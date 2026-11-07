@@ -7,6 +7,7 @@ import { PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
+import { QuickDatesPicker } from "@/components/quick-dates-picker";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { TechnicalInfo } from "@/components/technical-info";
 import { TimelineDisplayOptions } from "@/components/timeline-display-options";
@@ -16,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { dayKey } from "@/lib/heatmap";
+import { inQuickDate, parseQuickDate, type QuickDate } from "@/lib/quick-dates";
 import { findTimelineLabel, labelDates, labelOn } from "@/lib/timeline-labels";
 import { TimelineLabelPicker } from "@/components/timeline-label-picker";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
@@ -48,7 +50,7 @@ type ImagePhoto = Photo & { image: PhotoImage };
 type TimelineSearch = TimeRangeValue &
   PhotoFilters &
   ShownPhotoSearch &
-  TimelineDisplaySearch & { chart?: "heatmap"; label?: string; q?: string };
+  TimelineDisplaySearch & { chart?: "heatmap"; label?: string; q?: string; when?: QuickDate };
 
 export const Route = createFileRoute("/timeline")({
   validateSearch: (search: Record<string, unknown>): TimelineSearch => ({
@@ -59,6 +61,7 @@ export const Route = createFileRoute("/timeline")({
     ...parseTimelineDisplay(search),
     ...(search.chart === "heatmap" ? { chart: "heatmap" as const } : {}),
     ...parseLabel(search.label),
+    ...parseQuickDate(search.when),
   }),
   component: TimelineView,
 });
@@ -70,9 +73,22 @@ function parseLabel(label: unknown): { label?: string } {
   return typeof label === "string" && label ? { label } : {};
 }
 
-/** Whether the Timeline shows every photo's days: no time range and no label. */
-function showsAllTime(range: TimeRangeValue, label: ReturnType<typeof findTimelineLabel>) {
-  return Object.keys(range).length === 0 && !label;
+/** Whether the Timeline shows every photo's days: no time range, no label and no Quick dates choice. */
+function showsAllTime(
+  range: TimeRangeValue,
+  label: ReturnType<typeof findTimelineLabel>,
+  when: QuickDate | undefined,
+) {
+  return Object.keys(range).length === 0 && !label && !when;
+}
+
+/**
+ * Whether a photo is in the days shown and, with a Quick dates choice, taken on this date, in
+ * this month or in this season in an earlier year.
+ */
+function shownOn(days: { start: Date; end: Date }, when: QuickDate | undefined, now: Date) {
+  return ({ takenAt }: Photo) =>
+    takenAt >= days.start && takenAt <= days.end && (!when || inQuickDate(takenAt, when, now));
 }
 
 /** What the time range picker shows: the label's days as dates while one is chosen. */
@@ -116,19 +132,19 @@ function TimelineView() {
   // Newest first, so the months and the photos in each read down from the latest.
   const matching = searchPhotos(filterPhotos(photos, filters), search.q);
   const inRange = matching
-    .filter(({ takenAt }) => takenAt >= start && takenAt <= end)
+    .filter(shownOn({ start, end }, search.when, now))
     .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
-  const isAllTime = showsAllTime(timeRange, label);
+  const isAllTime = showsAllTime(timeRange, label, search.when);
   const display = resolveTimelineDisplay(search);
   const [chart, setChart] = useState<HTMLDivElement | null>(null);
   const [list, setList] = useState<HTMLOListElement | null>(null);
   useRememberViewOptions("/timeline", { ...timelineDisplaySearch(display), chart: search.chart });
 
   /**
-   * Shows the time range, or the timeline label's days, keeping the filters and the rest of the
-   * view's options; a range and a label each replace the other.
+   * Shows the time range, the timeline label's days, or a Quick dates choice, keeping the filters
+   * and the rest of the view's options; each of the three replaces the others.
    */
-  function showRange(next: TimeRangeValue & { label?: string }) {
+  function showRange(next: TimeRangeValue & { label?: string; when?: QuickDate }) {
     navigate({
       search: (prev) => ({
         ...prev,
@@ -136,6 +152,7 @@ function TimelineView() {
         from: undefined,
         to: undefined,
         label: undefined,
+        when: undefined,
         ...next,
       }),
     });
@@ -156,6 +173,12 @@ function TimelineView() {
             value={pickerRange(timeRange, label, { start, end })}
             selection={{ from: start, to: end }}
             onChange={showRange}
+          />
+          <QuickDatesPicker
+            photos={matching}
+            now={now}
+            value={search.when}
+            onChange={(when) => showRange({ when })}
           />
           <TimelineLabelPicker value={label} onChange={(id) => showRange({ label: id })} />
           <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>

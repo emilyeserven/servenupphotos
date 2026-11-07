@@ -110,6 +110,14 @@ type photoJSON struct {
 	// nil when it isn't marked. It's set on the Photo page, and replacing the
 	// photo's image there clears it.
 	ReEdit *ReEdit `json:"reEdit"`
+	// PickedSimilar are the IDs of the photos picked by hand on the
+	// pipeline's Similar Photos page to show first in the portfolio's More
+	// like this drawer, in order.
+	PickedSimilar []int `json:"pickedSimilar"`
+	// SimilarPhotos are the IDs of the photos most like this one, best first,
+	// as Find Similar Photos last found them; the drawer shows them after
+	// PickedSimilar.
+	SimilarPhotos []int `json:"similarPhotos"`
 	// PerceptualHash is the photo's perceptual hash (see
 	// PerceptualHashField). Like Colors it's left out of newPhotoJSON's
 	// defaults; Find near duplicates on the Compare page adds it.
@@ -166,6 +174,7 @@ func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
 		Title: s.Title, Comment: s.Comment, Notes: s.Notes, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
 		Genres: []string{},
 		Places: []PhotoPlace{}, SpotlightZones: []string{}, SocialPosts: []SocialPost{},
+		PickedSimilar: []int{}, SimilarPhotos: []int{},
 	}
 }
 

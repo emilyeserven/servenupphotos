@@ -99,7 +99,9 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null
+  "reEdit": null,
+  "pickedSimilar": [],
+  "similarPhotos": []
 }
 `
 	if string(saved) != wantJSON {
