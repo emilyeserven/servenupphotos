@@ -20,7 +20,7 @@ export function FindSimilarCard() {
         <CardDescription>
           Compares every photo with every other by the tags, genres and albums they share, where and
           on which day they were taken, and how much of them is the same colors. Each photo keeps
-          its 12 closest matches, which the portfolio&apos;s More like this drawer shows after any
+          its 6 closest matches, which the portfolio&apos;s More like this drawer shows after any
           photos picked by hand below. Run it again after adding or tagging photos.
         </CardDescription>
       </CardHeader>

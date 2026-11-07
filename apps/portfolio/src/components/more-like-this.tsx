@@ -115,7 +115,7 @@ function SimilarThumbnail({
 }
 
 /** How many photos the drawer shows at most. */
-const SIMILAR_COUNT = 12;
+const SIMILAR_COUNT = 6;
 
 /** The photos the drawer shows for photo, in order, leaving out any the viewer can't show. */
 function similarTo(photo: Photo): ImagePhoto[] {

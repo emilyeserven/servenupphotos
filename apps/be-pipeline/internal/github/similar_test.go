@@ -94,6 +94,7 @@ func TestSetPickedSimilarErrors(t *testing.T) {
 		{"itself", PickedSimilar{Path: similarDir + "A.json", IDs: []int{1}}, "like itself"},
 		{"twice", PickedSimilar{Path: similarDir + "A.json", IDs: []int{2, 2}}, "more than once"},
 		{"unknown ID", PickedSimilar{Path: similarDir + "A.json", IDs: []int{99}}, "no photo with the ID 99"},
+		{"too many", PickedSimilar{Path: similarDir + "A.json", IDs: []int{2, 3, 4, 5, 6, 7, 8}}, "up to 6 photos"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

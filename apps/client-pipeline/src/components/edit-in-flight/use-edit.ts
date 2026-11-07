@@ -16,6 +16,7 @@ import { useLeaveUndecided } from "@/components/undecided-photos";
 import { savedDetails } from "@/components/photo-details";
 import { type Crop } from "@/lib/crop";
 import { savedReEditDraft } from "@/lib/re-edit";
+import { pickedIds } from "@/components/similar-photos/similar-ids";
 import { savedSocialPosts } from "@/lib/social-posts";
 import {
   type Editable,
@@ -54,7 +55,7 @@ export function useLensSettings(): LensSettings {
   return { overrides: cameraOverrides(data), lenses: customLenses(data) };
 }
 
-/** The crop, title, place name, comment, albums, tags, social media posts, re-edit mark, custom lens and camera overrides being edited, against the last ones saved, and the JSON saving them would write. */
+/** The crop, title, place name, comment, albums, tags, social media posts, re-edit mark, hand-picked similar photos, custom lens and camera overrides being edited, against the last ones saved, and the JSON saving them would write. */
 export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null) {
   const [crop, setCrop] = useState<Crop | null>(savedCrop);
   // The editor reports the middle first when no crop was saved, which then counts as saved.
@@ -64,10 +65,11 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
   const [groups, setGroups] = useState(() => savedGroups(data));
   const [socialPosts, setSocialPosts] = useState(() => savedSocialPosts(data));
   const [reEdit, setReEdit] = useState(() => savedReEditDraft(data));
+  const [pickedSimilar, setPickedSimilar] = useState(() => pickedIds(data));
   const [lensEdit, setLensEdit] = useState<LensEdit>(() => startingLensEdit(data));
   const settings = useLensSettings();
   const overrides = lensEditFields(savedData, lensEdit, settings);
-  const fields = { details, groups, socialPosts, reEdit, overrides };
+  const fields = { details, groups, socialPosts, reEdit, pickedSimilar, overrides };
   const remakeSquares = cropChanged(crop, baseline, savedData);
   const changed = remakeSquares || fieldsChanged(savedData, fields);
   const request = {
@@ -88,6 +90,9 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
     /** Whether the photo is marked for re-editing, and why. */
     reEdit,
     setReEdit,
+    /** The photos picked by hand for its More like this drawer, by ID, in order. */
+    pickedSimilar,
+    setPickedSimilar,
     /** The custom lens, manual aperture and camera overrides being applied. */
     lensEdit,
     setLensEdit,

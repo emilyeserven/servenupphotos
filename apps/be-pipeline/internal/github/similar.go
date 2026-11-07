@@ -23,7 +23,7 @@ const (
 
 // similarCount is how many similar photos Find Similar Photos keeps for each
 // photo, as many as the drawer shows.
-const similarCount = 12
+const similarCount = 6
 
 // minSimilarScore is the lowest score a photo needs to count as like
 // another, such as one shared tag.
@@ -302,7 +302,8 @@ type PickedSimilarResult struct {
 }
 
 // SetPickedSimilar saves picked.IDs as the photo file's "pickedSimilar", in
-// the pending changes. Each ID must be another photo's, listed once.
+// the pending changes. Each ID must be another photo's, listed once, and
+// there can be up to similarCount of them.
 func (c *Client) SetPickedSimilar(ctx context.Context, gh settings.GitHub, picked PickedSimilar) (PickedSimilarResult, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
@@ -312,6 +313,9 @@ func (c *Client) SetPickedSimilar(ctx context.Context, gh settings.GitHub, picke
 	i := slices.IndexFunc(photos, func(p similarPhoto) bool { return p.file.path == picked.Path })
 	if i < 0 {
 		return PickedSimilarResult{}, publishErr(http.StatusNotFound, "%s isn't a photo file with an ID on %s.", picked.Path, scan.branch)
+	}
+	if len(picked.IDs) > similarCount {
+		return PickedSimilarResult{}, publishErr(http.StatusBadRequest, "Pick up to %d photos, as many as the drawer shows.", similarCount)
 	}
 	if perr := checkPicks(photos[i].id, picked.IDs, photos); perr != nil {
 		return PickedSimilarResult{}, perr

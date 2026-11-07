@@ -2,7 +2,7 @@
 
 The portfolio's [photo viewer](photo-viewer.md) has a **More like this** drawer along its bottom, like Lightroom's
 filmstrip. A short tab with an up arrow, in the middle under the photo, slides it open (or the **M** key); the tab's
-arrow then points down to close it. The drawer is a row of up to 12 square thumbnails, scrolling sideways, and clicking
+arrow then points down to close it. The drawer is a row of up to 6 square thumbnails, scrolling sideways, and clicking
 one shows that photo in the viewer with the drawer still open, so you can keep following similar photos.
 
 Whether the drawer is open is remembered in the browser, between photos and visits, under `servenup-more-like-this`.
@@ -16,7 +16,7 @@ and **Esc** still work.
 ## Which photos it shows
 
 The portfolio doesn't work out which photos are alike: it reads two lists of photo IDs from each photo's JSON (see
-[Photo data](data-model.md)) and shows the first 12 photos it can show:
+[Photo data](data-model.md)) and shows the first 6 photos it can show:
 
 1. `pickedSimilar`, the photos picked by hand on the pipeline's **Similar Photos** page, in the order picked.
 2. `similarPhotos`, the photos **Find similar photos** found, best first, leaving out any already picked.
@@ -44,18 +44,26 @@ The pipeline's **Similar Photos** page (`/similar-photos`, under Publish) has tw
 | The same colors                 | up to 6, by how much of both is the same |
 
 The colors are the hue buckets and shades the portfolio's Color page uses; the overlap adds up, for each color, the
-smaller of the two photos' shares. A pair needs at least 3 to count, such as one shared tag. Each photo keeps its 12
+smaller of the two photos' shares. A pair needs at least 3 to count, such as one shared tag. Each photo keeps its 6
 best, with ties going to the photo taken closest in time, in `similarPhotos`. Only photos with an image are listed.
 Only files whose list changed are saved, as changes waiting for Commit (see [Pending changes](pending-changes.md)).
 Smart Albums aren't counted, as only the portfolio works them out. Run it again after adding or tagging photos.
 
 **Pick similar photos by hand** chooses a photo, then lists:
 
-- its picks, which the drawer shows first, with arrows to reorder them and **×** to take one out, and **Save picks**;
+- its picks, up to 6 (as many as the drawer shows), which the drawer shows first, with arrows to reorder them and
+  **×** to take one out, and **Save picks**;
 - the photos **Find similar photos** found for it, each with **Pick**;
 - every other photo, with a search, to pick any of them.
 
 **Save picks** saves `pickedSimilar` on that one photo, as a change waiting for Commit.
+
+## On the Photo page
+
+The Photo page (Edit Photo) has the same picker in its **More like this** card: the picks, the photos found for it,
+and every other photo. Its picks are saved with the photo's other changes, by the page's own Save, into the JSON's
+`pickedSimilar`. Both pickers use `PickedSimilarFields` in
+`apps/client-pipeline/src/components/similar-photos/picked-similar-fields.tsx`.
 
 | Endpoint                              | What it does                                                |
 | ------------------------------------- | ----------------------------------------------------------- |

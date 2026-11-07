@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useSavedPhotos } from "@/components/saved-photo-picker";
 import { PhotoChoiceGrid } from "@/components/similar-photos/photo-choice-grid";
 import { PickedEditor } from "@/components/similar-photos/picked-editor";
-import { photoId, photosById } from "@/components/similar-photos/similar-ids";
+import { savedPhotoId, photosById } from "@/components/similar-photos/similar-ids";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -12,7 +12,7 @@ import { Spinner } from "@/components/ui/spinner";
  */
 export function PickSimilarCard() {
   const { photos: saved, pending } = useSavedPhotos();
-  const photos = useMemo(() => saved.filter((photo) => photoId(photo) !== undefined), [saved]);
+  const photos = useMemo(() => saved.filter((photo) => savedPhotoId(photo) !== undefined), [saved]);
   const byId = useMemo(() => photosById(photos), [photos]);
   const [chosenPath, setChosenPath] = useState<string>();
   const chosen = photos.find((photo) => photo.path === chosenPath);
