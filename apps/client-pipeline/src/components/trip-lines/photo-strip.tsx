@@ -1,4 +1,4 @@
-import { Flag, MapPin } from "lucide-react";
+import { Flag, MapPin, Scissors } from "lucide-react";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
 import { GAPS, gapInfo } from "@/components/trip-lines/modes";
 import type { TripPhoto } from "@/lib/trip-days";
@@ -13,20 +13,59 @@ interface PhotoStripProps {
   onGap?: (index: number, gap: Gap) => void;
   /** The photo pointed at, which the map highlights. */
   onHover: (id: number | undefined) => void;
+  /** Where these photos start among the day's, when they're one group of them: gaps count from 0. */
+  offset?: number;
+  /** Starts a new group at a photo; left out, photos can't start one. */
+  onSplit?: (id: number) => void;
 }
 
 /** The day's photos in the order they were taken, with what happened between each two. */
-export function PhotoStrip({ photos, gaps, onGap, onHover }: PhotoStripProps) {
+export function PhotoStrip({ photos, gaps, onGap, onHover, offset = 0, onSplit }: PhotoStripProps) {
   return (
     <ol className="flex items-center gap-1 overflow-x-auto pb-2" aria-label="The day's photos">
       {photos.map((p, i) => (
-        <li key={p.id} className="flex shrink-0 items-center gap-1">
-          {gaps && i > 0 && <GapPicker gap={gapBefore(gaps, i)} index={i - 1} onGap={onGap} />}
-          <StripPhoto photo={p} ends={gaps ? lineEnds(gaps, i) : NO_ENDS} onHover={onHover} />
-        </li>
+        <StripItem
+          key={p.id}
+          photo={p}
+          local={i}
+          offset={offset}
+          gaps={gaps}
+          onGap={onGap}
+          onHover={onHover}
+          onSplit={onSplit}
+        />
       ))}
     </ol>
   );
+}
+
+interface StripItemProps extends Omit<PhotoStripProps, "photos"> {
+  photo: TripPhoto;
+  /** Its index among the strip's photos. */
+  local: number;
+  offset: number;
+}
+
+/** One photo in the strip, after the gap before it (none before the strip's first photo). */
+function StripItem({ photo, local, offset, gaps, onGap, onHover, onSplit }: StripItemProps) {
+  const i = offset + local;
+  const first = local === 0;
+  return (
+    <li className="flex shrink-0 items-center gap-1">
+      {gaps && !first && <GapPicker gap={gapBefore(gaps, i)} index={i - 1} onGap={onGap} />}
+      <StripPhoto
+        photo={photo}
+        ends={endsAt(gaps, i)}
+        onHover={onHover}
+        onSplit={first ? undefined : onSplit}
+      />
+    </li>
+  );
+}
+
+/** Where lines start and end at the photo at index i; nowhere while the day has no line. */
+function endsAt(gaps: Gap[] | undefined, i: number): LineEnds {
+  return gaps ? lineEnds(gaps, i) : NO_ENDS;
 }
 
 /** Whether a line starts and ends at a photo. */
@@ -54,9 +93,10 @@ interface StripPhotoProps {
   photo: TripPhoto;
   ends: LineEnds;
   onHover: (id: number | undefined) => void;
+  onSplit?: (id: number) => void;
 }
 
-function StripPhoto({ photo, ends, onHover }: StripPhotoProps) {
+function StripPhoto({ photo, ends, onHover, onSplit }: StripPhotoProps) {
   const url = squareUrl(photo.photo);
   return (
     <figure
@@ -67,9 +107,25 @@ function StripPhoto({ photo, ends, onHover }: StripPhotoProps) {
       <div className="bg-muted relative size-20 overflow-hidden rounded-md">
         {url && <img src={url} alt={photoName(photo.photo)} className="size-full object-cover" />}
         <Ends {...ends} />
+        {onSplit && <SplitButton onClick={() => onSplit(photo.id)} />}
       </div>
       <figcaption className="text-muted-foreground text-xs tabular-nums">{photo.time}</figcaption>
     </figure>
+  );
+}
+
+/** Starts a new group at the photo, shown over it. */
+function SplitButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      title="Start a new group here"
+      onClick={onClick}
+      className="bg-background/90 absolute right-1 bottom-1 rounded-sm p-0.5 shadow-sm"
+    >
+      <Scissors className="size-3" aria-hidden />
+      <span className="sr-only">Start a new group here</span>
+    </button>
   );
 }
 

@@ -21,6 +21,8 @@ export interface TripPoint {
 /** One stretch of a day's trip line, travelled one way. */
 export interface TripSegment {
   mode: TripMode;
+  /** The name of the group of photos (a line of its own) the segment is in, such as "Nara Park". */
+  name?: string;
   /** A spot with no photo the line starts from, before the photos. */
   start?: TripPoint;
   /** The IDs of the day's photos the line goes through, in order. */

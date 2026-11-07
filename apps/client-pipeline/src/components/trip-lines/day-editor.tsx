@@ -11,11 +11,13 @@ import {
 import { EditorActions, type EditorView } from "@/components/trip-lines/editor-actions";
 import { type EndKey, EndSpots } from "@/components/trip-lines/end-spots";
 import { HopLines } from "@/components/trip-lines/hop-lines";
+import { GroupStrip } from "@/components/trip-lines/group-strip";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
 import { RouteMap } from "@/components/trip-lines/route-map";
 import { ShapeTools } from "@/components/trip-lines/shape-tools";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { TripDay } from "@/lib/trip-days";
+import type { TripDay, TripPhoto } from "@/lib/trip-days";
+import { placeGroups } from "@/lib/trip-groups";
 import { draftOf, type Gap, type GapDraft, segmentsOf } from "@/lib/trip-gaps";
 import { draftVias, movedVia, withVia } from "@/lib/trip-points";
 import { dayTitle } from "@/components/trip-lines/day-title";
@@ -25,6 +27,12 @@ function initialView(ids: number[], line: TripLine | undefined): EditorView {
   if (!line) return { kind: "none" };
   if (line.auto) return { kind: "auto" };
   return { kind: "hand", draft: draftOf(ids, line.segments) };
+}
+
+/** The view, with a hand-drawn draft that has no groups yet grouped by its photos' places. */
+function withPlaceGroups(view: EditorView, photos: TripPhoto[]): EditorView {
+  if (view.kind !== "hand" || view.draft.groups !== undefined) return view;
+  return { ...view, draft: { ...view.draft, ...placeGroups(photos) } };
 }
 
 /** Whether the view draws the automatic line, which the backend works out. */
@@ -58,8 +66,12 @@ function endsOf(segments: TripSegment[]): TripPoint[] {
 /** Edits one day's trip line: the photo strip, the map, and saving. */
 export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
   const ids = day.photos.map((p) => p.id);
-  const [view, setView] = useState<EditorView>(() => initialView(ids, line));
+  const [view, setRawView] = useState<EditorView>(() =>
+    withPlaceGroups(initialView(ids, line), day.photos),
+  );
+  const setView = (next: EditorView) => setRawView(withPlaceGroups(next, day.photos));
   const [hovered, setHovered] = useState<number>();
+  const [focus, setFocus] = useState<string>();
   const auto = useQuery({ ...autoTripLineQuery(day.day), enabled: showsAuto(view) });
   const segments = viewSegments(ids, view, auto.data);
   const editDraft = (draft: GapDraft) => setView({ kind: "hand", draft });
@@ -74,18 +86,29 @@ export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <PhotoStrip
-          photos={day.photos}
-          gaps={stripGaps(ids, view, segments)}
-          onHover={setHovered}
-          onGap={draft && ((i, gap) => editDraft(withGap(draft, i, gap)))}
-        />
+        {draft ? (
+          <GroupStrip
+            photos={day.photos}
+            draft={draft}
+            onChange={editDraft}
+            onHover={setHovered}
+            focus={focus}
+            onFocus={setFocus}
+          />
+        ) : (
+          <PhotoStrip
+            photos={day.photos}
+            gaps={stripGaps(ids, view, segments)}
+            onHover={setHovered}
+          />
+        )}
         {draft ? (
           <HandMap
             day={day}
             draft={draft}
             segments={segments}
             highlighted={hovered}
+            focus={focus}
             onChange={editDraft}
           />
         ) : (
@@ -117,6 +140,8 @@ interface HandMapProps {
   draft: GapDraft;
   segments: TripSegment[];
   highlighted?: number;
+  /** The name of the group shown on its own, the others faded. */
+  focus?: string;
   onChange: (draft: GapDraft) => void;
 }
 
@@ -124,7 +149,7 @@ interface HandMapProps {
  * The map of a line drawn by hand, with its tools: clicking the map places the spot being picked,
  * or adds a via point while adding them.
  */
-function HandMap({ day, draft, segments, highlighted, onChange }: HandMapProps) {
+function HandMap({ day, draft, segments, highlighted, focus, onChange }: HandMapProps) {
   const [picking, setPicking] = useState<EndKey>();
   const [addingVia, setAddingVia] = useState(false);
   const pick = (point: TripPoint) => {
@@ -141,6 +166,7 @@ function HandMap({ day, draft, segments, highlighted, onChange }: HandMapProps) 
         segments={segments}
         preview={false}
         highlighted={highlighted}
+        focus={focus}
         ends={endsOf(segments)}
         onPick={picking || addingVia ? pick : undefined}
         vias={draftVias(draft)}
@@ -158,11 +184,6 @@ function HandMap({ day, draft, segments, highlighted, onChange }: HandMapProps) 
       <EndSpots draft={draft} onChange={onChange} picking={picking} onPicking={setPicking} />
     </>
   );
-}
-
-/** The draft with gap index changed. */
-function withGap(draft: GapDraft, index: number, gap: Gap): GapDraft {
-  return { ...draft, gaps: draft.gaps.map((g, i) => (i === index ? gap : g)) };
 }
 
 interface DayActionsProps {
