@@ -2,6 +2,7 @@ import { ExternalLink, MapPinPlus, Trash2 } from "lucide-react";
 import type { Place } from "@/api/places";
 import type { TripVisit, VisitKind } from "@/api/trip-lines";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
+import { VisitRoute } from "@/components/trip-lines/visit-route";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { currentLists } from "@/lib/group-photos";
@@ -37,7 +38,12 @@ export function Visits({ day, draft, onChange, picking, onPicking }: VisitsProps
     <div className="flex flex-col gap-2">
       <h3 className="text-sm font-medium">Places visited</h3>
       {visits.map((visit, i) => (
-        <VisitRow key={i} visit={visit} onChange={(v) => onChange(changedVisit(draft, i, v))} />
+        <VisitRow
+          key={i}
+          visit={visit}
+          day={day}
+          onChange={(v) => onChange(changedVisit(draft, i, v))}
+        />
       ))}
       <div className="flex flex-wrap items-center gap-2">
         <Button
@@ -83,12 +89,13 @@ function SavedPlacePicker({ day, onPick }: { day: TripDay; onPick: (v: TripVisit
 
 interface VisitRowProps {
   visit: TripVisit;
+  day: TripDay;
   /** Changes the visit, or removes it with null. */
   onChange: (visit: TripVisit | null) => void;
 }
 
-/** One place visited: its kind, name, note and map link, and removing it. */
-function VisitRow({ visit, onChange }: VisitRowProps) {
+/** One place visited: its kind, name, note, map link and spot on the route, and removing it. */
+function VisitRow({ visit, day, onChange }: VisitRowProps) {
   const set = (fields: Partial<TripVisit>) => onChange({ ...visit, ...fields });
   const Icon = VISIT_ICONS[visit.kind];
   return (
@@ -121,6 +128,7 @@ function VisitRow({ visit, onChange }: VisitRowProps) {
         onChange={(e) => set({ note: e.target.value })}
       />
       <LinkField link={visit.link} onLink={(link) => set({ link })} />
+      <VisitRoute photos={day.photos} after={visit.after} onAfter={(after) => set({ after })} />
       <Button
         variant="ghost"
         size="icon"

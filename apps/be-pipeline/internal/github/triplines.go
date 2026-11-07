@@ -77,6 +77,9 @@ type TripVia struct {
 	After     *int    `json:"after,omitempty"`
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
+	// Visit is the place visited (its index in the day's visits) this spot
+	// stands for, so the line passes through it; nil for a spot of its own.
+	Visit *int `json:"visit,omitempty"`
 }
 
 // TripLine is a trip line file: the route of one day, which the portfolio's
@@ -179,7 +182,7 @@ func validTripLine(line TripLine) (TripLine, *PublishError) {
 		}
 		line.Segments[i] = seg
 	}
-	return line, validVisits(line.Visits)
+	return line, validVisits(line.Visits, line.Segments)
 }
 
 // validTripSegment checks the nth segment and returns it trimmed.

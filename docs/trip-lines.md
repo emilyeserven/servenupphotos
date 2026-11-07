@@ -40,7 +40,7 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - One photo can end a segment and start the next (304 and 305 above), so the line doesn't break at a station.
 - **`start`** and **`end`** are spots with no photo, such as the hotel, with an optional `label`.
 - **`via`** lists spots with no photo the line bends through, each with the photo it comes `after` (none for right
-  after `start`). See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
+  after `start`), and `visit` when it stands for a [place visited](#places-visited) on the route. See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
 - **`path`** is a walk, bus or car segment's line along the streets, as `[longitude, latitude]` pairs, from **Snap to
   streets**, or a hop's track along its `line`. A train, subway or transit hop keeps one only with a line.
 - **`line`** is the bus, subway or train line a hop rode, picked under [Lines ridden](#lines-ridden):
@@ -145,9 +145,22 @@ They're saved with the line as `visits`:
   "longitude": 135.5026,
   "note": "Ramen before the river walk",
   "link": "https://maps.app.goo.gl/…",
-  "place": "ichiran-dotonbori"
+  "place": "ichiran-dotonbori",
+  "after": 305
 }
 ```
+
+**Where on the route** puts a place between two photos taken one after the other, such as "Between photos 4 and 5".
+`after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
+segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
+to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
+two photos, named on hover. **Not on the route** leaves it as a pin only. A place put after a break or after the last
+photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
+time, so moving or removing the place keeps the line in step; the backend checks that `after` is a photo on the line
+and that every `visit` names a place the day has.
+
+> **Frontend analogy:** the via spot is derived state, like a `useMemo` over `visits`: `visits` is the source of
+> truth, and the saved via spot is only written out so the portfolio and the router don't need to know about places.
 
 `place` is the saved place's ID when one was picked. The link has to be an `http` or `https` web address. Commit bakes
 each into `TRIPLINES.geo.json` as a GeoJSON `Point` with `"feature": "visit"`, the day, and the name, kind, note and

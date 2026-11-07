@@ -25,6 +25,10 @@ type TripVisit struct {
 	// Place is the ID of the saved place it is, when picked from them; "" for
 	// one dropped on the map.
 	Place string `json:"place,omitempty"`
+	// After is the ID of the photo the place comes after on the route, so the
+	// line passes through it on the way to the next photo; nil leaves it off
+	// the route, as a pin only.
+	After *int `json:"after,omitempty"`
 }
 
 // visitKinds are the sorts of place a visit can be.
@@ -38,13 +42,38 @@ const (
 )
 
 // validVisits checks each visit and trims its text in place.
-func validVisits(visits []TripVisit) *PublishError {
+func validVisits(visits []TripVisit, segments []TripSegment) *PublishError {
 	if len(visits) > maxVisits {
 		return publishErr(http.StatusBadRequest, "Keep a day to %d places visited.", maxVisits)
 	}
 	for i := range visits {
 		if perr := validVisit(&visits[i], i+1); perr != nil {
 			return perr
+		}
+		if !visitPlaced(visits[i].After, segments) {
+			return publishErr(http.StatusBadRequest, "Place visited %d comes after a photo that isn't on the line.", i+1)
+		}
+	}
+	return validViaVisits(segments, len(visits))
+}
+
+// visitPlaced reports whether a visit after after has that photo on the line,
+// or isn't on the route (nil).
+func visitPlaced(after *int, segments []TripSegment) bool {
+	if after == nil {
+		return true
+	}
+	return slices.ContainsFunc(segments, func(s TripSegment) bool { return slices.Contains(s.Photos, *after) })
+}
+
+// validViaVisits fails when a via spot stands for a place visited the day
+// doesn't have (one of n).
+func validViaVisits(segments []TripSegment, n int) *PublishError {
+	for i, seg := range segments {
+		for _, v := range seg.Via {
+			if v.Visit != nil && (*v.Visit < 0 || *v.Visit >= n) {
+				return publishErr(http.StatusBadRequest, "Segment %d: a via spot stands for a place visited the day doesn't have.", i+1)
+			}
 		}
 	}
 	return nil

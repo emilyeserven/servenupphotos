@@ -65,3 +65,8 @@ export function placesNear(places: Place[], photos: TripPhoto[]): (Place & TripP
 export function webLink(link: string | undefined): boolean {
   return /^https?:\/\/\S+$/.test(link ?? "");
 }
+
+/** The places visited put on the route right after photo id, in the order added. */
+export function visitsAfter(visits: TripVisit[] | undefined, id: number | undefined): TripVisit[] {
+  return (visits ?? []).filter((v) => v.after !== undefined && v.after === id);
+}

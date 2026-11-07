@@ -224,7 +224,11 @@ const added = {
             photos: [302, 303, 304],
           },
           { mode: "subway", photos: [304, 305] },
-          { mode: "walk", photos: [305, 306, 307] },
+          {
+            mode: "walk",
+            photos: [305, 306, 307],
+            via: [{ after: 305, latitude: 34.6688, longitude: 135.5026, visit: 0 }],
+          },
         ],
         visits: [
           {
@@ -234,6 +238,7 @@ const added = {
             longitude: 135.5026,
             note: "Ramen before the river walk",
             link: "https://maps.app.goo.gl/example",
+            after: 305,
           },
           { name: "Kuromon Market", kind: "shop", latitude: 34.6655, longitude: 135.5065 },
         ],

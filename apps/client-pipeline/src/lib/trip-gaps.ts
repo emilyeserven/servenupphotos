@@ -65,14 +65,25 @@ interface Run {
   end?: TripPoint;
 }
 
-/** The via spots in the draft after key, as a segment lists them. */
+/**
+ * The via spots in the draft after key, as a segment lists them: its own, then the places visited
+ * put after that photo, so the line passes through them on the way to the next photo.
+ */
 function viaOf(draft: GapDraft, key: ViaKey): TripVia[] {
   const after = key === "start" ? {} : { after: Number(key) };
-  return (draft.via?.[key] ?? []).map(({ latitude, longitude }) => ({
+  const own = (draft.via?.[key] ?? []).map(({ latitude, longitude }) => ({
     ...after,
     latitude,
     longitude,
   }));
+  return [...own, ...visitVia(draft, key)];
+}
+
+/** The places visited put after photo key, as via spots that stand for them. */
+function visitVia(draft: GapDraft, key: ViaKey): TripVia[] {
+  return (draft.visits ?? []).flatMap(({ after, latitude, longitude }, visit) =>
+    String(after) === key ? [{ after: after!, latitude, longitude, visit }] : [],
+  );
 }
 
 /** How many points a run's line goes through. */
@@ -181,7 +192,8 @@ function dayEnds(segments: TripSegment[]): Pick<GapDraft, "start" | "end"> {
 /** The segments' via spots, by what they come after. */
 function viaByKey(segments: TripSegment[]): Record<ViaKey, TripPoint[]> {
   const out: Record<ViaKey, TripPoint[]> = {};
-  for (const { after, latitude, longitude } of segments.flatMap((s) => s.via ?? [])) {
+  const own = segments.flatMap((s) => s.via ?? []).filter((v) => v.visit === undefined);
+  for (const { after, latitude, longitude } of own) {
     const key = after === undefined ? "start" : String(after);
     out[key] = [...(out[key] ?? []), { latitude, longitude }];
   }

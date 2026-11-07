@@ -35,6 +35,36 @@ func TestTripLineVisits(t *testing.T) {
 	}
 }
 
+func TestTripLineVisitsOnRoute(t *testing.T) {
+	_, c := newMainRepo(t, tripPhotos)
+	ten, zero, two := 10, 0, 2
+	visit := TripVisit{Name: "Ichiran", Kind: "restaurant", Latitude: 35.0005, Longitude: 135.7505, After: &ten}
+	via := TripVia{After: &ten, Latitude: 35.0005, Longitude: 135.7505, Visit: &zero}
+	line := TripLine{ID: "2026-09-23", Segments: []TripSegment{{Mode: ModeWalk, Photos: []int{10, 11}, Via: []TripVia{via}}}, Visits: []TripVisit{visit}}
+	saved, err := c.SaveTripLine(t.Context(), placesGH, line)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(saved.Data), `"visit": 0`) || !strings.Contains(string(saved.Data), `"after": 10`) {
+		t.Errorf("saved = %s", saved.Data)
+	}
+	stray := 99
+	for name, change := range map[string]func(l *TripLine){
+		"after a photo off the line": func(l *TripLine) { l.Visits[0].After = &stray },
+		"via for a missing visit":    func(l *TripLine) { l.Segments[0].Via[0].Visit = &two },
+	} {
+		bad := line
+		bad.Visits = []TripVisit{visit}
+		bad.Segments = []TripSegment{{Mode: ModeWalk, Photos: []int{10, 11}, Via: []TripVia{via}}}
+		change(&bad)
+		_, err := c.SaveTripLine(t.Context(), placesGH, bad)
+		var perr *PublishError
+		if !errors.As(err, &perr) || perr.Status != http.StatusBadRequest {
+			t.Errorf("%s: SaveTripLine() error = %v, want 400", name, err)
+		}
+	}
+}
+
 func TestBakeVisits(t *testing.T) {
 	spots := map[int]tripSpot{10: {ID: 10, Day: "2026-09-23", Latitude: 35, Longitude: 135.75}, 11: {ID: 11, Day: "2026-09-23", Latitude: 35.001, Longitude: 135.751}}
 	line := TripLine{Day: "2026-09-23", Segments: []TripSegment{{Mode: ModeWalk, Photos: []int{10, 11}}}, Visits: []TripVisit{{Name: "Ichiran", Kind: "restaurant", Latitude: 35.0005, Longitude: 135.7505, Link: "https://naver.me/x"}}}
