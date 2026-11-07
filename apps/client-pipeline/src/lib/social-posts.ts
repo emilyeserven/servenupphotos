@@ -20,21 +20,42 @@ export const socialPlatforms: SocialPlatform[] = [
   { id: "other", label: "Other" },
 ];
 
-/** Whether a post is waiting to go up or already up. */
-export type SocialPostStatus = "scheduled" | "posted";
+/**
+ * Where a post stands: "planned" while it still has to be put on the site, "scheduled" once it's
+ * there, posted or scheduled on the site to post.
+ */
+export type SocialPostStatus = "planned" | "scheduled";
+
+/** Each status as the app shows it. */
+export const statusLabels: Record<SocialPostStatus, string> = {
+  planned: "Planned",
+  scheduled: "Scheduled",
+};
+
+/** Whether value is a status a post saves. */
+function isStatus(value: unknown): value is SocialPostStatus {
+  return value === "planned" || value === "scheduled";
+}
+
+/** Whether a post saved before posts kept their status is on the site: it has a link, or its day has come. */
+function looksUp(post: Record<string, unknown>, today: string): boolean {
+  const date = text(post.date);
+  return text(post.url).trim() !== "" || (date !== "" && date <= today);
+}
 
 /**
- * Whether a post on date is up yet, judged from today: posted on or before today, scheduled after it
- * or when it has no day. It isn't saved, so it changes on its own as the day passes.
+ * The status saved on a post, or for one saved before posts kept their status (or with an older
+ * "posted"), one worked out from it: scheduled once it has a link or its day has come.
  */
-export function postStatus(date: string | null, today = format(new Date(), "yyyy-MM-dd")) {
-  const status: SocialPostStatus = date && date <= today ? "posted" : "scheduled";
-  return status;
+function savedStatus(post: Record<string, unknown>, today: string): SocialPostStatus {
+  if (isStatus(post.status)) return post.status;
+  return post.status === "posted" || looksUp(post, today) ? "scheduled" : "planned";
 }
 
 /** One post of the photo on social media, as the photo JSON's `socialPosts` saves it. */
 export interface SocialPost {
   platform: string;
+  status: SocialPostStatus;
   /** The day it's posted or scheduled for, as YYYY-MM-DD, or null when it isn't known. */
   date: string | null;
   /** The post's link; empty before it's posted. */
@@ -59,11 +80,12 @@ function draftId(): string {
   return `social-post-${nextId}`;
 }
 
-/** A new post on Instagram with nothing else filled in. */
+/** A new post on Instagram, planned, with nothing else filled in. */
 export function newSocialPost(): SocialPostDraft {
   return {
     id: draftId(),
     platform: "instagram",
+    status: "planned",
     date: "",
     url: "",
     caption: "",
@@ -92,10 +114,11 @@ function savedHashtags(value: unknown): string[] {
 }
 
 /** A saved post as a draft to edit. */
-function toDraft(post: Record<string, unknown>): SocialPostDraft {
+function toDraft(post: Record<string, unknown>, today: string): SocialPostDraft {
   return {
     id: draftId(),
     platform: text(post.platform) || "other",
+    status: savedStatus(post, today),
     date: text(post.date),
     url: text(post.url),
     caption: text(post.caption),
@@ -105,16 +128,23 @@ function toDraft(post: Record<string, unknown>): SocialPostDraft {
   };
 }
 
-/** The posts saved in a photo's JSON, as drafts to start editing from; none when it has no list. */
-export function savedSocialPosts(data: Record<string, unknown>): SocialPostDraft[] {
+/**
+ * The posts saved in a photo's JSON, as drafts to start editing from; none when it has no list.
+ * today, as YYYY-MM-DD, works out the status of posts saved without one.
+ */
+export function savedSocialPosts(
+  data: Record<string, unknown>,
+  today = format(new Date(), "yyyy-MM-dd"),
+): SocialPostDraft[] {
   const posts = data[SOCIAL_POSTS];
-  return Array.isArray(posts) ? posts.filter(isObject).map(toDraft) : [];
+  return Array.isArray(posts) ? posts.filter(isObject).map((post) => toDraft(post, today)) : [];
 }
 
 /** A draft as it's saved, with its text trimmed. */
-function toSaved({ platform, date, url, caption, hashtags }: SocialPostDraft): SocialPost {
+function toSaved({ platform, status, date, url, caption, hashtags }: SocialPostDraft): SocialPost {
   return {
     platform,
+    status,
     date: date || null,
     url: url.trim(),
     caption: caption.trim(),
@@ -123,7 +153,7 @@ function toSaved({ platform, date, url, caption, hashtags }: SocialPostDraft): S
 }
 
 /** The drafts as the photo JSON's `socialPosts` saves them. */
-function socialPostsToSave(drafts: SocialPostDraft[]): SocialPost[] {
+export function socialPostsToSave(drafts: SocialPostDraft[]): SocialPost[] {
   return drafts.map(toSaved);
 }
 

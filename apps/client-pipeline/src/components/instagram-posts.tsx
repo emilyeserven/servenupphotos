@@ -3,6 +3,7 @@ import { CircleCheckIcon, ClockIcon, ExternalLinkIcon, ImageIcon } from "lucide-
 import { parseIsoDate } from "@/lib/calendar";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import type { DayPost } from "@/lib/social-post-days";
+import { statusLabels } from "@/lib/social-posts";
 import { cn } from "@/lib/utils";
 
 const dayFormat = new Intl.DateTimeFormat(undefined, {
@@ -13,40 +14,40 @@ const dayFormat = new Intl.DateTimeFormat(undefined, {
 
 const BADGE = "rounded px-1 text-[10px] font-medium whitespace-nowrap";
 
-/** Whether every post is up, so a day's mark shows a check rather than a clock. */
-function allPosted(posts: DayPost[]): boolean {
-  return posts.every((post) => post.status === "posted");
+/** Whether every post is on Instagram, so a day's mark shows a check rather than a clock. */
+function allScheduled(posts: DayPost[]): boolean {
+  return posts.every((post) => post.status === "scheduled");
 }
 
-/** "Posted" or "Scheduled", for a post's status. */
+/** "Planned" or "Scheduled", for a post's status. */
 function statusLabel(post: DayPost): string {
-  return post.status === "posted" ? "Posted" : "Scheduled";
+  return statusLabels[post.status];
 }
 
 /**
  * The corner mark of a calendar day with Instagram posts from the photos' Social media posts: a
- * check when they're all up, a clock while any is scheduled, and how many when there's more than one.
+ * check when they're all on Instagram, a clock while any is still planned, and how many when there's more than one.
  */
 export function DayPostMark({ posts }: { posts: DayPost[] | undefined }) {
   if (!posts?.length) return null;
   return <PostMark posts={posts} />;
 }
 
-/** A day's posts as "Name (posted), Name (scheduled)". */
+/** A day's posts as "Name (scheduled), Name (planned)". */
 function postNames(posts: DayPost[]): string {
   return posts.map((post) => `${post.photo.name} (${statusLabel(post).toLowerCase()})`).join(", ");
 }
 
 function PostMark({ posts }: { posts: DayPost[] }) {
-  const posted = allPosted(posts);
-  const Icon = posted ? CircleCheckIcon : ClockIcon;
+  const done = allScheduled(posts);
+  const Icon = done ? CircleCheckIcon : ClockIcon;
   const names = postNames(posts);
   return (
     <span
       className={cn(
         BADGE,
         "pointer-events-none absolute bottom-1 left-1 z-10 flex items-center gap-0.5",
-        posted ? "bg-emerald-600 text-white" : "bg-background/85 text-foreground",
+        done ? "bg-emerald-600 text-white" : "bg-background/85 text-foreground",
       )}
       title={`Instagram: ${names}`}
     >
@@ -137,14 +138,14 @@ function PostRow({ day, post }: { day: string; post: DayPost }) {
   );
 }
 
-/** Whether the post is up, and whether its photo is in flight or as the Gallery shows it. */
+/** Whether the post is on Instagram yet, and whether its photo is in flight or as the Gallery shows it. */
 function PostBadges({ post }: { post: DayPost }) {
   return (
     <>
       <span
         className={cn(
           BADGE,
-          post.status === "posted" ? "bg-emerald-600 text-white" : "bg-muted text-foreground",
+          post.status === "scheduled" ? "bg-emerald-600 text-white" : "bg-muted text-foreground",
         )}
       >
         {statusLabel(post)}

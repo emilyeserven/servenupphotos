@@ -16,8 +16,9 @@ import {
   newSocialPost,
   parseHashtags,
   platformLabel,
-  postStatus,
+  type SocialPostStatus,
   socialPlatforms,
+  statusLabels,
 } from "@/lib/social-posts";
 
 interface SocialPostsCardProps {
@@ -34,7 +35,7 @@ interface SocialPostsCardProps {
 }
 
 /**
- * The photo's posts on social media, each with its platform, whether it's scheduled or posted, its
+ * The photo's posts on social media, each with its platform, whether it's planned or scheduled, its
  * day, link, caption and hashtags, saved as the JSON's "socialPosts".
  */
 export function SocialPostsCard({
@@ -53,8 +54,8 @@ export function SocialPostsCard({
       <CardHeader>
         <CardTitle>Social media posts</CardTitle>
         <CardDescription>
-          Where the photo is posted or scheduled to post. Saving changes writes them over the
-          JSON&apos;s <code>socialPosts</code>.
+          Where the photo is planned to post, or already scheduled or posted. Saving changes writes
+          them over the JSON&apos;s <code>socialPosts</code>.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -149,7 +150,6 @@ function SocialPostFields({
       <div className="flex items-center justify-between gap-2">
         <p id={id("heading")} className="text-sm font-medium">
           Post {number} · {platformLabel(post.platform)}
-          <StatusNote date={post.date} />
         </p>
         <Button
           variant="ghost"
@@ -162,13 +162,25 @@ function SocialPostFields({
           <Trash2Icon />
         </Button>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <Field id={id("platform")} label="Platform" help="Where it's posted.">
           <PlatformSelect
             id={id("platform")}
             value={post.platform}
             disabled={disabled}
             onChange={(platform) => onChange({ platform })}
+          />
+        </Field>
+        <Field
+          id={id("status")}
+          label="Status"
+          help="Planned while it still has to be put on the site; Scheduled once it's there, posted or scheduled on the site to post."
+        >
+          <StatusSelect
+            id={id("status")}
+            value={post.status}
+            disabled={disabled}
+            onChange={(status) => onChange({ status })}
           />
         </Field>
         <Field
@@ -216,15 +228,6 @@ function SocialPostFields({
         <HashtagCount typed={post.hashtags} />
       </Field>
     </div>
-  );
-}
-
-/** Whether the post is up yet, from its day compared with today; nothing before it has a day. */
-function StatusNote({ date }: { date: string }) {
-  if (!date) return null;
-  const posted = postStatus(date) === "posted";
-  return (
-    <span className="text-muted-foreground font-normal"> · {posted ? "Posted" : "Scheduled"}</span>
   );
 }
 
@@ -287,6 +290,24 @@ function PlatformSelect({ id, value, disabled, onChange }: SelectProps<string>) 
       {platformOptions(value).map((platform) => (
         <option key={platform.id} value={platform.id}>
           {platform.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function StatusSelect({ id, value, disabled, onChange }: SelectProps<SocialPostStatus>) {
+  return (
+    <select
+      id={id}
+      value={value}
+      disabled={disabled}
+      onChange={(event) => onChange(event.target.value as SocialPostStatus)}
+      className={SELECT_CLASSES}
+    >
+      {(Object.keys(statusLabels) as SocialPostStatus[]).map((status) => (
+        <option key={status} value={status}>
+          {statusLabels[status]}
         </option>
       ))}
     </select>

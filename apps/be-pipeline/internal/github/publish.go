@@ -124,7 +124,8 @@ type ReEdit struct {
 type SocialPost struct {
 	// Platform is where it's posted, such as "instagram".
 	Platform string `json:"platform"`
-	// Status is "scheduled" or "posted".
+	// Status is "planned", while it still has to be put on the site, or
+	// "scheduled", once it is: posted, or scheduled there to post.
 	Status string `json:"status"`
 	// Date is the day it's posted or scheduled for, as YYYY-MM-DD, or nil
 	// when it isn't known.

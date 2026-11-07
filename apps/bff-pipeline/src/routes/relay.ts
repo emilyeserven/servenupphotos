@@ -3,8 +3,17 @@ import type { FastifyPluginAsync, FastifyRequest } from "fastify";
 import { relayToBackend } from "../lib/backend.js";
 import { timeoutFor } from "../lib/timeouts.js";
 
-/** Response headers passed on to the client: thumbnail caching and an upload's JPEG size and quality. */
-const RELAY_HEADERS = ["cache-control", "last-modified", "x-jpeg-bytes", "x-jpeg-quality"] as const;
+/**
+ * Response headers passed on to the client: thumbnail caching, an upload's JPEG size and quality,
+ * and the file name an original JPEG downloads as.
+ */
+const RELAY_HEADERS = [
+  "cache-control",
+  "last-modified",
+  "x-jpeg-bytes",
+  "x-jpeg-quality",
+  "content-disposition",
+] as const;
 
 /** Whether the request came with a body to pass on, by its headers. */
 function hasBody(request: FastifyRequest): boolean {

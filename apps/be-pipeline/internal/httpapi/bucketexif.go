@@ -64,17 +64,9 @@ func downloadPhoto(ctx context.Context, cfg settings.R2, get getPhotoFunc, key s
 	ctx, cancel := context.WithTimeout(ctx, getPhotoTimeout)
 	defer cancel()
 	photo, err := get(ctx, cfg, key)
-	var gerr *storage.GetError
-	switch {
-	case errors.As(err, &gerr) && gerr.BadKey:
-		return "", http.StatusBadRequest, gerr.Message
-	case errors.As(err, &gerr) && gerr.NotFound:
-		return "", http.StatusNotFound, gerr.Message
-	case errors.As(err, &gerr):
-		return "", http.StatusBadGateway, gerr.Message
-	case err != nil:
-		slog.Error("get photo failed", "err", err)
-		return "", http.StatusInternalServerError, "could not read the photo from R2"
+	if err != nil {
+		status, msg := getPhotoError(err)
+		return "", status, msg
 	}
 	defer photo.Close() //nolint:errcheck // read-only
 
@@ -88,6 +80,23 @@ func downloadPhoto(ctx context.Context, cfg settings.R2, get getPhotoFunc, key s
 		return "", status, msg
 	}
 	return path, http.StatusOK, ""
+}
+
+// getPhotoError is the status and message to send when get couldn't open a
+// photo in R2.
+func getPhotoError(err error) (int, string) {
+	var gerr *storage.GetError
+	switch {
+	case errors.As(err, &gerr) && gerr.BadKey:
+		return http.StatusBadRequest, gerr.Message
+	case errors.As(err, &gerr) && gerr.NotFound:
+		return http.StatusNotFound, gerr.Message
+	case errors.As(err, &gerr):
+		return http.StatusBadGateway, gerr.Message
+	default:
+		slog.Error("get photo failed", "err", err)
+		return http.StatusInternalServerError, "could not read the photo from R2"
+	}
 }
 
 // checkSavedJPEG checks the file at path is a JPEG no bigger than an upload.

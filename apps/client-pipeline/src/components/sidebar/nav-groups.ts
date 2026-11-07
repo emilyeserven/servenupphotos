@@ -12,6 +12,7 @@ import {
   LanguagesIcon,
   LayoutGridIcon,
   LightbulbIcon,
+  ListChecksIcon,
   type LucideIcon,
   MapPinIcon,
   MapPinnedIcon,
@@ -108,6 +109,7 @@ export const navGroups: readonly NavGroup[] = [
         url: "/instagram",
         icon: CalendarDaysIcon,
         children: [
+          { title: "Planned Posts", url: "/instagram-planned", icon: ListChecksIcon },
           { title: "Caption Templates", url: "/caption-templates", icon: MessageSquareTextIcon },
         ],
       },

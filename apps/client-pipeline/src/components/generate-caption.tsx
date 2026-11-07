@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { WandSparklesIcon } from "lucide-react";
 import { useState } from "react";
-import { type CaptionTemplate, captionTemplates } from "@/api/captions";
+import { captionTemplates, defaultCaptionTemplate } from "@/api/captions";
 import { Button } from "@/components/ui/button";
 import { captionLists, captionValues, fillCaption } from "@/lib/caption-template";
 import { parseHashtags, type SocialPostDraft } from "@/lib/social-posts";
@@ -15,12 +15,6 @@ interface GenerateCaptionProps {
   onGenerate: (caption: string) => void;
 }
 
-/** The template a post starts with: the first one for its platform, or else the first one for any, or else the first. */
-function startingTemplate(templates: CaptionTemplate[], platform: string) {
-  const forPlatform = (p: string) => templates.find((t) => t.platform === p);
-  return forPlatform(platform) ?? forPlatform("") ?? templates[0];
-}
-
 /**
  * A caption template to pick and a Generate button that writes the caption it makes from the
  * photo's data, asking first when the caption already has text; a link to the Caption Templates
@@ -31,7 +25,7 @@ export function GenerateCaption({ post, photo, disabled, onGenerate }: GenerateC
   const templates = captionTemplates(data);
   const [picked, setPicked] = useState<string | null>(null);
   const template =
-    templates.find((t) => t.id === picked) ?? startingTemplate(templates, post.platform);
+    templates.find((t) => t.id === picked) ?? defaultCaptionTemplate(templates, post.platform);
   if (!template) return <NoTemplates />;
   const generate = () => {
     const values = captionValues(photo, captionLists(data), parseHashtags(post.hashtags));
@@ -63,7 +57,8 @@ export function GenerateCaption({ post, photo, disabled, onGenerate }: GenerateC
   );
 }
 
-function NoTemplates() {
+/** A note linking to the Caption Templates page, for when there are no templates yet. */
+export function NoTemplates() {
   return (
     <p className="text-muted-foreground text-xs">
       Set up a{" "}

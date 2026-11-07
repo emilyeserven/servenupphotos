@@ -19,6 +19,8 @@ const TIMEOUTS: Record<string, number> = {
   "/photos/published": 50_000,
   // Commit; the backend gives GitHub 60s.
   "/photos/combined": 65_000,
+  // Downloads an original JPEG from R2 to pass on; the backend gives that 60s.
+  "/photos/original": 65_000,
   // Downloads an original from R2, given 30s, then reads it as /exif does.
   "/photos/bucket/exif": 90_000,
   // Remakes a photo's resized versions; the backend gives that 120s.
