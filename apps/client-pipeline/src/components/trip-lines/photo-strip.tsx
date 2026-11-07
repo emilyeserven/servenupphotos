@@ -37,8 +37,12 @@ interface PhotoStripProps {
 /** The day's photos in the order they were taken, with what happened between each two. */
 export function PhotoStrip({ photos, visits, offset = 0, ...rest }: PhotoStripProps) {
   const choices = offRoute(visits);
+  // Relative, so screen-reader labels (absolutely placed) scroll with the strip instead of widening the page.
   return (
-    <ol className="flex items-center gap-1 overflow-x-auto pb-2" aria-label="The day's photos">
+    <ol
+      className="relative flex items-center gap-1 overflow-x-auto pb-2"
+      aria-label="The day's photos"
+    >
       {photos.map((p, i) => (
         <StripItem
           key={p.id}

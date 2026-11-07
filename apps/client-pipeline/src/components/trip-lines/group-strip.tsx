@@ -43,13 +43,20 @@ export function GroupStrip(props: GroupStripProps) {
   const onOffVisit = (visit: TripVisit) => onChange(placedVisit(draft, visit, undefined));
   return (
     <ol
-      className={cn("flex items-start gap-2 pb-2", stacked ? "flex-col" : "overflow-x-auto")}
+      className={cn(
+        "flex items-start gap-2 pb-2",
+        stacked ? "flex-col" : "relative overflow-x-auto",
+      )}
       aria-label="The day's photos, by group"
     >
       {groups.map((g, n) => (
         <li
           key={g.key}
-          className={cn("flex items-start gap-2", stacked ? "w-full flex-col" : "shrink-0")}
+          // Stacked, each group is kept to the page's width so a long one scrolls its photos sideways.
+          className={cn(
+            "flex items-start gap-2",
+            stacked ? "w-full flex-col *:max-w-full" : "shrink-0",
+          )}
         >
           {n > 0 && (
             <GroupGap
