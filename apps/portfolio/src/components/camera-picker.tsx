@@ -56,7 +56,10 @@ export interface PickerPartProps extends CameraPickerProps {
   onGraphics: (on: boolean) => void;
   /** Hears the camera or lens pointed at, for the info pane; undefined when none is. */
   onPoint: (option: FilterOption | undefined) => void;
-  /** Hears a slider's ends while a handle is dragged, for the info pane's graphics. */
+  /**
+   * Hears a slider's ends while a handle is dragged or a quick pick is pointed at, for the info
+   * pane's graphics; undefined once neither is.
+   */
   onDrag: (ends: [string, string] | undefined) => void;
 }
 

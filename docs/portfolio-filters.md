@@ -263,13 +263,16 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
   slider. Each pick shows the lowest and highest values the photos actually have
   inside the group's range, not the range as it's set: a **Moderate** ISO group of 201 to 1600 shows **250 – 1600 ISO**
   when those are the photos' nearest values, and Wide angle's 10 to 24 mm shows **11mm – 24mm** when no photo was taken
-  at 10 mm. Choosing one moves the handles to those values (`?focalLength=11-24`); the list checks
+  at 10 mm. Pointing at one (or tabbing to it) previews it: the handles, the range written above them and the info
+  pane's graphics move to its values until the pointer leaves, without changing the URL. Choosing one moves the handles to those values (`?focalLength=11-24`); the list checks
   the one the slider is set to, and choosing that one again clears the slider. A group's range runs from the lowest to
   the highest end of its own range, its values and those of every group in it; a range with only a `min` runs up from
   it, and one with only a `max` up to it. A group no photo is in isn't listed.
 
 > **Frontend analogy:** a quick pick is a preset that calls the same `onChange` as letting go of the handles, so the
 > URL only ever holds the plain range; the list works out which one to check by comparing its range to the URL's.
+> Pointing at one is like a hover preview: the picker keeps the pointed-at range in local state and the slider and
+> graphics read it ahead of the URL's, the same way they follow a handle while it's dragged.
 
 ## Counts
 

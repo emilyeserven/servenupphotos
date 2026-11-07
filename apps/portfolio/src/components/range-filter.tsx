@@ -14,6 +14,16 @@ function positionsOf(values: string[], range: string | undefined): number[] {
   return [positionOf(values, low, 0), positionOf(values, high, Math.max(0, values.length - 1))];
 }
 
+/** Where the handles sit: where they're dragged, else at the previewed range, else at the set one. */
+function shownPositions(
+  values: string[],
+  range: string | undefined,
+  preview: string | undefined,
+  dragging: number[] | null,
+): number[] {
+  return dragging ?? positionsOf(values, preview ?? range);
+}
+
 /** The range the URL keeps for the positions, such as "100-400"; undefined when it's every value. */
 function rangeOf(values: string[], [low = 0, high = 0]: number[]): string | undefined {
   const every = low === 0 && high === values.length - 1;
@@ -25,7 +35,8 @@ function rangeOf(values: string[], [low = 0, high = 0]: number[]): string | unde
  * values at its ends, narrowing the photos to a range of one camera setting. It
  * steps through `values`, the ones the photos have, lowest first, so each step shows a different
  * set of photos; `write` writes one the way a photographer does, such as "f/5.6". `range` is the
- * one set, as "low-high", and `onChange` gets the new one once a handle is let go, or undefined
+ * one set, as "low-high", and `preview`, when given, a range the handles show for now without setting it,
+ * such as the quick pick pointed at. `onChange` gets the new one once a handle is let go, or undefined
  * when the handles are back at the ends or its X is clicked. Its quick picks are listed apart, by `RangePresetList`. `writeHigh`, when given, writes the range's
  * high end instead, such as the last minute of an hour.
  */
@@ -33,6 +44,7 @@ export function RangeFilter({
   label,
   values,
   range,
+  preview,
   write,
   writeHigh = write,
   onDrag,
@@ -41,16 +53,17 @@ export function RangeFilter({
   label: string;
   values: string[];
   range: string | undefined;
+  /** A range to show the handles at for now, such as a quick pick's while it's pointed at. */
+  preview?: string;
   write: (value: string) => string;
   writeHigh?: (value: string) => string;
   /** Gets the ends' values while a handle is dragged, and undefined once it's let go. */
   onDrag?: (ends: [string, string] | undefined) => void;
   onChange: (range: string | undefined) => void;
 }) {
-  const committed = positionsOf(values, range);
   // While a handle is dragged, the text follows it; the URL changes once it's let go.
   const [dragging, setDragging] = useState<number[] | null>(null);
-  const [low = 0, high = 0] = dragging ?? committed;
+  const [low = 0, high = 0] = shownPositions(values, range, preview, dragging);
   return (
     <div role="group" aria-label={label} className="flex w-full flex-col gap-2">
       <div className="flex h-5 items-center gap-1 text-sm">
