@@ -1,0 +1,167 @@
+import {
+  ApertureIcon,
+  BookImageIcon,
+  CalendarDaysIcon,
+  CalendarRangeIcon,
+  CameraIcon,
+  DatabaseIcon,
+  FolderTreeIcon,
+  HeartIcon,
+  ImageIcon,
+  LanguagesIcon,
+  LayoutGridIcon,
+  LightbulbIcon,
+  type LucideIcon,
+  MapPinIcon,
+  MapPinnedIcon,
+  MessageSquareTextIcon,
+  NotebookTabsIcon,
+  PlaneIcon,
+  RefreshCwIcon,
+  ScaleIcon,
+  ScalingIcon,
+  SettingsIcon,
+  ShapesIcon,
+  SignpostIcon,
+  SparklesIcon,
+  TagIcon,
+  TagsIcon,
+} from "lucide-react";
+import type { FileRoutesByTo } from "@/routeTree.gen";
+
+/** A page in the sidebar, with the icon it has when collapsed. */
+export interface NavPage {
+  /** Its name in the sidebar and the breadcrumbs. */
+  title: string;
+  /** Where it opens; pages under this URL, such as an album's, show as this page. */
+  url: keyof FileRoutesByTo;
+  icon: LucideIcon;
+  /** Pages listed under it in its submenu, such as Small Tags under Tags. */
+  children?: readonly NavPage[];
+}
+
+/** One of the sidebar's sections, such as Organize, and its pages. */
+export interface NavGroup {
+  title: string;
+  items: readonly NavPage[];
+}
+
+/** Every page in the sidebar, grouped the way the sidebar shows them. */
+export const navGroups: readonly NavGroup[] = [
+  {
+    title: "Images",
+    items: [
+      { title: "Photo", url: "/exif", icon: ImageIcon },
+      { title: "Gallery", url: "/gallery", icon: LayoutGridIcon },
+    ],
+  },
+  {
+    title: "Pipeline",
+    items: [
+      { title: "Photos in Flight", url: "/in-flight", icon: PlaneIcon },
+      { title: "Compare", url: "/compare", icon: ScaleIcon },
+      { title: "Lightroom Albums", url: "/lightroom-albums", icon: FolderTreeIcon },
+    ],
+  },
+  {
+    title: "Organize",
+    items: [
+      {
+        title: "Albums",
+        url: "/albums",
+        icon: BookImageIcon,
+        children: [{ title: "Album Suggestions", url: "/album-suggestions", icon: LightbulbIcon }],
+      },
+      {
+        title: "Tags",
+        url: "/tags",
+        icon: TagsIcon,
+        children: [
+          { title: "Small Tags", url: "/small-tags", icon: TagIcon },
+          { title: "Tag Data", url: "/tag-data", icon: NotebookTabsIcon },
+        ],
+      },
+      {
+        title: "Genres",
+        url: "/genres",
+        icon: ShapesIcon,
+        children: [{ title: "Genre Suggestions", url: "/genre-suggestions", icon: LightbulbIcon }],
+      },
+      {
+        title: "Places",
+        url: "/places",
+        icon: MapPinIcon,
+        children: [
+          { title: "Location Names", url: "/location-names", icon: SignpostIcon },
+          { title: "Bulk Places", url: "/bulk-places", icon: MapPinnedIcon },
+          { title: "Localizations", url: "/localizations", icon: LanguagesIcon },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Publish",
+    items: [
+      {
+        title: "Instagram",
+        url: "/instagram",
+        icon: CalendarDaysIcon,
+        children: [
+          { title: "Caption Templates", url: "/caption-templates", icon: MessageSquareTextIcon },
+        ],
+      },
+      { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
+      { title: "User Likes", url: "/viewer-likes", icon: HeartIcon },
+    ],
+  },
+  {
+    title: "Configuration",
+    items: [
+      {
+        title: "Settings",
+        url: "/settings",
+        icon: SettingsIcon,
+        children: [
+          { title: "Explore Bucket", url: "/bucket", icon: DatabaseIcon },
+          { title: "Manage Sizes", url: "/sizes", icon: ScalingIcon },
+        ],
+      },
+      { title: "Update Data", url: "/update-data", icon: RefreshCwIcon },
+      { title: "Metadata Groups", url: "/metadata-groups", icon: ApertureIcon },
+      { title: "Camera Overrides", url: "/camera-overrides", icon: CameraIcon },
+      { title: "Timeline Labels", url: "/timeline-labels", icon: CalendarRangeIcon },
+    ],
+  },
+];
+
+/** Whether the open page is this sidebar page or one under it, such as an Update Data subpage. */
+export function isUnder(pathname: string, url: string) {
+  return pathname === url || pathname.startsWith(`${url}/`);
+}
+
+/** Whether the open page is this sidebar page, one under it, or one in its submenu. */
+export function isWithin(pathname: string, page: NavPage): boolean {
+  return isUnder(pathname, page.url) || (page.children ?? []).some((c) => isWithin(pathname, c));
+}
+
+/** Where the open page is in the sidebar: its section, and the page with the one in its submenu after it. */
+export interface NavTrail {
+  group: string;
+  /** The sidebar page, and the page in its submenu when the open page is one. */
+  pages: NavPage[];
+}
+
+/** Where the open page is in the sidebar, for the breadcrumbs; nothing for a page the sidebar doesn't list. */
+export function navTrail(pathname: string): NavTrail | undefined {
+  for (const group of navGroups) {
+    const pages = pageTrail(pathname, group.items);
+    if (pages) return { group: group.title, pages };
+  }
+  return undefined;
+}
+
+function pageTrail(pathname: string, pages: readonly NavPage[]): NavPage[] | undefined {
+  const page = pages.find((p) => isWithin(pathname, p));
+  if (!page) return undefined;
+  return [page, ...(pageTrail(pathname, page.children ?? []) ?? [])];
+}

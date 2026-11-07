@@ -74,7 +74,7 @@ export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGri
 interface PhotoCardProps {
   file: PublishedFile;
   images: InFlightImages;
-  /** How many people liked each photo on the Viewer Likes page, by photo ID. */
+  /** How many people liked each photo on the User Likes page, by photo ID. */
   likes: Map<number, number>;
   /** Whether the photo is chosen; null when photos aren't being chosen. */
   selected: boolean | null;

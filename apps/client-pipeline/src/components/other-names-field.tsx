@@ -5,7 +5,7 @@ import type { RegionNode } from "@/lib/region-tree";
 
 /** How to fill in Other names, shown beside its title. */
 const HELP =
-  "Other ways photos and places write it, such as “United States” for “United States of America”. This name wins: the list counts them as it, and Update Data → Location names rewrites them to it in the photo and place files.";
+  "Other ways photos and places write it, such as “United States” for “United States of America”. This name wins: the list counts them as it, and Places → Location Names rewrites them to it in the photo and place files.";
 
 /** The count with its noun, such as "1 photo" or "3 photos". */
 function photosText(count: number): string {

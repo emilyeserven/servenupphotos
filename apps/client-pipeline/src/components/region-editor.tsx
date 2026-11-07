@@ -147,8 +147,8 @@ function stillWriting(left: { photos: number; places: number }): string {
 }
 
 /**
- * How many photos and places still write one of the saved other names, until Update Data's
- * Location names rewrites them; nothing when none do.
+ * How many photos and places still write one of the saved other names, until
+ * Location Names rewrites them; nothing when none do.
  */
 function UnrenamedNote({ node, list }: { node: RegionNode; list: RegionListData }) {
   const left = unrenamedCounts(
@@ -162,12 +162,8 @@ function UnrenamedNote({ node, list }: { node: RegionNode; list: RegionListData 
   return (
     <p className="text-muted-foreground text-sm">
       {stillWriting(left)} still write another name, and are counted as {node.name} here.{" "}
-      <Link
-        to="/update-data/$section"
-        params={{ section: "location-names" }}
-        className="text-foreground underline underline-offset-4"
-      >
-        Rewrite them in Update Data
+      <Link to="/location-names" className="text-foreground underline underline-offset-4">
+        Rewrite them in Location Names
       </Link>
       .
     </p>

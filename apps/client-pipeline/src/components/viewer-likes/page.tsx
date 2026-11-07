@@ -11,12 +11,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
 
-/** The Viewer Likes page: the lists of liked photos people sent from the portfolio's My Likes page. */
+/** The User Likes page: the lists of liked photos people sent from the portfolio's My Likes page. */
 export function ViewerLikesPage() {
   return (
     <Page
       wide
-      title="Viewer Likes"
+      title="User Likes"
       description="The photos people liked on the portfolio, from the list My Likes' “Send to photographer” makes. Each person is one JSON file, combined into LIKES.json, and importing a person's list again replaces their old one, so nobody's likes count twice."
     >
       <GitHubGate>{() => <Likes />}</GitHubGate>
@@ -26,7 +26,7 @@ export function ViewerLikesPage() {
 
 function Likes() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and viewer likes from GitHub…</p>;
+  if (combined.isPending) return <p>Reading the photos and user likes from GitHub…</p>;
   if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
   return <ViewerChooser data={combined.data} />;
 }
