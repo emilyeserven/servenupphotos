@@ -1,26 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { format, min } from "date-fns";
-import { CalendarClock, ChevronDown, RotateCcw } from "lucide-react";
+import { endOfDay, format, min, parseISO, startOfDay } from "date-fns";
+import { CalendarClock, ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
-import { QuickDatesPicker } from "@/components/quick-dates-picker";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { TechnicalInfo } from "@/components/technical-info";
 import { TimelineDisplayOptions } from "@/components/timeline-display-options";
 import { TimelineScrubber } from "@/components/timeline-scrubber";
 import { TimelineChart } from "@/components/timeline-chart";
-import { Button } from "@/components/ui/button";
-import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
-import { dayKey } from "@/lib/heatmap";
-import { inQuickDate, parseQuickDate, type QuickDate } from "@/lib/quick-dates";
-import { findTimelineLabel, labelDates, labelOn } from "@/lib/timeline-labels";
-import { TimelineLabelPicker } from "@/components/timeline-label-picker";
-import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { labelOn } from "@/lib/timeline-labels";
+import { withOldTimelineLinks } from "@/lib/timeline-old-links";
+import {
+  filterPhotos,
+  hasFilters,
+  parseFilters,
+  withoutFilters,
+  type PhotoFilters,
+} from "@/lib/photo-filters";
+import { dayOf, hasDateRange, type WhenFilters } from "@/lib/when-filters";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
@@ -34,86 +36,50 @@ import {
 import { useRememberViewOptions } from "@/lib/view-options";
 import { cn } from "@/lib/utils";
 import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-sketch";
-import {
-  absoluteTimeRange,
-  parseTimeRange,
-  resolveTimeRange,
-  type TimeRangeValue,
-} from "@/lib/time-range";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
 
 /**
- * The time range, filters and open photo, plus the display options and whether the chart is the
- * heatmap; each left out when it's the default.
+ * The filters (their date range is the days the Timeline shows), the open photo, plus the display
+ * options and whether the chart is the heatmap; each left out when it's the default.
  */
-type TimelineSearch = TimeRangeValue &
-  PhotoFilters &
+type TimelineSearch = PhotoFilters &
   ShownPhotoSearch &
-  TimelineDisplaySearch & { chart?: "heatmap"; label?: string; q?: string; when?: QuickDate };
+  TimelineDisplaySearch & { chart?: "heatmap"; q?: string };
 
 export const Route = createFileRoute("/timeline")({
-  validateSearch: (search: Record<string, unknown>): TimelineSearch => ({
-    ...parseTimeRange(search),
-    ...parseFilters(search),
-    ...parseTextSearch(search),
-    ...parseShownPhoto(search),
-    ...parseTimelineDisplay(search),
-    ...(search.chart === "heatmap" ? { chart: "heatmap" as const } : {}),
-    ...parseLabel(search.label),
-    ...parseQuickDate(search.when),
-  }),
+  validateSearch: (raw: Record<string, unknown>): TimelineSearch => {
+    // Links from before the time range, label and Quick dates pickers became filters still work.
+    const search = withOldTimelineLinks(raw, new Date());
+    return {
+      ...parseFilters(search),
+      ...parseTextSearch(search),
+      ...parseShownPhoto(search),
+      ...parseTimelineDisplay(search),
+      ...(search.chart === "heatmap" ? { chart: "heatmap" as const } : {}),
+    };
+  },
   component: TimelineView,
 });
 
 const earliestPhoto = min(photos.map((photo) => photo.takenAt));
 
-/** The timeline label ID in the URL (`?label=japan-2026-09-22`), when there's one. */
-function parseLabel(label: unknown): { label?: string } {
-  return typeof label === "string" && label ? { label } : {};
-}
-
-/** Whether the Timeline shows every photo's days: no time range, no label and no Quick dates choice. */
-function showsAllTime(
-  range: TimeRangeValue,
-  label: ReturnType<typeof findTimelineLabel>,
-  when: QuickDate | undefined,
-) {
-  return Object.keys(range).length === 0 && !label && !when;
-}
-
 /**
- * Whether a photo is in the days shown and, with a Quick dates choice, taken on this date, in
- * this month or in this season in an earlier year.
+ * The days the Timeline shows: the date range filter's, from the oldest photo when it has no first
+ * day and up to now when it has no last.
  */
-function shownOn(days: { start: Date; end: Date }, when: QuickDate | undefined, now: Date) {
-  return ({ takenAt }: Photo) =>
-    takenAt >= days.start && takenAt <= days.end && (!when || inQuickDate(takenAt, when, now));
+function shownDays({ start, end }: WhenFilters, now: Date) {
+  return {
+    start: start ? startOfDay(parseISO(start)) : earliestPhoto,
+    end: end ? endOfDay(parseISO(end)) : now,
+  };
 }
 
-/** What the time range picker shows: the label's days as dates while one is chosen. */
-function pickerRange(
-  range: TimeRangeValue,
-  label: ReturnType<typeof findTimelineLabel>,
-  days: { start: Date; end: Date },
-): TimeRangeValue {
-  return label ? absoluteTimeRange(days.start, days.end) : range;
-}
-
-/**
- * The days the Timeline shows: the chosen timeline label's, or else the time range's, with its
- * start at the oldest photo when it has none.
- */
-function shownDays(label: ReturnType<typeof findTimelineLabel>, range: TimeRangeValue, now: Date) {
-  if (label) return labelDates(label);
-  const { start = earliestPhoto, end } = resolveTimeRange(range, now);
+/** The date range filter for the days picked on the chart, earliest first. */
+function pickedDays(a: Date, b: Date): WhenFilters {
+  const [start, end] = [dayOf(a), dayOf(b)].toSorted();
   return { start, end };
-}
-
-/** Whether the scrubber ticks each day: when the display options say so, or a label is chosen. */
-function scrubsByDay(label: ReturnType<typeof findTimelineLabel>, display: TimelineDisplay) {
-  return label !== undefined || display.ticks === "days";
 }
 
 /** Photos grouped by their date taken written with a date-fns pattern, such as "MMMM yyyy" for months. */
@@ -132,37 +98,20 @@ function TimelineView() {
   const [now] = useState(() => new Date());
   const { shown, show, close } = useShownPhoto();
   const filters = parseFilters(search);
-  const timeRange = parseTimeRange(search);
-  const label = findTimelineLabel(search.label);
-  const { start, end } = shownDays(label, timeRange, now);
+  const { start, end } = shownDays(filters, now);
+  // Every photo the other filters let through, so the heatmap can fade the weeks outside the days.
+  const matching = searchPhotos(
+    filterPhotos(photos, withoutFilters(filters, ["start", "end"])),
+    search.q,
+  );
   // Newest first, so the months and the photos in each read down from the latest.
-  const matching = searchPhotos(filterPhotos(photos, filters), search.q);
-  const inRange = matching
-    .filter(shownOn({ start, end }, search.when, now))
-    .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
-  const isAllTime = showsAllTime(timeRange, label, search.when);
+  const inRange = filterPhotos(matching, filters).toSorted(
+    (a, b) => b.takenAt.getTime() - a.takenAt.getTime(),
+  );
   const display = resolveTimelineDisplay(search);
   const [chart, setChart] = useState<HTMLDivElement | null>(null);
   const [list, setList] = useState<HTMLOListElement | null>(null);
   useRememberViewOptions("/timeline", { ...timelineDisplaySearch(display), chart: search.chart });
-
-  /**
-   * Shows the time range, the timeline label's days, or a Quick dates choice, keeping the filters
-   * and the rest of the view's options; each of the three replaces the others.
-   */
-  function showRange(next: TimeRangeValue & { label?: string; when?: QuickDate }) {
-    navigate({
-      search: (prev) => ({
-        ...prev,
-        range: undefined,
-        from: undefined,
-        to: undefined,
-        label: undefined,
-        when: undefined,
-        ...next,
-      }),
-    });
-  }
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-16 sm:px-6">
@@ -175,23 +124,7 @@ function TimelineView() {
           </h1>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <TimeRangePicker
-            value={pickerRange(timeRange, label, { start, end })}
-            selection={{ from: start, to: end }}
-            onChange={showRange}
-          />
-          <QuickDatesPicker
-            photos={matching}
-            now={now}
-            value={search.when}
-            onChange={(when) => showRange({ when })}
-          />
-          <TimelineLabelPicker value={label} onChange={(id) => showRange({ label: id })} />
           <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
-          <Button variant="outline" size="sm" disabled={isAllTime} onClick={() => showRange({})}>
-            <RotateCcw aria-hidden />
-            Reset
-          </Button>
           <div className="ml-auto">
             <TimelineDisplayOptions
               display={display}
@@ -216,8 +149,10 @@ function TimelineView() {
           start={start}
           end={end}
           now={now}
-          shown={isAllTime ? undefined : { from: dayKey(start), to: dayKey(end) }}
-          onSelect={(from, to) => showRange(absoluteTimeRange(from, to))}
+          shown={hasDateRange(filters) ? { from: dayOf(start), to: dayOf(end) } : undefined}
+          onSelect={(from, to) =>
+            navigate({ search: (prev) => ({ ...prev, ...pickedDays(from, to) }) })
+          }
         />
       </div>
       <RouteSketches>
@@ -229,8 +164,7 @@ function TimelineView() {
           listRef={setList}
         />
       </RouteSketches>
-      {/* With one label's days, the ticks are its days rather than a month or two. */}
-      <TimelineScrubber list={list} chart={chart} byDay={scrubsByDay(label, display)} />
+      <TimelineScrubber list={list} chart={chart} byDay={display.ticks === "days"} />
       <PhotoLightbox photo={shown} photos={inRange} onShow={show} onClose={close} />
     </div>
   );
@@ -361,7 +295,7 @@ function dayFormat(dayPhotos: Photo[], pattern: string): string {
 /** The timeline label of the days the photos were taken, or "" without one. */
 function dayLabel(dayPhotos: Photo[]): string {
   const [first] = dayPhotos;
-  return first ? labelOn(dayKey(first.takenAt)) : "";
+  return first ? labelOn(dayOf(first.takenAt)) : "";
 }
 
 /** The day's timeline label beside its date; nothing without one. */

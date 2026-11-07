@@ -110,7 +110,7 @@ dimmed.
   keep From on or before To. Clicking the month's name above a calendar swaps the days for every month over the years,
   a row of twelve for each year, newest first, to jump straight to one.
 
-On the Timeline, which has its own time range and Quick dates, the picker only has **Across all years**.
+On the Timeline, the date range is the days it shows, and selecting bars or weeks on its chart sets it too.
 
 > **Frontend analogy:** each kind is a multi-select checkbox group kept as repeated search params, like
 > `?tag=a&tag=b`, and the tabs are radio buttons over which group is in use.
