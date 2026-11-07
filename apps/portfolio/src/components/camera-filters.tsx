@@ -1,6 +1,7 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { CameraPicker } from "@portfolio/components/camera-picker";
+import type { BlockerSource } from "@portfolio/lib/camera-blockers";
 import { type OwnFilters, PhotoFilterBar } from "@portfolio/components/photo-filters";
 import { OrientationFilter } from "@portfolio/components/orientation-filter";
 import type { Photo } from "@portfolio/lib/photos";
@@ -28,24 +29,26 @@ function useSetCameraFilters() {
 }
 
 /**
- * The camera filters, after the shared ones on the Table and Grid: the **Camera** picker, for the
+ * The camera filters, after the shared ones on the Table and Grid: the **Gear & settings** picker, for the
  * camera, lens, focal length, aperture, exposure and ISO, and the **Orientation** buttons.
  * `photos` is the photos the shared filters leave, which the picker's counts are out of, given the
- * other filters here. `children` go after them, in the filters' row, such as the Grid's **Colors**.
+ * other filters here, and `source` what's needed to say which filters hide a choice. `children` go after them, in the filters' row, such as the Grid's **Colors**.
  */
 function CameraFilterControls({
   photos,
   filters,
+  source,
   children,
 }: {
   photos: Photo[];
   filters: CameraFilters;
+  source: BlockerSource;
   children: ReactNode;
 }) {
   const setFilters = useSetCameraFilters();
   return (
     <>
-      <CameraPicker photos={photos} filters={filters} onChange={setFilters} />
+      <CameraPicker photos={photos} filters={filters} source={source} onChange={setFilters} />
       <OrientationFilter
         orientation={filters[ORIENTATION_KEY]}
         counts={orientationCounts(
@@ -77,7 +80,8 @@ export function CameraFilterBar({
 }) {
   const search = useSearch({ strict: false });
   const own = parseCameraFilters(search);
-  const searched = searchable ? searchPhotos(photos, parseTextSearch(search).q) : photos;
+  const query = searchable ? parseTextSearch(search).q : undefined;
+  const shared = parseFilters(search);
   return (
     <PhotoFilterBar
       photos={photos}
@@ -87,7 +91,11 @@ export function CameraFilterBar({
         keys: [...CAMERA_FILTER_KEYS, ...extra.keys],
         count: Object.keys(own).length + extra.count,
         children: (
-          <CameraFilterControls photos={filterPhotos(searched, parseFilters(search))} filters={own}>
+          <CameraFilterControls
+            photos={filterPhotos(searchPhotos(photos, query), shared)}
+            filters={own}
+            source={{ photos, query, shared, camera: own }}
+          >
             {extra.children}
           </CameraFilterControls>
         ),

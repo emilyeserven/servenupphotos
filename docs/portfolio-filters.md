@@ -108,15 +108,20 @@ On the Timeline, which has its own time range and Quick dates, the picker only h
 
 ## Camera filters
 
-The Grid's filters panel also has a **Camera** button after **When** that opens one picker for the camera filters. Its
+The Grid's filters panel also has a **Gear & settings** button after **When** that opens one picker for the camera
+filters: the gear a photo was taken with and how it was shot. Its
 left side lists **Cameras**, **Lenses**, **Focal length**, **Aperture**, **Exposure** and **ISO**, each with what it's set
 to under its name ("Any" while it isn't) and a dot while it's set; the right side shows the chosen one's choices. Unlike
 **When**, any number of them can be set at once, and the button's badge counts how many are. The picker opens on the
-first one that's set.
+first one that's set. It keeps 16px from the screen's edges. On phones the list folds up above the choices, behind a
+button naming the chosen one, and choosing one folds it up again.
 
 **Cameras** and **Lenses** list every camera or lens (`?camera=Fujifilm X-T5`, `?lens=EF50mm f/1.8 II`; a photo whose
 EXIF didn't name a lens is under none) with how many photos each would show; **All cameras** or **All lenses** comes
-first, and clicking the checked one again goes back to all. The four camera settings each have a slider with a handle
+first, and clicking the checked one again goes back to all. A choice that would show no photos given the other
+filters is left out, unless chosen; **Show N choices hidden by the other filters** lists them dimmed, and hovering one
+says which filters hide it: each one that, cleared alone, would let it show photos ("Hidden by Aperture or Lens"), or
+"the other filters together" when no single one would. The four camera settings each have a slider with a handle
 at each end, and their quick picks listed under it. A slider steps through the values the portfolio's
 photos have, lowest first, so every step changes what's shown, and says the range it's set to, such as "f/4 – f/5.6".
 The URL changes once a handle is let go, keeping the range's ends as the photos write them (`?iso=100-400`,
@@ -125,7 +130,7 @@ photo without the setting isn't in any range.
 
 The hours of the day are in the [When](#when) picker, which every view with filters has.
 
-**Orientation** sits after the **Camera** button: a horizontal and a vertical rectangle button, each with how many photos the
+**Orientation** sits after the **Gear & settings** button: a horizontal and a vertical rectangle button, each with how many photos the
 other filters leave have that orientation. Clicking one shows only the photos wider than they're tall
 (`?orientation=horizontal`) or taller than they're wide (`?orientation=vertical`); clicking it again, or its X, clears
 it. A square photo is neither, so it's only shown while no orientation is chosen. The photo's size is the one its JSON

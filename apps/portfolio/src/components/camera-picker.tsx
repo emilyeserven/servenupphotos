@@ -1,4 +1,4 @@
-import { Camera, ChevronsUpDown } from "lucide-react";
+import { Camera, ChevronDown, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import { CameraPickerPart } from "@portfolio/components/camera-picker-parts";
 import { RANGE_LABELS, spanText } from "@portfolio/components/camera-ranges";
@@ -12,6 +12,7 @@ import {
   type RangeKey,
 } from "@portfolio/lib/camera-filters";
 import { equipmentChoices } from "@portfolio/lib/camera-picker";
+import type { BlockerSource } from "@portfolio/lib/camera-blockers";
 import type { Photo } from "@portfolio/lib/photos";
 import { cn } from "@portfolio/lib/utils";
 
@@ -32,6 +33,8 @@ const SECTIONS: [CameraSection, string][] = [
 export interface CameraPickerProps {
   photos: Photo[];
   filters: CameraFilters;
+  /** The view's photos and filters, to say which filters hide a camera or lens choice. */
+  source: BlockerSource;
   onChange: (next: CameraFilters) => void;
 }
 
@@ -52,7 +55,8 @@ function setCount(filters: CameraFilters): number {
 }
 
 /**
- * A **Camera** button that opens one picker for the camera filters, like **When**: a list of
+ * A **Gear & settings** button that opens one picker for the camera filters, the photographer's
+ * gear and how each photo was shot, like **When**: a list of
  * Cameras, Lenses, Focal length, Aperture, Exposure and ISO on the left, each saying what it's set
  * to, and the chosen one's choices on the right. Any number of them can be set at once.
  */
@@ -62,28 +66,49 @@ export function CameraPicker(props: CameraPickerProps) {
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="font-normal">
           <Camera className="text-muted-foreground" aria-hidden />
-          Camera
+          Gear & settings
           <FilterCount count={setCount(props.filters)} />
           <ChevronsUpDown className="opacity-50" aria-hidden />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-[min(34rem,calc(100vw-2rem))] p-0">
+      <PopoverContent
+        align="start"
+        collisionPadding={16}
+        className="w-[min(34rem,calc(100vw-2rem))] p-0"
+      >
         <PickerBody {...props} />
       </PopoverContent>
     </Popover>
   );
 }
 
-/** The list of sections on the left and the chosen section's choices on the right. */
+/**
+ * The list of sections on the left and the chosen section's choices on the right. On phones the
+ * list folds up above the choices instead, behind a button naming the chosen section.
+ */
 function PickerBody(props: CameraPickerProps) {
   const [section, setSection] = useState<CameraSection>(() => firstSet(props.filters));
+  const [listOpen, setListOpen] = useState(false);
+  const choose = (next: CameraSection) => {
+    setSection(next);
+    setListOpen(false);
+  };
   return (
-    <div className="flex max-h-[min(28rem,70vh)]">
+    <div className="flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height)-1rem))] flex-col sm:flex-row">
+      <ListToggle
+        section={section}
+        open={listOpen}
+        onClick={() => setListOpen(!listOpen)}
+        {...props}
+      />
       <div
         role="tablist"
         aria-orientation="vertical"
-        aria-label="Camera filters"
-        className="flex w-32 shrink-0 flex-col gap-0.5 border-r bg-muted/40 p-1 sm:w-40"
+        aria-label="Gear and settings"
+        className={cn(
+          "flex shrink-0 flex-col gap-0.5 overflow-y-auto border-b bg-muted/40 p-1 sm:w-40 sm:border-r sm:border-b-0",
+          !listOpen && "max-sm:hidden",
+        )}
       >
         {SECTIONS.map(([key, label]) => (
           <SectionTab
@@ -91,15 +116,48 @@ function PickerBody(props: CameraPickerProps) {
             section={key}
             label={label}
             chosen={section === key}
-            onClick={() => setSection(key)}
+            onClick={() => choose(key)}
             {...props}
           />
         ))}
       </div>
-      <div role="tabpanel" className="min-w-0 flex-1 overflow-y-auto p-3">
+      <div role="tabpanel" className="min-h-0 min-w-0 flex-1 overflow-y-auto p-3">
         <CameraPickerPart section={section} {...props} />
       </div>
     </div>
+  );
+}
+
+/** The section's name, as the left list shows it. */
+function sectionLabel(section: CameraSection): string {
+  return SECTIONS.find(([key]) => key === section)?.[1] ?? "";
+}
+
+/**
+ * On phones only, the button that opens and closes the list of sections, naming the chosen one
+ * and what it's set to.
+ */
+function ListToggle({
+  section,
+  open,
+  onClick,
+  ...props
+}: CameraPickerProps & { section: CameraSection; open: boolean; onClick: () => void }) {
+  const setText = useSetText(section, props);
+  return (
+    <button
+      type="button"
+      aria-expanded={open}
+      onClick={onClick}
+      className="flex items-center gap-2 border-b bg-muted/40 px-3 py-2 text-left text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:hidden"
+    >
+      <span className="font-medium">{sectionLabel(section)}</span>
+      <span className="truncate text-xs text-muted-foreground">{setText ?? "Any"}</span>
+      <ChevronDown
+        aria-hidden
+        className={cn("ml-auto size-4 shrink-0 transition-transform", open && "rotate-180")}
+      />
+    </button>
   );
 }
 
