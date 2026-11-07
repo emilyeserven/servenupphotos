@@ -9,7 +9,7 @@ export type ConfigChange = (change: Partial<GraphConfig>) => void;
 
 /**
  * The graph's settings, in the Adjust Graph box, as three buttons that each open a picker:
- * **Graph type** (its type, and what splits a bar, line or dot graph), **Axes** (what's along each
+ * **Graph type** (its type, and what splits a bar, line or photo dot graph), **Axes** (what's along each
  * axis, and the x axis's order) and **Range** (each axis's ends, how many values show, the photos
  * a value needs, empty ends, and buckets).
  */

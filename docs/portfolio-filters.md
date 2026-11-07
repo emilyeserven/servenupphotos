@@ -122,7 +122,7 @@ other filters, and a choice with none is dimmed.
   keep From on or before To. Clicking the month's name above a calendar swaps the days for every month over the years,
   a row of twelve for each year, newest first, to jump straight to one.
 
-On the Timeline, the date range is the days it shows, and selecting bars or weeks on its chart sets it too.
+On the Timeline, the date range is the days it shows.
 
 > **Frontend analogy:** each kind is a multi-select checkbox group kept as repeated search params, like
 > `?tag=a&tag=b`, and the left list is a set of radio buttons over which group is in use.
@@ -217,7 +217,7 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
 
 Each choice says how many photos it would show in that view, given the other filters, so a place's count is out of the
 photos the chosen album and tag (and, on the Grid, camera, lens and ranges) leave. The Map counts only photos it can place and the Grid only photos with
-resized versions. The Timeline's counts leave out its time range, which still applies on top of the filters.
+resized versions.
 
 When the filters leave no photos, the view says so instead of its list; the Map shows no markers and moves out to the
 whole world. Changing a filter on the Map fits it to the photos it now shows.
@@ -234,10 +234,10 @@ Each of these views remembers its own settings in this browser (`lib/view-option
 - **Grid:** square, natural or Table view, **info** under the tiles, the sort (with a color sort's order and secondary
   sort), and the Table's sorted column, hidden columns and Place detail.
 - **Color:** the color wheel or Black & white view, and the preview size.
-- **Timeline:** technical info shown, and the chart or heatmap.
+- **Timeline:** its display options, such as technical info shown and thumbnail size.
 - **Tags:** the sort, and all tags or the top level only.
 
-Filters, the open photo, the Timeline's time range and where the Map is looking aren't remembered this way. The Map's
+Filters (including the Timeline's date range), the open photo and where the Map is looking aren't remembered this way. The Map's
 display options are remembered on their own (see [Portfolio Map](portfolio-map.md)). A link with settings in its URL
 still opens with them, and a URL without any opens the view's defaults: only links within the site add the remembered
 ones.

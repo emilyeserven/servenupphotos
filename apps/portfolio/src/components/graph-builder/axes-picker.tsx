@@ -14,7 +14,7 @@ type ConfigChange = (change: Partial<GraphConfig>) => void;
 /** One section of the Axes picker. */
 type AxesSection = "x" | "y" | "order";
 
-/** What a bar, line, dot or pie graph can measure, with their names. */
+/** What a bar, line or pie graph can measure, with their names. */
 export const MEASURES: [Measure, string][] = [
   ["count", "Photos"],
   ["percent", "Share of photos (%)"],
@@ -74,7 +74,7 @@ function AxesChoices({
   return <YChoices config={config} onChange={onChange} />;
 }
 
-/** A second stat for a scatterplot or heatmap, or what a bar, line, dot or pie graph measures. */
+/** A second stat for a scatterplot or heatmap, or what a bar, line or pie graph measures. */
 function YChoices({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
   if (hasYStat(config.type)) {
     return <StatChoices value={config.y} leaveOut={[config.x]} onPick={(y) => onChange({ y })} />;

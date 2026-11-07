@@ -1,7 +1,6 @@
 import {
   ChartColumn,
   ChartLine,
-  ChartNoAxesColumn,
   ChartPie,
   ChartScatter,
   Grip,
@@ -20,7 +19,6 @@ type ConfigChange = (change: Partial<GraphConfig>) => void;
 const TYPES: [GraphType, string, LucideIcon][] = [
   ["bar", "Bar", ChartColumn],
   ["line", "Line", ChartLine],
-  ["dot", "Dot", ChartNoAxesColumn],
   ["pie", "Pie", ChartPie],
   ["scatter", "Scatter", ChartScatter],
   ["heatmap", "Heatmap", Grid3x3],
@@ -69,7 +67,7 @@ function sectionsOf(config: GraphConfig): [TypeSection, string, string][] {
 
 /**
  * The **Graph type** button, like the Grid's **Gear & settings**: it opens a list of Type, Split by
- * (for the bar, line and dot graphs, which can be split) and Parts (for a split bar) on the left,
+ * (for the bar, line and photo dot graphs, which can be split) and Parts (for a split bar) on the left,
  * each saying what it's set to, and the chosen one's choices on the right. Its icon is the type's.
  */
 export function GraphTypePicker({

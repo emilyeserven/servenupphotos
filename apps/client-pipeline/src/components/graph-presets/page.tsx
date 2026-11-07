@@ -20,7 +20,7 @@ export function GraphPresetsPage() {
     <Page
       wide
       title="Graph Presets"
-      description="The ready-made graphs over the portfolio's Graph page, such as a dot graph of Aperture. The Graph page's Presets picker lists them by group, and a spotlight preset also gets its own button. Each preset and group is one JSON file, combined into GRAPHS.json."
+      description="The ready-made graphs over the portfolio's Graph page, such as a photo dot graph of Aperture. The Graph page's Presets picker lists them by group, and a spotlight preset also gets its own button. Each preset and group is one JSON file, combined into GRAPHS.json."
     >
       <GitHubGate>{() => <Presets />}</GitHubGate>
     </Page>

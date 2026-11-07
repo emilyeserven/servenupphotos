@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { endOfDay, format, min, parseISO, startOfDay } from "date-fns";
+import { format } from "date-fns";
 import { CalendarClock, ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
@@ -12,18 +12,11 @@ import { SiteHomeLink } from "@/components/site-home-link";
 import { TechnicalInfo } from "@/components/technical-info";
 import { TimelineDisplayOptions } from "@/components/timeline-display-options";
 import { TimelineScrubber } from "@/components/timeline-scrubber";
-import { TimelineChart } from "@/components/timeline-chart";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { labelOn } from "@/lib/timeline-labels";
 import { withOldTimelineLinks } from "@/lib/timeline-old-links";
-import {
-  filterPhotos,
-  hasFilters,
-  parseFilters,
-  withoutFilters,
-  type PhotoFilters,
-} from "@/lib/photo-filters";
-import { dayOf, hasDateRange, type WhenFilters } from "@/lib/when-filters";
+import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { dayOf } from "@/lib/when-filters";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { filterByVisuals, parseVisualFilters, type VisualSearch } from "@/lib/visual-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
@@ -43,13 +36,13 @@ import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-
 type ImagePhoto = Photo & { image: PhotoImage };
 
 /**
- * The filters (their date range is the days the Timeline shows), the open photo, plus the display
- * options and whether the chart is the heatmap; each left out when it's the default.
+ * The filters (their date range is the days the Timeline shows), the open photo and the display
+ * options; each left out when it's the default.
  */
 type TimelineSearch = PhotoFilters &
   VisualSearch &
   ShownPhotoSearch &
-  TimelineDisplaySearch & { chart?: "heatmap"; q?: string };
+  TimelineDisplaySearch & { q?: string };
 
 export const Route = createFileRoute("/timeline")({
   validateSearch: (raw: Record<string, unknown>): TimelineSearch => {
@@ -61,30 +54,10 @@ export const Route = createFileRoute("/timeline")({
       ...parseTextSearch(search),
       ...parseShownPhoto(search),
       ...parseTimelineDisplay(search),
-      ...(search.chart === "heatmap" ? { chart: "heatmap" as const } : {}),
     };
   },
   component: TimelineView,
 });
-
-const earliestPhoto = min(photos.map((photo) => photo.takenAt));
-
-/**
- * The days the Timeline shows: the date range filter's, from the oldest photo when it has no first
- * day and up to now when it has no last.
- */
-function shownDays({ start, end }: WhenFilters, now: Date) {
-  return {
-    start: start ? startOfDay(parseISO(start)) : earliestPhoto,
-    end: end ? endOfDay(parseISO(end)) : now,
-  };
-}
-
-/** The date range filter for the days picked on the chart, earliest first. */
-function pickedDays(a: Date, b: Date): WhenFilters {
-  const [start, end] = [dayOf(a), dayOf(b)].toSorted();
-  return { start, end };
-}
 
 /** Photos grouped by their date taken written with a date-fns pattern, such as "MMMM yyyy" for months. */
 function groupByDate(group: Photo[], pattern: string) {
@@ -99,29 +72,22 @@ function groupByDate(group: Photo[], pattern: string) {
 function TimelineView() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const [now] = useState(() => new Date());
   const { shown, show, close } = useShownPhoto();
   const filters = parseFilters(search);
-  const { start, end } = shownDays(filters, now);
-  // Every photo the other filters let through, so the heatmap can fade the weeks outside the days.
-  const matching = filterByVisuals(
-    searchPhotos(filterPhotos(photos, withoutFilters(filters, ["start", "end"])), search.q),
-    search,
-  );
   // What the filters and search leave before Visuals, which its counts are out of.
   const beforeVisuals = searchPhotos(filterPhotos(photos, filters), search.q);
   // Newest first, so the months and the photos in each read down from the latest.
-  const inRange = filterPhotos(matching, filters).toSorted(
+  const inRange = filterByVisuals(beforeVisuals, search).toSorted(
     (a, b) => b.takenAt.getTime() - a.takenAt.getTime(),
   );
   const display = resolveTimelineDisplay(search);
-  const [chart, setChart] = useState<HTMLDivElement | null>(null);
+  const [header, setHeader] = useState<HTMLElement | null>(null);
   const [list, setList] = useState<HTMLOListElement | null>(null);
-  useRememberViewOptions("/timeline", { ...timelineDisplaySearch(display), chart: search.chart });
+  useRememberViewOptions("/timeline", timelineDisplaySearch(display));
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-16 sm:px-6">
-      <header className="flex flex-col gap-4">
+      <header ref={setHeader} className="flex flex-col gap-4">
         <div>
           <SiteHomeLink className="mb-1" />
           <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
@@ -147,20 +113,6 @@ function TimelineView() {
         </div>
         <PhotoFilterBar photos={photos} searchable own={visualsOwnFilters(beforeVisuals, search)} />
       </header>
-      <div ref={setChart}>
-        <TimelineChart
-          mode={search.chart ?? "graph"}
-          inRange={inRange.map((photo) => photo.takenAt)}
-          all={matching.map((photo) => photo.takenAt)}
-          start={start}
-          end={end}
-          now={now}
-          shown={hasDateRange(filters) ? { from: dayOf(start), to: dayOf(end) } : undefined}
-          onSelect={(from, to) =>
-            navigate({ search: (prev) => ({ ...prev, ...pickedDays(from, to) }) })
-          }
-        />
-      </div>
       <RouteSketches>
         <PhotoMonths
           photos={inRange}
@@ -170,7 +122,7 @@ function TimelineView() {
           listRef={setList}
         />
       </RouteSketches>
-      <TimelineScrubber list={list} chart={chart} byDay={display.ticks === "days"} />
+      <TimelineScrubber list={list} above={header} byDay={display.ticks === "days"} />
       <PhotoLightbox photo={shown} photos={inRange} onShow={show} onClose={close} />
     </div>
   );

@@ -18,7 +18,7 @@ function splitLines(config: GraphConfig): SettingLine[] {
   return [["Split by", `${statById(config.split).label}${partsText(config)}`]];
 }
 
-/** How a split bar's parts sit, after its split; nothing for a line or dot graph. */
+/** How a split bar's parts sit, after its split; nothing for a line graph. */
 function partsText(config: GraphConfig): string {
   if (config.type !== "bar") return "";
   return config.stacked ? ", stacked" : ", side by side";

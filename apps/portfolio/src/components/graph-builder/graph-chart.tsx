@@ -67,7 +67,7 @@ function valueAxis(measure: Measure, domain: GraphData["domain"]) {
   );
 }
 
-/** A bar, line or dot graph's frame: the graph, with its key on the right when it's split. */
+/** A bar or line graph's frame: the graph, with its key on the right when it's split. */
 function Frame({ graph, children }: { graph: GraphData; children: ReactElement }) {
   const split = graph.series[0]?.key !== "value";
   return (
@@ -79,7 +79,7 @@ function Frame({ graph, children }: { graph: GraphData; children: ReactElement }
   );
 }
 
-/** Picking the clicked value of a bar, line or dot graph, so its photos show under it. */
+/** Picking the clicked value of a bar or line graph, so its photos show under it. */
 function useClickPick(graph: GraphData) {
   const { onPick } = useGraphPick();
   return (state: { activeIndex?: unknown }) => {
@@ -88,7 +88,7 @@ function useClickPick(graph: GraphData) {
   };
 }
 
-/** What every bar, line and dot graph has: a grid, both axes and the tooltip. */
+/** What every bar and line graph has: a grid, both axes and the tooltip. */
 function cartesianParts({ graph, measure }: CartesianProps) {
   return [
     <CartesianGrid key="grid" vertical={false} />,
@@ -137,11 +137,8 @@ export function BarGraph({ graph, measure, stacked }: CartesianProps & { stacked
   );
 }
 
-/**
- * A line graph, one line for each series; or with `dots`, a dot graph: only each value's dot, at
- * how many photos it has, such as one for each aperture.
- */
-export function LineGraph({ graph, measure, dots = false }: CartesianProps & { dots?: boolean }) {
+/** A line graph, one line for each series, with a dot at each value. */
+export function LineGraph({ graph, measure }: CartesianProps) {
   const { pick } = useGraphPick();
   return (
     <Frame graph={graph}>
@@ -159,9 +156,9 @@ export function LineGraph({ graph, measure, dots = false }: CartesianProps & { d
             dataKey={s.key}
             name={s.label}
             type="linear"
-            stroke={dots ? "none" : s.color}
+            stroke={s.color}
             strokeWidth={2}
-            dot={{ r: dots ? 5 : 4, fill: s.color, stroke: "var(--card)", strokeWidth: 2 }}
+            dot={{ r: 4, fill: s.color, stroke: "var(--card)", strokeWidth: 2 }}
             activeDot={{ r: 6 }}
             isAnimationActive={false}
           />

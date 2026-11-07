@@ -43,7 +43,7 @@ function endOr(end: string | number | null, own: string): string {
   return end === null ? own : String(end);
 }
 
-/** What the y axis's ends say: a scatterplot's or heatmap's values, or a bar, line or dot graph's numbers. */
+/** What the y axis's ends say: a scatterplot's or heatmap's values, or a bar or line graph's numbers. */
 function yText(config: GraphConfig): string {
   if (hasYStat(config.type)) return endsText(config.yFrom, config.yTo, "Start");
   return endsText(config.yMin, config.yMax, "0");
