@@ -1,21 +1,14 @@
 import { Layer, type LayerProps, Source } from "@vis.gl/react-maplibre";
-import { format } from "date-fns";
-import { useMemo } from "react";
-import { areaEdgePaint, areaFillPaint, useIsDark } from "@/lib/map-theme";
+import { areaEdgePaint, areaFillPaint, tripColors, useIsDark } from "@/lib/map-theme";
 import type { PlacedPhoto } from "@/lib/map-photos";
-import { onDays, type TripLinesMap, useTripLinesMap } from "@/lib/trip-lines-map";
+import { type TripLinesMap, useShownTripLines } from "@/lib/trip-lines-map";
 
 /** Only the segments' lines, not the places visited or the areas. */
 const IS_LINE = ["!", ["has", "feature"]];
 
-/** Colors that change with dark mode: the walking lines, and a hop with no line picked. */
-function lineColors(dark: boolean) {
-  return dark ? { walk: "#60a5fa", hop: "#c084fc" } : { walk: "#2563eb", hop: "#9333ea" };
-}
-
 /** Each layer of the trip lines, under the photos' markers: areas, then lines, then visits. */
 function layers(dark: boolean): LayerProps[] {
-  const colors = lineColors(dark);
+  const colors = tripColors(dark);
   const round = { "line-cap": "round", "line-join": "round" } as const;
   return [
     { id: "trip-fence-fill", type: "fill", filter: isFeature("fence"), paint: areaFillPaint(dark) },
@@ -46,8 +39,8 @@ function layers(dark: boolean): LayerProps[] {
       filter: isFeature("visit"),
       paint: {
         "circle-radius": 5,
-        "circle-color": "#f59e0b",
-        "circle-stroke-color": dark ? "#171717" : "#ffffff",
+        "circle-color": colors.visit,
+        "circle-stroke-color": colors.visitEdge,
         "circle-stroke-width": 2,
       },
     },
@@ -59,20 +52,14 @@ function isFeature(kind: "visit" | "fence") {
   return ["==", ["get", "feature"], kind];
 }
 
-/** The days the photos were taken, as TRIPLINES.geo.json writes them. */
-function daysOf(photos: PlacedPhoto[]): Set<string> {
-  return new Set(photos.map((p) => format(p.takenAt, "yyyy-MM-dd")));
-}
-
 /**
  * The trip lines of the days the map's photos were taken, from TRIPLINES.geo.json: walks in blue,
  * hops along a transit line in its color and others dashed, places visited as amber dots, and areas
  * shaded light blue. Nothing while `show` is off or there are none.
  */
 export function TripLinesLayer({ photos, show }: { photos: PlacedPhoto[]; show: boolean }) {
-  const map = useTripLinesMap(show);
+  const data = useShownTripLines(photos, show);
   const dark = useIsDark();
-  const data = useMemo(() => map && onDays(map, daysOf(photos)), [map, photos]);
   return data ? <TripLinesSource data={data} dark={dark} /> : null;
 }
 
