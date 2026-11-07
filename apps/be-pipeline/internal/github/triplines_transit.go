@@ -77,9 +77,12 @@ func lineProps(l *TripTransitLine) (name, ref, colour string) {
 
 // segmentFeatures are seg of line drawn through spots: the segment itself
 // and, for a hop that got on or off its line away from its photos, the walks
-// between those photos and the stations. None when it has fewer than two
-// points.
+// between those photos and the stations. None for a wander, which draws no
+// line, or when it has fewer than two points.
 func segmentFeatures(line TripLine, seg TripSegment, spots map[int]tripSpot) []tripLineFeature {
+	if seg.Mode == ModeWander {
+		return nil
+	}
 	f, ok := segmentFeature(line, seg, spots)
 	if !ok {
 		return nil

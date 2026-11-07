@@ -59,19 +59,34 @@ func routeSegment(ctx context.Context, seg *TripSegment, spots map[int]tripSpot,
 
 // segmentPoints are the spots seg's line goes through, each [longitude,
 // latitude], and the IDs of its photos in spots: its start, the via spots
-// after it, then each photo in spots followed by its via spots, then its end.
+// after it, then each photo in spots (or the area exit or entrance standing
+// in for the first or last, see areaEnd) followed by its via spots, then its
+// end.
 func segmentPoints(seg TripSegment, spots map[int]tripSpot) ([][2]float64, []int) {
 	out := pointOf(seg.Start)
 	out = append(out, viaAfter(seg.Via, nil)...)
 	photos := []int{}
-	for _, id := range seg.Photos {
+	for i, id := range seg.Photos {
 		if s, ok := spots[id]; ok {
-			out = append(out, [2]float64{s.Longitude, s.Latitude})
+			out = append(out, areaEnd(seg, i, [2]float64{s.Longitude, s.Latitude}))
 			photos = append(photos, id)
 		}
 		out = append(out, viaAfter(seg.Via, &id)...)
 	}
 	return append(out, pointOf(seg.End)...), photos
+}
+
+// areaEnd is the spot drawn for seg's photo at index i, whose own spot is
+// at: the exit of the area the first photo is in (From) or the entrance of
+// the area the last one is in (To), when set, or else at.
+func areaEnd(seg TripSegment, i int, at [2]float64) [2]float64 {
+	switch {
+	case i == 0 && seg.From != nil:
+		return [2]float64{seg.From.Longitude, seg.From.Latitude}
+	case i == len(seg.Photos)-1 && seg.To != nil:
+		return [2]float64{seg.To.Longitude, seg.To.Latitude}
+	}
+	return at
 }
 
 // pointOf is p as a one-point list, or none when p is nil.

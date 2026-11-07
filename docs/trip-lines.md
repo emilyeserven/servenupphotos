@@ -34,9 +34,12 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - **`visits`** are the [places visited](#places-visited) along the day's route, such as restaurants.
 - **`fences`** are the [areas](#areas) photos without an exact spot were taken in, such as a park.
 - **`segments`** are the stretches of the day, in the order they happened. Each one's line runs from `start` (when
-  set), through its `photos` (photo IDs) in order, to `end` (when set).
-- **`mode`** is `walk`, `train`, `subway`, `bus`, `car` (taxis too) or `transit`, a hop whose kind isn't known, as the
-  automatic line marks one. A walk is drawn through every photo; the others are a straight dashed line from the first
+  set), through its `photos` (photo IDs) in order, to `end` (when set). `from` and `to`, when set, are drawn instead of
+  the first and last photo: the exit and entrance of an [area wandered](#areas-wandered).
+- **`order`** is the day's photo IDs in the order they were [moved into by hand](#groups), such as when a camera's
+  clock was off; left out while they're in the order taken.
+- **`mode`** is `walk`, `train`, `subway`, `bus`, `car` (taxis too), `transit` (a hop whose kind isn't known, as the
+  automatic line marks one) or `wander` (an [area wandered](#areas-wandered) with no set route, drawn with no line). A walk is drawn through every photo; the others are a straight dashed line from the first
   point to the last, since the real track isn't known.
 - One photo can end a segment and start the next (304 and 305 above), so the line doesn't break at a station.
 - **`start`** and **`end`** are spots with no photo, such as the hotel, with an optional `label`.
@@ -311,8 +314,14 @@ with a name:
   dashed circle 80 m around its position instead (`circleShape` in `portfolio/src/lib/place-circle.ts`), so it reads
   as the place's surroundings rather than one more pin. For a single building, finding it by name gives its
   footprint as the area when OpenStreetMap maps its outline.
-- The scissors on a photo start a new group there; the join button between two groups merges them. The menu between
-  two groups picks what happened between them, like any gap.
+- Each photo shows its number on the map before the time it was taken, such as **3 · 14:59**.
+- Pointing at a photo shows arrows that move it one place earlier or later in the day, for a camera whose clock was
+  off. The new order is saved with the line as `order`, and the map's numbers and line follow it. A photo added to the
+  day since goes after the photo taken just before it.
+- Pointing at the menu between two photos shows the scissors under it: **Cut to a new place here** starts a new group
+  at the photo after it. The join button between two groups merges them. The menu between two groups picks what
+  happened between them, like any gap.
+- The shuffle button on a group's header marks it as an [area wandered](#areas-wandered).
 
 Saving writes each group's name on its segments, and a walk crossing from one group into the next is split there, so
 the stretch between the two groups is its own unnamed segment. Opening a saved line rebuilds the groups from those
@@ -320,6 +329,23 @@ names. A line saved with no names is grouped by place again, and a group left un
 
 > **Frontend analogy:** groups are like `<details>` sections over one list: they change how the list is shown and
 > labeled, but the photos and gaps underneath stay one array.
+
+### Areas wandered
+
+For a hike or an afternoon wandering a park with no set route, the shuffle button on a group's header makes every gap
+inside it **Wandered the area** (`wander`), and pressing it again walks through the photos again. No line is drawn
+through a wandered group's photos; the map shades the place's area, or circles it, instead. Under the map, **Areas
+wandered** lists them, each with **Entrance on the map** and **Exit on the map**: click the spot where the day entered
+and left the area, such as a park's gates. They're kept for that day only. The line from the photo before then runs
+to the entrance, and the line to the next photo from the exit, instead of to and from the photos inside
+(`lib/trip-wander.ts`, `components/trip-lines/area-ends.tsx`).
+
+They're saved on the segments around the area: `to` on the one coming in (by the area's first photo) and `from` on
+the one going out (by its last). Commit bakes those segments through them (`areaEnd` in `triplines_route.go`), snapping
+to streets follows them too, and a `wander` segment bakes no line at all.
+
+> **Frontend analogy:** like `position: absolute` children inside a box: the photos still belong to the group, but
+> the line only connects the box's doors.
 
 ## Shaping the line and snapping it to streets
 

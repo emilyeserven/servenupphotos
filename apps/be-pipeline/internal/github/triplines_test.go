@@ -237,3 +237,25 @@ func TestPathFits(t *testing.T) {
 		t.Error("a path ending 1 km away fits")
 	}
 }
+
+func TestWanderAndAreaEnds(t *testing.T) {
+	spots := map[int]tripSpot{
+		1: {ID: 1, Day: "2026-09-23", Latitude: 35, Longitude: 135.70},
+		2: {ID: 2, Day: "2026-09-23", Latitude: 35, Longitude: 135.71},
+		3: {ID: 3, Day: "2026-09-23", Latitude: 35, Longitude: 135.80},
+	}
+	exit := &TripPoint{Latitude: 35.01, Longitude: 135.72}
+	entrance := &TripPoint{Latitude: 35.02, Longitude: 135.79}
+	line := TripLine{Day: "2026-09-23", Segments: []TripSegment{
+		{Mode: ModeWander, Photos: []int{1, 2}},
+		{Mode: ModeWalk, Photos: []int{2, 3}, From: exit, To: entrance},
+	}}
+	m := bakeTripLines([]TripLine{line}, spots)
+	if len(m.Features) != 1 {
+		t.Fatalf("features = %d, want 1: the wander draws no line", len(m.Features))
+	}
+	got := m.Features[0].(tripLineFeature).Geometry.Coordinates
+	if len(got) != 2 || got[0] != [2]float64{135.72, 35.01} || got[1] != [2]float64{135.79, 35.02} {
+		t.Errorf("coordinates = %v, want the exit then the entrance", got)
+	}
+}

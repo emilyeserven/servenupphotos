@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronRight, Eye, EyeOff, Merge } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye, EyeOff, Merge, Shuffle } from "lucide-react";
 import { useState } from "react";
 import type { TripVisit } from "@/api/trip-lines";
 import { GroupAreaButton } from "@/components/trip-lines/group-area-button";
@@ -10,6 +10,7 @@ import type { TripPhoto } from "@/lib/trip-days";
 import { type GapDraft, withGap } from "@/lib/trip-gaps";
 import { type PhotoGroup, photoGroups, withGroupName, withGroupStart } from "@/lib/trip-groups";
 import { visitsAfter } from "@/lib/trip-visits";
+import { isWandered, withWandered } from "@/lib/trip-wander";
 
 interface GroupStripProps {
   photos: TripPhoto[];
@@ -196,8 +197,37 @@ function GroupHeader({
         {group.end - group.start} photos
       </span>
       <FocusButton name={name.trim()} focus={focus} onFocus={onFocus} />
+      <WanderButton group={group} draft={draft} onChange={onChange} />
       <GroupAreaButton place={photos[group.start]?.place} />
     </div>
+  );
+}
+
+interface WanderButtonProps {
+  group: PhotoGroup;
+  draft: GapDraft;
+  onChange: (draft: GapDraft) => void;
+}
+
+/**
+ * Marks the group as an area wandered with no set route, such as a hike: no line through its
+ * photos, and the lines before and after it run to its entrance and from its exit once those are
+ * set under the map. Pressed again, its photos are walked through again.
+ */
+function WanderButton({ group, draft, onChange }: WanderButtonProps) {
+  const on = isWandered(draft, group);
+  return (
+    <Button
+      variant={on ? "secondary" : "ghost"}
+      size="icon"
+      className="size-7"
+      aria-pressed={on}
+      disabled={group.end - group.start < 2}
+      title={on ? "Walk through these photos again" : "Wandered this area with no set route"}
+      onClick={() => onChange(withWandered(draft, group, !on))}
+    >
+      <Shuffle className="size-4" aria-hidden />
+    </Button>
   );
 }
 

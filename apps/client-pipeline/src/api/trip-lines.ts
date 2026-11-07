@@ -8,7 +8,7 @@ import { requestJson } from "@/api/settings";
  * a straight dashed line from the first point to the last. `transit` is a hop whose kind isn't
  * known, as the automatic line marks one.
  */
-export type TripMode = "walk" | "train" | "subway" | "bus" | "car" | "transit";
+export type TripMode = "walk" | "train" | "subway" | "bus" | "car" | "transit" | "wander";
 
 /** A spot on a trip line with no photo, such as the hotel a day starts from. */
 export interface TripPoint {
@@ -29,6 +29,10 @@ export interface TripSegment {
   photos: number[];
   /** A spot with no photo the line ends at, after the photos. */
   end?: TripPoint;
+  /** Where the line leaves the area its first photo is in, drawn instead of that photo. */
+  from?: TripPoint;
+  /** Where the line enters the area its last photo is in, drawn instead of that photo. */
+  to?: TripPoint;
   /** Spots the line goes through between its photos, to shape it. */
   via?: TripVia[];
   /**

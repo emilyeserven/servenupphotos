@@ -26,6 +26,8 @@ import { draftOf, type GapDraft, segmentsOf, walkingDraft } from "@/lib/trip-gap
 import { draftVias, movedVia, withVia } from "@/lib/trip-points";
 import { dayTitle } from "@/components/trip-lines/day-title";
 import { useTripLinesSearch } from "@/lib/trip-lines-search";
+import { type AreaPick, isAreaPick, withAreaEnd } from "@/lib/trip-wander";
+import { AreaEnds } from "@/components/trip-lines/area-ends";
 import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
 
 /** What the editor shows first: the saved line by hand, the automatic line, or nothing yet. */
@@ -72,7 +74,7 @@ function stripDraft(view: EditorView, photos: TripPhoto[], segments: TripSegment
 /** The spots with no photo the view draws. */
 function endsOf(segments: TripSegment[]): TripPoint[] {
   return segments.flatMap((s) =>
-    [s.start, s.end, s.board, s.alight].filter((p) => p !== undefined),
+    [s.start, s.end, s.board, s.alight, s.from, s.to].filter((p) => p !== undefined),
   );
 }
 
@@ -168,11 +170,16 @@ export function DayEditor({ day: taken, line }: { day: TripDay; line?: TripLine 
 }
 
 /** What a click on the map places: the day's start or end spot, or a place visited. */
-type MapPick = EndKey | "visit";
+type MapPick = EndKey | "visit" | AreaPick;
 
 /** The start or end spot being picked, if that's what is. */
 function endPicking(picking: MapPick | undefined): EndKey | undefined {
-  return picking === "visit" ? undefined : picking;
+  return picking === "start" || picking === "end" ? picking : undefined;
+}
+
+/** The entrance or exit of an area wandered being picked, if that's what is. */
+function areaPicking(picking: MapPick | undefined): AreaPick | undefined {
+  return isAreaPick(picking) ? picking : undefined;
 }
 
 /** The draft with the clicked point placed as picking says, or else as a via point. */
@@ -183,6 +190,7 @@ function picked(
   via: () => GapDraft,
 ): GapDraft {
   if (picking === "visit") return withVisit(draft, newVisit(point));
+  if (isAreaPick(picking)) return withAreaEnd(draft, picking, point);
   return picking ? { ...draft, [picking]: point } : via();
 }
 
@@ -238,6 +246,13 @@ function HandMap({ day, draft, segments, highlighted, focus, placeAreas, onChang
         draft={draft}
         onChange={onChange}
         picking={endPicking(picking)}
+        onPicking={setPicking}
+      />
+      <AreaEnds
+        ids={day.photos.map((p) => p.id)}
+        draft={draft}
+        onChange={onChange}
+        picking={areaPicking(picking)}
         onPicking={setPicking}
       />
       <Visits

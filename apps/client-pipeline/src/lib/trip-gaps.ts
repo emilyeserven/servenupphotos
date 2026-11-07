@@ -50,6 +50,13 @@ export interface GapDraft {
   fences?: TripFence[];
   /** The day's photo IDs in the order moved into by hand; none while they're as taken. */
   order?: number[];
+  /**
+   * Where the line left each area wandered, by the ID of the last photo there, such as a park's
+   * gate; the line to the next photo starts there instead of at the photo.
+   */
+  exits?: Record<string, TripPoint>;
+  /** Where the line entered each area wandered, by the ID of the first photo there. */
+  entrances?: Record<string, TripPoint>;
 }
 
 /** The line a hop rode, and how the hop was travelled when it was picked. */
@@ -158,7 +165,16 @@ function at(p: TripPoint | undefined): [number, number] | null {
 export function segmentKey(s: TripSegment): string {
   const via = (s.via ?? []).map((v) => [v.after ?? null, v.latitude, v.longitude]);
   const ride = [s.line?.id ?? null, at(s.board), at(s.alight)];
-  return JSON.stringify([s.mode, at(s.start), s.photos, at(s.end), via, ride]);
+  return JSON.stringify([
+    s.mode,
+    at(s.start),
+    s.photos,
+    at(s.end),
+    via,
+    ride,
+    at(s.from),
+    at(s.to),
+  ]);
 }
 
 /** The segment with its path from the draft, when it has one. */
@@ -167,9 +183,31 @@ function withPath(segment: TripSegment, draft: GapDraft): TripSegment {
   return path ? { ...segment, path } : segment;
 }
 
+/** The spot under photo id in one of the draft's lists of area ends, as a segment field. */
+function endField(
+  field: "from" | "to",
+  ends: Record<string, TripPoint> | undefined,
+  id: number | undefined,
+): Partial<TripSegment> {
+  const point = ends?.[String(id)];
+  return point ? { [field]: point } : {};
+}
+
+/** The segment with the exit and entrance it runs between, when the draft sets them. */
+function withAreaEnds(segment: TripSegment, draft: GapDraft): TripSegment {
+  if (segment.mode === "wander") return segment;
+  return {
+    ...segment,
+    ...endField("from", draft.exits, segment.photos[0]),
+    ...endField("to", draft.entrances, segment.photos.at(-1)),
+  };
+}
+
 /** The segments the gaps make between photos, taken one after the other. */
 export function segmentsOf(photos: number[], draft: GapDraft): TripSegment[] {
-  const plain = splitAtGroups(plainSegments(photos, draft), draft.groups);
+  const plain = splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
+    withAreaEnds(segment, draft),
+  );
   return withNames(
     plain.map((segment) => withPath(segment, draft)),
     photos,
@@ -222,6 +260,15 @@ function linesOf(segments: TripSegment[]): Record<string, HopLine> {
   );
 }
 
+/** The exits and entrances of the areas wandered that the segments run between. */
+function areaEndsOf(segments: TripSegment[]): Pick<GapDraft, "exits" | "entrances"> {
+  const exits = segments.flatMap((s) => (s.from ? [[String(s.photos[0]), s.from] as const] : []));
+  const entrances = segments.flatMap((s) =>
+    s.to ? [[String(s.photos.at(-1)), s.to] as const] : [],
+  );
+  return { exits: Object.fromEntries(exits), entrances: Object.fromEntries(entrances) };
+}
+
 /** A saved trip line's segments as gaps between the photos, taken one after the other. */
 export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
   const gaps = photos.slice(1).map((b, i) => gapIn(segments, photos[i] as number, b));
@@ -234,6 +281,7 @@ export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
     paths: pathsOf(segments),
     lines,
     ...groupsOf(segments),
+    ...areaEndsOf(segments),
   };
 }
 
