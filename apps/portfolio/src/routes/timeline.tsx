@@ -110,6 +110,11 @@ function shownDays(label: ReturnType<typeof findTimelineLabel>, range: TimeRange
   return { start, end };
 }
 
+/** Whether the scrubber ticks each day: when the display options say so, or a label is chosen. */
+function scrubsByDay(label: ReturnType<typeof findTimelineLabel>, display: TimelineDisplay) {
+  return label !== undefined || display.ticks === "days";
+}
+
 /** Photos grouped by their date taken written with a date-fns pattern, such as "MMMM yyyy" for months. */
 function groupByDate(group: Photo[], pattern: string) {
   const groups = new Map<string, Photo[]>();
@@ -222,7 +227,7 @@ function TimelineView() {
         listRef={setList}
       />
       {/* With one label's days, the ticks are its days rather than a month or two. */}
-      <TimelineScrubber list={list} chart={chart} byDay={label !== undefined} />
+      <TimelineScrubber list={list} chart={chart} byDay={scrubsByDay(label, display)} />
       <PhotoLightbox photo={shown} photos={inRange} onShow={show} onClose={close} />
     </div>
   );
@@ -269,7 +274,12 @@ function MonthSection({
   const [open, setOpen] = useState(true);
   const listId = useId();
   return (
-    <li data-month={month} data-group={month.slice(-4)} className="flex flex-col gap-1">
+    <li
+      data-month={month}
+      data-group={month.slice(-4)}
+      data-year={month.slice(-4)}
+      className="flex flex-col gap-1"
+    >
       {/* Sticks to the top while the month's photos scroll under it. Its fixed height (h-10) is
           where each day's subheading sticks, just under it. */}
       <h2 className="sticky top-0 z-10 -mx-1 flex h-10 items-center bg-background px-1">
@@ -313,6 +323,8 @@ function DaySection({
     <li
       data-day={day}
       data-group={dayGroup(dayPhotos)}
+      data-year={dayFormat(dayPhotos, "yyyy")}
+      data-name={dayFormat(dayPhotos, "EEEE, MMMM d, yyyy")}
       data-label={label}
       className="flex flex-col gap-1"
     >
@@ -333,8 +345,13 @@ function DaySection({
 
 /** The short month of the day the photos were taken, such as "Sep", which the scrubber labels days by. */
 function dayGroup(dayPhotos: Photo[]): string {
+  return dayFormat(dayPhotos, "MMM");
+}
+
+/** The day the photos were taken written with a date-fns pattern, or "" without photos. */
+function dayFormat(dayPhotos: Photo[], pattern: string): string {
   const [first] = dayPhotos;
-  return first ? format(first.takenAt, "MMM") : "";
+  return first ? format(first.takenAt, pattern) : "";
 }
 
 /** The timeline label of the days the photos were taken, or "" without one. */

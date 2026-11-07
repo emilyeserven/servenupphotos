@@ -9,14 +9,15 @@ import {
   scrollFor,
   scrollFraction,
   groupLabels,
+  type TickLevel,
 } from "@/lib/timeline-scrubber";
 import { useSize } from "@/lib/use-size";
 import { cn } from "@/lib/utils";
 
 /**
  * A scrubber down the right edge of the window, shown once the chart above the photos has scrolled
- * out of view, like the one in Google Photos. Its ticks are the months in the list and its labels
- * the years; dragging along it, or clicking it, scrolls the list there, and a bubble names the
+ * out of view, like the one in Google Photos. Its ticks are the months (or days) in the list and its
+ * labels the years (or months), with a bigger tick where a bigger unit starts; dragging along it, or clicking it, scrolls the list there, and a bubble names the
  * month under the pointer.
  */
 export function TimelineScrubber({
@@ -126,21 +127,31 @@ function stepMonth(event: KeyboardEvent, layout: MonthLayout, fraction: number) 
   if (next) window.scrollTo({ top: scrollFor(layout, next.at) + 1, behavior: "instant" });
 }
 
-/** A short tick for each month or day, and each year's or month's label at its first one. */
+/**
+ * Each tick's size by its level: a short one for each month or day, longer at a month's first
+ * day, and longest and darkest at a year's start.
+ */
+const TICK_CLASS: Record<TickLevel, string> = {
+  0: "h-px w-1.5 bg-muted-foreground/50",
+  1: "h-px w-2.5 bg-muted-foreground/80",
+  2: "h-0.5 w-3 bg-muted-foreground",
+};
+
+/** A tick for each month or day, sized by its level, and each year's or month's label at its first one. */
 function ScrubberTicks({ marks, trackHeight }: { marks: ScrubberMark[]; trackHeight: number }) {
   return (
     <>
       {marks.map((mark) => (
         <span
           key={mark.month}
-          className="absolute right-2 h-px w-1.5 bg-muted-foreground/50"
+          className={cn("absolute right-2 -translate-y-1/2", TICK_CLASS[mark.level])}
           style={{ top: `${mark.at * 100}%` }}
         />
       ))}
       {groupLabels(marks, trackHeight).map((label) => (
         <span
-          key={label.group}
-          className="absolute right-4 -translate-y-1/2 rounded-sm bg-background/80 px-1 text-[11px] font-medium text-muted-foreground tabular-nums"
+          key={label.at}
+          className="absolute right-5 -translate-y-1/2 rounded-sm bg-background/80 px-1 text-[11px] font-medium text-muted-foreground tabular-nums"
           style={{ top: `${label.at * 100}%` }}
         >
           {label.group}
