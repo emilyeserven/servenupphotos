@@ -75,6 +75,7 @@ fits without covering the map:
   - **Groups show the latest** picks which three photos a group's marker fades through: **Added** (the default), the
     ones added to the portfolio last, or **Captured**, the ones taken last. Photos with no added date count as
     the oldest added.
+  - **Trip lines** (on by default) draws the [trip lines](#trip-lines) under the photos.
   - **Reset to defaults** goes back to these defaults.
 
   These options, but for the group photos, are `components/pin-display-fields.tsx`, which the
@@ -105,3 +106,44 @@ fits without covering the map:
 - Once a day is chosen and another day is in view, a second **to** dropdown picks the last day of a range
   (`?day=2026-05-01&to=2026-05-17`), and the map shows every photo from the first day through the last. Either day can
   be the earlier one; the range is put in order. **Just this day** goes back to one day.
+
+## Trip lines
+
+Under the photos, the map draws the trip lines of the days its photos were taken, so the day filter and the other
+filters narrow them too (`components/trip-lines-layer.tsx`). They come from `triplines/TRIPLINES.geo.json`, which the
+pipeline's Commit bakes (see [Trip lines](trip-lines.md#the-baked-map-triplinesgeojson)), loaded the first time the map
+draws them (`lib/trip-lines-map.ts`):
+
+- Walks are solid blue (lighter in dark mode).
+- A hop along the bus, subway or train line it rode is solid in that line's color.
+- A drive (`car`, such as a big jump the automatic line marks) is gray in long dashes.
+- Any other hop is dashed purple.
+- Places visited are amber dots.
+- Areas that photos without an exact spot were taken in are shaded light blue, like a place's area.
+
+**Trip lines** in the display options turns them off, and takes them out of the [key](#key) too. The lines, stations and areas come from OpenStreetMap data,
+under the [ODbL](https://www.openstreetmap.org/copyright); the basemap's attribution (the ⓘ in the corner) already
+credits OpenStreetMap's contributors, which covers them.
+
+> **Frontend analogy:** the map reads a build artifact. The pipeline compiles each day's line into one GeoJSON file at
+> Commit, and the portfolio only renders it, the way a static site renders prebuilt JSON instead of calling an API.
+
+## Key
+
+A **Key** panel in the map's bottom left corner explains what the map draws (`components/map-legend.tsx`). It lists
+only the kinds of thing the map draws for its photos, whether or not they're in view (`lib/map-legend.ts`), so the
+filters and the day filter change it:
+
+- The pins: **Photo** (a square pin with a white edge), **Group of photos** (a round marker with its count, whenever
+  there are at least two photos) and **Photo without an image yet** (a small light-blue dot). A (?) after **Group of
+  photos** opens a note on clicking a group: a click zooms in, and ⌘-click (Ctrl-click off Apple devices, read from the
+  browser's user agent in `lib/platform.ts`) lists its photos in a grid (`components/map-legend-help.tsx`).
+- Then, under a divider, the trip lines of the photos' days when **Trip lines** is on: **Walk**, **Bus, subway or
+  train** (a sample in the colors of the lines ridden), **Drive** (long dashes), **Other trip** (dashed), **Place visited** and **Area**.
+  **Area** also shows while a place's area is shaded from **Places**.
+
+The samples use the same colors as the map in light and dark mode (`lib/map-theme.ts`). The **Key** button folds the
+panel down to itself; it starts open on wider screens and folded on phones, and is remembered in this browser.
+
+> **Frontend analogy:** the key is derived state, like a filter chip list built from the current results. It reads the
+> same trip line data and photos as the map's layers and keeps only the entries that would render something.

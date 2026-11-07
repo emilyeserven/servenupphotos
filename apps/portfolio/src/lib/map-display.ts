@@ -22,6 +22,8 @@ export interface MapDisplay {
   /** Whether a group's photos are darkened under its count, rather than shown as they are. */
   dimGroups: boolean;
   groupPhotos: GroupPhotos;
+  /** Whether the map draws the days' trip lines, places visited and areas under the photos. */
+  tripLines: boolean;
 }
 
 /** The display options a first visit starts with. */
@@ -31,6 +33,7 @@ export const DEFAULT_MAP_DISPLAY: MapDisplay = {
   showCounts: true,
   dimGroups: true,
   groupPhotos: "added",
+  tripLines: true,
 };
 
 /** The grouping slider's range and step, in pixels. */
@@ -69,6 +72,7 @@ const VALID: Record<keyof MapDisplay, (value: unknown) => boolean> = {
   showCounts: (value) => typeof value === "boolean",
   dimGroups: (value) => typeof value === "boolean",
   groupPhotos: (value) => value === "added" || value === "taken",
+  tripLines: (value) => typeof value === "boolean",
 };
 
 /** The options in a saved value that are still valid, leaving out the rest. */

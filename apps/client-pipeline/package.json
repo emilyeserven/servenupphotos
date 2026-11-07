@@ -13,6 +13,7 @@
     "@tanstack/react-form": "1.33.5",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
+    "@tanstack/react-table": "catalog:",
     "@vis.gl/react-maplibre": "catalog:",
     "class-variance-authority": "0.7.1",
     "clsx": "catalog:",

@@ -4,6 +4,7 @@ import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import { type GroupPhotos, type MapDisplay, PIN_PIXELS } from "@/lib/map-display";
 import { type MapMarker, photosInCluster } from "@/lib/map-markers";
 import type { PlacedPhoto } from "@/lib/map-photos";
+import { modifierKey } from "@/lib/platform";
 import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
@@ -170,7 +171,7 @@ function ClusterMarker({
   return (
     <button
       type="button"
-      title={`Show these ${count} photos (⌘ or Ctrl-click to list them)`}
+      title={`Show these ${count} photos (${modifierKey()}-click to list them)`}
       aria-label={`Show these ${count} photos`}
       onClick={(event) => {
         stopAtMarker(event);
@@ -187,7 +188,7 @@ function ClusterMarker({
 
 /**
  * Whether a click on a cluster asks for its photos as a grid rather than zooming in: a click with
- * ⌘ held, or Ctrl on Windows and Linux.
+ * ⌘ held, or Ctrl off Apple devices.
  */
 function listsPhotos(event: MouseEvent): boolean {
   return event.metaKey || event.ctrlKey;

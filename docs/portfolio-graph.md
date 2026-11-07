@@ -55,6 +55,34 @@ until the page is left.
 > **Frontend analogy:** the site's presets are the app's built-in defaults shipped in the bundle (`GRAPHS.json`), and a
 > visitor's own are user settings in `localStorage`, merged into one list when rendering.
 
+## Photos of a picked value
+
+Clicking a bar, a line or dot graph's point, a slice or a scatterplot dot shows its photos in a **Selected Photos** box under the graph
+(`components/graph-builder/picked-photos.tsx`, with what's picked worked out in `lib/graph-pick.ts`). Every other value
+fades while one is picked (a dashed line marks it on a line or dot graph); clicking it again, **Close**, or changing the
+graph in any way clears it. The photos are the ones the filters keep, and each opens in the lightbox.
+
+The box's heading names each axis and what's on it for the pick: **X axis** with its stat and value (such as Year:
+2016), **Y axis** with how many photos (or what share) it has, or a scatterplot dot's y stat and value, and **Grouped
+by** when the photos are in groups. A pie says **Slices** and **Size** instead.
+
+- On a split graph, such as each year's bar stacked by season, the photos are in a group for each split value with any,
+  in its color. Each group opens and closes from its heading, with joined **Expand all** / **Collapse all** buttons (like
+  Graph / Table) beside the order; all are open at first. Split values past the graph's own colors (drawn together as **Other**) get a group each, in gray.
+- A pie's **Other** slice groups its photos by the x values it puts together.
+- A scatterplot dot shows the photos that have both its values; a value that isn't split, its photos in one set.
+- **Order by** (grouped photos only) orders the groups by their values on the axis (the Numbers card's order, or
+  lowest first when they're all numbers, such as years) or by how many photos they have. **Ascending** and
+  **Descending** turn that order around, and put each group's photos oldest or newest first by when they were taken.
+- A group shows its first 48 photos, then **Show all**.
+- Each group's count (or, when the photos aren't grouped, the count beside the order buttons) reads **See More (12)**
+  on hover, as the Numbers page's rows do, and opens the group's photos on the Grid with the matching Grid filters: the page's own filters and search, the picked x value and the group's
+  value, such as Year 2016 and Season Autumn (`lib/graph-pick-grid.ts`). When those filters wouldn't find exactly the
+  group's photos, such as a value the Grid can't filter by, it opens them as photos chosen one by one (`ids`).
+
+> **Frontend analogy:** the click is a row selection in a data table. The graph keeps the selected key in state and
+> hands it down through context, and the box below runs the same `.filter()` the bar was counted from to list the rows.
+
 ## How it's counted
 
 Each stat is one of the Numbers page's groups (`STAT_SECTIONS` in `lib/stats.ts`), so a group added there shows up in

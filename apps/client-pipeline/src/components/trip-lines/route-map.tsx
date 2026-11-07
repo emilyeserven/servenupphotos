@@ -1,4 +1,4 @@
-import { MAP_STYLES, useIsDark } from "@portfolio/lib/map-theme";
+import { MAP_STYLES, tripColors, useIsDark } from "@portfolio/lib/map-theme";
 import {
   Layer,
   Map,
@@ -40,11 +40,30 @@ function walkLayer(preview: boolean): LayerProps {
   };
 }
 
-/** A hop by train, subway, bus or car with no line picked, a dashed line. */
+/** A drive, in long gray dashes like the portfolio's map. */
+function driveLayer(dark: boolean): LayerProps {
+  return {
+    id: "trip-drive",
+    type: "line",
+    filter: ["==", ["get", "mode"], "car"],
+    paint: {
+      "line-color": tripColors(dark).drive,
+      "line-width": 3,
+      "line-dasharray": [4, 2],
+      "line-opacity": opacity(1),
+    },
+  };
+}
+
+/** A hop by train, subway, bus or transit with no line picked, a dashed line. */
 const hopLayer: LayerProps = {
   id: "trip-hop",
   type: "line",
-  filter: ["all", ["!=", ["get", "mode"], "walk"], ["!", ["get", "onLine"]]],
+  filter: [
+    "all",
+    ["!", ["in", ["get", "mode"], ["literal", ["walk", "car"]]]],
+    ["!", ["get", "onLine"]],
+  ],
   paint: {
     "line-color": ["get", "colour"],
     "line-width": 3,
@@ -119,6 +138,7 @@ export function RouteMap({
         <Source id="trip-line" type="geojson" data={lineFeatures(segments, photos, focus)}>
           <Layer {...walkLayer(preview === true)} />
           <Layer {...hopLayer} />
+          <Layer {...driveLayer(dark)} />
           <Layer {...lineLayer} />
         </Source>
         {photos.map((p, i) => (

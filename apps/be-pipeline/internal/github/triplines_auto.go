@@ -2,13 +2,17 @@ package github
 
 import "time"
 
-// What the automatic line takes as a break or a hop: photos further apart in
-// time than autoBreak aren't joined, and two photos further apart than
-// autoMinHopKm with more than autoWalkKmh between them are a hop, not a walk.
+// What the automatic line takes as a break, a drive or a hop: two photos more
+// than autoDriveKm apart and taken within autoDriveGap are a drive; other
+// photos further apart in time than autoBreak aren't joined; and two photos
+// further apart than autoMinHopKm with more than autoWalkKmh between them are
+// a hop, not a walk.
 const (
 	autoBreak    = 2 * time.Hour
 	autoWalkKmh  = 6.0
 	autoMinHopKm = 0.3
+	autoDriveKm  = 15.0
+	autoDriveGap = 6 * time.Hour
 )
 
 // gapKind is how the automatic line joins two photos taken one after the other.
@@ -17,13 +21,17 @@ type gapKind int
 const (
 	gapWalk gapKind = iota
 	gapHop
+	gapDrive
 	gapBreak
 )
 
+// hopModes are the modes of the automatic line's hops, by gap.
+var hopModes = map[gapKind]string{gapHop: ModeTransit, gapDrive: ModeCar}
+
 // autoSegments is the automatic line through spots, taken one after the other
 // on one day: walks through the photos, split where they're more than
-// autoBreak apart, with a ModeTransit hop where moving between two was faster
-// than walking.
+// autoBreak apart, with a ModeCar drive across a big jump (see gapBetween) and
+// a ModeTransit hop where moving between two was faster than walking.
 func autoSegments(spots []tripSpot) []TripSegment {
 	b := autoLine{segments: []TripSegment{}}
 	var prev *tripSpot
@@ -55,8 +63,8 @@ func (b *autoLine) add(prev *tripSpot, s tripSpot) {
 		return
 	}
 	b.flush()
-	if gap == gapHop {
-		b.segments = append(b.segments, TripSegment{Mode: ModeTransit, Photos: []int{prev.ID, s.ID}})
+	if mode, ok := hopModes[gap]; ok {
+		b.segments = append(b.segments, TripSegment{Mode: mode, Photos: []int{prev.ID, s.ID}})
 	}
 	b.walk = []int{s.ID}
 }
@@ -72,10 +80,13 @@ func (b *autoLine) flush() {
 // gapBetween is how the automatic line joins a and b, b taken after a.
 func gapBetween(a, b tripSpot) gapKind {
 	elapsed := b.Taken.Sub(a.Taken)
+	km := distanceKm(a.Latitude, a.Longitude, b.Latitude, b.Longitude)
+	if km > autoDriveKm && elapsed <= autoDriveGap {
+		return gapDrive
+	}
 	if elapsed > autoBreak {
 		return gapBreak
 	}
-	km := distanceKm(a.Latitude, a.Longitude, b.Latitude, b.Longitude)
 	if km > autoMinHopKm && (elapsed <= 0 || km/elapsed.Hours() > autoWalkKmh) {
 		return gapHop
 	}

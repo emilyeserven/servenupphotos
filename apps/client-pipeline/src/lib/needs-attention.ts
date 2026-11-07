@@ -1,18 +1,27 @@
 import type { SocialPhoto } from "@/api/publish";
-import { isSetAside, isUnselected, titleOf } from "@/lib/drafts";
 import { currentData } from "@/lib/social-schedule";
 
 /** How many days of Instagram posts in a row from today the queue should have, at least. */
 export const INSTAGRAM_DAYS_WANTED = 7;
 
 /** One of the problems the Needs Attention card looks for in the photo files. */
-export type PhotoProblem =
-  | "untitled"
-  | "untagged"
-  | "noGenres"
-  | "noAlbums"
-  | "noPlaces"
-  | "noColors";
+export type PhotoProblem = "noGps" | "noColors" | "noPlaces" | "untagged" | "noGenres" | "noAlbums";
+
+/** How soon a problem should be fixed, which the card sorts its rows by. */
+export type Urgency = "high" | "medium" | "low";
+
+/** How urgent the Instagram queue running short is. */
+export const INSTAGRAM_URGENCY: Urgency = "medium";
+
+/** Each photo problem's urgency. */
+export const URGENCY: Record<PhotoProblem, Urgency> = {
+  noGps: "high",
+  noColors: "high",
+  noPlaces: "medium",
+  untagged: "low",
+  noGenres: "low",
+  noAlbums: "low",
+};
 
 /** The photos with one problem: how many there are, and the first one's path. */
 export interface ProblemCount {
@@ -30,10 +39,34 @@ function isEmptyList(data: PhotoData, field: string): boolean {
   return !Array.isArray(value) || value.length === 0;
 }
 
-/** Whether no place row has an ID, as Bulk Places counts a photo without places. */
+function isText(value: unknown): boolean {
+  return typeof value === "string" && value.trim() !== "";
+}
+
+/** Whether the photo is marked as having no GPS position on purpose, such as a studio photo. */
+function isMarkedNoGps(data: PhotoData): boolean {
+  return data.noGps === true;
+}
+
+/** Whether the photo has its own GPS position: a custom one written on the Photo page, or its EXIF one. */
+function hasOwnGps(data: PhotoData): boolean {
+  return isText(data.customGpsPosition) || isText(data.gpsPosition);
+}
+
+/** Whether the photo has no GPS position of its own and isn't marked as going without one. */
+function hasNoGps(data: PhotoData): boolean {
+  return !hasOwnGps(data) && !isMarkedNoGps(data);
+}
+
+/**
+ * Whether no place row has an ID, as Bulk Places counts a photo without places. A photo without GPS
+ * is counted in that row instead, as the more serious problem, and one marked as going without GPS
+ * is left out.
+ */
 function hasNoPlaces(data: PhotoData): boolean {
   const places = Array.isArray(data.places) ? data.places : [];
-  return !places.some((row) => typeof (row as { id?: unknown } | null)?.id === "string");
+  const placeless = !places.some((row) => typeof (row as { id?: unknown } | null)?.id === "string");
+  return placeless && hasOwnGps(data);
 }
 
 /** Whether the colors are missing, or were saved before `peakChroma`, as Update Data › Colors reads them. */
@@ -42,19 +75,14 @@ function hasNoColors(data: PhotoData): boolean {
   return colors?.peakChroma === undefined;
 }
 
-/** Whether the photo has no title and is waiting for one: not Undecided or unselected. */
-function isUntitled(data: PhotoData): boolean {
-  return titleOf(data) === undefined && !isSetAside(data) && !isUnselected(data);
-}
-
-/** Each problem's test of a photo's JSON, in the order the card lists them. */
+/** Each problem's test of a photo's JSON, most urgent first, in the order the card lists them. */
 const TESTS: Record<PhotoProblem, (data: PhotoData) => boolean> = {
-  untitled: isUntitled,
+  noGps: hasNoGps,
+  noColors: hasNoColors,
+  noPlaces: hasNoPlaces,
   untagged: (data) => isEmptyList(data, "tags"),
   noGenres: (data) => isEmptyList(data, "genres"),
   noAlbums: (data) => isEmptyList(data, "albums"),
-  noPlaces: hasNoPlaces,
-  noColors: hasNoColors,
 };
 
 /** Every photo file as the next Commit will have it, by path, without the removed ones. */

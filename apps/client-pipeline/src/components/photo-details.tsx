@@ -50,6 +50,8 @@ interface PhotoText {
 export interface PhotoDetails extends PhotoText {
   /** The photo's places, each with how the photo relates to it; a row being filled in has no ID yet. */
   places: PhotoPlace[];
+  /** Whether the photo won't have a GPS position on purpose, such as a studio photo; saved as noGps. */
+  noGps: boolean;
 }
 
 /** No title, place name, custom city or country, or comment, which a new photo starts with. */
@@ -67,7 +69,7 @@ const NO_TEXT: PhotoText = {
 };
 
 /** No details or places, which a new photo starts with. */
-export const NO_DETAILS: PhotoDetails = { ...NO_TEXT, places: [] };
+export const NO_DETAILS: PhotoDetails = { ...NO_TEXT, places: [], noGps: false };
 
 /** The text fields of PhotoDetails, as the JSON names them. */
 export const TEXT_FIELDS = Object.keys(NO_TEXT) as (keyof PhotoText)[];
@@ -92,7 +94,11 @@ export function fileStem(file: string): string {
 /** The details saved in a photo's JSON, to start editing from. */
 export function savedDetails(data: Record<string, unknown>): PhotoDetails {
   const texts = Object.fromEntries(TEXT_FIELDS.map((field) => [field, text(data[field])]));
-  return { ...(texts as unknown as PhotoText), places: savedPlaces(data.places) };
+  return {
+    ...(texts as unknown as PhotoText),
+    places: savedPlaces(data.places),
+    noGps: data.noGps === true,
+  };
 }
 
 /** The EXIF city, state, country, GPS position and date saved in a photo's JSON. */
@@ -137,6 +143,7 @@ export function withDetails<T extends object>(data: T, details: PhotoDetails) {
     customState: saved("customState"),
     customCountry: saved("customCountry"),
     customGpsPosition: saved("customGpsPosition"),
+    noGps: details.noGps,
     customCreateDate: saved("customCreateDate"),
     altText: saved("altText"),
     notes: saved("notes"),
@@ -171,7 +178,7 @@ interface PhotoDetailsCardProps {
 /**
  * The photo's optional title on the portfolio and Markdown comment in one card, and its places,
  * custom city and country and where it goes on the map in another, saved as the JSON's "title", "places" (with the first place's name as "placeName"),
- * "customCity", "customCountry", "customGpsPosition", "comment", "altText" and the photographer-only "notes".
+ * "customCity", "customCountry", "customGpsPosition", "noGps", "comment", "altText" and the photographer-only "notes".
  */
 export function PhotoDetailsCard({
   value,
@@ -238,8 +245,10 @@ export function PhotoDetailsCard({
           <PhotoCustomGps
             value={value.customGpsPosition}
             exifGps={exifPlace.gpsPosition}
+            noGps={value.noGps}
             disabled={disabled}
             onChange={(customGpsPosition) => onChange({ ...value, customGpsPosition })}
+            onNoGps={(noGps) => onChange({ ...value, noGps })}
           />
           <CityAndCountry
             exifPlace={exifPlace}

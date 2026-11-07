@@ -73,7 +73,7 @@ export interface GraphConfig extends GraphRanges {
 }
 
 /** A row's photos among the list: none for a row without a filter, which can't be told apart. */
-function rowPhotos(list: Photo[], row: StatRow): Photo[] {
+export function rowPhotos(list: Photo[], row: StatRow): Photo[] {
   return row.filter ? filterWithCamera(list, row.filter) : [];
 }
 
@@ -111,6 +111,8 @@ export interface GraphDatum {
   /** How many photos the value has, for the tooltip. */
   photos: number;
   values: Record<string, number>;
+  /** A pie's Other slice: the x values it puts together. */
+  others?: string[];
 }
 
 /** What a bar, line or pie graph draws. */
@@ -200,7 +202,11 @@ function pieData(rows: StatRow[], total: number, config: GraphConfig): GraphData
   const rest = rows.slice(own.length).reduce((sum, row) => sum + row.count, 0);
   const slices = rest > 0 ? [...own, { label: "Other", count: rest }] : own;
   const single = singleSeries(slices, total, config);
-  return { series: single.series, data: single.data };
+  const others = rows.slice(own.length).map((row) => row.label);
+  const data = single.data.map((datum, index) =>
+    index < own.length ? datum : { ...datum, others },
+  );
+  return { series: single.series, data };
 }
 
 /** The graph types whose values can be split by another stat. */

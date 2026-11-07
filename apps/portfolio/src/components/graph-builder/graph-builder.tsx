@@ -4,8 +4,10 @@ import { AxisLabels } from "@/components/graph-builder/graph-axes";
 import { BarGraph, LineGraph, PieGraph } from "@/components/graph-builder/graph-chart";
 import { type ConfigChange, GraphControls } from "@/components/graph-builder/graph-controls";
 import { CameraFilterBar } from "@/components/camera-filters";
+import { GraphPickContext } from "@/components/graph-builder/graph-pick-context";
 import { GraphPresets } from "@/components/graph-builder/graph-presets";
 import { HeatmapGraph } from "@/components/graph-builder/heatmap-graph";
+import { PickedPhotos } from "@/components/graph-builder/picked-photos";
 import { ScatterGraph } from "@/components/graph-builder/scatter-graph";
 import { GraphTable, ScatterTable } from "@/components/graph-builder/graph-table";
 import {
@@ -18,6 +20,7 @@ import {
   statById,
 } from "@/lib/graph-data";
 import { Button } from "@/components/ui/button";
+import { type GraphPick, samePick } from "@/lib/graph-pick";
 import { NO_RANGES } from "@/lib/graph-ranges";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
@@ -42,8 +45,9 @@ type View = "graph" | "table";
  * A graph of the person's own making from the Numbers page's counts. Presets come first, then the
  * Adjust Graph button, which opens a box of its settings: its type, the stat along each axis, what
  * splits a bar, line or dot graph. The site's usual **Show filters** bar, kept in the URL, picks
- * the photos it counts. Under them, the graph's box
- * names each axis with a dropdown to change it, and shows its numbers as a table too.
+ * the photos it counts. Under them, the graph's box names each axis with a dropdown to change it,
+ * and shows its numbers as a table too. Clicking a bar, point, slice or dot shows its photos under
+ * the graph; changing the graph clears it.
  */
 export function GraphBuilder({
   photos,
@@ -62,7 +66,12 @@ export function GraphBuilder({
   const [config, setConfig] = useState(START);
   const [view, setView] = useState<View>("graph");
   const [adjusting, setAdjusting] = useState(false);
-  const onChange: ConfigChange = (change) => setConfig((current) => ({ ...current, ...change }));
+  const [pick, setPick] = useState<GraphPick | null>(null);
+  const onChange: ConfigChange = (change) => {
+    setConfig((current) => ({ ...current, ...change }));
+    setPick(null);
+  };
+  const onPick = (next: GraphPick) => setPick(samePick(pick, next) ? null : next);
   return (
     <div className="flex flex-col gap-4">
       <CameraFilterBar photos={photos} searchable />
@@ -89,8 +98,19 @@ export function GraphBuilder({
             <ViewButtons view={view} onChange={setView} />
           </div>
         </div>
-        <GraphArea list={kept} config={config} view={view} onChange={onChange} />
+        <GraphPickContext value={{ pick, onPick }}>
+          <GraphArea list={kept} config={config} view={view} onChange={onChange} />
+        </GraphPickContext>
       </section>
+      {pick && (
+        <PickedPhotos
+          key={JSON.stringify(pick)}
+          list={kept}
+          config={config}
+          pick={pick}
+          onClear={() => setPick(null)}
+        />
+      )}
     </div>
   );
 }
