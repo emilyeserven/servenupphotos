@@ -53,7 +53,8 @@ to a draft opens nothing until it has a title and is merged, and then opens it w
   the local `ALLPHOTOS.local.json` it builds from the data folders.
 
 An [unselected photo](compare-groups.md#off-the-portfolio) is left out of `ALLPHOTOS.json` too, whatever this setting
-says.
+says, and so is a [casual photo](trip-lines.md#casual-photos) (`"casual": true`), which shows only with its place on a
+Trip page (`isCasual`).
 
 The rule lives in `isDraft` (`apps/be-pipeline/internal/github/drafts.go`) and `isDraft`
 (`apps/client-pipeline/src/lib/drafts.ts`), which the workflow's `jq` filter and the local script match.

@@ -1,4 +1,5 @@
 import { AlbumText, type PhotoText, RowPhotos } from "@/components/album-rows";
+import { TripStops } from "@/components/trip-stops";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 import { dayTitle, type StoryDay } from "@/lib/trip-pages";
 
@@ -14,7 +15,8 @@ interface TripStoryProps {
 
 /**
  * A Trip page's days, each under its date: its first paragraph, then its rows of photos side by
- * side with their text under or beside them, each followed by its paragraph across the page.
+ * side with their text under or beside them, each followed by its paragraph across the page, and
+ * last the trip stops with their casual photos.
  */
 export function TripStory({ days, texts, onOpen }: TripStoryProps) {
   return (
@@ -29,6 +31,7 @@ export function TripStory({ days, texts, onOpen }: TripStoryProps) {
               <AlbumText text={row.after} />
             </div>
           ))}
+          <TripStops stops={day.stops} />
         </li>
       ))}
     </ol>

@@ -23,6 +23,15 @@ export function isSetAside(data: unknown): boolean {
 }
 
 /**
+ * Whether the photo is a casual photo of a place visited (`"casual": true`), such as the food at a
+ * restaurant: it shows only on its day's Trip page, so Commit always leaves it out of ALLPHOTOS.json
+ * and the trip lines.
+ */
+export function isCasual(data: unknown): boolean {
+  return (data as { casual?: unknown } | null | undefined)?.casual === true;
+}
+
+/**
  * Whether a photo's JSON is marked as not chosen in a compare group: its `unselected` is an object.
  * Its images in R2 may be gone, so Commit always leaves it out of ALLPHOTOS.json.
  */
@@ -32,11 +41,11 @@ export function isUnselected(data: unknown): boolean {
 }
 
 /**
- * Whether Commit leaves a photo out of ALLPHOTOS.json: it's unselected, or it's a draft and untitled
- * photos aren't included.
+ * Whether Commit leaves a photo out of ALLPHOTOS.json: it's unselected or casual, or it's a draft
+ * and untitled photos aren't included.
  */
 export function leftOffPortfolio(data: unknown, includeUntitled = false): boolean {
-  return isUnselected(data) || (!includeUntitled && isDraft(data));
+  return isUnselected(data) || isCasual(data) || (!includeUntitled && isDraft(data));
 }
 
 /**

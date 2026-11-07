@@ -5,7 +5,7 @@ name: Combine photo data
 # albums/ALLALBUMS.json, tags/ALLTAGS.json, genres/ALLGENRES.json, places/PLACES.json,
 # localizations/LOCALIZATIONS.json, metainfo/METAINFO.json, cameras/CAMERAS.json, lenses/LENSES.json, captions/CAPTIONS.json, timeline/TIMELINE.json, likes/LIKES.json, triplines/TRIPLINES.json, graphs/GRAPHS.json and gear/GEAR.json, each every other JSON file in
 # its folder as one array sorted by file name. Photos without a title, or set aside as Undecided, are drafts and are left out
-# of ALLPHOTOS.json, unless include_untitled is checked (see docs/drafts.md); unselected photos always are (see docs/compare-groups.md). The pipeline's Commit button
+# of ALLPHOTOS.json, unless include_untitled is checked (see docs/drafts.md); unselected photos always are (see docs/compare-groups.md), and so are casual photos (see docs/trip-pages.md). The pipeline's Commit button
 # does the same itself (CommitCombined in apps/be-pipeline), and also bakes
 # triplines/TRIPLINES.geo.json and triplines/TRIPPAGES.json, which this leaves as they are, with the same
 # commit message, so this only runs when started by hand from the Actions
@@ -63,8 +63,8 @@ jobs:
             pnpm exec oxfmt "$out"
             echo "Combined ${#files[@]} file(s) into $out"
           }
-          drafts='map(select((.title | type) == "string" and (.title | test("\\S")) and .undecided != true) | select((.unselected | type) != "object"))'
-          if [ "$INCLUDE_UNTITLED" = "true" ]; then drafts='map(select((.unselected | type) != "object"))'; fi
+          drafts='map(select((.title | type) == "string" and (.title | test("\\S")) and .undecided != true) | select((.unselected | type) != "object" and .casual != true))'
+          if [ "$INCLUDE_UNTITLED" = "true" ]; then drafts='map(select((.unselected | type) != "object" and .casual != true))'; fi
           combine photos ALLPHOTOS.json "$drafts"
           combine albums ALLALBUMS.json
           combine tags ALLTAGS.json

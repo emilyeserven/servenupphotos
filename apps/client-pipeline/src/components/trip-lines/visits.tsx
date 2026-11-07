@@ -2,6 +2,7 @@ import { ExternalLink, MapPinPlus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { Place } from "@/api/places";
 import type { TripPoint, TripVisit, VisitKind } from "@/api/trip-lines";
+import { CasualPhotos, useClearCasual } from "@/components/trip-lines/casual-photos";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,13 +25,13 @@ interface VisitsProps {
   day: TripDay;
   draft: GapDraft;
   onChange: (draft: GapDraft) => void;
-  /** Whether the next map click adds a place. */
+  /** Whether the next map click adds a stop. */
   picking: boolean;
   onPicking: (on: boolean) => void;
 }
 
 /**
- * The day's places visited, such as restaurants and museums, with or without a photo: added by
+ * The day's trip stops, such as restaurants and museums, with or without a photo: added by
  * clicking the map, from the saved places nearby or by a coordinate, each with a kind, a note and a
  * link to it on Google Maps, Naver Map or another map. The photo strip on Photo order and Route puts
  * them on the route.
@@ -54,7 +55,7 @@ export function Visits({ day, draft, onChange, picking, onPicking }: VisitsProps
           onClick={() => onPicking(!picking)}
         >
           <MapPinPlus aria-hidden />
-          {picking ? "Click the map where it is…" : "Add a place on the map"}
+          {picking ? "Click the map where it is…" : "Add a stop on the map"}
         </Button>
         <SavedPlacePicker day={day} onPick={(v) => onChange(withVisit(draft, v))} />
         <CoordinateAdder onAdd={(v) => onChange(withVisit(draft, v))} />
@@ -69,7 +70,7 @@ function useSavedPlaces(): Place[] {
   return data ? ((currentLists(data).places.data ?? []) as Place[]) : [];
 }
 
-/** Adds one of the saved places near the day's photos as a place visited. */
+/** Adds one of the saved places near the day's photos as a trip stop. */
 function SavedPlacePicker({ day, onPick }: { day: TripDay; onPick: (v: TripVisit) => void }) {
   const near = placesNear(useSavedPlaces(), day.photos);
   if (near.length === 0) return null;
@@ -97,15 +98,16 @@ interface VisitRowProps {
   onChange: (visit: TripVisit | null) => void;
 }
 
-/** One place visited: its kind, name, note, map link, where it is on the route, and removing it. */
+/** One trip stop: its kind, name, note, map link, where it is on the route, and removing it. */
 function VisitRow({ visit, day, onChange }: VisitRowProps) {
   const set = (fields: Partial<TripVisit>) => onChange({ ...visit, ...fields });
+  const clearCasual = useClearCasual(day.day);
   const Icon = VISIT_ICONS[visit.kind];
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-md border p-2">
       <Icon className="text-muted-foreground size-4" aria-hidden />
       <select
-        aria-label="Kind of place"
+        aria-label="Kind of stop"
         className="border-input bg-background h-8 rounded-md border px-2 text-sm"
         value={visit.kind}
         onChange={(e) => set({ kind: e.target.value as VisitKind })}
@@ -137,11 +139,15 @@ function VisitRow({ visit, day, onChange }: VisitRowProps) {
         size="icon"
         className="size-8"
         title="Remove"
-        onClick={() => onChange(null)}
+        onClick={() => {
+          clearCasual(visit.photos);
+          onChange(null);
+        }}
       >
         <Trash2 className="size-4" aria-hidden />
         <span className="sr-only">Remove</span>
       </Button>
+      <CasualPhotos day={day.day} visit={visit} onChange={onChange} />
     </div>
   );
 }
@@ -176,7 +182,7 @@ function RouteSpot({ photos, after }: { photos: TripDay["photos"]; after?: numbe
   );
 }
 
-/** Adds a place visited at a coordinate typed or pasted in, such as from Google Maps. */
+/** Adds a trip stop at a coordinate typed or pasted in, such as from Google Maps. */
 function CoordinateAdder({ onAdd }: { onAdd: (visit: TripVisit) => void }) {
   const [text, setText] = useState("");
   const point = pointOf(text);

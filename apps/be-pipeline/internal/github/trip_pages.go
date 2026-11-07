@@ -39,6 +39,9 @@ type tripPageDay struct {
 	Day    string       `json:"day"`
 	Intro  string       `json:"intro,omitempty"`
 	Photos []StoryPhoto `json:"photos"`
+	// Stops are the day's trip stops with casual photos (see
+	// tripStop); none when it has none.
+	Stops []tripStop `json:"stops,omitempty"`
 }
 
 // addTripPages bakes TripPagesFile from the story and Trip files with
@@ -46,8 +49,10 @@ type tripPageDay struct {
 // and counts its pages in counts. The portfolio leaves out the photos it
 // doesn't have, such as drafts.
 func (w *workspace) addTripPages(changes map[string][]byte, counts map[string]int) *PublishError {
-	entries := w.withChanges(changes).entries(TripLines)
-	pages := bakeTripPages(storiesIn(entries), tripsIn(entries))
+	view := w.withChanges(changes)
+	entries := view.entries(TripLines)
+	places := pageStops(view.tripLineFiles(), view.casualPhotos())
+	pages := bakeTripPages(storiesIn(entries), tripsIn(entries), places)
 	b, err := json.Marshal(pages)
 	if err != nil {
 		return publishErr(http.StatusInternalServerError, "Couldn't format %s.", TripPagesFile)
@@ -74,8 +79,9 @@ func storiesIn(entries []Entry) []TripStory {
 }
 
 // bakeTripPages is the Trip pages of stories, newest first: each Trip with
-// a story on one of its days, then a page for each day in no Trip.
-func bakeTripPages(stories []TripStory, trips []Trip) []tripPage {
+// a story on one of its days, then a page for each day in no Trip. Each day
+// has its places with casual photos, by day.
+func bakeTripPages(stories []TripStory, trips []Trip, places map[string][]tripStop) []tripPage {
 	sort.Slice(stories, func(i, j int) bool { return stories[i].Date < stories[j].Date })
 	byID := map[string]*tripPage{}
 	var order []string
@@ -86,7 +92,7 @@ func bakeTripPages(stories []TripStory, trips []Trip) []tripPage {
 			order = append(order, page.ID)
 		}
 		p := byID[page.ID]
-		p.Days = append(p.Days, tripPageDay{Day: s.Date, Intro: s.Intro, Photos: s.Photos})
+		p.Days = append(p.Days, tripPageDay{Day: s.Date, Intro: s.Intro, Photos: s.Photos, Stops: places[s.Date]})
 	}
 	pages := make([]tripPage, 0, len(order))
 	for _, id := range order {

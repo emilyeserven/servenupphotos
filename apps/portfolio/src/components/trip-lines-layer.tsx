@@ -11,7 +11,7 @@ const IS_LINE = ["!", ["has", "feature"]];
 /** The modes drawn in a style of their own, rather than as a ride in its line's color or a dashed hop. */
 const OWN_STYLE = ["!", ["in", ["get", "mode"], ["literal", ["walk", "car", "ferry", "flight"]]]];
 
-/** Each layer of the trip lines, under the photos' markers: areas, then lines, then visits. */
+/** Each layer of the trip lines, under the photos' markers: areas, then lines. Places visited aren't drawn: they belong to the Trip pages. */
 function layers(dark: boolean): LayerProps[] {
   const colors = tripColors(dark);
   const round = { "line-cap": "round", "line-join": "round" } as const;
@@ -87,28 +87,17 @@ function layers(dark: boolean): LayerProps[] {
         "line-offset": LANE_OFFSET,
       },
     },
-    {
-      id: "trip-visit",
-      type: "circle",
-      filter: isFeature("visit"),
-      paint: {
-        "circle-radius": 5,
-        "circle-color": colors.visit,
-        "circle-stroke-color": colors.visitEdge,
-        "circle-stroke-width": 2,
-      },
-    },
   ] as LayerProps[];
 }
 
 /** A filter for the features marked `kind`. */
-function isFeature(kind: "visit" | "fence") {
+function isFeature(kind: "fence") {
   return ["==", ["get", "feature"], kind];
 }
 
 /**
  * The trip lines of the days the map's photos were taken, from TRIPLINES.geo.json: walks in blue,
- * drives in long light blue dashes, lines that run over an earlier one drawn to its side,, a Trip's ferries in teal dots and flights as pink dashed arcs, hops along a transit line in its color and others dashed, places visited as amber dots, and areas
+ * drives in long light blue dashes, lines that run over an earlier one drawn to its side, a Trip's ferries in teal dots and flights as pink dashed arcs, hops along a transit line in its color and others dashed, and areas
  * shaded light blue, with a light running along each line the way it was travelled when `flow` is on. Nothing while
  * `show` is off or there are none.
  */

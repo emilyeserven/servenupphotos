@@ -7,15 +7,15 @@ interface VisitChipsProps {
   visits: TripVisit[];
   /** Moves a visit one photo earlier or later on the route; left out, they can't move. */
   onMove?: (visit: TripVisit, by: -1 | 1) => void;
-  /** Takes a visit off the route, back to the day's Places page; left out, it can't be. */
+  /** Takes a visit off the route, back to the day's Trip Stops page; left out, it can't be. */
   onOff?: (visit: TripVisit) => void;
 }
 
-/** The places visited between two photos, as small icons whose name shows on hover; nothing when none. */
+/** The trip stops between two photos, as small icons whose name shows on hover; nothing when none. */
 export function VisitChips({ visits, onMove, onOff }: VisitChipsProps) {
   if (visits.length === 0) return null;
   return (
-    <span className="flex flex-col gap-0.5" aria-label="Places visited here">
+    <span className="flex flex-col gap-0.5" aria-label="Trip stops here">
       {visits.map((v, i) => (
         <VisitChip
           key={i}
@@ -38,7 +38,7 @@ interface VisitChipProps {
   onOff?: () => void;
 }
 
-/** One place visited: its icon, named on hover, between arrows that move it and a cross that takes it off. */
+/** One trip stop: its icon, named on hover, between arrows that move it and a cross that takes it off. */
 function VisitChip({ visit, onMove, onOff }: VisitChipProps) {
   const Icon = VISIT_ICONS[visit.kind];
   const name = nameOf(visit);

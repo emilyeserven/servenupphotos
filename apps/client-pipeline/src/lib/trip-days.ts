@@ -1,3 +1,4 @@
+import { isCasual } from "@/lib/drafts";
 import type { Place } from "@/api/places";
 import { savedPlaces } from "@/api/places";
 import type { CombinedPhoto } from "@/lib/group-photos";
@@ -132,14 +133,16 @@ function byDay<T extends LoosePhoto>(photos: T[]): Map<string, T[]> {
   return days;
 }
 
-/** Every day a trip line can be marked for, newest first. */
+/** Every day a trip line can be marked for, newest first, leaving out casual photos. */
 export function tripDays(photos: CombinedPhoto[], places: Place[]): TripDay[] {
   const lookup = {
     exact: exactPlaces(places),
     names: new Map(places.map((p) => [p.id, tripPlace(p)])),
   };
-  const usable = photos.flatMap((p) => tripPhoto(p, lookup) ?? []);
-  const loose = byDay(photos.flatMap((p) => loosePhoto(p, lookup)));
+  // A casual photo of a trip stop is never on a line or in a story.
+  const own = photos.filter((p) => !isCasual(p));
+  const usable = own.flatMap((p) => tripPhoto(p, lookup) ?? []);
+  const loose = byDay(own.flatMap((p) => loosePhoto(p, lookup)));
   return [...byDay(usable)]
     .map(([day, dayPhotos]) => ({
       day,

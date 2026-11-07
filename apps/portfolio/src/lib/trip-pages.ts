@@ -18,6 +18,27 @@ interface StoryPhoto {
   after?: string;
 }
 
+/** A casual photo, such as the food at a restaurant: on a Trip page with its place, and nowhere else. */
+export interface CasualPhoto {
+  id: number;
+  title?: string;
+  width?: number;
+  height?: number;
+  /** Its resized versions' URLs, by name, as a photo's are. */
+  images?: Partial<Record<"xsmall" | "small" | "medium" | "large" | "xlarge", string | null>>;
+}
+
+/** A trip stop on a day, such as a restaurant, with the casual photos taken there. */
+export interface TripStop {
+  name: string;
+  /** What sort of place it is, such as "restaurant" or "cafe". */
+  kind: string;
+  note?: string;
+  /** Its page on an outside map. */
+  link?: string;
+  photos: CasualPhoto[];
+}
+
 /** One day's story on a Trip page. */
 interface TripPageDay {
   /** The day, such as "2026-10-01". */
@@ -26,6 +47,8 @@ interface TripPageDay {
   intro?: string;
   /** Its photos in order, with their words. */
   photos: StoryPhoto[];
+  /** The trip stops that day that have casual photos, in the order along the route. */
+  stops?: TripStop[];
 }
 
 /**
@@ -74,6 +97,7 @@ export interface StoryDay {
   day: string;
   intro: string;
   rows: StoryRow[];
+  stops: TripStop[];
 }
 
 /** Two paragraphs one after the other, as one. */
@@ -122,10 +146,11 @@ function dayRows(entries: StoryPhoto[], byId: Map<number, ImagePhoto>): StoryRow
 /** The page's days as they show, with only the photos among photos (the ones with images). */
 export function storyDays(page: TripPage, photos: ImagePhoto[]): StoryDay[] {
   const byId = new Map(photos.map((photo) => [photo.id, photo]));
-  return page.days.map(({ day, intro = "", photos: entries }) => ({
+  return page.days.map(({ day, intro = "", photos: entries, stops = [] }) => ({
     day,
     intro,
     rows: dayRows(entries, byId),
+    stops,
   }));
 }
 

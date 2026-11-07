@@ -108,7 +108,7 @@ interface RouteMapProps {
   vias?: { key: string; index: number; point: TripPoint }[];
   /** Moves a via point, or removes it with null; left out, they can't be changed. */
   onMoveVia?: (key: string, index: number, point: TripPoint | null) => void;
-  /** The places visited along the route, as pins. */
+  /** The trip stops along the route, as pins. */
   visits?: TripVisit[];
   /** The areas photos without an exact spot were taken in, shaded. */
   fences?: TripFence[];
@@ -197,12 +197,12 @@ export function RouteMap({
   );
 }
 
-/** A place visited, as a round pin with its kind's icon and its name on hover. */
+/** A trip stop, as a round pin with its kind's icon and its name on hover. */
 function VisitPin({ visit }: { visit: TripVisit }) {
   const Icon = VISIT_ICONS[visit.kind];
   return (
     <span
-      title={visit.name || "A place visited"}
+      title={visit.name || "A trip stop"}
       className="flex size-6 items-center justify-center rounded-full border-2 border-amber-500 bg-white text-amber-600 shadow"
     >
       <Icon className="size-3.5" aria-hidden />

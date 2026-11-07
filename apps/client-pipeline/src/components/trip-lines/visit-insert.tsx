@@ -8,15 +8,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 
 interface VisitInsertProps {
-  /** The day's places visited not on the route yet, from its Places page. */
+  /** The day's trip stops not on the route yet, from its Trip Stops page. */
   choices: TripVisit[];
-  /** Puts the place visited on the route here. */
+  /** Puts the trip stop on the route here. */
   onInsert: (visit: TripVisit) => void;
   className?: string;
 }
 
 /**
- * Puts one of the day's places visited between two photos: the ones added on the day's Places page
+ * Puts one of the day's trip stops between two photos: the ones added on the day's Trip Stops page
  * and not on the route yet, or a link there when there are none.
  */
 export function VisitInsert({ choices, onInsert, className }: VisitInsertProps) {
@@ -30,15 +30,15 @@ export function VisitInsert({ choices, onInsert, className }: VisitInsertProps) 
       <PopoverTrigger asChild>
         <button
           type="button"
-          title="Put a place visited here"
+          title="Put a trip stop here"
           className={cn("hover:bg-muted rounded-sm p-0.5", className)}
         >
           <MapPinPlus className="size-3.5" aria-hidden />
-          <span className="sr-only">Put a place visited here</span>
+          <span className="sr-only">Put a trip stop here</span>
         </button>
       </PopoverTrigger>
       <PopoverContent align="start" className="flex w-64 flex-col gap-1 p-2">
-        <p className="text-muted-foreground px-1 text-xs">A place visited between these photos</p>
+        <p className="text-muted-foreground px-1 text-xs">A trip stop between these photos</p>
         {choices.map((visit, i) => (
           <Choice key={i} visit={visit} onPick={() => insert(visit)} />
         ))}
@@ -67,11 +67,11 @@ function PlacesLink({ none }: { none: boolean }) {
       <Link
         from="/trip-lines/$day/$part"
         to="/trip-lines/$day/$part"
-        params={(p) => ({ ...p, part: "places" })}
+        params={(p) => ({ ...p, part: "stops" })}
         search={(s) => s}
         className="text-foreground underline underline-offset-4"
       >
-        Add places on the Places page
+        Add stops on the Trip Stops page
       </Link>
     </p>
   );

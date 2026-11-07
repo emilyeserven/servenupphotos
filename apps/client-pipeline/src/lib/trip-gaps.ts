@@ -44,7 +44,7 @@ export interface GapDraft {
   groups?: string[];
   /** Each group's name, by its first photo's ID. */
   names?: Record<string, string>;
-  /** The places visited along the route, such as restaurants, in the order added. */
+  /** The trip stops along the route, such as restaurants, in the order added. */
   visits?: TripVisit[];
   /** The areas photos without an exact spot were taken in, in the order added. */
   fences?: TripFence[];
@@ -78,7 +78,7 @@ interface Run {
 }
 
 /**
- * The via spots in the draft after key, as a segment lists them: its own, then the places visited
+ * The via spots in the draft after key, as a segment lists them: its own, then the trip stops
  * put after that photo, so the line passes through them on the way to the next photo.
  */
 function viaOf(draft: GapDraft, key: ViaKey): TripVia[] {
@@ -91,7 +91,7 @@ function viaOf(draft: GapDraft, key: ViaKey): TripVia[] {
   return [...own, ...visitVia(draft, key)];
 }
 
-/** The places visited put after photo key, as via spots that stand for them. */
+/** The trip stops put after photo key, as via spots that stand for them. */
 function visitVia(draft: GapDraft, key: ViaKey): TripVia[] {
   return (draft.visits ?? []).flatMap(({ after, latitude, longitude }, visit) =>
     String(after) === key ? [{ after: after!, latitude, longitude, visit }] : [],

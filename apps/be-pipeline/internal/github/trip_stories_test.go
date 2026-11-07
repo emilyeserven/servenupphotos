@@ -87,7 +87,7 @@ func TestBakeTripPages(t *testing.T) {
 		{ID: "story-2026-10-01", Date: "2026-10-01", Intro: "Home again."},
 		{ID: "story-2026-09-23", Date: "2026-09-23", Photos: []StoryPhoto{{ID: 10, Text: "Gate"}}},
 	}
-	pages := bakeTripPages(stories, []Trip{tripKorea})
+	pages := bakeTripPages(stories, []Trip{tripKorea}, nil)
 	if len(pages) != 2 {
 		t.Fatalf("pages = %+v, want 2", pages)
 	}
