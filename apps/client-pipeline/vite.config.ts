@@ -24,6 +24,7 @@ export default defineConfig({
       "tailwind-merge",
       "class-variance-authority",
       "date-fns",
+      "react-day-picker",
     ],
   },
   server: {
