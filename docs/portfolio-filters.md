@@ -158,14 +158,13 @@ button naming the chosen one, and choosing one folds it up again.
 
 **Cameras** and **Lenses** list every camera or lens (`?camera=Fujifilm X-T5`, `?lens=EF50mm f/1.8 II`; a photo whose
 EXIF didn't name a lens is under none) with how many photos each would show; **All cameras** or **All lenses** comes
-first, and clicking the checked one again goes back to all. A **Group by** row above the list picks how it's laid out: one tab for each top-level
-metadata group that has groups or names under it, such as **Brand** or **Type** (that group's own row left out, what's
-under it a level up, then any camera or lens it doesn't list); for cameras, **Type**, each under the kind its model
-name says it is (Mirrorless, DSLR, Compact, Phone, or Unknown for photos whose EXIF names none), left out when a
-metadata group already makes a Type tab; and **Name**, every one once, A to Z. The Cameras list also has a **Sort** row:
-**Name** keeps the tab's order, and **Oldest first** or **Newest first** orders the cameras under each heading or group
-by when the first of the portfolio's photos was taken with each. It opens on the tab
-that lists the chosen one. A choice that would show no photos given the other
+first, and clicking the checked one again goes back to all. A **Group by** row above the list picks how it's laid out: **None**, every one once, A to Z (the default);
+**Brand**; or **Type**. Brand and Type are the top-level metadata groups with those names (that group's own row left
+out, what's under it a level up, then any camera or lens it doesn't list). Cameras without such a group get their own,
+guessed from the model name: Brand, such as Canon or Fujifilm, and Type (Mirrorless, DSLR, Compact or Phone), each
+under a heading, with Unknown last. A tab with nothing in it isn't shown, and the list opens on the tab of a chosen
+group. The Cameras list also has a **Sort** row: **Name** keeps the tab's order, and **Oldest first** or **Newest
+first** orders the cameras under each heading or group by when the first of the portfolio's photos was taken with each. A choice that would show no photos given the other
 filters is left out, unless chosen; **Show N choices hidden by the other filters** lists them dimmed, and hovering one
 says which filters hide it: each one that, cleared alone, would let it show photos ("Hidden by Aperture or Lens"), or
 "the other filters together" when no single one would. The **(i)** button across from the

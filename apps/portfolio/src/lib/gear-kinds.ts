@@ -16,6 +16,26 @@ export function cameraKind(name: string): CameraKind {
   return CAMERA_KINDS.find(([pattern]) => pattern.test(name))?.[1] ?? "mirrorless";
 }
 
+/** Words in a camera's model name that tell its brand, checked in order. */
+const CAMERA_BRANDS: [RegExp, string][] = [
+  [/canon|\beos\b|powershot/i, "Canon"],
+  [/fujifilm|\bx-[a-z]\d|\bx100|\bgfx/i, "Fujifilm"],
+  [/samsung|galaxy|\bsm-[a-z]\d/i, "Samsung"],
+  [/nikon|coolpix|\bz ?\d|\bd\d{2,4}\b/i, "Nikon"],
+  [/sony|\bilce|\brx100|\ba7/i, "Sony"],
+  [/iphone|apple/i, "Apple"],
+  [/pixel|google/i, "Google"],
+  [/ricoh|pentax/i, "Ricoh"],
+  [/olympus|om system|\bom-\d/i, "OM System"],
+  [/panasonic|lumix/i, "Panasonic"],
+  [/leica/i, "Leica"],
+];
+
+/** The brand a camera's model name says it's from, such as "Canon" for "Canon EOS 80D", if any. */
+export function cameraBrand(name: string): string | undefined {
+  return CAMERA_BRANDS.find(([pattern]) => pattern.test(name))?.[1];
+}
+
 /** A lens's focal length and largest aperture, read from its model name, each a range or one value. */
 export interface LensSpecs {
   /** The shortest and longest focal length in mm; the same for a prime lens. */
