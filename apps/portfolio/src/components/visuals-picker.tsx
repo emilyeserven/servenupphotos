@@ -27,7 +27,7 @@ function visualFilterCount(filters: VisualFilters): number {
 /** What each section of the picker is set to, shown under its name in the left list. */
 const SECTIONS: [VisualSection, string, (filters: VisualFilters) => string][] = [
   ["color", "Color", ({ color }) => (color ? colorLabel(color) : "Any")],
-  ["match", "Match", matchText],
+  ["match", "Color share", matchText],
   ["vivid", "Vividness", vividText],
   ["orientation", "Orientation", orientationText],
 ];
@@ -62,7 +62,7 @@ function firstSection(filters: VisualFilters): VisualSection {
 
 /**
  * The Grid's **Visuals** filter, a button like **When** and **Gear & settings** that opens a
- * picker: a list of Color, Match, Vividness and Orientation on the left, each saying what it's set
+ * picker: a list of Color, Color share, Vividness and Orientation on the left, each saying what it's set
  * to, and the chosen one's controls on the right, with what each choice does. The button shows the
  * picked color and how many of its filters are set. `photos` is what the other filters leave,
  * before the color and orientation filters, which the counts are out of.
