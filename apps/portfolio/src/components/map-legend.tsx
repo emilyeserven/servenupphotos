@@ -13,7 +13,9 @@ import {
   WalkSymbol,
 } from "@/components/map-legend-symbols";
 import type { MapDisplay } from "@/lib/map-display";
+import type { LngLatBounds } from "maplibre-gl";
 import { type LegendItems, legendItems } from "@/lib/map-legend";
+import type { MapMarker } from "@/lib/map-markers";
 import type { PlacedPhoto } from "@/lib/map-photos";
 import { useIsDark } from "@/lib/map-theme";
 import { type ShownArea, usePlaceArea } from "@/lib/place-areas";
@@ -23,31 +25,34 @@ import { cn } from "@/lib/utils";
 /** One row of the key: whether it's listed, its sample, and what it means. */
 type LegendRow = [shown: boolean, symbol: ReactNode, label: string];
 
-/** The key's rows, in order: the photos' markers, then the trip lines and areas. */
-function legendRows(items: LegendItems, dark: boolean): LegendRow[] {
+/** The key's rows for the photos' markers. */
+function pinRows(items: LegendItems): LegendRow[] {
   return [
-    [true, <PhotoSymbol key="photo" />, "Photo"],
-    [true, <GroupSymbol key="group-of-photos" />, "Group of photos"],
-    [
-      items.approximate,
-      <PhotoSymbol approximate key="photo-placed-by-its-area" />,
-      "Photo placed by its area",
-    ],
-    [
-      items.noImage,
-      <NoImageSymbol key="photo-without-an-image-yet" />,
-      "Photo without an image yet",
-    ],
+    [items.photo, <PhotoSymbol key="photo" />, "Photo"],
+    [items.group, <GroupSymbol key="group" />, "Group of photos"],
+    [items.approximate, <PhotoSymbol approximate key="approximate" />, "Photo placed by its area"],
+    [items.noImage, <NoImageSymbol key="no-image" />, "Photo without an image yet"],
+  ];
+}
+
+/** The key's rows for the trip lines and areas under the markers. */
+function lineRows(items: LegendItems, dark: boolean): LegendRow[] {
+  return [
     [items.walk, <WalkSymbol dark={dark} key="walk" />, "Walk"],
     [
       items.rides.length > 0,
-      <RideSymbol colors={items.rides} key="bus-subway-or-train" />,
+      <RideSymbol colors={items.rides} key="ride" />,
       "Bus, subway or train",
     ],
-    [items.hop, <HopSymbol dark={dark} key="other-trip" />, "Other trip"],
-    [items.visit, <VisitSymbol dark={dark} key="place-visited" />, "Place visited"],
+    [items.hop, <HopSymbol dark={dark} key="hop" />, "Other trip"],
+    [items.visit, <VisitSymbol dark={dark} key="visit" />, "Place visited"],
     [items.area, <AreaSymbol dark={dark} key="area" />, "Area"],
   ];
+}
+
+/** Only the rows of what's on the map. */
+function shownRows(rows: LegendRow[]): LegendRow[] {
+  return rows.filter(([shown]) => shown);
 }
 
 const STORAGE_KEY = "servenup-map-legend-open";
@@ -84,11 +89,17 @@ function useLegendOpen(): [boolean, () => void] {
  */
 export function MapLegend({
   photos,
+  markers,
+  view,
   display,
   area,
 }: {
-  /** The photos the map draws. */
+  /** The photos the map draws, whose days' trip lines it draws under them. */
   photos: PlacedPhoto[];
+  /** The markers in view. */
+  markers: MapMarker[];
+  /** What the map shows, or null before it's drawn. */
+  view: LngLatBounds | null;
   display: MapDisplay;
   /** The place whose area is shaded, from the Places menu. */
   area: ShownArea;
@@ -97,7 +108,8 @@ export function MapLegend({
   const dark = useIsDark();
   const trips = useShownTripLines(photos, display.tripLines);
   const placeArea = usePlaceArea(area.id) !== undefined;
-  const rows = legendRows(legendItems(photos, trips, placeArea), dark).filter(([shown]) => shown);
+  const items = legendItems(markers, trips, view, placeArea);
+  const groups = [shownRows(pinRows(items)), shownRows(lineRows(items, dark))];
   const container = useMap().current?.getContainer();
   if (!container) return null;
   // Drawn into the map itself, like its zoom buttons, rather than under the title with the controls.
@@ -107,7 +119,7 @@ export function MapLegend({
       className="absolute bottom-4 left-4 z-10 rounded-md border bg-background/90 text-sm shadow-xs backdrop-blur-sm dark:border-input"
     >
       <LegendToggle open={open} onToggle={toggle} />
-      {open && <LegendList rows={rows} />}
+      {open && <LegendList groups={groups} />}
     </section>,
     container,
   );
@@ -134,9 +146,23 @@ function LegendToggle({ open, onToggle }: { open: boolean; onToggle: () => void 
   );
 }
 
-function LegendList({ rows }: { rows: LegendRow[] }) {
+/** The key's rows: the pins, then the lines, with a line between them when there are both. */
+function LegendList({ groups }: { groups: LegendRow[][] }) {
+  const listed = groups.filter((rows) => rows.length > 0);
+  if (listed.length === 0)
+    return <p className="px-3 pb-2.5 text-muted-foreground">Nothing in view</p>;
   return (
-    <ul className="flex flex-col gap-1 px-3 pt-0.5 pb-2.5">
+    <div className="flex flex-col divide-y px-3 pb-1 dark:divide-input">
+      {listed.map((rows) => (
+        <LegendRows key={rows[0]![2]} rows={rows} />
+      ))}
+    </div>
+  );
+}
+
+function LegendRows({ rows }: { rows: LegendRow[] }) {
+  return (
+    <ul className="flex flex-col gap-1 py-1.5">
       {rows.map(([, symbol, label]) => (
         <li key={label} className="flex items-center gap-2.5">
           {symbol}

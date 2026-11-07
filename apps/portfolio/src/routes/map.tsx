@@ -302,6 +302,7 @@ function MapView() {
               filtered={mapPhotos.placed}
               drawn={dayPhotos.placed}
               view={view}
+              markers={markers}
               display={display}
               onDisplayChange={changeDisplay}
               onDaysChange={setDays}

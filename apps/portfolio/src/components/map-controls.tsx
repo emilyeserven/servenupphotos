@@ -11,6 +11,7 @@ import { MoreFilterControls } from "@/components/photo-filters";
 import { ViewInGridButton } from "@/components/view-in-grid-button";
 import type { MapDisplay } from "@/lib/map-display";
 import { type DayRange, daysInView } from "@/lib/map-days";
+import type { MapMarker } from "@/lib/map-markers";
 import { gridFiltersFor } from "@/lib/map-grid-link";
 import { type PlacedPhoto, placedPhotos } from "@/lib/map-photos";
 import { parseFilters } from "@/lib/photo-filters";
@@ -27,6 +28,7 @@ export function MapControls({
   filtered,
   drawn,
   view,
+  markers,
   display,
   onDisplayChange,
   onDaysChange,
@@ -43,6 +45,8 @@ export function MapControls({
   drawn: PlacedPhoto[];
   /** What the map shows, or null before it's drawn. */
   view: LngLatBounds | null;
+  /** The markers in view, which the map's key explains. */
+  markers: MapMarker[];
   display: MapDisplay;
   onDisplayChange: (change: Partial<MapDisplay>) => void;
   onDaysChange: (range: DayRange) => void;
@@ -70,7 +74,7 @@ export function MapControls({
     >
       <PlaceAreaLayer {...area.shown} />
       <TripLinesLayer photos={drawn} show={display.tripLines} />
-      <MapLegend photos={drawn} display={display} area={area.shown} />
+      <MapLegend photos={drawn} markers={markers} view={view} display={display} area={area.shown} />
       <MapDisplayOptions display={display} onChange={onDisplayChange} />
       <MoreFilterControls
         photos={placedPhotos}
