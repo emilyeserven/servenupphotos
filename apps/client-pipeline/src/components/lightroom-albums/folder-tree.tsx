@@ -2,6 +2,7 @@ import { ChevronRightIcon, FolderIcon } from "lucide-react";
 import { AlbumTitle, StageSelect, Uncertain } from "@/components/lightroom-albums/album-parts";
 import { ParentSelect } from "@/components/lightroom-albums/parent-select";
 import { RemoveAlbumButton } from "@/components/lightroom-albums/remove-album";
+import { RemoveFolderButton } from "@/components/lightroom-albums/remove-folder";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { count } from "@/components/update-data-shared";
@@ -90,30 +91,36 @@ function useFolderOpen(path: string, openAll: boolean): boolean {
   return openAll || remembered;
 }
 
-/** A folder that opens and closes from its name, remembered in the browser, with what's inside it indented under it. */
+/**
+ * A folder that opens and closes from its name, remembered in the browser, with a button that deletes it and what's
+ * inside it indented under it.
+ */
 function FolderRow({ folder, openAll }: { folder: LightroomFolder; openAll: boolean }) {
   const open = useFolderOpen(folder.path, openAll);
   const toggleFolder = useLightroomAlbumsStore((state) => state.toggleFolder);
   return (
     <div>
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={() => toggleFolder(folder.path)}
-        className="hover:bg-muted flex w-full flex-wrap items-center gap-2 rounded-md py-1 pe-2 text-start font-medium"
-      >
-        <ChevronRightIcon
-          className={cn("text-muted-foreground size-4 transition-transform", open && "rotate-90")}
-          aria-hidden
-        />
-        <FolderIcon className="text-muted-foreground size-4" aria-hidden />
-        <span className={cn(folder.path === NO_PARENT && "italic")}>{folder.name}</span>
-        <span className="text-muted-foreground text-xs font-normal">
-          {count(allAlbums(folder.children).length, "album")}
-        </span>
-        <Uncertain note={folder.uncertainNote} />
-        <ClosedInLightroom folder={folder} />
-      </button>
+      <div className="group/row flex items-start gap-1">
+        <button
+          type="button"
+          aria-expanded={open}
+          onClick={() => toggleFolder(folder.path)}
+          className="hover:bg-muted flex min-w-0 flex-1 flex-wrap items-center gap-2 rounded-md py-1 pe-2 text-start font-medium"
+        >
+          <ChevronRightIcon
+            className={cn("text-muted-foreground size-4 transition-transform", open && "rotate-90")}
+            aria-hidden
+          />
+          <FolderIcon className="text-muted-foreground size-4" aria-hidden />
+          <span className={cn(folder.path === NO_PARENT && "italic")}>{folder.name}</span>
+          <span className="text-muted-foreground text-xs font-normal">
+            {count(allAlbums(folder.children).length, "album")}
+          </span>
+          <Uncertain note={folder.uncertainNote} />
+          <ClosedInLightroom folder={folder} />
+        </button>
+        <RemoveFolderButton path={folder.path} />
+      </div>
       {open && (
         <div className="mt-1 ms-2 border-s ps-4">
           <ItemList items={folder.children} openAll={openAll} />

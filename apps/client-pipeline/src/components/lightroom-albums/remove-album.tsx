@@ -3,6 +3,13 @@ import { Button } from "@/components/ui/button";
 import type { LightroomAlbum } from "@/lib/lightroom-albums";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
 
+/**
+ * Hides an icon-only bin until the pointer is over its row (the nearest `group/row`), keeping it shown while it has
+ * keyboard focus and on touch screens, which can't hover.
+ */
+export const SHOW_ON_HOVER =
+  "opacity-0 transition-opacity group-hover/row:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100";
+
 /** What the Remove button asks first; an album read from Lightroom comes back with the next import that has it. */
 function question(album: LightroomAlbum): string {
   const ask = `Remove “${album.name}”, with its stage and notes?`;
@@ -28,6 +35,7 @@ export function RemoveAlbumButton({ album, iconOnly = false }: RemoveAlbumButton
         type="button"
         size="icon-sm"
         variant="ghost"
+        className={SHOW_ON_HOVER}
         aria-label={`Remove ${album.name}`}
         title="Remove"
         onClick={remove}

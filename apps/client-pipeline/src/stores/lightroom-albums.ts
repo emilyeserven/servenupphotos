@@ -8,7 +8,7 @@ import {
   updateAlbum,
 } from "@/lib/lightroom-albums";
 import type { LightroomConnection } from "@/lib/lightroom-next-up";
-import { insertAlbum, moveAlbum, removeAlbum } from "@/lib/lightroom-tree";
+import { insertAlbum, moveAlbum, removeAlbum, removeFolder } from "@/lib/lightroom-tree";
 
 /** How the Albums card shows the albums: as Lightroom's folder tree, or as a board with a lane per stage. */
 export type LightroomView = "tree" | "board";
@@ -26,6 +26,8 @@ interface LightroomAlbumsState {
   addAlbum: (album: LightroomAlbum) => void;
   /** Removes an album, such as one added by hand by mistake. */
   removeAlbum: (path: string) => void;
+  /** Deletes a folder with every folder and album inside it. */
+  removeFolder: (path: string) => void;
   /** Moves an album into another folder, or "" for no parent, making the folder when it isn't there yet. */
   moveAlbum: (path: string, folder: string) => void;
   /** The paths of the folders closed in the tree. */
@@ -83,6 +85,11 @@ export const useLightroomAlbumsStore = create<LightroomAlbumsState>()(
       removeAlbum: (path) =>
         set((state) => ({
           file: state.file && changed(state.file, (items) => removeAlbum(items, path)),
+        })),
+      removeFolder: (path) =>
+        set((state) => ({
+          file: state.file && changed(state.file, (items) => removeFolder(items, path)),
+          closedFolders: state.closedFolders.filter((p) => p !== path),
         })),
       moveAlbum: (path, folder) =>
         set((state) => ({
