@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { PageError } from "@/components/page-error";
 import { ScriptDisplayProvider } from "@/components/script-display-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { trackPageViews } from "@/lib/page-views";
@@ -15,6 +16,8 @@ const router = createRouter({
   basepath: import.meta.env.BASE_URL,
   context: { queryClient },
   defaultPreload: "intent",
+  // Every page, the root included, fails into the site's own error card; see docs/portfolio-page-errors.md.
+  defaultErrorComponent: PageError,
 });
 
 trackPageViews(router);
