@@ -1,4 +1,5 @@
 import { Trash2Icon } from "lucide-react";
+import { SHOW_ON_HOVER } from "@/components/lightroom-albums/remove-album";
 import { Button } from "@/components/ui/button";
 import { count } from "@/components/update-data-shared";
 import { allAlbums, type LightroomFolder } from "@/lib/lightroom-albums";
@@ -32,6 +33,7 @@ export function RemoveFolderButton({ path }: { path: string }) {
       type="button"
       size="icon-sm"
       variant="ghost"
+      className={SHOW_ON_HOVER}
       aria-label={`Delete the folder ${folder.name}`}
       title="Delete folder"
       onClick={remove}

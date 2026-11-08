@@ -86,7 +86,7 @@ function BoardCard({ album }: { album: LightroomAlbum }) {
         event.dataTransfer.setData(ALBUM_PATH, album.path);
         event.dataTransfer.effectAllowed = "move";
       }}
-      className="bg-background flex cursor-grab flex-col gap-1.5 rounded-md border p-2 shadow-xs active:cursor-grabbing"
+      className="group/row bg-background flex cursor-grab flex-col gap-1.5 rounded-md border p-2 shadow-xs active:cursor-grabbing"
     >
       <div className="flex items-start gap-1">
         <div className="flex min-w-0 flex-1 flex-col gap-1">

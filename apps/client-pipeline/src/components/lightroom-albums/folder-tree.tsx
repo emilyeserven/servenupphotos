@@ -100,7 +100,7 @@ function FolderRow({ folder, openAll }: { folder: LightroomFolder; openAll: bool
   const toggleFolder = useLightroomAlbumsStore((state) => state.toggleFolder);
   return (
     <div>
-      <div className="flex items-start gap-1">
+      <div className="group/row flex items-start gap-1">
         <button
           type="button"
           aria-expanded={open}

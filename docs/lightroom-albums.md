@@ -73,13 +73,14 @@ no list yet, adding an album starts one.
 
 ## Removing albums
 
-Every album has a **Remove** button (a bin on the board's cards), which asks first and then drops the album with its
+Every album has a **Remove** button (a bin on the board's cards, shown while the pointer is over the card), which asks first and then drops the album with its
 stage and notes. Folders it leaves empty stay. An album read from Lightroom comes back the next time you import a
 list that still has it, so remove it in Lightroom too; the question says so.
 
 ## Deleting folders
 
-Every folder in the tree has a bin on the right of its row that deletes it, with every folder and album inside it
+Every folder in the tree has a bin on the right of its row, shown while the pointer is over the row (and always on a
+touch screen or when it has keyboard focus), that deletes it, with every folder and album inside it
 (`removeFolder` in `lib/lightroom-tree.ts`). It asks first, saying how many albums go with it, counted in the whole
 list even while a search shows fewer. Like a removed album, albums read from Lightroom come back the next time you
 import a list that still has them, so delete the folder in Lightroom too; the question says so when the folder holds
