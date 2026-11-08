@@ -63,11 +63,27 @@ moved path. Moving it back to where Lightroom has it drops `lightroomPath`.
 
 ## Adding albums by hand
 
-**Add album**, on the Albums card, adds an album the LLM missed or one not made in Lightroom yet: its name, its
-folder (pick one that's there, type a new path such as `Travel/Japan`, which makes the folders it needs, or leave it
-empty for the top), its photo count and whether it's offline. It can't share a path with a folder or album already
-there. It's marked **Added by hand**, has a **Remove** button, and is saved with `"manual": true`, so importing a new
-list keeps it (`lib/lightroom-tree.ts`). With no list yet, adding an album starts one.
+**Add album**, on the Albums card, adds an album the LLM missed or one not made in Lightroom yet. Its form uses the
+pipeline's shared fields, each with an (i) beside its title saying how to fill it in: the **Name**, the **Folder**
+(a single-value combobox: pick a folder that's there, or type a new path such as `Travel/Japan` and choose **Make a
+new folder**, which makes the folders it needs; leave it empty for the top), the **Photos** count, and an
+**Available offline in Lightroom** checkbox. It can't share a path with a folder or album already there. It's marked
+**Added by hand** and saved with `"manual": true`, so importing a new list keeps it (`lib/lightroom-tree.ts`). With
+no list yet, adding an album starts one.
+
+## Removing albums
+
+Every album has a **Remove** button (a bin on the board's cards), which asks first and then drops the album with its
+stage and notes. Folders it leaves empty stay. An album read from Lightroom comes back the next time you import a
+list that still has it, so remove it in Lightroom too; the question says so.
+
+## Searching
+
+The **Search** box above the tree or board shows only the albums with the typed text in their name, their folder
+path or their notes, ignoring case (`lib/lightroom-filter.ts`). In the tree, every folder with a match shows open
+while you search, without changing which folders are remembered as closed, and the stage buttons count only the
+albums that match. Searching works with the stage buttons, so "busan" and **Editing** shows the Busan albums being
+edited.
 
 ## Stages and notes
 

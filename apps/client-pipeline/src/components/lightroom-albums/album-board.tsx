@@ -1,5 +1,6 @@
 import { type DragEvent, useState } from "react";
 import { AlbumTitle, StageSelect } from "@/components/lightroom-albums/album-parts";
+import { RemoveAlbumButton } from "@/components/lightroom-albums/remove-album";
 import {
   LIGHTROOM_STAGES,
   type LightroomAlbum,
@@ -75,7 +76,7 @@ function Lane({ stage, albums }: LaneProps) {
   );
 }
 
-/** An album's card, dragged by its body, with its folder, notes and stage. */
+/** An album's card, dragged by its body, with its folder, notes, stage and a button that removes it. */
 function BoardCard({ album }: { album: LightroomAlbum }) {
   const folder = albumFolder(album);
   return (
@@ -87,8 +88,13 @@ function BoardCard({ album }: { album: LightroomAlbum }) {
       }}
       className="bg-background flex cursor-grab flex-col gap-1.5 rounded-md border p-2 shadow-xs active:cursor-grabbing"
     >
-      {folder && <p className="text-muted-foreground truncate text-xs">{folder}</p>}
-      <AlbumTitle album={album} />
+      <div className="flex items-start gap-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          {folder && <p className="text-muted-foreground truncate text-xs">{folder}</p>}
+          <AlbumTitle album={album} />
+        </div>
+        <RemoveAlbumButton album={album} iconOnly />
+      </div>
       {album.notes && (
         <p className="text-muted-foreground line-clamp-3 text-xs whitespace-pre-line">
           {album.notes}
