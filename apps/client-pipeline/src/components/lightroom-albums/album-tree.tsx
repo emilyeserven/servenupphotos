@@ -3,16 +3,17 @@ import { AlbumBoard } from "@/components/lightroom-albums/album-board";
 import { AddAlbumButton } from "@/components/lightroom-albums/add-album";
 import { AlbumTree, FolderButtons } from "@/components/lightroom-albums/folder-tree";
 import { Segmented } from "@/components/lightroom-albums/segmented";
+import { SearchBox } from "@/components/search-box";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { count } from "@/components/update-data-shared";
 import {
   LIGHTROOM_STAGES,
   type LightroomAlbum,
   type LightroomAlbumsFile,
-  type LightroomItem,
   type LightroomStage,
   allAlbums,
 } from "@/lib/lightroom-albums";
+import { filterTree, matchesSearch } from "@/lib/lightroom-filter";
 import { cn } from "@/lib/utils";
 import { type LightroomView, useLightroomAlbumsStore } from "@/stores/lightroom-albums";
 
@@ -22,16 +23,6 @@ type StageFilter = "all" | "none" | LightroomStage;
 function matches(album: LightroomAlbum, filter: StageFilter): boolean {
   if (filter === "all") return true;
   return filter === "none" ? album.stage === null : album.stage === filter;
-}
-
-/** The items the filter shows, keeping a folder only when an album inside it is shown. */
-function filterItems(items: LightroomItem[], filter: StageFilter): LightroomItem[] {
-  if (filter === "all") return items;
-  return items.flatMap((item): LightroomItem[] => {
-    if (item.kind === "album") return matches(item, filter) ? [item] : [];
-    const children = filterItems(item.children, filter);
-    return children.length > 0 ? [{ ...item, children }] : [];
-  });
 }
 
 /** The Albums card: the albums as Lightroom's folder tree or as a board with a lane per stage, each with its stage and notes. */
@@ -78,26 +69,52 @@ function ViewSwitch() {
   return <Segmented label="Show the albums as" options={VIEWS} value={view} onChange={setView} />;
 }
 
-/** The chosen view of the albums. */
+/** The search box over the albums, then the chosen view of the albums that match it. */
 function AlbumsView({ file, albums }: { file: LightroomAlbumsFile; albums: LightroomAlbum[] }) {
-  const view = useLightroomAlbumsStore((state) => state.view);
-  return view === "board" ? (
-    <AlbumBoard albums={albums} />
-  ) : (
-    <TreeView file={file} albums={albums} />
+  const [search, setSearch] = useState("");
+  const found = albums.filter((album) => matchesSearch(album, search));
+  return (
+    <div className="flex flex-col gap-4">
+      <SearchBox value={search} onChange={setSearch} label="Search albums, folders and notes" />
+      {found.length === 0 && search.trim() ? (
+        <p className="text-muted-foreground text-sm">No albums match “{search.trim()}”.</p>
+      ) : (
+        <ChosenView file={file} albums={found} search={search} />
+      )}
+    </div>
   );
 }
 
-/** The folder tree, with the stage buttons above it that show only the albums at one stage. */
-function TreeView({ file, albums }: { file: LightroomAlbumsFile; albums: LightroomAlbum[] }) {
+interface ViewProps {
+  file: LightroomAlbumsFile;
+  /** The albums that match the search. */
+  albums: LightroomAlbum[];
+  search: string;
+}
+
+/** The tree or the board, whichever is chosen. */
+function ChosenView(props: ViewProps) {
+  const view = useLightroomAlbumsStore((state) => state.view);
+  return view === "board" ? <AlbumBoard albums={props.albums} /> : <TreeView {...props} />;
+}
+
+/**
+ * The folder tree, with the stage buttons above it that show only the albums at one stage. While searching,
+ * every folder with a match shows open.
+ */
+function TreeView({ file, albums, search }: ViewProps) {
   const [filter, setFilter] = useState<StageFilter>("all");
+  const shown = filterTree(
+    file.items,
+    (album) => matchesSearch(album, search) && matches(album, filter),
+  );
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <StageChips albums={albums} filter={filter} onFilter={setFilter} />
         <FolderButtons items={file.items} />
       </div>
-      <AlbumTree items={filterItems(file.items, filter)} />
+      <AlbumTree items={shown} openAll={search.trim() !== ""} />
     </div>
   );
 }

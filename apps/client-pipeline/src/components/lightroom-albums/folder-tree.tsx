@@ -1,6 +1,7 @@
-import { ChevronRightIcon, FolderIcon, Trash2Icon } from "lucide-react";
+import { ChevronRightIcon, FolderIcon } from "lucide-react";
 import { AlbumTitle, StageSelect, Uncertain } from "@/components/lightroom-albums/album-parts";
 import { ParentSelect } from "@/components/lightroom-albums/parent-select";
+import { RemoveAlbumButton } from "@/components/lightroom-albums/remove-album";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { count } from "@/components/update-data-shared";
@@ -33,9 +34,15 @@ function closablePaths(items: LightroomItem[]): string[] {
   return folderPaths(grouped(items));
 }
 
+interface AlbumTreeProps {
+  items: LightroomItem[];
+  /** Shows every folder open, such as while searching, without changing which ones are remembered as closed. */
+  openAll?: boolean;
+}
+
 /** The whole tree, with the albums that have no parent grouped under "No Parent" after the folders. */
-export function AlbumTree({ items }: { items: LightroomItem[] }) {
-  return <ItemList items={grouped(items)} />;
+export function AlbumTree({ items, openAll = false }: AlbumTreeProps) {
+  return <ItemList items={grouped(items)} openAll={openAll} />;
 }
 
 /** Opens or closes every folder in the tree at once. */
@@ -60,22 +67,32 @@ export function FolderButtons({ items }: { items: LightroomItem[] }) {
 }
 
 /** The folders and albums at one level of the tree, with what's inside each open folder under it. */
-function ItemList({ items }: { items: LightroomItem[] }) {
+function ItemList({ items, openAll }: { items: LightroomItem[]; openAll: boolean }) {
   if (items.length === 0) return <p className="text-muted-foreground text-sm">No albums here.</p>;
   return (
     <ul className="flex flex-col gap-2">
       {items.map((item) => (
         <li key={item.path}>
-          {item.kind === "folder" ? <FolderRow folder={item} /> : <AlbumRow album={item} />}
+          {item.kind === "folder" ? (
+            <FolderRow folder={item} openAll={openAll} />
+          ) : (
+            <AlbumRow album={item} />
+          )}
         </li>
       ))}
     </ul>
   );
 }
 
+/** Whether a folder shows open: always while `openAll`, otherwise unless it's remembered as closed. */
+function useFolderOpen(path: string, openAll: boolean): boolean {
+  const remembered = useLightroomAlbumsStore((state) => !state.closedFolders.includes(path));
+  return openAll || remembered;
+}
+
 /** A folder that opens and closes from its name, remembered in the browser, with what's inside it indented under it. */
-function FolderRow({ folder }: { folder: LightroomFolder }) {
-  const open = useLightroomAlbumsStore((state) => !state.closedFolders.includes(folder.path));
+function FolderRow({ folder, openAll }: { folder: LightroomFolder; openAll: boolean }) {
+  const open = useFolderOpen(folder.path, openAll);
   const toggleFolder = useLightroomAlbumsStore((state) => state.toggleFolder);
   return (
     <div>
@@ -99,7 +116,7 @@ function FolderRow({ folder }: { folder: LightroomFolder }) {
       </button>
       {open && (
         <div className="mt-1 ms-2 border-s ps-4">
-          <ItemList items={folder.children} />
+          <ItemList items={folder.children} openAll={openAll} />
         </div>
       )}
     </div>
@@ -116,7 +133,7 @@ function ClosedInLightroom({ folder }: { folder: LightroomFolder }) {
   );
 }
 
-/** An album's name and marks, with its stage and notes to change, and a Remove button when it was added by hand. */
+/** An album's name and marks, with its stage, parent and notes to change, and a Remove button. */
 function AlbumRow({ album }: { album: LightroomAlbum }) {
   const setAlbum = useLightroomAlbumsStore((state) => state.setAlbum);
   return (
@@ -134,22 +151,8 @@ function AlbumRow({ album }: { album: LightroomAlbum }) {
       <div className="flex gap-2 sm:flex-col">
         <StageSelect album={album} className="flex-1 sm:w-44 sm:flex-none" />
         <ParentSelect album={album} className="flex-1 sm:w-44 sm:flex-none" />
-        {album.manual && <RemoveButton album={album} />}
+        <RemoveAlbumButton album={album} />
       </div>
     </div>
-  );
-}
-
-/** Removes an album added by hand, after asking. */
-function RemoveButton({ album }: { album: LightroomAlbum }) {
-  const removeAlbum = useLightroomAlbumsStore((state) => state.removeAlbum);
-  const remove = () => {
-    if (confirm(`Remove “${album.name}”, with its stage and notes?`)) removeAlbum(album.path);
-  };
-  return (
-    <Button type="button" size="sm" variant="ghost" onClick={remove}>
-      <Trash2Icon />
-      Remove
-    </Button>
   );
 }

@@ -1,4 +1,4 @@
-import { ChevronRightIcon, SearchIcon } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 import { useState } from "react";
 import { type Localization, type Place, type PlacesResponse } from "@/api/places";
 import { InferredPlaceList } from "@/components/inferred-place-list";
@@ -7,9 +7,9 @@ import { PlaceBulkBar } from "@/components/place-bulk-bar";
 import { PlacePhotoCount } from "@/components/place-gallery-link";
 import { PlaceGpsCell } from "@/components/place-gps-cell";
 import { RegionIcon, type RegionIconKind } from "@/components/region-icon";
+import { SearchBox } from "@/components/search-box";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -103,7 +103,11 @@ function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
         />
       )}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <SearchBox value={search} onChange={setSearch} />
+        <SearchBox
+          value={search}
+          onChange={setSearch}
+          label="Search countries, cities and places"
+        />
         <ExpandButtons
           parents={regionParentKeys(list.nodes)}
           collapsed={collapsed}
@@ -143,23 +147,6 @@ function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
         <p className="text-muted-foreground text-sm">Nothing is named like that.</p>
       )}
     </>
-  );
-}
-
-/** Narrows the list to the names with the text in them, and what they're in. */
-function SearchBox({ value, onChange }: { value: string; onChange: (value: string) => void }) {
-  return (
-    <div className="relative w-full max-w-xs">
-      <SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
-      <Input
-        type="search"
-        aria-label="Search countries, cities and places"
-        placeholder="Search"
-        className="pl-8"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      />
-    </div>
   );
 }
 
