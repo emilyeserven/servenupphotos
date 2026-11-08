@@ -110,7 +110,7 @@ export function HopSymbol({ dark }: { dark: boolean }) {
   );
 }
 
-/** A drive: a light blue line in long dashes. */
+/** A drive: a solid light blue line. */
 export function DriveSymbol({ dark }: { dark: boolean }) {
   return (
     <LineSample>
@@ -121,7 +121,7 @@ export function DriveSymbol({ dark }: { dark: boolean }) {
         y2={12}
         stroke={tripColors(dark).drive}
         strokeWidth={3}
-        strokeDasharray="9 4"
+        strokeLinecap="round"
       />
     </LineSample>
   );

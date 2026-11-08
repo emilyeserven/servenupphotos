@@ -15,7 +15,7 @@ export interface LegendItems {
   rides: string[];
   /** Whether a hop with no transit line picked is drawn, dashed. */
   hop: boolean;
-  /** Whether a drive is drawn, in long light blue dashes. */
+  /** Whether a drive is drawn, as a solid light blue line. */
   drive: boolean;
   /** Whether a Trip's ferry is drawn, in teal dots. */
   ferry: boolean;
