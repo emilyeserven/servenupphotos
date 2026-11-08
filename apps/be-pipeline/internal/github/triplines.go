@@ -126,7 +126,7 @@ type TripLine struct {
 // SaveTripLine saves line as <folder>/triplines/<day>.json, new or replacing
 // the one there, in the pending changes, with the paths along streets it was
 // given (see RouteTripLine). An automatic line is saved with its segments as
-// the photos draw it now, so the file shows the line too. It fails when a
+// the photos and its trip stops draw it now, so the file shows the line too. It fails when a
 // photo isn't from that day or has no exact spot.
 func (c *Client) SaveTripLine(ctx context.Context, gh settings.GitHub, line TripLine) (EntryResult, error) {
 	line, spots, perr := c.checkedTripLine(ctx, gh, line)
@@ -134,7 +134,7 @@ func (c *Client) SaveTripLine(ctx context.Context, gh settings.GitHub, line Trip
 		return EntryResult{}, perr
 	}
 	if line.Auto {
-		line.Segments = autoSegments(spotsOn(spots, line.Day))
+		line.Segments = autoLineSegments(spots, line)
 	}
 	return c.saveEntry(ctx, gh, TripLines, line.ID, line, func([]Entry) *PublishError { return nil })
 }

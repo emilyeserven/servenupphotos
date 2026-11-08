@@ -23,7 +23,14 @@ import { useTripDaySearch } from "@/lib/trip-lines-search";
 import { isAreaPick, withAreaEnd } from "@/lib/trip-wander";
 import { MapTools, type MapPick } from "@/components/trip-lines/route-tools";
 import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
-import { hasStops, keptStops, type KeptStops, lineStops } from "@/lib/trip-stops-kept";
+import {
+  hasStops,
+  keptStops,
+  type KeptStops,
+  lineStops,
+  onlyStopsChanged,
+  withStopVias,
+} from "@/lib/trip-stops-kept";
 
 /**
  * What the editor shows first: the saved line by hand, the automatic line, or nothing yet. A day
@@ -57,14 +64,36 @@ function showsAuto(view: EditorView): boolean {
   return view.kind === "preview" || view.kind === "auto";
 }
 
-/** The automatic line's segments, while the view shows it. */
-function autoSegments(view: EditorView, auto: TripLine | undefined): TripSegment[] {
-  return (showsAuto(view) && auto?.segments) || [];
+/** The automatic line's segments, while the view shows it, through the trip stops put on it. */
+function autoSegments(
+  view: EditorView,
+  auto: TripLine | undefined,
+  stops: KeptStops,
+): TripSegment[] {
+  return withStopVias((showsAuto(view) && auto?.segments) || [], stops.visits);
 }
 
-/** The segments the view draws. */
-function viewSegments(ids: number[], view: EditorView, auto: TripLine | undefined): TripSegment[] {
-  return view.kind === "hand" ? segmentsOf(ids, view.draft) : autoSegments(view, auto);
+/** The segments the view draws; saved is the day's line file, whose trip stops the automatic line passes through. */
+function viewSegments(
+  ids: number[],
+  view: EditorView,
+  auto: TripLine | undefined,
+  saved: TripLine | undefined,
+): TripSegment[] {
+  if (view.kind === "hand") return segmentsOf(ids, view.draft);
+  return autoSegments(view, auto, keptStops(view, saved));
+}
+
+/**
+ * The view after the strip or map changes the draft shown: on the automatic line, a change to its
+ * trip stops alone keeps it automatic, to save with **Update automatic line**; any other change
+ * starts a line drawn by hand.
+ */
+function editedView(view: EditorView, shown: GapDraft, draft: GapDraft): EditorView {
+  if (view.kind === "auto" && onlyStopsChanged(shown, draft)) {
+    return { kind: "auto", stops: lineStops(draft) };
+  }
+  return { kind: "hand", draft };
 }
 
 /**
@@ -82,7 +111,7 @@ function stripDraft(
   const ids = photos.map((p) => p.id);
   const drawn = {
     ...(segments.length > 0 ? draftOf(ids, segments) : walkingDraft(ids)),
-    ...lineStops(saved),
+    ...keptStops(view, saved),
   };
   return drawn.groups === undefined ? { ...drawn, ...placeGroups(photos) } : drawn;
 }
@@ -153,10 +182,10 @@ export function DayEditor({ day: taken, line, part }: DayEditorProps) {
   const focus = search.group;
   const setFocus = (group: string | undefined) => set({ group });
   const auto = useQuery({ ...autoTripLineQuery(day.day), enabled: showsAuto(view) });
-  const segments = viewSegments(ids, view, auto.data);
-  const editDraft = (draft: GapDraft) => setView({ kind: "hand", draft });
+  const segments = viewSegments(ids, view, auto.data, line);
   const placeAreas = useDayPlaceAreas(day.photos);
   const shownDraft = stripDraft(view, day.photos, segments, line);
+  const editDraft = (draft: GapDraft) => setView(editedView(view, shownDraft, draft));
   return (
     <Card>
       <CardHeader>
@@ -327,7 +356,12 @@ interface DayActionsProps {
   ids: number[];
   view: EditorView;
   setView: (view: EditorView) => void;
-  auto: { data?: TripLine; isFetching: boolean; error: Error | null };
+  auto: {
+    data?: TripLine;
+    isFetching: boolean;
+    error: Error | null;
+    refetch: () => Promise<unknown>;
+  };
   segments: TripSegment[];
   /** The photo order moved into by hand, to save with the line; none while it's as taken. */
   order?: number[];
@@ -363,6 +397,12 @@ function DayActions(props: DayActionsProps) {
           { onSuccess: () => setView({ kind: "auto" }) },
         )
       }
+      onUpdateAuto={() =>
+        save.mutate(
+          { ...base, auto: true, segments: [], ...keptStops(view, saved), ...(order && { order }) },
+          { onSuccess: () => void auto.refetch().then(() => setView({ kind: "auto" })) },
+        )
+      }
       onRemove={() => {
         const stops = keptStops(view, saved);
         const done = { onSuccess: () => setView({ kind: "none" }) };
@@ -373,7 +413,7 @@ function DayActions(props: DayActionsProps) {
       onEditOwn={() =>
         setView({
           kind: "hand",
-          draft: { ...draftOf(ids, auto.data?.segments ?? []), ...lineStops(saved) },
+          draft: { ...draftOf(ids, auto.data?.segments ?? []), ...keptStops(view, saved) },
         })
       }
       setView={setView}

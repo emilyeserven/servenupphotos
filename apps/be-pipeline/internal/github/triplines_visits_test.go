@@ -49,8 +49,8 @@ func TestTripLineVisitsOnRoute(t *testing.T) {
 		t.Errorf("saved = %s", saved.Data)
 	}
 	auto := TripLine{ID: "2026-09-23", Auto: true, Visits: []TripVisit{visit}}
-	if _, err := c.SaveTripLine(t.Context(), placesGH, auto); err != nil {
-		t.Errorf("auto line with a stop after one of its photos: error = %v", err)
+	if got, err := c.SaveTripLine(t.Context(), placesGH, auto); err != nil || !strings.Contains(string(got.Data), `"visit": 0`) {
+		t.Errorf("auto line with a stop after one of its photos = %s, %v, want it routed through the stop", got.Data, err)
 	}
 	stray := 99
 	for name, change := range map[string]func(l *TripLine){

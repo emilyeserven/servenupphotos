@@ -115,6 +115,11 @@ A file with `"auto": true` keeps it on: it's worked out again at every Commit, s
 the line. Its `segments` hold the line as it was last worked out: when it's turned on, and again at each Commit when
 the photos draw it differently (`refreshAutoLines`), so the file and `TRIPLINES.json` show it as drawn.
 
+The automatic line passes through the day's [trip stops](#trip-stops) put on the route the way a line drawn by hand
+does: a stop after a photo the line walks on from becomes a via spot with `visit` on that walk (`withStopVias` in
+`triplines_auto_stops.go`, and the same in the editor's `lib/trip-stops-kept.ts`). A stop after a walk's last photo,
+or on a hop or drive, stays a pin.
+
 > **Frontend analogy:** the segments are a cached copy of a derived value, like persisting a `useMemo` result next to
 > its inputs and refreshing it whenever they change.
 
@@ -172,8 +177,11 @@ highlights its dot.
 - By hand, each gap between two photos is a menu: **Keep walking**, **Break** (the line stops, and starts again at the
   next photo), or a hop. An arrow marks each photo a line starts at and a flag each one it ends at (not a pin, since every photo in the strip has an exact spot; ones without go in [areas](#areas) instead). **Starts from** and
   **Ends at** set a spot with no photo by clicking the map, with a label such as "Hotel". **Save route** saves it.
-- An automatic day shows the line as the next Commit would draw it, with **Edit as my own** and **Turn off automatic
-  line**.
+- An automatic day shows the line as the next Commit would draw it, with **Update automatic line**, **Edit as my own**
+  and **Turn off automatic line**. Putting trip stops on the route, moving them or taking them off (in the strip or on
+  Trip Stops) keeps the line automatic, with a note that they aren't saved yet; any other change, such as a gap or the
+  photo order, starts a line by hand. **Update automatic line** saves the line again as the day's photos and stops
+  draw it now, so photos added since show without waiting for Commit.
 - Changing what kind of line a day has never loses its trip stops or areas. **Turn on automatic line**, **Edit as my
   own** and **Turn off automatic line** carry them over, and removing the route of a day with stops keeps them as a line
   with no segments, marked `"planned": true` like a [planned day](#planned-days), which opens with no line drawn and its
