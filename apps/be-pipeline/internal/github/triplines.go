@@ -174,6 +174,9 @@ func (c *Client) checkedTripLine(ctx context.Context, gh settings.GitHub, line T
 	if perr := checkTripPhotos(line, spots); perr != nil {
 		return line, spots, perr
 	}
+	if perr := checkVisitPhotos(line, spots); perr != nil {
+		return line, spots, perr
+	}
 	return line, spots, checkFencePhotos(line, w.photoDays())
 }
 

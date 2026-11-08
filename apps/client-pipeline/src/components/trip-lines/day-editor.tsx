@@ -23,6 +23,7 @@ import { useTripDaySearch } from "@/lib/trip-lines-search";
 import { isAreaPick, withAreaEnd } from "@/lib/trip-wander";
 import { MapTools, type MapPick } from "@/components/trip-lines/route-tools";
 import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
+import { hasStops, keptStops, type KeptStops, lineStops } from "@/lib/trip-stops-kept";
 
 /**
  * What the editor shows first: the saved line by hand, the automatic line, or nothing yet. A day
@@ -30,7 +31,16 @@ import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
  */
 function initialView(ids: number[], line: TripLine | undefined): EditorView {
   if (!line) return { kind: "none" };
-  if (line.auto) return { kind: "auto" };
+  return line.auto ? { kind: "auto" } : handView(ids, line);
+}
+
+/**
+ * A line saved by hand as the editor starts it. One with trip stops and no route (planned ahead,
+ * or with its route removed) shows no line while its day has photos, its stops kept; with no
+ * photos yet, it's a draft to add stops to.
+ */
+function handView(ids: number[], line: TripLine): EditorView {
+  if (line.planned && ids.length > 0) return { kind: "none" };
   const extras = { visits: line.visits, fences: line.fences, order: line.order };
   const drawn = line.planned ? walkingDraft(ids) : draftOf(ids, line.segments);
   return { kind: "hand", draft: { ...drawn, ...extras } };
@@ -62,10 +72,18 @@ function viewSegments(ids: number[], view: EditorView, auto: TripLine | undefine
  * with no line yet) grouped by place, so the groups show before drawing by hand. Changing it starts
  * a hand-drawn line from it.
  */
-function stripDraft(view: EditorView, photos: TripPhoto[], segments: TripSegment[]): GapDraft {
+function stripDraft(
+  view: EditorView,
+  photos: TripPhoto[],
+  segments: TripSegment[],
+  saved: TripLine | undefined,
+): GapDraft {
   if (view.kind === "hand") return view.draft;
   const ids = photos.map((p) => p.id);
-  const drawn = segments.length > 0 ? draftOf(ids, segments) : walkingDraft(ids);
+  const drawn = {
+    ...(segments.length > 0 ? draftOf(ids, segments) : walkingDraft(ids)),
+    ...lineStops(saved),
+  };
   return drawn.groups === undefined ? { ...drawn, ...placeGroups(photos) } : drawn;
 }
 
@@ -138,7 +156,7 @@ export function DayEditor({ day: taken, line, part }: DayEditorProps) {
   const segments = viewSegments(ids, view, auto.data);
   const editDraft = (draft: GapDraft) => setView({ kind: "hand", draft });
   const placeAreas = useDayPlaceAreas(day.photos);
-  const shownDraft = stripDraft(view, day.photos, segments);
+  const shownDraft = stripDraft(view, day.photos, segments, line);
   return (
     <Card>
       <CardHeader>
@@ -211,7 +229,8 @@ function DayMap({ view, shown, ...props }: DayMapProps) {
       highlighted={highlighted}
       focus={focus}
       ends={endsOf(segments)}
-      fences={placeAreas}
+      visits={shown.visits}
+      fences={[...(shown.fences ?? []), ...placeAreas]}
     />
   );
 }
@@ -285,6 +304,11 @@ function HandMap(props: HandMapProps) {
   );
 }
 
+/** A line with its route removed and its trip stops kept: by hand, with nothing drawn. */
+function stopsOnly(): Pick<TripLine, "auto" | "planned" | "segments"> {
+  return { auto: false, planned: true, segments: [] };
+}
+
 /**
  * How a line drawn by hand is saved: by hand, and planned ahead while its day has no photos yet,
  * so its trip stops wait for them.
@@ -294,10 +318,8 @@ function plannedOf(ids: number[]): Pick<TripLine, "auto" | "planned"> {
 }
 
 /** The trip stops and areas in a hand-drawn view, as the line file lists them; none otherwise. */
-function extrasOf(view: EditorView): Pick<TripLine, "visits" | "fences"> {
-  if (view.kind !== "hand") return {};
-  const { visits = [], fences = [] } = view.draft;
-  return { ...(visits.length > 0 && { visits }), ...(fences.length > 0 && { fences }) };
+function extrasOf(view: EditorView): KeptStops {
+  return view.kind === "hand" ? lineStops(view.draft) : {};
 }
 
 interface DayActionsProps {
@@ -337,12 +359,23 @@ function DayActions(props: DayActionsProps) {
       }
       onTurnOnAuto={() =>
         save.mutate(
-          { ...base, auto: true, segments: [] },
+          { ...base, auto: true, segments: [], ...keptStops(view, saved) },
           { onSuccess: () => setView({ kind: "auto" }) },
         )
       }
-      onRemove={() => remove.mutate(day.day, { onSuccess: () => setView({ kind: "none" }) })}
-      onEditOwn={() => setView({ kind: "hand", draft: draftOf(ids, auto.data?.segments ?? []) })}
+      onRemove={() => {
+        const stops = keptStops(view, saved);
+        const done = { onSuccess: () => setView({ kind: "none" }) };
+        // With trip stops, the route goes but they stay, as a line with none drawn.
+        if (hasStops(stops)) save.mutate({ ...base, ...stopsOnly(), ...stops }, done);
+        else remove.mutate(day.day, done);
+      }}
+      onEditOwn={() =>
+        setView({
+          kind: "hand",
+          draft: { ...draftOf(ids, auto.data?.segments ?? []), ...lineStops(saved) },
+        })
+      }
       setView={setView}
       ids={ids}
     />

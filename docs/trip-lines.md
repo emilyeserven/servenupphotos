@@ -170,10 +170,14 @@ highlights its dot.
   from one walk through every photo. From the preview, **Turn on automatic line** saves `{ "auto": true }`, and **Edit as
   my own** copies it into the photo strip to change by hand.
 - By hand, each gap between two photos is a menu: **Keep walking**, **Break** (the line stops, and starts again at the
-  next photo), or a hop. A pin marks each photo a line starts at and a flag each one it ends at. **Starts from** and
+  next photo), or a hop. An arrow marks each photo a line starts at and a flag each one it ends at (not a pin, since every photo in the strip has an exact spot; ones without go in [areas](#areas) instead). **Starts from** and
   **Ends at** set a spot with no photo by clicking the map, with a label such as "Hotel". **Save route** saves it.
 - An automatic day shows the line as the next Commit would draw it, with **Edit as my own** and **Turn off automatic
   line**.
+- Changing what kind of line a day has never loses its trip stops or areas. **Turn on automatic line**, **Edit as my
+  own** and **Turn off automatic line** carry them over, and removing the route of a day with stops keeps them as a line
+  with no segments, marked `"planned": true` like a [planned day](#planned-days), which opens with no line drawn and its
+  stops still on the map. A day with no stops or areas is removed outright.
 
 ### Planned days
 
@@ -243,8 +247,9 @@ two photos, its name shown on hover, with the way between the two photos shown o
 route (it stops at the first and last gap), and a cross that takes it off the route again. A place not on the route
 is a pin only. A place put after a break or after the last
 photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
-time, so moving or removing the place keeps the line in step; the backend checks that `after` is a photo on the line
-and that every `visit` names a place the day has.
+time, so moving or removing the place keeps the line in step; the backend checks that `after` is one of the day's
+photos with an exact spot (not necessarily on a drawn segment, so a stop can follow a photo on an automatic line or at
+a break) and that every `visit` names a place the day has.
 
 > **Frontend analogy:** the via spot is derived state, like a `useMemo` over `visits`: `visits` is the source of
 > truth, and the saved via spot is only written out so the portfolio and the router don't need to know about places.

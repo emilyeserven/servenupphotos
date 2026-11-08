@@ -54,20 +54,24 @@ func validVisits(visits []TripVisit, segments []TripSegment) *PublishError {
 		if perr := validVisit(&visits[i], i+1); perr != nil {
 			return perr
 		}
-		if !visitPlaced(visits[i].After, segments) {
-			return publishErr(http.StatusBadRequest, "Place visited %d comes after a photo that isn't on the line.", i+1)
-		}
 	}
 	return validViaVisits(segments, len(visits))
 }
 
-// visitPlaced reports whether a visit after after has that photo on the line,
-// or isn't on the route (nil).
-func visitPlaced(after *int, segments []TripSegment) bool {
-	if after == nil {
-		return true
+// checkVisitPhotos fails when a trip stop comes after a photo that isn't
+// one of line's day's photos with an exact spot. The photo needn't be on a
+// drawn segment: a stop can follow a photo at a break, or on an automatic or
+// planned line.
+func checkVisitPhotos(line TripLine, spots map[int]tripSpot) *PublishError {
+	for i, v := range line.Visits {
+		if v.After == nil {
+			continue
+		}
+		if spot, ok := spots[*v.After]; !ok || spot.Day != line.Day {
+			return publishErr(http.StatusBadRequest, "Trip stop %d comes after photo %d, which isn't one of this day's photos with an exact spot.", i+1, *v.After)
+		}
 	}
-	return slices.ContainsFunc(segments, func(s TripSegment) bool { return slices.Contains(s.Photos, *after) })
+	return nil
 }
 
 // validViaVisits fails when a via spot stands for a trip stop the day
@@ -88,16 +92,16 @@ func validViaVisits(segments []TripSegment, n int) *PublishError {
 func validVisit(v *TripVisit, n int) *PublishError {
 	v.Name, v.Note, v.Link, v.Place = strings.TrimSpace(v.Name), strings.TrimSpace(v.Note), strings.TrimSpace(v.Link), strings.TrimSpace(v.Place)
 	if v.Name == "" || utf8.RuneCountInString(v.Name) > maxEntryTextLength {
-		return publishErr(http.StatusBadRequest, "Place visited %d needs a name of up to %d characters.", n, maxEntryTextLength)
+		return publishErr(http.StatusBadRequest, "Trip stop %d needs a name of up to %d characters.", n, maxEntryTextLength)
 	}
 	if !slices.Contains(visitKinds, v.Kind) {
-		return publishErr(http.StatusBadRequest, "Place visited %d: pick what sort of place it is (%s).", n, strings.Join(visitKinds, ", "))
+		return publishErr(http.StatusBadRequest, "Trip stop %d: pick what sort of place it is (%s).", n, strings.Join(visitKinds, ", "))
 	}
 	if v.Latitude < -90 || v.Latitude > 90 || v.Longitude < -180 || v.Longitude > 180 {
-		return publishErr(http.StatusBadRequest, "Place visited %d: its latitude must be from -90 to 90 and its longitude from -180 to 180.", n)
+		return publishErr(http.StatusBadRequest, "Trip stop %d: its latitude must be from -90 to 90 and its longitude from -180 to 180.", n)
 	}
 	if utf8.RuneCountInString(v.Note) > maxNoteLength {
-		return publishErr(http.StatusBadRequest, "Place visited %d: keep its note to %d characters.", n, maxNoteLength)
+		return publishErr(http.StatusBadRequest, "Trip stop %d: keep its note to %d characters.", n, maxNoteLength)
 	}
 	if perr := validVisitPhotos(v.Photos, n); perr != nil {
 		return perr
@@ -112,12 +116,12 @@ const maxVisitPhotos = 50
 // photos, or one twice.
 func validVisitPhotos(photos []int, n int) *PublishError {
 	if len(photos) > maxVisitPhotos {
-		return publishErr(http.StatusBadRequest, "Place visited %d: keep it to %d photos.", n, maxVisitPhotos)
+		return publishErr(http.StatusBadRequest, "Trip stop %d: keep it to %d photos.", n, maxVisitPhotos)
 	}
 	seen := map[int]bool{}
 	for _, id := range photos {
 		if seen[id] {
-			return publishErr(http.StatusBadRequest, "Place visited %d has photo %d twice.", n, id)
+			return publishErr(http.StatusBadRequest, "Trip stop %d has photo %d twice.", n, id)
 		}
 		seen[id] = true
 	}
@@ -131,7 +135,7 @@ func validLink(link string, n int) *PublishError {
 	}
 	u, err := url.Parse(link)
 	if err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Host == "" || len(link) > maxLinkLength {
-		return publishErr(http.StatusBadRequest, "Place visited %d: its map link should be a web address, such as https://maps.app.goo.gl/….", n)
+		return publishErr(http.StatusBadRequest, "Trip stop %d: its map link should be a web address, such as https://maps.app.goo.gl/….", n)
 	}
 	return nil
 }
