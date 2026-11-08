@@ -77,6 +77,14 @@ Every album has a **Remove** button (a bin on the board's cards), which asks fir
 stage and notes. Folders it leaves empty stay. An album read from Lightroom comes back the next time you import a
 list that still has it, so remove it in Lightroom too; the question says so.
 
+## Deleting folders
+
+Every folder in the tree has a bin on the right of its row that deletes it, with every folder and album inside it
+(`removeFolder` in `lib/lightroom-tree.ts`). It asks first, saying how many albums go with it, counted in the whole
+list even while a search shows fewer. Like a removed album, albums read from Lightroom come back the next time you
+import a list that still has them, so delete the folder in Lightroom too; the question says so when the folder holds
+any. The _No Parent_ group isn't a folder and has no bin.
+
 ## Searching
 
 The **Search** box above the tree or board shows only the albums with the typed text in their name, their folder

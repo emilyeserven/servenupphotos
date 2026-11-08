@@ -55,6 +55,27 @@ export function removeAlbum(items: LightroomItem[], path: string): LightroomItem
   });
 }
 
+/** The tree without the folder at a path, and everything inside it. */
+export function removeFolder(items: LightroomItem[], path: string): LightroomItem[] {
+  return items.flatMap((item): LightroomItem[] => {
+    if (item.kind === "album") return [item];
+    if (item.path === path) return [];
+    return [{ ...item, children: removeFolder(item.children, path) }];
+  });
+}
+
+/** Every folder in the tree, outer ones before the ones inside them. */
+function foldersIn(items: LightroomItem[]): LightroomFolder[] {
+  return items.flatMap((item) =>
+    item.kind === "folder" ? [item, ...foldersIn(item.children)] : [],
+  );
+}
+
+/** The folder at a path, anywhere in the tree. */
+export function findFolder(items: LightroomItem[], path: string): LightroomFolder | undefined {
+  return foldersIn(items).find((folder) => folder.path === path);
+}
+
 /** Every album in the tree, from top to bottom. */
 function albumsIn(items: LightroomItem[]): LightroomAlbum[] {
   return items.flatMap((item) => (item.kind === "album" ? [item] : albumsIn(item.children)));
