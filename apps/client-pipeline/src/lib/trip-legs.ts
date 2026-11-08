@@ -1,5 +1,5 @@
 import { eachDayOfInterval, format, parseISO } from "date-fns";
-import type { TripLegEnd } from "@/api/trips";
+import type { TripLeg, TripLegEnd } from "@/api/trips";
 import type { TripDay, TripPhoto } from "@/lib/trip-days";
 
 /** Every day from start to end, both included, such as "2026-09-20"; none when they're backwards. */
@@ -64,4 +64,44 @@ export function parsePosition(text: string): Position | undefined {
   if (parts.length !== 2 || !Number.isFinite(latitude) || !Number.isFinite(longitude))
     return undefined;
   return { latitude: latitude!, longitude: longitude! };
+}
+
+/** A time after every photo's, for an end at the close of its day. */
+const DAY_END = "~";
+
+/**
+ * When a leg's end happens, for sorting: its day, then the time its photo was taken. An end at a
+ * spot with no photo is taken as the day's last moment where it leaves and its first where it
+ * arrives, as the day's last and first photos are when no photo is picked.
+ */
+function endTime(end: TripLegEnd, days: Map<string, TripDay>, last: boolean): string {
+  return `${end.day} ${end.spot ? spotTime(last) : photoTime(endPhoto(end, days, last))}`;
+}
+
+/** When an end at a spot happens on its day: its close where it leaves, its start where it arrives. */
+function spotTime(last: boolean): string {
+  return last ? DAY_END : "";
+}
+
+/** When the photo was taken, for sorting; nothing without one. */
+function photoTime(photo: TripPhoto | undefined): string {
+  return photo?.taken ?? "";
+}
+
+/** When the leg leaves and arrives, for sorting. */
+function legTimes(leg: TripLeg, days: Map<string, TripDay>): [string, string] {
+  return [endTime(leg.from, days, true), endTime(leg.to, days, false)];
+}
+
+/**
+ * The legs in the order they happen in the Trip: by the day and time each leaves, then arrives.
+ * Legs that can't be told apart keep their order.
+ */
+export function legsInOrder(legs: TripLeg[], days: Map<string, TripDay>): TripLeg[] {
+  const times = new Map(legs.map((leg) => [leg, legTimes(leg, days)]));
+  return legs.toSorted((a, b) => {
+    const [aFrom, aTo] = times.get(a)!;
+    const [bFrom, bTo] = times.get(b)!;
+    return aFrom.localeCompare(bFrom) || aTo.localeCompare(bTo);
+  });
 }

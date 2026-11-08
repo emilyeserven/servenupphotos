@@ -120,7 +120,11 @@ how many legs it has. Clicking one opens its own page, `/trip-lines/trips/<id>` 
 - **Days and legs** (`components/trips/day-legs.tsx`): every day of the Trip, first to last, each linking to its Route
   page when it has a route to mark. Under each day are the legs that **leave** it, edited in place, and **Add a leg
   from this day**; a day lists the legs that **arrive** on it too, such as "Arrives by Flight (leg 1, from Tue, Sep
-  22, 2026)". A day can have any number of legs, and a leg can arrive the same day it left.
+  22, 2026)". A day can have any number of legs, and a leg can arrive the same day it left. The legs are kept in the order
+  they happen, so their numbers follow the Trip: by the day each leaves, then the time of the photo it leaves from (a
+  spot with no photo counts as the end of its day, as the day's last photo would), then when it arrives
+  (`legsInOrder` in `lib/trip-legs.ts`). Opening a Trip puts its legs in that order, and changing a leg's day or photo
+  moves it to its place.
 
 Saving a new Trip moves to its page; removing one goes back to the tab. An old link to `/timeline-labels` or `/trips`
 opens the Trips tab, and one to a Trip on the tab (`/trip-lines?tab=trips&trip=<id>`) opens that Trip's page.

@@ -18,7 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { TripLine } from "@/api/trip-lines";
 import { TripMap } from "@/components/trips/trip-map";
 import type { TripDay } from "@/lib/trip-days";
-import { datesBetween } from "@/lib/trip-legs";
+import { datesBetween, legsInOrder } from "@/lib/trip-legs";
 
 interface TripEditorProps {
   /** The Trip as saved, or a new one with no ID yet. */
@@ -56,7 +56,7 @@ function Covers({ trip, countPhotos }: Pick<TripEditorProps, "trip" | "countPhot
 /** A Trip's name, days and legs, edited as a draft and saved as a change waiting for Commit. */
 export function TripEditor(props: TripEditorProps) {
   const { trip, days } = props;
-  const [typed, setDraft] = useState(trip);
+  const [typed, setDraft] = useState(() => ({ ...trip, legs: legsInOrder(trip.legs, days) }));
   const draft = withDays(typed);
   const dates = datesBetween(draft.start, draft.end);
   const mapDays = dates.flatMap((d) => days.get(d) ?? []);
@@ -91,7 +91,7 @@ export function TripEditor(props: TripEditorProps) {
               dates={dates}
               legs={typed.legs}
               days={days}
-              onChange={(legs) => setDraft({ ...typed, legs })}
+              onChange={(legs) => setDraft({ ...typed, legs: legsInOrder(legs, days) })}
             />
           )}
           <TripActions
