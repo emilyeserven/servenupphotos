@@ -872,7 +872,7 @@
       "properties": {
         "day": "2026-10-25",
         "mode": "walk",
-        "auto": true,
+        "auto": false,
         "photos": [400, 401, 404, 402, 403],
         "km": 3.9
       }
@@ -884,13 +884,41 @@
         "coordinates": [
           [-122.5117, 37.77736111111111],
           [-122.5117, 37.77736111111111],
-          [-122.5117, 37.77736111111111],
-          [-122.5117, 37.77736111111111],
-          [-122.5117, 37.77736111111111],
+          [-122.5117, 37.77736111111111]
+        ]
+      },
+      "properties": {
+        "day": "2026-10-25",
+        "mode": "walk",
+        "auto": false,
+        "photos": [421, 422, 423],
+        "km": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [-122.51010041302268, 37.775441742830566],
           [-122.51026944444445, 37.775083333333335],
           [-122.51099947198733, 37.77524728667587],
-          [-122.5114715553275, 37.77486782781847],
+          [-122.5114715553275, 37.77486782781847]
+        ]
+      },
+      "properties": {
+        "day": "2026-10-25",
+        "mode": "walk",
+        "auto": false,
+        "photos": [430, 431, 432, 433],
+        "km": 0.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [-122.51157812845044, 37.773509336730626],
           [-122.51014740153771, 37.773351570312826]
         ]
@@ -898,9 +926,9 @@
       "properties": {
         "day": "2026-10-25",
         "mode": "walk",
-        "auto": true,
-        "photos": [421, 422, 423, 425, 428, 430, 431, 432, 433, 435, 436],
-        "km": 0.7
+        "auto": false,
+        "photos": [435, 436],
+        "km": 0.1
       }
     },
     {
@@ -909,7 +937,22 @@
         "type": "LineString",
         "coordinates": [
           [-122.40382777777778, 37.789763888888885],
-          [-122.40382777777778, 37.789763888888885],
+          [-122.40382777777778, 37.789763888888885]
+        ]
+      },
+      "properties": {
+        "day": "2026-10-25",
+        "mode": "walk",
+        "auto": false,
+        "photos": [438, 467],
+        "km": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [-122.40543981982262, 37.790656104270134],
           [-122.40543981982262, 37.790656104270134]
         ]
@@ -917,9 +960,35 @@
       "properties": {
         "day": "2026-10-25",
         "mode": "walk",
-        "auto": true,
-        "photos": [438, 467, 441, 442],
-        "km": 0.2
+        "auto": false,
+        "photos": [441, 442],
+        "km": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.50996450392321, 37.774521520769476]
+      },
+      "properties": {
+        "feature": "visit",
+        "day": "2026-10-25",
+        "name": "Ocean Beach Cafe",
+        "kind": "cafe"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.40537581718577, 37.796514716300806]
+      },
+      "properties": {
+        "feature": "visit",
+        "day": "2026-10-25",
+        "name": "House of Xian Dumpling",
+        "kind": "restaurant"
       }
     },
     {
@@ -1516,6 +1585,129 @@
         "auto": false,
         "photos": [472, 474, 476, 477, 478, 479, 480],
         "km": 0.6
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [129.05113611111113, 35.116733333333336],
+          [130.9260748757786, 33.94779916565636]
+        ]
+      },
+      "properties": {
+        "day": "2026-09-21",
+        "mode": "ferry",
+        "trip": "korea-2026-09-12",
+        "arrive": "2026-09-22",
+        "auto": false,
+        "photos": [327],
+        "km": 215.4,
+        "end": "Shimonoseki International Port"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [130.9260748757786, 33.94779916565636],
+          [131.41039798268122, 34.416983070194384]
+        ]
+      },
+      "properties": {
+        "day": "2026-09-22",
+        "mode": "train",
+        "trip": "korea-2026-09-12",
+        "arrive": "2026-09-22",
+        "auto": false,
+        "photos": [],
+        "km": 68.6,
+        "start": "Shimonoseki International Port",
+        "end": "Higashi Hagi Station"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [129.032508, 35.102908],
+          [129.036753, 35.107819]
+        ]
+      },
+      "properties": {
+        "day": "2026-09-20",
+        "mode": "train",
+        "trip": "korea-2026-09-12",
+        "arrive": "2026-09-21",
+        "auto": false,
+        "photos": [],
+        "km": 0.7
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [131.41039798268122, 34.416983070194384],
+          [133.0639064250506, 35.46400325739574]
+        ]
+      },
+      "properties": {
+        "day": "2026-09-25",
+        "mode": "train",
+        "trip": "korea-2026-09-12",
+        "arrive": "2026-09-25",
+        "auto": false,
+        "photos": [],
+        "km": 190.4,
+        "start": "Higashi Hagi Station",
+        "end": "Matsue Station"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [135.17828548269063, 34.67952389576481],
+          [135.24366453381782, 34.43594453442068]
+        ]
+      },
+      "properties": {
+        "day": "2026-10-01",
+        "mode": "train",
+        "trip": "korea-2026-09-12",
+        "arrive": "2026-10-01",
+        "auto": false,
+        "photos": [],
+        "km": 27.7,
+        "start": "Kobe Station",
+        "end": "Kansai International Airport Station"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [133.0639064250506, 35.46400325739574],
+          [135.17828548269063, 34.67952389576481]
+        ]
+      },
+      "properties": {
+        "day": "2026-09-28",
+        "mode": "train",
+        "trip": "korea-2026-09-12",
+        "arrive": "2026-09-28",
+        "auto": false,
+        "photos": [],
+        "km": 211.3,
+        "start": "Matsue Station",
+        "end": "Kobe Station"
       }
     }
   ]

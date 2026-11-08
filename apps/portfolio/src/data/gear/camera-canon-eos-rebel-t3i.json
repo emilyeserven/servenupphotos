@@ -2,13 +2,13 @@
   "id": "camera-canon-eos-rebel-t3i",
   "kind": "camera",
   "name": "Canon EOS REBEL T3i",
-  "image": "https://cdn.servenupphotos.net/gear/be3f46b2e5fb-canon-t3i.webp",
+  "image": "https://cdn.servenupphotos.net/gear/b805ef8fcf2d-canon-t3i.webp",
   "original": "https://cdn.servenupphotos.net/gear/originals/c4dbc8462fe4-canon-t3i.jpg",
   "crop": {
-    "x": -0.01429808256017051,
-    "y": -0.23124349146152512,
-    "width": 1.028596165120341,
-    "height": 1.467248887684955,
+    "x": 0.07368255411602154,
+    "y": -0.10574283758162839,
+    "width": 0.8526348917679569,
+    "height": 1.2162475799251615,
     "fill": "white"
   },
   "subject": {
