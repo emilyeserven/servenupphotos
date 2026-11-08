@@ -42,16 +42,16 @@ function walkLayer(preview: boolean): LayerProps {
   };
 }
 
-/** A drive, in long light blue dashes like the portfolio's map. */
+/** A drive, a solid light blue line like the portfolio's map. */
 function driveLayer(dark: boolean): LayerProps {
   return {
     id: "trip-drive",
     type: "line",
     filter: ["==", ["get", "mode"], "car"],
+    layout: { "line-cap": "round", "line-join": "round" },
     paint: {
       "line-color": tripColors(dark).drive,
       "line-width": 3,
-      "line-dasharray": [4, 2],
       "line-opacity": opacity(1),
       "line-offset": LANE_OFFSET,
     },

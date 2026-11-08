@@ -123,7 +123,7 @@ draws them (`lib/trip-lines-map.ts`):
 
 - Walks are solid blue (lighter in dark mode).
 - A hop along the bus, subway or train line it rode is solid in that line's color.
-- A drive (`car`, such as a big jump the automatic line marks) is light blue in long dashes.
+- A drive (`car`, such as a big jump the automatic line marks) is a solid light blue line, next to walks' darker blue. Only hops by public transit with no line picked are dashed.
 - Where a line runs over an earlier one, such as walking a street one way and driving it back, the later one is
   drawn about 6 px to its side, in the next free lane, so both show. Lines are compared on a grid of about 30 m, and
   they overlap when at least 30% of the shorter one runs along the other (`lib/trip-lanes.ts`). The pipeline's
@@ -156,7 +156,7 @@ filters and the day filter change it:
   photos** opens a note on clicking a group: a click zooms in, and ⌘-click (Ctrl-click off Apple devices, read from the
   browser's user agent in `lib/platform.ts`) lists its photos in a grid (`components/map-legend-help.tsx`).
 - Then, under a divider, the trip lines of the photos' days when **Show trip lines** is on: **Walk**, **Bus, subway or
-  train** (a sample in the colors of the lines ridden), **Drive** (long dashes), **Ferry**, **Flight**, **Other trip** (dashed) and **Area**.
+  train** (a sample in the colors of the lines ridden), **Drive** (solid light blue), **Ferry**, **Flight**, **Other trip** (dashed) and **Area**.
   **Area** also shows while a place's area is shaded from **Places**.
 
 The samples use the same colors as the map in light and dark mode (`lib/map-theme.ts`). The **Key** button folds the

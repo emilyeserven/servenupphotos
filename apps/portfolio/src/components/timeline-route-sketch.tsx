@@ -146,10 +146,10 @@ export function SketchDrawing({
 
 type TripColors = ReturnType<typeof tripColors>;
 
-/** How a line is drawn, as on the Map: walks solid, drives in long light blue dashes, rides in their line's color, other hops dashed. */
+/** How a line is drawn, as on the Map: walks solid, drives solid light blue, rides in their line's color, other hops dashed. */
 function lineStyle(line: SketchLine, colors: TripColors) {
   if (line.mode === "walk") return { stroke: colors.walk, strokeWidth: 2 };
-  if (line.mode === "car") return { stroke: colors.drive, strokeWidth: 2, strokeDasharray: "5 2" };
+  if (line.mode === "car") return { stroke: colors.drive, strokeWidth: 2 };
   if (line.colour) return { stroke: line.colour, strokeWidth: 2 };
   return { stroke: colors.hop, strokeWidth: 1.5, strokeDasharray: "2 2" };
 }

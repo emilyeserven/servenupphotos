@@ -46,10 +46,11 @@ export function tripLineLayers(dark: boolean): LayerProps[] {
       id: "trip-drive",
       type: "line",
       filter: ["all", IS_LINE, ["==", ["get", "mode"], "car"]],
+      layout: round,
       paint: {
         "line-color": colors.drive,
         "line-width": 3,
-        "line-dasharray": [4, 2],
+        "line-opacity": 0.85,
         "line-offset": LANE_OFFSET,
       },
     },
