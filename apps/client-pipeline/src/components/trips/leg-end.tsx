@@ -3,12 +3,15 @@ import { useState } from "react";
 import type { TripLegEnd } from "@/api/trips";
 import { dayTitle } from "@/components/trip-lines/day-title";
 import { Input } from "@/components/ui/input";
-import { parsePosition } from "@/lib/trip-legs";
+import { StationSearch } from "@/components/trips/station-search";
+import { endSpot, parsePosition, ridesLegLine } from "@/lib/trip-legs";
 import type { TripPhoto } from "@/lib/trip-days";
 
 interface LegEndFieldProps {
   /** What the end is, such as "Leaves". */
   title: string;
+  /** How the leg was travelled, which picks whether its ends can be stations. */
+  mode: string;
   end: TripLegEnd;
   /** The Trip's days, which the end can be on. */
   dates: string[];
@@ -40,7 +43,7 @@ export function LegEndField(props: LegEndFieldProps) {
       </select>
       <WherePicker {...props} />
       {end.spot ? (
-        <SpotFields end={end} title={title} onChange={onChange} />
+        <StationOrSpot {...props} />
       ) : (
         <PhotoNote photo={photo} photoWord={props.photoWord} named={end.photo !== undefined} />
       )}
@@ -87,7 +90,7 @@ function WherePicker({ title, end, photo, photoWord, photos, onChange }: LegEndF
           {p.time} · {photoTitle(p)}
         </option>
       ))}
-      <option value={SPOT}>A spot with no photo</option>
+      <option value={SPOT}>A station or spot with no photo</option>
     </select>
   );
 }
@@ -114,6 +117,45 @@ function PhotoNote({ photo, photoWord, named }: PhotoNoteProps) {
     <p className="text-muted-foreground text-xs">
       The day's {photoWord}: {photoTitle(photo)} ({photo.time})
     </p>
+  );
+}
+
+/** Whether the spot has been put somewhere, rather than left at 0, 0. */
+function isPlaced(spot: TripLegEnd["spot"]): boolean {
+  return Boolean(spot?.latitude || spot?.longitude);
+}
+
+/**
+ * Where to look for the end's station: its spot once it has one, or else its day's photo; none for
+ * a leg that rides no line, or a day with neither.
+ */
+function searchNear(mode: string, end: TripLegEnd, photo: TripPhoto | undefined) {
+  if (!ridesLegLine(mode)) return undefined;
+  return endSpot(isPlaced(end.spot) ? end : { day: end.day }, photo);
+}
+
+/**
+ * An end at a spot with no photo: a station found by name for a train, bus or ferry, and the spot's
+ * label and position, which picking a station fills in.
+ */
+function StationOrSpot({ title, mode, end, photo, onChange }: LegEndFieldProps) {
+  const [picked, setPicked] = useState(0);
+  const near = searchNear(mode, end, photo);
+  return (
+    <>
+      {near && (
+        <StationSearch
+          title={title}
+          mode={mode}
+          near={near}
+          onPick={(spot) => {
+            onChange({ ...end, spot });
+            setPicked((n) => n + 1);
+          }}
+        />
+      )}
+      <SpotFields key={picked} end={end} title={title} onChange={onChange} />
+    </>
   );
 }
 

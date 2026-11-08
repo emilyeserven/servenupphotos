@@ -1,10 +1,12 @@
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 import { X } from "lucide-react";
+import type { Spot } from "@/api/transit";
 import type { LegMode, TripLeg } from "@/api/trips";
 import { LegEndField } from "@/components/trips/leg-end";
+import { LegRoute } from "@/components/trips/leg-route";
 import { Button } from "@/components/ui/button";
 import type { TripDay } from "@/lib/trip-days";
-import { dayPhotos, distanceKm, endPhoto, endPosition } from "@/lib/trip-legs";
+import { dayPhotos, distanceKm, endPhoto, endPosition, endSpot, withLegEnd } from "@/lib/trip-legs";
 
 /** The ways a leg can be travelled, as the menu lists them. */
 const LEG_MODES: { mode: LegMode; label: string }[] = [
@@ -25,10 +27,16 @@ interface LegRowProps {
   onRemove: () => void;
 }
 
-/** One leg of a Trip: how it was travelled, where it left and where it arrived. */
+/** Both ends' spots, once each has one. */
+function bothEnds(a: Spot | undefined, b: Spot | undefined): [Spot, Spot] | undefined {
+  return a && b ? [a, b] : undefined;
+}
+
+/** One leg of a Trip: how it was travelled, where it left and where it arrived, and the line ridden. */
 export function LegRow({ leg, n, dates, days, onChange, onRemove }: LegRowProps) {
   const fromPhoto = endPhoto(leg.from, days, true);
   const toPhoto = endPhoto(leg.to, days, false);
+  const ends = bothEnds(endSpot(leg.from, fromPhoto), endSpot(leg.to, toPhoto));
   return (
     <li className="flex flex-col gap-3 rounded-md border p-3">
       <div className="flex items-center gap-2">
@@ -59,23 +67,26 @@ export function LegRow({ leg, n, dates, days, onChange, onRemove }: LegRowProps)
       <div className="grid gap-4 sm:grid-cols-2">
         <LegEndField
           title="Leaves"
+          mode={leg.mode}
           end={leg.from}
           dates={dates}
           photo={fromPhoto}
           photoWord="last photo"
           photos={dayPhotos(days, leg.from.day)}
-          onChange={(from) => onChange({ ...leg, from })}
+          onChange={(from) => onChange(withLegEnd(leg, "from", from, days))}
         />
         <LegEndField
           title="Arrives"
+          mode={leg.mode}
           end={leg.to}
           dates={dates.filter((d) => d >= leg.from.day)}
           photo={toPhoto}
           photoWord="first photo"
           photos={dayPhotos(days, leg.to.day)}
-          onChange={(to) => onChange({ ...leg, to })}
+          onChange={(to) => onChange(withLegEnd(leg, "to", to, days))}
         />
       </div>
+      <LegRoute leg={leg} ends={ends} onChange={onChange} />
     </li>
   );
 }

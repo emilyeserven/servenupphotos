@@ -138,6 +138,11 @@ type element struct {
 	// Lat and Lon are a node's spot.
 	Lat float64 `json:"lat"`
 	Lon float64 `json:"lon"`
+	// Center is a way's or relation's middle, when asked for with "out center".
+	Center *struct {
+		Lat float64 `json:"lat"`
+		Lon float64 `json:"lon"`
+	} `json:"center"`
 }
 
 // member is one member of a route relation, with its geometry.

@@ -14,7 +14,7 @@ import { lineDays } from "@/lib/stale-trip-lines";
 import type { TripDay } from "@/lib/trip-days";
 import { type DayPart, DAY_PARTS } from "@/lib/trip-lines-search";
 import { cn } from "@/lib/utils";
-import { useCombinedData } from "@/stores/combined-data";
+import { useSessionData } from "@/hooks/use-session-data";
 
 /** What each of a day's pages is called in its tabs. */
 export const PART_LABELS: Record<DayPart, string> = {
@@ -51,7 +51,7 @@ export function TripDayPage() {
 
 /** The day once the photos and lines are read. */
 function DayData({ day }: { day: string }) {
-  const combined = useCombinedData();
+  const combined = useSessionData();
   if (combined.isPending) return <p>Reading the photos and trip lines…</p>;
   if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
   return <DayFound data={combined.data} day={day} />;

@@ -33,6 +33,37 @@ func (f *fakeFinder) Stops(_ context.Context, _ int64) ([]transit.Stop, error) {
 	return []transit.Stop{{Name: "Namba", Latitude: 34.66, Longitude: 135.5}}, f.err
 }
 
+func (f *fakeFinder) Stations(_ context.Context, mode, name string, near [2]float64) ([]transit.Station, error) {
+	f.mode, f.from = mode, near
+	if name == "" {
+		return nil, transit.ErrNoName
+	}
+	return []transit.Station{{Name: "博多", NameEn: "Hakata", Latitude: 33.59, Longitude: 130.42}}, f.err
+}
+
+func TestTransitStations(t *testing.T) {
+	f := &fakeFinder{}
+	cases := []struct {
+		url    string
+		status int
+		body   string
+	}{
+		{"/transit/stations?mode=train&q=Hakata&near=130.42,33.59", http.StatusOK, "Hakata"},
+		{"/transit/stations?mode=train&q=&near=130.42,33.59", http.StatusBadRequest, "station's name"},
+		{"/transit/stations?mode=train&q=Hakata", http.StatusBadRequest, "near"},
+	}
+	for _, c := range cases {
+		rec := httptest.NewRecorder()
+		transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, c.url, nil))
+		if rec.Code != c.status || !strings.Contains(rec.Body.String(), c.body) {
+			t.Errorf("%s: %d %s", c.url, rec.Code, rec.Body)
+		}
+	}
+	if f.mode != "train" || f.from != [2]float64{130.42, 33.59} {
+		t.Errorf("asked %s near %v", f.mode, f.from)
+	}
+}
+
 func transitMux(f *fakeFinder) *http.ServeMux {
 	mux := http.NewServeMux()
 	registerTripLineRoutes(mux, routeDeps{transit: f})

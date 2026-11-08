@@ -62,17 +62,35 @@ func legFeature(trip Trip, leg TripLeg, spots map[int]tripSpot) (tripLineFeature
 	if !ok1 || !ok2 {
 		return tripLineFeature{}, false
 	}
-	to = nearSide(from, to)
-	coords := [][2]float64{from, to}
-	if leg.Mode == ModeFlight {
-		coords = arc(from, to)
-	}
+	coords := legCoords(leg, from, nearSide(from, to))
+	name, ref, colour := lineProps(leg.Line)
 	props := tripLineProps{
 		Day: leg.From.Day, Arrive: leg.To.Day, Trip: trip.ID, Mode: leg.Mode,
-		Photos: legPhotos(fromPhoto, toPhoto), Km: lineKm([][2]float64{from, to}),
-		Start: fromLabel, End: toLabel,
+		Photos: legPhotos(fromPhoto, toPhoto), Km: lineKm(legKmCoords(leg, from, to)),
+		Start: fromLabel, End: toLabel, Line: name, Ref: ref, Colour: colour,
 	}
 	return tripLineFeature{Type: "Feature", Geometry: tripLineGeometry{Type: "LineString", Coordinates: coords}, Properties: props}, true
+}
+
+// legCoords are the points leg is drawn through from from to to: its line's
+// track when it has one, a gentle arc for a flight, or else straight.
+func legCoords(leg TripLeg, from, to [2]float64) [][2]float64 {
+	switch {
+	case len(leg.Path) >= 2:
+		return leg.Path
+	case leg.Mode == ModeFlight:
+		return arc(from, to)
+	}
+	return [][2]float64{from, to}
+}
+
+// legKmCoords are what leg's length is measured along: its track, or else
+// the straight line between its ends.
+func legKmCoords(leg TripLeg, from, to [2]float64) [][2]float64 {
+	if len(leg.Path) >= 2 {
+		return leg.Path
+	}
+	return [][2]float64{from, to}
 }
 
 // legPhotos are the photos a leg leaves from and arrives at, leaving out a

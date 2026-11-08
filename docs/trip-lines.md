@@ -444,7 +444,10 @@ and changing it back before saving brings it back. The walks to and from the sta
 doesn't route them.
 
 The page reads the day files from the [combined data store](combined-data-store.md)'s `TRIPLINES.json` with the
-changes since made over it, so a saved line shows at once.
+changes since made over it, so a saved line shows at once. It (and each Trip's page) waits until the changes waiting
+for Commit that the backend kept from before a reload are made over the lists too (`hooks/use-session-data.ts`), so the
+editors start from where the session left off rather than from the committed files, and don't miss changes that arrive
+a moment after the lists.
 
 The portfolio doesn't draw the lines yet; that's the next step.
 

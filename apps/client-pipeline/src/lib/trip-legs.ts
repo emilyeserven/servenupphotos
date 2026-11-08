@@ -105,3 +105,36 @@ export function legsInOrder(legs: TripLeg[], days: Map<string, TripDay>): TripLe
     return aFrom.localeCompare(bFrom) || aTo.localeCompare(bTo);
   });
 }
+
+/** Whether a leg of this mode can ride a line OpenStreetMap maps: a train, bus or ferry. */
+export function ridesLegLine(mode: string): boolean {
+  return mode === "train" || mode === "bus" || mode === "ferry";
+}
+
+/** A spot as [longitude, latitude]. */
+type LngLat = [number, number];
+
+/** Where an end is as [longitude, latitude]: its spot, or else its photo; undefined with neither. */
+export function endSpot(end: TripLegEnd, photo: TripPhoto | undefined): LngLat | undefined {
+  const at = endPosition(end, photo);
+  return at && [at.longitude, at.latitude];
+}
+
+/**
+ * The leg with one end changed. Moving where that end is drops the line's track picked for the old
+ * spots, as it no longer joins them; changing only a label keeps it.
+ */
+export function withLegEnd(
+  leg: TripLeg,
+  side: "from" | "to",
+  end: TripLegEnd,
+  days: Map<string, TripDay>,
+): TripLeg {
+  const last = side === "from";
+  const before = endSpot(leg[side], endPhoto(leg[side], days, last));
+  const after = endSpot(end, endPhoto(end, days, last));
+  const next = { ...leg, [side]: end };
+  if (String(before) === String(after)) return next;
+  const { line: _line, path: _path, ...straight } = next;
+  return straight;
+}

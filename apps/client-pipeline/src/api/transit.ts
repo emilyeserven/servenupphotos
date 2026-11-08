@@ -63,6 +63,40 @@ export function transitStopsQuery(id: number) {
   });
 }
 
+/** A station or stop found by name, as `GET /api/transit/stations` answers it. */
+export interface TransitStation {
+  /** Its name, such as "博多", and its English one when it has another, such as "Hakata". */
+  name: string;
+  nameEn?: string;
+  latitude: number;
+  longitude: number;
+  /** How far it is from the spot it was looked for near. */
+  km: number;
+}
+
+/** What a station search asks: the kind of line, the name typed, and a spot it's near. */
+export interface StationAsk {
+  mode: string;
+  name: string;
+  near: Spot;
+}
+
+/**
+ * The stations or stops of the kind whose name, in any language, has the name typed, within 30 km
+ * of the spot, nearest first, from OpenStreetMap through the Overpass API.
+ */
+export function transitStationsQuery({ mode, name, near }: StationAsk) {
+  return queryOptions({
+    queryKey: ["transit", "stations", mode, name, near],
+    queryFn: () =>
+      requestJson<TransitStation[]>(
+        `/api/transit/stations?${new URLSearchParams({ mode, q: name, near: near.join(",") })}`,
+      ),
+    retry: false,
+    staleTime: Infinity,
+  });
+}
+
 /** Line id's track between two spots, each point [longitude, latitude]. */
 export function fetchTrack(id: number, from: Spot, to: Spot): Promise<{ path: Spot[] }> {
   return requestJson<{ path: Spot[] }>(

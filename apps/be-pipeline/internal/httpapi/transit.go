@@ -18,6 +18,7 @@ type transitFinder interface {
 	Lines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
 	Track(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
 	Stops(ctx context.Context, id int64) ([]transit.Stop, error)
+	Stations(ctx context.Context, mode, name string, near [2]float64) ([]transit.Station, error)
 }
 
 // transitTimeout is how long one look-up may take, waiting its turn and trying
@@ -52,6 +53,38 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 			return
 		}
 		writeJSON(w, http.StatusOK, lines)
+	}
+}
+
+// handleTransitStations answers the ?mode= stations or stops ("train",
+// "subway", "bus" or "ferry") whose name contains ?q=, near ?near=,
+// "longitude,latitude", nearest first.
+func handleTransitStations(finder transitFinder) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		q := r.URL.Query()
+		near, ok := parseSpot(q.Get("near"))
+		if !ok {
+			writeError(w, http.StatusBadRequest, "Give near as longitude,latitude: a spot on the day the station is looked for on.")
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), transitTimeout)
+		defer cancel()
+		stations, err := finder.Stations(ctx, q.Get("mode"), q.Get("q"), near)
+		writeStations(w, stations, err)
+	}
+}
+
+// writeStations answers stations, or the error that kept them from being found.
+func writeStations(w http.ResponseWriter, stations []transit.Station, err error) {
+	switch {
+	case errors.Is(err, transit.ErrNoKind):
+		writeError(w, http.StatusBadRequest, "Stations can be looked up for a train, subway, bus or ferry.")
+	case errors.Is(err, transit.ErrNoName):
+		writeError(w, http.StatusBadRequest, "Type the station's name to look it up.")
+	case err != nil:
+		writeOverpassError(w, "look up stations", err)
+	default:
+		writeJSON(w, http.StatusOK, stations)
 	}
 }
 

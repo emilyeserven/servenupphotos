@@ -147,8 +147,11 @@ func viaAnchored(seg TripSegment, after *int) bool {
 }
 
 // roundPath is path with each coordinate rounded to 6 decimal places, about
-// 10 cm, so the files stay small.
+// 10 cm, so the files stay small; nil for none.
 func roundPath(path [][2]float64) [][2]float64 {
+	if len(path) == 0 {
+		return nil
+	}
 	out := make([][2]float64, len(path))
 	for i, p := range path {
 		out[i] = [2]float64{math.Round(p[0]*1e6) / 1e6, math.Round(p[1]*1e6) / 1e6}
