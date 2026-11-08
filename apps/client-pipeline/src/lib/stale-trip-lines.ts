@@ -3,7 +3,7 @@ import type { Place } from "@/api/places";
 import { type TripLine, tripLines } from "@/api/trip-lines";
 import { currentLists } from "@/lib/group-photos";
 import { shownPhotos } from "@/lib/place-seeds";
-import { type TripDay, tripDays } from "@/lib/trip-days";
+import { plannedDay, type TripDay, tripDays } from "@/lib/trip-days";
 
 /** A line marked by hand that no longer matches its day's photos. */
 export interface StaleTripLine {
@@ -21,7 +21,12 @@ function placesOf(data: CombinedData): Place[] {
 
 /** The days a trip line can be marked for, newest first, as the next Commit will have the photos. */
 export function lineDays(data: CombinedData): TripDay[] {
-  return tripDays(shownPhotos(data), placesOf(data));
+  const days = tripDays(shownPhotos(data), placesOf(data));
+  const known = new Set(days.map((d) => d.day));
+  const planned = [...tripLines(data).values()]
+    .filter((line) => line.planned && !known.has(line.day))
+    .map((line) => plannedDay(line.day));
+  return [...days, ...planned].toSorted((a, b) => b.day.localeCompare(a.day));
 }
 
 /** How many of ids aren't in other. */
@@ -54,7 +59,7 @@ function isStale({ missing, gone }: StaleTripLine): boolean {
 export function staleTripLines(data: CombinedData): StaleTripLine[] {
   const days = new Map(lineDays(data).map((d) => [d.day, d]));
   return [...tripLines(data).values()]
-    .filter((line) => !line.auto)
+    .filter((line) => !line.auto && !line.planned)
     .map((line) => staleness(line, days.get(line.day)))
     .filter(isStale)
     .toSorted((a, b) => b.day.localeCompare(a.day));

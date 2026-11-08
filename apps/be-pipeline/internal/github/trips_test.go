@@ -189,3 +189,14 @@ func TestLegLine(t *testing.T) {
 		t.Errorf("train leg feature = %+v", f)
 	}
 }
+
+func TestPlannedLine(t *testing.T) {
+	planned, perr := validTripLine(TripLine{ID: "2026-12-01", Planned: true, Visits: []TripVisit{{Name: "Ichiran", Kind: "restaurant", Latitude: 34.67, Longitude: 135.5}}})
+	if perr != nil || !planned.Planned || len(planned.Visits) != 1 {
+		t.Fatalf("planned day: %v, %+v", perr, planned)
+	}
+	drawn, perr := validTripLine(TripLine{ID: "2026-12-01", Planned: true, Segments: []TripSegment{{Mode: ModeWalk, Photos: []int{1, 2}}}})
+	if perr != nil || drawn.Planned {
+		t.Errorf("a line with segments stayed planned: %v, %+v", perr, drawn)
+	}
+}

@@ -121,8 +121,8 @@ the photos draw it differently (`refreshAutoLines`), so the file and `TRIPLINES.
 ## The page
 
 `/trip-lines` lists the days with two or more photos at two or more different exact spots, newest first, as cards. Each
-card has how many photos and spots the day has, whether its line is **Marked**, **Out of date**, **Automatic** or
-**None** (with a filter by each), and a small drawing of the line from its file, by hand or automatic: the line in
+card has how many photos and spots the day has, whether its line is **Marked**, **Out of date**, **Automatic**,
+**Planned** or **None** (with a filter by each), and a small drawing of the line from its file, by hand or automatic: the line in
 the map's colors and the photos as dots, drawn as SVG with no basemap so a long list stays quick. An automatic line
 saved before its segments were kept shows a note until it's saved again or the next Commit fills them in. **Out of date** (in red) is a line marked by hand
 that doesn't go through every photo of the day with an exact spot, such as photos added since, or goes through photos
@@ -174,6 +174,19 @@ highlights its dot.
   **Ends at** set a spot with no photo by clicking the map, with a label such as "Hotel". **Save route** saves it.
 - An automatic day shows the line as the next Commit would draw it, with **Edit as my own** and **Turn off automatic
   line**.
+
+### Planned days
+
+**Plan a day**, above the cards, picks a date before its photos are taken and opens its Trip Stops page, to add the
+[trip stops](#trip-stops) ahead, such as the restaurants booked for a day in Kyoto. Any day can be opened that way: a
+day without two or more photos at two or more exact spots says it's a planned day. Its map starts on the whole world
+until the first stop is added (by coordinate, or on the map), and saved places near its stops can be added from then
+on. Saving keeps it as a line with no segments, marked `"planned": true`, listed as **Planned** with how many stops it
+has. Once its photos are added, the day opens as walking through them with the stops kept (not put on the route yet),
+the way a line marked by hand starts; saving it then drops `planned`. A planned line is never **Out of date**.
+
+> **Frontend analogy:** a planned day is like a draft route created before its data loads: the page renders from the
+> saved stops alone, and the photos hydrate it once they exist, rather than the page waiting for them.
 
 ## Trip Stops
 

@@ -24,12 +24,16 @@ import { isAreaPick, withAreaEnd } from "@/lib/trip-wander";
 import { MapTools, type MapPick } from "@/components/trip-lines/route-tools";
 import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
 
-/** What the editor shows first: the saved line by hand, the automatic line, or nothing yet. */
+/**
+ * What the editor shows first: the saved line by hand, the automatic line, or nothing yet. A day
+ * planned before its photos starts as walking through any photos it has since, with its trip stops.
+ */
 function initialView(ids: number[], line: TripLine | undefined): EditorView {
   if (!line) return { kind: "none" };
   if (line.auto) return { kind: "auto" };
   const extras = { visits: line.visits, fences: line.fences, order: line.order };
-  return { kind: "hand", draft: { ...draftOf(ids, line.segments), ...extras } };
+  const drawn = line.planned ? walkingDraft(ids) : draftOf(ids, line.segments);
+  return { kind: "hand", draft: { ...drawn, ...extras } };
 }
 
 /** The view, with a hand-drawn draft that has no groups yet grouped by its photos' places. */
@@ -281,6 +285,14 @@ function HandMap(props: HandMapProps) {
   );
 }
 
+/**
+ * How a line drawn by hand is saved: by hand, and planned ahead while its day has no photos yet,
+ * so its trip stops wait for them.
+ */
+function plannedOf(ids: number[]): Pick<TripLine, "auto" | "planned"> {
+  return ids.length === 0 ? { auto: false, planned: true } : { auto: false };
+}
+
 /** The trip stops and areas in a hand-drawn view, as the line file lists them; none otherwise. */
 function extrasOf(view: EditorView): Pick<TripLine, "visits" | "fences"> {
   if (view.kind !== "hand") return {};
@@ -315,7 +327,13 @@ function DayActions(props: DayActionsProps) {
       save={save}
       remove={remove}
       onSaveHand={() =>
-        save.mutate({ ...base, auto: false, segments, ...extrasOf(view), ...(order && { order }) })
+        save.mutate({
+          ...base,
+          ...plannedOf(ids),
+          segments,
+          ...extrasOf(view),
+          ...(order && { order }),
+        })
       }
       onTurnOnAuto={() =>
         save.mutate(

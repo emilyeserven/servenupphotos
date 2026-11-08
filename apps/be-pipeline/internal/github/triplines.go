@@ -105,6 +105,10 @@ type TripLine struct {
 	// photos at every Commit (see autoSegments); Segments is then the line as
 	// it was drawn when saved or at the last Commit, for the pipeline to show.
 	Auto bool `json:"auto"`
+	// Planned is true for a day planned before its photos were taken, saved
+	// with the trip stops added ahead and no segments. It's dropped once the
+	// line is saved again with the day's photos on it.
+	Planned bool `json:"planned,omitempty"`
 	// Segments are the stretches of the day, in the order they happened.
 	Segments []TripSegment `json:"segments"`
 	// Visits are the places visited along the day's route, such as a
@@ -202,6 +206,7 @@ func validTripLine(line TripLine) (TripLine, *PublishError) {
 	if line.Auto || line.Segments == nil {
 		line.Segments = []TripSegment{}
 	}
+	line.Planned = line.Planned && !line.Auto && len(line.Segments) == 0
 	for i := range line.Segments {
 		seg, perr := validTripSegment(line.Segments[i], i+1)
 		if perr != nil {

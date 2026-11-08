@@ -12,6 +12,9 @@ export const Route = createFileRoute("/trip-lines/$day/$part")({
   validateSearch: parseTripDaySearch,
   // A page the day doesn't have opens its first, the photo order (or Trip Stops for an old Places link).
   beforeLoad: ({ params }) => {
+    // Something other than a day, such as a typo, goes back to the list of days.
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(params.day))
+      throw redirect({ to: "/trip-lines", replace: true });
     if (isDayPart(params.part)) return;
     throw redirect({
       to: "/trip-lines/$day/$part",

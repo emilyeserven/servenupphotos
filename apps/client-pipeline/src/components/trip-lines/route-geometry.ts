@@ -100,8 +100,15 @@ function walkBetween(
   ];
 }
 
-/** The corners around the points, as [west, south, east, north]. */
+/** The whole world, less the poles, for a map with nothing on it yet. */
+const WORLD: [number, number, number, number] = [-170, -60, 170, 75];
+
+/**
+ * The corners around the points, as [west, south, east, north]; the whole world with none, such
+ * as a day planned before its photos with no trip stops yet.
+ */
 export function pointsBounds(points: (TripPoint | TripPhoto)[]): [number, number, number, number] {
+  if (points.length === 0) return WORLD;
   const lngs = points.map((p) => p.longitude);
   const lats = points.map((p) => p.latitude);
   return [Math.min(...lngs), Math.min(...lats), Math.max(...lngs), Math.max(...lats)];

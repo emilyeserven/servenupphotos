@@ -3,6 +3,7 @@ import { tripLines } from "@/api/trip-lines";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { DayGrid } from "@/components/trip-lines/day-grid";
+import { PlanDay } from "@/components/trip-lines/plan-day";
 import { TripsPanel } from "@/components/trips/trips-panel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { lineDays, staleTripLines } from "@/lib/stale-trip-lines";
@@ -52,8 +53,18 @@ function DaysAndTrips({ data }: { data: CombinedData }) {
   );
 }
 
-/** Every day a line can be marked for, each linking to its pages. */
+/** Planning a day ahead, then every day a line can be marked for, each linking to its pages. */
 function DayCards({ data }: { data: CombinedData }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <PlanDay />
+      <DayList data={data} />
+    </div>
+  );
+}
+
+/** The days' cards, or a note when there are none yet. */
+function DayList({ data }: { data: CombinedData }) {
   const days = lineDays(data);
   if (days.length === 0) {
     return (

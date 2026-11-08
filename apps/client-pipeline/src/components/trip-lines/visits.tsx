@@ -57,11 +57,19 @@ export function Visits({ day, draft, onChange, picking, onPicking }: VisitsProps
           <MapPinPlus aria-hidden />
           {picking ? "Click the map where it is…" : "Add a stop on the map"}
         </Button>
-        <SavedPlacePicker day={day} onPick={(v) => onChange(withVisit(draft, v))} />
+        <SavedPlacePicker
+          spots={nearbySpots(day, draft)}
+          onPick={(v) => onChange(withVisit(draft, v))}
+        />
         <CoordinateAdder onAdd={(v) => onChange(withVisit(draft, v))} />
       </div>
     </div>
   );
+}
+
+/** The spots saved places are looked for near: the day's photos and its trip stops. */
+function nearbySpots(day: TripDay, draft: GapDraft): TripPoint[] {
+  return [...day.photos, ...(draft.visits ?? [])];
 }
 
 /** The saved places, from the combined lists. */
@@ -70,9 +78,18 @@ function useSavedPlaces(): Place[] {
   return data ? ((currentLists(data).places.data ?? []) as Place[]) : [];
 }
 
-/** Adds one of the saved places near the day's photos as a trip stop. */
-function SavedPlacePicker({ day, onPick }: { day: TripDay; onPick: (v: TripVisit) => void }) {
-  const near = placesNear(useSavedPlaces(), day.photos);
+/**
+ * Adds one of the saved places near the day's photos or its trip stops as a trip stop, so a day
+ * planned before its photos gets nearby places once its first stop is added.
+ */
+function SavedPlacePicker({
+  spots,
+  onPick,
+}: {
+  spots: TripPoint[];
+  onPick: (v: TripVisit) => void;
+}) {
+  const near = placesNear(useSavedPlaces(), spots);
   if (near.length === 0) return null;
   return (
     <select
