@@ -2,13 +2,13 @@
   "id": "camera-canon-eos-80d",
   "kind": "camera",
   "name": "Canon EOS 80D",
-  "image": "https://cdn.servenupphotos.net/gear/8f9c45c8b35e-canon80d.webp",
+  "image": "https://cdn.servenupphotos.net/gear/a08d46b5452c-canon80d.webp",
   "original": "https://cdn.servenupphotos.net/gear/originals/9e2fea54edbc-canon80d.jpg",
   "crop": {
-    "x": -0.12312547730314516,
-    "y": -0.37548110994780587,
-    "width": 1.2317220033843048,
-    "height": 1.7569992973785449,
+    "x": 0.07807575148178691,
+    "y": -0.08847607420474718,
+    "width": 0.8293195458144407,
+    "height": 1.1829892258924275,
     "fill": "white"
   },
   "subject": {

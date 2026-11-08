@@ -12,12 +12,6 @@
     "end": "2025-01-27"
   },
   {
-    "id": "japan-2026-09-22",
-    "name": "Japan",
-    "start": "2026-09-22",
-    "end": "2026-10-02"
-  },
-  {
     "id": "korea-2026-05-15",
     "name": "Korea",
     "start": "2026-05-15",
@@ -25,9 +19,131 @@
   },
   {
     "id": "korea-2026-09-12",
-    "name": "Korea",
+    "name": "Korea and Japan",
     "start": "2026-09-12",
-    "end": "2026-09-21"
+    "end": "2026-10-02",
+    "legs": [
+      {
+        "mode": "ferry",
+        "from": {
+          "day": "2026-09-21",
+          "photo": 327
+        },
+        "to": {
+          "day": "2026-09-22",
+          "spot": {
+            "latitude": 33.94779916565636,
+            "longitude": 130.9260748757786,
+            "label": "Shimonoseki International Port"
+          }
+        }
+      },
+      {
+        "mode": "train",
+        "from": {
+          "day": "2026-09-22",
+          "spot": {
+            "latitude": 33.94779916565636,
+            "longitude": 130.9260748757786,
+            "label": "Shimonoseki International Port"
+          }
+        },
+        "to": {
+          "day": "2026-09-22",
+          "spot": {
+            "latitude": 34.416983070194384,
+            "longitude": 131.41039798268122,
+            "label": "Higashi Hagi Station"
+          }
+        }
+      },
+      {
+        "mode": "train",
+        "from": {
+          "day": "2026-09-20",
+          "spot": {
+            "latitude": 35.102908,
+            "longitude": 129.032508
+          }
+        },
+        "to": {
+          "day": "2026-09-21",
+          "spot": {
+            "latitude": 35.107819,
+            "longitude": 129.036753
+          }
+        }
+      },
+      {
+        "mode": "train",
+        "from": {
+          "day": "2026-09-25",
+          "spot": {
+            "latitude": 34.416983070194384,
+            "longitude": 131.41039798268122,
+            "label": "Higashi Hagi Station"
+          }
+        },
+        "to": {
+          "day": "2026-09-25",
+          "spot": {
+            "latitude": 35.46400325739574,
+            "longitude": 133.0639064250506,
+            "label": "Matsue Station"
+          }
+        }
+      },
+      {
+        "mode": "train",
+        "from": {
+          "day": "2026-10-01",
+          "spot": {
+            "latitude": 34.67952389576481,
+            "longitude": 135.17828548269063,
+            "label": "Kobe Station"
+          }
+        },
+        "to": {
+          "day": "2026-10-01",
+          "spot": {
+            "latitude": 34.43594453442068,
+            "longitude": 135.24366453381782,
+            "label": "Kansai International Airport Station"
+          }
+        }
+      },
+      {
+        "mode": "train",
+        "from": {
+          "day": "2026-09-28",
+          "spot": {
+            "latitude": 35.46400325739574,
+            "longitude": 133.0639064250506,
+            "label": "Matsue Station"
+          }
+        },
+        "to": {
+          "day": "2026-09-28",
+          "spot": {
+            "latitude": 34.67952389576481,
+            "longitude": 135.17828548269063,
+            "label": "Kobe Station"
+          }
+        }
+      }
+    ],
+    "labels": [
+      {
+        "name": "Korea",
+        "start": "2026-09-12",
+        "end": "2026-09-21"
+      },
+      {
+        "name": "Japan",
+        "start": "2026-09-22",
+        "end": "2026-10-02"
+      }
+    ]
   },
   {
     "id": "open-house-ny-2017-10-14",

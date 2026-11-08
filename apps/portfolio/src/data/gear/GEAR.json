@@ -3,13 +3,13 @@
     "id": "camera-canon-eos-80d",
     "kind": "camera",
     "name": "Canon EOS 80D",
-    "image": "https://cdn.servenupphotos.net/gear/8f9c45c8b35e-canon80d.webp",
+    "image": "https://cdn.servenupphotos.net/gear/a08d46b5452c-canon80d.webp",
     "original": "https://cdn.servenupphotos.net/gear/originals/9e2fea54edbc-canon80d.jpg",
     "crop": {
-      "x": -0.12312547730314516,
-      "y": -0.37548110994780587,
-      "width": 1.2317220033843048,
-      "height": 1.7569992973785449,
+      "x": 0.07807575148178691,
+      "y": -0.08847607420474718,
+      "width": 0.8293195458144407,
+      "height": 1.1829892258924275,
       "fill": "white"
     },
     "subject": {
@@ -24,13 +24,13 @@
     "id": "camera-canon-eos-rebel-t3i",
     "kind": "camera",
     "name": "Canon EOS REBEL T3i",
-    "image": "https://cdn.servenupphotos.net/gear/be3f46b2e5fb-canon-t3i.webp",
+    "image": "https://cdn.servenupphotos.net/gear/b805ef8fcf2d-canon-t3i.webp",
     "original": "https://cdn.servenupphotos.net/gear/originals/c4dbc8462fe4-canon-t3i.jpg",
     "crop": {
-      "x": -0.01429808256017051,
-      "y": -0.23124349146152512,
-      "width": 1.028596165120341,
-      "height": 1.467248887684955,
+      "x": 0.07368255411602154,
+      "y": -0.10574283758162839,
+      "width": 0.8526348917679569,
+      "height": 1.2162475799251615,
       "fill": "white"
     },
     "subject": {
@@ -66,13 +66,13 @@
     "id": "camera-fujifilm-x-t5",
     "kind": "camera",
     "name": "Fujifilm X-T5",
-    "image": "https://cdn.servenupphotos.net/gear/d7a415b9da80-fujifilm-xt5.webp",
+    "image": "https://cdn.servenupphotos.net/gear/13f8698f8c6c-fujifilm-xt5.webp",
     "original": "https://cdn.servenupphotos.net/gear/originals/7a647e1acdc8-fujifilm-xt5.jpg",
     "crop": {
-      "x": -0.6315054253240259,
-      "y": -0.3482318398834861,
-      "width": 2.229684744873749,
-      "height": 1.6701758388567387,
+      "x": -0.07234395194720722,
+      "y": 0.060538633660904895,
+      "width": 1.138267580510224,
+      "height": 0.8526348917679567,
       "fill": "white"
     },
     "subject": {
@@ -87,13 +87,13 @@
     "id": "camera-galaxy-s24-ultra",
     "kind": "camera",
     "name": "Galaxy S24 Ultra",
-    "image": "https://cdn.servenupphotos.net/gear/7c211a07a614-samsung-s24-ultra.webp",
+    "image": "https://cdn.servenupphotos.net/gear/37f06d6351b2-samsung-s24-ultra.webp",
     "original": "https://cdn.servenupphotos.net/gear/originals/06a6a4c99c32-samsung-s24-ultra.jpg",
     "crop": {
-      "x": -0.8240780288162036,
-      "y": -0.4719490262102912,
-      "width": 2.6120437166029293,
-      "height": 1.9453098948245766,
+      "x": -0.26298734455541817,
+      "y": -0.05407881483192545,
+      "width": 1.4898623480813584,
+      "height": 1.109569472067845,
       "fill": "white"
     },
     "subject": {

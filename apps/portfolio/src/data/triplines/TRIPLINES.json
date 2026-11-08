@@ -1143,7 +1143,7 @@
   {
     "id": "2026-10-25",
     "day": "2026-10-25",
-    "auto": true,
+    "auto": false,
     "segments": [
       {
         "mode": "walk",
@@ -1151,13 +1151,37 @@
       },
       {
         "mode": "walk",
-        "photos": [
-          419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436
-        ]
+        "photos": [421, 422, 423]
       },
       {
         "mode": "walk",
-        "photos": [438, 467, 439, 440, 441, 442]
+        "photos": [430, 431, 432, 433]
+      },
+      {
+        "mode": "walk",
+        "photos": [435, 436]
+      },
+      {
+        "mode": "walk",
+        "photos": [438, 467]
+      },
+      {
+        "mode": "walk",
+        "photos": [441, 442]
+      }
+    ],
+    "visits": [
+      {
+        "name": "Ocean Beach Cafe",
+        "kind": "cafe",
+        "latitude": 37.774521520769476,
+        "longitude": -122.50996450392321
+      },
+      {
+        "name": "House of Xian Dumpling",
+        "kind": "restaurant",
+        "latitude": 37.796514716300806,
+        "longitude": -122.40537581718577
       }
     ]
   },
