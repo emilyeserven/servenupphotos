@@ -1594,6 +1594,11 @@ export function defaultFixtures() {
       },
     ],
     "GET /api/transit/lines/1/stops": lineStops,
+    "GET /api/transit/stations": [
+      { name: "難波", nameEn: "Namba", latitude: 34.6654, longitude: 135.5013, km: 0.4 },
+      { name: "大阪難波", nameEn: "Osaka Namba", latitude: 34.6672, longitude: 135.4986, km: 0.6 },
+      { name: "南海難波", nameEn: "Nankai Namba", latitude: 34.6627, longitude: 135.5018, km: 0.8 },
+    ],
     "GET /api/transit/lines/1/track": curvedTrack,
     "PUT /api/triplines/2026-10-01": ({ body }) => ({
       ...pendingSave(),

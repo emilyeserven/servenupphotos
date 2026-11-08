@@ -91,7 +91,8 @@ combines the metadata groups into `METAINFO.json` (`be-pipeline/internal/github/
 - **`legs`** are left out when there are none, as a timeline label was written. Each end has its `day`, and either a
   `spot` with no photo or the ID of the day's `photo` it leaves from or arrives at; with neither, it's the day's last
   photo with an exact spot where it leaves and its first where it arrives. A `photo` that isn't from that day, or has
-  no exact spot, falls back to the same.
+  no exact spot, falls back to the same. A train, bus or ferry leg can also have the `line` it rode and its track as `path`
+  (`[longitude, latitude]` points, at most 20,000); see [Stations and routes](#stations-and-routes).
 - Trips can't overlap: saving one whose days another Trip already covers fails, so each day has at most one Trip. If a
   hand-edited file does overlap, the Timeline shows both names joined with " · ".
 - The ID is the name and first day as an ID, made when the Trip is first saved and kept when it's renamed or its days
@@ -120,7 +121,11 @@ how many legs it has. Clicking one opens its own page, `/trip-lines/trips/<id>` 
 - **Days and legs** (`components/trips/day-legs.tsx`): every day of the Trip, first to last, each linking to its Route
   page when it has a route to mark. Under each day are the legs that **leave** it, edited in place, and **Add a leg
   from this day**; a day lists the legs that **arrive** on it too, such as "Arrives by Flight (leg 1, from Tue, Sep
-  22, 2026)". A day can have any number of legs, and a leg can arrive the same day it left.
+  22, 2026)". A day can have any number of legs, and a leg can arrive the same day it left. The legs are kept in the order
+  they happen, so their numbers follow the Trip: by the day each leaves, then the time of the photo it leaves from (a
+  spot with no photo counts as the end of its day, as the day's last photo would), then when it arrives
+  (`legsInOrder` in `lib/trip-legs.ts`). Opening a Trip puts its legs in that order, and changing a leg's day or photo
+  moves it to its place.
 
 Saving a new Trip moves to its page; removing one goes back to the tab. An old link to `/timeline-labels` or `/trips`
 opens the Trips tab, and one to a Trip on the tab (`/trip-lines?tab=trips&trip=<id>`) opens that Trip's page.
@@ -128,9 +133,29 @@ opens the Trips tab, and one to a Trip on the tab (`/trip-lines?tab=trips&trip=<
 Each leg has a mode (**Ferry**, **Flight**, **Train**, **Bus** or **Car**), the day it **Leaves** and the day it
 **Arrives**, and where on each day: **The day's last photo** where it leaves or **first photo** where it arrives (the
 photos with an exact spot), **one of the day's photos** picked by its time and title, such as one taken at the
-airport, or **A spot with no photo**, such as "Home", typed as a label and `latitude, longitude`. Picking a photo is
-what lets one day have several legs from different places. The row shows the photo it uses and how far the leg is in
-a straight line.
+airport, or **A station or spot with no photo**, such as "Home", typed as a label and `latitude, longitude`. Picking a
+photo is what lets one day have several legs from different places. The row shows the photo it uses and how far the
+leg is in a straight line.
+
+### Stations and routes
+
+A **Train**, **Bus** or **Ferry** leg can leave from and arrive at a station. With **A station or spot with no photo**
+picked, **Find a station** looks up the stations (or stops, or ferry terminals) whose name in any language has the
+words typed, within 30 km of that end's day (its spot once it has one, or else its photo), nearest first, each with its
+English name beside it, such as "博多 (Hakata)". Picking one fills in the label and position
+(`GET /api/transit/stations?mode=train&q=Hakata&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`, through
+the same Overpass servers, throttle and day-long cache as [Lines ridden](trip-lines.md#lines-ridden)).
+
+Once both ends have a spot, **Look up route** finds the lines of the leg's kind that pass within 500 m of both ends
+(the same look-up as a day's hops, so it works best with each end at its station), and picking one fetches its track
+between them. The leg is then saved with the `line` (its ID, name, number and color) and its `path`, drawn along the
+track in the line's color on the Trip's map and the portfolio's, instead of a straight line. **Clear** takes it off.
+Moving either end drops the track picked for the old spots (renaming one keeps it), and a flight or drive keeps no
+line.
+
+> **Frontend analogy:** the station search is an autocomplete endpoint scoped to a map viewport, like a places search
+> with a `near` bias, and the route is the same "find the paths in the sprite sheet" look-up as a day's hops, clipped
+> between the two stations.
 
 **Save Trip** (`PUT /api/trips/<id>` → `PUT /trips/{id}`) and **Remove Trip** (`DELETE /api/trips/<id>` →
 `DELETE /trips/{id}`) keep the file as a [change waiting for Commit](pending-changes.md), counted by the sync button as

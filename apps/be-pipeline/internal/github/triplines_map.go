@@ -101,7 +101,7 @@ func bakeTripLines(lines []TripLine, spots map[int]tripSpot) tripLinesMap {
 		day := onDay(spots, line.Day)
 		segments := line.Segments
 		if line.Auto {
-			segments = autoSegments(spotsOn(day, line.Day))
+			segments = autoLineSegments(day, line)
 		}
 		for _, seg := range segments {
 			for _, f := range segmentFeatures(line, seg, day) {

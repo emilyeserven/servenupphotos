@@ -11,10 +11,10 @@ import { dayTitle } from "@/components/trip-lines/day-title";
 import { StoryCard } from "@/components/trip-story/story-card";
 import { Button } from "@/components/ui/button";
 import { lineDays } from "@/lib/stale-trip-lines";
-import type { TripDay } from "@/lib/trip-days";
+import { plannedDay, type TripDay } from "@/lib/trip-days";
 import { type DayPart, DAY_PARTS } from "@/lib/trip-lines-search";
 import { cn } from "@/lib/utils";
-import { useCombinedData } from "@/stores/combined-data";
+import { useSessionData } from "@/hooks/use-session-data";
 
 /** What each of a day's pages is called in its tabs. */
 export const PART_LABELS: Record<DayPart, string> = {
@@ -51,23 +51,34 @@ export function TripDayPage() {
 
 /** The day once the photos and lines are read. */
 function DayData({ day }: { day: string }) {
-  const combined = useCombinedData();
+  const combined = useSessionData();
   if (combined.isPending) return <p>Reading the photos and trip lines…</p>;
   if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
   return <DayFound data={combined.data} day={day} />;
 }
 
-/** The day's pages, or a note when it has no trip line. */
+/**
+ * The day's pages: a day with photos to mark its line for, or else a day planned ahead with no
+ * photos yet, whose trip stops can be added before it.
+ */
 function DayFound({ data, day }: { data: CombinedData; day: string }) {
   const found = lineDays(data).find((d) => d.day === day);
-  if (!found) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        This day doesn't have two or more photos at two or more exact spots, so it has no trip line.
-      </p>
-    );
-  }
-  return <DayParts data={data} day={found} />;
+  return (
+    <>
+      {!found && <PlannedNote />}
+      <DayParts data={data} day={found ?? plannedDay(day)} />
+    </>
+  );
+}
+
+/** What a day with no line to mark yet is for: planning its trip stops ahead. */
+function PlannedNote() {
+  return (
+    <p className="text-muted-foreground mb-3 text-sm">
+      This day doesn't have two or more photos at two or more exact spots yet, so it's a planned
+      day: add its trip stops ahead on Trip Stops, and save. Its photos join it once they're added.
+    </p>
+  );
 }
 
 /**

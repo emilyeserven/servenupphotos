@@ -105,6 +105,10 @@ type TripLine struct {
 	// photos at every Commit (see autoSegments); Segments is then the line as
 	// it was drawn when saved or at the last Commit, for the pipeline to show.
 	Auto bool `json:"auto"`
+	// Planned is true for a day planned before its photos were taken, saved
+	// with the trip stops added ahead and no segments. It's dropped once the
+	// line is saved again with the day's photos on it.
+	Planned bool `json:"planned,omitempty"`
 	// Segments are the stretches of the day, in the order they happened.
 	Segments []TripSegment `json:"segments"`
 	// Visits are the places visited along the day's route, such as a
@@ -122,7 +126,7 @@ type TripLine struct {
 // SaveTripLine saves line as <folder>/triplines/<day>.json, new or replacing
 // the one there, in the pending changes, with the paths along streets it was
 // given (see RouteTripLine). An automatic line is saved with its segments as
-// the photos draw it now, so the file shows the line too. It fails when a
+// the photos and its trip stops draw it now, so the file shows the line too. It fails when a
 // photo isn't from that day or has no exact spot.
 func (c *Client) SaveTripLine(ctx context.Context, gh settings.GitHub, line TripLine) (EntryResult, error) {
 	line, spots, perr := c.checkedTripLine(ctx, gh, line)
@@ -130,7 +134,7 @@ func (c *Client) SaveTripLine(ctx context.Context, gh settings.GitHub, line Trip
 		return EntryResult{}, perr
 	}
 	if line.Auto {
-		line.Segments = autoSegments(spotsOn(spots, line.Day))
+		line.Segments = autoLineSegments(spots, line)
 	}
 	return c.saveEntry(ctx, gh, TripLines, line.ID, line, func([]Entry) *PublishError { return nil })
 }
@@ -170,6 +174,9 @@ func (c *Client) checkedTripLine(ctx context.Context, gh settings.GitHub, line T
 	if perr := checkTripPhotos(line, spots); perr != nil {
 		return line, spots, perr
 	}
+	if perr := checkVisitPhotos(line, spots); perr != nil {
+		return line, spots, perr
+	}
 	return line, spots, checkFencePhotos(line, w.photoDays())
 }
 
@@ -202,6 +209,7 @@ func validTripLine(line TripLine) (TripLine, *PublishError) {
 	if line.Auto || line.Segments == nil {
 		line.Segments = []TripSegment{}
 	}
+	line.Planned = line.Planned && !line.Auto && len(line.Segments) == 0
 	for i := range line.Segments {
 		seg, perr := validTripSegment(line.Segments[i], i+1)
 		if perr != nil {

@@ -19,7 +19,7 @@ func (w *workspace) refreshAutoLines(changes map[string][]byte) *PublishError {
 		if !ok {
 			continue
 		}
-		segments := autoSegments(spotsOn(spots, line.Day))
+		segments := autoLineSegments(spots, line)
 		if reflect.DeepEqual(segments, line.Segments) {
 			continue
 		}

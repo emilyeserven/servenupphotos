@@ -59,7 +59,21 @@ function nearSide(from: LngLat, to: LngLat): LngLat {
   return to;
 }
 
-/** A leg as a straight line from where it left to where it arrived; none while an end has no spot. */
+/** What the map draws a leg as: its mode, and its line's color when it has one. */
+function legProps(leg: TripLeg): TripMapFeature["properties"] {
+  const colour = leg.line?.colour;
+  return colour ? { mode: leg.mode, colour } : { mode: leg.mode };
+}
+
+/** The points a leg is drawn through: its line's track, or else straight between its ends. */
+function legCoords(leg: TripLeg, start: LngLat, end: LngLat): LngLat[] {
+  return leg.path && leg.path.length >= 2 ? leg.path : [start, nearSide(start, end)];
+}
+
+/**
+ * A leg from where it left to where it arrived, along its line's track in the line's color when
+ * one was picked, or else straight; none while an end has no spot.
+ */
 function legLine(leg: TripLeg, byDay: Map<string, TripDay>): TripMapFeature[] {
   const from = endPosition(leg.from, endPhoto(leg.from, byDay, true));
   const to = endPosition(leg.to, endPhoto(leg.to, byDay, false));
@@ -70,9 +84,9 @@ function legLine(leg: TripLeg, byDay: Map<string, TripDay>): TripMapFeature[] {
       type: "Feature",
       geometry: {
         type: "LineString",
-        coordinates: [start, nearSide(start, [to.longitude, to.latitude])],
+        coordinates: legCoords(leg, start, [to.longitude, to.latitude]),
       },
-      properties: { mode: leg.mode },
+      properties: legProps(leg),
     },
   ];
 }

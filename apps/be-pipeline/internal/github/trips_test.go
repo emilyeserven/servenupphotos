@@ -165,3 +165,38 @@ func TestLegEndPhoto(t *testing.T) {
 		t.Errorf("other day's photo = %d, want 12", id)
 	}
 }
+
+func TestLegLine(t *testing.T) {
+	line := &TripTransitLine{ID: 7, Name: " Sanyo Shinkansen ", Colour: "#1e50a2"}
+	path := [][2]float64{{130.4200001, 33.59}, {131, 34}, {135.5, 34.73}}
+	train := TripLeg{Mode: ModeTrain, Line: line, Path: path}
+	if perr := validLegLine(&train, 1); perr != nil || train.Line.Name != "Sanyo Shinkansen" || train.Path[0][0] != 130.42 {
+		t.Fatalf("train leg: %v, %+v", perr, train)
+	}
+	flight := TripLeg{Mode: ModeFlight, Line: &TripTransitLine{Name: "x"}, Path: path}
+	if perr := validLegLine(&flight, 1); perr != nil || flight.Line != nil || flight.Path != nil {
+		t.Errorf("a flight kept its line: %v, %+v", perr, flight)
+	}
+	noName := TripLeg{Mode: ModeBus, Line: &TripTransitLine{}}
+	if perr := validLegLine(&noName, 2); perr == nil || !strings.HasPrefix(perr.Message, "Leg 2:") {
+		t.Errorf("a line with no name: %v", perr)
+	}
+	trip := Trip{ID: "japan"}
+	from := TripLegEnd{Day: "2026-09-23", Spot: &TripPoint{Latitude: 33.59, Longitude: 130.42, Label: "Hakata"}}
+	to := TripLegEnd{Day: "2026-09-24", Spot: &TripPoint{Latitude: 34.73, Longitude: 135.5, Label: "Shin-Osaka"}}
+	f, ok := legFeature(trip, TripLeg{Mode: ModeTrain, From: from, To: to, Line: train.Line, Path: train.Path}, nil)
+	if !ok || len(f.Geometry.Coordinates) != 3 || f.Properties.Line != "Sanyo Shinkansen" || f.Properties.Colour != "#1e50a2" {
+		t.Errorf("train leg feature = %+v", f)
+	}
+}
+
+func TestPlannedLine(t *testing.T) {
+	planned, perr := validTripLine(TripLine{ID: "2026-12-01", Planned: true, Visits: []TripVisit{{Name: "Ichiran", Kind: "restaurant", Latitude: 34.67, Longitude: 135.5}}})
+	if perr != nil || !planned.Planned || len(planned.Visits) != 1 {
+		t.Fatalf("planned day: %v, %+v", perr, planned)
+	}
+	drawn, perr := validTripLine(TripLine{ID: "2026-12-01", Planned: true, Segments: []TripSegment{{Mode: ModeWalk, Photos: []int{1, 2}}}})
+	if perr != nil || drawn.Planned {
+		t.Errorf("a line with segments stayed planned: %v, %+v", perr, drawn)
+	}
+}

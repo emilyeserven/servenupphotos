@@ -10,14 +10,14 @@ import { NEW_TRIP_ID } from "@/components/trips/trips-panel";
 import { Button } from "@/components/ui/button";
 import { shownPhotos } from "@/lib/place-seeds";
 import { lineDays } from "@/lib/stale-trip-lines";
-import { useCombinedData } from "@/stores/combined-data";
+import { useSessionData } from "@/hooks/use-session-data";
 
 /** A new Trip with no name, days or legs yet. */
 const NEW_TRIP: Trip = { id: "", name: "", start: "", end: "", legs: [], labels: [] };
 
 /** One Trip's page, from the Trip Lines page's Trips tab: its name, days and legs, and its days' lines. */
 export function TripPage({ id }: { id: string }) {
-  const combined = useCombinedData();
+  const combined = useSessionData();
   const trip = trips(combined.data).find((t) => t.id === id);
   return (
     <Page
@@ -43,7 +43,7 @@ function BackToTrips() {
 }
 
 function TripContent({ id }: { id: string }) {
-  const combined = useCombinedData();
+  const combined = useSessionData();
   if (combined.isPending) return <p>Reading the photos and Trips…</p>;
   if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
   return <TripDetail id={id} data={combined.data} />;

@@ -35,7 +35,10 @@ function tripPlace({ id, name, latitude, longitude }: Place): TripPlace {
 /** A photo taken on a day with no exact spot, which can go in an area (a fence) instead. */
 export type LoosePhoto = Omit<TripPhoto, "latitude" | "longitude">;
 
-/** A day a trip line can be marked for: two or more photos at two or more spots. */
+/**
+ * A day a trip line can be marked for: two or more photos at two or more spots, or a day planned
+ * ahead with no photos yet.
+ */
 export interface TripDay {
   day: string;
   /** Its photos with an exact spot, in the order they were taken. */
@@ -134,6 +137,11 @@ function byDay<T extends LoosePhoto>(photos: T[]): Map<string, T[]> {
 }
 
 /** Every day a trip line can be marked for, newest first, leaving out casual photos. */
+/** A day planned before its photos, such as "2026-12-01", with none yet. */
+export function plannedDay(day: string): TripDay {
+  return { day, photos: [], loose: [], spots: 0 };
+}
+
 export function tripDays(photos: CombinedPhoto[], places: Place[]): TripDay[] {
   const lookup = {
     exact: exactPlaces(places),

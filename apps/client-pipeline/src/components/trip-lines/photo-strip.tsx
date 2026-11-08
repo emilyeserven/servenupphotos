@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Flag, MapPin, Scissors } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flag, Play, Scissors } from "lucide-react";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
 import { GAPS, gapInfo } from "@/components/trip-lines/modes";
@@ -295,11 +295,14 @@ function CutButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-/** A start pin and an end flag over a photo where a line starts or ends. */
+/**
+ * A start arrow and an end flag over a photo where a line starts or ends. Not a pin, so it isn't
+ * read as the photo having (or lacking) a GPS position: every photo in the strip has an exact spot.
+ */
 function Ends({ starts, ends }: LineEnds) {
   return (
     <span className="absolute top-1 left-1 flex gap-0.5">
-      {starts && <Badge title="A line starts here" icon={<MapPin className="size-3" />} />}
+      {starts && <Badge title="A line starts here" icon={<Play className="size-3" />} />}
       {ends && <Badge title="A line ends here" icon={<Flag className="size-3" />} />}
     </span>
   );

@@ -10,15 +10,23 @@ import { cn } from "@/lib/utils";
  * Whether a day's line is marked by hand, marked by hand but out of date with the day's photos,
  * automatic, or not there yet.
  */
-type LineStatus = "Marked" | "Out of date" | "Automatic" | "None";
+type LineStatus = "Marked" | "Out of date" | "Automatic" | "Planned" | "None";
 
-const FILTERS: ("All" | LineStatus)[] = ["All", "Marked", "Out of date", "Automatic", "None"];
+const FILTERS: ("All" | LineStatus)[] = [
+  "All",
+  "Marked",
+  "Out of date",
+  "Automatic",
+  "Planned",
+  "None",
+];
 
 /** How each status reads in the list: out of date in red, so it stands out. */
 const STATUS_CLASS: Record<LineStatus, string> = {
   Marked: "text-foreground",
   "Out of date": "text-destructive font-medium",
   Automatic: "text-foreground",
+  Planned: "text-sky-700 dark:text-sky-400",
   None: "text-muted-foreground",
 };
 
@@ -34,7 +42,12 @@ function filterOf(show: DayFilter | undefined): (typeof FILTERS)[number] {
 
 function statusOf(line: TripLine | undefined, stale: Set<string>): LineStatus {
   if (!line) return "None";
-  if (line.auto) return "Automatic";
+  return line.auto ? "Automatic" : handStatus(line, stale);
+}
+
+/** A line not drawn automatically: planned ahead, or marked by hand and maybe out of date. */
+function handStatus(line: TripLine, stale: Set<string>): LineStatus {
+  if (line.planned) return "Planned";
   return stale.has(line.day) ? "Out of date" : "Marked";
 }
 
@@ -97,7 +110,7 @@ function DayCard({ day, line, status }: DayCardProps) {
   return (
     <Link
       to="/trip-lines/$day/$part"
-      params={{ day: day.day, part: "order" }}
+      params={{ day: day.day, part: day.photos.length > 0 ? "order" : "stops" }}
       className="hover:bg-muted/50 flex h-full flex-col gap-2 rounded-lg border p-3 text-sm"
     >
       <span className="flex items-baseline justify-between gap-2">
@@ -117,9 +130,23 @@ function Preview({ day, line }: { day: TripDay; line?: TripLine }) {
   if (isDrawn(line)) return <LinePreview photos={day.photos} line={line as TripLine} />;
   return (
     <span className="bg-muted/50 text-muted-foreground flex aspect-[2/1] items-center justify-center rounded-md px-3 text-center text-xs">
-      {line?.auto ? "Automatic line, drawn here after its next save or Commit" : "No line yet"}
+      {previewNote(line)}
     </span>
   );
+}
+
+/** Why a day's card has no drawing of its line. */
+function previewNote(line: TripLine | undefined): string {
+  if (!line) return "No line yet";
+  return line.planned
+    ? plannedNote(line)
+    : "Automatic line, drawn here after its next save or Commit";
+}
+
+/** A planned day's note: no photos yet, and how many trip stops it has. */
+function plannedNote(line: TripLine): string {
+  const stops = line.visits?.length ?? 0;
+  return `Planned: no photos yet, ${stops} trip ${stops === 1 ? "stop" : "stops"}`;
 }
 
 /** Whether the line has segments to draw, by hand or as last worked out automatically. */

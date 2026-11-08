@@ -4,7 +4,7 @@ import { settingMutations } from "@/api/data-files";
 import { post } from "@/api/data";
 import type { PendingSave } from "@/api/scan-changes";
 import type { CombinedData } from "@/api/photos";
-import type { TripPoint } from "@/api/trip-lines";
+import type { TripPoint, TripTransitLine } from "@/api/trip-lines";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
 /** How a Trip's leg between days was travelled. */
@@ -31,6 +31,10 @@ export interface TripLeg {
   mode: LegMode;
   from: TripLegEnd;
   to: TripLegEnd;
+  /** The train, bus or ferry line ridden, picked from the ones OpenStreetMap maps; none when not picked. */
+  line?: TripTransitLine;
+  /** The line's track between the leg's ends, each [longitude, latitude], drawn instead of a straight line. */
+  path?: [number, number][];
 }
 
 /**

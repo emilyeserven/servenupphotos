@@ -82,6 +82,11 @@ export interface TripLine {
   /** True for the automatic line, worked out again from the day's photos at every Commit. */
   auto: boolean;
   /**
+   * True for a day planned before its photos were taken, saved with the trip stops added ahead and
+   * no segments; dropped once the line is saved with the day's photos on it.
+   */
+  planned?: boolean;
+  /**
    * The stretches of the day, in the order they happened; for the automatic line, as it was last
    * worked out (when turned on, or at the last Commit).
    */

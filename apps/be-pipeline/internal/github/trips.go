@@ -75,7 +75,16 @@ type TripLeg struct {
 	// From is where it left from, and To where it arrived.
 	From TripLegEnd `json:"from"`
 	To   TripLegEnd `json:"to"`
+	// Line is the train, bus or ferry line ridden, picked from the ones
+	// OpenStreetMap maps between its ends; nil when not picked.
+	Line *TripTransitLine `json:"line,omitempty"`
+	// Path is the line's track between the leg's ends, each [longitude,
+	// latitude], drawn instead of a straight line; none without a Line.
+	Path [][2]float64 `json:"path,omitempty"`
 }
+
+// legLineModes are the leg modes that can ride a mapped line.
+var legLineModes = map[string]bool{ModeTrain: true, ModeBus: true, ModeFerry: true}
 
 // TripLegEnd is one end of a leg: a day of the Trip, and the spot on it.
 type TripLegEnd struct {
@@ -201,10 +210,31 @@ func validLeg(trip Trip, leg *TripLeg, n int) *PublishError {
 	}
 	for _, spot := range []*TripPoint{leg.From.Spot, leg.To.Spot} {
 		if perr := validTripPoint(spot, n); perr != nil {
-			return publishErr(http.StatusBadRequest, "Leg %s", strings.TrimPrefix(perr.Message, "Segment "))
+			return asLegError(perr)
 		}
 	}
+	return validLegLine(leg, n)
+}
+
+// validLegLine drops the nth leg's line and path when its mode rides no
+// line, and checks the ones it keeps.
+func validLegLine(leg *TripLeg, n int) *PublishError {
+	if !legLineModes[leg.Mode] || leg.Line == nil {
+		leg.Line, leg.Path = nil, nil
+	}
+	if perr := validLine(leg.Line, n); perr != nil {
+		return asLegError(perr)
+	}
+	leg.Path = roundPath(leg.Path)
+	if perr := validPath(leg.Path, n); perr != nil {
+		return asLegError(perr)
+	}
 	return nil
+}
+
+// asLegError is a segment's error as the same leg's: "Leg 2: …".
+func asLegError(perr *PublishError) *PublishError {
+	return publishErr(http.StatusBadRequest, "Leg %s", strings.TrimPrefix(perr.Message, "Segment "))
 }
 
 // inTrip is whether day is a date from the Trip's first day to its last.

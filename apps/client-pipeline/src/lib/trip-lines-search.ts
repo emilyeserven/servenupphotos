@@ -1,7 +1,7 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 
 /** The day list's filters, as the URL writes them. */
-const DAY_FILTERS = ["marked", "out-of-date", "automatic", "none"] as const;
+const DAY_FILTERS = ["marked", "out-of-date", "automatic", "planned", "none"] as const;
 
 /** A day list filter other than All. */
 export type DayFilter = (typeof DAY_FILTERS)[number];

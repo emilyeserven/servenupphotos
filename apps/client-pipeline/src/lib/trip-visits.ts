@@ -1,6 +1,5 @@
 import type { Place } from "@/api/places";
 import type { TripPoint, TripVisit, VisitKind } from "@/api/trip-lines";
-import type { TripPhoto } from "@/lib/trip-days";
 import type { GapDraft } from "@/lib/trip-gaps";
 
 /** The sorts of place a visit can be, as the menu lists them. */
@@ -50,9 +49,9 @@ function apart(a: TripPoint, b: TripPoint): number {
 /** About 10 km, in degrees. */
 const NEAR = 0.09;
 
-/** The saved places within about 10 km of the day's photos, nearest first. */
-export function placesNear(places: Place[], photos: TripPhoto[]): (Place & TripPoint)[] {
-  const distance = (p: TripPoint) => Math.min(...photos.map((photo) => apart(p, photo)));
+/** The saved places within about 10 km of any of the spots, such as the day's photos, nearest first. */
+export function placesNear(places: Place[], spots: TripPoint[]): (Place & TripPoint)[] {
+  const distance = (p: TripPoint) => Math.min(...spots.map((spot) => apart(p, spot)));
   return places
     .filter(located)
     .map((place) => ({ place, d: distance(place) }))
