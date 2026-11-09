@@ -447,11 +447,13 @@ light use, so `be-pipeline/internal/transit` spaces its requests a second apart,
 routing servers. The public servers are often busy and answer 429, 502 or 504, so when one does, the backend waits a
 moment and tries the next of the
 [public mirrors](https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances)
-(`overpass.private.coffee`, then `maps.mail.ru`), going round them twice. Each try gets 25s, and the query asks the
+(`overpass.private.coffee`, then `maps.mail.ru`), going round them twice. Each try gets 40s, and the query asks the
 server to stop after 20s (`[timeout:20]`; a lower value is also
 [less likely to be turned away](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#timeout:) when the
-server is loaded). The whole look-up gets 85s, enough for one full try on each server. A query a server turns down as
-wrong (400) isn't tried again. When none answer, or the 85s run out while one is still thinking, the page says the
+server is loaded). The extra time is for a busy server's wait before it starts: even a query for the few ferry
+terminals around Shimonoseki took overpass-api.de 22s. The whole look-up gets 100s (the BFF waits 105s), enough for
+a full try on two servers. A query a server turns down as wrong (400) isn't tried again. When none answer, or the 100s
+run out while one is still thinking, the page says the
 servers are busy, which server answered last and how (such as "took too long to answer"), and to try again in a minute
 (503).
 

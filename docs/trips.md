@@ -182,7 +182,9 @@ or why it failed (`api/transit-log.ts`). The backend's terminal logs each Overpa
 long it took and what it answered, and answers given from memory.
 
 An end at a photo can have a station too, such as the ferry terminal a short walk from the day's last photo: under
-the photo, **Station near the photo** finds one the same way. The photo stays the end's photo (picking a station for
+the photo, **Station near the photo** finds one the same way, or **Type the station instead** adds one by hand (a label and
+`latitude, longitude`, starting at the photo) for when the search can't find it or OpenStreetMap is too busy. A
+station found by name can be renamed or moved the same way. The photo stays the end's photo (picking a station for
 the day's usual photo names that photo, so the station stays with it), and the leg runs from the station instead, so
 **Look up route** looks near the station. Commit bakes a walk from the photo to the station (or from the station to the
 photo where the leg arrives) on that end's day. **From the photo** takes the station off. Changing the end's day or

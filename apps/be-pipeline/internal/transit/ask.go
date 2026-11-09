@@ -15,8 +15,9 @@ import (
 const serverTimeout = "[out:json][timeout:20];"
 
 // tryTimeout is how long one server gets to answer before the next is tried:
-// the server's own 20s plus time for the answer to arrive.
-const tryTimeout = 25 * time.Second
+// the server's own 20s, plus a busy server's wait before it starts, which
+// can be as long again (a simple query to overpass-api.de took 22s).
+const tryTimeout = 40 * time.Second
 
 // rounds is how many times each server is tried.
 const rounds = 2

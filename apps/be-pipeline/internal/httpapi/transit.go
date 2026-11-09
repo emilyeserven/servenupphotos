@@ -22,9 +22,8 @@ type transitFinder interface {
 }
 
 // transitTimeout is how long one look-up may take, waiting its turn and trying
-// the mirrors included.
-// It fits one full try on each of the three default servers.
-const transitTimeout = 85 * time.Second
+// the mirrors included: a full try on two servers and part of a third.
+const transitTimeout = 100 * time.Second
 
 // trackAnswer is a transit line's track between two spots.
 type trackAnswer struct {
