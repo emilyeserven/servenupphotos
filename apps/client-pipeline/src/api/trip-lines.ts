@@ -157,6 +157,11 @@ export interface TripVisit {
   /** The ID of the photo it comes after on the route; none leaves it off the route, as a pin only. */
   after?: number;
   /**
+   * On the route before the day's first photo: after the start spot when there is one, or else the
+   * line starts there. It wins over `after`.
+   */
+  first?: boolean;
+  /**
    * The IDs of the casual photos taken there, such as the food, in order. Each is marked `casual`,
    * so it shows only with the place on its day's Trip page.
    */

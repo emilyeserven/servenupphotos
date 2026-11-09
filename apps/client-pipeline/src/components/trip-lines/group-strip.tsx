@@ -3,14 +3,15 @@ import { useState } from "react";
 import type { TripVisit } from "@/api/trip-lines";
 import { GroupAreaButton } from "@/components/trip-lines/group-area-button";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
+import type { StripVia } from "@/components/trip-lines/via-list";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { TripPhoto } from "@/lib/trip-days";
-import { type GapDraft, withGap } from "@/lib/trip-gaps";
+import { type Gap, type GapDraft, withGap } from "@/lib/trip-gaps";
 import { type PhotoGroup, photoGroups, withGroupName, withGroupStart } from "@/lib/trip-groups";
-import { movedVisit, offRoute, placedVisit, visitsAfter } from "@/lib/trip-visits";
+import { firstStops, movedVisit, offRoute, placedVisit, visitsAfter } from "@/lib/trip-visits";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { isWandered, withWandered } from "@/lib/trip-wander";
 
@@ -24,6 +25,8 @@ interface GroupStripProps {
   onFocus: (name: string | undefined) => void;
   /** Moves a photo one place earlier or later in the day. */
   onMove: (id: number, by: -1 | 1) => void;
+  /** The via points by the photo they show before, numbered as on the map; left out, none show. */
+  vias?: Map<number, StripVia[]>;
   /** Lays the groups out top to bottom, with what happened between them in between, instead of in a row. */
   stacked?: boolean;
 }
@@ -83,6 +86,7 @@ export function GroupStrip(props: GroupStripProps) {
             onMove={onMove}
             onMoveVisit={onMoveVisit}
             onOffVisit={onOffVisit}
+            vias={props.vias}
           />
         </li>
       ))}
@@ -192,6 +196,16 @@ interface GroupBoxProps {
   onMove: (id: number, by: -1 | 1) => void;
   onMoveVisit: (visit: TripVisit, by: -1 | 1) => void;
   onOffVisit: (visit: TripVisit) => void;
+  vias?: Map<number, StripVia[]>;
+}
+
+/**
+ * How the day got to its first photo from its start spot or the trip stop before that photo, as
+ * the strip shows it; none when it has neither.
+ */
+function startGapShown(draft: GapDraft): Gap | undefined {
+  if (!draft.start && firstStops(draft.visits).length === 0) return undefined;
+  return draft.startGap ?? "walk";
 }
 
 /** One group: its name, how many photos, collapsing and showing it alone, and its photos. */
@@ -213,6 +227,8 @@ function GroupBox(props: GroupBoxProps) {
           onInsertVisit={(after, visit) => onChange(placedVisit(draft, visit, after))}
           onOffVisit={props.onOffVisit}
           visits={draft.visits}
+          vias={props.vias}
+          startGap={startGapShown(draft)}
         />
       )}
     </div>

@@ -5,7 +5,13 @@ import type { TripDay } from "@/lib/trip-days";
 import type { GapDraft } from "@/lib/trip-gaps";
 import { movedVia } from "@/lib/trip-points";
 import { type WalkEnd, walkOfKey } from "@/lib/station-walks";
-import { canMove, movedInRoute, type PlacedVia, viasInRouteOrder } from "@/lib/via-order";
+import {
+  canMove,
+  movedInRoute,
+  type PlacedVia,
+  photoAfter,
+  viasInRouteOrder,
+} from "@/lib/via-order";
 
 interface ViaListProps {
   day: TripDay;
@@ -60,6 +66,46 @@ export function ViaList({ day, draft, segments, onChange }: ViaListProps) {
         </li>
       ))}
     </ol>
+  );
+}
+
+/** A via point as the photo strip shows it: its number on the map, and where it is on the route. */
+export interface StripVia {
+  n: number;
+  label: string;
+}
+
+/**
+ * The via points by the photo the strip shows them before: the one their stretch leads to, so
+ * they sit between the same two photos as on the map. Ones on the way to the end spot are left out.
+ */
+export function stripVias(
+  day: TripDay,
+  draft: GapDraft,
+  segments: TripSegment[],
+): Map<number, StripVia[]> {
+  const ids = day.photos.map((p) => p.id);
+  const out = new Map<number, StripVia[]>();
+  viasInRouteOrder(draft, segments).forEach((via, i) => {
+    const next = photoAfter(via.key, ids, segments);
+    if (next === undefined) return;
+    const label = `Via point ${i + 1}: ${whereOnRoute(via, day, segments)}`;
+    out.set(next, [...(out.get(next) ?? []), { n: i + 1, label }]);
+  });
+  return out;
+}
+
+/** The via points between two photos in the strip, numbered as on the map; nothing when none. */
+export function ViaChips({ vias = [] }: { vias?: StripVia[] }) {
+  if (vias.length === 0) return null;
+  return (
+    <span className="flex flex-col items-center gap-0.5" aria-label="Via points here">
+      {vias.map(({ n, label }) => (
+        <span key={n} title={label} aria-label={label}>
+          <ViaNumber n={n} />
+        </span>
+      ))}
+    </span>
   );
 }
 

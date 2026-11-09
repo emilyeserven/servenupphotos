@@ -10,6 +10,7 @@ import {
   walkingDraft,
   withGap,
   withItem,
+  withStops,
 } from "@/lib/trip-gaps";
 
 const draft: GapDraft = { gaps: ["walk", "walk"] };
@@ -108,4 +109,46 @@ test("gives a segment the path saved under its key", () => {
   ];
   const [routed] = segmentsOf([1, 2], { gaps: ["walk"], paths: { [segmentKey(plain!)]: path } });
   assert.deepEqual(routed?.path, path);
+});
+
+test("a trip stop before the first photo starts the line with no start spot, or follows the start spot", () => {
+  const stop: TripVisit = {
+    name: "Lunch",
+    kind: "restaurant",
+    latitude: 5,
+    longitude: 6,
+    first: true,
+  };
+  const draft: GapDraft = { ...walkingDraft([1, 2]), visits: [stop] };
+  const [own] = segmentsOf([1, 2], draft);
+  assert.deepEqual(own!.start, { latitude: 5, longitude: 6, label: "Lunch" });
+  assert.equal(own!.via, undefined);
+  const loaded = withStops({ ...draftOf([1, 2], segmentsOf([1, 2], draft)), visits: [stop] });
+  assert.equal(loaded.start, undefined);
+  const hotel = { latitude: 1, longitude: 2 };
+  const [afterHotel] = segmentsOf([1, 2], { ...draft, start: hotel });
+  assert.deepEqual(afterHotel!.start, hotel);
+  assert.deepEqual(afterHotel!.via, [{ latitude: 5, longitude: 6, visit: 0 }]);
+});
+
+test("the way from the trip stop before the first photo can be a bus, kept through a save", () => {
+  const stop: TripVisit = {
+    name: "Lunch",
+    kind: "restaurant",
+    latitude: 5,
+    longitude: 6,
+    first: true,
+  };
+  const draft = withGap({ ...walkingDraft([1, 2]), visits: [stop] }, -1, "bus");
+  assert.equal(draft.startGap, "bus");
+  const segments = segmentsOf([1, 2], draft);
+  assert.deepEqual(
+    segments.map((s) => [s.mode, s.photos, s.start?.label]),
+    [
+      ["bus", [1], "Lunch"],
+      ["walk", [1, 2], undefined],
+    ],
+  );
+  assert.equal(draftOf([1, 2], segments).startGap, "bus");
+  assert.equal(withGap(draft, -1, "walk").startGap, undefined);
 });

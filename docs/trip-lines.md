@@ -257,8 +257,13 @@ link to the Trip Stops page to add more). `after` is the photo it comes after. T
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
 two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
-route (it stops at the first and last gap), and a cross that takes it off the route again. A place not on the route
-is a pin only. A place put after a break or after the last
+route (it stops at the last gap), and a cross that takes it off the route again. Moving one earlier from after the
+first photo puts it before the first photo, as `"first": true` with no `after`, such as lunch before the first photo
+was taken: the line goes from the start spot through it to the first photo (as a via spot after the start spot), or,
+with no start spot, starts at it. The way from there to the first photo shows before photo 1 in the strip and can be
+changed like any gap, such as a bus from lunch: the line is then a hop from the start to the first photo before the
+walk, saved as the first segment with that mode, a `start` and only the first photo. A place not on the route is a pin
+only. A place put after a break or after the last
 photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
 time, so moving or removing the place keeps the line in step; the backend checks that `after` is one of the day's
 photos with an exact spot (not necessarily on a drawn segment, so a stop can follow a photo on an automatic line or at
@@ -399,7 +404,9 @@ A line drawn by hand is straight from point to point. To make it follow the stre
    points v1, v2, … in the order the route goes through them, and the list under the tools says where each is ("After
    photo 2", "Walk from Broderick St & Francisco St to photo 3"). Its arrows move one a place earlier or later: past
    the next via point, or past the photo or station at the end of its stretch into the next one, so a lone via point
-   after photo 3 moves up onto the walk from the bus stop to photo 3. Its × removes it.
+   after photo 3 moves up onto the walk from the bus stop to photo 3. Its × removes it. The photo strip on **Route** shows the
+   same numbered squares between the two photos each via point is between, before that stretch's trip stops; pointing
+   at one says where it is.
 2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
    servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
    walk, bus or car segment's points and via points, walking on foot and buses and cars by road, and for every walk to

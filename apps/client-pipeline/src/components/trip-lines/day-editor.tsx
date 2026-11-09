@@ -13,11 +13,12 @@ import { EditorActions, type EditorView } from "@/components/trip-lines/editor-a
 import { useDayPlaceAreas } from "@/components/trip-lines/use-day-place-areas";
 import { newVisit, withVisit } from "@/lib/trip-visits";
 import { GroupStrip } from "@/components/trip-lines/group-strip";
+import { stripVias } from "@/components/trip-lines/via-list";
 import { RouteMap } from "@/components/trip-lines/route-map";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TripDay, TripPhoto } from "@/lib/trip-days";
 import { placeGroups } from "@/lib/trip-groups";
-import { draftOf, type GapDraft, segmentsOf, walkingDraft } from "@/lib/trip-gaps";
+import { draftOf, type GapDraft, segmentsOf, walkingDraft, withStops } from "@/lib/trip-gaps";
 import { movedVia, withVia } from "@/lib/trip-points";
 import { viasInRouteOrder } from "@/lib/via-order";
 import { useTripDaySearch } from "@/lib/trip-lines-search";
@@ -51,7 +52,7 @@ function handView(ids: number[], line: TripLine): EditorView {
   if (line.planned && ids.length > 0) return { kind: "none" };
   const extras = { visits: line.visits, fences: line.fences, order: line.order };
   const drawn = line.planned ? walkingDraft(ids) : draftOf(ids, line.segments);
-  return { kind: "hand", draft: { ...drawn, ...extras } };
+  return { kind: "hand", draft: withStops({ ...drawn, ...extras }) };
 }
 
 /** The view, with a hand-drawn draft that has no groups yet grouped by its photos' places. */
@@ -110,10 +111,10 @@ function stripDraft(
 ): GapDraft {
   if (view.kind === "hand") return view.draft;
   const ids = photos.map((p) => p.id);
-  const drawn = {
+  const drawn = withStops({
     ...(segments.length > 0 ? draftOf(ids, segments) : walkingDraft(ids)),
     ...keptStops(view, saved),
-  };
+  });
   return drawn.groups === undefined ? { ...drawn, ...placeGroups(photos) } : drawn;
 }
 
@@ -206,6 +207,7 @@ export function DayEditor({ day: taken, line, part }: DayEditorProps) {
             focus={focus}
             onFocus={setFocus}
             stacked={part === "order"}
+            vias={part === "route" ? stripVias(day, shownDraft, segments) : undefined}
           />
         )}
         {part !== "order" && (
@@ -414,7 +416,10 @@ function DayActions(props: DayActionsProps) {
       onEditOwn={() =>
         setView({
           kind: "hand",
-          draft: { ...draftOf(ids, auto.data?.segments ?? []), ...keptStops(view, saved) },
+          draft: withStops({
+            ...draftOf(ids, auto.data?.segments ?? []),
+            ...keptStops(view, saved),
+          }),
         })
       }
       setView={setView}

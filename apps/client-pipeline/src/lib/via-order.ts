@@ -1,5 +1,5 @@
 import type { TripPoint, TripSegment } from "@/api/trip-lines";
-import { walkKey } from "@/lib/station-walks";
+import { walkKey, walkOfKey } from "@/lib/station-walks";
 import type { GapDraft, ViaKey } from "@/lib/trip-gaps";
 
 /** A via point with where it is in the draft: the list after `key`, at `index`. */
@@ -12,21 +12,24 @@ export interface PlacedVia {
 /**
  * The via lists a segment's line goes through, in order: for a hop with a line picked, its walks to
  * the station it got on at and from the one it got off at; for a hop without one, the list after its
- * first photo; for a walk, the start spot's and each photo's but the last (whose via points lead to
+ * first photo (or the start spot's, for the hop from the start); for a walk, the start spot's and each photo's but the last (whose via points lead to
  * the next segment), unless the walk ends at the end spot.
  */
 function segmentKeys(segment: TripSegment): ViaKey[] {
   const [a] = segment.photos;
   if (segment.mode === "wander" || a === undefined) return [];
-  if (segment.line) {
-    return [
-      ...(segment.board ? [walkKey("board", a)] : []),
-      ...(segment.alight ? [walkKey("alight", a)] : []),
-    ];
-  }
-  if (segment.mode !== "walk") return [String(a)];
+  if (segment.line) return stationKeys(segment, a);
+  if (segment.mode !== "walk") return [segment.start ? "start" : String(a)];
   const photos = segment.end ? segment.photos : segment.photos.slice(0, -1);
   return [...(segment.start ? ["start"] : []), ...photos.map(String)];
+}
+
+/** The via lists of a hop with a line from photo a: its walks to and from its stations. */
+function stationKeys(segment: TripSegment, a: number): ViaKey[] {
+  return [
+    ...(segment.board ? [walkKey("board", a)] : []),
+    ...(segment.alight ? [walkKey("alight", a)] : []),
+  ];
 }
 
 /**
@@ -110,4 +113,21 @@ export function movedInRoute(
   const target = [...(lists[to.key] ?? [])];
   target.splice(to.index, 0, via.point);
   return { ...draft, via: { ...lists, [to.key]: target } };
+}
+
+/**
+ * The photo the stretch after key leads to, by the day's photo ids in order: the first photo after
+ * the start spot, the photo a walk to or from a station is on the way to, or the photo after key's;
+ * none for the stretch to the end spot.
+ */
+export function photoAfter(
+  key: ViaKey,
+  ids: number[],
+  segments: TripSegment[],
+): number | undefined {
+  if (key === "start") return ids[0];
+  const walk = walkOfKey(key);
+  if (walk) return segments.find((s) => s.line && s.photos[0] === walk.a)?.photos[1];
+  const at = ids.indexOf(Number(key));
+  return at === -1 ? undefined : ids[at + 1];
 }
