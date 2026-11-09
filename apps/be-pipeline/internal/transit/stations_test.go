@@ -22,7 +22,7 @@ func TestStations(t *testing.T) {
 	if len(stations) != 2 || stations[0].NameEn != "Hakata" || stations[0].Km != 0 || stations[1].Name != "Hakata-minami" || stations[1].NameEn != "" {
 		t.Fatalf("stations = %+v", stations)
 	}
-	for _, want := range []string{`nwr[railway~"^(station|halt)$"](around:30000,33.590000,130.420000);`, `nwr[public_transport=station][train=yes]`, `)->.s;nwr.s[~"^((official|alt|short|old)_)?name`, `~"hakata",i]`, "out tags center 200"} {
+	for _, want := range []string{`nwr[railway~"^(station|halt)$"][station!~"^(subway|light_rail|monorail)$"](around:30000,33.590000,130.420000);`, `nwr[public_transport=station][train=yes]`, `)->.s;nwr.s[~"^((official|alt|short|old)_)?name`, `~"hakata",i]`, "out tags center 200"} {
 		if !strings.Contains(got, want) {
 			t.Errorf("query %q lacks %q", got, want)
 		}
@@ -32,6 +32,9 @@ func TestStations(t *testing.T) {
 	}
 	if _, err := c.Stations(context.Background(), "ferry", "Terminal", [2]float64{}); err != nil || !strings.Contains(got, "nwr[amenity=ferry_terminal]") {
 		t.Errorf("ferry query %q lacks ferry terminals (err %v)", got, err)
+	}
+	if _, err := c.Stations(context.Background(), "subway", "Namba", [2]float64{}); err != nil || !strings.Contains(got, `[railway=station][station~"^(subway|`) || strings.Contains(got, "ferry") {
+		t.Errorf("subway query %q isn't only subway stations (err %v)", got, err)
 	}
 	if _, err := c.Stations(context.Background(), "flight", "Hakata", [2]float64{}); !errors.Is(err, ErrNoKind) {
 		t.Errorf("flight: err = %v", err)

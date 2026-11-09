@@ -22,11 +22,12 @@ const maxStations = 15
 var ErrNoName = errors.New("no station name to look for")
 
 // stationTags are, for each mode, the Overpass tag filters for what its
-// stations are mapped as, one statement each. Each starts with a plain key, so
+// stations are mapped as, one statement each, so a search finds only that
+// kind: a ferry search no train stations, and a train search no subway ones. Each starts with a plain key, so
 // the server can use its tag index instead of scanning every element nearby.
 var stationTags = map[string][]string{
-	"train":  {`[railway~"^(station|halt)$"]`, `[public_transport=station][train=yes]`},
-	"subway": {`[railway~"^(station|halt)$"]`, `[public_transport=station][subway=yes]`},
+	"train":  {`[railway~"^(station|halt)$"][station!~"^(subway|light_rail|monorail)$"]`, `[public_transport=station][train=yes]`},
+	"subway": {`[railway=station][station~"^(subway|light_rail|monorail)$"]`, `[public_transport=station][subway=yes]`},
 	"bus":    {`[highway=bus_stop]`, `[amenity=bus_station]`, `[public_transport=station][bus=yes]`},
 	"ferry":  {`[amenity=ferry_terminal]`, `[public_transport~"^(station|stop_position)$"][ferry=yes]`},
 }

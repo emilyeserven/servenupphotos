@@ -148,8 +148,10 @@ have the most of the words typed come first, then the nearest, each with its Eng
 position (`GET /api/transit/stations?mode=ferry&q=Shimonoseki&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`,
 through the same Overpass servers, throttle and day-long cache as [Lines ridden](trip-lines.md#lines-ridden)).
 
-The query asks for each kind's station tags by name (`railway=station`, `amenity=ferry_terminal`, `highway=bus_stop`
-and so on) before matching names, so the server can use its tag index. Matching every tag nearby by pattern first made
+Only the leg's kind of station is looked for: a **Ferry** leg finds ferry terminals (`amenity=ferry_terminal`, or a
+`public_transport` station with `ferry=yes`), a **Bus** leg bus stops and bus stations, and a **Train** leg railway
+stations other than subway ones (`station=subway`, `light_rail` or `monorail`), which only a subway hop finds. The query
+asks for these tags by name before matching names, so the server can use its tag index. Matching every tag nearby by pattern first made
 the public servers give up on a 30 km search, which the page showed as a 503 after a long spin.
 
 > **Frontend analogy:** it's `document.getElementsByClassName("station")` and then filtering by text, instead of
