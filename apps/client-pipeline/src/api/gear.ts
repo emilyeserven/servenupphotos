@@ -1,7 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
 import type { GearBox, GearCrop, GearFile, GearKind } from "@portfolio/lib/gear-pictures";
-import { settingMutations } from "@/api/data-files";
-import type { CombinedData } from "@/api/photos";
+import { settingEntries, settingMutations } from "@/api/data-files";
 import { entryId } from "@/api/places";
 import { requestJson } from "@/api/request";
 import type { CombinedPhoto } from "@/lib/group-photos";
@@ -12,10 +11,7 @@ function isGearFile(value: unknown): value is GearFile {
 }
 
 /** The gear pictures as the next Commit will have them: GEAR.json with the changes since. */
-export function gearFiles(data: CombinedData | undefined): GearFile[] {
-  const entries = data ? (data.head ?? data.base).gear.data : undefined;
-  return (entries ?? []).filter(isGearFile);
-}
+export const gearFiles = settingEntries("gear", isGearFile);
 
 /** The ID a camera's or lens's picture file gets, such as `camera-fujifilm-x-t5`. */
 export function gearId(kind: GearKind, name: string): string {
