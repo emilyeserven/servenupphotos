@@ -1,5 +1,5 @@
 import { type PostedPhotoFile, postsByDay } from "@/lib/social-post-days";
-import { PUBLISH_DATE } from "@/lib/social-schedule";
+import { PUBLISH_DATE } from "@/lib/photo-fields";
 
 /** Each day other photos post on, as YYYY-MM-DD, with those photos' names. */
 export type UsedPostDays = Map<string, string[]>;

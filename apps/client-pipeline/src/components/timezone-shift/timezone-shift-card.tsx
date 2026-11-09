@@ -11,13 +11,13 @@ import { Spinner } from "@/components/ui/spinner";
 import { type ClockSetting, DEFAULT_CLOCK } from "@/lib/clock-setting";
 import { type ShiftSide, type ShiftZones, browserZone } from "@/lib/timezone-shift";
 import {
-  CUSTOM_DATE,
   type PlannedShift,
   photosInRange,
   planShifts,
   tripLineEffects,
 } from "@/lib/timezone-shift-plan";
 import { type FieldChange, useLocalEditsStore } from "@/stores/local-edits";
+import { CUSTOM_DATE } from "@/lib/photo-fields";
 
 /**
  * Update Data's Times across timezones: fixes a session of photos whose camera clock was wrong

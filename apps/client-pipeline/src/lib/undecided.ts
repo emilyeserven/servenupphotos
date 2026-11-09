@@ -1,9 +1,6 @@
 import { isSetAside } from "@/lib/drafts";
 import type { LocalEdit } from "@/stores/local-edits";
 
-/** The photo JSON field marking a photo as Undecided: `true`, or left out (or `null`) when it isn't. */
-export const UNDECIDED = "undecided";
-
 /** A photo file as the Undecided queue reads it. */
 interface PhotoFile {
   path: string;

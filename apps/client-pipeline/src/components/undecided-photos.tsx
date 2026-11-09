@@ -6,8 +6,8 @@ import { CompareButton } from "@/components/compare/compare-button";
 import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
 import { Button } from "@/components/ui/button";
 import { squareImages } from "@/lib/offline-thumbnails";
-import { UNDECIDED } from "@/lib/undecided";
 import { useLocalEditsStore } from "@/stores/local-edits";
+import { UNDECIDED } from "@/lib/photo-fields";
 
 /** Sets or clears the photo's `undecided` mark, as a local edit until Commit. */
 function useSetUndecided() {

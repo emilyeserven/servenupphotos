@@ -21,6 +21,9 @@ The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in 
 | Graph presets     | `graphs/<ID>.json`           | `graphs/GRAPHS.json`               |
 | Gear pictures     | `gear/<ID>.json`             | `gear/GEAR.json`                   |
 
+The pipeline reads a photo's JSON untyped, by field name. The names it uses are constants, each with a note on what the
+field holds, in `apps/client-pipeline/src/lib/photo-fields.ts`; import them rather than typing a name again.
+
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is
 `{ "id", "name", "description" }` and an album file `{ "id", "name", "description", "parent" }`, each named by its ID.

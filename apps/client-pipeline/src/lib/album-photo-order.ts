@@ -1,4 +1,5 @@
 import { type CombinedPhoto, photoText } from "@/lib/group-photos";
+import { CREATE_DATE } from "@/lib/photo-fields";
 
 /** The photo's ID from its JSON, or undefined for an older file without one. */
 export function photoId(photo: CombinedPhoto): number | undefined {
@@ -13,7 +14,7 @@ function oldPlace(photo: CombinedPhoto): number {
 
 /** Newest first, by the EXIF date. */
 function byNewest(a: CombinedPhoto, b: CombinedPhoto): number {
-  return (photoText(b, "createDate") ?? "").localeCompare(photoText(a, "createDate") ?? "");
+  return (photoText(b, CREATE_DATE) ?? "").localeCompare(photoText(a, CREATE_DATE) ?? "");
 }
 
 /**

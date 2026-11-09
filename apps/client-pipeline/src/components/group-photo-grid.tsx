@@ -13,6 +13,7 @@ import {
 import { albumPhotoOrder } from "@/lib/album-photo-order";
 import { squareImages, tileImageUrl } from "@/lib/offline-thumbnails";
 import { useCombinedData } from "@/stores/combined-data";
+import { FILE, TITLE } from "@/lib/photo-fields";
 
 /** ALLPHOTOS.json from the combined data store, and its photos listing any of ids under kind. */
 export function useGroupPhotos(kind: GroupKind, ids: ReadonlySet<string>) {
@@ -46,7 +47,7 @@ export function GroupPhotoGrid({
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]">
       {albumPhotoOrder(photos, order).map((photo, i) => (
-        <li key={`${photoText(photo, "file") ?? ""}-${i}`}>
+        <li key={`${photoText(photo, FILE) ?? ""}-${i}`}>
           <PhotoTile photo={photo} action={action?.(photo)} />
         </li>
       ))}
@@ -74,7 +75,7 @@ function NoPhotos() {
 
 /** What to call a photo: its title, or else its original file name. */
 export function photoName(photo: CombinedPhoto): string {
-  return photoText(photo, "title") ?? photoText(photo, "file") ?? "Untitled";
+  return photoText(photo, TITLE) ?? photoText(photo, FILE) ?? "Untitled";
 }
 
 /**

@@ -10,7 +10,6 @@ import { calendarDays, dayFormat, isoDate, longDayFormat, parseIsoDate } from "@
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
 import {
   type Unsaved,
-  PUBLISH_DATE,
   dateChanges,
   dateOf,
   moveToDay,
@@ -24,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { type DayPost, instagramPostsByDay } from "@/lib/social-post-days";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
+import { PUBLISH_DATE } from "@/lib/photo-fields";
 
 /** How many weeks the calendar shows, this week first. */
 const WEEKS = 3;

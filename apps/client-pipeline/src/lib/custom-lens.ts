@@ -1,8 +1,6 @@
 import type { CustomLens } from "@/api/lenses";
 import type { CombinedPhoto } from "@/lib/group-photos";
-
-/** The photo JSON field naming the custom lens chosen for the photo on the Photo page, by its ID. */
-const CUSTOM_LENS = "customLens";
+import { CUSTOM_LENS } from "@/lib/photo-fields";
 
 /** The ID of the custom lens chosen for photo, or null when it has none. */
 export function chosenLens(photo: CombinedPhoto): string | null {

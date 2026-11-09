@@ -1,4 +1,5 @@
 import type { SocialPhoto } from "@/api/publish";
+import { CREATE_DATE } from "@/lib/photo-fields";
 
 /**
  * The Instagram calendar's Focus: the filters its photo picker starts with, so picking a photo for a
@@ -41,7 +42,7 @@ export function customOr(data: Record<string, unknown>, field: string): string {
 
 /** The day the photo was taken, as YYYY-MM-DD, from its custom or EXIF date; "" when it has none. */
 export function takenDay(data: Record<string, unknown>): string {
-  const match = customOr(data, "createDate").match(/^(\d{4})[:-](\d{2})[:-](\d{2})/);
+  const match = customOr(data, CREATE_DATE).match(/^(\d{4})[:-](\d{2})[:-](\d{2})/);
   return match ? `${match[1]}-${match[2]}-${match[3]}` : "";
 }
 

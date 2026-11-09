@@ -2,6 +2,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { InFlightFileRead } from "@/api/photos";
 import { FilterToggle, type ToggleChoices } from "@/components/photo-filter-bar";
 import { savedString } from "@/components/gallery/published-file";
+import { ADDED_DATE, CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
 
 /**
  * What the Gallery is sorted by besides when each photo was taken, newest first: "added", when
@@ -41,15 +42,15 @@ function latestFirst<T extends InFlightFileRead>(files: T[], field: string): T[]
  * as "18:42:05" for "2025:10:03 18:42:05"; undefined when it has neither.
  */
 function timeOfDay(file: InFlightFileRead): string | undefined {
-  const date = savedString(file, "customCreateDate") ?? savedString(file, "createDate");
+  const date = savedString(file, CUSTOM_DATE) ?? savedString(file, CREATE_DATE);
   return /^\d{4}:\d{2}:\d{2} (\d{2}:\d{2}:\d{2})/.exec(date ?? "")?.[1];
 }
 
 /** files, given newest first, by when they went on the portfolio, then the ones without a date added. */
 function byAdded<T extends InFlightFileRead>(byTaken: T[]): T[] {
-  const added = byTaken.filter((file) => savedString(file, "addedDate"));
-  const undated = byTaken.filter((file) => !savedString(file, "addedDate"));
-  return [...latestFirst(added, "addedDate"), ...undated];
+  const added = byTaken.filter((file) => savedString(file, ADDED_DATE));
+  const undated = byTaken.filter((file) => !savedString(file, ADDED_DATE));
+  return [...latestFirst(added, ADDED_DATE), ...undated];
 }
 
 /**
@@ -78,7 +79,7 @@ export function sortGallery<T extends InFlightFileRead>(
   files: T[],
   sort: GallerySort | undefined,
 ): T[] {
-  const byTaken = latestFirst(files, "createDate");
+  const byTaken = latestFirst(files, CREATE_DATE);
   return sort ? SORTS[sort](byTaken) : byTaken;
 }
 
