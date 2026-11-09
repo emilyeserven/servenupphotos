@@ -28,7 +28,7 @@ import { AlbumMoveButtons } from "@/components/album-move-buttons";
 import { HiddenMark } from "@/components/album-visibility-card";
 import { SmartMark } from "@/components/smart-album/smart-album-card";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
-import { GroupCombobox } from "@/components/group-picker";
+import { GroupCombobox } from "@/components/photo-groups-card";
 import { TagNamesCard } from "@/components/tag-names-card";
 import { FavoriteTagButton, FavoriteTagsCard } from "@/components/tag-favorites";
 import { validateGroupName } from "@/lib/group-name";

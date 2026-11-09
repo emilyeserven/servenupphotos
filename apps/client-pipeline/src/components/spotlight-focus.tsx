@@ -12,7 +12,7 @@ import {
   wholePhoto,
   zoneFocusChange,
   zoneFocusOf,
-} from "@/lib/spotlight-focus";
+} from "@/lib/spotlight-focus-edits";
 import { previewOf } from "@/lib/spotlight-preview";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import type { ZoneFocus } from "@portfolio/lib/photos";

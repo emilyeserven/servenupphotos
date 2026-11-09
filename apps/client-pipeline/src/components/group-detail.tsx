@@ -44,7 +44,7 @@ import { AlbumVisibilityCard } from "@/components/album-visibility-card";
 import { SmartAlbumCard } from "@/components/smart-album/smart-album-card";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { type GroupPhotos, useGroupPhotos } from "@/components/group-photo-grid";
-import { GroupCombobox } from "@/components/group-picker";
+import { GroupCombobox } from "@/components/photo-groups-card";
 import { GitHubGate, GroupStatus } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";

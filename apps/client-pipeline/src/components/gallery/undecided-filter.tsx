@@ -1,6 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { PublishedFile } from "@/api/photos";
-import { FilterToggle, type ToggleChoices } from "@/components/photo-filters";
+import { FilterToggle, type ToggleChoices } from "@/components/photo-filter-bar";
 import { undecidedPaths } from "@/lib/undecided";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
