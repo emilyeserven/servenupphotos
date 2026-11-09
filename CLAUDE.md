@@ -38,7 +38,8 @@ A new endpoint usually touches, in order:
    (`newFakeRepo`, `fakeGitHub`, `fakeBucket`, …).
 2. `be-pipeline/internal/httpapi/<area>.go`: the handler, and one line in that area's `routes_<area>.go`.
 3. `client-pipeline/src/api/<area>.ts`: the response type and the query or mutation.
-4. `scripts/screenshot-fixtures.mjs`: a sample answer, so `pnpm shot` can show the page.
+4. `scripts/screenshot-fixtures.mjs`: a sample answer, so `pnpm shot` can show the page. `pnpm check:fixtures`
+   (part of `pnpm check`) fails when a route has none.
 
 The BFF relays every path on its own. Only when the backend gives the work more than 30s, add the path to
 `bff-pipeline/src/lib/timeouts.ts` with a wait a little longer than the backend's.
@@ -48,7 +49,8 @@ The BFF relays every path on its own. Only when the backend gives the work more 
 Everything here is fast; run the narrowest check while working and `pnpm check` before pushing.
 
 ```sh
-pnpm check                         # oxlint, oxfmt --check, typecheck, fallow (~6s); `pnpm fmt` fixes formatting
+pnpm check                         # oxlint, oxfmt --check, typecheck, fallow, check:fixtures (~6s); `pnpm fmt` fixes formatting
+pnpm check:fixtures                # every backend route has a fixture in scripts/screenshot-fixtures.mjs
 pnpm build                         # all three TS apps (~5s); CI runs it too
 cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes ~8s
 cd apps/be-pipeline && golangci-lint run
