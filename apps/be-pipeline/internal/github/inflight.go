@@ -99,7 +99,8 @@ type InFlightResult struct {
 	// Albums, Tags, Genres, Places, Localizations, MetaInfo, Cameras, Lenses
 	// Captions, Timeline and Likes are the album, tag, genre, place,
 	// localization, metadata group, camera override, custom lens, caption
-	// template, Trip and viewer likes files in the pull request.
+	// template, Trip and viewer likes files in the pull request. Each kind in
+	// groupKinds has one field here, named by its JSON name (see addGroups).
 	Albums        InFlightGroups `json:"albums"`
 	Tags          InFlightGroups `json:"tags"`
 	Genres        InFlightGroups `json:"genres"`
@@ -119,10 +120,15 @@ type InFlightResult struct {
 	Gear InFlightGroups `json:"gear"`
 }
 
-// groups are r's album, tag, genre, place, localization, metadata group, camera
-// override, custom lens, caption template, Trip, viewer likes, trip line, graph preset and gear picture files.
-func (r *InFlightResult) groups() []*InFlightGroups {
-	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Genres, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras, &r.Lenses, &r.Captions, &r.Timeline, &r.Likes, &r.TripLines, &r.Graphs, &r.Gear}
+// addGroups fills r's field for each kind but photos (see groupKinds) with
+// the files w adds or changes in the kind's folder.
+func (r *InFlightResult) addGroups(w *workspace) {
+	fields := kindFields[InFlightGroups](r)
+	for _, k := range groupKinds() {
+		g := newInFlightGroups(w.root, k)
+		w.addGroupFiles(&g)
+		*fields[k.name] = g
+	}
 }
 
 // InFlightGroups is the files of one Kind in the pull request.
@@ -166,20 +172,6 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 	folder := w.root + "/" + PhotosFolder
 	result := InFlightResult{
 		Repo: w.t.repo.FullName, Folder: folder, Files: []InFlightFile{}, PullRequest: w.inFlightPullRequest(),
-		Albums:        newInFlightGroups(w.root, Albums),
-		Tags:          newInFlightGroups(w.root, Tags),
-		Genres:        newInFlightGroups(w.root, Genres),
-		Places:        newInFlightGroups(w.root, Kind{Folder: Places.Folder, AllFile: Places.AllFile}),
-		Localizations: newInFlightGroups(w.root, Kind{Folder: Localizations.Folder, AllFile: Localizations.AllFile}),
-		MetaInfo:      newInFlightGroups(w.root, Kind{Folder: MetaInfo.Folder, AllFile: MetaInfo.AllFile}),
-		Cameras:       newInFlightGroups(w.root, Kind{Folder: Cameras.Folder, AllFile: Cameras.AllFile}),
-		Lenses:        newInFlightGroups(w.root, Kind{Folder: Lenses.Folder, AllFile: Lenses.AllFile}),
-		Captions:      newInFlightGroups(w.root, Kind{Folder: Captions.Folder, AllFile: Captions.AllFile}),
-		Timeline:      newInFlightGroups(w.root, Kind{Folder: Trips.Folder, AllFile: Trips.AllFile}),
-		Likes:         newInFlightGroups(w.root, Kind{Folder: ViewerLikesKind.Folder, AllFile: ViewerLikesKind.AllFile}),
-		TripLines:     newInFlightGroups(w.root, Kind{Folder: TripLines.Folder, AllFile: TripLines.AllFile}),
-		Graphs:        newInFlightGroups(w.root, Kind{Folder: GraphPresets.Folder, AllFile: GraphPresets.AllFile}),
-		Gear:          newInFlightGroups(w.root, Kind{Folder: GearKind.Folder, AllFile: GearKind.AllFile}),
 	}
 	for _, p := range w.changed(folder, AllPhotosFile) {
 		if w.status(p) == statusRemoved {
@@ -191,15 +183,14 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		file.BaseFile = w.baseFile(p)
 		result.Files = append(result.Files, file)
 	}
-	for _, g := range result.groups() {
-		w.addGroupFiles(g)
-	}
+	result.addGroups(w)
 	return result, nil
 }
 
-func newInFlightGroups(root string, kind Kind) InFlightGroups {
-	folder := root + "/" + kind.Folder
-	return InFlightGroups{Folder: folder, Files: []InFlightGroupFile{}, allFile: folder + "/" + kind.AllFile}
+// newInFlightGroups is an empty list of kind's files in the data folder root.
+func newInFlightGroups(root string, kind combinedKind) InFlightGroups {
+	folder := root + "/" + kind.folder
+	return InFlightGroups{Folder: folder, Files: []InFlightGroupFile{}, allFile: folder + "/" + kind.allFile}
 }
 
 // addGroupFiles lists the files in g's folder, other than its AllFile, that

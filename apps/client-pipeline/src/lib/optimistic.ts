@@ -3,7 +3,6 @@ import {
   type CombinedData,
   type PendingFile,
   type CombinedFile,
-  type CombinedFiles,
   type InFlightPullRequest,
   type InFlightRead,
   photosInFlightQuery,
@@ -11,6 +10,13 @@ import {
   publishedPhotosQuery,
 } from "@/api/photos";
 import { canonicalJson } from "@/lib/combined";
+import {
+  type CombinedKind,
+  type GroupKind,
+  GROUP_KINDS,
+  KIND_INFO,
+  byKind,
+} from "@/lib/data-kinds";
 import { leftOffPortfolio } from "@/lib/drafts";
 
 /**
@@ -19,7 +25,7 @@ import { leftOffPortfolio } from "@/lib/drafts";
  * replaced; `after` is null when the save removed the file.
  */
 export interface FileChange {
-  kind: keyof CombinedFiles;
+  kind: CombinedKind;
   path: string;
   before?: unknown;
   after: unknown;
@@ -32,23 +38,7 @@ interface CachedFile {
 
 function inFlightFiles(read: InFlightRead | undefined): CachedFile[] {
   if (!read) return [];
-  const groups = [
-    read.albums,
-    read.tags,
-    read.genres,
-    read.places,
-    read.localizations,
-    read.metainfo,
-    read.cameras,
-    read.lenses,
-    read.captions,
-    read.timeline,
-    read.likes,
-    read.triplines,
-    read.graphs,
-    read.gear,
-  ];
-  return [...read.files, ...groups.flatMap((group) => group.files)];
+  return [...read.files, ...GROUP_KINDS.flatMap((kind) => read[kind].files)];
 }
 
 function publishedFiles(read: PublishedResponse | undefined): CachedFile[] {
@@ -125,26 +115,13 @@ function headOf(data: CombinedData): NonNullable<CombinedData["head"]> {
 export function withChanges(data: CombinedData, changes: FileChange[]): CombinedData {
   if (changes.length === 0) return data;
   const head = headOf(data);
-  const of = (kind: keyof CombinedFiles) => changes.filter((change) => change.kind === kind);
+  const of = (kind: CombinedKind) => changes.filter((change) => change.kind === kind);
   return {
     ...data,
     head: {
       ...head,
+      ...byKind(GROUP_KINDS, (kind) => changedFile(head[kind], of(kind))),
       photos: changedFile(head.photos, photoChanges(of("photos"), data.includeUntitled)),
-      albums: changedFile(head.albums, of("albums")),
-      tags: changedFile(head.tags, of("tags")),
-      genres: changedFile(head.genres, of("genres")),
-      places: changedFile(head.places, of("places")),
-      localizations: changedFile(head.localizations, of("localizations")),
-      metainfo: changedFile(head.metainfo, of("metainfo")),
-      cameras: changedFile(head.cameras, of("cameras")),
-      lenses: changedFile(head.lenses, of("lenses")),
-      captions: changedFile(head.captions, of("captions")),
-      timeline: changedFile(head.timeline, of("timeline")),
-      likes: changedFile(head.likes, of("likes")),
-      triplines: changedFile(head.triplines, of("triplines")),
-      graphs: changedFile(head.graphs, of("graphs")),
-      gear: changedFile(head.gear, of("gear")),
     },
   };
 }
@@ -189,30 +166,16 @@ function firstAndLast(changes: FileChange[]): Map<string, [FileChange, FileChang
   return byPath;
 }
 
-/** What changed since the last commit, each file counted once. */
-export interface PendingSummary {
+/** What changed since the last commit, each file counted once: images, and each other kind's files. */
+export interface PendingSummary extends Record<GroupKind, number> {
   /** Images by how they changed. */
   images: Record<Exclude<NetChange, undefined>, number>;
-  albums: number;
-  tags: number;
-  genres: number;
-  places: number;
-  localizations: number;
-  metainfo: number;
-  cameras: number;
-  lenses: number;
-  captions: number;
-  timeline: number;
-  likes: number;
-  triplines: number;
-  graphs: number;
-  gear: number;
   /** Saves whose files aren't known. */
   other: number;
 }
 
 /** Counts a file that changed in the way net, if it did. */
-function count(summary: PendingSummary, kind: keyof CombinedFiles, net: NetChange) {
+function count(summary: PendingSummary, kind: CombinedKind, net: NetChange) {
   if (!net) return;
   if (kind === "photos") summary.images[net]++;
   else summary[kind]++;
@@ -229,20 +192,7 @@ export function summarizeChanges(
 ): PendingSummary {
   const summary: PendingSummary = {
     images: { added: 0, modified: 0, deleted: 0 },
-    albums: 0,
-    tags: 0,
-    genres: 0,
-    places: 0,
-    localizations: 0,
-    metainfo: 0,
-    cameras: 0,
-    lenses: 0,
-    captions: 0,
-    timeline: 0,
-    likes: 0,
-    triplines: 0,
-    graphs: 0,
-    gear: 0,
+    ...byKind(GROUP_KINDS, () => 0),
     other: unknownChanges,
   };
   const byKey = new Map(checked.map((file) => [fileKey(file), file]));
@@ -276,21 +226,8 @@ function nonZero(parts: [number, string][]): string {
 /** The summary as the sync button says it, such as "3 images, 1 album"; "" with nothing known. */
 export function pendingText(summary: PendingSummary): string {
   return nonZero([
-    [imageCount(summary), "image"],
-    [summary.albums, "album"],
-    [summary.tags, "tag"],
-    [summary.genres, "genre"],
-    [summary.places, "place"],
-    [summary.localizations, "localization"],
-    [summary.metainfo, "metadata group"],
-    [summary.cameras, "camera override"],
-    [summary.lenses, "custom lens file"],
-    [summary.captions, "caption template"],
-    [summary.timeline, "Trip"],
-    [summary.likes, "user likes list"],
-    [summary.triplines, "trip line"],
-    [summary.graphs, "graph preset"],
-    [summary.gear, "gear picture"],
+    [imageCount(summary), KIND_INFO.photos.pending],
+    ...GROUP_KINDS.map((kind): [number, string] => [summary[kind], KIND_INFO[kind].pending]),
     [summary.other, "other save"],
   ]);
 }

@@ -1,12 +1,11 @@
-// Makes ALLPHOTOS.local.json, PLACES.local.json, LOCALIZATIONS.local.json, ALLALBUMS.local.json,
-// ALLTAGS.local.json, ALLGENRES.local.json, METAINFO.local.json, TIMELINE.local.json, GRAPHS.local.json and GEAR.local.json in apps/portfolio/src/data, which the portfolio uses
+// Makes a local copy of each combined file in apps/portfolio/src/data, such as ALLPHOTOS.local.json,
+// PLACES.local.json and GEAR.local.json (one per kind in scripts/data-kinds.json), which the portfolio uses
 // in place of the committed combined files whenever they have anything in them. It asks, in turn:
 //
 // 1. The photo pipeline, when it's running locally (PIPELINE_URL, or else http://localhost:8080
 //    or http://localhost:5174): the combined files at the open "Add photo data" pull request's
-//    head, or the base branch's when none is open, with the photo, place, localization, album,
-//    tag, genre, metadata group, timeline label, graph preset and gear picture files in flight over them, so the changes waiting for Commit show
-//    too. Skipped when no pull request is open and nothing is waiting for Commit.
+//    head, or the base branch's when none is open, with each kind's files in flight over them, so
+//    the changes waiting for Commit show too. Skipped when no pull request is open and nothing is waiting for Commit.
 // 2. GitHub: the combined files from the open "Add photo data" pull request on the `origin`
 //    repository. Set GITHUB_TOKEN to read a private repository.
 // 3. The data folders: every other JSON file in each, as one array sorted by file name, the same
@@ -28,19 +27,18 @@ const log = quiet ? () => {} : console.log;
 const PR_TITLE = "Add photo data";
 const root = path.resolve(import.meta.dirname, "..");
 
-/** Each folder of JSON files and the combined file made from them. */
-const KINDS = [
-  { folder: "photos", all: "ALLPHOTOS", identity: "file" },
-  { folder: "places", all: "PLACES", identity: "id" },
-  { folder: "localizations", all: "LOCALIZATIONS", identity: "id" },
-  { folder: "albums", all: "ALLALBUMS", identity: "id" },
-  { folder: "tags", all: "ALLTAGS", identity: "id" },
-  { folder: "genres", all: "ALLGENRES", identity: "id" },
-  { folder: "metainfo", all: "METAINFO", identity: "id" },
-  { folder: "timeline", all: "TIMELINE", identity: "id" },
-  { folder: "graphs", all: "GRAPHS", identity: "id" },
-  { folder: "gear", all: "GEAR", identity: "id" },
-];
+/**
+ * Each folder of JSON files and the combined file made from them, from scripts/data-kinds.json, the
+ * list of kinds the "Combine photo data" workflow reads too. A photo's identity is its file name;
+ * every other kind's entries have an ID.
+ */
+const KINDS = JSON.parse(await readFile(path.join(root, "scripts/data-kinds.json"), "utf8")).map(
+  ({ folder, all }) => ({
+    folder,
+    all: all.replace(/\.json$/, ""),
+    identity: folder === "photos" ? "file" : "id",
+  }),
+);
 
 /** Where the local photo pipeline may be running: as set, `pnpm dev:pipeline` or Docker, then `pnpm dev:docker`. */
 const PIPELINE_URLS = process.env.PIPELINE_URL
@@ -217,7 +215,8 @@ async function fromPullRequest({ repo, pull }, kind) {
 
 async function fromDataFolder(kind) {
   const dataDir = path.join(root, DATA_PATH, kind.folder);
-  const skipped = new Set([`${kind.all}.json`, `${kind.all}.local.json`]);
+  // TRIPPAGES.json is baked by Commit next to TRIPLINES.json, and isn't a trip line.
+  const skipped = new Set([`${kind.all}.json`, `${kind.all}.local.json`, "TRIPPAGES.json"]);
   const files = (await readdir(dataDir, { withFileTypes: true }).catch(() => []))
     .filter(
       (entry) =>

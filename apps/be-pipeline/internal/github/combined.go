@@ -87,30 +87,16 @@ func (c *Client) Combined(ctx context.Context, gh settings.GitHub) (CombinedResu
 // combinedFiles is each combined list in the data folder root in s, linked to
 // its page on branch.
 func combinedFiles(t target, root string, s *snapshot, branch string) CombinedFiles {
-	read := func(folder, file string) InFlightAllPhotos {
-		all := readCombined(s, root+"/"+folder+"/"+file)
+	var files CombinedFiles
+	fields := kindFields[InFlightAllPhotos](&files)
+	for _, k := range combinedKinds() {
+		all := readCombined(s, root+"/"+k.folder+"/"+k.allFile)
 		if all.Found {
 			all.FileURL = blobURL(t, branch, all.Path)
 		}
-		return all
+		*fields[k.name] = all
 	}
-	return CombinedFiles{
-		Photos:        read(PhotosFolder, AllPhotosFile),
-		Albums:        read(Albums.Folder, Albums.AllFile),
-		Tags:          read(Tags.Folder, Tags.AllFile),
-		Genres:        read(Genres.Folder, Genres.AllFile),
-		Places:        read(Places.Folder, Places.AllFile),
-		Localizations: read(Localizations.Folder, Localizations.AllFile),
-		MetaInfo:      read(MetaInfo.Folder, MetaInfo.AllFile),
-		Cameras:       read(Cameras.Folder, Cameras.AllFile),
-		Lenses:        read(Lenses.Folder, Lenses.AllFile),
-		Captions:      read(Captions.Folder, Captions.AllFile),
-		Timeline:      read(Trips.Folder, Trips.AllFile),
-		Likes:         read(ViewerLikesKind.Folder, ViewerLikesKind.AllFile),
-		TripLines:     read(TripLines.Folder, TripLines.AllFile),
-		Graphs:        read(GraphPresets.Folder, GraphPresets.AllFile),
-		Gear:          read(GearKind.Folder, GearKind.AllFile),
-	}
+	return files
 }
 
 // readCombined is file, a combined list, in s.

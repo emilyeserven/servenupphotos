@@ -1,6 +1,6 @@
 # Combined data store
 
-`ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`, `PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json`, `LENSES.json`, `TIMELINE.json` and `LIKES.json` are read once, on the Settings branch and at the open **Add photo
+The combined lists, one per [kind of data](#where-the-kind-list-lives) (`ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`, … `GEAR.json`), are read once, on the Settings branch and at the open **Add photo
 data** pull request's head (`GET /api/photos/combined` → `GET /photos/combined`), and kept in a Zustand store
 (`apps/client-pipeline/src/stores/combined-data.ts`) that every page shares: Photos in Flight, Explore Bucket, the Add
 Photo check and the Instagram calendar. Other endpoints don't read them anymore. They only change when you **Commit** them or the
@@ -38,10 +38,32 @@ yet) moves its edits to the new name (the mutation's `meta.moves`), so a focus p
 the photo. An edit of a file that isn't on GitHub anymore is left out and shown
 after the commit instead of failing it (see [pending changes](pending-changes.md#commit)).
 
+## Where the kind list lives
+
+There are 15 kinds of combined data: photos, albums, tags, genres, places, localizations, metainfo (metadata groups),
+cameras (camera overrides), lenses (custom lenses), captions (caption templates), timeline (Trips), likes (viewer likes),
+triplines (trip lines), graphs (graph presets) and gear (gear pictures). Each is a folder of JSON files under the data
+folder and one combined list in it. The list of them is written once per language:
+
+- **Go:** `dataKinds` in `apps/be-pipeline/internal/github/kinds.go` (name, folder, combined file). Commit, the
+  snapshot's GraphQL query, `GET /photos/combined` and Photos in Flight all go through it. The answers keep one typed
+  field per kind (`CombinedFiles`, `InFlightResult`), filled by their JSON names.
+- **Pipeline UI:** `COMBINED_KINDS` and `KIND_INFO` (combined file name, heading, the word the sync button counts) in
+  `apps/client-pipeline/src/lib/data-kinds.ts`. `CombinedFiles`, `InFlightRead` and the pending summary are typed from it,
+  and the optimistic updates and Photos in Flight go through it.
+- **Workflow and script:** `scripts/data-kinds.json`, which the **Combine photo data** workflow reads with `jq` and
+  `pnpm photos:local` reads at start.
+
+Adding a kind is one entry in each, plus its field in Go's `CombinedFiles` and `InFlightResult`. `kinds_test.go`
+fails when the Go list, those fields and `scripts/data-kinds.json` don't match.
+
+> **Frontend analogy:** like one `as const` tuple that a union type and every `.map()` derive from, instead of the same
+> keys typed out in several object literals.
+
 ## Committing the combined files
 
 Saves don't touch GitHub or the combined files. **Commit** (`POST /api/photos/combined` →
-`POST /photos/combined`) takes every [change waiting for Commit](pending-changes.md) and any [local edits](#local-edits), builds all of them (`ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`, `PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json`, `LENSES.json`, `TIMELINE.json` and `LIKES.json`) from the result and commits
+`POST /photos/combined`) takes every [change waiting for Commit](pending-changes.md) and any [local edits](#local-edits), builds every [kind](#where-the-kind-list-lives)'s combined list from the result and commits
 everything that changed as one commit, "Combine photo, album and tag data", on the open **Add photo data** pull
 request's branch, or on a new `photo-data/` branch with a new pull request when none is open. Each is every other `.json` file directly in its folder,
 sorted by path, as one array, formatted as oxfmt formats it, so a list that's already up to date isn't committed again.
