@@ -1,8 +1,16 @@
+/** How long the BFF waits for the backend: the wait for every path, and for paths by prefix, in ms. */
+export interface RelayTimeouts {
+  /** The wait for a path no prefix matches. */
+  defaultMs: number;
+  /** The wait for the paths starting with each prefix; the longest matching prefix wins. */
+  prefixes: Record<string, number>;
+}
+
 /**
- * How long the BFF waits for the backend on paths that take longer than DEFAULT_TIMEOUT_MS, each a
- * little longer than the backend gives the work itself. The longest matching prefix wins.
+ * The waits used until the backend answers GET /timeouts, or when it never does (an older
+ * backend): each a little longer than the backend gives the work itself, kept by hand.
  */
-const TIMEOUTS: Record<string, number> = {
+const FALLBACK_PREFIXES: Record<string, number> = {
   // The backend may first read the camera overrides from GitHub, given 30s, before reading the photo.
   "/exif": 90_000,
   // The backend gives resizing and R2 120s after receiving the photo.
@@ -45,14 +53,23 @@ const TIMEOUTS: Record<string, number> = {
   "/transit/": 105_000,
 };
 
-/** The wait for every other path: the backend gives GitHub 30s for most reads and saves. */
-const DEFAULT_TIMEOUT_MS = 35_000;
+/** The waits in use: the fallback until setRelayTimeouts replaces them with the backend's. */
+let current: RelayTimeouts = {
+  // The backend gives GitHub 30s for most reads and saves.
+  defaultMs: 35_000,
+  prefixes: FALLBACK_PREFIXES,
+};
 
-/** How long to wait for the backend to answer path, by TIMEOUTS; its query is left out. */
+/** Replaces the waits timeoutFor uses, such as with the ones the backend answers at start-up. */
+export function setRelayTimeouts(timeouts: RelayTimeouts) {
+  current = timeouts;
+}
+
+/** How long to wait for the backend to answer path, by the waits in use; its query is left out. */
 export function timeoutFor(path: string): number {
   const { pathname } = new URL(path, "http://backend");
-  const matches = Object.entries(TIMEOUTS)
+  const matches = Object.entries(current.prefixes)
     .filter(([prefix]) => pathname.startsWith(prefix))
     .toSorted(([a], [b]) => b.length - a.length);
-  return matches[0]?.[1] ?? DEFAULT_TIMEOUT_MS;
+  return matches[0]?.[1] ?? current.defaultMs;
 }
