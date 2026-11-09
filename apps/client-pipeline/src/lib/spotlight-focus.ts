@@ -1,6 +1,6 @@
 import type { SocialPhoto } from "@/api/publish";
 import type { FieldChange, LocalEdit } from "@/stores/local-edits";
-import type { SpotlightFocus, ZoneFocus as PortfolioZoneFocus } from "@portfolio/lib/photos";
+import type { SpotlightFocus, ZoneFocus } from "@portfolio/lib/photos";
 
 /**
  * The photo JSON field that holds its focus point and placement for each spotlight zone, by zone
@@ -23,9 +23,6 @@ function isFocus(value: unknown): value is Focus {
 function asFocus(value: unknown): Focus | null {
   return isFocus(value) ? value : null;
 }
-
-/** A photo's focus point and placement in one spotlight zone; null for the middle. */
-export type ZoneFocus = PortfolioZoneFocus;
 
 /** The photo's focus points by zone, as its data holds them; empty when it has none. */
 function zoneFocusMap(data: Record<string, unknown>): Record<string, unknown> {
