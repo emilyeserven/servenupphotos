@@ -21,6 +21,20 @@ legs, and its file didn't change.
 > the Timeline checks each day heading against while rendering. Its legs are like a layout route wrapping several
 > pages: each day still renders its own line, and the Trip only adds what sits between them.
 
+## Map previews on the Trips tab
+
+Each Trip's card on the Trips tab draws its days' trip lines as a small map: walks solid dark blue, drives solid light
+blue, and transit (trains, subways, buses) dashed in its line's color, or purple when no line was picked, with Trip
+Stops as amber dots. It draws the lines as the next Commit will have them, so a line saved a moment ago shows at once.
+When the lines are far apart, such as Seoul and Busan, the card draws a small map for each place instead, grouped the
+way the [Timeline](portfolio-timeline.md) groups a month's lines (days within about 50 km share a map). The legs
+between days, such as a flight, are left out so they don't shrink the days' routes to dots. A Trip whose days have no
+line yet says so. The drawing is the portfolio's `SketchDrawing` (`components/sketch-drawing.tsx`) with the Trips
+tab's own line styles.
+
+> **Frontend analogy:** like an SVG sparkline per card: no map tiles, just the lines' coordinates scaled into a box,
+> so a grid of Trips draws instantly.
+
 ## Timeline labels within a Trip
 
 A Trip can name parts of itself on the Timeline: a "Korea and Japan" Trip from September 12 to October 2 with the

@@ -2,11 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { format, parseISO } from "date-fns";
 import { ChevronDown, Route } from "lucide-react";
 import { useId, useState } from "react";
-import {
-  type DaysSketch,
-  SketchDrawing,
-  useDaysSketches,
-} from "@/components/timeline-route-sketch";
+import { SketchDrawing } from "@/components/sketch-drawing";
+import { type DaysSketch, useDaysSketches } from "@/components/timeline-route-sketch";
 import { Button } from "@/components/ui/button";
 import { fitView } from "@/lib/fit-view";
 import type { Photo } from "@/lib/photos";

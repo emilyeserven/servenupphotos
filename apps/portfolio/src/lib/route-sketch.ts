@@ -1,6 +1,21 @@
-import type { GeoBounds } from "@/lib/fit-view";
-import { withLanes } from "@/lib/trip-lanes";
-import type { TripMapFeature } from "@/lib/trip-lines-map";
+import type { GeoBounds } from "@portfolio/lib/fit-view";
+import { withLanes } from "@portfolio/lib/trip-lanes";
+
+/**
+ * A feature a sketch draws, as TRIPLINES.geo.json has them or the pipeline's Trips tab builds them
+ * from each day's line: a LineString with its `mode`, or a place visited as a Point.
+ */
+export interface SketchFeature {
+  geometry: { type: string; coordinates: unknown };
+  properties: {
+    feature?: string;
+    mode?: string;
+    colour?: string;
+    /** The Trip a leg between days is part of; a sketch leaves legs out. */
+    trip?: string;
+    lane?: number;
+  };
+}
 
 /**
  * The size of a route sketch in pixels, and how far apart it draws the lanes of lines that run
@@ -45,19 +60,19 @@ export interface RouteSketch {
 }
 
 /** A day's own line; a Trip's leg to another day, such as a flight, would dwarf the day's route. */
-function isLine(feature: TripMapFeature): boolean {
+function isLine(feature: SketchFeature): boolean {
   return feature.geometry.type === "LineString" && feature.properties.trip === undefined;
 }
 
-function isVisit(feature: TripMapFeature): boolean {
+function isVisit(feature: SketchFeature): boolean {
   return feature.properties.feature === "visit";
 }
 
-function lineCoordinates(feature: TripMapFeature): LngLat[] {
+function lineCoordinates(feature: SketchFeature): LngLat[] {
   return feature.geometry.coordinates as LngLat[];
 }
 
-function visitCoordinates(feature: TripMapFeature): LngLat {
+function visitCoordinates(feature: SketchFeature): LngLat {
   return feature.geometry.coordinates as LngLat;
 }
 
@@ -136,7 +151,7 @@ function round(n: number): number {
  * on the Map; null when there's no line to draw. Areas are left out.
  */
 export function routeSketch(
-  features: TripMapFeature[],
+  features: SketchFeature[],
   size: SketchSize = SKETCH_SIZE,
 ): RouteSketch | null {
   const lines = withLanes(features.filter(isLine));

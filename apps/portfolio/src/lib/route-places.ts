@@ -1,4 +1,4 @@
-import type { GeoBounds } from "@/lib/fit-view";
+import type { GeoBounds } from "@portfolio/lib/fit-view";
 
 /**
  * How far apart two days' lines can be and still share a map, in degrees: about 50 km, so a city
