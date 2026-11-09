@@ -92,7 +92,10 @@ var tlExtendedKinds = map[int]string{1: "train", 2: "bus", 4: "subway", 7: "bus"
 
 // tlRoute is one route in a Transitland answer.
 type tlRoute struct {
-	ID        int64  `json:"id"`
+	ID int64 `json:"id"`
+	// OnestopID is Transitland's ID for the route across feeds, such as
+	// "r-wyj6-防長線": the same in two copies of one operator's feed.
+	OnestopID string `json:"onestop_id"`
 	ShortName string `json:"route_short_name"`
 	LongName  string `json:"route_long_name"`
 	Color     string `json:"route_color"`
@@ -191,7 +194,7 @@ func bothNear(a, b []tlRoute) []Line {
 		ids[r.ID] = true
 	}
 	lines := []Line{}
-	for _, r := range a {
+	for _, r := range firstCopies(a) {
 		if ids[r.ID] {
 			lines = append(lines, tlLine(r))
 		}
@@ -200,6 +203,18 @@ func bothNear(a, b []tlRoute) []Line {
 		return cmp.Or(cmp.Compare(x.Ref, y.Ref), cmp.Compare(x.Name, y.Name), cmp.Compare(x.ID, y.ID))
 	})
 	return lines[:min(len(lines), maxLines)]
+}
+
+// firstCopies are routes with each route listed once, when Transitland has
+// two copies of an operator's feed and so the same route twice under different
+// IDs.
+func firstCopies(routes []tlRoute) []tlRoute {
+	seen := map[string]bool{}
+	return slices.DeleteFunc(slices.Clone(routes), func(r tlRoute) bool {
+		dup := r.OnestopID != "" && seen[r.OnestopID]
+		seen[r.OnestopID] = true
+		return dup
+	})
 }
 
 // tlLine is r as a Line, named by its long name, or else its number, with

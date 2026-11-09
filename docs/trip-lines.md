@@ -443,7 +443,7 @@ choice is kept in the browser for every look-up:
   by volunteers, and the public servers are often busy.
 - **Transitland** ([transit.land](https://www.transit.land)): the timetables transit agencies publish as GTFS, with
   each route's shape and stops. A route is listed when it has a stop within 500 m of both ends
-  (`GET /routes?lat=…&lon=…&radius=500&route_types=…`, once per end), its track is cut from its shape the same way as
+  (`GET /routes?lat=…&lon=…&radius=500&route_types=…`, once per end, each route once when Transitland lists two copies of a feed), its track is cut from its shape the same way as
   an OpenStreetMap line's, and its stops are put in order along its shape. It covers railways well (in Japan too),
   ferries less so. It needs a free API key as `TRANSITLAND_API_KEY` in the repo's `.env` (see `.env.example`), sent
   as the `apikey` header; without one the look-up says so. Answers are kept for a day, and the backend logs each

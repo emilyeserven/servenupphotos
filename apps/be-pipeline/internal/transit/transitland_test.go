@@ -38,15 +38,15 @@ func TestTransitlandLines(t *testing.T) {
 	var got []string
 	c := fakeTransitland(t, func(r *http.Request) string {
 		if strings.Contains(r.URL.RawQuery, "lat=33.950000") {
-			return `{"routes":[{"id":9,"route_long_name":"Sanyo Line","route_color":"F68B1E","route_type":2,"agency":{"agency_name":"JR West"}},{"id":10,"route_long_name":"Bus 1","route_type":3}]}`
+			return `{"routes":[{"id":9,"route_long_name":"Sanyo Line","route_color":"F68B1E","route_type":2,"agency":{"agency_name":"JR West"}},{"id":10,"route_long_name":"Bus 1","route_type":3},{"id":11,"onestop_id":"r-sanyo","route_long_name":"Sanyo Line","route_type":2},{"id":12,"onestop_id":"r-sanyo","route_long_name":"Sanyo Line","route_type":2}]}`
 		}
-		return `{"routes":[{"id":9,"route_long_name":"Sanyo Line","route_type":2}]}`
+		return `{"routes":[{"id":9,"route_long_name":"Sanyo Line","route_type":2},{"id":11,"route_type":2},{"id":12,"route_type":2}]}`
 	}, &got)
 	lines, err := c.TransitlandLines(context.Background(), "train", [2]float64{130.92, 33.95}, [2]float64{130.88, 33.88})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(lines) != 1 || lines[0].ID != 9 || lines[0].Colour != "#F68B1E" || lines[0].Source != SourceTransitland || lines[0].Kind != "train" || lines[0].From != "JR West" {
+	if len(lines) != 2 || lines[1].ID != 11 || lines[0].ID != 9 || lines[0].Colour != "#F68B1E" || lines[0].Source != SourceTransitland || lines[0].Kind != "train" || lines[0].From != "JR West" {
 		t.Fatalf("lines = %+v", lines)
 	}
 	if len(got) != 2 || !strings.HasPrefix(got[0], "key /routes?") || !strings.Contains(got[0], "route_types=2%2C0%2C12%2C100%2C101") || !strings.Contains(got[0], "radius=500") {
