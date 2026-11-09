@@ -352,14 +352,6 @@ export const added = {
               day: "2026-09-23",
               spot: { latitude: 34.417, longitude: 131.4105, label: "Higashi-Hagi" },
             },
-            line: { id: 1, name: "Marumaru no Hanashi", colour: "#00a3d9" },
-            path: [
-              [130.9218, 33.9494],
-              [131.0, 34.2],
-              [131.18, 34.37],
-              [131.3, 34.4],
-              [131.4105, 34.417],
-            ],
             rides: [
               {
                 change: { latitude: 34.37, longitude: 131.18, label: "Nagato-shi" },

@@ -1,5 +1,6 @@
 import type { TripLine } from "@/api/trip-lines";
-import type { Trip, TripLeg } from "@/api/trips";
+import type { Trip, TripLeg, TripLegRide } from "@/api/trips";
+import { separateRides } from "@/lib/leg-rides";
 import { lineFeatures } from "@/components/trip-lines/route-geometry";
 import type { TripDay, TripPhoto } from "@/lib/trip-days";
 import { endPhoto, endPosition } from "@/lib/trip-legs";
@@ -78,6 +79,8 @@ function legLine(leg: TripLeg, byDay: Map<string, TripDay>): TripMapFeature[] {
   const from = endPosition(leg.from, endPhoto(leg.from, byDay, true));
   const to = endPosition(leg.to, endPhoto(leg.to, byDay, false));
   if (!from || !to) return [];
+  const separate = separateRides(leg);
+  if (separate) return separate.map((ride) => rideLine(leg, ride));
   const start: LngLat = [from.longitude, from.latitude];
   return [
     {
@@ -89,6 +92,15 @@ function legLine(leg: TripLeg, byDay: Map<string, TripDay>): TripMapFeature[] {
       properties: legProps(leg),
     },
   ];
+}
+
+/** A ride of a leg that changed lines, along its track in its line's color. */
+function rideLine(leg: TripLeg, ride: TripLegRide & { path: LngLat[] }): TripMapFeature {
+  return {
+    type: "Feature",
+    geometry: { type: "LineString", coordinates: ride.path },
+    properties: legProps({ ...leg, line: ride.line }),
+  };
 }
 
 /** The Trip's map: each day's line and photos, and its legs between them. */

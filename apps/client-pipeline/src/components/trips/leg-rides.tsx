@@ -1,4 +1,4 @@
-import { Plus, TrainFront, X } from "lucide-react";
+import { Combine, Plus, Split, TrainFront, X } from "lucide-react";
 import { useState } from "react";
 import type { Spot } from "@/api/transit";
 import type { TripPoint } from "@/api/trip-lines";
@@ -9,13 +9,16 @@ import { StationSearch } from "@/components/trips/station-search";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  allPicked,
   midway,
   rideEnds,
   ridesOf,
   withChange,
   withoutChange,
   withRideLine,
+  withCombined,
   withRides,
+  withSeparateRides,
 } from "@/lib/leg-rides";
 
 interface LegRidesProps {
@@ -56,6 +59,7 @@ export function LegRides({ leg, ends, onChange }: LegRidesProps) {
         near={midway(stretches.at(-1)!)}
         onAdd={(station) => update(withChange(rides, station))}
       />
+      <CombineRoute leg={leg} rides={rides} onChange={onChange} />
       <RouteName leg={leg} onChange={onChange} />
     </div>
   );
@@ -121,5 +125,41 @@ function RouteName({ leg, onChange }: Pick<LegRidesProps, "leg" | "onChange">) {
         onChange={(e) => onChange({ ...leg, line: { ...line, name: e.target.value } })}
       />
     </label>
+  );
+}
+
+interface CombineRouteProps extends Pick<LegRidesProps, "leg" | "onChange"> {
+  rides: TripLegRide[];
+}
+
+/**
+ * Offers to draw the rides as one route under one name, such as a through train, once each has its
+ * line, or to split a combined route back into its lines.
+ */
+function CombineRoute({ leg, rides, onChange }: CombineRouteProps) {
+  if (!allPicked(rides)) return null;
+  if (leg.line) {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        className="self-start"
+        onClick={() => onChange(withSeparateRides(leg))}
+      >
+        <Split aria-hidden />
+        Show as separate lines
+      </Button>
+    );
+  }
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      className="self-start"
+      onClick={() => onChange(withCombined({ ...leg, rides }))}
+    >
+      <Combine aria-hidden />
+      Combine into one route
+    </Button>
   );
 }

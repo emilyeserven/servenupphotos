@@ -220,9 +220,11 @@ The look-up only finds a line that passes both ends, so a leg that changed train
 changed at by name, looked for within 30 km of halfway along the last ride, and splits that ride there. Each ride then
 gets its own **Look up route** between its ends, and **No change here** joins two rides back together (both are picked
 again). The leg keeps them in `rides`, each with the `change` station at its end (none on the last), its `line` and
-its `path`. Once every ride has a line, the leg's `line` is the route they make together, which the map and Commit use
-as before: the first ride's line with its rides' names joined, which **Route name** renames, such as "Marumaru no
-Hanashi". Its `path` is the rides' tracks joined. **Route name** renames a single line too.
+its `path`. The rides stay separate lines: the Trip's map and Commit draw each along its own track, in its line's color
+and under its name, from the station before it to the one after. Once every ride has a line, **Combine into one
+route** offers to draw them as one instead, such as a through train: the leg's `line` is then the first ride's line
+with the rides' names joined, which **Route name** renames (such as "Marumaru no Hanashi"), and its `path` the rides'
+tracks joined. **Show as separate lines** takes the combined route off again. **Route name** renames a single line too.
 
 > **Frontend analogy:** like a multi-step form whose steps each validate on their own, with a computed summary field
 > that's only filled once every step is done.

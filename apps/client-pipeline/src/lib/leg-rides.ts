@@ -36,24 +36,38 @@ function combinedLine(rides: TripLegRide[], name?: string): TripTransitLine {
   return { ...rides[0]!.line!, name: name ?? joinedName(rides) };
 }
 
-/** The leg with these rides, and their route and joined tracks once every ride has its line. */
+/**
+ * The leg with these rides, kept as separate lines, or recombined into one route under its name
+ * when it was combined already.
+ */
 export function withRides(leg: TripLeg, rides: TripLegRide[]): TripLeg {
   const { line, path: _path, rides: _rides, ...rest } = leg;
   if (rides.length < 2) return withOneRide(rest, rides[0]);
-  return withCombined({ ...rest, rides }, typedName(leg, line));
+  const kept = { ...rest, rides };
+  return combinedName(leg, line) === undefined ? kept : withCombined(kept, line?.name);
 }
 
-/** The name typed for a combined route the leg already had; none for one line. */
-function typedName(leg: TripLeg, line?: TripTransitLine): string | undefined {
+/** The name of the route the leg's rides were combined into; none when they weren't. */
+function combinedName(leg: TripLeg, line?: TripTransitLine): string | undefined {
   return leg.rides && line?.name;
 }
 
-/** The leg with its rides' route and joined tracks, once every ride has its line. */
-function withCombined(leg: TripLeg & { rides: TripLegRide[] }, name?: string): TripLeg {
+/** Whether every ride has its line, so they can be combined into one route. */
+export function allPicked(rides: TripLegRide[]): boolean {
+  return rides.length > 1 && rides.every((r) => r.line);
+}
+
+/** The leg with its rides combined into one route along their joined tracks, once each has a line. */
+export function withCombined(leg: TripLeg & { rides: TripLegRide[] }, name?: string): TripLeg {
   const { rides } = leg;
-  if (!rides.every((r) => r.line)) return leg;
+  if (!allPicked(rides)) return leg;
   const path: Path = rides.flatMap((r) => r.path ?? []);
   return { ...leg, line: combinedLine(rides, name), path };
+}
+
+/** The leg with its rides drawn as separate lines again, its combined route taken off. */
+export function withSeparateRides({ line: _line, path: _path, ...leg }: TripLeg): TripLeg {
+  return leg;
 }
 
 /** The leg riding one line, or none. */
@@ -82,4 +96,25 @@ export function withRideLine(
 ): TripLegRide[] {
   const change = rides[i]!.change;
   return rides.map((r, j) => (j === i ? { ...(change && { change }), line, path } : r));
+}
+
+/**
+ * The rides of a leg that changed lines without combining them, each drawn as its own line; none
+ * when it has a route, changed no lines, or a ride has no track yet.
+ */
+export function separateRides(leg: TripLeg): (TripLegRide & { path: Path })[] | undefined {
+  const rides = uncombined(leg);
+  const drawn = rides.filter(hasTrack);
+  return drawn.length > 0 && drawn.length === rides.length ? drawn : undefined;
+}
+
+/** The rides of a leg that changed lines, each with its line, when they aren't combined; else none. */
+function uncombined(leg: TripLeg): TripLegRide[] {
+  if (leg.line || !allPicked(leg.rides ?? [])) return [];
+  return leg.rides!;
+}
+
+/** Whether a ride has a track to draw. */
+function hasTrack(ride: TripLegRide): ride is TripLegRide & { path: Path } {
+  return (ride.path?.length ?? 0) >= 2;
 }

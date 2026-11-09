@@ -184,6 +184,30 @@ func TestLegRides(t *testing.T) {
 	}
 }
 
+func TestSeparateRides(t *testing.T) {
+	trip := Trip{ID: "japan"}
+	from := TripLegEnd{Day: "2026-09-23", Spot: &TripPoint{Latitude: 33.95, Longitude: 130.92, Label: "Shimonoseki"}}
+	to := TripLegEnd{Day: "2026-09-23", Spot: &TripPoint{Latitude: 34.42, Longitude: 131.41, Label: "Higashi-Hagi"}}
+	rides := []TripLegRide{
+		{Change: &TripPoint{Latitude: 34.37, Longitude: 131.18, Label: "Nagato-shi"}, Line: &TripTransitLine{Name: "San'in Line", Colour: "#00a3d9"}, Path: [][2]float64{{130.92, 33.95}, {131.18, 34.37}}},
+		{Line: &TripTransitLine{Name: "Mine Line"}, Path: [][2]float64{{131.18, 34.37}, {131.41, 34.42}}},
+	}
+	leg := TripLeg{Mode: ModeTrain, From: from, To: to, Rides: rides}
+	f, ok := legFeature(trip, leg, nil)
+	got := rideFeatures(f, separateRides(leg))
+	if !ok || len(got) != 2 {
+		t.Fatalf("features = %+v", got)
+	}
+	first, second := got[0].(tripLineFeature).Properties, got[1].(tripLineFeature).Properties
+	if first.Line != "San'in Line" || first.Start != "Shimonoseki" || first.End != "Nagato-shi" || second.Start != "Nagato-shi" || second.End != "Higashi-Hagi" || second.Line != "Mine Line" {
+		t.Errorf("rides = %+v, %+v", first, second)
+	}
+	leg.Line = &TripTransitLine{Name: "Marumaru no Hanashi"}
+	if separateRides(leg) != nil {
+		t.Error("a combined route drew its rides apart")
+	}
+}
+
 func TestLegLine(t *testing.T) {
 	line := &TripTransitLine{ID: 7, Name: " Sanyo Shinkansen ", Colour: "#1e50a2"}
 	path := [][2]float64{{130.4200001, 33.59}, {131, 34}, {135.5, 34.73}}
