@@ -388,7 +388,8 @@ to streets follows them too, and a `wander` segment bakes no line at all.
 A line drawn by hand is straight from point to point. To make it follow the streets:
 
 1. **Add via points**, then click the map where the line should bend. Each click puts a via point in the stretch of the
-   line nearest it. Drag a via point to move it, or click it to remove it. **Done adding via points** stops adding.
+   line nearest it, skipping hops with a line picked, which follow the line's track (a via spot already on one doesn't
+   drop the track). Drag a via point to move it, or click it to remove it. **Done adding via points** stops adding.
 2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
    servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
    walk, bus or car segment's points and via points, walking on foot and buses and cars by road. Train and subway hops

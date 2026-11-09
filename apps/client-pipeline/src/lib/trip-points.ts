@@ -78,13 +78,15 @@ function distanceToLeg(p: LngLat, a: LngLat, b: LngLat): number {
  * with a line picked follows the line's track, so a via spot never goes on it.
  */
 function legs(segments: TripSegment[], byId: Map<number, TripPhoto>, p: LngLat) {
-  return segments.filter((segment) => !segment.line).flatMap((segment) => {
-    const points = linePoints(segment, byId);
-    return points.slice(1).map((b, i) => {
-      const a = points[i] as LinePoint;
-      return { from: a, distance: distanceToLeg(p, a.at, b.at) };
+  return segments
+    .filter((segment) => !segment.line)
+    .flatMap((segment) => {
+      const points = linePoints(segment, byId);
+      return points.slice(1).map((b, i) => {
+        const a = points[i] as LinePoint;
+        return { from: a, distance: distanceToLeg(p, a.at, b.at) };
+      });
     });
-  });
 }
 
 /**
