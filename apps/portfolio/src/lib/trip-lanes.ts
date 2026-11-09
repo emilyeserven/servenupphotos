@@ -20,11 +20,28 @@ const SHARED = 0.3;
 /** How far apart lanes are drawn, in pixels. */
 const LANE_PX = 6;
 
-/** The `line-offset` paint that draws a line in its lane: none for the first. */
+/** A line's lane: 0 for the first. */
+const LANE: ExpressionSpecification = ["coalesce", ["get", "lane"], 0];
+
+/** Zoomed out to here or further, lines are drawn on their own track, with no lane to the side. */
+const LANES_FROM_ZOOM = 12;
+
+/** Zoomed in to here or closer, lanes are drawn their full LANE_PX apart. */
+const LANES_FULL_ZOOM = 15;
+
+/**
+ * The `line-offset` paint that draws a line in its lane: none for the first. The lanes close up
+ * as the map zooms out, since a short line, such as the walk from a photo to a station, drawn
+ * 6 px aside there looks cut off from the lines it joins.
+ */
 export const LANE_OFFSET: ExpressionSpecification = [
-  "*",
-  ["coalesce", ["get", "lane"], 0],
-  LANE_PX,
+  "interpolate",
+  ["linear"],
+  ["zoom"],
+  LANES_FROM_ZOOM,
+  0,
+  LANES_FULL_ZOOM,
+  ["*", LANE, LANE_PX],
 ];
 
 /** The lines drawn so far: which are near each grid cell, and each one's size and lane. */
