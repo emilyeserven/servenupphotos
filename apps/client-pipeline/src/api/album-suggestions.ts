@@ -1,6 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
 import type { BulkTagPhoto } from "@/api/bulk-tags";
-import { post } from "@/api/data";
+import { post } from "@/api/request";
 import type { PendingSave } from "@/api/scan-changes";
 
 /** Up to the chosen number of related photos without an album: one, then the ones most like it. */

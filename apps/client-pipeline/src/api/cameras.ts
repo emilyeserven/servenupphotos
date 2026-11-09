@@ -4,7 +4,7 @@ import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
 import { entryId } from "@/api/places";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 
 /**
  * A photo field a camera override can set: the ones read from EXIF, except the photo's size, and

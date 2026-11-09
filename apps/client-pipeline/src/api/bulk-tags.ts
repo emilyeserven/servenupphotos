@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { post } from "@/api/data";
+import { post } from "@/api/request";
 import { type PendingSave, changesByFolder } from "@/api/scan-changes";
 
 /** One photo Bulk Tagging picked to tag with the others. */

@@ -3,7 +3,7 @@ import type { ExifResponse, SanitizedExif } from "@/api/exif";
 import type { NearDuplicates } from "@/api/near-duplicates";
 import type { PhotoPlace } from "@/api/places";
 import { type ScanChange, photoChanges } from "@/api/scan-changes";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 
 /** A photo's data to save as `<folder>/<name>.json` in the GitHub repository from Settings. */
 export interface PhotoData {

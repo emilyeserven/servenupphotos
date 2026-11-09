@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { type ErrorBody, apiErrorOf } from "@/api/errors";
+import { requestJson } from "@/api/request";
 
 /** All the client ever learns about a stored secret. */
 export interface SecretStatus {
@@ -46,13 +46,6 @@ export function dataFolder(folder: string): string {
 
 /** What to do with a stored secret on save: keep it (`undefined`), clear it (`""`), or replace it. */
 export type SecretUpdate = string | undefined;
-
-export async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, init);
-  const json = (await res.json().catch(() => null)) as (T & ErrorBody) | null;
-  if (!res.ok) throw apiErrorOf(url, res.status, json);
-  return json as T;
-}
 
 export const settingsQuery = queryOptions({
   queryKey: ["settings"],

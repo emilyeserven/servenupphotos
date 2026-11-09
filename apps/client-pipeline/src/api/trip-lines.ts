@@ -1,7 +1,7 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 
 /**
  * How a stretch of a day was travelled. A walk is drawn through every photo in it; the others are

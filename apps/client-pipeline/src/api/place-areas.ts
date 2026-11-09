@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 import type { AreaShape } from "@/api/trip-lines";
 
 /** The outline of the area a place covers, such as a park, which the portfolio's map shades. */

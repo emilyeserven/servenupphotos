@@ -1,7 +1,7 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { InFlightPullRequest, PublishResult } from "@/api/photos";
 import { type PendingSave, changesByFolder, photoChanges } from "@/api/scan-changes";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 
 /**
  * A way of organizing photos: albums, tags and photographic genres. Each one is one JSON file, and

@@ -1,4 +1,4 @@
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 import type { LocalEdit } from "@/stores/local-edits";
 
 /** One data file waiting for Commit: its data as saved, or `deleted` when the change removes it. */

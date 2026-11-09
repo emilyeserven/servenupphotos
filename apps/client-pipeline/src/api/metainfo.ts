@@ -1,7 +1,7 @@
 import { mutationOptions } from "@tanstack/react-query";
 import type { CombinedData } from "@/api/photos";
 import { entryId } from "@/api/places";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 import type { FileChange } from "@/lib/optimistic";
 
 /** A photo field a metadata group can group the values of, as the photo files name it. */

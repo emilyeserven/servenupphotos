@@ -66,6 +66,8 @@ async function uploadPhoto({ photo, keepSameName, crop }: UploadRequest): Promis
   }
   body.append("photo", photo);
 
+  // Plain fetch rather than api/request's postForm: a failed upload's body carries the photos
+  // already under that name and Cloudflare's answer, which toUploadError keeps on the error.
   const res = await fetch("/api/upload", { method: "POST", body });
   if (!res.ok) throw await toUploadError(res);
   return (await res.json()) as UploadResponse;
