@@ -98,7 +98,8 @@ jobs:
         with:
           version: v2.14.0
           working-directory: apps/be-pipeline
-      - run: go test ./...
+      # The race detector catches data races in the backend's concurrent R2 and GitHub reads (internal/throttle, memo, progress).
+      - run: go test -race ./...
         env:
           # Fail, rather than skip, the oxfmt comparison if oxfmt is missing.
           REQUIRE_OXFMT: "1"
