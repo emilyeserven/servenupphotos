@@ -18,7 +18,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { TripDay, TripPhoto } from "@/lib/trip-days";
 import { placeGroups } from "@/lib/trip-groups";
 import { draftOf, type GapDraft, segmentsOf, walkingDraft } from "@/lib/trip-gaps";
-import { draftVias, movedVia, withVia } from "@/lib/trip-points";
+import { movedVia, withVia } from "@/lib/trip-points";
+import { viasInRouteOrder } from "@/lib/via-order";
 import { useTripDaySearch } from "@/lib/trip-lines-search";
 import { isAreaPick, withAreaEnd } from "@/lib/trip-wander";
 import { MapTools, type MapPick } from "@/components/trip-lines/route-tools";
@@ -313,7 +314,7 @@ function HandMap(props: HandMapProps) {
         focus={focus}
         ends={endsOf(segments)}
         onPick={picking || addingVia ? pick : undefined}
-        vias={draftVias(draft)}
+        vias={viasInRouteOrder(draft, segments)}
         visits={draft.visits}
         fences={[...(draft.fences ?? []), ...placeAreas]}
         onMoveVia={(key, i, point) => onChange(movedVia(draft, key, i, point))}

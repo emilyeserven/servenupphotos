@@ -122,10 +122,3 @@ export function movedVia(
   );
   return { ...draft, via: { ...draft.via, [key]: list } };
 }
-
-/** Every via spot in the draft, with where it is in it. */
-export function draftVias(draft: GapDraft): { key: ViaKey; index: number; point: TripPoint }[] {
-  return Object.entries(draft.via ?? {}).flatMap(([key, list]) =>
-    list.map((point, index) => ({ key, index, point })),
-  );
-}

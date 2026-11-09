@@ -391,7 +391,10 @@ A line drawn by hand is straight from point to point. To make it follow the stre
 
 1. **Add via points**, then click the map where the line should bend. Each click puts a via point in the stretch of the
    line nearest it, skipping hops with a line picked, which follow the line's track (a via spot already on one doesn't
-   drop the track). Drag a via point to move it, or click it to remove it. **Done adding via points** stops adding.
+   drop the track). Drag a via point to move it, or click it to remove it. **Done adding via points** stops adding. The
+   map numbers via points v1, v2, … in the order the route goes through them, and the list under the tools says where
+   each is ("After photo 2"). Its arrows move one a place earlier or later, past the next via point or photo, and its
+   × removes it.
 2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
    servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
    walk, bus or car segment's points and via points, walking on foot and buses and cars by road. Train and subway hops
