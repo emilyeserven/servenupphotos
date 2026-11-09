@@ -1,7 +1,7 @@
 import { overrideId } from "@/api/cameras";
 import { mutationOptions } from "@tanstack/react-query";
 import { settingMutations } from "@/api/data-files";
-import { post } from "@/api/data";
+import { post } from "@/api/request";
 import type { PendingSave } from "@/api/scan-changes";
 import type { CombinedData } from "@/api/photos";
 import type { TripPoint, TripTransitLine } from "@/api/trip-lines";

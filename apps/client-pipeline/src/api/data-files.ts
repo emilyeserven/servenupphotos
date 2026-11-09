@@ -1,5 +1,5 @@
 import { mutationOptions } from "@tanstack/react-query";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 import type { FileChange } from "@/lib/optimistic";
 
 /** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets or gear pictures. */

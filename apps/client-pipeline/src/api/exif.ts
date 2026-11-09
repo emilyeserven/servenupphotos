@@ -1,5 +1,6 @@
 import type { PhotoPlace } from "@/api/places";
 import { mutationOptions } from "@tanstack/react-query";
+import { postForm } from "@/api/request";
 import type { ThumbnailCrop } from "@/api/versions";
 
 interface Color {
@@ -158,14 +159,10 @@ export interface ExifResponse {
   colors: ColorAnalysis;
 }
 
-async function postPhoto(photo: File): Promise<ExifResponse> {
+function postPhoto(photo: File): Promise<ExifResponse> {
   const body = new FormData();
   body.append("photo", photo);
-
-  const res = await fetch("/api/exif", { method: "POST", body });
-  const json = (await res.json().catch(() => null)) as (ExifResponse & { message?: string }) | null;
-  if (!res.ok) throw new Error(json?.message ?? `/api/exif responded ${res.status}`);
-  return json as ExifResponse;
+  return postForm<ExifResponse>("/api/exif", body);
 }
 
 export const exifMutation = mutationOptions({

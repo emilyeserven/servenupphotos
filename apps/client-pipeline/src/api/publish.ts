@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import type { CombinedFile } from "@/api/photos";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 
 /** A photo JSON file as the backend reads it for the Instagram calendar. */
 interface SocialPhotoRead {

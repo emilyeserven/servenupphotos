@@ -1,7 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
-import { post } from "@/api/data";
 import { photoChanges, type PendingSave } from "@/api/scan-changes";
-import { requestJson } from "@/api/settings";
+import { post, requestJson } from "@/api/request";
 
 /** What Find Related Photos saved: a new list of related photos on each photo whose list changed. */
 interface SimilarPhotosResult extends PendingSave {

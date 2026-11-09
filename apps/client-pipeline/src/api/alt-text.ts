@@ -1,5 +1,5 @@
 import { mutationOptions } from "@tanstack/react-query";
-import { post } from "@/api/data";
+import { post } from "@/api/request";
 import type { BulkTagPhoto } from "@/api/bulk-tags";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
 

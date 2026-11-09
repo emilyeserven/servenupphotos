@@ -1,6 +1,7 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { FieldChange } from "@/api/cameras";
-import { type ScannedPhotos, post } from "@/api/data";
+import type { ScannedPhotos } from "@/api/data";
+import { post } from "@/api/request";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
 
 /** A photo whose image moves in R2 to keys named after its title. */

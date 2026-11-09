@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { requestJson } from "@/api/settings";
+import { requestBlob, requestJson } from "@/api/request";
 import type { Crop } from "@/lib/crop";
 
 /** The resized WEBP versions every upload puts in R2 next to the original JPEG. */
@@ -128,12 +128,8 @@ export interface JpegComparison {
 async function fetchVersion(photo: File, version: VersionName): Promise<VersionPreview> {
   const body = new FormData();
   body.append("photo", photo);
-  const res = await fetch(`/api/photos/versions/${version}`, { method: "POST", body });
-  if (!res.ok) {
-    const json = (await res.json().catch(() => ({}))) as { message?: string };
-    throw new Error(json.message ?? `/api/photos/versions/${version} responded ${res.status}`);
-  }
-  return { webp: await res.blob(), jpeg: jpegComparison(res.headers) };
+  const res = await requestBlob(`/api/photos/versions/${version}`, { method: "POST", body });
+  return { webp: res.blob, jpeg: jpegComparison(res.headers) };
 }
 
 /** The JPEG comparison the backend sends in headers, when it sent one. */

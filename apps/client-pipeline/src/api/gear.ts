@@ -3,7 +3,7 @@ import type { GearBox, GearCrop, GearFile, GearKind } from "@portfolio/lib/gear-
 import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
 import { entryId } from "@/api/places";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
 function isGearFile(value: unknown): value is GearFile {

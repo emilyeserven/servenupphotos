@@ -12,6 +12,8 @@ const AT_ONCE = 4;
 async function keepOffline(urls: string[]): Promise<{ kept: number; failed: number }> {
   let kept = 0;
   for (let i = 0; i < urls.length; i += AT_ONCE) {
+    // Plain fetch rather than api/request: these are image URLs, not the API, and a failed one is
+    // counted rather than thrown.
     const answers = await Promise.all(
       urls.slice(i, i + AT_ONCE).map((url) =>
         fetch(url).then(

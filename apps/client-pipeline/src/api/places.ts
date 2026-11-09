@@ -1,7 +1,7 @@
 import { mutationOptions, type QueryClient, queryOptions } from "@tanstack/react-query";
 import { groupId } from "@/api/organize";
 import type { InFlightPullRequest } from "@/api/photos";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 import type { FileChange } from "@/lib/optimistic";
 
 /** A place file: somewhere photos are taken, more exactly than a city, such as Gyeongbokgung Palace. */

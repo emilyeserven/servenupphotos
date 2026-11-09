@@ -1,7 +1,7 @@
 import { mutationOptions } from "@tanstack/react-query";
 import { bulkTagChanges } from "@/api/bulk-tags";
 import type { PendingSave } from "@/api/scan-changes";
-import { post } from "@/api/data";
+import { post } from "@/api/request";
 
 /** A merge the answer suggests: every photo with `tag` gets `into` instead. */
 export interface PruneTagMerge {

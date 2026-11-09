@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 import type { AreaShape } from "@/api/trip-lines";
 
 /** An area with an outline, as `GET /api/areas` answers it. */

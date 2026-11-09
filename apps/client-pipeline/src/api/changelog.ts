@@ -1,5 +1,5 @@
 import { infiniteQueryOptions } from "@tanstack/react-query";
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 
 /** One change on the base branch: usually a squash-merged pull request, or a commit pushed straight to it. */
 export interface ChangelogEntry {

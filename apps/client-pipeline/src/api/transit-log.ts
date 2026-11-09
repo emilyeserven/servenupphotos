@@ -1,4 +1,4 @@
-import { requestJson } from "@/api/settings";
+import { requestJson } from "@/api/request";
 
 /** How many items an answer has, when it's a list, for the log. */
 function sizeOf(answer: unknown): string {

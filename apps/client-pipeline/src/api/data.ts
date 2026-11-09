@@ -2,7 +2,7 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { type PendingSave, changesByFolder, photoChanges } from "@/api/scan-changes";
 import type { FieldChange } from "@/api/cameras";
 import type { ColorSummary } from "@/api/exif";
-import { requestJson } from "@/api/settings";
+import { post, requestJson } from "@/api/request";
 
 /** Base URLs to move the photos' image URLs between; both empty to only list the origins. */
 export interface BaseUrlChange {
@@ -56,15 +56,6 @@ export interface BaseUrlPreview extends ScannedPhotos {
 export interface BaseUrlResult extends PendingSave {
   files: number;
   urls: number;
-}
-
-/** POSTs `body` as JSON to `url` and reads the JSON answer. */
-export function post<T>(url: string, body: unknown) {
-  return requestJson<T>(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
 }
 
 /** Reads every photo JSON file and previews moving their image URLs from one base URL to another. */

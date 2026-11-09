@@ -1,5 +1,5 @@
 import { mutationOptions } from "@tanstack/react-query";
-import { post } from "@/api/data";
+import { post } from "@/api/request";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
 
 /** A compare group photos that look nearly the same were put in. */
