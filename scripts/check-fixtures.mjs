@@ -26,19 +26,25 @@ const WITHOUT_FIXTURE = new Set([
   "POST /photos/versions/{version}",
 ]);
 
+const ROUTE_LINE = /mux\.Handle(?:Func)?\("((?:GET|POST|PUT|DELETE|PATCH) [^"]+)"/g;
+
+/** Whether the file is Go source the router could register routes in (not a test). */
+function registersRoutes(name) {
+  return name.endsWith(".go") && !name.endsWith("_test.go");
+}
+
+/** The `METHOD /path` routes one Go file registers. */
+function routesIn(source) {
+  return [...source.matchAll(ROUTE_LINE)].map(([, route]) => route);
+}
+
 /** Every `METHOD /path` the backend's route files register. */
 async function backendRoutes() {
-  const routes = new Set();
-  for (const name of await readdir(HTTPAPI)) {
-    if (!name.endsWith(".go") || name.endsWith("_test.go")) continue;
-    const source = await readFile(path.join(HTTPAPI, name), "utf8");
-    for (const [, route] of source.matchAll(
-      /mux\.Handle(?:Func)?\("((?:GET|POST|PUT|DELETE|PATCH) [^"]+)"/g,
-    )) {
-      routes.add(route);
-    }
-  }
-  return [...routes].toSorted();
+  const names = (await readdir(HTTPAPI)).filter(registersRoutes);
+  const sources = await Promise.all(
+    names.map((name) => readFile(path.join(HTTPAPI, name), "utf8")),
+  );
+  return [...new Set(sources.flatMap(routesIn))].toSorted();
 }
 
 /** A regular expression matching the fixture keys that answer the route, with `/api` in front. */
