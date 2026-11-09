@@ -1,5 +1,6 @@
 import { ChevronRightIcon, FolderIcon } from "lucide-react";
 import { AlbumTitle, StageSelect, Uncertain } from "@/components/lightroom-albums/album-parts";
+import { AlbumCounts } from "@/components/lightroom-albums/album-counts";
 import { ParentSelect } from "@/components/lightroom-albums/parent-select";
 import { RemoveAlbumButton } from "@/components/lightroom-albums/remove-album";
 import { RemoveFolderButton } from "@/components/lightroom-albums/remove-folder";
@@ -140,7 +141,7 @@ function ClosedInLightroom({ folder }: { folder: LightroomFolder }) {
   );
 }
 
-/** An album's name and marks, with its stage, parent and notes to change, and a Remove button. */
+/** An album's name and marks, with its stage, parent, notes and photo counts to change, and a Remove button. */
 function AlbumRow({ album }: { album: LightroomAlbum }) {
   const setAlbum = useLightroomAlbumsStore((state) => state.setAlbum);
   return (
@@ -154,6 +155,7 @@ function AlbumRow({ album }: { album: LightroomAlbum }) {
           className="min-h-9 text-sm"
           onChange={(event) => setAlbum(album.path, { notes: event.target.value })}
         />
+        <AlbumCounts album={album} />
       </div>
       <div className="flex gap-2 sm:flex-col">
         <StageSelect album={album} className="flex-1 sm:w-44 sm:flex-none" />

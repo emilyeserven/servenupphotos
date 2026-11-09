@@ -18,7 +18,7 @@ export function AlbumTitle({ album, className, hideOffline = false }: AlbumTitle
       {album.name}
       <KindMark album={album} />
       {album.offline && !hideOffline && <OfflineBadge />}
-      <PhotoCount photoCount={album.photoCount} />
+      <PhotoCount album={album} />
       <Uncertain note={album.uncertainNote} />
     </p>
   );
@@ -30,10 +30,17 @@ function KindMark({ album }: { album: LightroomAlbum }) {
   return mark && <span className="text-muted-foreground text-xs">{mark}</span>;
 }
 
-/** How many photos Lightroom says the album has, when it showed a count. */
-function PhotoCount({ photoCount }: { photoCount: number | null }) {
-  if (photoCount === null) return null;
-  return <span className="text-muted-foreground text-xs">{count(photoCount, "photo")}</span>;
+/** The album's photo counts in words: "120 → 85 photos", "85 photos" or "120 photos at first", or "" with neither. */
+function photoCountText({ originalCount, photoCount }: LightroomAlbum): string {
+  if (originalCount === null) return photoCount === null ? "" : count(photoCount, "photo");
+  if (photoCount === null) return `${count(originalCount, "photo")} at first`;
+  return `${originalCount} → ${count(photoCount, "photo")}`;
+}
+
+/** How many photos the album has, after how many it had at first when that was noted. */
+function PhotoCount({ album }: { album: LightroomAlbum }) {
+  const text = photoCountText(album);
+  return text && <span className="text-muted-foreground text-xs">{text}</span>;
 }
 
 /** Marks an album Lightroom keeps on the device, so it can be worked on without the internet. */

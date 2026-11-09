@@ -1,6 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
+import { readCount } from "@/components/lightroom-albums/album-counts";
 import { FieldLabel } from "@/components/field-label";
 import { type SwitchConfig, SettingsSwitch } from "@/components/settings-switch";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,13 @@ import type { LightroomItem } from "@/lib/lightroom-albums";
 import { type ManualAlbum, folderPaths, manualAlbum, pathTaken } from "@/lib/lightroom-tree";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
 
-const EMPTY: ManualAlbum = { name: "", folder: "", photoCount: null, offline: false };
+const EMPTY: ManualAlbum = {
+  name: "",
+  folder: "",
+  photoCount: null,
+  originalCount: null,
+  offline: false,
+};
 
 /** Why the album can't be added: no name, or a folder or album at its path already. */
 function problem(value: ManualAlbum, items: LightroomItem[]): string | undefined {
@@ -60,7 +67,10 @@ const HELP = {
   name: "The album's name as Lightroom shows it, such as Busan, South Korea.",
   folder:
     "Pick a folder that's there, or type a new path such as Travel/Japan to make the folders it needs. Leave it empty for the top level.",
-  photoCount: "How many photos Lightroom shows for the album. Leave it empty when you don't know.",
+  originalCount:
+    "How many photos the album had before you started culling, to compare with how many it has now. Leave it empty when you don't know.",
+  photoCount:
+    "How many photos Lightroom shows for the album now. Leave it empty when you don't know.",
 };
 
 /** The Offline checkbox, which says whether Lightroom keeps the album on the device. */
@@ -110,22 +120,30 @@ function AddAlbumForm({ onDone }: { onDone: () => void }) {
           <FolderField items={items} value={field.state.value} onChange={field.handleChange} />
         )}
       </form.Field>
-      <form.Field name="photoCount">
-        {(field) => (
-          <Field>
-            <FieldLabel htmlFor="add-album-photos" help={HELP.photoCount}>
-              Photos (optional)
-            </FieldLabel>
-            <Input
-              id="add-album-photos"
-              type="number"
-              min={0}
-              value={field.state.value ?? ""}
-              onChange={(e) => field.handleChange(e.target.value ? Number(e.target.value) : null)}
+      <div className="grid grid-cols-2 gap-4">
+        <form.Field name="originalCount">
+          {(field) => (
+            <CountField
+              id="add-album-original"
+              label="Photos at first"
+              help={HELP.originalCount}
+              value={field.state.value}
+              onChange={field.handleChange}
             />
-          </Field>
-        )}
-      </form.Field>
+          )}
+        </form.Field>
+        <form.Field name="photoCount">
+          {(field) => (
+            <CountField
+              id="add-album-photos"
+              label="Photos now"
+              help={HELP.photoCount}
+              value={field.state.value}
+              onChange={field.handleChange}
+            />
+          )}
+        </form.Field>
+      </div>
       <form.Field name="offline">
         {(field) => (
           <SettingsSwitch
@@ -176,6 +194,33 @@ function FolderField({ items, value, onChange }: FolderFieldProps) {
         emptyText="No folders yet. Type a path to make one."
         createLabel={(text) => `Make a new folder “${text}”`}
         onCreate={onChange}
+      />
+    </Field>
+  );
+}
+
+interface CountFieldProps {
+  id: string;
+  label: string;
+  help: string;
+  value: number | null;
+  onChange: (value: number | null) => void;
+}
+
+/** An optional photo count, with its title and help. */
+function CountField({ id, label, help, value, onChange }: CountFieldProps) {
+  return (
+    <Field>
+      <FieldLabel htmlFor={id} help={help}>
+        {label}
+      </FieldLabel>
+      <Input
+        id={id}
+        type="number"
+        min={0}
+        inputMode="numeric"
+        value={value ?? ""}
+        onChange={(e) => onChange(readCount(e.target.value))}
       />
     </Field>
   );

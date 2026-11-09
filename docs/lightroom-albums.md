@@ -66,10 +66,22 @@ moved path. Moving it back to where Lightroom has it drops `lightroomPath`.
 **Add album**, on the Albums card, adds an album the LLM missed or one not made in Lightroom yet. Its form uses the
 pipeline's shared fields, each with an (i) beside its title saying how to fill it in: the **Name**, the **Folder**
 (a single-value combobox: pick a folder that's there, or type a new path such as `Travel/Japan` and choose **Make a
-new folder**, which makes the folders it needs; leave it empty for the top), the **Photos** count, and an
+new folder**, which makes the folders it needs; leave it empty for the top), **Photos at first** and **Photos now** (see
+[Photo counts](#photo-counts)), and an
 **Available offline in Lightroom** checkbox. It can't share a path with a folder or album already there. It's marked
 **Added by hand** and saved with `"manual": true`, so importing a new list keeps it (`lib/lightroom-tree.ts`). With
 no list yet, adding an album starts one.
+
+## Photo counts
+
+Under its notes in the tree, each album has two counts to note by hand: **Photos at first**, how many it had before
+you started culling, and **Now**, how many it has today. **Now** starts as the count Lightroom showed when the list was
+read. With both, the album's title reads like `120 → 85 photos` everywhere it's shown (the tree, the board and Next
+up); with only the first, `120 photos at first`. Next up's "fewer photos first" uses **Now**.
+
+Importing again keeps both: a count the new list has (an LLM answer has Lightroom's current count, never the one at
+first) replaces the old one, and a count it doesn't have stays as it was. Export and Import carry them as
+`photoCount` and `originalCount`.
 
 ## Removing albums
 
