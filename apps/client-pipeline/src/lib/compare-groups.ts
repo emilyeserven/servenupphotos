@@ -6,12 +6,7 @@ import type {
 } from "@/api/photos";
 import { editedData } from "@/lib/undecided";
 import type { LocalEdit } from "@/stores/local-edits";
-
-/** The photo JSON field naming the compare group a photo is in, or left out (or `null`) when it's in none. */
-export const COMPARE_GROUP = "compareGroup";
-
-/** The photo JSON field marking a photo picked as one of its compare group's winners: `true`, or left out. */
-export const COMPARE_WINNER = "compareWinner";
+import { COMPARE_GROUP, COMPARE_WINNER } from "@/lib/photo-fields";
 
 /** A photo that can go in a compare group, from the Gallery or Photos in Flight. */
 export interface ComparePhoto {

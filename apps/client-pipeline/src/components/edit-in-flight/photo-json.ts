@@ -33,7 +33,7 @@ import {
 } from "@/components/related-photos/picks";
 import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
 import { jsonFileName } from "@/lib/file-name";
-import { UNDECIDED } from "@/lib/undecided";
+import { UNDECIDED } from "@/lib/photo-fields";
 
 /**
  * A photo JSON file in the pull request, or one already in the portfolio that the pull request

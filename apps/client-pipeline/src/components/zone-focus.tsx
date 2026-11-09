@@ -5,8 +5,9 @@ import { PhotoFiles } from "@/components/photo-files";
 import { SpotlightFocus } from "@/components/spotlight-focus";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import type { SpotlightZone } from "@/lib/site-spotlight";
-import { SPOTLIGHT_ZONE_FOCUS, wholePhoto } from "@/lib/spotlight-focus-edits";
+import { wholePhoto } from "@/lib/spotlight-focus-edits";
 import { cn } from "@/lib/utils";
+import { SPOTLIGHT_ZONE_FOCUS } from "@/lib/photo-fields";
 
 interface ZoneFocusProps {
   zone: SpotlightZone;
