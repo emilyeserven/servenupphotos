@@ -1,0 +1,17 @@
+[
+  { "folder": "photos", "all": "ALLPHOTOS.json" },
+  { "folder": "albums", "all": "ALLALBUMS.json" },
+  { "folder": "tags", "all": "ALLTAGS.json" },
+  { "folder": "genres", "all": "ALLGENRES.json" },
+  { "folder": "places", "all": "PLACES.json" },
+  { "folder": "localizations", "all": "LOCALIZATIONS.json" },
+  { "folder": "metainfo", "all": "METAINFO.json" },
+  { "folder": "cameras", "all": "CAMERAS.json" },
+  { "folder": "lenses", "all": "LENSES.json" },
+  { "folder": "captions", "all": "CAPTIONS.json" },
+  { "folder": "timeline", "all": "TIMELINE.json" },
+  { "folder": "likes", "all": "LIKES.json" },
+  { "folder": "triplines", "all": "TRIPLINES.json" },
+  { "folder": "graphs", "all": "GRAPHS.json" },
+  { "folder": "gear", "all": "GEAR.json" }
+]

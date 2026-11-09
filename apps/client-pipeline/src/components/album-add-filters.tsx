@@ -6,7 +6,7 @@ import {
   GridFilterBar,
   useGridFilters,
 } from "@/components/gallery/grid-filters";
-import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
+import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
 import { type SavedPhoto, matchesSearch } from "@/components/saved-photo-picker";
 
 /**

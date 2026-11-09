@@ -1,10 +1,9 @@
 name: Combine photo data
 
 # Rebuilds the combined lists in apps/portfolio/src/data on the branch it's
-# started on, committed back to that branch: photos/ALLPHOTOS.json,
-# albums/ALLALBUMS.json, tags/ALLTAGS.json, genres/ALLGENRES.json, places/PLACES.json,
-# localizations/LOCALIZATIONS.json, metainfo/METAINFO.json, cameras/CAMERAS.json, lenses/LENSES.json, captions/CAPTIONS.json, timeline/TIMELINE.json, likes/LIKES.json, triplines/TRIPLINES.json, graphs/GRAPHS.json and gear/GEAR.json, each every other JSON file in
-# its folder as one array sorted by file name. Photos without a title, or set aside as Undecided, are drafts and are left out
+# started on, committed back to that branch: one per kind listed in
+# scripts/data-kinds.json (photos/ALLPHOTOS.json, albums/ALLALBUMS.json, ...,
+# gear/GEAR.json), each every other JSON file in its folder as one array sorted by file name. Photos without a title, or set aside as Undecided, are drafts and are left out
 # of ALLPHOTOS.json, unless include_untitled is checked (see docs/drafts.md); unselected photos always are (see docs/compare-groups.md), and so are casual photos (see docs/trip-pages.md). The pipeline's Commit button
 # does the same itself (CommitCombined in apps/be-pipeline), and also bakes
 # triplines/TRIPLINES.geo.json and triplines/TRIPPAGES.json, which this leaves as they are, with the same
@@ -38,9 +37,9 @@ jobs:
       HEAD_REF: ${{ github.ref_name }}
       INCLUDE_UNTITLED: ${{ inputs.include_untitled }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -65,28 +64,17 @@ jobs:
           }
           drafts='map(select((.title | type) == "string" and (.title | test("\\S")) and .undecided != true) | select((.unselected | type) != "object" and .casual != true))'
           if [ "$INCLUDE_UNTITLED" = "true" ]; then drafts='map(select((.unselected | type) != "object" and .casual != true))'; fi
-          combine photos ALLPHOTOS.json "$drafts"
-          combine albums ALLALBUMS.json
-          combine tags ALLTAGS.json
-          combine genres ALLGENRES.json
-          combine places PLACES.json
-          combine localizations LOCALIZATIONS.json
-          combine metainfo METAINFO.json
-          combine cameras CAMERAS.json
-          combine lenses LENSES.json
-          combine captions CAPTIONS.json
-          combine timeline TIMELINE.json
-          combine likes LIKES.json
-          combine triplines TRIPLINES.json
-          combine graphs GRAPHS.json
-          combine gear GEAR.json
+          # Every kind in scripts/data-kinds.json, as "folder file"; photos go through drafts.
+          mapfile -t kinds < <(jq -r '.[] | "\(.folder) \(.all)"' scripts/data-kinds.json)
+          for kind in "${kinds[@]}"; do
+            read -r folder all <<< "$kind"
+            if [ "$folder" = photos ]; then combine "$folder" "$all" "$drafts"; else combine "$folder" "$all"; fi
+          done
       - name: Commit the combined files
         run: |
-          git add "$DATA_DIR/photos/ALLPHOTOS.json" "$DATA_DIR/albums/ALLALBUMS.json" "$DATA_DIR/tags/ALLTAGS.json" \
-            "$DATA_DIR/genres/ALLGENRES.json" "$DATA_DIR/places/PLACES.json" "$DATA_DIR/localizations/LOCALIZATIONS.json" "$DATA_DIR/metainfo/METAINFO.json" \
-            "$DATA_DIR/cameras/CAMERAS.json" "$DATA_DIR/lenses/LENSES.json" \
-            "$DATA_DIR/captions/CAPTIONS.json" "$DATA_DIR/timeline/TIMELINE.json" "$DATA_DIR/likes/LIKES.json" \
-            "$DATA_DIR/triplines/TRIPLINES.json" "$DATA_DIR/graphs/GRAPHS.json" "$DATA_DIR/gear/GEAR.json"
+          # Each kind's combined file, from scripts/data-kinds.json.
+          mapfile -t combined < <(jq -r --arg dir "$DATA_DIR" '.[] | "\($dir)/\(.folder)/\(.all)"' scripts/data-kinds.json)
+          git add "${combined[@]}"
           if git diff --cached --quiet; then
             echo "The combined files are already up to date."
             exit 0

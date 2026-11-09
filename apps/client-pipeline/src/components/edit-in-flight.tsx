@@ -8,7 +8,7 @@ import {
   publishedPhotosQuery,
 } from "@/api/photos";
 import { savedThumbnailCrop, thumbnailCropQuery } from "@/api/versions";
-import { PhotoGroupsCard } from "@/components/group-picker";
+import { PhotoGroupsCard } from "@/components/photo-groups-card";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-details";
 import { QueryResult } from "@/components/query-result";

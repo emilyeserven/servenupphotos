@@ -10,9 +10,7 @@ import {
   photoZone,
   shiftedTime,
 } from "@/lib/timezone-shift";
-
-/** The JSON field the fixed time is written to; the EXIF `createDate` is kept as it is. */
-export const CUSTOM_DATE = "customCreateDate";
+import { CUSTOM_DATE } from "@/lib/photo-fields";
 
 /** A photo that could have been taken on the day being fixed. */
 export interface DayPhoto {

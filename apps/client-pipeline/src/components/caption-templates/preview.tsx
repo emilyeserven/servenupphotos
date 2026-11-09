@@ -9,10 +9,11 @@ import {
 } from "@/lib/caption-template";
 import { type CombinedPhoto, photoText } from "@/lib/group-photos";
 import { shownPhotos } from "@/lib/place-seeds";
+import { FILE, TITLE } from "@/lib/photo-fields";
 
 /** A photo's name in the preview's list: its title, or else its file. */
 function photoLabel(photo: CombinedPhoto, index: number): string {
-  return photoText(photo, "title") ?? photoText(photo, "file") ?? `Photo ${index + 1}`;
+  return photoText(photo, TITLE) ?? photoText(photo, FILE) ?? `Photo ${index + 1}`;
 }
 
 /** The photos to preview with, newest first, as the portfolio lists them. */

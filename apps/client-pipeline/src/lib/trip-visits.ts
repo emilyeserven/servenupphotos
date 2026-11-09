@@ -1,6 +1,6 @@
 import type { Place } from "@/api/places";
 import type { TripPoint, TripVisit, VisitKind } from "@/api/trip-lines";
-import type { GapDraft } from "@/lib/trip-gaps";
+import { changedItem, withItem, type GapDraft } from "@/lib/trip-gaps";
 
 /** The sorts of place a visit can be, as the menu lists them. */
 export const VISIT_KINDS: { kind: VisitKind; label: string }[] = [
@@ -10,12 +10,18 @@ export const VISIT_KINDS: { kind: VisitKind; label: string }[] = [
   { kind: "shop", label: "Shop" },
   { kind: "museum", label: "Museum" },
   { kind: "sight", label: "Sight" },
+  { kind: "station", label: "Station" },
   { kind: "other", label: "Other" },
 ];
 
 /** A new, unnamed restaurant at the point clicked. */
 export function newVisit({ latitude, longitude }: TripPoint): TripVisit {
   return { name: "", kind: "restaurant", latitude, longitude };
+}
+
+/** The station found by name as a trip stop, named after it. */
+export function stationVisit({ label, latitude, longitude }: TripPoint): TripVisit {
+  return { name: label ?? "", kind: "station", latitude, longitude };
 }
 
 /** The saved place as a visit, named after it. */
@@ -26,13 +32,12 @@ export function placeVisit(place: Place & TripPoint): TripVisit {
 
 /** The draft with the visit added. */
 export function withVisit(draft: GapDraft, visit: TripVisit): GapDraft {
-  return { ...draft, visits: [...(draft.visits ?? []), visit] };
+  return withItem(draft, "visits", visit);
 }
 
 /** The draft with visit i changed, or removed for null. */
 export function changedVisit(draft: GapDraft, i: number, visit: TripVisit | null): GapDraft {
-  const visits = (draft.visits ?? []).flatMap((v, n) => (n !== i ? [v] : visit ? [visit] : []));
-  return { ...draft, visits };
+  return changedItem(draft, "visits", i, visit);
 }
 
 /** Whether the place has a GPS position. */
@@ -70,19 +75,45 @@ export function visitsAfter(visits: TripVisit[] | undefined, id: number | undefi
   return (visits ?? []).filter((v) => v.after !== undefined && v.after === id);
 }
 
-/**
- * The draft with the visit put on the route one photo earlier (-1) or later (1) among ids, the day's
- * photos in order; unchanged when it's off the route or would go past the first or last gap.
- */
-export function movedVisit(draft: GapDraft, visit: TripVisit, ids: number[], by: -1 | 1): GapDraft {
-  const to = neighbourAfter(ids, visit.after, by);
-  return to === undefined ? draft : placedVisit(draft, visit, to);
+/** The trip stops put on the route before the day's first photo, in the order added. */
+export function firstStops(visits: TripVisit[] | undefined): TripVisit[] {
+  return (visits ?? []).filter((v) => v.first);
 }
 
-/** The photo `by` places from photo `after` among ids, when a gap follows it; none otherwise. */
-function neighbourAfter(ids: number[], after: number | undefined, by: -1 | 1): number | undefined {
-  const at = after === undefined ? -1 : ids.indexOf(after);
-  return at === -1 ? undefined : ids.slice(0, -1)[at + by];
+/** Where a trip stop is on the route: after a photo, before the first photo, or neither (off it). */
+type StopPlace = Pick<TripVisit, "after" | "first">;
+
+/**
+ * The draft with the visit put on the route one photo earlier (-1) or later (1) among ids, the day's
+ * photos in order: from after the first photo to before it, and back; unchanged when it's off the
+ * route or would go past the first or last gap.
+ */
+export function movedVisit(draft: GapDraft, visit: TripVisit, ids: number[], by: -1 | 1): GapDraft {
+  const to = neighbourPlace(ids, visit, by);
+  return to === undefined ? draft : withPlace(draft, visit, to);
+}
+
+/** The place `by` photos from the visit's among ids, when there is one there; none otherwise. */
+function neighbourPlace(
+  ids: number[],
+  { after, first }: TripVisit,
+  by: -1 | 1,
+): StopPlace | undefined {
+  const at = first ? -1 : after === undefined ? undefined : ids.indexOf(after);
+  if (at === undefined || (at === -1 && !first)) return undefined;
+  if (at + by === -1) return { first: true };
+  const to = ids.slice(0, -1)[at + by];
+  return to === undefined ? undefined : { after: to };
+}
+
+/** The draft with the visit at place, its old place dropped. */
+function withPlace(draft: GapDraft, visit: TripVisit, place: StopPlace): GapDraft {
+  const visits = (draft.visits ?? []).map((v) => {
+    if (v !== visit) return v;
+    const { after: _after, first: _first, ...rest } = v;
+    return { ...rest, ...place };
+  });
+  return { ...draft, visits };
 }
 
 /**
@@ -94,11 +125,10 @@ export function placedVisit(
   visit: TripVisit,
   after: number | undefined,
 ): GapDraft {
-  const visits = (draft.visits ?? []).map((v) => (v === visit ? { ...v, after } : v));
-  return { ...draft, visits };
+  return withPlace(draft, visit, after === undefined ? {} : { after });
 }
 
 /** The trip stops not on the route yet, which the photo strip can put between two photos. */
 export function offRoute(visits: TripVisit[] | undefined): TripVisit[] {
-  return (visits ?? []).filter((v) => v.after === undefined);
+  return (visits ?? []).filter((v) => v.after === undefined && !v.first);
 }

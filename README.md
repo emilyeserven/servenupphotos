@@ -36,6 +36,7 @@ pnpm dev:portfolio   # just the portfolio: http://localhost:5173/
 pnpm dev:docker      # just the pipeline in Docker: http://localhost:5174
 pnpm photos:local    # refresh the portfolio's local photo, place and localization data (docs/local-photo-data.md)
 pnpm dev:pipeline    # the pipeline without Docker: Go :8081 + Fastify :8080 + Vite :5173 (proxies /api → :8080)
+pnpm test            # unit tests for the pure functions in src/lib (node --test)
 pnpm shot pipeline /gallery   # screenshot a page with sample data, no backend needed (see below)
 ```
 
@@ -143,6 +144,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
 - [Changelog](docs/changelog.md) (`/changelog`): the pull requests merged into the repository, by day, with links to GitHub and without merge commits or photo data merges
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
+- [BFF timeouts](docs/bff-timeouts.md) (`/api/timeouts`): how long the BFF waits for each backend path, read from the backend at start-up
 - [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
 
 ## Checks (same as CI)

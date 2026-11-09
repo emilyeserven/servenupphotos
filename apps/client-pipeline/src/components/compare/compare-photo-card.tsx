@@ -11,6 +11,7 @@ import { offlineSmallUrl } from "@/lib/offline-thumbnails";
 import { SETTING_FORMATS } from "@portfolio/lib/photo-settings";
 import { readableDate } from "@/lib/photo-date";
 import { cn } from "@/lib/utils";
+import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
 
 /** One photo of a compare group: large, with what it was taken with, and Pick as winner. */
 export function ComparePhotoCard({ photo }: { photo: ComparePhoto }) {
@@ -131,7 +132,7 @@ function settingsLine(data: Record<string, unknown>): string | undefined {
 
 /** When it was taken: the custom date, or else the EXIF one. */
 function takenText(data: Record<string, unknown>): string | undefined {
-  const date = text(data, "customCreateDate") ?? text(data, "createDate");
+  const date = text(data, CUSTOM_DATE) ?? text(data, CREATE_DATE);
   return date && readableDate(date);
 }
 

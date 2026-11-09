@@ -60,31 +60,6 @@ type FieldEdit struct {
 	Fields map[string]json.RawMessage `json:"fields"`
 }
 
-// combinedKind is one folder of data files and the combined list built from it.
-type combinedKind struct {
-	name, folder, allFile string
-}
-
-func combinedKinds() []combinedKind {
-	return []combinedKind{
-		{"photos", PhotosFolder, AllPhotosFile},
-		{"albums", Albums.Folder, Albums.AllFile},
-		{"tags", Tags.Folder, Tags.AllFile},
-		{"genres", Genres.Folder, Genres.AllFile},
-		{"places", Places.Folder, Places.AllFile},
-		{"localizations", Localizations.Folder, Localizations.AllFile},
-		{"metainfo", MetaInfo.Folder, MetaInfo.AllFile},
-		{"cameras", Cameras.Folder, Cameras.AllFile},
-		{"lenses", Lenses.Folder, Lenses.AllFile},
-		{"captions", Captions.Folder, Captions.AllFile},
-		{"timeline", Trips.Folder, Trips.AllFile},
-		{"likes", ViewerLikesKind.Folder, ViewerLikesKind.AllFile},
-		{"triplines", TripLines.Folder, TripLines.AllFile},
-		{"graphs", GraphPresets.Folder, GraphPresets.AllFile},
-		{"gear", GearKind.Folder, GearKind.AllFile},
-	}
-}
-
 // CommitCombined commits every pending change, with edits made over the data
 // files, and the combined lists rebuilt from the result, as the "Combine
 // photo data" workflow does (each is every other JSON file in its folder,

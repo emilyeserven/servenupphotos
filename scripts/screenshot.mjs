@@ -17,8 +17,10 @@
 //   --live             send /api to the real BFF on :8080 (`pnpm dev:pipeline`) instead of fixtures
 //
 // Chromium comes from Playwright: in a sandbox with PLAYWRIGHT_BROWSERS_PATH set it's already
-// there; elsewhere run `pnpm exec playwright-core install chromium` once.
+// there (a newer revision than playwright-core wants is used as is); elsewhere run
+// `pnpm exec playwright-core install chromium` once.
 import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import { createServer } from "node:net";
 import path from "node:path";
@@ -290,8 +292,22 @@ async function capture(browser, base) {
   else await shot(opts.name ?? defaultName());
 }
 
+/**
+ * The Chromium to launch instead of Playwright's own, or undefined to use Playwright's. The sandbox
+ * image ships a newer Chromium than the revision this repo's playwright-core wants, so when that one
+ * is missing this uses `$PW_CHROMIUM`, else the `chromium` link in `$PLAYWRIGHT_BROWSERS_PATH`.
+ */
+function fallbackChromium() {
+  if (existsSync(chromium.executablePath())) return undefined;
+  const found = [
+    process.env.PW_CHROMIUM,
+    path.join(process.env.PLAYWRIGHT_BROWSERS_PATH ?? "", "chromium"),
+  ];
+  return found.find((file) => file && existsSync(file));
+}
+
 const { url: base, vite } = await startVite(APPS[app]);
-const browser = await chromium.launch();
+const browser = await chromium.launch({ executablePath: fallbackChromium() });
 try {
   await capture(browser, base);
 } finally {

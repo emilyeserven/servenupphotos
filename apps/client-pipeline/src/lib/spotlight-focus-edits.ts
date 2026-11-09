@@ -1,12 +1,7 @@
 import type { SocialPhoto } from "@/api/publish";
 import type { FieldChange, LocalEdit } from "@/stores/local-edits";
 import type { SpotlightFocus, ZoneFocus } from "@portfolio/lib/photos";
-
-/**
- * The photo JSON field that holds its focus point and placement for each spotlight zone, by zone
- * ID, such as `{ "grid-header": { "focus": { "x": 30, "y": 70 }, "placement": null } }`.
- */
-export const SPOTLIGHT_ZONE_FOCUS = "spotlightZoneFocus";
+import { SPOTLIGHT_ZONE_FOCUS } from "@/lib/photo-fields";
 
 /** A point of a photo, as percentages of its width and height from its top left corner. */
 export type Focus = SpotlightFocus;

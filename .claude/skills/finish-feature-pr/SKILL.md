@@ -30,7 +30,7 @@ pnpm --filter @servenup/portfolio test       # when apps/portfolio/map-preview c
 - New UI went into a new component file rather than growing `in-flight.tsx`, `instagram-calendar.tsx`,
   `organize-page.tsx` or `group-detail.tsx`.
 - A pipeline mutation that saves a change waiting for Commit has `meta: { saves: true }`; a new `/api` route has
-  a fixture in `scripts/screenshot-fixtures.mjs`.
+  a fixture in `scripts/fixtures/<area>.mjs`.
 
 ## 3. Docs
 

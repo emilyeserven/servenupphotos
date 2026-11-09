@@ -3,6 +3,7 @@ import { Route, Spline } from "lucide-react";
 import { routeTripLineMutation, type TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { Button } from "@/components/ui/button";
+import { unsnappedWalks } from "@/lib/station-walks";
 import { type GapDraft, pathsOf } from "@/lib/trip-gaps";
 
 interface ShapeToolsProps {
@@ -20,9 +21,9 @@ function followsStreets(segment: TripSegment): boolean {
   return segment.mode === "walk" || segment.mode === "bus" || segment.mode === "car";
 }
 
-/** How many segments that follow streets aren't snapped yet. */
+/** How many segments that follow streets, and walks to and from stations, aren't snapped yet. */
 function unsnapped(segments: TripSegment[]): number {
-  return segments.filter((s) => followsStreets(s) && !s.path).length;
+  return segments.filter((s) => followsStreets(s) && !s.path).length + unsnappedWalks(segments);
 }
 
 /** What the snap said: how many stretches got no route, or that all of them are snapped. */
@@ -50,7 +51,8 @@ export function ShapeTools({
   const route = useMutation(routeTripLineMutation);
   const snap = () =>
     route.mutate(
-      { id: day, day, auto: false, segments },
+      // The trip stops go along, since a segment's via spots can stand for them.
+      { id: day, day, auto: false, segments, visits: draft.visits },
       {
         onSuccess: ({ line }) =>
           onChange({ ...draft, paths: { ...draft.paths, ...pathsOf(line.segments) } }),

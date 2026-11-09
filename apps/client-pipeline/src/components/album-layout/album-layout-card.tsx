@@ -30,7 +30,7 @@ import {
   emptyRow,
   sameLayout,
   savedLayout,
-} from "@/lib/album-layout";
+} from "@/lib/album-layout-editor";
 import { albumPhotoOrder, photoId } from "@/lib/album-photo-order";
 import type { CombinedPhoto } from "@/lib/group-photos";
 

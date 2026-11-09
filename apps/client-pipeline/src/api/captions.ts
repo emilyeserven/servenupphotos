@@ -1,6 +1,5 @@
 import { overrideId } from "@/api/cameras";
-import { settingMutations } from "@/api/data-files";
-import type { CombinedData } from "@/api/photos";
+import { byName, settingEntries, settingMutations } from "@/api/data-files";
 
 /**
  * A caption template file: a social media post's caption with placeholders for the photo's
@@ -23,10 +22,7 @@ function isTemplate(value: unknown): value is CaptionTemplate {
 }
 
 /** The caption templates as the next Commit will have them: CAPTIONS.json with the changes since, by name. */
-export function captionTemplates(data: CombinedData | undefined): CaptionTemplate[] {
-  const entries = data ? (data.head ?? data.base).captions.data : undefined;
-  return (entries ?? []).filter(isTemplate).toSorted((a, b) => a.name.localeCompare(b.name));
-}
+export const captionTemplates = settingEntries("captions", isTemplate, byName);
 
 /**
  * The template a post on platform starts with, its default: the first one for that platform, or

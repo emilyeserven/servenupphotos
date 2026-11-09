@@ -41,6 +41,22 @@ export interface TripLeg {
   line?: TripTransitLine;
   /** The line's track between the leg's ends, each [longitude, latitude], drawn instead of a straight line. */
   path?: [number, number][];
+  /**
+   * The lines ridden one after another when it changed lines on the way, such as the San'in Line to
+   * Nagato-shi and then on to Higashi-Hagi. `line` is then the route they make together, under the
+   * name typed for it, and `path` their tracks joined. Left out for one line.
+   */
+  rides?: TripLegRide[];
+}
+
+/** One of the lines a leg rode in turn. */
+export interface TripLegRide {
+  /** The station it changed lines at, at the end of this ride; left out on the last ride. */
+  change?: TripPoint;
+  /** The line ridden; left out until picked. */
+  line?: TripTransitLine;
+  /** The line's track along this ride, each [longitude, latitude]. */
+  path?: [number, number][];
 }
 
 /**

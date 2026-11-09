@@ -1,3 +1,4 @@
+import { ViaNumber } from "@/components/trip-lines/via-list";
 import { MAP_STYLES, tripColors, useIsDark } from "@portfolio/lib/map-theme";
 import { LANE_OFFSET, withLanes } from "@portfolio/lib/trip-lanes";
 import {
@@ -104,7 +105,7 @@ interface RouteMapProps {
   ends: TripPoint[];
   /** Picks a spot on the map, while the editor is waiting for one. */
   onPick?: (point: TripPoint) => void;
-  /** The via points that shape the line, each with where it is in the draft. */
+  /** The via points that shape the line, in route order (numbered so), each with where it is in the draft. */
   vias?: { key: string; index: number; point: TripPoint }[];
   /** Moves a via point, or removes it with null; left out, they can't be changed. */
   onMoveVia?: (key: string, index: number, point: TripPoint | null) => void;
@@ -160,7 +161,7 @@ export function RouteMap({
             <PhotoDot n={i + 1} highlighted={p.id === highlighted} />
           </Marker>
         ))}
-        {vias.map(({ key, index, point }) => (
+        {vias.map(({ key, index, point }, n) => (
           <Marker
             key={`via-${key}-${index}`}
             latitude={point.latitude}
@@ -175,9 +176,11 @@ export function RouteMap({
             }}
           >
             <span
-              title="Via point: drag to move, click to remove"
-              className="block size-3 rotate-45 cursor-grab border-2 border-blue-600 bg-white shadow"
-            />
+              title={`Via point ${n + 1}: drag to move, click to remove`}
+              className="cursor-grab"
+            >
+              <ViaNumber n={n + 1} />
+            </span>
           </Marker>
         ))}
         {visits.map((v, i) => (

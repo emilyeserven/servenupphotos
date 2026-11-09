@@ -4,6 +4,7 @@ import { type EndKey, EndSpots } from "@/components/trip-lines/end-spots";
 import { Fences } from "@/components/trip-lines/fences";
 import { HopLines } from "@/components/trip-lines/hop-lines";
 import { ShapeTools } from "@/components/trip-lines/shape-tools";
+import { ViaList } from "@/components/trip-lines/via-list";
 import { Visits } from "@/components/trip-lines/visits";
 import type { TripDay } from "@/lib/trip-days";
 import type { GapDraft } from "@/lib/trip-gaps";
@@ -71,6 +72,7 @@ function RouteTools(props: RouteToolsProps) {
         addingVia={props.addingVia}
         onAddingVia={props.onAddingVia}
       />
+      <ViaList day={day} draft={draft} segments={segments} onChange={onChange} />
       <HopLines photos={day.photos} draft={draft} segments={segments} onChange={onChange} />
       <EndSpots
         draft={draft}

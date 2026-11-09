@@ -6,16 +6,16 @@ import { Button } from "@/components/ui/button";
 import type { SpotlightZone } from "@/lib/site-spotlight";
 import {
   type Focus,
-  SPOTLIGHT_ZONE_FOCUS,
   clickedFocus,
   editedData,
   wholePhoto,
   zoneFocusChange,
   zoneFocusOf,
-} from "@/lib/spotlight-focus";
+} from "@/lib/spotlight-focus-edits";
 import { previewOf } from "@/lib/spotlight-preview";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import type { ZoneFocus } from "@portfolio/lib/photos";
+import { SPOTLIGHT_ZONE_FOCUS } from "@/lib/photo-fields";
 
 /**
  * The photo's focus point in the zone: where to click on it to keep that part in view when the

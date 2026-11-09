@@ -1,6 +1,5 @@
 import { overrideId } from "@/api/cameras";
-import { settingMutations } from "@/api/data-files";
-import type { CombinedData } from "@/api/photos";
+import { byName, settingEntries, settingMutations } from "@/api/data-files";
 
 /**
  * A custom lens file: a lens the photos' EXIF doesn't name well, such as a manual lens adapted to
@@ -26,10 +25,7 @@ function isLens(value: unknown): value is CustomLens {
 }
 
 /** The custom lenses as the next Commit will have them: LENSES.json with the changes since, by name. */
-export function customLenses(data: CombinedData | undefined): CustomLens[] {
-  const entries = data ? (data.head ?? data.base).lenses.data : undefined;
-  return (entries ?? []).filter(isLens).toSorted((a, b) => a.name.localeCompare(b.name));
-}
+export const customLenses = settingEntries("lenses", isLens, byName);
 
 /** The ID a new lens gets, such as `7artisans-12mm-f2-8`. */
 export const lensId = overrideId;

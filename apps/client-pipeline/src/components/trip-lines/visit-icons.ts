@@ -5,6 +5,7 @@ import {
   MapPin,
   ShoppingBag,
   Star,
+  TrainFront,
   UtensilsCrossed,
   Wine,
 } from "lucide-react";
@@ -18,5 +19,6 @@ export const VISIT_ICONS: Record<VisitKind, LucideIcon> = {
   shop: ShoppingBag,
   museum: Landmark,
   sight: Star,
+  station: TrainFront,
   other: MapPin,
 };

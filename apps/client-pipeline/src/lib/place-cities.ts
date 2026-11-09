@@ -2,7 +2,7 @@ import type { Localization, Place } from "@/api/places";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { type LocationNames, NO_LOCATION_NAMES, winningName } from "@/lib/location-names";
 import { shownField } from "@/lib/place-seeds";
-import { placeChain } from "@/lib/place-tree";
+import { placeChain } from "@/lib/place-chain";
 
 /** A city that photos show or places are in, with its country and how many photos and places have it. */
 export interface CityRow {

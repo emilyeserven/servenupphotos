@@ -81,6 +81,22 @@ type TripLeg struct {
 	// Path is the line's track between the leg's ends, each [longitude,
 	// latitude], drawn instead of a straight line; none without a Line.
 	Path [][2]float64 `json:"path,omitempty"`
+	// Rides are the lines ridden one after another when it changed lines
+	// on the way, such as the San'in Line to Nagato-shi and then on to
+	// Higashi-Hagi. Line is then the route they make together, under the
+	// name typed for it, and Path their tracks joined. None for one line.
+	Rides []TripLegRide `json:"rides,omitempty"`
+}
+
+// TripLegRide is one of the lines a leg rode in turn.
+type TripLegRide struct {
+	// Change is the station it changed lines at, at the end of this ride;
+	// nil on the last ride, which ends at the leg's end.
+	Change *TripPoint `json:"change,omitempty"`
+	// Line is the line ridden; nil until picked.
+	Line *TripTransitLine `json:"line,omitempty"`
+	// Path is the line's track along this ride, each [longitude, latitude].
+	Path [][2]float64 `json:"path,omitempty"`
 }
 
 // legLineModes are the leg modes that can ride a mapped line.
@@ -235,14 +251,34 @@ func dropStations(leg *TripLeg) {
 // validLegLine drops the nth leg's line and path when its mode rides no
 // line, and checks the ones it keeps.
 func validLegLine(leg *TripLeg, n int) *PublishError {
+	if !legLineModes[leg.Mode] {
+		leg.Rides = nil
+	}
 	if !legLineModes[leg.Mode] || leg.Line == nil {
 		leg.Line, leg.Path = nil, nil
 	}
-	if perr := validLine(leg.Line, n); perr != nil {
-		return asLegError(perr)
+	if perr := validRide(&TripLegRide{Line: leg.Line, Path: leg.Path}, n); perr != nil {
+		return perr
 	}
 	leg.Path = roundPath(leg.Path)
-	if perr := validPath(leg.Path, n); perr != nil {
+	for i := range leg.Rides {
+		if perr := validRide(&leg.Rides[i], n); perr != nil {
+			return perr
+		}
+	}
+	return nil
+}
+
+// validRide checks the nth leg's ride, rounding its path.
+func validRide(ride *TripLegRide, n int) *PublishError {
+	if perr := validTripPoint(ride.Change, n); perr != nil {
+		return asLegError(perr)
+	}
+	if perr := validLine(ride.Line, n); perr != nil {
+		return asLegError(perr)
+	}
+	ride.Path = roundPath(ride.Path)
+	if perr := validPath(ride.Path, n); perr != nil {
 		return asLegError(perr)
 	}
 	return nil

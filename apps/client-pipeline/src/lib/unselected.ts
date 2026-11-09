@@ -1,8 +1,6 @@
 import type { ComparePhoto } from "@/lib/compare-groups";
 import { isUnselected } from "@/lib/drafts";
-
-/** The photo JSON field marking a photo as not chosen in a compare group, or left out (or `null`). */
-export const UNSELECTED = "unselected";
+import { UNSELECTED } from "@/lib/photo-fields";
 
 /** What's left of an unselected photo in R2. */
 export type UnselectedImages = "kept" | "small" | "deleted";

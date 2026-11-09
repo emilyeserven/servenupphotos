@@ -1,5 +1,6 @@
 import type { PreviewPhoto } from "@/components/spotlight-preview";
-import type { Focus } from "@/lib/spotlight-focus";
+import type { Focus } from "@/lib/spotlight-focus-edits";
+import { CUSTOM_GPS_POSITION, FILE, GPS_POSITION, TITLE } from "@/lib/photo-fields";
 
 /** A string field of a photo's data, trimmed, or undefined when it's empty or not a string. */
 function text(data: Record<string, unknown>, field: string): string | undefined {
@@ -9,7 +10,7 @@ function text(data: Record<string, unknown>, field: string): string | undefined 
 
 /** The photo's title as the portfolio shows it: the one written, or else its file name without the extension. */
 function titleOf(data: Record<string, unknown>): string {
-  return text(data, "title") ?? (text(data, "file") ?? "").replace(/\.[^.]*$/, "");
+  return text(data, TITLE) ?? (text(data, FILE) ?? "").replace(/\.[^.]*$/, "");
 }
 
 /**
@@ -17,7 +18,7 @@ function titleOf(data: Record<string, unknown>): string {
  * Photo page or from its EXIF, or a place, which the map uses when that place has a position.
  */
 function hasPosition(data: Record<string, unknown>): boolean {
-  const gps = text(data, "customGpsPosition") ?? text(data, "gpsPosition");
+  const gps = text(data, CUSTOM_GPS_POSITION) ?? text(data, GPS_POSITION);
   return gps !== undefined || (Array.isArray(data.places) && data.places.length > 0);
 }
 

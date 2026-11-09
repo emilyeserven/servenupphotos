@@ -1,6 +1,7 @@
-import type { TripPoint, TripSegment } from "@/api/trip-lines";
+import type { StationWalk, TripPoint, TripSegment } from "@/api/trip-lines";
 import type { TripPhoto } from "@/lib/trip-days";
 import { type LngLat, linePoints } from "@/lib/trip-points";
+import { walkLine } from "@/lib/station-walks";
 
 /** What the map draws a line by: its mode, and for a hop along its line, that line's color. */
 interface LineProps {
@@ -81,13 +82,17 @@ function stationWalks(
 ): LineFeature[] {
   if (!lineProps(segment).onLine) return [];
   const [a, b] = segment.photos.map((id) => byId.get(id));
-  return [...walkBetween(a, segment.board, faded), ...walkBetween(segment.alight, b, faded)];
+  return [
+    ...walkBetween(a, segment.board, segment.boardWalk, faded),
+    ...walkBetween(segment.alight, b, segment.alightWalk, faded),
+  ];
 }
 
-/** A short walk from x to y, as a one-line list; none when either is missing. */
+/** A short walk from x to y through its via spots or along its path, as a one-line list; none when either is missing. */
 function walkBetween(
   x: TripPoint | TripPhoto | undefined,
   y: TripPoint | TripPhoto | undefined,
+  shape: StationWalk | undefined,
   faded: boolean,
 ): LineFeature[] {
   if (!x || !y) return [];
@@ -95,7 +100,7 @@ function walkBetween(
   return [
     feature(
       walk,
-      [x, y].map((p) => [p.longitude, p.latitude] as LngLat),
+      walkLine(shape, x, y).map((p) => [p.longitude, p.latitude] as LngLat),
     ),
   ];
 }

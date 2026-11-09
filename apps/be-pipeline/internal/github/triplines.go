@@ -78,6 +78,10 @@ type TripSegment struct {
 	// the first photo and to the last one. Nil rides from or to the photo.
 	Board  *TripPoint `json:"board,omitempty"`
 	Alight *TripPoint `json:"alight,omitempty"`
+	// BoardWalk and AlightWalk shape the walks from the first photo to Board
+	// and from Alight to the last photo; nil draws them straight.
+	BoardWalk  *StationWalk `json:"boardWalk,omitempty"`
+	AlightWalk *StationWalk `json:"alightWalk,omitempty"`
 }
 
 // TripVia is a spot a segment's line goes through to shape it, such as a

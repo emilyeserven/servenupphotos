@@ -43,7 +43,14 @@ does the merging (`postedPhotoFiles`, `postsByDay`), for any page that needs eac
 
 ### Suggested photos
 
-When a day is picked, the picker's first section, **Suggested**, holds up to 8 unused photos most like the 3 photos on
+When a day is picked, the picker opens with two sections, each folded or opened by its heading. The first, **Before
+and after** (open at first), holds the photos taken just around the last one on the calendar before that day: the 3 taken before it and the 5 taken after, in the order they were taken (custom date
+or EXIF, then file name), whether or not they're scheduled yet. Each says where it falls, such as "2 before" or "1
+after", and one already on another day shows that day. Photos without a date are skipped, and so are ones the Focus
+leaves out. `apps/client-pipeline/src/lib/social-neighbors.ts` picks them.
+
+The second, **Suggested**, is folded at first to its first row of photos (3 on a phone, 4 wider) and holds up to 8
+unused photos, not already under **Before and after**, most like the 3 photos on
 Instagram on the days just before it (on the calendar, or with an Instagram post under **Social media posts**). Below
 it, **All photos** lists the rest as before. "Unused" means not on the calendar and with no Instagram post, planned
 or scheduled. Each pair of photos is scored from 0 to 1 and a photo's score is its average against the 3:

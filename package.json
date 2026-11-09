@@ -11,13 +11,16 @@
     "dev:pipeline": "concurrently -n be,bff,client -c blue,magenta,green \"pnpm run dev:be\" \"pnpm --filter @servenup/bff-pipeline dev\" \"pnpm --filter @servenup/client-pipeline dev\"",
     "dev:be": "cd apps/be-pipeline && go run ./cmd/api",
     "build": "pnpm -r build",
+    "test": "pnpm --filter @servenup/portfolio --filter @servenup/client-pipeline test",
     "lint": "oxlint",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "typecheck": "pnpm -r typecheck",
-    "fallow": "fallow",
-    "check": "pnpm lint && pnpm fmt:check && pnpm typecheck && pnpm fallow && pnpm check:fixtures",
-    "check:fixtures": "node scripts/check-fixtures.mjs"
+    "fallow": "fallow --dupes-baseline fallow-baseline/dupes.json",
+    "check:fallow-baseline": "fallow dupes --save-baseline fallow-baseline/dupes.json && oxfmt fallow-baseline",
+    "check": "pnpm lint && pnpm fmt:check && pnpm typecheck && pnpm fallow && pnpm check:fixtures && pnpm check:docs",
+    "check:fixtures": "node scripts/check-fixtures.mjs",
+    "check:docs": "node scripts/check-docs.mjs"
   },
   "devDependencies": {
     "concurrently": "10.0.6",

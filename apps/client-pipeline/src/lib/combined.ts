@@ -10,6 +10,7 @@ import type {
   PhotoIdentity,
 } from "@/api/photos";
 import type { SocialCalendar, SocialCalendarRead } from "@/api/publish";
+import { type CombinedKind, GROUP_KINDS, KIND_INFO, byKind } from "@/lib/data-kinds";
 
 /** What the combined data store has for a page: the lists once read, or why they aren't. */
 export interface CombinedView {
@@ -56,7 +57,7 @@ function unread(path: string, view: CombinedView): CombinedFile {
 /** The store's copy of a combined file; not found when the store has none at that ref. */
 function combinedFile(
   files: CombinedFiles | null | undefined,
-  kind: keyof CombinedFiles,
+  kind: CombinedKind,
   path: string,
   view: CombinedView,
 ): CombinedFile {
@@ -82,29 +83,16 @@ export function withCombined(read: InFlightRead, view: CombinedView): InFlightRe
   const root = read.folder.replace(/\/photos$/, "");
   // With no pull request, there's nothing at its head to compare with.
   const head = read.pullRequest ? view.data?.head : null;
-  const file = (kind: keyof CombinedFiles, name: string) =>
-    combinedFile(head, kind, `${root}/${kind}/${name}`, view);
+  const file = (kind: CombinedKind) =>
+    combinedFile(head, kind, `${root}/${kind}/${KIND_INFO[kind].file}`, view);
 
-  const allPhotos = file("photos", "ALLPHOTOS.json");
+  const allPhotos = file("photos");
   const photoEntries = entrySet(allPhotos);
   return {
     ...read,
     allPhotos,
     files: read.files.map((f) => ({ ...f, inAllPhotos: inEntries(photoEntries, f.data) })),
-    albums: checkedGroups(read.albums, file("albums", "ALLALBUMS.json")),
-    tags: checkedGroups(read.tags, file("tags", "ALLTAGS.json")),
-    genres: checkedGroups(read.genres, file("genres", "ALLGENRES.json")),
-    places: checkedGroups(read.places, file("places", "PLACES.json")),
-    localizations: checkedGroups(read.localizations, file("localizations", "LOCALIZATIONS.json")),
-    metainfo: checkedGroups(read.metainfo, file("metainfo", "METAINFO.json")),
-    cameras: checkedGroups(read.cameras, file("cameras", "CAMERAS.json")),
-    lenses: checkedGroups(read.lenses, file("lenses", "LENSES.json")),
-    captions: checkedGroups(read.captions, file("captions", "CAPTIONS.json")),
-    timeline: checkedGroups(read.timeline, file("timeline", "TIMELINE.json")),
-    likes: checkedGroups(read.likes, file("likes", "LIKES.json")),
-    triplines: checkedGroups(read.triplines, file("triplines", "TRIPLINES.json")),
-    graphs: checkedGroups(read.graphs, file("graphs", "GRAPHS.json")),
-    gear: checkedGroups(read.gear, file("gear", "GEAR.json")),
+    ...byKind(GROUP_KINDS, (kind) => checkedGroups(read[kind], file(kind))),
   };
 }
 

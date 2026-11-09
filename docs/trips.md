@@ -170,7 +170,9 @@ The menu beside the search box picks the service it asks, and the choice is kept
   OpenStreetMap's data. It answers in about a second and ranks by how well the name matches, then how near it is,
   within a box about 30 km around the end, with English names where they're mapped. It can only filter by a station's
   main tag ([`osm_tag`](https://github.com/komoot/photon#filter-results-by-tags-and-keys)), so a **Train** search
-  there also finds subway stations. `PHOTON_URL` points it at another Photon server.
+  there also finds subway stations. OpenStreetMap names a station without the word "Station" (Shimonoseki Station is
+  just "Shimonoseki"), so when a search finds nothing, it's tried once more without words like "station", "terminal",
+  "port" or "駅". `PHOTON_URL` points it at another Photon server.
   (`?source=photon`, `be-pipeline/internal/transit/photon.go`.)
 - **Overpass**: the OpenStreetMap query servers below, which tell subway and train stations apart but are often slow
   when busy.
@@ -210,6 +212,22 @@ between them. The leg is then saved with the `line` (its ID, name, number and co
 track in the line's color on the Trip's map and the portfolio's, instead of a straight line. **Clear** takes it off.
 Moving either end drops the track picked for the old spots (renaming one keeps it), and a flight or drive keeps no
 line.
+
+### Changing lines on the way
+
+The look-up only finds a line that passes both ends, so a leg that changed trains, such as Shimonoseki to Higashi-Hagi
+(OpenStreetMap's San'in Line routes end at Nagato-shi), finds none. **Changed lines on the way** finds the station it
+changed at by name, looked for within 30 km of halfway along the last ride, and splits that ride there. Each ride then
+gets its own **Look up route** between its ends, and **No change here** joins two rides back together (both are picked
+again). The leg keeps them in `rides`, each with the `change` station at its end (none on the last), its `line` and
+its `path`. The rides stay separate lines: the Trip's map and Commit draw each along its own track, in its line's color
+and under its name, from the station before it to the one after. Once every ride has a line, **Combine into one
+route** offers to draw them as one instead, such as a through train: the leg's `line` is then the first ride's line
+with the rides' names joined, which **Route name** renames (such as "Marumaru no Hanashi"), and its `path` the rides'
+tracks joined. **Show as separate lines** takes the combined route off again. **Route name** renames a single line too.
+
+> **Frontend analogy:** like a multi-step form whose steps each validate on their own, with a computed summary field
+> that's only filled once every step is done.
 
 > **Frontend analogy:** the station search is an autocomplete endpoint scoped to a map viewport, like a places search
 > with a `near` bias, and the route is the same "find the paths in the sprite sheet" look-up as a day's hops, clipped

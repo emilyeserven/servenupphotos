@@ -2,8 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { type InFlightFileRead, photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
 import {
-  COMPARE_GROUP,
-  COMPARE_WINNER,
   type CompareGroup,
   type ComparePhoto,
   compareGroups,
@@ -12,9 +10,7 @@ import {
   winnersOf,
 } from "@/lib/compare-groups";
 import { titleOf } from "@/lib/drafts";
-import { UNDECIDED } from "@/lib/undecided";
 import {
-  UNSELECTED,
   type Unselected,
   type UnselectedImages,
   missingImages,
@@ -22,6 +18,7 @@ import {
   today,
 } from "@/lib/unselected";
 import { type FieldChange, useLocalEditsStore } from "@/stores/local-edits";
+import { COMPARE_GROUP, COMPARE_WINNER, UNDECIDED, UNSELECTED } from "@/lib/photo-fields";
 
 /** The error messages of the reads that failed. */
 function readProblems(...errors: (Error | null)[]): string[] {

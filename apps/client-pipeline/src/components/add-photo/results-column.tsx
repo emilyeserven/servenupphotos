@@ -7,7 +7,7 @@ import type { ExifMutation } from "@/components/add-photo/photo-state";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import { SavedPhotoCard } from "@/components/choose-photo-dialog";
 import { NewPhotoLens } from "@/components/custom-lens-card";
-import { PhotoGroupsCard } from "@/components/group-picker";
+import { PhotoGroupsCard } from "@/components/photo-groups-card";
 import {
   fileStem,
   type ExifPlace,

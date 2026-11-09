@@ -1,6 +1,7 @@
 import type { SocialPhoto } from "@/api/publish";
 import { isSetAside } from "@/lib/drafts";
 import type { FieldChange, LocalEdit } from "@/stores/local-edits";
+import { PUBLISH_DATE } from "@/lib/photo-fields";
 
 /** Photo file path → its unsaved publish date; a path that's missing keeps its saved one. */
 export type Unsaved = Record<string, string | null>;
@@ -20,9 +21,6 @@ export function photosByDay(photos: SocialPhoto[], unsaved: Unsaved): Map<string
   }
   return map;
 }
-
-/** The photo JSON field that holds the day a photo is posted, as YYYY-MM-DD. */
-export const PUBLISH_DATE = "socialMediaPublishDate";
 
 /** The publish dates among the local edits, by photo file path. */
 export function unsavedFromEdits(edits: Record<string, LocalEdit>): Unsaved {

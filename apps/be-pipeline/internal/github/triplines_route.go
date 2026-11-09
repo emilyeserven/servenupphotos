@@ -35,6 +35,7 @@ func routeSegments(ctx context.Context, line TripLine, spots map[int]tripSpot, r
 		if !routeSegment(ctx, &line.Segments[i], spots, route) {
 			unrouted++
 		}
+		unrouted += routeStationWalks(ctx, &line.Segments[i], spots, route)
 	}
 	return unrouted
 }

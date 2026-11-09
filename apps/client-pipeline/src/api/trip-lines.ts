@@ -46,6 +46,18 @@ export interface TripSegment {
   board?: TripPoint;
   /** The station or stop it got off at, which can be a walk away from the next photo. */
   alight?: TripPoint;
+  /** Shapes the walk from the first photo to `board`; left out, it's drawn straight. */
+  boardWalk?: StationWalk;
+  /** Shapes the walk from `alight` to the last photo; left out, it's drawn straight. */
+  alightWalk?: StationWalk;
+}
+
+/** How a walk between a hop's photo and a station goes, such as from a bus stop around a park. */
+export interface StationWalk {
+  /** The spots it goes through, in walking order. */
+  via?: TripPoint[];
+  /** The walk along streets from Snap to streets, each [longitude, latitude]. */
+  path?: [number, number][];
 }
 
 /**
@@ -119,7 +131,15 @@ export interface TripFence {
 }
 
 /** What sort of place a visit is. */
-export type VisitKind = "restaurant" | "cafe" | "bar" | "shop" | "museum" | "sight" | "other";
+export type VisitKind =
+  | "restaurant"
+  | "cafe"
+  | "bar"
+  | "shop"
+  | "museum"
+  | "sight"
+  | "station"
+  | "other";
 
 /** A place visited along a day's route, shown as a pin on the map. */
 export interface TripVisit {
@@ -136,6 +156,11 @@ export interface TripVisit {
   place?: string;
   /** The ID of the photo it comes after on the route; none leaves it off the route, as a pin only. */
   after?: number;
+  /**
+   * On the route before the day's first photo: after the start spot when there is one, or else the
+   * line starts there. It wins over `after`.
+   */
+  first?: boolean;
   /**
    * The IDs of the casual photos taken there, such as the food, in order. Each is marked `casual`,
    * so it shows only with the place on its day's Trip page.

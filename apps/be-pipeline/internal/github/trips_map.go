@@ -18,7 +18,7 @@ func bakeTrips(trips []Trip, spots map[int]tripSpot) []any {
 	for _, trip := range trips {
 		for _, leg := range trip.Legs {
 			if f, ok := legFeature(trip, leg, spots); ok {
-				out = append(out, f)
+				out = append(out, rideFeatures(f, separateRides(leg))...)
 				out = append(out, stationWalks(trip, leg, spots)...)
 			}
 		}
@@ -111,6 +111,51 @@ func legFeature(trip Trip, leg TripLeg, spots map[int]tripSpot) (tripLineFeature
 		Start: fromLabel, End: toLabel, Line: name, Ref: ref, Colour: colour,
 	}
 	return tripLineFeature{Type: "Feature", Geometry: tripLineGeometry{Type: "LineString", Coordinates: coords}, Properties: props}, true
+}
+
+// separateRides are the rides of a leg that changed lines without combining
+// them into one route, each drawn as its own line; none when it has a route,
+// changed no lines, or a ride has no line or track yet.
+func separateRides(leg TripLeg) []TripLegRide {
+	if leg.Line != nil || len(leg.Rides) < 2 {
+		return nil
+	}
+	for _, r := range leg.Rides {
+		if r.Line == nil || len(r.Path) < 2 {
+			return nil
+		}
+	}
+	return leg.Rides
+}
+
+// rideFeatures are the leg's line f, or with rides, one line for each ride
+// along its track in its line's color, from the station changed at before it
+// to the one after.
+func rideFeatures(f tripLineFeature, rides []TripLegRide) []any {
+	if len(rides) == 0 {
+		return []any{f}
+	}
+	out := make([]any, 0, len(rides))
+	start := f.Properties.Start
+	for _, r := range rides {
+		ride := f
+		ride.Geometry.Coordinates = r.Path
+		ride.Properties.Line, ride.Properties.Ref, ride.Properties.Colour = lineProps(r.Line)
+		ride.Properties.Km = lineKm(r.Path)
+		ride.Properties.Start, ride.Properties.End = start, rideEnd(r, f.Properties.End)
+		start = ride.Properties.End
+		out = append(out, ride)
+	}
+	return out
+}
+
+// rideEnd is where a ride got off: the station changed at, or else the leg's
+// end.
+func rideEnd(r TripLegRide, legEnd string) string {
+	if r.Change == nil {
+		return legEnd
+	}
+	return r.Change.Label
 }
 
 // legCoords are the points leg is drawn through from from to to: its line's
