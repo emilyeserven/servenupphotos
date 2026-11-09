@@ -9,7 +9,8 @@ import (
 )
 
 // TripTransitLine is the bus, subway or train line a hop rode: an
-// OpenStreetMap route relation, kept with the name and color the map shows.
+// OpenStreetMap route relation or a Transitland route, kept with the name and
+// color the map shows.
 type TripTransitLine struct {
 	// ID is the route relation's OpenStreetMap ID.
 	ID int64 `json:"id"`
@@ -20,6 +21,9 @@ type TripTransitLine struct {
 	// Colour is the line's color, such as "#e5171f", which the map draws it
 	// in; "" for the usual hop color.
 	Colour string `json:"colour,omitempty"`
+	// Source is where the line was found: "" for OpenStreetMap, whose route
+	// relation ID is its ID, or "transitland" for a Transitland route.
+	Source string `json:"source,omitempty"`
 }
 
 // lineModes are the modes a hop can name the line it rode for.
@@ -59,6 +63,9 @@ func validLine(l *TripTransitLine, n int) *PublishError {
 	l.Name, l.Ref, l.Colour = strings.TrimSpace(l.Name), strings.TrimSpace(l.Ref), strings.TrimSpace(l.Colour)
 	if l.Name == "" || utf8.RuneCountInString(l.Name) > maxEntryTextLength || utf8.RuneCountInString(l.Ref) > 32 {
 		return publishErr(http.StatusBadRequest, "Segment %d: its line needs a name of up to %d characters and a number of up to 32.", n, maxEntryTextLength)
+	}
+	if l.Source != "" && l.Source != "transitland" {
+		l.Source = ""
 	}
 	if l.Colour != "" && !colourPattern.MatchString(l.Colour) {
 		return publishErr(http.StatusBadRequest, "Segment %d: its line's color should be a hex code such as #e5171f.", n)

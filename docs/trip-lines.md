@@ -434,6 +434,27 @@ hop is drawn along the line's track between them, solid in the line's color, wit
 it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
 route** keeps the line, the stations and the track.
 
+### Looking lines up on Transitland
+
+The menu beside **Find lines** (and beside a Trip leg's **Look up route**) picks where lines are looked up, and the
+choice is kept in the browser for every look-up:
+
+- **OpenStreetMap** (the default): the Overpass servers, as below. Its lines are each direction of a route, mapped
+  by volunteers, and the public servers are often busy.
+- **Transitland** ([transit.land](https://www.transit.land)): the timetables transit agencies publish as GTFS, with
+  each route's shape and stops. A route is listed when it has a stop within 500 m of both ends
+  (`GET /routes?lat=…&lon=…&radius=500&route_types=…`, once per end), its track is cut from its shape the same way as
+  an OpenStreetMap line's, and its stops are put in order along its shape. It covers railways well (in Japan too),
+  ferries less so. It needs a free API key as `TRANSITLAND_API_KEY` in the repo's `.env` (see `.env.example`), sent
+  as the `apikey` header; without one the look-up says so. Answers are kept for a day, and the backend logs each
+  request (`be-pipeline/internal/transit/transitland.go`; `TRANSITLAND_URL` replaces the server).
+
+A line picked from Transitland is saved with `"source": "transitland"`, so its stops and track are fetched from there
+again; one from OpenStreetMap has no `source`. The `?source=transitland` query below asks Transitland.
+
+> **Frontend analogy:** it's the same component with two data providers behind it, like a `fetcher` prop that
+> switches between two REST APIs returning the same shape.
+
 - `GET /api/transit/lines?mode=subway&from=<lng,lat>&to=<lng,lat>` answers the lines found. `mode` is `train`,
   `subway`, `bus` or `ferry`.
 - `GET /api/transit/lines/<id>/stops` answers the line's stations or stops in order, each with its `name`,

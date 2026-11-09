@@ -20,6 +20,39 @@ type transitFinder interface {
 	Stops(ctx context.Context, id int64) ([]transit.Stop, error)
 	Stations(ctx context.Context, mode, name string, near [2]float64) ([]transit.Station, error)
 	PhotonStations(ctx context.Context, mode, name string, near [2]float64) ([]transit.Station, error)
+	TransitlandLines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
+	TransitlandTrack(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
+	TransitlandStops(ctx context.Context, id int64) ([]transit.Stop, error)
+}
+
+// fromTransitland reports whether the request asks Transitland
+// (?source=transitland) rather than OpenStreetMap.
+func fromTransitland(r *http.Request) bool {
+	return r.URL.Query().Get("source") == transit.SourceTransitland
+}
+
+// linesSource is the lines look-up the request asks for.
+func linesSource(finder transitFinder, r *http.Request) func(context.Context, string, [2]float64, [2]float64) ([]transit.Line, error) {
+	if fromTransitland(r) {
+		return finder.TransitlandLines
+	}
+	return finder.Lines
+}
+
+// trackSource is the track look-up the request asks for.
+func trackSource(finder transitFinder, r *http.Request) func(context.Context, int64, [2]float64, [2]float64) ([][2]float64, error) {
+	if fromTransitland(r) {
+		return finder.TransitlandTrack
+	}
+	return finder.Track
+}
+
+// stopsSource is the stops look-up the request asks for.
+func stopsSource(finder transitFinder, r *http.Request) func(context.Context, int64) ([]transit.Stop, error) {
+	if fromTransitland(r) {
+		return finder.TransitlandStops
+	}
+	return finder.Stops
 }
 
 // transitTimeout is how long one look-up may take, waiting its turn and trying
@@ -34,7 +67,8 @@ type trackAnswer struct {
 
 // handleTransitLines answers the lines of ?mode= ("train", "subway", "bus"
 // or "ferry") whose track passes near both ?from= and ?to=, each
-// "longitude,latitude".
+// "longitude,latitude", from OpenStreetMap or, with ?source=transitland,
+// Transitland.
 func handleTransitLines(finder transitFinder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		from, to, ok := spotsParam(w, r)
@@ -43,7 +77,7 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 		}
 		ctx, cancel := context.WithTimeout(r.Context(), transitTimeout)
 		defer cancel()
-		lines, err := finder.Lines(ctx, r.URL.Query().Get("mode"), from, to)
+		lines, err := linesSource(finder, r)(ctx, r.URL.Query().Get("mode"), from, to)
 		if errors.Is(err, transit.ErrNoKind) {
 			writeError(w, http.StatusBadRequest, "Pick whether the hop was a train, subway, bus or ferry to find its lines.")
 			return
@@ -110,7 +144,7 @@ func handleTransitStops(finder transitFinder) http.HandlerFunc {
 		}
 		ctx, cancel := context.WithTimeout(r.Context(), transitTimeout)
 		defer cancel()
-		stops, err := finder.Stops(ctx, id)
+		stops, err := stopsSource(finder, r)(ctx, id)
 		if err != nil {
 			writeOverpassError(w, "get the line's stops", err)
 			return
@@ -123,7 +157,7 @@ func handleTransitStops(finder transitFinder) http.HandlerFunc {
 func lineID(w http.ResponseWriter, r *http.Request) (int64, bool) {
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil || id <= 0 {
-		writeError(w, http.StatusBadRequest, "Give the line's OpenStreetMap ID.")
+		writeError(w, http.StatusBadRequest, "Give the line's OpenStreetMap or Transitland ID.")
 		return 0, false
 	}
 	return id, true
@@ -142,7 +176,7 @@ func handleTransitTrack(finder transitFinder) http.HandlerFunc {
 		}
 		ctx, cancel := context.WithTimeout(r.Context(), transitTimeout)
 		defer cancel()
-		path, err := finder.Track(ctx, id, from, to)
+		path, err := trackSource(finder, r)(ctx, id, from, to)
 		writeTrack(w, path, err)
 	}
 }
@@ -163,6 +197,9 @@ func writeTrack(w http.ResponseWriter, path [][2]float64, err error) {
 // lines". When every server was busy it says so and asks to try again later,
 // since that's the servers' load and not the photos.
 func writeOverpassError(w http.ResponseWriter, what string, err error) {
+	if writeTransitlandError(w, err) {
+		return
+	}
 	var busy *transit.BusyError
 	if errors.As(err, &busy) {
 		writeError(w, http.StatusServiceUnavailable, fmt.Sprintf(
@@ -207,4 +244,18 @@ func parseSpot(s string) ([2]float64, bool) {
 		return [2]float64{}, false
 	}
 	return [2]float64{x, y}, true
+}
+
+// writeTransitlandError answers a Transitland failure, when err is one, and
+// reports whether it did.
+func writeTransitlandError(w http.ResponseWriter, err error) bool {
+	switch {
+	case errors.Is(err, transit.ErrNoTransitlandKey):
+		writeError(w, http.StatusServiceUnavailable, "Transitland needs an API key: get a free one at transit.land, add TRANSITLAND_API_KEY=<key> to the repo's .env, and restart the backend. Or look it up on OpenStreetMap instead.")
+	case errors.As(err, new(*transit.TransitlandError)):
+		writeError(w, http.StatusBadGateway, err.Error()+". Try again, or look it up on OpenStreetMap instead.")
+	default:
+		return false
+	}
+	return true
 }
