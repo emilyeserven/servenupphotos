@@ -7,6 +7,7 @@ import type {
   TripVia,
   TripVisit,
 } from "@/api/trip-lines";
+import { walkPathsOf, walkViasOf, withStationWalks } from "@/lib/station-walks";
 import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
 
 /**
@@ -217,7 +218,7 @@ export function segmentsOf(photos: number[], draft: GapDraft): TripSegment[] {
     withAreaEnds(segment, draft),
   );
   return withNames(
-    plain.map((segment) => withPath(segment, draft)),
+    plain.map((segment) => withStationWalks(withPath(segment, draft), draft)),
     photos,
     draft,
   );
@@ -251,10 +252,11 @@ function viaByKey(segments: TripSegment[]): Record<ViaKey, TripPoint[]> {
   return out;
 }
 
-/** The segments' paths along streets, by segmentKey. */
+/** The segments' paths along streets, by segmentKey, and their station walks', by walkPathKey. */
 export function pathsOf(segments: TripSegment[]): Record<string, Path> {
   const routed = segments.filter((s) => s.path && s.path.length >= 2);
-  return Object.fromEntries(routed.map((s) => [segmentKey(s), s.path as Path]));
+  const own = Object.fromEntries(routed.map((s) => [segmentKey(s), s.path as Path]));
+  return { ...own, ...walkPathsOf(segments) };
 }
 
 /** The lines the segments' hops rode, by the photo each hop starts from. */
@@ -281,7 +283,7 @@ function areaEndsOf(segments: TripSegment[]): Pick<GapDraft, "exits" | "entrance
 export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
   const gaps = photos.slice(1).map((b, i) => gapIn(segments, photos[i] as number, b));
   const lines = linesOf(segments);
-  const via = viaByKey(segments);
+  const via = { ...viaByKey(segments), ...walkViasOf(segments) };
   return {
     gaps,
     ...dayEnds(segments),

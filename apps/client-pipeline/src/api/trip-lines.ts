@@ -46,6 +46,18 @@ export interface TripSegment {
   board?: TripPoint;
   /** The station or stop it got off at, which can be a walk away from the next photo. */
   alight?: TripPoint;
+  /** Shapes the walk from the first photo to `board`; left out, it's drawn straight. */
+  boardWalk?: StationWalk;
+  /** Shapes the walk from `alight` to the last photo; left out, it's drawn straight. */
+  alightWalk?: StationWalk;
+}
+
+/** How a walk between a hop's photo and a station goes, such as from a bus stop around a park. */
+export interface StationWalk {
+  /** The spots it goes through, in walking order. */
+  via?: TripPoint[];
+  /** The walk along streets from Snap to streets, each [longitude, latitude]. */
+  path?: [number, number][];
 }
 
 /**

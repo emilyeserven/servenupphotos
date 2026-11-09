@@ -52,6 +52,9 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
   relation. Only train, subway, bus and transit hops keep one.
 - **`board`** and **`alight`** are the station or stop a hop with a `line` got on and off at, with its name as the
   `label`, when that isn't at the photo: say the subway was left and then a 10-minute walk led to the next photo.
+- **`boardWalk`** and **`alightWalk`** shape the walk from the hop's first photo to `board`, and from `alight` to its
+  last photo: `{ "via": [{ "latitude": …, "longitude": … }], "path": [[lng, lat], …] }`, both optional. Without them
+  (or with a `path` that no longer fits) the walk is straight through its via spots.
 - **`auto: true`** turns on the [automatic line](#the-automatic-line); its segments are filled in by the backend.
 
 A photo in a line must be from that day (its [custom date](data-model.md#date-taken), or else its EXIF date) and have
@@ -87,7 +90,7 @@ segment, coordinates filled in from the photos:
 ```
 
 A hop with a `board` or `alight` station also gets a walk feature from its first photo to where it got on, and from
-where it got off to its last photo.
+where it got off to its last photo, along its `boardWalk` or `alightWalk` when it has one.
 
 Each feature also has its segment's `name`, so the portfolio can show one group's line at a time.
 
@@ -390,15 +393,17 @@ to streets follows them too, and a `wander` segment bakes no line at all.
 A line drawn by hand is straight from point to point. To make it follow the streets:
 
 1. **Add via points**, then click the map where the line should bend. Each click puts a via point in the stretch of the
-   line nearest it, skipping hops with a line picked, which follow the line's track (a via spot already on one doesn't
-   drop the track). Drag a via point to move it, or click it to remove it. **Done adding via points** stops adding. The
-   map numbers via points v1, v2, … in the order the route goes through them, and the list under the tools says where
-   each is ("After photo 2"). Its arrows move one a place earlier or later, past the next via point or photo, and its
-   × removes it.
+   line nearest it. A hop with a line picked follows the line's track, so a via point never goes on the ride itself, but
+   it can go on the walk from the photo to the station it got on at, or from the stop it got off at to the next photo.
+   Drag a via point to move it, or click it to remove it. **Done adding via points** stops adding. The map numbers via
+   points v1, v2, … in the order the route goes through them, and the list under the tools says where each is ("After
+   photo 2", "Walk from Broderick St & Francisco St to photo 3"). Its arrows move one a place earlier or later: past
+   the next via point, or past the photo or station at the end of its stretch into the next one, so a lone via point
+   after photo 3 moves up onto the walk from the bus stop to photo 3. Its × removes it.
 2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
    servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
-   walk, bus or car segment's points and via points, walking on foot and buses and cars by road. Train and subway hops
-   stay dashed straight lines.
+   walk, bus or car segment's points and via points, walking on foot and buses and cars by road, and for every walk to
+   or from a station. Train and subway hops without a line stay dashed straight lines.
 3. **Save route** saves the paths with the line. Snapping alone saves nothing.
 
 `POST /api/triplines/<day>/route` → `POST /triplines/{day}/route` takes the line, checks it as saving would, and answers

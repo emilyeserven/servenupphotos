@@ -1,5 +1,6 @@
 import type { TripPoint, TripSegment, TripVia } from "@/api/trip-lines";
 import type { TripPhoto } from "@/lib/trip-days";
+import { type WalkEnd, walkKey } from "@/lib/station-walks";
 import type { GapDraft, ViaKey } from "@/lib/trip-gaps";
 
 /** A point as [longitude, latitude], as GeoJSON writes it. */
@@ -73,20 +74,49 @@ function distanceToLeg(p: LngLat, a: LngLat, b: LngLat): number {
   return Math.hypot(px - (ax + t * (bx - ax)), py - (ay + t * (by - ay)));
 }
 
+/** A station walk's points: from x through its via spots after key to y. */
+function walkPoints(key: ViaKey, x: LngLat, via: TripPoint[], y: LngLat): LinePoint[] {
+  const mid = via.map((v, index) => ({ at: lngLat(v), key, index }));
+  return [{ at: x, key, index: -1 }, ...mid, { at: y, key, index: via.length }];
+}
+
 /**
- * The point a leg starts at for each leg of the segments' lines, with how far p is from it. A hop
- * with a line picked follows the line's track, so a via spot never goes on it.
+ * The walks of a hop with a line picked, as point lists: from its first photo to the station it
+ * got on at, and from the station it got off at to its last photo. Its ride follows the line's
+ * track, so a via spot never goes on that.
  */
-function legs(segments: TripSegment[], byId: Map<number, TripPhoto>, p: LngLat) {
-  return segments
-    .filter((segment) => !segment.line)
-    .flatMap((segment) => {
-      const points = linePoints(segment, byId);
-      return points.slice(1).map((b, i) => {
-        const a = points[i] as LinePoint;
-        return { from: a, distance: distanceToLeg(p, a.at, b.at) };
-      });
-    });
+function stationWalkPoints(
+  segment: TripSegment,
+  byId: Map<number, TripPhoto>,
+  draft: GapDraft,
+): LinePoint[][] {
+  const [a, b] = segment.photos.map((id) => byId.get(id));
+  if (!a || !b) return [];
+  const vias = (end: WalkEnd) => draft.via?.[walkKey(end, a.id)] ?? [];
+  const walk = (end: WalkEnd, x?: LngLat, y?: LngLat) =>
+    x && y ? [walkPoints(walkKey(end, a.id), x, vias(end), y)] : [];
+  const station = (p?: TripPoint) => (p ? lngLat(p) : undefined);
+  return [
+    ...walk("board", lngLat(a), station(segment.board)),
+    ...walk("alight", station(segment.alight), lngLat(b)),
+  ];
+}
+
+/** The point lists the segments' lines go through where a via spot can go. */
+function shapeable(segments: TripSegment[], byId: Map<number, TripPhoto>, draft: GapDraft) {
+  return segments.flatMap((segment) =>
+    segment.line ? stationWalkPoints(segment, byId, draft) : [linePoints(segment, byId)],
+  );
+}
+
+/** The point a leg starts at for each leg of the lines a via spot can go on, with how far p is from it. */
+function legs(lines: LinePoint[][], p: LngLat) {
+  return lines.flatMap((points) =>
+    points.slice(1).map((b, i) => {
+      const a = points[i] as LinePoint;
+      return { from: a, distance: distanceToLeg(p, a.at, b.at) };
+    }),
+  );
 }
 
 /**
@@ -100,7 +130,7 @@ export function withVia(
   point: TripPoint,
 ): GapDraft {
   const byId = new Map(photos.map((photo) => [photo.id, photo]));
-  const nearest = legs(segments, byId, lngLat(point)).toSorted(
+  const nearest = legs(shapeable(segments, byId, draft), lngLat(point)).toSorted(
     (x, y) => x.distance - y.distance,
   )[0];
   if (!nearest) return draft;
