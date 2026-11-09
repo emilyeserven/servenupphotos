@@ -71,9 +71,14 @@ export function settingMutations<T extends { id: string }>(
   };
 }
 
-/** The entries of a kind's file as the next Commit will have them: at the pull request's head, or else on the base branch. */
+/** The lists Commit starts from: at the pull request's head, or else on the base branch. */
+function nextLists(data: CombinedData | undefined) {
+  return data?.head ?? data?.base;
+}
+
+/** The entries of a kind's file as the next Commit will have them; none while the lists aren't read. */
 function fileEntries(data: CombinedData | undefined, kind: SettingKind): unknown[] {
-  return (data && (data.head ?? data.base)[kind]?.data) ?? [];
+  return nextLists(data)?.[kind]?.data ?? [];
 }
 
 /** Orders setting entries by name, for kinds the pages list that way. */
