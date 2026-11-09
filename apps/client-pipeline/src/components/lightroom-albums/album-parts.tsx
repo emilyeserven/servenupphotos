@@ -30,11 +30,24 @@ function KindMark({ album }: { album: LightroomAlbum }) {
   return mark && <span className="text-muted-foreground text-xs">{mark}</span>;
 }
 
-/** The album's photo counts in words: "120 → 85 photos", "85 photos" or "120 photos at first", or "" with neither. */
-function photoCountText({ originalCount, photoCount }: LightroomAlbum): string {
-  if (originalCount === null) return photoCount === null ? "" : count(photoCount, "photo");
+/** How many photos there are now in words, such as "85 photos", or "" when that isn't known. */
+function currentText(photoCount: number | null): string {
+  return photoCount === null ? "" : count(photoCount, "photo");
+}
+
+/**
+ * Two photo counts in words: "120 → 85 photos", "85 photos" (also when both are the same) or "120 photos at first",
+ * or "" with neither.
+ */
+function countsText(originalCount: number | null, photoCount: number | null): string {
+  if (originalCount === null || originalCount === photoCount) return currentText(photoCount);
   if (photoCount === null) return `${count(originalCount, "photo")} at first`;
   return `${originalCount} → ${count(photoCount, "photo")}`;
+}
+
+/** The album's photo counts in words. A missing count, such as on an album saved before the page had it, reads as not noted. */
+function photoCountText(album: LightroomAlbum): string {
+  return countsText(album.originalCount ?? null, album.photoCount ?? null);
 }
 
 /** How many photos the album has, after how many it had at first when that was noted. */

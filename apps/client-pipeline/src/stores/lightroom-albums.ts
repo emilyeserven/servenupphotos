@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import {
   type AlbumChange,
+  backfillOriginalCounts,
   type LightroomAlbum,
   type LightroomAlbumsFile,
   type LightroomItem,
@@ -47,11 +48,19 @@ interface LightroomAlbumsState {
   setConnection: (connection: LightroomConnection) => void;
 }
 
-/** A list saved by version 0 of the page, read again so its albums get "offline" and its stages become lanes. */
-function migrate(saved: unknown): Partial<LightroomAlbumsState> {
+/**
+ * A list saved by an older version of the page, read again so its albums get the fields added since: "offline" and the
+ * board's lanes (version 0), and the photo count at first (version 1), filled in from the count now. Which folders
+ * are closed, the view and Online / Offline are kept.
+ */
+function migrate(saved: unknown, version: number): Partial<LightroomAlbumsState> {
   const state = (saved ?? {}) as Partial<LightroomAlbumsState>;
-  if (!state.file) return { file: null };
-  return { file: { ...state.file, items: normalizeLightroomItems(state.file.items) } };
+  if (!state.file) return { ...state, file: null };
+  const items = normalizeLightroomItems(state.file.items);
+  return {
+    ...state,
+    file: { ...state.file, items: version < 2 ? backfillOriginalCounts(items) : items },
+  };
 }
 
 /** The list with its tree changed and its time of change set to now. */
@@ -112,8 +121,8 @@ export const useLightroomAlbumsStore = create<LightroomAlbumsState>()(
     {
       name: "pipeline-lightroom-albums",
       storage: createJSONStorage(() => localStorage),
-      version: 1,
-      migrate: (saved) => migrate(saved) as LightroomAlbumsState,
+      version: 2,
+      migrate: (saved, version) => migrate(saved, version) as LightroomAlbumsState,
     },
   ),
 );

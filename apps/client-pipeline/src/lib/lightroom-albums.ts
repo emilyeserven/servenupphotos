@@ -196,6 +196,24 @@ export function normalizeLightroomItems(items: unknown): LightroomItem[] {
   return readItems(items, "");
 }
 
+/** The album with its photo count at first set to its count now, when only the count now is known. */
+function withOriginalCount(album: LightroomAlbum): LightroomAlbum {
+  if (album.originalCount !== null) return album;
+  return { ...album, originalCount: album.photoCount };
+}
+
+/**
+ * The tree with every album that has no photo count at first given its count now as that count, a one-time fill for
+ * lists saved before the page had the count at first.
+ */
+export function backfillOriginalCounts(items: LightroomItem[]): LightroomItem[] {
+  return items.map((item) =>
+    item.kind === "album"
+      ? withOriginalCount(item)
+      : { ...item, children: backfillOriginalCounts(item.children) },
+  );
+}
+
 /** The folder an album is in, from its path, such as "Travel/Japan", or "" when it's at the top. */
 export function albumFolder(album: LightroomAlbum): string {
   return album.path.slice(0, Math.max(0, album.path.length - album.name.length - 1));

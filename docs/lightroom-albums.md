@@ -77,7 +77,9 @@ no list yet, adding an album starts one.
 Under its notes in the tree, each album has two counts to note by hand: **Photos at first**, how many it had before
 you started culling, and **Now**, how many it has today. **Now** starts as the count Lightroom showed when the list was
 read. With both, the album's title reads like `120 → 85 photos` everywhere it's shown (the tree, the board and Next
-up); with only the first, `120 photos at first`. Next up's "fewer photos first" uses **Now**.
+up); with only the first, `120 photos at first`; when they're the same, just `85 photos`. A list saved before the
+page had **Photos at first** gets it filled in once from **Now** when the page next opens (version 2 of the saved
+list in `stores/lightroom-albums.ts`), so culling starts from today's count. Next up's "fewer photos first" uses **Now**.
 
 Importing again keeps both: a count the new list has (an LLM answer has Lightroom's current count, never the one at
 first) replaces the old one, and a count it doesn't have stays as it was. Export and Import carry them as
