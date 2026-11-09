@@ -164,7 +164,21 @@ most of the words come first, then the nearest, each with its English name besid
 (`GET /api/transit/stations?mode=ferry&q=Shimonoseki&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`,
 through the same Overpass servers, throttle and day-long cache as [Lines ridden](trip-lines.md#lines-ridden)).
 
-A city has few enough stations and ferry terminals that the backend asks the server for all of them near there, with
+The menu beside the search box picks the service it asks, and the choice is kept in the browser for every search:
+
+- **Photon** (the default): [photon.komoot.io](https://photon.komoot.io), a search-as-you-type service over
+  OpenStreetMap's data. It answers in about a second and ranks by how well the name matches, then how near it is,
+  within a box about 30 km around the end, with English names where they're mapped. It can only filter by a station's
+  main tag ([`osm_tag`](https://github.com/komoot/photon#filter-results-by-tags-and-keys)), so a **Train** search
+  there also finds subway stations. `PHOTON_URL` points it at another Photon server.
+  (`?source=photon`, `be-pipeline/internal/transit/photon.go`.)
+- **Overpass**: the OpenStreetMap query servers below, which tell subway and train stations apart but are often slow
+  when busy.
+
+> **Frontend analogy:** Photon is a dedicated autocomplete endpoint, like Algolia, over the same data that Overpass
+> answers as a full database query each time.
+
+With Overpass, a city has few enough stations and ferry terminals that the backend asks the server for all of them near there, with
 no name, and matches names itself, so one answer (kept for a day, for spots within about a kilometer) serves every
 name typed there. Bus stops are too many, so for a bus the server matches the longest word typed.
 

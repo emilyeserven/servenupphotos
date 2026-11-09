@@ -41,6 +41,11 @@ func (f *fakeFinder) Stations(_ context.Context, mode, name string, near [2]floa
 	return []transit.Station{{Name: "博多", NameEn: "Hakata", Latitude: 33.59, Longitude: 130.42}}, f.err
 }
 
+func (f *fakeFinder) PhotonStations(_ context.Context, mode, _ string, near [2]float64) ([]transit.Station, error) {
+	f.mode, f.from = mode, near
+	return []transit.Station{{Name: "Photon Port", Latitude: 33.96, Longitude: 130.93}}, f.err
+}
+
 func TestTransitStations(t *testing.T) {
 	f := &fakeFinder{}
 	cases := []struct {
@@ -49,6 +54,7 @@ func TestTransitStations(t *testing.T) {
 		body   string
 	}{
 		{"/transit/stations?mode=train&q=Hakata&near=130.42,33.59", http.StatusOK, "Hakata"},
+		{"/transit/stations?mode=ferry&q=Port&near=130.42,33.59&source=photon", http.StatusOK, "Photon Port"},
 		{"/transit/stations?mode=train&q=&near=130.42,33.59", http.StatusBadRequest, "station's name"},
 		{"/transit/stations?mode=train&q=Hakata", http.StatusBadRequest, "near"},
 	}

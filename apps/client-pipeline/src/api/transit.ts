@@ -74,24 +74,30 @@ export interface TransitStation {
   km: number;
 }
 
-/** What a station search asks: the kind of line, the name typed, and a spot it's near. */
+/**
+ * The service a station search asks: Photon (photon.komoot.io, a fast name search over
+ * OpenStreetMap's data) or OpenStreetMap's Overpass servers, which tell subway and train stations
+ * apart but are often slow.
+ */
+export type StationSource = "photon" | "overpass";
+
+/** What a station search asks: the kind of line, the name typed, a spot it's near, and where. */
 export interface StationAsk {
   mode: string;
   name: string;
   near: Spot;
+  source: StationSource;
 }
 
 /**
- * The stations or stops of the kind whose name, in any language, has the name typed, within 30 km
- * of the spot, nearest first, from OpenStreetMap through the Overpass API.
+ * The stations or stops of the kind whose name has the name typed, within 30 km of the spot, from
+ * OpenStreetMap's data through the source picked.
  */
-export function transitStationsQuery({ mode, name, near }: StationAsk) {
+export function transitStationsQuery({ mode, name, near, source }: StationAsk) {
+  const params = new URLSearchParams({ mode, q: name, near: near.join(","), source });
   return queryOptions({
-    queryKey: ["transit", "stations", mode, name, near],
-    queryFn: () =>
-      transitJson<TransitStation[]>(
-        `/api/transit/stations?${new URLSearchParams({ mode, q: name, near: near.join(",") })}`,
-      ),
+    queryKey: ["transit", "stations", mode, name, near, source],
+    queryFn: () => transitJson<TransitStation[]>(`/api/transit/stations?${params}`),
     retry: false,
     staleTime: Infinity,
   });

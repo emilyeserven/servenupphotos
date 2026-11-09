@@ -19,6 +19,7 @@ type transitFinder interface {
 	Track(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
 	Stops(ctx context.Context, id int64) ([]transit.Stop, error)
 	Stations(ctx context.Context, mode, name string, near [2]float64) ([]transit.Station, error)
+	PhotonStations(ctx context.Context, mode, name string, near [2]float64) ([]transit.Station, error)
 }
 
 // transitTimeout is how long one look-up may take, waiting its turn and trying
@@ -57,7 +58,8 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 
 // handleTransitStations answers the ?mode= stations or stops ("train",
 // "subway", "bus" or "ferry") whose name contains ?q=, near ?near=,
-// "longitude,latitude", nearest first.
+// "longitude,latitude", nearest first, searched on Overpass or, with
+// ?source=photon, on Photon.
 func handleTransitStations(finder transitFinder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query()
@@ -68,9 +70,18 @@ func handleTransitStations(finder transitFinder) http.HandlerFunc {
 		}
 		ctx, cancel := context.WithTimeout(r.Context(), transitTimeout)
 		defer cancel()
-		stations, err := finder.Stations(ctx, q.Get("mode"), q.Get("q"), near)
+		stations, err := stationSearch(finder, q.Get("source"))(ctx, q.Get("mode"), q.Get("q"), near)
 		writeStations(w, stations, err)
 	}
+}
+
+// stationSearch is the search ?source= picks: "photon" for Photon, or else
+// Overpass.
+func stationSearch(finder transitFinder, source string) func(context.Context, string, string, [2]float64) ([]transit.Station, error) {
+	if source == "photon" {
+		return finder.PhotonStations
+	}
+	return finder.Stations
 }
 
 // writeStations answers stations, or the error that kept them from being found.
@@ -80,6 +91,8 @@ func writeStations(w http.ResponseWriter, stations []transit.Station, err error)
 		writeError(w, http.StatusBadRequest, "Stations can be looked up for a train, subway, bus or ferry.")
 	case errors.Is(err, transit.ErrNoName):
 		writeError(w, http.StatusBadRequest, "Type the station's name to look it up.")
+	case errors.As(err, new(*transit.PhotonError)):
+		writeError(w, http.StatusBadGateway, err.Error()+". Try again, or search with Overpass instead.")
 	case err != nil:
 		writeOverpassError(w, "look up stations", err)
 	default:
