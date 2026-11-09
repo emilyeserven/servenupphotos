@@ -35,7 +35,7 @@ The README covers setup and commands. Each feature's behavior is in `docs/<featu
 A new endpoint usually touches, in order:
 
 1. `be-pipeline/internal/github` or `storage`: the logic, with a `_test.go` next to it using the package's fakes
-   (`newFakeRepo`, `fakeGitHub`, `fakeBucket`, …).
+   (`newFakeGitHub`, `newMainRepo` in `github`; `fakeBucket` in `storage`).
 2. `be-pipeline/internal/httpapi/<area>.go`: the handler, and one line in that area's `routes_<area>.go`.
 3. `client-pipeline/src/api/<area>.ts`: the response type and the query or mutation.
 4. `scripts/screenshot-fixtures.mjs`: a sample answer, so `pnpm shot` can show the page. `pnpm check:fixtures`
@@ -56,10 +56,12 @@ cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes
 cd apps/be-pipeline && golangci-lint run
 ```
 
-`fallow` fails on dead exports, duplicated code and complex functions (roughly: keep each function's cyclomatic
-complexity at 4 or under; every `?:`, `??`, `?.`, `&&` and `||` counts). Split a function rather than adding an ignore.
-`golangci-lint` likewise fails a Go function that grows past today's longest or most complex one (`funlen`, `gocyclo`,
-`dupl`), so split a function rather than raising the limit in `.golangci.yml`.
+`fallow` fails on dead code (unused exports, files and dependencies, duplicate exports), on any function over its
+health thresholds (cyclomatic 20, cognitive 15, CRAP 30, 60 lines; the "refactoring targets" it prints are advice only),
+and on any duplicate code block not in the committed baseline `fallow-baseline/dupes.json`. The five clone groups there
+today pass; a new one fails `pnpm check` (and CI, which runs the same script). Split or share the code instead of
+adding to the baseline. Only when a PR deliberately accepts a duplicate, run `pnpm check:fallow-baseline` and commit
+the changed file.
 
 ## Conventions
 
