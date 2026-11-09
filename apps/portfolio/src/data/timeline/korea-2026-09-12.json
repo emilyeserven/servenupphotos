@@ -5,40 +5,6 @@
   "end": "2026-10-02",
   "legs": [
     {
-      "mode": "ferry",
-      "from": {
-        "day": "2026-09-21",
-        "photo": 327
-      },
-      "to": {
-        "day": "2026-09-22",
-        "spot": {
-          "latitude": 33.94779916565636,
-          "longitude": 130.9260748757786,
-          "label": "Shimonoseki International Port"
-        }
-      }
-    },
-    {
-      "mode": "train",
-      "from": {
-        "day": "2026-09-22",
-        "spot": {
-          "latitude": 33.94779916565636,
-          "longitude": 130.9260748757786,
-          "label": "Shimonoseki International Port"
-        }
-      },
-      "to": {
-        "day": "2026-09-22",
-        "spot": {
-          "latitude": 34.416983070194384,
-          "longitude": 131.41039798268122,
-          "label": "Higashi Hagi Station"
-        }
-      }
-    },
-    {
       "mode": "train",
       "from": {
         "day": "2026-09-20",
@@ -56,21 +22,79 @@
       }
     },
     {
+      "mode": "ferry",
+      "from": {
+        "day": "2026-09-21",
+        "photo": 327,
+        "station": {
+          "latitude": 35.117439,
+          "longitude": 129.0489621,
+          "label": "Busan Port International Passenger Terminal"
+        }
+      },
+      "to": {
+        "day": "2026-09-22",
+        "spot": {
+          "latitude": 33.947731,
+          "longitude": 130.9254417,
+          "label": "下関港国際ターミナル"
+        }
+      }
+    },
+    {
+      "mode": "train",
+      "from": {
+        "day": "2026-09-22",
+        "spot": {
+          "latitude": 33.9493851,
+          "longitude": 130.9217895,
+          "label": "Shimonoseki"
+        }
+      },
+      "to": {
+        "day": "2026-09-22",
+        "spot": {
+          "latitude": 34.4169951,
+          "longitude": 131.4105197,
+          "label": "Higashi-Hagi"
+        }
+      }
+    },
+    {
       "mode": "train",
       "from": {
         "day": "2026-09-25",
         "spot": {
-          "latitude": 34.416983070194384,
-          "longitude": 131.41039798268122,
-          "label": "Higashi Hagi Station"
+          "latitude": 34.4169951,
+          "longitude": 131.4105197,
+          "label": "Higashi-Hagi"
         }
       },
       "to": {
         "day": "2026-09-25",
         "spot": {
+          "latitude": 35.4640129,
+          "longitude": 133.06387,
+          "label": "Matsue"
+        }
+      }
+    },
+    {
+      "mode": "train",
+      "from": {
+        "day": "2026-09-28",
+        "spot": {
           "latitude": 35.46400325739574,
           "longitude": 133.0639064250506,
           "label": "Matsue Station"
+        }
+      },
+      "to": {
+        "day": "2026-09-28",
+        "spot": {
+          "latitude": 34.67952389576481,
+          "longitude": 135.17828548269063,
+          "label": "Kobe Station"
         }
       }
     },
@@ -90,25 +114,6 @@
           "latitude": 34.43594453442068,
           "longitude": 135.24366453381782,
           "label": "Kansai International Airport Station"
-        }
-      }
-    },
-    {
-      "mode": "train",
-      "from": {
-        "day": "2026-09-28",
-        "spot": {
-          "latitude": 35.46400325739574,
-          "longitude": 133.0639064250506,
-          "label": "Matsue Station"
-        }
-      },
-      "to": {
-        "day": "2026-09-28",
-        "spot": {
-          "latitude": 34.67952389576481,
-          "longitude": 135.17828548269063,
-          "label": "Kobe Station"
         }
       }
     }
