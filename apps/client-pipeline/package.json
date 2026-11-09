@@ -27,9 +27,9 @@
     "react-dom": "catalog:",
     "react-markdown": "10.1.0",
     "remark-breaks": "4.0.0",
-    "shiki": "4.5.0",
+    "shiki": "4.6.0",
     "tailwind-merge": "catalog:",
-    "zustand": "5.0.15"
+    "zustand": "5.0.16"
   },
   "devDependencies": {
     "@tailwindcss/vite": "catalog:",
@@ -38,7 +38,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "shadcn": "4.22.1",
+    "shadcn": "4.23.0",
     "tailwindcss": "catalog:",
     "tw-animate-css": "catalog:",
     "typescript": "catalog:",
