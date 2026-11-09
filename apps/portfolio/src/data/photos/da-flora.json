@@ -13,7 +13,7 @@
   "gpsPosition": null,
   "customGpsPosition": "37.801223673490945, -122.41136169420197",
   "createDate": "2026:10:25 06:40:50",
-  "customCreateDate": null,
+  "customCreateDate": "2026:10:24 14:40:50",
   "placeName": null,
   "customCity": null,
   "customState": null,
@@ -263,5 +263,7 @@
     "samples": 10050
   },
   "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.",
-  "similarPhotos": [436, 429, 413, 435, 250, 373]
+  "similarPhotos": [436, 429, 413, 435, 250, 373],
+  "noGps": false,
+  "altText": null
 }

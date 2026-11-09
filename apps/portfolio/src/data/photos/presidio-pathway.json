@@ -13,7 +13,7 @@
   "gpsPosition": null,
   "customGpsPosition": "37.804303751801356, -122.45373212016419",
   "createDate": "2026:10:25 07:48:52",
-  "customCreateDate": null,
+  "customCreateDate": "2026:10:24 15:48:52",
   "placeName": null,
   "customCity": null,
   "customState": null,
@@ -262,5 +262,8 @@
     "peakChroma": 24.72,
     "samples": 9975
   },
-  "similarPhotos": [402, 399, 195, 41, 202, 126]
+  "similarPhotos": [402, 399, 195, 41, 202, 126],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

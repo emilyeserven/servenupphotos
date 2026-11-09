@@ -10843,7 +10843,7 @@
     "gpsPosition": null,
     "customGpsPosition": "37.804303751801356, -122.45373212016419",
     "createDate": "2026:10:25 07:47:10",
-    "customCreateDate": null,
+    "customCreateDate": "2026:10:24 15:47:10",
     "placeName": null,
     "customCity": null,
     "customState": null,
@@ -11101,7 +11101,10 @@
       "peakChroma": 29.26,
       "samples": 10050
     },
-    "similarPhotos": [403, 489, 405, 399, 393, 375]
+    "similarPhotos": [403, 489, 405, 399, 393, 375],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "id": 38,
@@ -17914,7 +17917,7 @@
     "gpsPosition": null,
     "customGpsPosition": "37.801223673490945, -122.41136169420197",
     "createDate": "2026:10:25 06:40:50",
-    "customCreateDate": null,
+    "customCreateDate": "2026:10:24 14:40:50",
     "placeName": null,
     "customCity": null,
     "customState": null,
@@ -18164,7 +18167,9 @@
       "samples": 10050
     },
     "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.",
-    "similarPhotos": [436, 429, 413, 435, 250, 373]
+    "similarPhotos": [436, 429, 413, 435, 250, 373],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Desert Beetle",
@@ -49108,7 +49113,7 @@
     "gpsPosition": null,
     "customGpsPosition": "37.806509135849964, -122.42240979920365",
     "createDate": "2026:10:25 07:08:49",
-    "customCreateDate": null,
+    "customCreateDate": "2026:10:24 15:08:49",
     "placeName": null,
     "customCity": null,
     "customState": null,
@@ -49366,7 +49371,10 @@
       "peakChroma": 0.01,
       "samples": 10115
     },
-    "similarPhotos": [282, 404, 121, 250, 167, 131]
+    "similarPhotos": [282, 404, 121, 250, 167, 131],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "id": 52,
@@ -51828,7 +51836,7 @@
     "gpsPosition": null,
     "customGpsPosition": "37.804275420772505, -122.4534053351354",
     "createDate": "2026:10:25 07:39:08",
-    "customCreateDate": null,
+    "customCreateDate": "2026:10:24 15:39:08",
     "placeName": null,
     "customCity": null,
     "customState": null,
@@ -52077,7 +52085,10 @@
       "peakChroma": 0.01,
       "samples": 9828
     },
-    "similarPhotos": [453, 409, 401, 444, 424, 430]
+    "similarPhotos": [453, 409, 401, 444, 424, 430],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "id": 55,
@@ -77544,7 +77555,7 @@
     "gpsPosition": null,
     "customGpsPosition": "37.804303751801356, -122.45373212016419",
     "createDate": "2026:10:25 07:48:52",
-    "customCreateDate": null,
+    "customCreateDate": "2026:10:24 15:48:52",
     "placeName": null,
     "customCity": null,
     "customState": null,
@@ -77793,7 +77804,10 @@
       "peakChroma": 24.72,
       "samples": 9975
     },
-    "similarPhotos": [402, 399, 195, 41, 202, 126]
+    "similarPhotos": [402, 399, 195, 41, 202, 126],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Promenade Bench",
