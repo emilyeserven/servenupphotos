@@ -50,7 +50,8 @@ export function ShapeTools({
   const route = useMutation(routeTripLineMutation);
   const snap = () =>
     route.mutate(
-      { id: day, day, auto: false, segments },
+      // The trip stops go along, since a segment's via spots can stand for them.
+      { id: day, day, auto: false, segments, visits: draft.visits },
       {
         onSuccess: ({ line }) =>
           onChange({ ...draft, paths: { ...draft.paths, ...pathsOf(line.segments) } }),
