@@ -36,7 +36,7 @@ type TripVisit struct {
 }
 
 // visitKinds are the sorts of place a visit can be.
-var visitKinds = []string{"restaurant", "cafe", "bar", "shop", "museum", "sight", "other"}
+var visitKinds = []string{"restaurant", "cafe", "bar", "shop", "museum", "sight", "station", "other"}
 
 // Limits on a day's visits: how many, and how long a note or link can be.
 const (

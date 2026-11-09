@@ -207,10 +207,12 @@ the Places page, which a stop can be added from. An old `/trip-lines/<day>/place
 they're still `visits`.
 
 The day's **Trip Stops** page lists the stops along the day's route, with or without a photo: a restaurant,
-café, bar, shop, museum, sight or other. It's only for adding them: **Add a stop on the map** drops one where the map
+café, bar, shop, museum, sight, station or other. It's only for adding them: **Add a stop on the map** drops one where the map
 is clicked; **Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km
 of the day's photos, named after it; and **Add at this coordinate** adds one at a latitude and longitude typed or
-pasted in, such as `34.6672, 135.5013` from Google Maps (degrees and minutes work too). Each row says where the stop
+pasted in, such as `34.6672, 135.5013` from Google Maps (degrees and minutes work too); and **Add a station** finds a
+train, subway, bus or ferry station by name within 30 km of the day's first photo (the [station search](trips.md) a
+Trip's legs use) and adds it as a **Station** stop, such as one changed trains at. Each row says where the stop
 is on the route, which Photo order and Route set. Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
 Map or any other map, which opens from the row. The map shows each as a round pin with its kind's icon.
 

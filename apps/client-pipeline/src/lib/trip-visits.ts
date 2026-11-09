@@ -10,12 +10,18 @@ export const VISIT_KINDS: { kind: VisitKind; label: string }[] = [
   { kind: "shop", label: "Shop" },
   { kind: "museum", label: "Museum" },
   { kind: "sight", label: "Sight" },
+  { kind: "station", label: "Station" },
   { kind: "other", label: "Other" },
 ];
 
 /** A new, unnamed restaurant at the point clicked. */
 export function newVisit({ latitude, longitude }: TripPoint): TripVisit {
   return { name: "", kind: "restaurant", latitude, longitude };
+}
+
+/** The station found by name as a trip stop, named after it. */
+export function stationVisit({ label, latitude, longitude }: TripPoint): TripVisit {
+  return { name: label ?? "", kind: "station", latitude, longitude };
 }
 
 /** The saved place as a visit, named after it. */

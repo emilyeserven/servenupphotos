@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Place } from "@/api/places";
 import type { TripPoint, TripVisit, VisitKind } from "@/api/trip-lines";
 import { CasualPhotos, useClearCasual } from "@/components/trip-lines/casual-photos";
+import { StationStopAdder } from "@/components/trip-lines/station-stop-adder";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,6 +63,10 @@ export function Visits({ day, draft, onChange, picking, onPicking }: VisitsProps
           onPick={(v) => onChange(withVisit(draft, v))}
         />
         <CoordinateAdder onAdd={(v) => onChange(withVisit(draft, v))} />
+        <StationStopAdder
+          near={nearbySpots(day, draft)[0]}
+          onAdd={(v) => onChange(withVisit(draft, v))}
+        />
       </div>
     </div>
   );
