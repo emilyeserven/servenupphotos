@@ -49,7 +49,7 @@ The BFF relays every path on its own. Only when the backend gives the work more 
 Everything here is fast; run the narrowest check while working and `pnpm check` before pushing.
 
 ```sh
-pnpm check                         # oxlint, oxfmt --check, typecheck, fallow, check:fixtures (~6s); `pnpm fmt` fixes formatting
+pnpm check                         # oxlint, oxfmt --check, typecheck, fallow, check:fixtures, check:docs (~6s); `pnpm fmt` fixes formatting
 pnpm check:fixtures                # every backend route has a fixture in scripts/fixtures/
 pnpm build                         # all three TS apps (~5s); CI runs it too
 cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes ~8s
@@ -86,7 +86,7 @@ the changed file.
   `withGitHub` (or `withGitHubBody`, which decodes the body first) in `httpapi/respond.go`, which reads the settings,
   opens the timeout context and answers with `writeResult`.
 - **Docs:** a change in behavior updates its `docs/<feature>.md`. A new feature gets a new `docs/` file and one line
-  in the README's **Features** list. Only touch the README itself for setup, commands or deployment. Docs explain
+  in the README's **Features** list (`pnpm check` fails on a doc missing from it or a link to a missing doc). Only touch the README itself for setup, commands or deployment. Docs explain
   backend ideas with a short "> **Frontend analogy:**" note, since the owner is a frontend engineer.
 - **Pull requests:** title is one sentence describing the change as the user sees it, such as "Show photo counts on
   the portfolio map". Squash-merged.
