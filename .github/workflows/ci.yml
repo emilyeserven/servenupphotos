@@ -24,7 +24,7 @@ jobs:
     steps:
       - id: filter
         if: github.event_name == 'pull_request'
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         with:
           # A file counts only if it matches every pattern of a filter.
           predicate-quantifier: every
@@ -49,9 +49,9 @@ jobs:
     if: github.event_name == 'push' || needs.changes.outputs.typescript == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -82,15 +82,15 @@ jobs:
       run:
         working-directory: apps/be-pipeline
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
           go-version-file: apps/be-pipeline/go.mod
           cache-dependency-path: apps/be-pipeline/go.mod
       # The Go tests run the repository's oxfmt on the JSON the pipeline
       # commits, so a photo data pull request can't fail the format check.
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -114,7 +114,7 @@ jobs:
     if: github.event_name == 'push' || needs.changes.outputs.workflows == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       # The image bundles shellcheck and pyflakes, so the run: blocks are
       # checked too.
       - name: actionlint
