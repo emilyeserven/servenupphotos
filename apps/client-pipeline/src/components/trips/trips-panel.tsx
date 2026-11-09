@@ -1,13 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { Combine, Plus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { CombinedData } from "@/api/photos";
+import { tripLines } from "@/api/trip-lines";
 import { legacyTripIds, photosBetween, type Trip, trips } from "@/api/trips";
 import { CombineBar } from "@/components/trips/combine-trips";
 import { dayRange } from "@/components/trips/day-range";
+import { type DayLines, TripPreview } from "@/components/trips/trip-preview";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { shownPhotos } from "@/lib/place-seeds";
+import { lineDays } from "@/lib/stale-trip-lines";
 
 /** The ID in a Trip page's URL for a new Trip, not saved yet. */
 export const NEW_TRIP_ID = "new";
@@ -17,6 +20,7 @@ export function TripsPanel({ data }: { data: CombinedData }) {
   const all = trips(data);
   const photos = shownPhotos(data);
   const legacy = legacyTripIds(data);
+  const dayLines = useMemo(() => dayLinesOf(data), [data]);
   // The IDs of the Trips picked to combine, or undefined while not combining.
   const [picked, setPicked] = useState<Set<string>>();
   const toggle = (id: string) => setPicked(toggled(picked ?? new Set(), id));
@@ -60,6 +64,7 @@ export function TripsPanel({ data }: { data: CombinedData }) {
               trip={trip}
               photos={photosBetween(photos, trip.start, trip.end)}
               legacy={legacy.has(trip.id)}
+              dayLines={dayLines}
               picked={picked && { on: picked.has(trip.id), toggle: () => toggle(trip.id) }}
             />
           </li>
@@ -67,6 +72,11 @@ export function TripsPanel({ data }: { data: CombinedData }) {
       </ul>
     </div>
   );
+}
+
+/** Every day's line and photos, read once for all the Trips' previews. */
+function dayLinesOf(data: CombinedData): DayLines {
+  return { lines: tripLines(data), days: new Map(lineDays(data).map((d) => [d.day, d])) };
 }
 
 /** The set with the ID added, or taken out when it's there. */
@@ -98,6 +108,8 @@ interface TripCardProps {
   photos: number;
   /** Whether it's still in the trip lines folder from before, so the Timeline doesn't show it yet. */
   legacy: boolean;
+  /** Every day's line and photos, for the map preview of the Trip's lines. */
+  dayLines: DayLines;
   /** While combining, whether it's picked and how to pick it; the card then picks rather than links. */
   picked?: { on: boolean; toggle: () => void };
 }
@@ -125,8 +137,8 @@ function TripCard({ picked, ...props }: TripCardProps) {
   );
 }
 
-/** A Trip's name, days, photos and legs, and its timeline labels. */
-function TripCardBody({ trip, photos, legacy }: Omit<TripCardProps, "picked">) {
+/** A Trip's name, days, photos and legs, its timeline labels, and a map preview of its lines. */
+function TripCardBody({ trip, photos, legacy, dayLines }: Omit<TripCardProps, "picked">) {
   return (
     <Card className="h-full">
       <CardHeader>
@@ -142,6 +154,9 @@ function TripCardBody({ trip, photos, legacy }: Omit<TripCardProps, "picked">) {
           )}
         </CardDescription>
       </CardHeader>
+      <CardContent>
+        <TripPreview trip={trip} dayLines={dayLines} />
+      </CardContent>
     </Card>
   );
 }
