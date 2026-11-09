@@ -1,7 +1,7 @@
-import type { SpotlightFocus } from "@/lib/photos";
+import type { SpotlightFocus } from "@portfolio/lib/photos";
 
 /** A width and a height in pixels. */
-interface Size {
+export interface Size {
   width: number;
   height: number;
 }

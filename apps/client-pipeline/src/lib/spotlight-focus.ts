@@ -1,5 +1,6 @@
 import type { SocialPhoto } from "@/api/publish";
 import type { FieldChange, LocalEdit } from "@/stores/local-edits";
+import type { SpotlightFocus, ZoneFocus as PortfolioZoneFocus } from "@portfolio/lib/photos";
 
 /**
  * The photo JSON field that holds its focus point and placement for each spotlight zone, by zone
@@ -8,10 +9,7 @@ import type { FieldChange, LocalEdit } from "@/stores/local-edits";
 export const SPOTLIGHT_ZONE_FOCUS = "spotlightZoneFocus";
 
 /** A point of a photo, as percentages of its width and height from its top left corner. */
-export interface Focus {
-  x: number;
-  y: number;
-}
+export type Focus = SpotlightFocus;
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -27,10 +25,7 @@ function asFocus(value: unknown): Focus | null {
 }
 
 /** A photo's focus point and placement in one spotlight zone; null for the middle. */
-export interface ZoneFocus {
-  focus: Focus | null;
-  placement: Focus | null;
-}
+export type ZoneFocus = PortfolioZoneFocus;
 
 /** The photo's focus points by zone, as its data holds them; empty when it has none. */
 function zoneFocusMap(data: Record<string, unknown>): Record<string, unknown> {
@@ -68,42 +63,6 @@ export function zoneFocusChange(
   next: ZoneFocus,
 ): FieldChange {
   return { path: photo.path, before: photo.data, value: { ...zoneFocusMap(data), [zone]: next } };
-}
-
-/** A width and a height in pixels. */
-export interface Size {
-  width: number;
-  height: number;
-}
-
-/**
- * Where along one side, as a percent for `object-position`, an image `drawn` long must sit in a
- * box `box` long so its point at `focus` percent lands at `place` percent of the box, as close as
- * it can without leaving a gap at either end.
- */
-function sidePercent(focus: number, place: number, drawn: number, box: number): number {
-  if (drawn - box < 0.5) return 50;
-  const at = ((place / 100) * box - (focus / 100) * drawn) / (box - drawn);
-  return Math.round(Math.min(1, Math.max(0, at)) * 1000) / 10;
-}
-
-/**
- * The CSS `object-position` that crops an image of `image`'s size to fill `box` with its focus
- * (its middle without one) at the placement on the screen (its middle without one), or as near as
- * the photo's edges allow. The portfolio's homepage crops its photos the same way.
- */
-export function objectPosition(
-  focus: Focus | null,
-  placement: Focus | null,
-  image: Size,
-  box: Size,
-): string {
-  const at = focus ?? { x: 50, y: 50 };
-  const place = placement ?? { x: 50, y: 50 };
-  const scale = Math.max(box.width / image.width, box.height / image.height);
-  const x = sidePercent(at.x, place.x, image.width * scale, box.width);
-  const y = sidePercent(at.y, place.y, image.height * scale, box.height);
-  return `${x}% ${y}%`;
 }
 
 /** A percentage from 0 to 100, rounded to a whole one. */
