@@ -59,20 +59,10 @@ func handleBulkTags[T any](store *settings.Store, kind, failure string, run func
 
 // handleBulkTagsUpTo is handleBulkTags for a body of up to limit bytes.
 func handleBulkTagsUpTo[T any](store *settings.Store, limit int64, kind, failure string, run func(context.Context, settings.GitHub, T) (any, error)) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req T
-		if !decodeEntryUpTo(w, r, &req, kind, limit) {
-			return
-		}
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), reapplyTimeout)
-		defer cancel()
-		result, err := run(ctx, cfg, req)
-		writeSocialResult(w, result, err, failure)
-	}
+	return withGitHubBodyUpTo(store, reapplyTimeout, kind, limit, failure,
+		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req T) (any, error) {
+			return run(ctx, cfg, req)
+		})
 }
 
 // handlePickBulkPlacePhotos picks up to the asked number of related photos

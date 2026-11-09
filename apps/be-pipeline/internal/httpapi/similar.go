@@ -12,16 +12,9 @@ import (
 // handleFindSimilarPhotos works out every photo's most related photos and
 // saves their IDs in its "similarPhotos", as changes waiting for Commit.
 func handleFindSimilarPhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), baseURLTimeout)
-		defer cancel()
-		result, err := gh.FindSimilarPhotos(ctx, cfg)
-		writeSocialResult(w, result, err, "could not save the related photos")
-	}
+	return withGitHub(store, baseURLTimeout, "could not save the related photos", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+		return gh.FindSimilarPhotos(ctx, cfg)
+	})
 }
 
 // handleSetPickedSimilar saves the photos picked by hand to show first in one
@@ -40,6 +33,6 @@ func handleSetPickedSimilar(store *settings.Store, gh *github.Client) http.Handl
 		ctx, cancel := context.WithTimeout(r.Context(), baseURLTimeout)
 		defer cancel()
 		result, err := gh.SetPickedSimilar(ctx, cfg, req)
-		writeSocialResult(w, result, err, "could not save the picked photos")
+		writeResult(w, result, err, "could not save the picked photos")
 	}
 }

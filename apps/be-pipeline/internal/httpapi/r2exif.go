@@ -49,20 +49,14 @@ type r2ExifWriteRequest struct {
 // handlePreviewR2Exif lists the photos whose originals' EXIF in R2 doesn't
 // match their photo files, and the ones edited before.
 func handlePreviewR2Exif(extractor exif.Extractor, store *settings.Store, gh *github.Client, get getPhotoFunc, cache *exifCache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if extractor == nil {
+	if extractor == nil {
+		return func(w http.ResponseWriter, _ *http.Request) {
 			writeError(w, http.StatusServiceUnavailable, "exiftool isn't running, so the originals' EXIF can't be read.")
-			return
 		}
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), r2ExifTimeout)
-		defer cancel()
-		result, err := gh.PreviewR2Exif(ctx, cfg, exifReader(extractor, store.R2, get, cache))
-		writeSocialResult(w, result, err, "could not check the originals' EXIF")
 	}
+	return withGitHub(store, r2ExifTimeout, "could not check the originals' EXIF", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+		return gh.PreviewR2Exif(ctx, cfg, exifReader(extractor, store.R2, get, cache))
+	})
 }
 
 // handleWriteR2Exif writes the body's fields, each already changed in
@@ -86,7 +80,7 @@ func handleWriteR2Exif(
 		defer cancel()
 		edit := r2ExifEdit{extractor: extractor, writer: writer, get: get, replace: replace, cache: cache}
 		result, err := edit.run(ctx, store, gh, req, tags)
-		writeSocialResult(w, result, err, "could not edit the original's EXIF")
+		writeResult(w, result, err, "could not edit the original's EXIF")
 	}
 }
 

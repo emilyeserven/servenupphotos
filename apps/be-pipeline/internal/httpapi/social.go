@@ -3,8 +3,6 @@ package httpapi
 import (
 	"context"
 	"encoding/json"
-	"errors"
-	"log/slog"
 	"net/http"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
@@ -18,31 +16,17 @@ type socialDatesRequest struct {
 // handleSocialCalendar lists every photo JSON file with its social media
 // publish date, for the Instagram page's calendar. It only reads from GitHub.
 func handleSocialCalendar(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), baseURLTimeout)
-		defer cancel()
-		result, err := gh.SocialCalendar(ctx, cfg)
-		writeSocialResult(w, result, err, "could not read the photo files")
-	}
+	return withGitHub(store, baseURLTimeout, "could not read the photo files", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+		return gh.SocialCalendar(ctx, cfg)
+	})
 }
 
 // handleAttention lists every photo JSON file cut down to the fields the
 // Dashboard's Needs attention counts from. It only reads from GitHub.
 func handleAttention(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), baseURLTimeout)
-		defer cancel()
-		result, err := gh.Attention(ctx, cfg)
-		writeSocialResult(w, result, err, "could not read the photo files")
-	}
+	return withGitHub(store, baseURLTimeout, "could not read the photo files", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+		return gh.Attention(ctx, cfg)
+	})
 }
 
 // handleSetSocialDates sets the social media publish dates in the body, as
@@ -61,30 +45,6 @@ func handleSetSocialDates(store *settings.Store, gh *github.Client) http.Handler
 		ctx, cancel := context.WithTimeout(r.Context(), baseURLTimeout)
 		defer cancel()
 		result, err := gh.SetSocialDates(ctx, cfg, req.Dates)
-		writeSocialResult(w, result, err, "could not save the publish dates")
+		writeResult(w, result, err, "could not save the publish dates")
 	}
-}
-
-func githubSettings(w http.ResponseWriter, store *settings.Store) (settings.GitHub, bool) {
-	cfg, err := store.GitHub()
-	if err != nil {
-		slog.Error("read settings failed", "err", err)
-		writeError(w, http.StatusInternalServerError, "could not read settings")
-		return settings.GitHub{}, false
-	}
-	return cfg, true
-}
-
-func writeSocialResult(w http.ResponseWriter, result any, err error, failure string) {
-	var perr *github.PublishError
-	if errors.As(err, &perr) {
-		writePublishError(w, perr)
-		return
-	}
-	if err != nil {
-		slog.Error(failure, "err", err)
-		writeError(w, http.StatusInternalServerError, failure)
-		return
-	}
-	writeJSON(w, http.StatusOK, result)
 }

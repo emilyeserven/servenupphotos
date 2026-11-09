@@ -12,34 +12,17 @@ import (
 // portfolio's Trip page, new or replacing the one there, as a change waiting
 // for Commit.
 func handleSaveTripStory(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var story github.TripStory
-		if !decodeEntryUpTo(w, r, &story, "story", maxTripLineBytes) {
-			return
-		}
-		story.ID = r.PathValue("id")
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.SaveTripStory(ctx, cfg, story)
-		writeSocialResult(w, result, err, "could not save the story")
-	}
+	return withGitHubBodyUpTo(store, publishTimeout, "story", maxTripLineBytes, "could not save the story",
+		func(ctx context.Context, r *http.Request, cfg settings.GitHub, story github.TripStory) (any, error) {
+			story.ID = r.PathValue("id")
+			return gh.SaveTripStory(ctx, cfg, story)
+		})
 }
 
 // handleDeleteTripStory removes the path's day's story as a change waiting
 // for Commit.
 func handleDeleteTripStory(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.DeleteTripStory(ctx, cfg, r.PathValue("id"))
-		writeSocialResult(w, result, err, "could not remove the story")
-	}
+	return withGitHub(store, publishTimeout, "could not remove the story", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+		return gh.DeleteTripStory(ctx, cfg, r.PathValue("id"))
+	})
 }
