@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import fastifyStatic from "@fastify/static";
 import Fastify from "fastify";
 import { env } from "./env.js";
+import { loadBackendTimeouts } from "./lib/backend-timeouts.js";
 import { healthRoutes } from "./routes/health.js";
 import { relayRoutes } from "./routes/relay.js";
 
@@ -32,3 +33,6 @@ try {
   app.log.error(error);
   process.exit(1);
 }
+
+// In the background, so the BFF answers while the backend starts; until then the relay uses its own table.
+void loadBackendTimeouts(app.log);

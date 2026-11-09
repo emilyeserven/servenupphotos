@@ -143,6 +143,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
 - [Changelog](docs/changelog.md) (`/changelog`): the pull requests merged into the repository, by day, with links to GitHub and without merge commits or photo data merges
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
+- [BFF timeouts](docs/bff-timeouts.md) (`/api/timeouts`): how long the BFF waits for each backend path, read from the backend at start-up
 - [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
 
 ## Checks (same as CI)

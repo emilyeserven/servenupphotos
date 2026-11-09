@@ -1272,6 +1272,7 @@ export function defaultFixtures() {
     "GET /api/health": { status: "ok", bff: "ok", backend: "ok" },
     "GET /api/hello": { message: "Hello from be-pipeline (Go)" },
     "GET /api/changelog": changelogFixture(),
+    "GET /api/timeouts": { defaultSeconds: 30, prefixes: { "/upload": 150, "/data/colors": 300 } },
     "GET /api/settings": settingsFixture(),
     "POST /api/settings/r2/test": { ok: true, message: "Connected to bucket servenupphotos." },
     "POST /api/settings/github/test": { ok: true, message: `Connected to ${REPO}.` },
