@@ -120,4 +120,4 @@ colors change. One screenshot per state the user asked about, not per step.
 - `.claude/hooks/session-start.sh` runs when a cloud session starts: `pnpm install`, exiftool, and a warm Go build
   cache. Add a step there when a new tool is needed in every session.
 - R2 (`cdn.servenupphotos.net`), GitHub's API and map tiles usually can't be reached; `pnpm shot` covers for them.
-- Chromium for `pnpm shot` is already in `PLAYWRIGHT_BROWSERS_PATH`.
+- Chromium for `pnpm shot` is already in `PLAYWRIGHT_BROWSERS_PATH`; `screenshot.mjs` falls back to its `chromium` link when the revision playwright-core wants is missing.
