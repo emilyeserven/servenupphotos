@@ -22,7 +22,7 @@ of the fading screen; the pipeline sets `view-transition-name: none` on `:root` 
 
 The pipeline imports the same `page-fade.ts` and `page-fade.css` from the portfolio, so the timing is the same in both.
 
-Page errors (`docs/portfolio-page-errors.md`) still wait before showing: an error that clears itself during the switch
+[Page errors](portfolio-page-errors.md) still wait before showing: an error that clears itself during the switch
 simply fades in as the new page.
 
 > **Frontend analogy:** the browser takes a screenshot of the old page, swaps in the new DOM behind it, then
