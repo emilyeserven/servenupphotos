@@ -8,7 +8,8 @@ import {
 } from "@portfolio/lib/localize";
 import { type FilterKey, type LocationKey, matchesFilters } from "@portfolio/lib/photo-filters";
 import { groupTree, groupValues, type MetaGroup } from "@portfolio/lib/metadata-groups";
-import { distinctState, type Photo } from "@portfolio/lib/photos";
+import { distinctState } from "@portfolio/lib/photo-places";
+import type { Photo } from "@portfolio/lib/photos";
 import type { EquipmentKey } from "@portfolio/lib/camera-filters";
 
 /** One choice of a filter's dropdown. */

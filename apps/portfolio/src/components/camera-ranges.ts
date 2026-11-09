@@ -7,7 +7,8 @@ import {
   rangeValues,
 } from "@portfolio/lib/camera-filters";
 import { groupTree } from "@portfolio/lib/metadata-groups";
-import { photos as allPhotos, SETTING_FORMATS } from "@portfolio/lib/photos";
+import { SETTING_FORMATS } from "@portfolio/lib/photo-settings";
+import { photos as allPhotos } from "@portfolio/lib/photos";
 
 /** Each camera setting's name, as the Camera picker lists it. */
 export const RANGE_LABELS: Record<RangeKey, string> = {
