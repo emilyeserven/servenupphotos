@@ -14,10 +14,7 @@ export function parseTextSearch(search: Record<string, unknown>): { q?: string }
  * finds "São Paulo". Only the Latin combining marks go, so Japanese and Korean text stays as it is.
  */
 function normalized(text: string): string {
-  return text
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase();
+  return text.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
 }
 
 /** Every way the photo's location is written: each script's label and parts, and the English names. */
