@@ -1,5 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
 import { requestJson } from "@/api/request";
+import type { CombinedData } from "@/api/photos";
 import type { FileChange } from "@/lib/optimistic";
 
 /** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets or gear pictures. */
@@ -67,5 +68,30 @@ export function settingMutations<T extends { id: string }>(
       meta: settingMeta<T>(kind),
       mutationFn: (id: string) => requestJson<SettingResult<T>>(url(id), { method: "DELETE" }),
     }),
+  };
+}
+
+/** The entries of a kind's file as the next Commit will have them: at the pull request's head, or else on the base branch. */
+function fileEntries(data: CombinedData | undefined, kind: SettingKind): unknown[] {
+  return (data && (data.head ?? data.base)[kind]?.data) ?? [];
+}
+
+/** Orders setting entries by name, for kinds the pages list that way. */
+export function byName(a: { name: string }, b: { name: string }): number {
+  return a.name.localeCompare(b.name);
+}
+
+/**
+ * A kind's entries as the next Commit will have them: its file with the changes since, keeping
+ * those `isEntry` accepts. They keep the file's order unless `compare` sorts them.
+ */
+export function settingEntries<T>(
+  kind: SettingKind,
+  isEntry: (value: unknown) => value is T,
+  compare?: (a: T, b: T) => number,
+) {
+  return (data: CombinedData | undefined): T[] => {
+    const entries = fileEntries(data, kind).filter(isEntry);
+    return compare ? entries.toSorted(compare) : entries;
   };
 }
