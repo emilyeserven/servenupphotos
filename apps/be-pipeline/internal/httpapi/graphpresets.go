@@ -11,34 +11,17 @@ import (
 // handleSaveGraphPreset saves the body as the path's graph preset or preset
 // group, new or replacing the one there, as a change waiting for Commit.
 func handleSaveGraphPreset(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var preset github.GraphPreset
-		if !decodeEntry(w, r, &preset, "graph preset") {
-			return
-		}
-		preset.ID = r.PathValue("id")
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.SaveGraphPreset(ctx, cfg, preset)
-		writeSocialResult(w, result, err, "could not save the graph preset")
-	}
+	return withGitHubBody(store, publishTimeout, "graph preset", "could not save the graph preset",
+		func(ctx context.Context, r *http.Request, cfg settings.GitHub, preset github.GraphPreset) (any, error) {
+			preset.ID = r.PathValue("id")
+			return gh.SaveGraphPreset(ctx, cfg, preset)
+		})
 }
 
 // handleDeleteGraphPreset removes the path's graph preset or preset group as
 // a change waiting for Commit.
 func handleDeleteGraphPreset(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.DeleteGraphPreset(ctx, cfg, r.PathValue("id"))
-		writeSocialResult(w, result, err, "could not remove the graph preset")
-	}
+	return withGitHub(store, publishTimeout, "could not remove the graph preset", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+		return gh.DeleteGraphPreset(ctx, cfg, r.PathValue("id"))
+	})
 }

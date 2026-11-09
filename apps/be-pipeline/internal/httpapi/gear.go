@@ -32,36 +32,19 @@ type gearCropFunc func(ctx context.Context, cfg settings.R2, original string, cr
 // handleSaveGear saves the body as the path's gear picture file, new or
 // replacing the one there, as a change waiting for Commit.
 func handleSaveGear(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var gear github.Gear
-		if !decodeEntry(w, r, &gear, "gear picture") {
-			return
-		}
-		gear.ID = r.PathValue("id")
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.SaveGear(ctx, cfg, gear)
-		writeSocialResult(w, result, err, "could not save the gear picture")
-	}
+	return withGitHubBody(store, publishTimeout, "gear picture", "could not save the gear picture",
+		func(ctx context.Context, r *http.Request, cfg settings.GitHub, gear github.Gear) (any, error) {
+			gear.ID = r.PathValue("id")
+			return gh.SaveGear(ctx, cfg, gear)
+		})
 }
 
 // handleDeleteGear removes the path's gear picture file as a change waiting
 // for Commit. The picture itself stays in R2.
 func handleDeleteGear(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.DeleteGear(ctx, cfg, r.PathValue("id"))
-		writeSocialResult(w, result, err, "could not remove the gear picture")
-	}
+	return withGitHub(store, publishTimeout, "could not remove the gear picture", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+		return gh.DeleteGear(ctx, cfg, r.PathValue("id"))
+	})
 }
 
 // handleUploadGearImage puts the JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF in the "image" field of a

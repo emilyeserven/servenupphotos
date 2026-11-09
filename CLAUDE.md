@@ -76,7 +76,9 @@ complexity at 4 or under; every `?:`, `??`, `?.`, `&&` and `||` counts). Split a
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors
-  the user should see come back as `*github.PublishError`.
+  the user should see come back as `*github.PublishError`. A handler that reads or changes photo data on GitHub is
+  `withGitHub` (or `withGitHubBody`, which decodes the body first) in `httpapi/respond.go`, which reads the settings,
+  opens the timeout context and answers with `writeResult`.
 - **Docs:** a change in behavior updates its `docs/<feature>.md`. A new feature gets a new `docs/` file and one line
   in the README's **Features** list. Only touch the README itself for setup, commands or deployment. Docs explain
   backend ideas with a short "> **Frontend analogy:**" note, since the owner is a frontend engineer.

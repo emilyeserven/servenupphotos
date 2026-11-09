@@ -25,10 +25,8 @@ func handleDiscardPending(store *settings.Store, gh *github.Client) http.Handler
 				return
 			}
 		}
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
+		cfg, ok := githubSettings(w, store)
+		if !ok {
 			return
 		}
 		result, err := gh.Discard(cfg, body.Paths)
@@ -53,14 +51,12 @@ const maxBackupBody = 32 << 20
 // backup, reading nothing from GitHub, so it works offline.
 func handleExportPending(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, _ *http.Request) {
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
+		cfg, ok := githubSettings(w, store)
+		if !ok {
 			return
 		}
 		backup, err := gh.Backup(cfg)
-		writeGitHubResult(w, backup, err, "could not read the pending changes")
+		writeResult(w, backup, err, "could not read the pending changes")
 	}
 }
 
@@ -74,10 +70,8 @@ func handleImportPending(store *settings.Store, gh *github.Client) http.HandlerF
 			writeError(w, http.StatusBadRequest, "The backup couldn't be read as JSON.")
 			return
 		}
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
+		cfg, ok := githubSettings(w, store)
+		if !ok {
 			return
 		}
 		if problem := backupProblem(backup, cfg); problem != "" {
@@ -87,7 +81,7 @@ func handleImportPending(store *settings.Store, gh *github.Client) http.HandlerF
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
 		result, err := gh.Restore(ctx, cfg, backup.Files)
-		writeGitHubResult(w, result, err, "could not restore the pending changes")
+		writeResult(w, result, err, "could not restore the pending changes")
 	}
 }
 
@@ -101,19 +95,4 @@ func backupProblem(backup github.InFlightBackup, cfg settings.GitHub) string {
 		return "This backup is of " + backup.Repo + ", but Settings use " + cfg.Repo + "."
 	}
 	return ""
-}
-
-// writeGitHubResult answers result, or err as GitHub's error or failed.
-func writeGitHubResult(w http.ResponseWriter, result any, err error, failed string) {
-	var perr *github.PublishError
-	if errors.As(err, &perr) {
-		writePublishError(w, perr)
-		return
-	}
-	if err != nil {
-		slog.Error(failed, "err", err)
-		writeError(w, http.StatusInternalServerError, failed)
-		return
-	}
-	writeJSON(w, http.StatusOK, result)
 }
