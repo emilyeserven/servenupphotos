@@ -1,7 +1,7 @@
 import type { Area } from "@/api/areas";
 import type { TripFence, TripPoint } from "@/api/trip-lines";
 import type { LoosePhoto } from "@/lib/trip-days";
-import type { GapDraft } from "@/lib/trip-gaps";
+import { changedItem, withItem, type GapDraft } from "@/lib/trip-gaps";
 
 /** The area as a fence holding photos (by ID), named after it. */
 export function areaFence({ name, osm, shape }: Area, photos: number[]): TripFence {
@@ -10,13 +10,12 @@ export function areaFence({ name, osm, shape }: Area, photos: number[]): TripFen
 
 /** The draft with the fence added. */
 export function withFence(draft: GapDraft, fence: TripFence): GapDraft {
-  return { ...draft, fences: [...(draft.fences ?? []), fence] };
+  return withItem(draft, "fences", fence);
 }
 
 /** The draft with fence i changed, or removed for null. */
 export function changedFence(draft: GapDraft, i: number, fence: TripFence | null): GapDraft {
-  const fences = (draft.fences ?? []).flatMap((f, n) => (n !== i ? [f] : fence ? [fence] : []));
-  return { ...draft, fences };
+  return changedItem(draft, "fences", i, fence);
 }
 
 /**

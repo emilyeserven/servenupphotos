@@ -1,6 +1,6 @@
 import type { Place } from "@/api/places";
 import type { TripPoint, TripVisit, VisitKind } from "@/api/trip-lines";
-import type { GapDraft } from "@/lib/trip-gaps";
+import { changedItem, withItem, type GapDraft } from "@/lib/trip-gaps";
 
 /** The sorts of place a visit can be, as the menu lists them. */
 export const VISIT_KINDS: { kind: VisitKind; label: string }[] = [
@@ -26,13 +26,12 @@ export function placeVisit(place: Place & TripPoint): TripVisit {
 
 /** The draft with the visit added. */
 export function withVisit(draft: GapDraft, visit: TripVisit): GapDraft {
-  return { ...draft, visits: [...(draft.visits ?? []), visit] };
+  return withItem(draft, "visits", visit);
 }
 
 /** The draft with visit i changed, or removed for null. */
 export function changedVisit(draft: GapDraft, i: number, visit: TripVisit | null): GapDraft {
-  const visits = (draft.visits ?? []).flatMap((v, n) => (n !== i ? [v] : visit ? [visit] : []));
-  return { ...draft, visits };
+  return changedItem(draft, "visits", i, visit);
 }
 
 /** Whether the place has a GPS position. */
