@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"slices"
 	"strings"
@@ -46,12 +45,8 @@ func (a tagLibraryAnswer) size() int {
 // which may be inside a code block or have words around it.
 func parseTagLibraryAnswer(text string) (tagLibraryAnswer, *PublishError) {
 	var answer tagLibraryAnswer
-	start, end := strings.Index(text, "{"), strings.LastIndex(text, "}")
-	if start < 0 || end < start {
-		return answer, publishErr(http.StatusBadRequest, "Paste the LLM's whole answer: the JSON object it wrote, from { to }.")
-	}
-	if err := json.Unmarshal([]byte(text[start:end+1]), &answer); err != nil {
-		return answer, publishErr(http.StatusBadRequest, "The answer isn't the JSON the prompt asks for (%v). Ask the LLM to answer with only that JSON.", err)
+	if perr := parseLLMAnswer(text, &answer); perr != nil {
+		return answer, perr
 	}
 	if answer.size() == 0 {
 		return answer, publishErr(http.StatusBadRequest, "The answer doesn't suggest any changes, so the tags are fine as they are.")

@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"slices"
 	"strings"
@@ -40,12 +39,8 @@ type pruneTagAnswer struct {
 // may be inside a code block or have words around it.
 func parsePruneTagAnswer(text string) (pruneTagAnswer, *PublishError) {
 	var answer pruneTagAnswer
-	start, end := strings.Index(text, "{"), strings.LastIndex(text, "}")
-	if start < 0 || end < start {
-		return answer, publishErr(http.StatusBadRequest, "Paste the LLM's whole answer: the JSON object it wrote, from { to }.")
-	}
-	if err := json.Unmarshal([]byte(text[start:end+1]), &answer); err != nil {
-		return answer, publishErr(http.StatusBadRequest, "The answer isn't the JSON the prompt asks for (%v). Ask the LLM to answer with only that JSON.", err)
+	if perr := parseLLMAnswer(text, &answer); perr != nil {
+		return answer, perr
 	}
 	if len(answer.Merge)+len(answer.Remove)+len(answer.Reparent)+len(answer.Notes) == 0 {
 		return answer, publishErr(http.StatusBadRequest, "The answer doesn't suggest any changes, so the tags are fine as they are.")
