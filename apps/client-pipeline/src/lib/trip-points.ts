@@ -73,9 +73,12 @@ function distanceToLeg(p: LngLat, a: LngLat, b: LngLat): number {
   return Math.hypot(px - (ax + t * (bx - ax)), py - (ay + t * (by - ay)));
 }
 
-/** The point a leg starts at for each leg of the segments' lines, with how far p is from it. */
+/**
+ * The point a leg starts at for each leg of the segments' lines, with how far p is from it. A hop
+ * with a line picked follows the line's track, so a via spot never goes on it.
+ */
 function legs(segments: TripSegment[], byId: Map<number, TripPhoto>, p: LngLat) {
-  return segments.flatMap((segment) => {
+  return segments.filter((segment) => !segment.line).flatMap((segment) => {
     const points = linePoints(segment, byId);
     return points.slice(1).map((b, i) => {
       const a = points[i] as LinePoint;
