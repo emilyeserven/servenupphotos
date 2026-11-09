@@ -21,15 +21,27 @@ const maxStations = 15
 // ErrNoName is returned when a station search has no name to look for.
 var ErrNoName = errors.New("no station name to look for")
 
-// stationTags are, for each mode, the Overpass tag filters for what its
-// stations are mapped as, one statement each, so a search finds only that
-// kind: a ferry search no train stations, and a train search no subway ones. Each starts with a plain key, so
-// the server can use its tag index instead of scanning every element nearby.
-var stationTags = map[string][]string{
-	"train":  {`[railway~"^(station|halt)$"][station!~"^(subway|light_rail|monorail)$"]`, `[public_transport=station][train=yes]`},
-	"subway": {`[railway=station][station~"^(subway|light_rail|monorail)$"]`, `[public_transport=station][subway=yes]`},
-	"bus":    {`[highway=bus_stop]`, `[amenity=bus_station]`, `[public_transport=station][bus=yes]`},
-	"ferry":  {`[amenity=ferry_terminal]`, `[public_transport~"^(station|stop_position)$"][ferry=yes]`},
+// stationKind is what a mode's stations are mapped as.
+type stationKind struct {
+	// tags are the Overpass tag filters for its stations, one statement
+	// each, so a search finds only that kind: a ferry search no train
+	// stations, and a train search no subway ones. Each starts with a plain
+	// key, so the server can use its tag index instead of scanning every
+	// element nearby.
+	tags []string
+	// byName asks the server to match the name too. Only bus stops need it:
+	// a city has tens of thousands. A city's stations or ferry terminals are
+	// few enough to fetch all at once and match here, which is lighter on
+	// the server and lets one answer serve every name typed near there.
+	byName bool
+}
+
+// stationKinds are each mode's stations.
+var stationKinds = map[string]stationKind{
+	"train":  {[]string{`[railway~"^(station|halt)$"][station!~"^(subway|light_rail|monorail)$"]`, `[public_transport=station][train=yes]`}, false},
+	"subway": {[]string{`[railway=station][station~"^(subway|light_rail|monorail)$"]`, `[public_transport=station][subway=yes]`}, false},
+	"bus":    {[]string{`[highway=bus_stop]`, `[amenity=bus_station]`, `[public_transport=station][bus=yes]`}, true},
+	"ferry":  {[]string{`[amenity=ferry_terminal]`, `[public_transport~"^(station|stop_position)$"][ferry=yes]`}, false},
 }
 
 // nameKeys are the tags a station's name can be in, in any language, such as
@@ -38,7 +50,7 @@ const nameKeys = `^((official|alt|short|old)_)?name(:[A-Za-z_-]+)?$`
 
 // stationsLimit is how many stations the server sends at most, before they're
 // ranked by how many of the words typed they match.
-const stationsLimit = 200
+const stationsLimit = 3000
 
 // Station is a station or stop found by name, such as "Hakata".
 type Station struct {
@@ -52,12 +64,12 @@ type Station struct {
 }
 
 // Stations are mode's stations or stops within stationsNearM of near, each
-// [longitude, latitude], whose name in any language has the longest word of
-// name, the ones with the most of name's words first, then the nearest, each
-// name once. So "Shimonoseki Kokusai Terminal" finds 下関港国際ターミナル by its
+// [longitude, latitude], whose names in any language have at least one of
+// name's words, the ones with the most first, then the nearest, each name
+// once. So "Shimonoseki Kokusai Terminal" finds 下関港国際ターミナル by its
 // English or romaji name even when neither is spelled quite that way.
 func (c *Client) Stations(ctx context.Context, mode, name string, near [2]float64) ([]Station, error) {
-	tags, ok := stationTags[mode]
+	kind, ok := stationKinds[mode]
 	if !ok {
 		return nil, ErrNoKind
 	}
@@ -65,7 +77,7 @@ func (c *Client) Stations(ctx context.Context, mode, name string, near [2]float6
 	if len(words) == 0 {
 		return nil, ErrNoName
 	}
-	elements, err := c.query(ctx, stationsQuery(tags, longest(words), near))
+	elements, err := c.query(ctx, stationsQuery(kind, longest(words), near))
 	if err != nil {
 		return nil, err
 	}
@@ -77,17 +89,26 @@ func longest(words []string) string {
 	return slices.MaxFunc(words, func(a, b string) int { return cmp.Compare(len([]rune(a)), len([]rune(b))) })
 }
 
-// stationsQuery is the Overpass QL for stations tagged as any of tags within
-// stationsNearM of near whose name, in any language, contains word.
-func stationsQuery(tags []string, word string, near [2]float64) string {
-	around := fmt.Sprintf("(around:%d,%f,%f)", stationsNearM, near[1], near[0])
+// stationsQuery is the Overpass QL for kind's stations within stationsNearM
+// of near, rounded to about a kilometer so nearby searches share an answer,
+// and for bus stops only those whose name, in any language, contains word.
+func stationsQuery(kind stationKind, word string, near [2]float64) string {
+	around := fmt.Sprintf("(around:%d,%.2f,%.2f)", stationsNearM, near[1], near[0])
 	var union strings.Builder
-	for _, t := range tags {
+	for _, t := range kind.tags {
 		union.WriteString("nwr" + t + around + ";")
 	}
+	return fmt.Sprintf(serverTimeout+`(%s)->.s;%s;out tags center %d;`, union.String(), nameFilter(kind, word), stationsLimit)
+}
+
+// nameFilter is the statement that keeps the stations found whose name has
+// word, for a kind matched by name on the server, or else keeps them all.
+func nameFilter(kind stationKind, word string) string {
+	if !kind.byName {
+		return "nwr.s"
+	}
 	pattern := strings.NewReplacer(`\`, `\\`, `"`, `\"`).Replace(regexp.QuoteMeta(word))
-	return fmt.Sprintf(serverTimeout+`(%s)->.s;nwr.s[~"%s"~"%s",i];out tags center %d;`,
-		union.String(), nameKeys, pattern, stationsLimit)
+	return fmt.Sprintf(`nwr.s[~"%s"~"%s",i]`, nameKeys, pattern)
 }
 
 // ranked is a station with how many of the words typed its names have.
@@ -96,14 +117,15 @@ type ranked struct {
 	hits int
 }
 
-// bestStations are elements as stations, those whose names have the most of
-// words first and then the nearest, keeping the first of each name and at most
-// maxStations.
+// bestStations are elements as stations whose names have any of words,
+// those with the most first and then the nearest, keeping the first of each
+// name and at most maxStations.
 func bestStations(elements []element, words []string, near [2]float64) []Station {
 	found := []ranked{}
 	for _, e := range elements {
-		if s, ok := stationOf(e, near); ok {
-			found = append(found, ranked{s, wordHits(e.Tags, words)})
+		hits := wordHits(e.Tags, words)
+		if s, ok := stationOf(e, near); ok && hits > 0 {
+			found = append(found, ranked{s, hits})
 		}
 	}
 	slices.SortStableFunc(found, func(a, b ranked) int { return cmp.Or(cmp.Compare(b.hits, a.hits), cmp.Compare(a.Km, b.Km)) })

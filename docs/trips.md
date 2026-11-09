@@ -155,12 +155,16 @@ leg is in a straight line.
 
 A **Train**, **Bus** or **Ferry** leg can leave from and arrive at a station. With **A station or spot with no photo**
 picked, **Find a station** looks up the stations (or stops, or ferry terminals) within 30 km of that end's day (its
-spot once it has one, or else its photo) whose name, in any language, has the longest word typed. The ones whose names
-have the most of the words typed come first, then the nearest, each with its English name beside it, such as
-"博多 (Hakata)". So "Shimonoseki Kokusai Terminal" asks for
-"shimonoseki", and a terminal whose names also have "Kokusai" or "Terminal" comes before Shimonoseki Station. Picking one fills in the label and
-position (`GET /api/transit/stations?mode=ferry&q=Shimonoseki&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`,
+spot once it has one, or else its photo) whose names, in any language, have any of the words typed. The ones with the
+most of the words come first, then the nearest, each with its English name beside it, such as "博多 (Hakata)". So
+"Shimonoseki Kokusai Terminal" puts a terminal whose names have "Kokusai" and "Terminal" before one that only has
+"Shimonoseki". Picking one fills in the label and position
+(`GET /api/transit/stations?mode=ferry&q=Shimonoseki&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`,
 through the same Overpass servers, throttle and day-long cache as [Lines ridden](trip-lines.md#lines-ridden)).
+
+A city has few enough stations and ferry terminals that the backend asks the server for all of them near there, with
+no name, and matches names itself, so one answer (kept for a day, for spots within about a kilometer) serves every
+name typed there. Bus stops are too many, so for a bus the server matches the longest word typed.
 
 Only the leg's kind of station is looked for: a **Ferry** leg finds ferry terminals (`amenity=ferry_terminal`, or a
 `public_transport` station with `ferry=yes`), a **Bus** leg bus stops and bus stations, and a **Train** leg railway
