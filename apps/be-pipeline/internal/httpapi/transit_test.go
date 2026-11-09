@@ -46,6 +46,44 @@ func (f *fakeFinder) PhotonStations(_ context.Context, mode, _ string, near [2]f
 	return []transit.Station{{Name: "Photon Port", Latitude: 33.96, Longitude: 130.93}}, f.err
 }
 
+func (f *fakeFinder) TransitlandLines(_ context.Context, mode string, from, _ [2]float64) ([]transit.Line, error) {
+	f.mode, f.from = mode, from
+	return []transit.Line{{ID: 9, Name: "JR Sanyo Line", Kind: "train", Source: transit.SourceTransitland}}, f.err
+}
+
+func (f *fakeFinder) TransitlandTrack(_ context.Context, _ int64, from, to [2]float64) ([][2]float64, error) {
+	return [][2]float64{from, {1, 1}, to}, f.err
+}
+
+func (f *fakeFinder) TransitlandStops(_ context.Context, _ int64) ([]transit.Stop, error) {
+	return []transit.Stop{{Name: "Shimonoseki", Latitude: 33.95, Longitude: 130.92}}, f.err
+}
+
+func TestTransitlandSource(t *testing.T) {
+	f := &fakeFinder{}
+	cases := []struct {
+		url  string
+		body string
+	}{
+		{"/transit/lines?mode=train&from=130.92,33.95&to=130.88,33.88&source=transitland", "JR Sanyo Line"},
+		{"/transit/lines/9/stops?source=transitland", "Shimonoseki"},
+		{"/transit/lines/9/track?from=0,0&to=2,2&source=transitland", "[1,1]"},
+	}
+	for _, c := range cases {
+		rec := httptest.NewRecorder()
+		transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, c.url, nil))
+		if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), c.body) {
+			t.Errorf("%s: %d %s", c.url, rec.Code, rec.Body)
+		}
+	}
+	f.err = transit.ErrNoTransitlandKey
+	rec := httptest.NewRecorder()
+	transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=train&from=0,1&to=1,1&source=transitland", nil))
+	if rec.Code != http.StatusServiceUnavailable || !strings.Contains(rec.Body.String(), "TRANSITLAND_API_KEY") {
+		t.Errorf("no key: %d %s", rec.Code, rec.Body)
+	}
+}
+
 func TestTransitStations(t *testing.T) {
 	f := &fakeFinder{}
 	cases := []struct {

@@ -82,6 +82,9 @@ type Line struct {
 	// From and To are where the line starts and ends; "" when not mapped.
 	From string `json:"from,omitempty"`
 	To   string `json:"to,omitempty"`
+	// Source is where the line was found: "" for OpenStreetMap (ID is its
+	// route relation), "transitland" for Transitland (ID is its route ID).
+	Source string `json:"source,omitempty"`
 }
 
 // Client asks Overpass API servers, at most one request per gap, trying the
@@ -97,6 +100,8 @@ type Client struct {
 	Waits []time.Duration
 	// Cache keeps answers already given, by query; nil keeps none.
 	Cache *memo.Cache[[]element]
+	// TLCache keeps Transitland's answers, by path; nil keeps none.
+	TLCache *memo.Cache[[]byte]
 }
 
 // New is a client for OVERPASS_URL's servers, or else DefaultURLs.
@@ -107,6 +112,7 @@ func New() *Client {
 		Gate:     throttle.Gate{Gap: time.Second},
 		Waits:    []time.Duration{time.Second, 3 * time.Second},
 		Cache:    memo.New[[]element](cacheFor, cacheSize),
+		TLCache:  memo.New[[]byte](cacheFor, cacheSize),
 	}
 }
 

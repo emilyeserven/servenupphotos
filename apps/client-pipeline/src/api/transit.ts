@@ -18,11 +18,22 @@ export interface TransitLine extends TripTransitLine {
   to?: string;
 }
 
+/**
+ * Where lines and their tracks are looked up: OpenStreetMap through its Overpass servers, or
+ * Transitland, which gathers the timetables transit agencies publish (it needs an API key).
+ */
+export type RouteSource = "overpass" | "transitland";
+
 /** What a hop's look-ups ask about: how it was travelled, and its first and last spots. */
 export interface HopAsk {
   mode: string;
   from: Spot;
   to: Spot;
+}
+
+/** The query string that asks Transitland for a line from there, or nothing for OpenStreetMap. */
+function sourceParam(source: RouteSource | undefined): string {
+  return source === "transitland" ? "&source=transitland" : "";
 }
 
 /** The look-up's spots as the query string writes them. */
@@ -32,14 +43,15 @@ function spotParams({ from, to }: Pick<HopAsk, "from" | "to">): string {
 
 /**
  * The lines of the hop's kind whose track passes near both its spots, from OpenStreetMap through
- * the Overpass API. The backend asks at most once a second.
+ * the Overpass API (which the backend asks at most once a second) or from Transitland.
  */
-export function transitLinesQuery(ask: HopAsk) {
+export function transitLinesQuery(ask: HopAsk, source: RouteSource) {
+  const mode = encodeURIComponent(ask.mode);
   return queryOptions({
-    queryKey: ["transit", "lines", ask],
+    queryKey: ["transit", "lines", ask, source],
     queryFn: () =>
       transitJson<TransitLine[]>(
-        `/api/transit/lines?mode=${encodeURIComponent(ask.mode)}&${spotParams(ask)}`,
+        `/api/transit/lines?mode=${mode}&${spotParams(ask)}${sourceParam(source)}`,
       ),
     retry: false,
     staleTime: Infinity,
@@ -53,11 +65,12 @@ export interface TransitStop {
   longitude: number;
 }
 
-/** A line's stations or stops, in the order it runs. */
-export function transitStopsQuery(id: number) {
+/** A line's stations or stops, in the order it runs, from where the line was found. */
+export function transitStopsQuery({ id, source }: TripTransitLine) {
   return queryOptions({
-    queryKey: ["transit", "stops", id],
-    queryFn: () => transitJson<TransitStop[]>(`/api/transit/lines/${id}/stops`),
+    queryKey: ["transit", "stops", id, source],
+    queryFn: () =>
+      transitJson<TransitStop[]>(`/api/transit/lines/${id}/stops?${sourceParam(source).slice(1)}`),
     retry: false,
     staleTime: Infinity,
   });
@@ -103,9 +116,13 @@ export function transitStationsQuery({ mode, name, near, source }: StationAsk) {
   });
 }
 
-/** Line id's track between two spots, each point [longitude, latitude]. */
-export function fetchTrack(id: number, from: Spot, to: Spot): Promise<{ path: Spot[] }> {
+/** The line's track between two spots, each point [longitude, latitude], from where it was found. */
+export function fetchTrack(
+  { id, source }: TripTransitLine,
+  from: Spot,
+  to: Spot,
+): Promise<{ path: Spot[] }> {
   return transitJson<{ path: Spot[] }>(
-    `/api/transit/lines/${id}/track?${spotParams({ from, to })}`,
+    `/api/transit/lines/${id}/track?${spotParams({ from, to })}${sourceParam(source)}`,
   );
 }

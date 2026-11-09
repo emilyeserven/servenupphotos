@@ -6,6 +6,7 @@ import { HopEndsPicker } from "@/components/trip-lines/hop-ends";
 import { HopStations } from "@/components/trip-lines/hop-stations";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
 import { LookupKind } from "@/components/trip-lines/lookup-kind";
+import { RouteSourcePicker } from "@/components/trip-lines/route-source-picker";
 import { gapInfo } from "@/components/trip-lines/modes";
 import { type HopEnds, useHopRide } from "@/components/trip-lines/use-hop-ride";
 import { Button } from "@/components/ui/button";
@@ -80,6 +81,7 @@ function HopRow({ hop, ends, onRide }: HopRowProps) {
           {hopTitle(ends)} by {gapInfo(hop.mode as Gap).label.toLowerCase()}:
         </span>
         <LineBadge line={hop.line} />
+        <RouteSourcePicker />
         <HopButtons
           hop={hop}
           busy={busy}
@@ -151,7 +153,7 @@ function findNote(finding: boolean, lines: { isFetching: boolean; data?: Transit
 }
 
 /** Said while the look-up runs, since the public servers can be slow. */
-const ASKING = "Asking OpenStreetMap. Its servers can take up to a minute when busy.";
+const ASKING = "Looking up lines. OpenStreetMap's servers can take up to a minute when busy.";
 
 /** Said when the look-up found no line. */
 function noneNote(lines: TransitLine[] | undefined): string {
@@ -160,7 +162,7 @@ function noneNote(lines: TransitLine[] | undefined): string {
 
 /** Said when no line passes near both ends. */
 const NONE_FOUND =
-  "OpenStreetMap maps no line of this kind within 500 m of both ends. If a photo was a walk from the station, pick the station above and it looks again; otherwise the hop stays a straight dashed line.";
+  "No line of this kind found within 500 m of both ends. If a photo was a walk from the station, pick the station above and it looks again; otherwise the hop stays a straight dashed line.";
 
 interface HopButtonsProps {
   hop: TripSegment;

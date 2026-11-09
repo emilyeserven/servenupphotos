@@ -41,14 +41,28 @@ type trackGraph struct {
 
 // newTrackGraph builds the graph of members' ways, leaving out platforms.
 func newTrackGraph(members []member) *trackGraph {
-	g := &trackGraph{index: map[[2]float64]int{}}
+	var lines [][][2]float64
 	for _, m := range members {
 		if m.Type != "way" || strings.HasPrefix(m.Role, "platform") {
 			continue
 		}
-		prev := -1
+		line := make([][2]float64, 0, len(m.Geometry))
 		for _, p := range m.Geometry {
-			n := g.node([2]float64{p.Lon, p.Lat})
+			line = append(line, [2]float64{p.Lon, p.Lat})
+		}
+		lines = append(lines, line)
+	}
+	return newLinesGraph(lines)
+}
+
+// newLinesGraph builds the graph of lines, each point a node joined to the
+// points next to it along its line.
+func newLinesGraph(lines [][][2]float64) *trackGraph {
+	g := &trackGraph{index: map[[2]float64]int{}}
+	for _, line := range lines {
+		prev := -1
+		for _, p := range line {
+			n := g.node(p)
 			if prev >= 0 && prev != n {
 				g.edges[prev] = append(g.edges[prev], n)
 				g.edges[n] = append(g.edges[n], prev)

@@ -15,7 +15,7 @@ interface HopStationsProps {
  * 10-minute walk from the next photo. "At the photo" rides right from or to it.
  */
 export function HopStations({ hop, disabled, onChange }: HopStationsProps) {
-  const stops = useQuery(transitStopsQuery(hop.line.id)).data ?? [];
+  const stops = useQuery(transitStopsQuery(hop.line)).data ?? [];
   const keep = { board: hop.board ?? null, alight: hop.alight ?? null };
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">

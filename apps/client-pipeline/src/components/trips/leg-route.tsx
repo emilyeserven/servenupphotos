@@ -2,23 +2,20 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Route, X } from "lucide-react";
 import { useState } from "react";
 import { fetchTrack, type Spot, type TransitLine, transitLinesQuery } from "@/api/transit";
-import type { TripTransitLine } from "@/api/trip-lines";
 import type { TripLeg } from "@/api/trips";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
 import { Button } from "@/components/ui/button";
+import { RouteSourcePicker } from "@/components/trip-lines/route-source-picker";
+import { lineOf } from "@/lib/transit-line";
 import { ridesLegLine } from "@/lib/trip-legs";
+import { useRouteSourceStore } from "@/stores/route-source";
 
 interface LegRouteProps {
   leg: TripLeg;
   /** Where the leg leaves and arrives, as [longitude, latitude]; none while an end has no spot. */
   ends?: [Spot, Spot];
   onChange: (leg: TripLeg) => void;
-}
-
-/** The line as a leg keeps it: no kind or ends. */
-function lineOf({ id, name, ref, colour }: TransitLine): TripTransitLine {
-  return { id, name, ...(ref && { ref }), ...(colour && { colour }) };
 }
 
 /** The leg without its line and track, drawn straight again. */
@@ -47,12 +44,13 @@ export function LegRoute({ leg, ends, onChange }: LegRouteProps) {
 function useLegRoute({ leg, ends, onChange }: LegRouteProps & { ends: [Spot, Spot] }) {
   const [finding, setFinding] = useState(false);
   const [from, to] = ends;
+  const source = useRouteSourceStore((s) => s.source);
   const lines = useQuery({
-    ...transitLinesQuery({ mode: leg.mode, from, to }),
+    ...transitLinesQuery({ mode: leg.mode, from, to }, source),
     enabled: finding,
   });
   const ride = useMutation({
-    mutationFn: (line: TransitLine) => fetchTrack(line.id, from, to),
+    mutationFn: (line: TransitLine) => fetchTrack(line, from, to),
     onSuccess: ({ path }, line) => {
       onChange({ ...leg, line: lineOf(line), path });
       setFinding(false);
@@ -81,6 +79,7 @@ function RouteFinder(props: LegRouteProps & { ends: [Spot, Spot] }) {
           {leg.line ? "Change route" : "Look up route"}
         </Button>
         <ClearButton leg={leg} onChange={onChange} />
+        <RouteSourcePicker />
       </div>
       {finding && <LineChoices lines={lines.data} disabled={busy} onPick={ride.mutate} />}
       <SaveNote error={lines.error ?? ride.error} why={routeNote(finding, lines.data)} />
@@ -107,5 +106,5 @@ function ClearButton({ leg, onChange }: Omit<LegRouteProps, "ends">) {
 /** What the look-up found, said when it found none. */
 function routeNote(finding: boolean, lines: TransitLine[] | undefined): string {
   if (!finding || lines === undefined || lines.length > 0) return "";
-  return "OpenStreetMap maps no line of this kind within 500 m of both ends. Try setting each end to its station.";
+  return "No line of this kind found within 500 m of both ends. Try setting each end to its station, or the other source.";
 }

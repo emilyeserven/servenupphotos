@@ -9,12 +9,9 @@ import {
   transitStopsQuery,
 } from "@/api/transit";
 import type { TripPoint, TripSegment, TripTransitLine } from "@/api/trip-lines";
+import { lineOf } from "@/lib/transit-line";
+import { useRouteSourceStore } from "@/stores/route-source";
 import { oneLine, type Ride, rideSpots, type Stations, stationsFor } from "@/lib/transit-ride";
-
-/** The line as a hop keeps it: no kind or ends. */
-function lineOf({ id, name, ref, colour }: TripTransitLine): TripTransitLine {
-  return { id, name, ...(ref && { ref }), ...(colour && { colour }) };
-}
 
 /**
  * The ride on line between the stations chosen (the stops nearest near's spots where none was),
@@ -26,9 +23,9 @@ async function rideOn(
   line: TripTransitLine,
   chosen: Stations,
 ): Promise<Ride> {
-  const stops = await client.fetchQuery(transitStopsQuery(line.id));
+  const stops = await client.fetchQuery(transitStopsQuery(line));
   const stations = stationsFor(stops, near, chosen);
-  const { path } = await fetchTrack(line.id, ...rideSpots(ask, stations));
+  const { path } = await fetchTrack(line, ...rideSpots(ask, stations));
   return { line, path, ...stations };
 }
 
@@ -109,11 +106,12 @@ function lookupOf(ask: HopAsk | undefined, kind: string | undefined): HopAsk | u
 export function useHopRide(hop: TripSegment, ask: HopAsk | undefined, onRide: (r: Ride) => void) {
   const [finding, setFinding] = useState(!hop.line);
   const [kind, setKind] = useState(firstKind(hop.mode));
+  const source = useRouteSourceStore((s) => s.source);
   const [ends, setEnds] = useState<HopEnds>({});
   const near = nearOf(ask, ends);
   const lookup = lookupOf(near, kind);
   const lines = useQuery({
-    ...transitLinesQuery(lookup!),
+    ...transitLinesQuery(lookup!, source),
     enabled: finding && lookup !== undefined,
   });
   const { mutation, ride } = useRide(ask, near, (r) => (onRide(r), setFinding(false)));
