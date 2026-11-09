@@ -4,42 +4,9 @@ import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
 import { fileName } from "@/components/in-flight-checks";
 import { AllPhotosMark, FileJson } from "@/components/in-flight-file-json";
 import { FileLink, FileStatus } from "@/components/in-flight-pending";
+import { GROUP_KINDS, KIND_INFO } from "@/lib/data-kinds";
 import { lineChanges } from "@/lib/json-changes";
 import { cn } from "@/lib/utils";
-
-type GroupKey =
-  | "albums"
-  | "tags"
-  | "genres"
-  | "places"
-  | "localizations"
-  | "metainfo"
-  | "cameras"
-  | "lenses"
-  | "captions"
-  | "timeline"
-  | "likes"
-  | "triplines"
-  | "graphs"
-  | "gear";
-
-/** The kinds of data files listed after the photos, in order, with their headings. */
-const GROUPS: [GroupKey, string][] = [
-  ["albums", "Albums"],
-  ["tags", "Tags"],
-  ["genres", "Photographic genres"],
-  ["places", "Places"],
-  ["localizations", "Localizations"],
-  ["metainfo", "Metadata groups"],
-  ["cameras", "Camera overrides"],
-  ["lenses", "Custom lenses"],
-  ["captions", "Caption templates"],
-  ["timeline", "Trips"],
-  ["likes", "User likes"],
-  ["triplines", "Trip lines"],
-  ["graphs", "Graph presets"],
-  ["gear", "Gear pictures"],
-];
 
 interface GroupFilesProps {
   title: string;
@@ -173,7 +140,8 @@ export function AllGroupFiles({
   rebuilding: boolean;
   baseBranch?: string;
 }) {
-  return GROUPS.map(([key, title]) => (
-    <GroupFiles key={key} title={title} groups={shown[key]} {...props} />
+  // The kinds after the photos, in order, each under its heading.
+  return GROUP_KINDS.map((kind) => (
+    <GroupFiles key={kind} title={KIND_INFO[kind].heading} groups={shown[kind]} {...props} />
   ));
 }

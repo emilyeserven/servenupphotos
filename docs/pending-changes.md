@@ -42,9 +42,10 @@ the browser keeps a copy of them once the pipeline has been offline (see [Offlin
 ## Commit
 
 **Commit** (`POST /api/photos/combined`) writes, as **one commit**, every change waiting for Commit, the browser-only
-[local edits](combined-data-store.md#local-edits), and `ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`,
-`PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json`, `LENSES.json`, `TIMELINE.json` and `LIKES.json` rebuilt from the result (`ALLPHOTOS.json` without
-[drafts](drafts.md), photos with no title). It uses GitHub's
+[local edits](combined-data-store.md#local-edits), and every kind's combined list (`ALLPHOTOS.json`, `ALLALBUMS.json`,
+`ALLTAGS.json`, … `GEAR.json`) rebuilt from the result (`ALLPHOTOS.json` without [drafts](drafts.md), photos with no
+title). The kinds, and the change kinds a save sends (`FileChange.kind`), come from one list per language; see
+[Where the kind list lives](combined-data-store.md#where-the-kind-list-lives). It uses GitHub's
 [Git database API](https://docs.github.com/en/rest/git/trees#create-a-tree): one tree with every changed file (a
 deletion is an entry with `sha: null`), one commit on top of the pull request's head, and the branch moved to it. With
 no pull request open it creates a `photo-data/<date>-<time>` branch at that commit from the Settings branch and opens

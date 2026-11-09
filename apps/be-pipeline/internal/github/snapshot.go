@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"path"
@@ -10,9 +11,8 @@ import (
 	"sync"
 )
 
-// snapshot is every file directly in the data folder's subfolders (photos,
-// albums, tags, genres, places, localizations, metadata groups, camera overrides,
-// custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets and gear pictures) at one commit. A commit never
+// snapshot is every file directly in the data folder's subfolders (one per
+// kind in dataKinds) at one commit. A commit never
 // changes, so a snapshot is read from GitHub once, with one GraphQL query, and
 // kept.
 type snapshot struct {
@@ -32,40 +32,27 @@ type snapFile struct {
 }
 
 // snapshotFolders reads the commit's tree and each data subfolder's entries,
-// with the fields of the files fragment. Each folder is an expression such as
-// "<sha>:<folder>".
-const snapshotFolders = `query($owner: String!, $name: String!, $commit: String!, $photos: String!, $albums: String!,
-  $tags: String!, $genres: String!, $places: String!, $localizations: String!, $metainfo: String!, $cameras: String!,
-  $lenses: String!, $captions: String!, $timeline: String!, $likes: String!,
-  $triplines: String!, $graphs: String!, $gear: String!) {
-  repository(owner: $owner, name: $name) {
-    commit: object(expression: $commit) { ... on Commit { tree { oid } } }
-    photos: object(expression: $photos) { ...files }
-    albums: object(expression: $albums) { ...files }
-    tags: object(expression: $tags) { ...files }
-    genres: object(expression: $genres) { ...files }
-    places: object(expression: $places) { ...files }
-    localizations: object(expression: $localizations) { ...files }
-    metainfo: object(expression: $metainfo) { ...files }
-    cameras: object(expression: $cameras) { ...files }
-    lenses: object(expression: $lenses) { ...files }
-    captions: object(expression: $captions) { ...files }
-    timeline: object(expression: $timeline) { ...files }
-    likes: object(expression: $likes) { ...files }
-    triplines: object(expression: $triplines) { ...files }
-    graphs: object(expression: $graphs) { ...files }
-    gear: object(expression: $gear) { ...files }
-  }
+// one alias per kind in dataKinds, with the fields of the files fragment.
+// Each folder is an expression such as "<sha>:<folder>".
+func snapshotFolders() string {
+	var vars, fields strings.Builder
+	for _, k := range combinedKinds() {
+		vars.WriteString(", $" + k.name + ": String!")
+		fields.WriteString("    " + k.name + ": object(expression: $" + k.name + ") { ...files }\n")
+	}
+	return "query($owner: String!, $name: String!, $commit: String!" + vars.String() + ") {\n" +
+		"  repository(owner: $owner, name: $name) {\n" +
+		"    commit: object(expression: $commit) { ... on Commit { tree { oid } } }\n" +
+		fields.String() + "  }\n}\n"
 }
-`
 
 // snapshotQuery reads every data subfolder's files with their content.
-const snapshotQuery = snapshotFolders +
+var snapshotQuery = snapshotFolders() +
 	`fragment files on Tree { entries { name type oid object { ... on Blob { text isTruncated isBinary } } } }`
 
 // treeQuery reads only the names and blob SHAs of every data subfolder's
 // files, which costs GitHub far less than their content (see readChanged).
-const treeQuery = snapshotFolders + `fragment files on Tree { entries { name type oid } }`
+var treeQuery = snapshotFolders() + `fragment files on Tree { entries { name type oid } }`
 
 // treeAnswer is a folder in snapshotQuery's answer; nil when the folder isn't
 // there.
@@ -84,38 +71,44 @@ type treeAnswer *struct {
 
 // snapshotAnswer is the data of snapshotQuery.
 type snapshotAnswer struct {
-	Repository *struct {
-		Commit *struct {
-			Tree gitObject `json:"tree"`
-		} `json:"commit"`
-		Photos        treeAnswer `json:"photos"`
-		Albums        treeAnswer `json:"albums"`
-		Tags          treeAnswer `json:"tags"`
-		Genres        treeAnswer `json:"genres"`
-		Places        treeAnswer `json:"places"`
-		Localizations treeAnswer `json:"localizations"`
-		MetaInfo      treeAnswer `json:"metainfo"`
-		Cameras       treeAnswer `json:"cameras"`
-		Lenses        treeAnswer `json:"lenses"`
-		Captions      treeAnswer `json:"captions"`
-		Timeline      treeAnswer `json:"timeline"`
-		Likes         treeAnswer `json:"likes"`
-		TripLines     treeAnswer `json:"triplines"`
-		Graphs        treeAnswer `json:"graphs"`
-		Gear          treeAnswer `json:"gear"`
-	} `json:"repository"`
+	Repository *snapshotRepo `json:"repository"`
 }
 
-// folders pairs each folder's answer with the kind it's of.
-func (a snapshotAnswer) folders() map[string]treeAnswer {
-	r := a.Repository
-	return map[string]treeAnswer{
-		PhotosFolder: r.Photos, Albums.Folder: r.Albums, Tags.Folder: r.Tags, Genres.Folder: r.Genres,
-		Places.Folder: r.Places, Localizations.Folder: r.Localizations, MetaInfo.Folder: r.MetaInfo,
-		Cameras.Folder: r.Cameras, Lenses.Folder: r.Lenses, Captions.Folder: r.Captions,
-		Trips.Folder: r.Timeline, ViewerLikesKind.Folder: r.Likes, TripLines.Folder: r.TripLines,
-		GraphPresets.Folder: r.Graphs, GearKind.Folder: r.Gear,
+// snapshotCommit is the commit in snapshotQuery's answer.
+type snapshotCommit struct {
+	Tree gitObject `json:"tree"`
+}
+
+// snapshotRepo is the repository in snapshotQuery's answer: the commit, and
+// each kind's folder by the kind's name.
+type snapshotRepo struct {
+	Commit *snapshotCommit
+	trees  map[string]treeAnswer
+}
+
+// UnmarshalJSON reads the commit, and every other field as a kind's folder.
+func (r *snapshotRepo) UnmarshalJSON(b []byte) error {
+	var c struct {
+		Commit *snapshotCommit `json:"commit"`
 	}
+	if err := json.Unmarshal(b, &c); err != nil {
+		return err
+	}
+	r.Commit = c.Commit
+	if err := json.Unmarshal(b, &r.trees); err != nil {
+		return err
+	}
+	delete(r.trees, "commit")
+	return nil
+}
+
+// folders pairs each kind's folder with its answer.
+func (a snapshotAnswer) folders() map[string]treeAnswer {
+	folders := map[string]treeAnswer{}
+	for _, k := range combinedKinds() {
+		folders[k.folder] = a.Repository.trees[k.name]
+	}
+	return folders
 }
 
 // snapshot returns the data folder root at commit: from this run's reads, or
