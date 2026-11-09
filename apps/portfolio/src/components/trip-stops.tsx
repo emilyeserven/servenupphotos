@@ -12,6 +12,7 @@ const KIND_LABELS: Record<string, string> = {
   shop: "Shop",
   museum: "Museum",
   sight: "Sight",
+  station: "Station",
 };
 
 /**

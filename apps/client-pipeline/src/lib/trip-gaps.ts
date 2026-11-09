@@ -161,9 +161,17 @@ function at(p: TripPoint | undefined): [number, number] | null {
   return p ? [p.latitude, p.longitude] : null;
 }
 
-/** What makes a segment's path: its mode, points and line, but not its spots' labels. */
+/** The via spots that shape a segment's path: none for a hop with a line, which follows its track. */
+function shapingVia(s: TripSegment): TripVia[] {
+  return s.line ? [] : (s.via ?? []);
+}
+
+/**
+ * What makes a segment's path: its mode, points and line, but not its spots' labels, nor the via
+ * spots of a hop with a line, so adding one doesn't drop the line's track.
+ */
 export function segmentKey(s: TripSegment): string {
-  const via = (s.via ?? []).map((v) => [v.after ?? null, v.latitude, v.longitude]);
+  const via = shapingVia(s).map((v) => [v.after ?? null, v.latitude, v.longitude]);
   const ride = [s.line?.id ?? null, at(s.board), at(s.alight)];
   return JSON.stringify([
     s.mode,

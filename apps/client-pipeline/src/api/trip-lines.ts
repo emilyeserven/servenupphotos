@@ -119,7 +119,15 @@ export interface TripFence {
 }
 
 /** What sort of place a visit is. */
-export type VisitKind = "restaurant" | "cafe" | "bar" | "shop" | "museum" | "sight" | "other";
+export type VisitKind =
+  | "restaurant"
+  | "cafe"
+  | "bar"
+  | "shop"
+  | "museum"
+  | "sight"
+  | "station"
+  | "other";
 
 /** A place visited along a day's route, shown as a pin on the map. */
 export interface TripVisit {

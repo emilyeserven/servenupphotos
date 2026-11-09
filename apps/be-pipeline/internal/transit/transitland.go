@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -50,23 +51,51 @@ func (e *TransitlandError) Error() string {
 func (e *TransitlandError) Unwrap() error { return e.Err }
 
 // transitlandTypes are, for each mode, the GTFS route types its lines can
-// have (https://gtfs.org/documentation/schedule/reference/#routestxt): 0 tram
-// or light rail, 1 subway, 2 rail, 3 bus, 4 ferry, 11 trolleybus, 12
-// monorail.
+// have: the basic ones (https://gtfs.org/documentation/schedule/reference/#routestxt),
+// 0 tram or light rail, 1 subway, 2 rail, 3 bus, 4 ferry, 11 trolleybus and
+// 12 monorail, and the extended ones some feeds use instead
+// (https://developers.google.com/transit/gtfs/reference/extended-route-types),
+// such as 100 to 117 for railways, 400 to 405 for urban rail, 700 to 716 for
+// buses and 1000 or 1200 for ferries.
 var transitlandTypes = map[string]string{
-	"train":  "2,0,12",
-	"subway": "1,0,12",
-	"bus":    "3,11",
-	"ferry":  "4",
+	"train":  "2,0,12," + typeRange(100, 117),
+	"subway": "1,0,12," + typeRange(400, 405),
+	"bus":    "3,11,200,201,202,204,800," + typeRange(700, 716),
+	"ferry":  "4,1000,1200",
 }
 
-// tlKindNames are the OpenStreetMap kinds the GTFS route types are shown as,
-// so the line list groups them as it does OpenStreetMap's.
+// typeRange is the route types from first to last, joined by commas.
+func typeRange(first, last int) string {
+	types := make([]string, 0, last-first+1)
+	for t := first; t <= last; t++ {
+		types = append(types, strconv.Itoa(t))
+	}
+	return strings.Join(types, ",")
+}
+
+// tlKindNames are the OpenStreetMap kinds the basic GTFS route types are
+// shown as, so the line list groups them as it does OpenStreetMap's.
 var tlKindNames = map[int]string{0: "tram", 1: "subway", 2: "train", 3: "bus", 4: "ferry", 11: "trolleybus", 12: "monorail"}
+
+// tlKind is the OpenStreetMap kind a route type is shown as, an extended type
+// by its hundreds: 1xx railways as trains, 2xx coaches, 7xx and 8xx buses,
+// 4xx urban rail as subways, 9xx trams, and 10xx or 12xx ferries.
+func tlKind(t int) string {
+	if t < 100 {
+		return tlKindNames[t]
+	}
+	return tlExtendedKinds[t/100]
+}
+
+// tlExtendedKinds are the kinds of extended route types, by their hundreds.
+var tlExtendedKinds = map[int]string{1: "train", 2: "bus", 4: "subway", 7: "bus", 8: "trolleybus", 9: "tram", 10: "ferry", 12: "ferry"}
 
 // tlRoute is one route in a Transitland answer.
 type tlRoute struct {
-	ID        int64  `json:"id"`
+	ID int64 `json:"id"`
+	// OnestopID is Transitland's ID for the route across feeds, such as
+	// "r-wyj6-防長線": the same in two copies of one operator's feed.
+	OnestopID string `json:"onestop_id"`
 	ShortName string `json:"route_short_name"`
 	LongName  string `json:"route_long_name"`
 	Color     string `json:"route_color"`
@@ -165,7 +194,7 @@ func bothNear(a, b []tlRoute) []Line {
 		ids[r.ID] = true
 	}
 	lines := []Line{}
-	for _, r := range a {
+	for _, r := range firstCopies(a) {
 		if ids[r.ID] {
 			lines = append(lines, tlLine(r))
 		}
@@ -174,6 +203,18 @@ func bothNear(a, b []tlRoute) []Line {
 		return cmp.Or(cmp.Compare(x.Ref, y.Ref), cmp.Compare(x.Name, y.Name), cmp.Compare(x.ID, y.ID))
 	})
 	return lines[:min(len(lines), maxLines)]
+}
+
+// firstCopies are routes with each route listed once, when Transitland has
+// two copies of an operator's feed and so the same route twice under different
+// IDs.
+func firstCopies(routes []tlRoute) []tlRoute {
+	seen := map[string]bool{}
+	return slices.DeleteFunc(slices.Clone(routes), func(r tlRoute) bool {
+		dup := r.OnestopID != "" && seen[r.OnestopID]
+		seen[r.OnestopID] = true
+		return dup
+	})
 }
 
 // tlLine is r as a Line, named by its long name, or else its number, with
@@ -186,7 +227,7 @@ func tlLine(r tlRoute) Line {
 	}
 	return Line{
 		ID: r.ID, Name: name, Ref: r.ShortName, Colour: colour,
-		Kind: tlKindNames[r.Type], From: r.Agency.Name, Source: SourceTransitland,
+		Kind: tlKind(r.Type), From: r.Agency.Name, Source: SourceTransitland,
 	}
 }
 
