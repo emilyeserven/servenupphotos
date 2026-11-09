@@ -1,6 +1,7 @@
 import { CalendarClock, Grid3x3, MapPin } from "lucide-react";
 import { type CSSProperties, useLayoutEffect, useRef, useState } from "react";
-import { type Focus, type Size, objectPosition } from "@/lib/spotlight-focus";
+import { type Size, objectPosition } from "@portfolio/lib/spotlight-focus";
+import type { Focus } from "@/lib/spotlight-focus";
 import { cn } from "@/lib/utils";
 import { FallbackImage } from "@/components/fallback-image";
 import { offlineSmallUrl } from "@/lib/offline-thumbnails";

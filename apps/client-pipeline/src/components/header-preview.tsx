@@ -2,7 +2,7 @@ import { type CSSProperties, useState } from "react";
 import { FallbackImage } from "@/components/fallback-image";
 import type { PreviewPhoto } from "@/components/spotlight-preview";
 import { offlineSmallUrl } from "@/lib/offline-thumbnails";
-import { type Size, objectPosition } from "@/lib/spotlight-focus";
+import { type Size, objectPosition } from "@portfolio/lib/spotlight-focus";
 
 /** A screen a header spotlight is drawn for: its width, and 30% of its height, as on the portfolio. */
 interface HeaderScreen {
