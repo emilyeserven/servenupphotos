@@ -146,18 +146,28 @@ export interface ManualAlbum {
   name: string;
   /** The folder it goes in, such as "Travel/Japan", or "" for the top. */
   folder: string;
+  /** How many photos it has now, or null when not known. */
   photoCount: number | null;
+  /** How many photos it had before culling, or null when not noted. */
+  originalCount: number | null;
   offline: boolean;
 }
 
 /** The album to add by hand, with its path from its folder and `manual` set so a new import keeps it. */
-export function manualAlbum({ name, folder, photoCount, offline }: ManualAlbum): LightroomAlbum {
+export function manualAlbum({
+  name,
+  folder,
+  photoCount,
+  originalCount,
+  offline,
+}: ManualAlbum): LightroomAlbum {
   const clean = cleanFolder(folder);
   return {
     kind: "album",
     name: name.trim(),
     path: join(clean, name.trim()),
     photoCount,
+    originalCount,
     smart: false,
     offline,
     manual: true,

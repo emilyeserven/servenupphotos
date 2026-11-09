@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import {
+  type AlbumChange,
   type LightroomAlbum,
   type LightroomAlbumsFile,
   type LightroomItem,
@@ -18,8 +19,8 @@ interface LightroomAlbumsState {
   file: LightroomAlbumsFile | null;
   /** Puts an imported tree (already merged with the current one) in place of the current one. */
   replace: (source: string, items: LightroomItem[]) => void;
-  /** Changes one album's stage or notes. */
-  setAlbum: (path: string, change: Partial<Pick<LightroomAlbum, "stage" | "notes">>) => void;
+  /** Changes one album's stage, notes or photo counts. */
+  setAlbum: (path: string, change: AlbumChange) => void;
   /** Forgets the whole tree, with every stage and note. */
   clear: () => void;
   /** Adds an album by hand, starting a list when there isn't one yet. */

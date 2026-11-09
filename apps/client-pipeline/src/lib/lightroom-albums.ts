@@ -31,8 +31,16 @@ export interface LightroomAlbum {
   name: string;
   /** Every name from the top of the tree down to the album, joined with "/", which matches it again on the next import. */
   path: string;
-  /** How many photos Lightroom says the album has, or null when it wasn't shown. */
+  /**
+   * How many photos the album has now: what Lightroom showed on the last import, or what the photographer noted since.
+   * Null when neither is known.
+   */
   photoCount: number | null;
+  /**
+   * How many photos the album had before culling started, as the photographer noted it, or null when not noted. With
+   * `photoCount` it shows how far culling has got, such as 120 → 85.
+   */
+  originalCount: number | null;
   /** Whether it's a Smart Collection. */
   smart: boolean;
   /** Whether Lightroom keeps the album on the device, so it's there without the internet. */
@@ -132,6 +140,7 @@ function readAlbum(raw: Record<string, unknown>, name: string, path: string): Li
     name,
     path,
     photoCount: count(raw.photoCount),
+    originalCount: count(raw.originalCount),
     smart: raw.smart === true,
     offline: raw.offline === true,
     ...origin(raw),
@@ -207,10 +216,23 @@ function lightroomPathOf(album: LightroomAlbum): string {
   return album.lightroomPath ?? album.path;
 }
 
-/** The album with the old album's stage and notes in place of any it doesn't have itself. */
+/** The old album's photo counts, in place of any the new one doesn't have (an LLM answer never has the original). */
+function keepCounts(album: LightroomAlbum, old: LightroomAlbum) {
+  return {
+    photoCount: album.photoCount ?? old.photoCount,
+    originalCount: album.originalCount ?? old.originalCount,
+  };
+}
+
+/** The album with the old album's stage, notes and photo counts in place of any it doesn't have itself. */
 function keepWork(album: LightroomAlbum, old: LightroomAlbum | undefined): LightroomAlbum {
   if (!old) return album;
-  return { ...album, stage: album.stage ?? old.stage, notes: album.notes || old.notes };
+  return {
+    ...album,
+    ...keepCounts(album, old),
+    stage: album.stage ?? old.stage,
+    notes: album.notes || old.notes,
+  };
 }
 
 function mergeItem(item: LightroomItem, old: Map<string, LightroomAlbum>): LightroomItem {
@@ -258,11 +280,16 @@ export function mergeLightroomAlbums(
   };
 }
 
+/** What the photographer can change on an album in place: its stage, notes and photo counts. */
+export type AlbumChange = Partial<
+  Pick<LightroomAlbum, "stage" | "notes" | "photoCount" | "originalCount">
+>;
+
 /** Changes one album, found by path, anywhere in the tree. */
 export function updateAlbum(
   items: LightroomItem[],
   path: string,
-  change: Partial<Pick<LightroomAlbum, "stage" | "notes">>,
+  change: AlbumChange,
 ): LightroomItem[] {
   return items.map((item) => {
     if (item.kind === "folder")
