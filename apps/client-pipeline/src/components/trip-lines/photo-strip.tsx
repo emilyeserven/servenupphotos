@@ -35,6 +35,11 @@ interface PhotoStripProps {
   visits?: TripVisit[];
   /** The via points by the photo they show before, numbered as on the map; left out, none show. */
   vias?: Map<number, StripVia[]>;
+  /**
+   * How the day got from its start spot, or the trip stop before the first photo, to the first
+   * photo; left out when it has neither, so no way shows before the first photo.
+   */
+  startGap?: Gap;
 }
 
 /** The day's photos in the order they were taken, with what happened between each two. */
@@ -92,7 +97,7 @@ function StripItem(props: StripItemProps) {
   const i = offset + local;
   return (
     <li className="flex shrink-0 items-center gap-1">
-      <Between {...props} i={i} />
+      {i === 0 ? <FromStart {...props} /> : <Between {...props} i={i} />}
       <StripPhoto
         photo={photo}
         n={i + 1}
@@ -126,6 +131,24 @@ function Between(props: StripItemProps & { i: number }) {
     </>
   );
 }
+
+/**
+ * What comes before the day's first photo: the trip stops there, then how the day got from them
+ * (or its start spot) to the photo, which can be changed like any gap.
+ */
+function FromStart(props: StripItemProps) {
+  const { startGap, gaps, onGap } = props;
+  if (!startGap || !gaps) return <StopsHere {...props} />;
+  return (
+    <>
+      <StopsHere {...props} />
+      <GapPicker gap={startGap} index={-1} onGap={onGap} choices={START_GAPS} />
+    </>
+  );
+}
+
+/** The ways the day can get from its start to the first photo: any but a break or a wander. */
+const START_GAPS = GAPS.filter((g) => g.gap !== "break" && g.gap !== "wander");
 
 /** Whether any trip stops or via points are between the photo before and this one. */
 function hasStops({ before, viasBefore = [] }: StripItemProps): boolean {
@@ -348,12 +371,21 @@ function Badge({ title, icon }: { title: string; icon: React.ReactNode }) {
 
 interface GapPickerProps {
   gap: Gap;
+  /** The gap's index; -1 for the way from the day's start to its first photo. */
   index: number;
   onGap?: (index: number, gap: Gap) => void;
+  /** The ways it can be changed to; every gap when left out. */
+  choices?: typeof GAPS;
+}
+
+/** What the gap at index is between, for screen readers. */
+function gapName(index: number): string {
+  if (index === -1) return "From the start to photo 1";
+  return `Between photos ${index + 1} and ${index + 2}`;
 }
 
 /** What happened between two photos: an icon, and a menu to change it when the strip can. */
-function GapPicker({ gap, index, onGap }: GapPickerProps) {
+function GapPicker({ gap, index, onGap, choices = GAPS }: GapPickerProps) {
   const { icon: Icon, label } = gapInfo(gap);
   return (
     <label
@@ -368,12 +400,12 @@ function GapPicker({ gap, index, onGap }: GapPickerProps) {
       <span className="sr-only">{label}</span>
       {onGap && (
         <select
-          aria-label={`Between photos ${index + 1} and ${index + 2}`}
+          aria-label={gapName(index)}
           className="absolute inset-0 cursor-pointer opacity-0"
           value={gap}
           onChange={(e) => onGap(index, e.target.value as Gap)}
         >
-          {GAPS.map((g) => (
+          {choices.map((g) => (
             <option key={g.gap} value={g.gap}>
               {g.label}
             </option>

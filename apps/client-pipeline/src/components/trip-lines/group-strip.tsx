@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { TripPhoto } from "@/lib/trip-days";
-import { type GapDraft, withGap } from "@/lib/trip-gaps";
+import { type Gap, type GapDraft, withGap } from "@/lib/trip-gaps";
 import { type PhotoGroup, photoGroups, withGroupName, withGroupStart } from "@/lib/trip-groups";
-import { movedVisit, offRoute, placedVisit, visitsAfter } from "@/lib/trip-visits";
+import { firstStops, movedVisit, offRoute, placedVisit, visitsAfter } from "@/lib/trip-visits";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { isWandered, withWandered } from "@/lib/trip-wander";
 
@@ -199,6 +199,15 @@ interface GroupBoxProps {
   vias?: Map<number, StripVia[]>;
 }
 
+/**
+ * How the day got to its first photo from its start spot or the trip stop before that photo, as
+ * the strip shows it; none when it has neither.
+ */
+function startGapShown(draft: GapDraft): Gap | undefined {
+  if (!draft.start && firstStops(draft.visits).length === 0) return undefined;
+  return draft.startGap ?? "walk";
+}
+
 /** One group: its name, how many photos, collapsing and showing it alone, and its photos. */
 function GroupBox(props: GroupBoxProps) {
   const { group, photos, draft, onChange, onHover, collapsed } = props;
@@ -219,6 +228,7 @@ function GroupBox(props: GroupBoxProps) {
           onOffVisit={props.onOffVisit}
           visits={draft.visits}
           vias={props.vias}
+          startGap={startGapShown(draft)}
         />
       )}
     </div>

@@ -12,21 +12,24 @@ export interface PlacedVia {
 /**
  * The via lists a segment's line goes through, in order: for a hop with a line picked, its walks to
  * the station it got on at and from the one it got off at; for a hop without one, the list after its
- * first photo; for a walk, the start spot's and each photo's but the last (whose via points lead to
+ * first photo (or the start spot's, for the hop from the start); for a walk, the start spot's and each photo's but the last (whose via points lead to
  * the next segment), unless the walk ends at the end spot.
  */
 function segmentKeys(segment: TripSegment): ViaKey[] {
   const [a] = segment.photos;
   if (segment.mode === "wander" || a === undefined) return [];
-  if (segment.line) {
-    return [
-      ...(segment.board ? [walkKey("board", a)] : []),
-      ...(segment.alight ? [walkKey("alight", a)] : []),
-    ];
-  }
-  if (segment.mode !== "walk") return [String(a)];
+  if (segment.line) return stationKeys(segment, a);
+  if (segment.mode !== "walk") return [segment.start ? "start" : String(a)];
   const photos = segment.end ? segment.photos : segment.photos.slice(0, -1);
   return [...(segment.start ? ["start"] : []), ...photos.map(String)];
+}
+
+/** The via lists of a hop with a line from photo a: its walks to and from its stations. */
+function stationKeys(segment: TripSegment, a: number): ViaKey[] {
+  return [
+    ...(segment.board ? [walkKey("board", a)] : []),
+    ...(segment.alight ? [walkKey("alight", a)] : []),
+  ];
 }
 
 /**

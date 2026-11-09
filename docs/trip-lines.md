@@ -260,7 +260,10 @@ two photos, its name shown on hover, with the way between the two photos shown o
 route (it stops at the last gap), and a cross that takes it off the route again. Moving one earlier from after the
 first photo puts it before the first photo, as `"first": true` with no `after`, such as lunch before the first photo
 was taken: the line goes from the start spot through it to the first photo (as a via spot after the start spot), or,
-with no start spot, starts at it. A place not on the route is a pin only. A place put after a break or after the last
+with no start spot, starts at it. The way from there to the first photo shows before photo 1 in the strip and can be
+changed like any gap, such as a bus from lunch: the line is then a hop from the start to the first photo before the
+walk, saved as the first segment with that mode, a `start` and only the first photo. A place not on the route is a pin
+only. A place put after a break or after the last
 photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
 time, so moving or removing the place keeps the line in step; the backend checks that `after` is one of the day's
 photos with an exact spot (not necessarily on a drawn segment, so a stop can follow a photo on an automatic line or at
