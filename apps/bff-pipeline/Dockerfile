@@ -3,7 +3,9 @@
 # Builds client-pipeline + bff-pipeline; the BFF serves the client build and proxies /api to be-pipeline.
 FROM node:26-slim AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
-RUN corepack enable
+# Node 25+ no longer ships corepack, so install it from npm first. corepack then reads the root package.json's
+# packageManager field and fetches that exact pnpm version.
+RUN npm install -g corepack@latest && corepack enable
 WORKDIR /repo
 
 FROM base AS build
