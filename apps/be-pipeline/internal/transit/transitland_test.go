@@ -49,7 +49,7 @@ func TestTransitlandLines(t *testing.T) {
 	if len(lines) != 1 || lines[0].ID != 9 || lines[0].Colour != "#F68B1E" || lines[0].Source != SourceTransitland || lines[0].Kind != "train" || lines[0].From != "JR West" {
 		t.Fatalf("lines = %+v", lines)
 	}
-	if len(got) != 2 || !strings.HasPrefix(got[0], "key /routes?") || !strings.Contains(got[0], "route_types=2%2C0%2C12") || !strings.Contains(got[0], "radius=500") {
+	if len(got) != 2 || !strings.HasPrefix(got[0], "key /routes?") || !strings.Contains(got[0], "route_types=2%2C0%2C12%2C100%2C101") || !strings.Contains(got[0], "radius=500") {
 		t.Errorf("requests = %v", got)
 	}
 	if _, err := c.TransitlandLines(context.Background(), "walk", [2]float64{}, [2]float64{}); !errors.Is(err, ErrNoKind) {
