@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { dayFormat, parseIsoDate } from "@/lib/calendar";
 import { type SocialFocus, isFocused, knownValues, parseList } from "@/lib/social-focus";
 import { useSocialFocusStore } from "@/stores/social-focus";
+import { DatePicker } from "@/components/date-picker";
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -56,19 +57,19 @@ function DateFields() {
   return (
     <>
       <Field label="Taken from">
-        <Input
-          type="date"
+        <DatePicker
           value={takenFrom}
-          max={takenTo || undefined}
-          onChange={(event) => setFocus({ takenFrom: event.target.value })}
+          max={takenTo}
+          placeholder="Any day"
+          onChange={(day) => setFocus({ takenFrom: day })}
         />
       </Field>
       <Field label="Taken to">
-        <Input
-          type="date"
+        <DatePicker
           value={takenTo}
-          min={takenFrom || undefined}
-          onChange={(event) => setFocus({ takenTo: event.target.value })}
+          min={takenFrom}
+          placeholder="Any day"
+          onChange={(day) => setFocus({ takenTo: day })}
         />
       </Field>
     </>

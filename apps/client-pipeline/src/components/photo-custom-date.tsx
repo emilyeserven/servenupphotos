@@ -2,8 +2,8 @@ import { CalendarIcon } from "lucide-react";
 import { FieldSection } from "@/components/field-section";
 import { FieldLabel } from "@/components/field-label";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { dateFromFileName, fromInputValue, inputValue, readableDate } from "@/lib/photo-date";
+import { DateTimePicker } from "@/components/date-time-picker";
 
 /** How to fill in the custom date, shown beside its title. */
 const HELP =
@@ -50,13 +50,11 @@ export function PhotoCustomDate({
       <FieldLabel htmlFor="photo-custom-date" help={HELP}>
         Custom date
       </FieldLabel>
-      <Input
+      <DateTimePicker
         id="photo-custom-date"
-        type="datetime-local"
-        step={1}
         value={inputValue(value)}
         disabled={disabled}
-        onChange={(event) => onChange(fromInputValue(event.target.value))}
+        onChange={(next) => onChange(fromInputValue(next))}
       />
       <FileNameDate value={value} fileStem={fileStem} disabled={disabled} onChange={onChange} />
     </FieldSection>

@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/date-picker";
 
 /** The days to list photos from, as "2016-12-23"; `to` is blank for one day. */
 interface DayRange {
@@ -28,21 +28,19 @@ export function DayRangeFields({ value, onChange, count }: DayRangeFieldsProps) 
       <div className="flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1.5 text-xs font-medium">
           From
-          <Input
-            type="date"
-            className="w-44"
+          <DatePicker
+            className="w-52"
             value={value.from}
-            onChange={(event) => onChange({ ...value, from: event.target.value })}
+            onChange={(from) => onChange({ ...value, from })}
           />
         </label>
         <label className="flex flex-col gap-1.5 text-xs font-medium">
           To (optional)
-          <Input
-            type="date"
-            className="w-44"
+          <DatePicker
+            className="w-52"
             value={value.to}
-            min={value.from || undefined}
-            onChange={(event) => onChange({ ...value, to: event.target.value })}
+            min={value.from}
+            onChange={(to) => onChange({ ...value, to })}
           />
         </label>
       </div>

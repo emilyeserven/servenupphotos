@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { CalendarPlus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/date-picker";
 
 /**
  * Plans a day before its photos are taken: picking a date opens its Trip Stops page, where the
@@ -19,13 +19,7 @@ export function PlanDay() {
         void navigate({ to: "/trip-lines/$day/$part", params: { day, part: "stops" } });
       }}
     >
-      <Input
-        type="date"
-        value={day}
-        aria-label="Day to plan"
-        className="h-8 w-40"
-        onChange={(e) => setDay(e.target.value)}
-      />
+      <DatePicker value={day} aria-label="Day to plan" className="h-8 w-48" onChange={setDay} />
       <Button type="submit" variant="outline" size="sm" disabled={!day}>
         <CalendarPlus aria-hidden />
         Plan a day

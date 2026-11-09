@@ -1,11 +1,11 @@
 import { ZoneField } from "@/components/timezone-shift/zone-pickers";
 import type { ComboboxOption } from "@/components/ui/combobox";
-import { Input } from "@/components/ui/input";
 import type { ClockSetting } from "@/lib/clock-setting";
 import { fromInputValue, inputValue } from "@/lib/photo-date";
 import { readableTime, zoneOffsetOn } from "@/lib/timezone-shift";
 import type { DayPhoto } from "@/lib/timezone-shift-plan";
 import { cn } from "@/lib/utils";
+import { DateTimePicker } from "@/components/date-time-picker";
 
 type Kind = ClockSetting["kind"];
 
@@ -125,12 +125,10 @@ function MatchFields({ photos, value, onChange }: MatchFieldsProps) {
       </label>
       <label className="flex flex-col gap-1.5 text-xs font-medium">
         Its real local time
-        <Input
+        <DateTimePicker
           id={`${id}-time`}
-          type="datetime-local"
-          step={1}
           value={inputValue(value.realTime)}
-          onChange={(event) => onChange({ ...value, realTime: fromInputValue(event.target.value) })}
+          onChange={(next) => onChange({ ...value, realTime: fromInputValue(next) })}
         />
       </label>
       <p className="text-muted-foreground text-xs sm:col-span-2">
