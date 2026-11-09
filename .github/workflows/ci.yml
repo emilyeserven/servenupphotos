@@ -20,6 +20,7 @@ jobs:
     outputs:
       typescript: ${{ steps.filter.outputs.typescript }}
       go: ${{ steps.filter.outputs.go }}
+      workflows: ${{ steps.filter.outputs.workflows }}
     steps:
       - id: filter
         if: github.event_name == 'pull_request'
@@ -39,6 +40,8 @@ jobs:
               # config and lockfile are here because the Go tests check the
               # pipeline's JSON against oxfmt.
               - '{apps/be-pipeline/**,.github/workflows/ci.yml,.oxfmtrc.json,pnpm-lock.yaml}'
+            workflows:
+              - '.github/**'
 
   typescript:
     name: TypeScript (lint, format, typecheck, fallow)
@@ -101,3 +104,17 @@ jobs:
           # Fail, rather than skip, the oxfmt comparison if oxfmt is missing.
           REQUIRE_OXFMT: "1"
       - run: go build ./...
+
+  workflows:
+    name: Workflows (actionlint)
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.workflows == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      # The image bundles shellcheck and pyflakes, so the run: blocks are
+      # checked too.
+      - name: actionlint
+        uses: docker://rhysd/actionlint:1.7.7
+        with:
+          args: -color
