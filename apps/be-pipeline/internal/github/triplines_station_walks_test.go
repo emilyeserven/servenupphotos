@@ -11,7 +11,7 @@ func TestRouteStationWalks(t *testing.T) {
 	seg := TripSegment{Mode: ModeBus, Photos: []int{1, 2}, Line: &TripTransitLine{ID: 1, Name: "30"}, Alight: stop,
 		AlightWalk: &StationWalk{Via: []TripPoint{{Latitude: 37.803, Longitude: -122.445}}}}
 	var asked [][2]float64
-	route := func(_ context.Context, mode string, points [][2]float64) ([][2]float64, error) {
+	route := func(_ context.Context, _ string, points [][2]float64) ([][2]float64, error) {
 		asked = points
 		return points, nil
 	}
