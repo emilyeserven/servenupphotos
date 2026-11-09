@@ -15,6 +15,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -160,8 +161,10 @@ type member struct {
 // when it was asked before.
 func (c *Client) query(ctx context.Context, ql string) ([]element, error) {
 	if elements, ok := c.Cache.Get(ql); ok {
+		slog.Info("overpass answer from memory", "elements", len(elements))
 		return elements, nil
 	}
+	slog.Info("overpass query", "ql", ql)
 	elements, err := c.ask(ctx, ql)
 	if err == nil {
 		c.Cache.Put(ql, elements)

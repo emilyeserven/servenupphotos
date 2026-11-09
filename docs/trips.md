@@ -140,11 +140,24 @@ leg is in a straight line.
 ### Stations and routes
 
 A **Train**, **Bus** or **Ferry** leg can leave from and arrive at a station. With **A station or spot with no photo**
-picked, **Find a station** looks up the stations (or stops, or ferry terminals) whose name in any language has the
-words typed, within 30 km of that end's day (its spot once it has one, or else its photo), nearest first, each with its
-English name beside it, such as "博多 (Hakata)". Picking one fills in the label and position
-(`GET /api/transit/stations?mode=train&q=Hakata&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`, through
-the same Overpass servers, throttle and day-long cache as [Lines ridden](trip-lines.md#lines-ridden)).
+picked, **Find a station** looks up the stations (or stops, or ferry terminals) within 30 km of that end's day (its
+spot once it has one, or else its photo) whose name, in any language, has the longest word typed. The ones whose names
+have the most of the words typed come first, then the nearest, each with its English name beside it, such as
+"博多 (Hakata)". So "Shimonoseki Kokusai Terminal" asks for
+"shimonoseki", and a terminal whose names also have "Kokusai" or "Terminal" comes before Shimonoseki Station. Picking one fills in the label and
+position (`GET /api/transit/stations?mode=ferry&q=Shimonoseki&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`,
+through the same Overpass servers, throttle and day-long cache as [Lines ridden](trip-lines.md#lines-ridden)).
+
+The query asks for each kind's station tags by name (`railway=station`, `amenity=ferry_terminal`, `highway=bus_stop`
+and so on) before matching names, so the server can use its tag index. Matching every tag nearby by pattern first made
+the public servers give up on a 30 km search, which the page showed as a 503 after a long spin.
+
+> **Frontend analogy:** it's `document.getElementsByClassName("station")` and then filtering by text, instead of
+> `querySelectorAll("*")` and testing each element's attributes against a regex.
+
+Every transit look-up logs to the browser console under `[transit]`: when it starts, how long it took, and what it found
+or why it failed (`api/transit-log.ts`). The backend's terminal logs each Overpass query, each server tried with how
+long it took and what it answered, and answers given from memory.
 
 Once both ends have a spot, **Look up route** finds the lines of the leg's kind that pass within 500 m of both ends
 (the same look-up as a day's hops, so it works best with each end at its station), and picking one fetches its track

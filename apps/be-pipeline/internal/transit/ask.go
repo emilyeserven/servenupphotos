@@ -3,6 +3,7 @@ package transit
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"time"
@@ -81,7 +82,7 @@ func (c *Client) ask(ctx context.Context, ql string) ([]element, error) {
 			return nil, outOfTime(ctx, busy, err)
 		}
 		base := c.BaseURLs[i%len(c.BaseURLs)]
-		elements, err := c.askOnce(ctx, base, ql)
+		elements, err := c.timedAsk(ctx, base, ql, i+1)
 		if err == nil {
 			return elements, nil
 		}
@@ -91,6 +92,20 @@ func (c *Client) ask(ctx context.Context, ql string) ([]element, error) {
 		}
 	}
 	return nil, busy
+}
+
+// timedAsk is askOnce, logging which server try was asked, how long it took
+// and what it answered, so a slow look-up can be followed in the terminal.
+func (c *Client) timedAsk(ctx context.Context, base, ql string, try int) ([]element, error) {
+	start := time.Now()
+	elements, err := c.askOnce(ctx, base, ql)
+	took := time.Since(start).Round(time.Millisecond)
+	if err != nil {
+		slog.Warn("overpass try failed", "server", host(base), "try", try, "took", took, "err", err)
+		return nil, err
+	}
+	slog.Info("overpass answered", "server", host(base), "try", try, "took", took, "elements", len(elements))
+	return elements, nil
 }
 
 // outOfTime is busy when ctx ran out of time after at least one try, or else

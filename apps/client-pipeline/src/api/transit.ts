@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { requestJson } from "@/api/settings";
+import { transitJson } from "@/api/transit-log";
 import type { TripTransitLine } from "@/api/trip-lines";
 
 /** A spot as [longitude, latitude]. */
@@ -38,7 +38,7 @@ export function transitLinesQuery(ask: HopAsk) {
   return queryOptions({
     queryKey: ["transit", "lines", ask],
     queryFn: () =>
-      requestJson<TransitLine[]>(
+      transitJson<TransitLine[]>(
         `/api/transit/lines?mode=${encodeURIComponent(ask.mode)}&${spotParams(ask)}`,
       ),
     retry: false,
@@ -57,7 +57,7 @@ export interface TransitStop {
 export function transitStopsQuery(id: number) {
   return queryOptions({
     queryKey: ["transit", "stops", id],
-    queryFn: () => requestJson<TransitStop[]>(`/api/transit/lines/${id}/stops`),
+    queryFn: () => transitJson<TransitStop[]>(`/api/transit/lines/${id}/stops`),
     retry: false,
     staleTime: Infinity,
   });
@@ -89,7 +89,7 @@ export function transitStationsQuery({ mode, name, near }: StationAsk) {
   return queryOptions({
     queryKey: ["transit", "stations", mode, name, near],
     queryFn: () =>
-      requestJson<TransitStation[]>(
+      transitJson<TransitStation[]>(
         `/api/transit/stations?${new URLSearchParams({ mode, q: name, near: near.join(",") })}`,
       ),
     retry: false,
@@ -99,7 +99,7 @@ export function transitStationsQuery({ mode, name, near }: StationAsk) {
 
 /** Line id's track between two spots, each point [longitude, latitude]. */
 export function fetchTrack(id: number, from: Spot, to: Spot): Promise<{ path: Spot[] }> {
-  return requestJson<{ path: Spot[] }>(
+  return transitJson<{ path: Spot[] }>(
     `/api/transit/lines/${id}/track?${spotParams({ from, to })}`,
   );
 }

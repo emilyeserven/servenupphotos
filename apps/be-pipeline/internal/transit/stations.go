@@ -21,14 +21,23 @@ const maxStations = 15
 // ErrNoName is returned when a station search has no name to look for.
 var ErrNoName = errors.New("no station name to look for")
 
-// stationTags are, for each mode, the Overpass filter for what its stations
-// are mapped as: a key and a value, each a regex.
-var stationTags = map[string]string{
-	"train":  `[~"^(railway|public_transport)$"~"^(station|halt)$"]`,
-	"subway": `[~"^(railway|public_transport)$"~"^(station|halt)$"]`,
-	"bus":    `[~"^(highway|amenity|public_transport)$"~"^(bus_stop|bus_station|station)$"]`,
-	"ferry":  `[~"^(amenity|public_transport)$"~"^(ferry_terminal|station)$"]`,
+// stationTags are, for each mode, the Overpass tag filters for what its
+// stations are mapped as, one statement each. Each starts with a plain key, so
+// the server can use its tag index instead of scanning every element nearby.
+var stationTags = map[string][]string{
+	"train":  {`[railway~"^(station|halt)$"]`, `[public_transport=station][train=yes]`},
+	"subway": {`[railway~"^(station|halt)$"]`, `[public_transport=station][subway=yes]`},
+	"bus":    {`[highway=bus_stop]`, `[amenity=bus_station]`, `[public_transport=station][bus=yes]`},
+	"ferry":  {`[amenity=ferry_terminal]`, `[public_transport~"^(station|stop_position)$"][ferry=yes]`},
 }
+
+// nameKeys are the tags a station's name can be in, in any language, such as
+// "name", "name:en", "name:ja-Latn" or "official_name".
+const nameKeys = `^((official|alt|short|old)_)?name(:[A-Za-z_-]+)?$`
+
+// stationsLimit is how many stations the server sends at most, before they're
+// ranked by how many of the words typed they match.
+const stationsLimit = 200
 
 // Station is a station or stop found by name, such as "Hakata".
 type Station struct {
@@ -42,49 +51,91 @@ type Station struct {
 }
 
 // Stations are mode's stations or stops within stationsNearM of near, each
-// [longitude, latitude], whose name in any language contains name, nearest
-// first, each name once.
+// [longitude, latitude], whose name in any language has the longest word of
+// name, the ones with the most of name's words first, then the nearest, each
+// name once. So "Shimonoseki Kokusai Terminal" finds 下関港国際ターミナル by its
+// English or romaji name even when neither is spelled quite that way.
 func (c *Client) Stations(ctx context.Context, mode, name string, near [2]float64) ([]Station, error) {
 	tags, ok := stationTags[mode]
 	if !ok {
 		return nil, ErrNoKind
 	}
-	name = strings.TrimSpace(name)
-	if name == "" {
+	words := strings.Fields(strings.ToLower(name))
+	if len(words) == 0 {
 		return nil, ErrNoName
 	}
-	elements, err := c.query(ctx, stationsQuery(tags, name, near))
+	elements, err := c.query(ctx, stationsQuery(tags, longest(words), near))
 	if err != nil {
 		return nil, err
 	}
-	return nearestStations(elements, near), nil
+	return bestStations(elements, words, near), nil
 }
 
-// stationsQuery is the Overpass QL for stations tagged tags within
-// stationsNearM of near whose name, in any language, contains name.
-func stationsQuery(tags, name string, near [2]float64) string {
-	pattern := strings.NewReplacer(`\`, `\\`, `"`, `\"`).Replace(regexp.QuoteMeta(name))
-	return fmt.Sprintf(serverTimeout+`nwr%s[~"^name(:[a-z]+)?$"~"%s",i](around:%d,%f,%f);out tags center 60;`,
-		tags, pattern, stationsNearM, near[1], near[0])
+// longest is the longest of words, the one fewest names have.
+func longest(words []string) string {
+	return slices.MaxFunc(words, func(a, b string) int { return cmp.Compare(len([]rune(a)), len([]rune(b))) })
 }
 
-// nearestStations are elements as stations, nearest near first, keeping
-// the nearest of each name and at most maxStations.
-func nearestStations(elements []element, near [2]float64) []Station {
-	out := []Station{}
+// stationsQuery is the Overpass QL for stations tagged as any of tags within
+// stationsNearM of near whose name, in any language, contains word.
+func stationsQuery(tags []string, word string, near [2]float64) string {
+	around := fmt.Sprintf("(around:%d,%f,%f)", stationsNearM, near[1], near[0])
+	var union strings.Builder
+	for _, t := range tags {
+		union.WriteString("nwr" + t + around + ";")
+	}
+	pattern := strings.NewReplacer(`\`, `\\`, `"`, `\"`).Replace(regexp.QuoteMeta(word))
+	return fmt.Sprintf(serverTimeout+`(%s)->.s;nwr.s[~"%s"~"%s",i];out tags center %d;`,
+		union.String(), nameKeys, pattern, stationsLimit)
+}
+
+// ranked is a station with how many of the words typed its names have.
+type ranked struct {
+	Station
+	hits int
+}
+
+// bestStations are elements as stations, those whose names have the most of
+// words first and then the nearest, keeping the first of each name and at most
+// maxStations.
+func bestStations(elements []element, words []string, near [2]float64) []Station {
+	found := []ranked{}
 	for _, e := range elements {
 		if s, ok := stationOf(e, near); ok {
-			out = append(out, s)
+			found = append(found, ranked{s, wordHits(e.Tags, words)})
 		}
 	}
-	slices.SortFunc(out, func(a, b Station) int { return cmp.Compare(a.Km, b.Km) })
+	slices.SortStableFunc(found, func(a, b ranked) int { return cmp.Or(cmp.Compare(b.hits, a.hits), cmp.Compare(a.Km, b.Km)) })
+	out := []Station{}
 	seen := map[string]bool{}
-	out = slices.DeleteFunc(out, func(s Station) bool {
-		dup := seen[s.Name]
-		seen[s.Name] = true
-		return dup
-	})
-	return out[:min(len(out), maxStations)]
+	for _, r := range found {
+		if !seen[r.Name] && len(out) < maxStations {
+			out = append(out, r.Station)
+		}
+		seen[r.Name] = true
+	}
+	return out
+}
+
+// nameKeyPattern matches the tags nameKeys names.
+var nameKeyPattern = regexp.MustCompile(nameKeys)
+
+// wordHits is how many of words, each lower case, are in any of tags' names.
+func wordHits(tags map[string]string, words []string) int {
+	var names strings.Builder
+	for k, v := range tags {
+		if nameKeyPattern.MatchString(k) {
+			names.WriteString(strings.ToLower(v) + "\n")
+		}
+	}
+	all := names.String()
+	hits := 0
+	for _, w := range words {
+		if strings.Contains(all, w) {
+			hits++
+		}
+	}
+	return hits
 }
 
 // stationOf is e as a station, and false when it has no name or no spot.
