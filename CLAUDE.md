@@ -38,7 +38,7 @@ A new endpoint usually touches, in order:
    (`newFakeRepo`, `fakeGitHub`, `fakeBucket`, …).
 2. `be-pipeline/internal/httpapi/<area>.go`: the handler, and one line in that area's `routes_<area>.go`.
 3. `client-pipeline/src/api/<area>.ts`: the response type and the query or mutation.
-4. `scripts/screenshot-fixtures.mjs`: a sample answer, so `pnpm shot` can show the page. `pnpm check:fixtures`
+4. `scripts/fixtures/<area>.mjs` (the area of the `routes_<area>.go` that registers the route): a sample answer, so `pnpm shot` can show the page. `pnpm check:fixtures`
    (part of `pnpm check`) fails when a route has none.
 
 The BFF relays every path on its own. Only when the backend gives the work more than 30s, add the path to
@@ -50,7 +50,7 @@ Everything here is fast; run the narrowest check while working and `pnpm check` 
 
 ```sh
 pnpm check                         # oxlint, oxfmt --check, typecheck, fallow, check:fixtures (~6s); `pnpm fmt` fixes formatting
-pnpm check:fixtures                # every backend route has a fixture in scripts/screenshot-fixtures.mjs
+pnpm check:fixtures                # every backend route has a fixture in scripts/fixtures/
 pnpm build                         # all three TS apps (~5s); CI runs it too
 cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes ~8s
 cd apps/be-pipeline && golangci-lint run
@@ -100,7 +100,7 @@ pnpm shot pipeline /in-flight --script steps.mjs   # export default async ({ pag
 pnpm shot pipeline /albums --fixtures mine.mjs     # export default (fixtures) => ({ ...fixtures, "GET /api/organize": … })
 ```
 
-It answers the pipeline's `/api` from `scripts/screenshot-fixtures.mjs` (built from the committed portfolio data plus
+It answers the pipeline's `/api` from `scripts/screenshot-fixtures.mjs`, which merges `scripts/fixtures/<area>.mjs` (built from the committed portfolio data plus
 one open pull request), draws placeholders for R2 photos and a plain map background, and warns about any `/api`
 request without a fixture. Add a fixture there for new endpoints.
 

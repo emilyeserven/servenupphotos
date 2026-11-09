@@ -76,4 +76,4 @@ func TestSetThing(t *testing.T) {
       data pull request", "Square Thumbnail"), with a "Frontend analogy:" line where the idea is backend-only.
 - [ ] `cd apps/be-pipeline && go test ./internal/github/` and `golangci-lint run` (CI pins v2.14.0).
 - [ ] Then the handler in `internal/httpapi/<area>.go` and its line in `routes_<area>.go`,
-      `apps/client-pipeline/src/api/<area>.ts`, a fixture in `scripts/screenshot-fixtures.mjs`, and `docs/<feature>.md`.
+      `apps/client-pipeline/src/api/<area>.ts`, a fixture in `scripts/fixtures/<area>.mjs`, and `docs/<feature>.md`.

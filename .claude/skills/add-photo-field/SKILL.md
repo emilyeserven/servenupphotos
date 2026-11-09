@@ -48,7 +48,7 @@ A photo is one JSON file, `photos/<PHOTONAME>.json`, combined by Commit into `AL
   that older entries don't have it, and to `Photo` as the views need it; `fromPhotoData` in the same file fills
   it in. Every view reads `Photo` (`routes/grid.tsx`, `timeline.tsx`, `map.tsx`, `color.tsx`, …), and the
   pipeline's Gallery reads photos through `photosFromData` too.
-- `scripts/screenshot-fixtures.mjs` builds its photos from the committed `apps/portfolio/src/data`, so it keeps
+- `scripts/fixtures/shared.mjs` builds its photos from the committed `apps/portfolio/src/data`, so it keeps
   up on its own; only a fixture written by hand there needs the field.
 
 ## 5. Docs
