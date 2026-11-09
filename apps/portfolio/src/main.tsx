@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { PageError } from "@/components/page-error";
 import { ScriptDisplayProvider } from "@/components/script-display-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { pageFade } from "@/lib/page-fade";
 import { trackPageViews } from "@/lib/page-views";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
@@ -15,6 +16,7 @@ const router = createRouter({
   routeTree,
   basepath: import.meta.env.BASE_URL,
   context: { queryClient },
+  defaultViewTransition: pageFade,
   defaultPreload: "intent",
   // Every page, the root included, fails into the site's own error card; see docs/portfolio-page-errors.md.
   defaultErrorComponent: PageError,
