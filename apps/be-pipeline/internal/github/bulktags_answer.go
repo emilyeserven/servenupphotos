@@ -25,19 +25,6 @@ type bulkTagAnswer struct {
 	} `json:"definitions"`
 }
 
-// parseLLMAnswer reads the JSON object in text, an LLM's answer, into
-// answer. The object may be inside a code block or have words around it.
-func parseLLMAnswer(text string, answer any) *PublishError {
-	start, end := strings.Index(text, "{"), strings.LastIndex(text, "}")
-	if start < 0 || end < start {
-		return publishErr(http.StatusBadRequest, "Paste the LLM's whole answer: the JSON object it wrote, from { to }.")
-	}
-	if err := json.Unmarshal([]byte(text[start:end+1]), answer); err != nil {
-		return publishErr(http.StatusBadRequest, "The answer isn't the JSON the prompt asks for (%v). Ask the LLM to answer with only that JSON.", err)
-	}
-	return nil
-}
-
 // parseBulkTagAnswer reads the Bulk Tagging JSON in text, the LLM's answer.
 func parseBulkTagAnswer(text string) (bulkTagAnswer, *PublishError) {
 	var answer bulkTagAnswer
