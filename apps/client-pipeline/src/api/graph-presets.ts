@@ -1,6 +1,5 @@
 import type { GraphPresetFile } from "@portfolio/lib/graph-presets";
-import { settingMutations } from "@/api/data-files";
-import type { CombinedData } from "@/api/photos";
+import { settingEntries, settingMutations } from "@/api/data-files";
 import { entryId } from "@/api/places";
 
 function isPresetFile(value: unknown): value is GraphPresetFile {
@@ -9,10 +8,7 @@ function isPresetFile(value: unknown): value is GraphPresetFile {
 }
 
 /** The graph presets and preset groups as the next Commit will have them: GRAPHS.json with the changes since. */
-export function graphPresetFiles(data: CombinedData | undefined): GraphPresetFile[] {
-  const entries = data ? (data.head ?? data.base).graphs.data : undefined;
-  return (entries ?? []).filter(isPresetFile);
-}
+export const graphPresetFiles = settingEntries("graphs", isPresetFile);
 
 /**
  * The ID a new preset or group gets from its name, such as `focal-length`, with a number after it

@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import type { InFlightFileRead } from "@/api/photos";
 import { bySaved, byFileName } from "@/components/draft-sort";
 import { sortGallery } from "@/components/gallery/gallery-sort";
-import { FilterToggle, type ToggleChoices } from "@/components/photo-filters";
+import { FilterToggle, type ToggleChoices } from "@/components/photo-filter-bar";
 import { savedTitle, untitledFirst } from "@/lib/untitled-photos";
 
 /**

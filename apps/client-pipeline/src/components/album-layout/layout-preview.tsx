@@ -5,7 +5,7 @@ import type { AlbumRow } from "@/api/organize";
 import { OfflinePreviewsButton } from "@/components/album-layout/offline-previews";
 import { MARKDOWN_CLASSES } from "@/components/photo-details";
 import { photoId } from "@/lib/album-photo-order";
-import type { AlbumLayout } from "@/lib/album-layout";
+import type { AlbumLayout } from "@/lib/album-layout-editor";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { offlineXSmallUrl } from "@/lib/offline-thumbnails";
 

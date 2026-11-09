@@ -1,6 +1,5 @@
 import { overrideId } from "@/api/cameras";
-import { settingMutations } from "@/api/data-files";
-import type { CombinedData } from "@/api/photos";
+import { byName, settingEntries, settingMutations } from "@/api/data-files";
 
 /**
  * A viewer likes file: one person and the photos they liked on the portfolio's My Likes page and
@@ -24,10 +23,7 @@ function isViewer(value: unknown): value is ViewerLikes {
 }
 
 /** The people who sent likes, as the next Commit will have them: LIKES.json with the changes since, by name. */
-export function viewerLikes(data: CombinedData | undefined): ViewerLikes[] {
-  const entries = data ? (data.head ?? data.base).likes.data : undefined;
-  return (entries ?? []).filter(isViewer).toSorted((a, b) => a.name.localeCompare(b.name));
-}
+export const viewerLikes = settingEntries("likes", isViewer, byName);
 
 /** The ID a new person gets, such as `jane-doe`. */
 export function viewerId(name: string): string {

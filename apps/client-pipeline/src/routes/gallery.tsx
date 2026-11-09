@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { BulkGroupsCard } from "@/components/gallery/bulk-groups-card";
 import { PhotoGrid } from "@/components/gallery/photo-grid";
-import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
+import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
 import {
   type GallerySort,
   GallerySortToggle,
@@ -46,7 +46,7 @@ import {
   parseGridFilters,
   useGridFilters,
 } from "@/components/gallery/grid-filters";
-import { prefixedFilters } from "@/lib/photo-filters";
+import { prefixedFilters } from "@/lib/photo-data-filters";
 import { type Selection, fileName, photoName } from "@/components/gallery/published-file";
 import { OfflineNotice } from "@/components/offline-notice";
 

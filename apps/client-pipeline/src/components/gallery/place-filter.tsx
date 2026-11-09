@@ -3,7 +3,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { LocateFixedIcon, LocateIcon, LocateOffIcon, MapPinIcon, XIcon } from "lucide-react";
 import type { PublishedFile } from "@/api/photos";
 import { type Place, placesQuery, readEntries, savedPlaces } from "@/api/places";
-import { FilterToggle, type ToggleChoices } from "@/components/photo-filters";
+import { FilterToggle, type ToggleChoices } from "@/components/photo-filter-bar";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { type PhotoGpsSource, photoGpsSource } from "@/lib/place-gps";
 import { editedData } from "@/lib/undecided";

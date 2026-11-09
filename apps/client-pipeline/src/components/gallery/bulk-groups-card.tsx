@@ -11,7 +11,7 @@ import {
 } from "@/api/organize";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
-import { PhotoGroupFields, Warning } from "@/components/group-picker";
+import { PhotoGroupFields, Warning } from "@/components/photo-groups-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";

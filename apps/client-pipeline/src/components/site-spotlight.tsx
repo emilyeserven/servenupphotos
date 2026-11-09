@@ -9,7 +9,7 @@ import {
 } from "@/api/organize";
 import { GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
 import { albumPhotoOrder } from "@/lib/album-photo-order";
-import { GroupCombobox } from "@/components/group-picker";
+import { GroupCombobox } from "@/components/photo-groups-card";
 import { QueryResult } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SpotlightOrientationPicker } from "@/components/spotlight-orientation";

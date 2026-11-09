@@ -4,6 +4,7 @@ import type { NearDuplicates } from "@/api/near-duplicates";
 import type { PhotoPlace } from "@/api/places";
 import { type ScanChange, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/request";
+import type { CombinedKind, GroupKind } from "@/lib/data-kinds";
 
 /** A photo's data to save as `<folder>/<name>.json` in the GitHub repository from Settings. */
 export interface PhotoData {
@@ -108,34 +109,11 @@ export interface CombinedFile {
   error?: string;
 }
 
-/** ALLPHOTOS.json, ALLALBUMS.json, ALLTAGS.json, ALLGENRES.json, PLACES.json and the other combined lists, read at one ref. */
-export interface CombinedFiles {
-  photos: CombinedFile;
-  albums: CombinedFile;
-  tags: CombinedFile;
-  /** ALLGENRES.json, the photographic genres. */
-  genres: CombinedFile;
-  places: CombinedFile;
-  localizations: CombinedFile;
-  /** METAINFO.json, the metadata groups. */
-  metainfo: CombinedFile;
-  /** CAMERAS.json, the camera overrides. */
-  cameras: CombinedFile;
-  /** LENSES.json, the custom lenses. */
-  lenses: CombinedFile;
-  /** CAPTIONS.json, the caption templates. */
-  captions: CombinedFile;
-  /** TIMELINE.json, the Trips. */
-  timeline: CombinedFile;
-  /** LIKES.json, the photos each viewer liked. */
-  likes: CombinedFile;
-  /** TRIPLINES.json, the days' trip lines as marked. */
-  triplines: CombinedFile;
-  /** GRAPHS.json, the portfolio Graph page's presets and preset groups. */
-  graphs: CombinedFile;
-  /** GEAR.json, the cameras' and lenses' own pictures. */
-  gear: CombinedFile;
-}
+/**
+ * ALLPHOTOS.json, ALLALBUMS.json, ALLTAGS.json and the other combined lists, read at one ref: one
+ * per kind in `COMBINED_KINDS`, with its file name in `KIND_INFO`.
+ */
+export type CombinedFiles = Record<CombinedKind, CombinedFile>;
 
 /** The combined lists on the base branch and, when one is open, the photo data pull request. */
 export interface CombinedData {
@@ -158,37 +136,16 @@ export function readCombinedData(refresh = false): Promise<CombinedData> {
   return requestJson<CombinedData>(`/api/photos/combined${refresh ? "?refresh=1" : ""}`);
 }
 
-/** The photo data waiting in the pull request, as the backend reads it, without the combined lists. */
-export interface InFlightRead {
+/**
+ * The photo data waiting in the pull request, as the backend reads it, without the combined lists:
+ * the photo files, and the files of each other kind (`GROUP_KINDS`) under the kind's name.
+ */
+export interface InFlightRead extends Record<GroupKind, InFlightGroupsRead> {
   repo: string;
   folder: string;
   /** Null when no pull request titled "Add photo data" is open. */
   pullRequest: InFlightPullRequest | null;
   files: InFlightFileRead[];
-  albums: InFlightGroupsRead;
-  tags: InFlightGroupsRead;
-  /** The photographic genre files, combined into ALLGENRES.json. */
-  genres: InFlightGroupsRead;
-  places: InFlightGroupsRead;
-  localizations: InFlightGroupsRead;
-  /** The metadata group files, combined into METAINFO.json. */
-  metainfo: InFlightGroupsRead;
-  /** The camera override files, combined into CAMERAS.json. */
-  cameras: InFlightGroupsRead;
-  /** The custom lens files, combined into LENSES.json. */
-  lenses: InFlightGroupsRead;
-  /** The caption template files, combined into CAPTIONS.json. */
-  captions: InFlightGroupsRead;
-  /** The Trip files, combined into TIMELINE.json. */
-  timeline: InFlightGroupsRead;
-  /** The viewer likes files, one per person, combined into LIKES.json. */
-  likes: InFlightGroupsRead;
-  /** The trip line files, one per day, combined into TRIPLINES.json. */
-  triplines: InFlightGroupsRead;
-  /** The graph preset and preset group files, combined into GRAPHS.json. */
-  graphs: InFlightGroupsRead;
-  /** The gear picture files, combined into GEAR.json. */
-  gear: InFlightGroupsRead;
   images: InFlightImages;
 }
 
@@ -199,42 +156,11 @@ interface InFlightGroupsRead {
 }
 
 /** The photo data waiting in the pull request, checked against the combined lists at its head. */
-export interface InFlightResponse extends Omit<
-  InFlightRead,
-  | "files"
-  | "albums"
-  | "tags"
-  | "genres"
-  | "places"
-  | "localizations"
-  | "metainfo"
-  | "cameras"
-  | "lenses"
-  | "captions"
-  | "timeline"
-  | "likes"
-  | "triplines"
-  | "graphs"
-  | "gear"
-> {
+export interface InFlightResponse
+  extends Omit<InFlightRead, "files" | GroupKind>, Record<GroupKind, InFlightGroups> {
   files: InFlightFile[];
   /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
   allPhotos: CombinedFile;
-  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens, caption template, Trip, viewer likes, trip line, graph preset and gear picture files in the pull request. */
-  albums: InFlightGroups;
-  tags: InFlightGroups;
-  genres: InFlightGroups;
-  places: InFlightGroups;
-  localizations: InFlightGroups;
-  metainfo: InFlightGroups;
-  cameras: InFlightGroups;
-  lenses: InFlightGroups;
-  captions: InFlightGroups;
-  timeline: InFlightGroups;
-  likes: InFlightGroups;
-  triplines: InFlightGroups;
-  graphs: InFlightGroups;
-  gear: InFlightGroups;
 }
 
 /** The album, tag, place or localization files in the pull request, and the combined file built from them. */

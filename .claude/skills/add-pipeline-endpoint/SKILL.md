@@ -48,7 +48,7 @@ slow. How saves reach GitHub is in `docs/saving-to-github.md` and `docs/pending-
 
 ## 4. Fixture
 
-- Add a sample answer to `defaultFixtures()` in `scripts/screenshot-fixtures.mjs`, keyed `"METHOD /api/path"`
+- Add a sample answer to the returned object of `scripts/fixtures/<area>.mjs` (the `routes_<area>.go` that registers the route), keyed `"METHOD /api/path"`
   (such as `"POST /api/data/alt-text/pick"`), so `pnpm shot` can draw the page and doesn't warn.
 
 ## 5. Only if the backend gives the work more than 30s

@@ -1,7 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { ScannedPhotos } from "@/api/data";
-import { settingMutations } from "@/api/data-files";
-import type { CombinedData } from "@/api/photos";
+import { settingEntries, settingMutations } from "@/api/data-files";
 import { entryId } from "@/api/places";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/request";
@@ -88,16 +87,8 @@ function isOverride(value: unknown): value is CameraOverride {
   return typeof v?.camera === "string" && Array.isArray(v.rules);
 }
 
-/** CAMERAS.json as the next Commit will have it, with the changes since. */
-function overridesFile(data: CombinedData) {
-  return (data.head ?? data.base).cameras;
-}
-
 /** The camera overrides as the next Commit will have them: CAMERAS.json with the changes since. */
-export function cameraOverrides(data: CombinedData | undefined): CameraOverride[] {
-  const entries = data ? overridesFile(data).data : undefined;
-  return (entries ?? []).filter(isOverride);
-}
+export const cameraOverrides = settingEntries("cameras", isOverride);
 
 /** The ID a new override gets, such as `x-t5`. */
 export function overrideId(camera: string): string {

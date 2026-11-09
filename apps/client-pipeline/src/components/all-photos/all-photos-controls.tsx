@@ -7,7 +7,7 @@ import {
   SORT_OPTIONS,
   type SortOrder,
 } from "@/components/all-photos/all-photos-sort";
-import { FilterToggle, type ToggleChoices } from "@/components/photo-filters";
+import { FilterToggle, type ToggleChoices } from "@/components/photo-filter-bar";
 import { Card, CardContent } from "@/components/ui/card";
 
 /** Changes some of the All Photos page's search params, keeping the page where it's scrolled to. */

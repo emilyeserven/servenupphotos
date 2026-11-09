@@ -10,7 +10,7 @@ import { EmptySection } from "@/components/in-flight-loading";
 import { FileSection } from "@/components/in-flight-page/file-section";
 import { InFlightSortToggle, sortInFlight } from "@/components/in-flight-sort";
 import { OfflineNotice } from "@/components/offline-notice";
-import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
+import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
 import { SavedDrafts } from "@/components/saved-drafts";
 import { UndecidedQueue } from "@/components/undecided-photos";
 import { undecidedPaths } from "@/lib/undecided";

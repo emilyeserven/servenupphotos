@@ -1,4 +1,4 @@
-import type { Focus } from "@/lib/spotlight-focus";
+import type { Focus } from "@/lib/spotlight-focus-edits";
 import { cn } from "@/lib/utils";
 
 /** The spots the focus point can be put on the screen, by row and then by column. */

@@ -1,7 +1,7 @@
 import { type Place, savedPlaces } from "@/api/places";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { placePhotoCounts } from "@/lib/place-seeds";
-import { placeChain } from "@/lib/place-tree";
+import { placeChain } from "@/lib/place-chain";
 
 /** A place's GPS position, or neither part when it has none. */
 type Coordinates = Pick<Place, "latitude" | "longitude">;
