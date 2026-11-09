@@ -2,11 +2,12 @@ import { Search, X } from "lucide-react";
 import type { HopAsk, Spot, TransitLine } from "@/api/transit";
 import type { TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
+import { HopEndsPicker } from "@/components/trip-lines/hop-ends";
 import { HopStations } from "@/components/trip-lines/hop-stations";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
 import { LookupKind } from "@/components/trip-lines/lookup-kind";
 import { gapInfo } from "@/components/trip-lines/modes";
-import { useHopRide } from "@/components/trip-lines/use-hop-ride";
+import { type HopEnds, useHopRide } from "@/components/trip-lines/use-hop-ride";
 import { Button } from "@/components/ui/button";
 import type { Ride } from "@/lib/transit-ride";
 import type { TripPhoto } from "@/lib/trip-days";
@@ -64,15 +65,13 @@ interface HopRowProps {
 
 /**
  * One hop: which photos it joins, the line it rode and where it got on and off, and the lines to
- * pick from, looked up at once while it has no line.
+ * pick from, looked up at once while it has no line. When none is found near the photos, stations
+ * can be picked to look near instead.
  */
 function HopRow({ hop, ends, onRide }: HopRowProps) {
   const ask = askOf(hop, ends);
-  const { finding, setFinding, kind, setKind, lines, mutation, ride } = useHopRide(
-    hop,
-    ask,
-    onRide,
-  );
+  const found = useHopRide(hop, ask, onRide);
+  const { finding, setFinding, kind, setKind, lines, mutation, ride } = found;
   const busy = busyOf(lines, mutation);
   return (
     <div className="flex flex-col gap-2 rounded-md border p-2">
@@ -96,8 +95,15 @@ function HopRow({ hop, ends, onRide }: HopRowProps) {
         />
       )}
       {finding && <LookupKind mode={hop.mode} kind={kind} disabled={busy} onKind={setKind} />}
+      <HopEndsPicker
+        ask={ask}
+        kind={kind}
+        shown={picksEnds(finding, found.ends, lines.data)}
+        ends={found.ends}
+        onEnds={found.setEnds}
+      />
       {finding && <LineChoices lines={lines.data} onPick={ride} disabled={busy} />}
-      <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines.data)} />
+      <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines)} />
     </div>
   );
 }
@@ -128,11 +134,33 @@ function numberOf(end: HopEnd): string {
   return end ? String(end.n) : "?";
 }
 
-/** What the look-up found, said when it found none. */
-function findNote(finding: boolean, lines: TransitLine[] | undefined): string {
-  if (!finding || lines === undefined || lines.length > 0) return "";
-  return "OpenStreetMap maps no line of this kind near both photos. The hop stays a straight dashed line.";
+/** Whether to offer stations to look near: once nothing was found near the photos, or one is picked. */
+function picksEnds(finding: boolean, ends: HopEnds, lines: TransitLine[] | undefined): boolean {
+  return finding && (hasEnds(ends) || lines?.length === 0);
 }
+
+/** Whether a station is picked for either end. */
+function hasEnds({ board, alight }: HopEnds): boolean {
+  return Boolean(board || alight);
+}
+
+/** What the look-up is doing, or what it found when it found none. */
+function findNote(finding: boolean, lines: { isFetching: boolean; data?: TransitLine[] }): string {
+  if (!finding) return "";
+  return lines.isFetching ? ASKING : noneNote(lines.data);
+}
+
+/** Said while the look-up runs, since the public servers can be slow. */
+const ASKING = "Asking OpenStreetMap. Its servers can take up to a minute when busy.";
+
+/** Said when the look-up found no line. */
+function noneNote(lines: TransitLine[] | undefined): string {
+  return lines?.length === 0 ? NONE_FOUND : "";
+}
+
+/** Said when no line passes near both ends. */
+const NONE_FOUND =
+  "OpenStreetMap maps no line of this kind within 500 m of both ends. If a photo was a walk from the station, pick the station above and it looks again; otherwise the hop stays a straight dashed line.";
 
 interface HopButtonsProps {
   hop: TripSegment;

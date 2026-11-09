@@ -420,6 +420,14 @@ usually one direction of one line, listed with its number, color and ends. When 
 its two directions), it's picked by itself; otherwise pick one. When the lines found are of more than one kind, **Bus**, **Subway** and **Train** (and **Other**, such as a ferry) show only that kind. Subway covers light
 rail, monorails and trams. **Change line** looks again.
 
+While it looks, the hop says it's asking OpenStreetMap, since a busy public server can take up to a minute (see
+below). When nothing is found, often because a photo was a walk from the line (say the beach, 15 minutes from the end
+of the line), **Got on near** and **Got off near** each find a station by name near that photo, the same search as a
+[Trip's legs](trips.md#stations-and-routes). Picking one looks again with the station standing in for the photo, and the line then gets on
+or off at the stop nearest it, so the walk from the photo to the station is drawn and baked as below. **The photo**
+goes back to looking near the photo. The stations picked here only steer the look-up; what's saved is the line's own
+**Got on at** and **Got off at**.
+
 Picking a line gets its stations or stops and sets **Got on at** and **Got off at** to the ones nearest each photo.
 Either can be changed to another station, such as one a walk away from the next photo, or to **At the photo**. The
 hop is drawn along the line's track between them, solid in the line's color, with a walk from the first photo to where
