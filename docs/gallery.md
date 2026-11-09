@@ -24,7 +24,7 @@ link's search works here too. Each choice counts the photos the Gallery's other 
 filter's `navigate` passes `resetScroll: false`, since TanStack Router scrolls to the top on every navigation
 otherwise. The Grid's filters, being the same code, do too.
 
-They're the portfolio's own code, not a copy: the Gallery imports `CameraFilterBar` and `GridColorFilters` from
+They're the portfolio's own code, not a copy: the Gallery imports `CameraFilterBar` and `VisualsPicker` from
 `apps/portfolio/src` through the `@portfolio/*` alias (in both apps' `tsconfig.json` and `vite.config.ts`), and reads
 each photo's JSON (with local edits) with the portfolio's `photosFromData`. The files those import each other with
 `@portfolio/` rather than `@/`, since `@/` means a different folder in each app; a new import in one of them must do the

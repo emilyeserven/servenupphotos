@@ -15,7 +15,8 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "typecheck": "pnpm -r typecheck",
-    "fallow": "fallow",
+    "fallow": "fallow --dupes-baseline fallow-baseline/dupes.json",
+    "check:fallow-baseline": "fallow dupes --save-baseline fallow-baseline/dupes.json && oxfmt fallow-baseline",
     "check": "pnpm lint && pnpm fmt:check && pnpm typecheck && pnpm fallow && pnpm check:fixtures",
     "check:fixtures": "node scripts/check-fixtures.mjs"
   },

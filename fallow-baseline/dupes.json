@@ -1,0 +1,24 @@
+{
+  "kind": "dupes",
+  "clone_groups": [
+    "apps/client-pipeline/src/components/bulk-tagging/pick-controls.tsx:104-115|apps/client-pipeline/src/components/tag-descriptions/tag-description-batch.tsx:84-92",
+    "apps/client-pipeline/src/components/caption-templates/editor.tsx:128-145|apps/client-pipeline/src/components/custom-lenses/editor.tsx:165-182",
+    "apps/client-pipeline/src/components/caption-templates/editor.tsx:153-161|apps/client-pipeline/src/components/custom-lenses/editor.tsx:185-193",
+    "apps/client-pipeline/src/components/gallery/gallery-sort.tsx:86-101|apps/client-pipeline/src/components/in-flight-sort.tsx:62-77",
+    "apps/client-pipeline/src/components/dashboard/needs-attention-table.tsx:97-103|apps/portfolio/src/components/photo-table.tsx:213-219"
+  ],
+  "clone_fingerprints": [
+    "dup:167f43ab:2",
+    "dup:c822904b:2",
+    "dup:d89fbaa3:2",
+    "dup:dbbf9836:2",
+    "dup:b7a6a520:2"
+  ],
+  "normalized_clone_fingerprints": [
+    "dup:cd8fb918:2",
+    "dup:7e640fed:2",
+    "dup:43715c46:2",
+    "dup:cbe402bb:2",
+    "dup:6de71e00:2"
+  ]
+}
