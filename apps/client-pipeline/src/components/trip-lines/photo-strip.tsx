@@ -8,7 +8,7 @@ import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { type StripVia, ViaChips } from "@/components/trip-lines/via-list";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap } from "@/lib/trip-gaps";
-import { offRoute, visitsAfter } from "@/lib/trip-visits";
+import { firstStops, offRoute, visitsAfter } from "@/lib/trip-visits";
 import { cn } from "@/lib/utils";
 
 interface PhotoStripProps {
@@ -53,7 +53,7 @@ export function PhotoStrip({ photos, visits, vias, offset = 0, ...rest }: PhotoS
           local={i}
           offset={offset}
           prev={photos[i - 1]}
-          before={visitsAfter(visits, photos[i - 1]?.id)}
+          before={stopsBefore(visits, photos[i - 1]?.id, offset + i)}
           viasBefore={vias?.get(p.id)}
           choices={choices}
           {...rest}
@@ -61,6 +61,14 @@ export function PhotoStrip({ photos, visits, vias, offset = 0, ...rest }: PhotoS
       ))}
     </ol>
   );
+}
+
+/**
+ * The trip stops the strip shows before the photo at index i of the day: those put before the
+ * first photo for the day's first, or else those after the photo before it in this strip.
+ */
+function stopsBefore(visits: TripVisit[] | undefined, prev: number | undefined, i: number) {
+  return i === 0 ? firstStops(visits) : visitsAfter(visits, prev);
 }
 
 interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits" | "vias"> {

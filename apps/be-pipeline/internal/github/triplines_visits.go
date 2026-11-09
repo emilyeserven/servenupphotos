@@ -27,8 +27,12 @@ type TripVisit struct {
 	Place string `json:"place,omitempty"`
 	// After is the ID of the photo the place comes after on the route, so the
 	// line passes through it on the way to the next photo; nil leaves it off
-	// the route, as a pin only.
+	// the route, as a pin only, unless First puts it before the first photo.
 	After *int `json:"after,omitempty"`
+	// First puts the place on the route before the day's first photo, such as
+	// lunch before the first photo was taken: after the start spot when the
+	// day has one, or else the line starts there. It wins over After.
+	First bool `json:"first,omitempty"`
 	// Photos are the IDs of the casual photos taken there, such as the food,
 	// in order: marked casual (see isCasual), they show only with the place
 	// on its day's Trip page. None when there are none.
@@ -51,6 +55,9 @@ func validVisits(visits []TripVisit, segments []TripSegment) *PublishError {
 		return publishErr(http.StatusBadRequest, "Keep a day to %d trip stops.", maxVisits)
 	}
 	for i := range visits {
+		if visits[i].First {
+			visits[i].After = nil
+		}
 		if perr := validVisit(&visits[i], i+1); perr != nil {
 			return perr
 		}

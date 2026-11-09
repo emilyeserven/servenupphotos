@@ -81,3 +81,14 @@ func TestBakeVisits(t *testing.T) {
 		t.Errorf("pin = %+v", m.Features[1])
 	}
 }
+
+func TestValidVisitsFirstWinsOverAfter(t *testing.T) {
+	after := 3
+	visits := []TripVisit{{Name: "Lunch", Kind: "restaurant", After: &after, First: true}}
+	if perr := validVisits(visits, nil); perr != nil {
+		t.Fatalf("validVisits: %v", perr.Message)
+	}
+	if visits[0].After != nil {
+		t.Errorf("a stop before the first photo kept After %d", *visits[0].After)
+	}
+}

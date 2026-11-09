@@ -92,11 +92,15 @@ function viaOf(draft: GapDraft, key: ViaKey): TripVia[] {
   return [...own, ...visitVia(draft, key)];
 }
 
-/** The trip stops put after photo key, as via spots that stand for them. */
+/**
+ * The trip stops put after photo key, or before the first photo for "start", as via spots that
+ * stand for them.
+ */
 function visitVia(draft: GapDraft, key: ViaKey): TripVia[] {
-  return (draft.visits ?? []).flatMap(({ after, latitude, longitude }, visit) =>
-    String(after) === key ? [{ after: after!, latitude, longitude, visit }] : [],
-  );
+  return (draft.visits ?? []).flatMap(({ after, first, latitude, longitude }, visit) => {
+    if (key === "start") return first ? [{ latitude, longitude, visit }] : [];
+    return !first && String(after) === key ? [{ after: after!, latitude, longitude, visit }] : [];
+  });
 }
 
 /** How many points a run's line goes through. */
@@ -115,10 +119,39 @@ function withPoints({ start, end, via }: Pick<Run, "start" | "end" | "via">): Pa
   return { ...(start && { start }), ...(end && { end }), ...(via.length > 0 && { via }) };
 }
 
-/** The first run: the first photo, after the start spot and its via spots when there is one. */
+/**
+ * The first run: the first photo, after the start spot (or else the first trip stop put before it)
+ * and its via spots when there is one.
+ */
 function firstRun(photos: number[], draft: GapDraft): Run {
-  const via = draft.start ? viaOf(draft, "start") : [];
-  return { start: draft.start, photos: photos.slice(0, 1), via };
+  const start = draft.start ?? stopStart(draft);
+  const via = start ? viaOf(draft, "start").filter((v) => !sameSpot(v, start)) : [];
+  return { start, photos: photos.slice(0, 1), via };
+}
+
+/**
+ * Where the line starts on a day with no start spot: the first trip stop put before the first
+ * photo, named, so the line runs from it; none when there is none.
+ */
+function stopStart(draft: GapDraft): TripPoint | undefined {
+  const stop = draft.visits?.find((v) => v.first);
+  return stop && { latitude: stop.latitude, longitude: stop.longitude, label: stop.name };
+}
+
+/** Whether two spots are at the same place. */
+function sameSpot(a: TripPoint, b: TripPoint): boolean {
+  return a.latitude === b.latitude && a.longitude === b.longitude;
+}
+
+/**
+ * The draft loaded from a saved line, with its trip stops: a start spot that only stands for the
+ * first trip stop put before the first photo isn't kept as a start spot of its own.
+ */
+export function withStops<T extends Pick<GapDraft, "start" | "visits">>(draft: T): T {
+  const stop = stopStart({ gaps: [], visits: draft.visits });
+  if (!draft.start || !stop || !sameSpot(draft.start, stop)) return draft;
+  const { start: _start, ...rest } = draft;
+  return rest as T;
 }
 
 /** The last run, ending at the end spot with the last photo's via spots when there is one. */

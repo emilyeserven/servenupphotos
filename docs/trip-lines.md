@@ -257,8 +257,10 @@ link to the Trip Stops page to add more). `after` is the photo it comes after. T
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
 two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
-route (it stops at the first and last gap), and a cross that takes it off the route again. A place not on the route
-is a pin only. A place put after a break or after the last
+route (it stops at the last gap), and a cross that takes it off the route again. Moving one earlier from after the
+first photo puts it before the first photo, as `"first": true` with no `after`, such as lunch before the first photo
+was taken: the line goes from the start spot through it to the first photo (as a via spot after the start spot), or,
+with no start spot, starts at it. A place not on the route is a pin only. A place put after a break or after the last
 photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
 time, so moving or removing the place keeps the line in step; the backend checks that `after` is one of the day's
 photos with an exact spot (not necessarily on a drawn segment, so a stop can follow a photo on an automatic line or at

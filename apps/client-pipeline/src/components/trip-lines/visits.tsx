@@ -155,7 +155,7 @@ function VisitRow({ visit, day, onChange }: VisitRowProps) {
         onChange={(e) => set({ note: e.target.value })}
       />
       <LinkField link={visit.link} onLink={(link) => set({ link })} />
-      <RouteSpot photos={day.photos} after={visit.after} />
+      <RouteSpot photos={day.photos} after={visit.after} first={visit.first} />
       <Button
         variant="ghost"
         size="icon"
@@ -195,13 +195,23 @@ function LinkField({ link, onLink }: { link?: string; onLink: (link: string) => 
 }
 
 /** Where the place is on the route, which the photo strip sets: between which photos, or not yet. */
-function RouteSpot({ photos, after }: { photos: TripDay["photos"]; after?: number }) {
-  const at = photos.findIndex((p) => p.id === after);
+function RouteSpot({ photos, after, first }: RouteSpotProps) {
   return (
-    <span className="text-muted-foreground text-xs">
-      {at === -1 ? "Not on the route yet" : `On the route between photos ${at + 1} and ${at + 2}`}
-    </span>
+    <span className="text-muted-foreground text-xs">{routeSpotText(photos, after, first)}</span>
   );
+}
+
+interface RouteSpotProps {
+  photos: TripDay["photos"];
+  after?: number;
+  first?: boolean;
+}
+
+/** Where a trip stop is on the route, in words. */
+function routeSpotText(photos: TripDay["photos"], after?: number, first?: boolean): string {
+  if (first) return "On the route before photo 1";
+  const at = photos.findIndex((p) => p.id === after);
+  return at === -1 ? "Not on the route yet" : `On the route between photos ${at + 1} and ${at + 2}`;
 }
 
 /** Adds a trip stop at a coordinate typed or pasted in, such as from Google Maps. */
