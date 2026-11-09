@@ -13,6 +13,7 @@ import { EditorActions, type EditorView } from "@/components/trip-lines/editor-a
 import { useDayPlaceAreas } from "@/components/trip-lines/use-day-place-areas";
 import { newVisit, withVisit } from "@/lib/trip-visits";
 import { GroupStrip } from "@/components/trip-lines/group-strip";
+import { stripVias } from "@/components/trip-lines/via-list";
 import { RouteMap } from "@/components/trip-lines/route-map";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TripDay, TripPhoto } from "@/lib/trip-days";
@@ -206,6 +207,7 @@ export function DayEditor({ day: taken, line, part }: DayEditorProps) {
             focus={focus}
             onFocus={setFocus}
             stacked={part === "order"}
+            vias={part === "route" ? stripVias(day, shownDraft, segments) : undefined}
           />
         )}
         {part !== "order" && (

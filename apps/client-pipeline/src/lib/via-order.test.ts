@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { TripSegment } from "@/api/trip-lines";
 import type { GapDraft } from "@/lib/trip-gaps";
-import { canMove, movedInRoute, viasInRouteOrder } from "@/lib/via-order";
+import { canMove, movedInRoute, photoAfter, viasInRouteOrder } from "@/lib/via-order";
 
 const p = (n: number) => ({ latitude: n, longitude: n });
 const line = { id: 1, name: "Bus 30" };
@@ -39,4 +39,13 @@ test("orders via points as the route reaches them, walks to and from stations in
   const draft: GapDraft = { gaps: [], via: { "3": [p(4)], "alight:2": [p(3)], "1": [p(1)] } };
   const keys = viasInRouteOrder(draft, segments).map((v) => v.key);
   assert.deepEqual(keys, ["1", "alight:2", "3"]);
+});
+
+test("finds the photo each via point's stretch leads to, for the photo strip", () => {
+  const ids = [1, 2, 3, 4];
+  assert.equal(photoAfter("start", ids, segments), 1);
+  assert.equal(photoAfter("1", ids, segments), 2);
+  assert.equal(photoAfter("board:2", ids, segments), 3);
+  assert.equal(photoAfter("alight:2", ids, segments), 3);
+  assert.equal(photoAfter("4", ids, segments), undefined);
 });

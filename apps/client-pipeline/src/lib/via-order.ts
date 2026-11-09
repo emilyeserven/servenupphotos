@@ -1,5 +1,5 @@
 import type { TripPoint, TripSegment } from "@/api/trip-lines";
-import { walkKey } from "@/lib/station-walks";
+import { walkKey, walkOfKey } from "@/lib/station-walks";
 import type { GapDraft, ViaKey } from "@/lib/trip-gaps";
 
 /** A via point with where it is in the draft: the list after `key`, at `index`. */
@@ -110,4 +110,21 @@ export function movedInRoute(
   const target = [...(lists[to.key] ?? [])];
   target.splice(to.index, 0, via.point);
   return { ...draft, via: { ...lists, [to.key]: target } };
+}
+
+/**
+ * The photo the stretch after key leads to, by the day's photo ids in order: the first photo after
+ * the start spot, the photo a walk to or from a station is on the way to, or the photo after key's;
+ * none for the stretch to the end spot.
+ */
+export function photoAfter(
+  key: ViaKey,
+  ids: number[],
+  segments: TripSegment[],
+): number | undefined {
+  if (key === "start") return ids[0];
+  const walk = walkOfKey(key);
+  if (walk) return segments.find((s) => s.line && s.photos[0] === walk.a)?.photos[1];
+  const at = ids.indexOf(Number(key));
+  return at === -1 ? undefined : ids[at + 1];
 }

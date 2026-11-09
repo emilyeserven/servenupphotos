@@ -399,7 +399,9 @@ A line drawn by hand is straight from point to point. To make it follow the stre
    points v1, v2, … in the order the route goes through them, and the list under the tools says where each is ("After
    photo 2", "Walk from Broderick St & Francisco St to photo 3"). Its arrows move one a place earlier or later: past
    the next via point, or past the photo or station at the end of its stretch into the next one, so a lone via point
-   after photo 3 moves up onto the walk from the bus stop to photo 3. Its × removes it.
+   after photo 3 moves up onto the walk from the bus stop to photo 3. Its × removes it. The photo strip on **Route** shows the
+   same numbered squares between the two photos each via point is between, before that stretch's trip stops; pointing
+   at one says where it is.
 2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
    servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
    walk, bus or car segment's points and via points, walking on foot and buses and cars by road, and for every walk to
