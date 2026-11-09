@@ -1,0 +1,37 @@
+/*
+ * The fade between pages, shared by the portfolio and the pipeline (docs/page-fade.md). A page
+ * switch runs as a view transition of the type `page` (src/lib/page-fade.ts): the old page fades
+ * out, then the new one fades in. The portfolio fades the whole screen (`root`) but its menu; the
+ * pipeline fades only its page area (`page`), so the sidebar stays put.
+ */
+@keyframes page-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Nothing moves by default: a browser without view transition types, or a viewer who asked for
+   reduced motion, sees the new page at once. */
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:active-view-transition-type(page)::view-transition-old(root),
+  :root:active-view-transition-type(page)::view-transition-old(page) {
+    animation: page-fade-out 120ms ease-in both;
+  }
+
+  :root:active-view-transition-type(page)::view-transition-new(root),
+  :root:active-view-transition-type(page)::view-transition-new(page) {
+    animation: page-fade-in 180ms ease-out 120ms both;
+  }
+}

@@ -2,6 +2,7 @@ import { MutationCache, QueryClient, QueryClientProvider } from "@tanstack/react
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { pageFade } from "@portfolio/lib/page-fade";
 import { cachedFile, type FileChange } from "@/lib/optimistic";
 import { useCombinedDataStore } from "@/stores/combined-data";
 import { type FileMove, useLocalEditsStore } from "@/stores/local-edits";
@@ -65,6 +66,7 @@ const queryClient = new QueryClient({
 const router = createRouter({
   routeTree,
   context: { queryClient },
+  defaultViewTransition: pageFade,
   defaultPreload: "intent",
 });
 

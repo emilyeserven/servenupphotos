@@ -102,6 +102,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio Graph](docs/portfolio-graph.md) (`/graph` on the portfolio): a bar, line, dot, pie or scatter graph of your own from those counts and the camera settings, with filters, axis ranges, presets (and your own, saved in the browser) and a Wide view
 - [Portfolio Color](docs/portfolio-color.md) (`/color` on the portfolio): filtering photos by hue bucket or shade, sorting them by color or vividness, with each photo's share of colors
 - [Portfolio Back to top button](docs/portfolio-back-to-top.md): the button at the bottom left of every page but the Map and Color that scrolls back to the top
+- [Page fade](docs/page-fade.md): the short fade out and in when switching pages, on the portfolio and in the pipeline
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
 - [Dashboard](docs/dashboard.md) (`/`): the home page, with the next Lightroom albums, drafts, Compare sets, Instagram queue and Site Spotlight dates
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets, and Status (`/settings/status`), the services and connections check

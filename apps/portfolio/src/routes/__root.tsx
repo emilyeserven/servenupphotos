@@ -11,7 +11,7 @@ interface RouterContext {
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <main className="min-h-svh bg-background text-foreground">
-      <div className="fixed top-4 right-4 z-40">
+      <div className="fixed top-4 right-4 z-40 [view-transition-name:site-menu]">
         <SiteMenu />
       </div>
       <PageHeaderSpotlight />

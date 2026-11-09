@@ -59,7 +59,8 @@ function RootLayout() {
             />
             <NavBreadcrumbs />
           </header>
-          <div className="flex-1">
+          {/* Only the page fades when switching pages; the sidebar and breadcrumbs stay. */}
+          <div className="flex-1 [view-transition-name:page]">
             <Outlet />
           </div>
         </SidebarInset>
