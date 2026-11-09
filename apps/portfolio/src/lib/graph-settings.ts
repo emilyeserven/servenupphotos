@@ -1,6 +1,7 @@
 import { type RangeKey, rangeValues } from "@portfolio/lib/camera-filters";
 import type { GraphStat } from "@portfolio/lib/graph-data";
-import { type Photo, photos as allPhotos, SETTING_FORMATS } from "@portfolio/lib/photos";
+import { SETTING_FORMATS } from "@portfolio/lib/photo-settings";
+import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
 import { type Bucket, bucketGroup, type StatGroup } from "@portfolio/lib/stat-groups";
 
 /** A camera setting's value as a row: written as a photographer would, filtering to just that value. */

@@ -1,4 +1,5 @@
-import { settingsText, type Photo } from "@/lib/photos";
+import { settingsText } from "@/lib/photo-settings";
+import type { Photo } from "@/lib/photos";
 
 /** A photo's aperture, exposure, ISO, focal length, lens and camera, on one line. */
 export function TechnicalInfo({ photo }: { photo: Photo }) {

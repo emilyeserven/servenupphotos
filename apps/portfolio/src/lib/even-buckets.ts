@@ -1,5 +1,5 @@
 import { exposureSeconds, RANGE_KEYS, type RangeKey } from "@portfolio/lib/camera-filters";
-import { SETTING_FORMATS } from "@portfolio/lib/photos";
+import { SETTING_FORMATS } from "@portfolio/lib/photo-settings";
 import type { StatRow } from "@portfolio/lib/stat-groups";
 
 /**

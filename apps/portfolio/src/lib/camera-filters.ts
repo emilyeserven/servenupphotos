@@ -4,7 +4,8 @@ import {
   metaGroupById,
   type MetaGroup,
 } from "@portfolio/lib/metadata-groups";
-import type { CameraSettings, Photo } from "@portfolio/lib/photos";
+import type { CameraSettings } from "@portfolio/lib/photo-settings";
+import type { Photo } from "@portfolio/lib/photos";
 import { filterPhotos, parseFilters } from "@portfolio/lib/photo-filters";
 import { matchesOrientation, ORIENTATION_KEY } from "@portfolio/lib/orientation";
 

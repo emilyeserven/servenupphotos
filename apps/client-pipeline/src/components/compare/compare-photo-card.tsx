@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
 import { type ComparePhoto, comparePhotoName, isWinner } from "@/lib/compare-groups";
 import { offlineSmallUrl } from "@/lib/offline-thumbnails";
-import { SETTING_FORMATS } from "@portfolio/lib/photos";
+import { SETTING_FORMATS } from "@portfolio/lib/photo-settings";
 import { readableDate } from "@/lib/photo-date";
 import { cn } from "@/lib/utils";
 

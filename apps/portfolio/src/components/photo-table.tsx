@@ -34,13 +34,8 @@ import {
   locationText,
   parseLocationDetail,
 } from "@/lib/location-detail";
-import {
-  settingText,
-  type SettingKey,
-  type CameraSettings,
-  type Photo,
-  type PhotoImage,
-} from "@/lib/photos";
+import { type CameraSettings, type SettingKey, settingText } from "@/lib/photo-settings";
+import type { Photo, PhotoImage } from "@/lib/photos";
 import {
   HIDEABLE,
   type HideableColumn,
