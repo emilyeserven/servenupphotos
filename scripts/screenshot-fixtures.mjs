@@ -1234,28 +1234,45 @@ function changelogEntry(line) {
 
 const secret = { set: true, last4: "a1b2" };
 
+/** The settings as `GET /api/settings` and the saves answer: everything set up. */
+function settingsFixture() {
+  return {
+    r2: {
+      accountId: "0123456789abcdef",
+      accessKeyId: "fixture-access-key",
+      secretAccessKey: secret,
+      bucket: "servenupphotos",
+      publicUrl: CDN,
+    },
+    github: {
+      repo: REPO,
+      branch: BASE_BRANCH,
+      folder: "",
+      token: secret,
+      includeUntitled: false,
+    },
+  };
+}
+
+/** What an Update Data preview says about the photo files it read, before its own fields. */
+function scannedPhotos() {
+  return {
+    repo: REPO,
+    folder: `${FOLDER}/photos`,
+    branch: PULL_REQUEST.branch,
+    pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
+    photoFiles: headPhotos.length,
+    unreadable: [],
+  };
+}
+
 /** The default answers: everything set up, and one photo data pull request open. */
 export function defaultFixtures() {
   return {
     "GET /api/health": { status: "ok", bff: "ok", backend: "ok" },
     "GET /api/hello": { message: "Hello from be-pipeline (Go)" },
     "GET /api/changelog": changelogFixture(),
-    "GET /api/settings": {
-      r2: {
-        accountId: "0123456789abcdef",
-        accessKeyId: "fixture-access-key",
-        secretAccessKey: secret,
-        bucket: "servenupphotos",
-        publicUrl: CDN,
-      },
-      github: {
-        repo: REPO,
-        branch: BASE_BRANCH,
-        folder: "",
-        token: secret,
-        includeUntitled: false,
-      },
-    },
+    "GET /api/settings": settingsFixture(),
     "POST /api/settings/r2/test": { ok: true, message: "Connected to bucket servenupphotos." },
     "POST /api/settings/github/test": { ok: true, message: `Connected to ${REPO}.` },
     "GET /api/photos/combined": {
@@ -1484,11 +1501,85 @@ export function defaultFixtures() {
       before: null,
       changed: true,
     }),
+    "DELETE /api/cameras/x-t5": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/cameras/x-t5.json`,
+      data: null,
+      before: added.cameras[0].data,
+      changed: true,
+    }),
+    "PUT /api/metainfo/lens-brands": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/metainfo/lens-brands.json`,
+      data: body,
+      before: added.metainfo[2].data,
+      changed: true,
+    }),
+    "DELETE /api/metainfo/iso-high": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/metainfo/iso-high.json`,
+      data: null,
+      before: added.metainfo[1].data,
+      changed: true,
+    }),
+    "PUT /api/places/gyeongbokgung-palace": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/places/gyeongbokgung-palace.json`,
+      data: body,
+      before: added.places[0].data,
+      changed: true,
+    }),
+    "PUT /api/places/washington-square-park/area": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/places/washington-square-park.geo.json`,
+      changed: true,
+    }),
+    "DELETE /api/places/washington-square-park/area": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/places/washington-square-park.geo.json`,
+      changed: true,
+    }),
+    "PUT /api/organize/albums/japan/parent": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/albums/japan.json`,
+      changed: true,
+    }),
+    "DELETE /api/photos/in-flight": () => ({
+      path: added.photo.path,
+      before: added.photo.data,
+      image: { key: "originals/DSCF3104.jpg", deleted: true, versions: [] },
+    }),
+    "POST /api/photos/bucket/versions": ({ body }) => ({ key: body?.key ?? "", versions: {} }),
+    "POST /api/data/image-base-url/preview": () => ({
+      ...scannedPhotos(),
+      from: "",
+      to: "",
+      origins: [{ origin: CDN, urls: headPhotos.length * 4, files: headPhotos.length }],
+      files: [],
+      urls: 0,
+    }),
+    "POST /api/data/image-base-url": () => ({ ...pendingSave(), files: 3, urls: 12 }),
+    "POST /api/data/missing-fields/preview": () => ({
+      ...scannedPhotos(),
+      fields: [],
+      files: [],
+      readExif: false,
+    }),
+    "POST /api/data/missing-fields": () => ({ ...pendingSave(), files: 2, fields: 5 }),
+    "PUT /api/settings/r2": () => settingsFixture(),
+    "PUT /api/settings/github": () => settingsFixture(),
     "PUT /api/cameras/x-t5": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/cameras/x-t5.json`,
       data: body,
       before: added.cameras[0].data,
+      changed: true,
+    }),
+    "DELETE /api/captions/instagram": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/captions/instagram.json`,
+      data: null,
+      before: added.captions[0].data,
       changed: true,
     }),
     "PUT /api/captions/instagram": ({ body }) => ({
@@ -1498,11 +1589,25 @@ export function defaultFixtures() {
       before: added.captions[0].data,
       changed: true,
     }),
+    "DELETE /api/lenses/7artisans-12mm-f2-8": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,
+      data: null,
+      before: added.lenses[0].data,
+      changed: true,
+    }),
     "PUT /api/lenses/7artisans-12mm-f2-8": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,
       data: body,
       before: added.lenses[0].data,
+      changed: true,
+    }),
+    "DELETE /api/likes/jane": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/likes/jane.json`,
+      data: null,
+      before: added.likes[0].data,
       changed: true,
     }),
     "PUT /api/likes/jane": ({ body }) => ({
@@ -1600,11 +1705,25 @@ export function defaultFixtures() {
       { name: "南海難波", nameEn: "Nankai Namba", latitude: 34.6627, longitude: 135.5018, km: 0.8 },
     ],
     "GET /api/transit/lines/1/track": curvedTrack,
+    "DELETE /api/triplines/2026-10-01": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/triplines/2026-10-01.json`,
+      data: null,
+      before: added.triplines[0].data,
+      changed: true,
+    }),
     "PUT /api/triplines/2026-10-01": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/triplines/2026-10-01.json`,
       data: body,
       before: added.triplines[0].data,
+      changed: true,
+    }),
+    "DELETE /api/tripstories/story-2026-10-01": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/triplines/story-2026-10-01.json`,
+      data: null,
+      before: added.triplines[1].data,
       changed: true,
     }),
     "PUT /api/tripstories/story-2026-10-01": ({ body }) => ({
@@ -1625,11 +1744,25 @@ export function defaultFixtures() {
       key: "gear/7a8b9c0d1e2f-lens.webp",
       url: "https://cdn.servenupphotos.net/gear/7a8b9c0d1e2f-lens.webp",
     },
+    "DELETE /api/gear/camera-fujifilm-x-t5": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/gear/camera-fujifilm-x-t5.json`,
+      data: null,
+      before: added.gear[0].data,
+      changed: true,
+    }),
     "PUT /api/gear/camera-fujifilm-x-t5": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/gear/camera-fujifilm-x-t5.json`,
       data: body,
       before: added.gear[0].data,
+      changed: true,
+    }),
+    "DELETE /api/graphs/time-of-day": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/graphs/time-of-day.json`,
+      data: null,
+      before: added.graphs[2].data,
       changed: true,
     }),
     "PUT /api/graphs/time-of-day": ({ body }) => ({
@@ -1643,6 +1776,13 @@ export function defaultFixtures() {
       ...pendingSave(),
       path: `${FOLDER}/timeline/${body.trip.id}.json`,
       data: body.trip,
+    }),
+    "DELETE /api/trips/japan-2026-09-22": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/timeline/japan-2026-09-22.json`,
+      data: null,
+      before: added.timeline[0].data,
+      changed: true,
     }),
     "PUT /api/trips/japan-2026-09-22": ({ body }) => ({
       ...pendingSave(),

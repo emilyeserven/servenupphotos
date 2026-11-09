@@ -16,7 +16,8 @@
     "fmt:check": "oxfmt --check",
     "typecheck": "pnpm -r typecheck",
     "fallow": "fallow",
-    "check": "pnpm lint && pnpm fmt:check && pnpm typecheck && pnpm fallow"
+    "check": "pnpm lint && pnpm fmt:check && pnpm typecheck && pnpm fallow && pnpm check:fixtures",
+    "check:fixtures": "node scripts/check-fixtures.mjs"
   },
   "devDependencies": {
     "concurrently": "10.0.6",
