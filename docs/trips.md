@@ -105,7 +105,9 @@ combines the metadata groups into `METAINFO.json` (`be-pipeline/internal/github/
 - **`legs`** are left out when there are none, as a timeline label was written. Each end has its `day`, and either a
   `spot` with no photo or the ID of the day's `photo` it leaves from or arrives at; with neither, it's the day's last
   photo with an exact spot where it leaves and its first where it arrives. A `photo` that isn't from that day, or has
-  no exact spot, falls back to the same. A train, bus or ferry leg can also have the `line` it rode and its track as `path`
+  no exact spot, falls back to the same. An end at a photo of a train, bus or ferry leg can also have a `station`
+  (`{ "latitude", "longitude", "label" }`) it got on or off at near that photo; see
+  [Stations and routes](#stations-and-routes). A train, bus or ferry leg can also have the `line` it rode and its track as `path`
   (`[longitude, latitude]` points, at most 20,000); see [Stations and routes](#stations-and-routes).
 - Trips can't overlap: saving one whose days another Trip already covers fails, so each day has at most one Trip. If a
   hand-edited file does overlap, the Timeline shows both names joined with " · ".
@@ -155,12 +157,30 @@ leg is in a straight line.
 
 A **Train**, **Bus** or **Ferry** leg can leave from and arrive at a station. With **A station or spot with no photo**
 picked, **Find a station** looks up the stations (or stops, or ferry terminals) within 30 km of that end's day (its
-spot once it has one, or else its photo) whose name, in any language, has the longest word typed. The ones whose names
-have the most of the words typed come first, then the nearest, each with its English name beside it, such as
-"博多 (Hakata)". So "Shimonoseki Kokusai Terminal" asks for
-"shimonoseki", and a terminal whose names also have "Kokusai" or "Terminal" comes before Shimonoseki Station. Picking one fills in the label and
-position (`GET /api/transit/stations?mode=ferry&q=Shimonoseki&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`,
+spot once it has one, or else its photo) whose names, in any language, have any of the words typed. The ones with the
+most of the words come first, then the nearest, each with its English name beside it, such as "博多 (Hakata)". So
+"Shimonoseki Kokusai Terminal" puts a terminal whose names have "Kokusai" and "Terminal" before one that only has
+"Shimonoseki". Picking one fills in the label and position
+(`GET /api/transit/stations?mode=ferry&q=Shimonoseki&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`,
 through the same Overpass servers, throttle and day-long cache as [Lines ridden](trip-lines.md#lines-ridden)).
+
+The menu beside the search box picks the service it asks, and the choice is kept in the browser for every search:
+
+- **Photon** (the default): [photon.komoot.io](https://photon.komoot.io), a search-as-you-type service over
+  OpenStreetMap's data. It answers in about a second and ranks by how well the name matches, then how near it is,
+  within a box about 30 km around the end, with English names where they're mapped. It can only filter by a station's
+  main tag ([`osm_tag`](https://github.com/komoot/photon#filter-results-by-tags-and-keys)), so a **Train** search
+  there also finds subway stations. `PHOTON_URL` points it at another Photon server.
+  (`?source=photon`, `be-pipeline/internal/transit/photon.go`.)
+- **Overpass**: the OpenStreetMap query servers below, which tell subway and train stations apart but are often slow
+  when busy.
+
+> **Frontend analogy:** Photon is a dedicated autocomplete endpoint, like Algolia, over the same data that Overpass
+> answers as a full database query each time.
+
+With Overpass, a city has few enough stations and ferry terminals that the backend asks the server for all of them near there, with
+no name, and matches names itself, so one answer (kept for a day, for spots within about a kilometer) serves every
+name typed there. Bus stops are too many, so for a bus the server matches the longest word typed.
 
 Only the leg's kind of station is looked for: a **Ferry** leg finds ferry terminals (`amenity=ferry_terminal`, or a
 `public_transport` station with `ferry=yes`), a **Bus** leg bus stops and bus stations, and a **Train** leg railway
@@ -174,6 +194,15 @@ the public servers give up on a 30 km search, which the page showed as a 503 aft
 Every transit look-up logs to the browser console under `[transit]`: when it starts, how long it took, and what it found
 or why it failed (`api/transit-log.ts`). The backend's terminal logs each Overpass query, each server tried with how
 long it took and what it answered, and answers given from memory.
+
+An end at a photo can have a station too, such as the ferry terminal a short walk from the day's last photo: under
+the photo, **Station near the photo** finds one the same way, or **Type the station instead** adds one by hand (a label and
+`latitude, longitude`, starting at the photo) for when the search can't find it or OpenStreetMap is too busy. A
+station found by name can be renamed or moved the same way. The photo stays the end's photo (picking a station for
+the day's usual photo names that photo, so the station stays with it), and the leg runs from the station instead, so
+**Look up route** looks near the station. Commit bakes a walk from the photo to the station (or from the station to the
+photo where the leg arrives) on that end's day. **From the photo** takes the station off. Changing the end's day or
+photo, or picking a spot, drops it, and a flight or drive keeps none.
 
 Once both ends have a spot, **Look up route** finds the lines of the leg's kind that pass within 500 m of both ends
 (the same look-up as a day's hops, so it works best with each end at its station), and picking one fetches its track

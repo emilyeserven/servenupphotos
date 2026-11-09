@@ -2,9 +2,10 @@ import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 import { useState } from "react";
 import type { TripLegEnd } from "@/api/trips";
 import { dayTitle } from "@/components/trip-lines/day-title";
-import { Input } from "@/components/ui/input";
+import { LegStation } from "@/components/trips/leg-station";
+import { PointFields } from "@/components/trips/point-fields";
 import { StationSearch } from "@/components/trips/station-search";
-import { endSpot, parsePosition, ridesLegLine } from "@/lib/trip-legs";
+import { endSpot, ridesLegLine } from "@/lib/trip-legs";
 import type { TripPhoto } from "@/lib/trip-days";
 
 interface LegEndFieldProps {
@@ -47,6 +48,7 @@ export function LegEndField(props: LegEndFieldProps) {
       ) : (
         <PhotoNote photo={photo} photoWord={props.photoWord} named={end.photo !== undefined} />
       )}
+      <LegStation title={title} mode={props.mode} end={end} photo={photo} onChange={onChange} />
     </fieldset>
   );
 }
@@ -154,46 +156,13 @@ function StationOrSpot({ title, mode, end, photo, onChange }: LegEndFieldProps) 
           }}
         />
       )}
-      <SpotFields key={picked} end={end} title={title} onChange={onChange} />
-    </>
-  );
-}
-
-interface SpotFieldsProps {
-  end: TripLegEnd;
-  title: string;
-  onChange: (end: TripLegEnd) => void;
-}
-
-/** A spot's label and where it is, typed as "latitude, longitude". */
-function SpotFields({ end, title, onChange }: SpotFieldsProps) {
-  const spot = end.spot!;
-  const [text, setText] = useState(() => `${spot.latitude}, ${spot.longitude}`);
-  const valid = parsePosition(text) !== undefined;
-  return (
-    <div className="flex flex-col gap-1">
-      <Input
-        value={spot.label ?? ""}
+      <PointFields
+        key={picked}
+        point={end.spot!}
+        title={title}
         placeholder="Hakata Port"
-        aria-label={`${title}: the spot's label`}
-        onChange={(e) => onChange({ ...end, spot: { ...spot, label: e.target.value } })}
+        onChange={(spot) => onChange({ ...end, spot })}
       />
-      <Input
-        value={text}
-        placeholder="33.6064, 130.4017"
-        aria-label={`${title}: latitude, longitude`}
-        aria-invalid={!valid}
-        onChange={(e) => {
-          setText(e.target.value);
-          const at = parsePosition(e.target.value);
-          if (at) onChange({ ...end, spot: { ...spot, ...at } });
-        }}
-      />
-      <p className="text-muted-foreground text-xs">
-        {valid
-          ? "Latitude, longitude, such as from Google Maps."
-          : "Type it as latitude, longitude."}
-      </p>
-    </div>
+    </>
   );
 }

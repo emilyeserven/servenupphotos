@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Search, TrainFront } from "lucide-react";
 import { useState } from "react";
 import { type Spot, type TransitStation, transitStationsQuery } from "@/api/transit";
+import { StationSourcePicker } from "@/components/trips/station-source-picker";
+import { useStationSourceStore } from "@/stores/station-source";
 import type { TripPoint } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { Button } from "@/components/ui/button";
@@ -29,8 +31,9 @@ function stationLabel(s: TransitStation): string {
 export function StationSearch({ title, mode, near, onPick }: StationSearchProps) {
   const [text, setText] = useState("");
   const [asked, setAsked] = useState("");
+  const source = useStationSourceStore((s) => s.source);
   const stations = useQuery({
-    ...transitStationsQuery({ mode, name: asked, near }),
+    ...transitStationsQuery({ mode, name: asked, near, source }),
     enabled: asked !== "",
   });
   return (
@@ -48,6 +51,7 @@ export function StationSearch({ title, mode, near, onPick }: StationSearchProps)
           aria-label={`${title}: find a station`}
           onChange={(e) => setText(e.target.value)}
         />
+        <StationSourcePicker title={title} />
         <Button type="submit" variant="outline" size="icon" disabled={!text.trim()}>
           {stations.isFetching ? <Busy busy /> : <Search aria-hidden />}
           <span className="sr-only">Find a station</span>
