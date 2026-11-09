@@ -56,6 +56,8 @@ cd apps/be-pipeline && golangci-lint run
 
 `fallow` fails on dead exports, duplicated code and complex functions (roughly: keep each function's cyclomatic
 complexity at 4 or under; every `?:`, `??`, `?.`, `&&` and `||` counts). Split a function rather than adding an ignore.
+`golangci-lint` likewise fails a Go function that grows past today's longest or most complex one (`funlen`, `gocyclo`,
+`dupl`), so split a function rather than raising the limit in `.golangci.yml`.
 
 ## Conventions
 
