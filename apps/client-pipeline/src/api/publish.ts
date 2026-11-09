@@ -49,7 +49,8 @@ export interface SocialCalendar extends Omit<SocialCalendarRead, "photos"> {
 /** Every photo JSON file with its social media publish date. */
 export const socialCalendarQuery = queryOptions({
   queryKey: ["publish", "instagram"],
-  queryFn: () => requestJson<SocialCalendarRead>("/api/attention"),
+  // The whole files, not /api/attention's slim copy: the calendar's post backdrops read `images`.
+  queryFn: () => requestJson<SocialCalendarRead>("/api/publish/instagram"),
   retry: false,
   refetchOnWindowFocus: false,
 });
