@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --import ../../scripts/test-aliases-register.mjs --test src/lib/*.test.ts"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "catalog:",

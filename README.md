@@ -36,6 +36,7 @@ pnpm dev:portfolio   # just the portfolio: http://localhost:5173/
 pnpm dev:docker      # just the pipeline in Docker: http://localhost:5174
 pnpm photos:local    # refresh the portfolio's local photo, place and localization data (docs/local-photo-data.md)
 pnpm dev:pipeline    # the pipeline without Docker: Go :8081 + Fastify :8080 + Vite :5173 (proxies /api → :8080)
+pnpm test            # unit tests for the pure functions in src/lib (node --test)
 pnpm shot pipeline /gallery   # screenshot a page with sample data, no backend needed (see below)
 ```
 

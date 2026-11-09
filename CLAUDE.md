@@ -52,6 +52,7 @@ Everything here is fast; run the narrowest check while working and `pnpm check` 
 pnpm check                         # oxlint, oxfmt --check, typecheck, fallow, check:fixtures (~6s); `pnpm fmt` fixes formatting
 pnpm check:fixtures                # every backend route has a fixture in scripts/fixtures/
 pnpm build                         # all three TS apps (~5s); CI runs it too
+pnpm test                          # node --test: the portfolio's map-preview and both apps' src/lib (~2s); CI runs it too
 cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes ~8s
 cd apps/be-pipeline && golangci-lint run
 ```
@@ -62,6 +63,11 @@ and on any duplicate code block not in the committed baseline `fallow-baseline/d
 today pass; a new one fails `pnpm check` (and CI, which runs the same script). Split or share the code instead of
 adding to the baseline. Only when a PR deliberately accepts a duplicate, run `pnpm check:fallow-baseline` and commit
 the changed file.
+
+**Tests:** `pnpm test` runs `node --test` on `*.test.ts` files: the portfolio's `map-preview/` and each app's
+`src/lib/` (next to the module they test), with no test framework. `scripts/test-aliases-register.mjs` lets Node
+resolve `@/` and `@portfolio/` imports, load the data JSON and stub Vite's `import.meta.glob`; a module that imports
+React components (`.tsx`) can't be tested this way. Tests assert behavior with small hand-built objects.
 
 ## Conventions
 
