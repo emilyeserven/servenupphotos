@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { count } from "@/components/update-data-shared";
-import { downloadFile } from "@/lib/album-layout";
+import { downloadFile } from "@/lib/album-layout-editor";
 import { tagLibraryJson, tagLibraryPrompt } from "@/lib/tag-library-prompt";
 
 /**

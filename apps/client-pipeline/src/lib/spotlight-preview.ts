@@ -1,5 +1,5 @@
 import type { PreviewPhoto } from "@/components/spotlight-preview";
-import type { Focus } from "@/lib/spotlight-focus";
+import type { Focus } from "@/lib/spotlight-focus-edits";
 
 /** A string field of a photo's data, trimmed, or undefined when it's empty or not a string. */
 function text(data: Record<string, unknown>, field: string): string | undefined {

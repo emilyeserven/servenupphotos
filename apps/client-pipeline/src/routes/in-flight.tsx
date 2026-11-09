@@ -9,7 +9,7 @@ import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { DRAFT_FILTERS } from "@/components/saved-drafts";
 import { Card, CardContent } from "@/components/ui/card";
-import { type PhotoFilters, parseFilters, prefixedFilters } from "@/lib/photo-filters";
+import { type PhotoFilters, parseFilters, prefixedFilters } from "@/lib/photo-data-filters";
 
 interface InFlightSearch extends PhotoFilters {
   /** Shows ALLPHOTOS.json in a panel beside the photo files. */

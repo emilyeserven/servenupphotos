@@ -1,9 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
 import { FilterIcon, SearchIcon } from "lucide-react";
-import { FilterResult, FilterToggle, type ToggleChoices } from "@/components/photo-filters";
+import { FilterResult, FilterToggle, type ToggleChoices } from "@/components/photo-filter-bar";
 import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import type { FilterChoice } from "@/lib/photo-filters";
+import type { FilterChoice } from "@/lib/photo-data-filters";
 
 /** Where a bucket photo's data is: in the open pull request, in ALLPHOTOS.json, or nowhere yet. */
 export type PhotoState = "in-flight" | "saved" | "unsaved";

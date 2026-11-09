@@ -13,7 +13,7 @@ A photo is one JSON file, `photos/<PHOTONAME>.json`, combined by Commit into `AL
 - **A field only some photos have.** It's left out of the defaults and read by its key, like `perceptualHash`
   and `colors` (tagged `omitempty` in `photoJSON`) or `undecided` and `spotlightZoneFocus`, which the pipeline
   reads with string constants (`UNDECIDED` in `apps/client-pipeline/src/lib/undecided.ts`,
-  `SPOTLIGHT_ZONE_FOCUS` in `apps/client-pipeline/src/lib/spotlight-focus.ts`). Skip steps 1 and 2 for these.
+  `SPOTLIGHT_ZONE_FOCUS` in `apps/client-pipeline/src/lib/spotlight-focus-edits.ts`). Skip steps 1 and 2 for these.
 
 ## 1. Default, in the backend
 
@@ -38,7 +38,7 @@ A photo is one JSON file, `photos/<PHOTONAME>.json`, combined by Commit into `AL
 - Type the field in `apps/client-pipeline/src/api/photos.ts` where the pipeline reads photo data, and edit it
   where the page that owns it saves: the Photo page's parts are in
   `apps/client-pipeline/src/components/edit-in-flight/` (`photo-json.ts` builds the JSON that `Update` saves),
-  Site Spotlight's in `src/lib/spotlight-focus.ts`. Put new UI in a new component file.
+  Site Spotlight's in `src/lib/spotlight-focus-edits.ts`. Put new UI in a new component file.
 - A field the pipeline reads but the portfolio shouldn't see is stripped at build time like `notes`
   (`apps/portfolio/private-notes.ts`, `docs/photo-notes.md`).
 

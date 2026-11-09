@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { count } from "@/components/update-data-shared";
-import { downloadFile } from "@/lib/album-layout";
+import { downloadFile } from "@/lib/album-layout-editor";
 import {
   type LightroomMerge,
   mergeLightroomAlbums,

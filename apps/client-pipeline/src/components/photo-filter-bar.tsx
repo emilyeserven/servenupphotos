@@ -13,7 +13,7 @@ import {
   filterParam,
   matchesFilters,
   parseFilters,
-} from "@/lib/photo-filters";
+} from "@/lib/photo-data-filters";
 import { cn } from "@/lib/utils";
 import { useLocalEditsStore } from "@/stores/local-edits";
 

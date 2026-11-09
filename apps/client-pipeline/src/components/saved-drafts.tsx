@@ -10,7 +10,7 @@ import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
 import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-sort";
 import { DraftsSkeleton } from "@/components/in-flight-loading";
 import { MissingImageDrafts } from "@/components/missing-image-drafts";
-import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
+import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
 import { DraftTile, UndecidedQueue } from "@/components/undecided-photos";
 import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
 import { editedData, undecidedPaths } from "@/lib/undecided";

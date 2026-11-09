@@ -5,7 +5,7 @@ import { MarkdownField } from "@/components/album-layout/markdown-field";
 import { PhotoPickDialog } from "@/components/album-layout/photo-pick-dialog";
 import { Button } from "@/components/ui/button";
 import { moved, photoId } from "@/lib/album-photo-order";
-import { EMPTY_ROW, MAX_ROW_PHOTOS, emptyRow, placedIds, withRow } from "@/lib/album-layout";
+import { EMPTY_ROW, MAX_ROW_PHOTOS, emptyRow, placedIds, withRow } from "@/lib/album-layout-editor";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
 interface LayoutRowsProps {

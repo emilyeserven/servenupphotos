@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import type { InFlightFileRead, PublishedFile } from "@/api/photos";
 import { sortGallery } from "@/components/gallery/gallery-sort";
 import { fileName } from "@/components/gallery/published-file";
-import { FilterToggle, type ToggleChoices } from "@/components/photo-filters";
+import { FilterToggle, type ToggleChoices } from "@/components/photo-filter-bar";
 
 /**
  * What the drafts on Photos in Flight are sorted by besides their file name: "taken", when each
