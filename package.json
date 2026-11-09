@@ -11,6 +11,7 @@
     "dev:pipeline": "concurrently -n be,bff,client -c blue,magenta,green \"pnpm run dev:be\" \"pnpm --filter @servenup/bff-pipeline dev\" \"pnpm --filter @servenup/client-pipeline dev\"",
     "dev:be": "cd apps/be-pipeline && go run ./cmd/api",
     "build": "pnpm -r build",
+    "test": "pnpm --filter @servenup/portfolio --filter @servenup/client-pipeline test",
     "lint": "oxlint",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",

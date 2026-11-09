@@ -66,12 +66,12 @@ jobs:
         run: pnpm fallow
       - name: fixtures
         run: pnpm check:fixtures
-      - name: map preview tests
-        run: pnpm --filter @servenup/portfolio test
       # bff-pipeline's build is the same tsc pass as its typecheck, so only
       # the Vite apps are built.
       - name: build
         run: pnpm --filter @servenup/portfolio --filter @servenup/client-pipeline build
+      - name: tests
+        run: pnpm test
 
   go:
     name: Go (be-pipeline)
