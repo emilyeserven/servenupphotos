@@ -19,6 +19,7 @@ func bakeTrips(trips []Trip, spots map[int]tripSpot) []any {
 		for _, leg := range trip.Legs {
 			if f, ok := legFeature(trip, leg, spots); ok {
 				out = append(out, f)
+				out = append(out, stationWalks(trip, leg, spots)...)
 			}
 		}
 	}
@@ -31,10 +32,50 @@ func bakeTrips(trips []Trip, spots map[int]tripSpot) []any {
 // day has no photo to use.
 func legEnd(end TripLegEnd, spots map[int]tripSpot, last bool) ([2]float64, string, int, bool) {
 	if end.Spot != nil {
-		return [2]float64{end.Spot.Longitude, end.Spot.Latitude}, end.Spot.Label, 0, true
+		return pointCoords(end.Spot), end.Spot.Label, 0, true
 	}
 	s, ok := legPhoto(end, spots, last)
+	if end.Station != nil {
+		return pointCoords(end.Station), end.Station.Label, s.ID, ok
+	}
 	return [2]float64{s.Longitude, s.Latitude}, "", s.ID, ok
+}
+
+// pointCoords is p as [longitude, latitude].
+func pointCoords(p *TripPoint) [2]float64 {
+	return [2]float64{p.Longitude, p.Latitude}
+}
+
+// stationWalks are the walks between leg's photos and the stations it got
+// on and off at near them, one feature each on that end's day; none for an
+// end with no station.
+func stationWalks(trip Trip, leg TripLeg, spots map[int]tripSpot) []any {
+	out := []any{}
+	for _, side := range []struct {
+		end  TripLegEnd
+		last bool
+	}{{leg.From, true}, {leg.To, false}} {
+		if f, ok := legStationWalk(trip, side.end, spots, side.last); ok {
+			out = append(out, f)
+		}
+	}
+	return out
+}
+
+// legStationWalk is the walk between end's photo and its station, from the
+// photo where the leg leaves (last) and to it where it arrives; false with no
+// station or photo.
+func legStationWalk(trip Trip, end TripLegEnd, spots map[int]tripSpot, last bool) (tripLineFeature, bool) {
+	s, ok := legPhoto(end, spots, last)
+	if end.Station == nil || end.Spot != nil || !ok {
+		return tripLineFeature{}, false
+	}
+	coords := [][2]float64{{s.Longitude, s.Latitude}, pointCoords(end.Station)}
+	if !last {
+		coords[0], coords[1] = coords[1], coords[0]
+	}
+	props := tripLineProps{Day: end.Day, Trip: trip.ID, Mode: ModeWalk, Photos: []int{s.ID}, Km: lineKm(coords)}
+	return tripLineFeature{Type: "Feature", Geometry: tripLineGeometry{Type: "LineString", Coordinates: coords}, Properties: props}, true
 }
 
 // legPhoto is the photo a leg's end uses: the one it names when that photo

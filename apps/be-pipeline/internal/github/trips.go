@@ -99,6 +99,11 @@ type TripLegEnd struct {
 	// such as one taken at the airport, so a day can have several legs from
 	// different spots. 0 uses the day's last or first photo.
 	Photo int `json:"photo,omitempty"`
+	// Station is the station a train, bus or ferry leg got on or off at near
+	// its photo, such as a ferry terminal a short walk away: the leg runs from
+	// there, with a walk from the photo. Dropped with a Spot, which is the
+	// station itself, or for a leg that rides no line.
+	Station *TripPoint `json:"station,omitempty"`
 }
 
 // SaveTrip saves trip as <folder>/timeline/<id>.json, new or replacing the
@@ -208,12 +213,23 @@ func validLeg(trip Trip, leg *TripLeg, n int) *PublishError {
 	if leg.From.Photo < 0 || leg.To.Photo < 0 {
 		return publishErr(http.StatusBadRequest, "Leg %d: pick a photo from the list.", n)
 	}
-	for _, spot := range []*TripPoint{leg.From.Spot, leg.To.Spot} {
+	dropStations(leg)
+	for _, spot := range []*TripPoint{leg.From.Spot, leg.To.Spot, leg.From.Station, leg.To.Station} {
 		if perr := validTripPoint(spot, n); perr != nil {
 			return asLegError(perr)
 		}
 	}
 	return validLegLine(leg, n)
+}
+
+// dropStations drops a station near the photo from each of leg's ends that
+// is at a spot, or from both when the leg rides no line.
+func dropStations(leg *TripLeg) {
+	for _, end := range []*TripLegEnd{&leg.From, &leg.To} {
+		if end.Spot != nil || !legLineModes[leg.Mode] {
+			end.Station = nil
+		}
+	}
 }
 
 // validLegLine drops the nth leg's line and path when its mode rides no

@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { TripLegEnd } from "@/api/trips";
 import { dayTitle } from "@/components/trip-lines/day-title";
 import { Input } from "@/components/ui/input";
+import { LegStation } from "@/components/trips/leg-station";
 import { StationSearch } from "@/components/trips/station-search";
 import { endSpot, parsePosition, ridesLegLine } from "@/lib/trip-legs";
 import type { TripPhoto } from "@/lib/trip-days";
@@ -47,6 +48,7 @@ export function LegEndField(props: LegEndFieldProps) {
       ) : (
         <PhotoNote photo={photo} photoWord={props.photoWord} named={end.photo !== undefined} />
       )}
+      <LegStation title={title} mode={props.mode} end={end} photo={photo} onChange={onChange} />
     </fieldset>
   );
 }

@@ -24,6 +24,12 @@ export interface TripLegEnd {
    * day can have several legs from different spots. Left out, it's the day's last or first photo.
    */
   photo?: number;
+  /**
+   * The station it got on or off at near its photo, such as the ferry terminal a short walk from
+   * the last photo of the day: the leg runs from there, with a walk from the photo. Only a train,
+   * bus or ferry leg at a photo keeps one; an end at a spot is the station itself.
+   */
+  station?: TripPoint;
 }
 
 /** One stretch of a Trip from one day to another, such as a ferry or a flight. */

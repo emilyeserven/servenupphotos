@@ -41,9 +41,12 @@ function namedPhoto(end: TripLegEnd, photos: TripPhoto[]): TripPhoto | undefined
 
 type Position = { latitude: number; longitude: number };
 
-/** Where a leg's end is: its spot, or else its photo; undefined when it has neither. */
+/**
+ * Where a leg's end is: its spot, or else the station near its photo, or else its photo; undefined
+ * when it has none.
+ */
 export function endPosition(end: TripLegEnd, photo: TripPhoto | undefined): Position | undefined {
-  return end.spot ?? photo;
+  return end.spot ?? end.station ?? photo;
 }
 
 /** How far apart two spots are along the Earth's surface, in km (the haversine formula). */

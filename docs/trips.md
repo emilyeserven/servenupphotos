@@ -105,7 +105,9 @@ combines the metadata groups into `METAINFO.json` (`be-pipeline/internal/github/
 - **`legs`** are left out when there are none, as a timeline label was written. Each end has its `day`, and either a
   `spot` with no photo or the ID of the day's `photo` it leaves from or arrives at; with neither, it's the day's last
   photo with an exact spot where it leaves and its first where it arrives. A `photo` that isn't from that day, or has
-  no exact spot, falls back to the same. A train, bus or ferry leg can also have the `line` it rode and its track as `path`
+  no exact spot, falls back to the same. An end at a photo of a train, bus or ferry leg can also have a `station`
+  (`{ "latitude", "longitude", "label" }`) it got on or off at near that photo; see
+  [Stations and routes](#stations-and-routes). A train, bus or ferry leg can also have the `line` it rode and its track as `path`
   (`[longitude, latitude]` points, at most 20,000); see [Stations and routes](#stations-and-routes).
 - Trips can't overlap: saving one whose days another Trip already covers fails, so each day has at most one Trip. If a
   hand-edited file does overlap, the Timeline shows both names joined with " · ".
@@ -178,6 +180,13 @@ the public servers give up on a 30 km search, which the page showed as a 503 aft
 Every transit look-up logs to the browser console under `[transit]`: when it starts, how long it took, and what it found
 or why it failed (`api/transit-log.ts`). The backend's terminal logs each Overpass query, each server tried with how
 long it took and what it answered, and answers given from memory.
+
+An end at a photo can have a station too, such as the ferry terminal a short walk from the day's last photo: under
+the photo, **Station near the photo** finds one the same way. The photo stays the end's photo (picking a station for
+the day's usual photo names that photo, so the station stays with it), and the leg runs from the station instead, so
+**Look up route** looks near the station. Commit bakes a walk from the photo to the station (or from the station to the
+photo where the leg arrives) on that end's day. **From the photo** takes the station off. Changing the end's day or
+photo, or picking a spot, drops it, and a flight or drive keeps none.
 
 Once both ends have a spot, **Look up route** finds the lines of the leg's kind that pass within 500 m of both ends
 (the same look-up as a day's hops, so it works best with each end at its station), and picking one fetches its track

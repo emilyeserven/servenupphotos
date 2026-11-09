@@ -200,3 +200,36 @@ func TestPlannedLine(t *testing.T) {
 		t.Errorf("a line with segments stayed planned: %v, %+v", perr, drawn)
 	}
 }
+
+// TestLegStation runs a leg from the station near its photo, keeps the photo,
+// walks from the photo to the station, and drops a station a leg can't have.
+func TestLegStation(t *testing.T) {
+	spots := map[int]tripSpot{
+		12: {ID: 12, Day: "2026-09-23", Longitude: 130.92, Latitude: 33.95},
+		20: {ID: 20, Day: "2026-09-24", Longitude: 129.04, Latitude: 35.11},
+	}
+	terminal := &TripPoint{Latitude: 33.96, Longitude: 130.93, Label: "Shimonoseki Port"}
+	leg := TripLeg{Mode: ModeFerry, From: TripLegEnd{Day: "2026-09-23", Photo: 12, Station: terminal}, To: TripLegEnd{Day: "2026-09-24"}}
+	at, label, id, ok := legEnd(leg.From, spots, true)
+	if !ok || at != [2]float64{130.93, 33.96} || label != "Shimonoseki Port" || id != 12 {
+		t.Errorf("leg end = %v %q %d %v, want the terminal with photo 12", at, label, id, ok)
+	}
+	walks := stationWalks(Trip{ID: "korea"}, leg, spots)
+	if len(walks) != 1 {
+		t.Fatalf("walks = %+v, want one from the photo", walks)
+	}
+	w := walks[0].(tripLineFeature)
+	if w.Properties.Mode != ModeWalk || w.Geometry.Coordinates[0] != [2]float64{130.92, 33.95} || w.Geometry.Coordinates[1] != [2]float64{130.93, 33.96} {
+		t.Errorf("walk = %+v", w)
+	}
+	flight := TripLeg{Mode: ModeFlight, From: leg.From, To: TripLegEnd{Day: "2026-09-24", Spot: terminal, Station: terminal}}
+	dropStations(&flight)
+	if flight.From.Station != nil || flight.To.Station != nil {
+		t.Errorf("a flight kept its stations: %+v", flight)
+	}
+	spotEnd := TripLeg{Mode: ModeFerry, To: TripLegEnd{Spot: terminal, Station: terminal}}
+	dropStations(&spotEnd)
+	if spotEnd.To.Station != nil {
+		t.Errorf("an end at a spot kept a station: %+v", spotEnd.To)
+	}
+}
