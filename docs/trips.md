@@ -213,6 +213,20 @@ track in the line's color on the Trip's map and the portfolio's, instead of a st
 Moving either end drops the track picked for the old spots (renaming one keeps it), and a flight or drive keeps no
 line.
 
+### Changing lines on the way
+
+The look-up only finds a line that passes both ends, so a leg that changed trains, such as Shimonoseki to Higashi-Hagi
+(OpenStreetMap's San'in Line routes end at Nagato-shi), finds none. **Changed lines on the way** finds the station it
+changed at by name, looked for within 30 km of halfway along the last ride, and splits that ride there. Each ride then
+gets its own **Look up route** between its ends, and **No change here** joins two rides back together (both are picked
+again). The leg keeps them in `rides`, each with the `change` station at its end (none on the last), its `line` and
+its `path`. Once every ride has a line, the leg's `line` is the route they make together, which the map and Commit use
+as before: the first ride's line with its rides' names joined, which **Route name** renames, such as "Marumaru no
+Hanashi". Its `path` is the rides' tracks joined. **Route name** renames a single line too.
+
+> **Frontend analogy:** like a multi-step form whose steps each validate on their own, with a computed summary field
+> that's only filled once every step is done.
+
 > **Frontend analogy:** the station search is an autocomplete endpoint scoped to a map viewport, like a places search
 > with a `near` bias, and the route is the same "find the paths in the sprite sheet" look-up as a day's hops, clipped
 > between the two stations.

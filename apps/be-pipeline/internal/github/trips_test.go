@@ -166,6 +166,24 @@ func TestLegEndPhoto(t *testing.T) {
 	}
 }
 
+func TestLegRides(t *testing.T) {
+	sanin := &TripTransitLine{ID: 1, Name: "San'in Line"}
+	nagato := &TripPoint{Latitude: 34.37, Longitude: 131.18, Label: " Nagato-shi "}
+	rides := []TripLegRide{{Change: nagato, Line: sanin, Path: [][2]float64{{130.9200001, 33.95}, {131.18, 34.37}}}, {Line: sanin}}
+	train := TripLeg{Mode: ModeTrain, Line: &TripTransitLine{ID: 1, Name: "Marumaru no Hanashi"}, Rides: rides}
+	if perr := validLegLine(&train, 1); perr != nil || train.Rides[0].Change.Label != "Nagato-shi" || train.Rides[0].Path[0][0] != 130.92 {
+		t.Fatalf("train leg: %v, %+v", perr, train.Rides)
+	}
+	flight := TripLeg{Mode: ModeFlight, Rides: rides}
+	if perr := validLegLine(&flight, 1); perr != nil || flight.Rides != nil {
+		t.Errorf("a flight kept its rides: %v", perr)
+	}
+	offMap := TripLeg{Mode: ModeTrain, Rides: []TripLegRide{{Change: &TripPoint{Latitude: 99}}}}
+	if perr := validLegLine(&offMap, 3); perr == nil || !strings.HasPrefix(perr.Message, "Leg 3:") {
+		t.Errorf("a change off the map: %v", perr)
+	}
+}
+
 func TestLegLine(t *testing.T) {
 	line := &TripTransitLine{ID: 7, Name: " Sanyo Shinkansen ", Colour: "#1e50a2"}
 	path := [][2]float64{{130.4200001, 33.59}, {131, 34}, {135.5, 34.73}}
