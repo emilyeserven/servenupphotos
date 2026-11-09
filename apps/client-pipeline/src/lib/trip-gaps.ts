@@ -294,3 +294,31 @@ export function walkingDraft(photos: number[]): GapDraft {
 export function withGap(draft: GapDraft, index: number, gap: Gap): GapDraft {
   return { ...draft, gaps: draft.gaps.map((g, i) => (i === index ? gap : g)) };
 }
+
+/** The keys of a draft that hold a list, such as its visits or its fences. */
+type ListKey = {
+  [K in keyof GapDraft]-?: NonNullable<GapDraft[K]> extends unknown[] ? K : never;
+}[keyof GapDraft];
+
+/** The type of one item in the draft's list under key. */
+type ItemOf<K extends ListKey> = NonNullable<GapDraft[K]> extends (infer T)[] ? T : never;
+
+/** The draft with the item added to the end of its list under key. */
+export function withItem<K extends ListKey>(draft: GapDraft, key: K, item: ItemOf<K>): GapDraft {
+  const list: ItemOf<K>[] = [...((draft[key] ?? []) as ItemOf<K>[]), item];
+  return { ...draft, [key]: list };
+}
+
+/** The draft with item i of its list under key changed, or removed for null. */
+export function changedItem<K extends ListKey>(
+  draft: GapDraft,
+  key: K,
+  i: number,
+  item: ItemOf<K> | null,
+): GapDraft {
+  const list = ((draft[key] ?? []) as ItemOf<K>[]).flatMap((old, n) => {
+    if (n !== i) return [old];
+    return item ? [item] : [];
+  });
+  return { ...draft, [key]: list };
+}
