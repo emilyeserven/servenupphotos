@@ -170,7 +170,9 @@ The menu beside the search box picks the service it asks, and the choice is kept
   OpenStreetMap's data. It answers in about a second and ranks by how well the name matches, then how near it is,
   within a box about 30 km around the end, with English names where they're mapped. It can only filter by a station's
   main tag ([`osm_tag`](https://github.com/komoot/photon#filter-results-by-tags-and-keys)), so a **Train** search
-  there also finds subway stations. `PHOTON_URL` points it at another Photon server.
+  there also finds subway stations. OpenStreetMap names a station without the word "Station" (Shimonoseki Station is
+  just "Shimonoseki"), so when a search finds nothing, it's tried once more without words like "station", "terminal",
+  "port" or "駅". `PHOTON_URL` points it at another Photon server.
   (`?source=photon`, `be-pipeline/internal/transit/photon.go`.)
 - **Overpass**: the OpenStreetMap query servers below, which tell subway and train stations apart but are often slow
   when busy.

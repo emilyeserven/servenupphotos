@@ -104,5 +104,5 @@ function StationChoices({
 /** What the search found, said when it found none. */
 function stationsNote(asked: string, stations: TransitStation[] | undefined): string {
   if (!asked || stations === undefined || stations.length > 0) return "";
-  return `No station named "${asked}" within 30 km of this day.`;
+  return `Found no station named "${asked}" within 30 km of this end. Try the place's name alone, such as "Shimonoseki" for Shimonoseki Station, or the other search.`;
 }

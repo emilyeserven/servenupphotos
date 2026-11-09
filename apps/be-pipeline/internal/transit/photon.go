@@ -84,10 +84,37 @@ func (c *Client) PhotonStations(ctx context.Context, mode, name string, near [2]
 		return nil, ErrNoName
 	}
 	answer, err := c.askPhoton(ctx, photonQuery(tags, name, near))
+	if err == nil && len(answer.Features) == 0 && placeName(name) != name {
+		answer, err = c.askPhoton(ctx, photonQuery(tags, placeName(name), near))
+	}
 	if err != nil {
 		return nil, &PhotonError{Err: err}
 	}
 	return photonStations(answer, near), nil
+}
+
+// kindWords are words that say what a stop is rather than which one, such as
+// "station" in "Shimonoseki Station". OpenStreetMap usually leaves them out of
+// the name (the station is just "Shimonoseki"), and Photon then finds nothing
+// for the name with them.
+var kindWords = map[string]bool{
+	"station": true, "stn": true, "sta": true, "stop": true, "halt": true,
+	"terminal": true, "port": true, "pier": true, "駅": true, "港": true,
+}
+
+// placeName is name without its kindWords, such as "Shimonoseki" for
+// "Shimonoseki Station", or name itself when nothing else would be left.
+func placeName(name string) string {
+	var kept []string
+	for _, w := range strings.Fields(name) {
+		if !kindWords[strings.ToLower(strings.Trim(w, ".,"))] {
+			kept = append(kept, w)
+		}
+	}
+	if len(kept) == 0 {
+		return name
+	}
+	return strings.Join(kept, " ")
 }
 
 // photonQuery is the query string for a Photon search for name near near,
