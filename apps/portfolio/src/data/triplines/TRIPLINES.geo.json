@@ -860,135 +860,43 @@
     {
       "type": "Feature",
       "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [-122.41136169420197, 37.801223673490945],
-          [-122.42240979920365, 37.806509135849964],
-          [-122.4534053351354, 37.804275420772505],
-          [-122.45373212016419, 37.804303751801356],
-          [-122.45373212016419, 37.804303751801356]
-        ]
-      },
-      "properties": {
-        "day": "2026-10-25",
-        "mode": "walk",
-        "auto": false,
-        "photos": [400, 401, 404, 402, 403],
-        "km": 3.9
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [-122.5117, 37.77736111111111],
-          [-122.5117, 37.77736111111111],
-          [-122.5117, 37.77736111111111]
-        ]
-      },
-      "properties": {
-        "day": "2026-10-25",
-        "mode": "walk",
-        "auto": false,
-        "photos": [421, 422, 423],
-        "km": 0
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [-122.51010041302268, 37.775441742830566],
-          [-122.51026944444445, 37.775083333333335],
-          [-122.51099947198733, 37.77524728667587],
-          [-122.5114715553275, 37.77486782781847]
-        ]
-      },
-      "properties": {
-        "day": "2026-10-25",
-        "mode": "walk",
-        "auto": false,
-        "photos": [430, 431, 432, 433],
-        "km": 0.2
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [-122.51157812845044, 37.773509336730626],
-          [-122.51014740153771, 37.773351570312826]
-        ]
-      },
-      "properties": {
-        "day": "2026-10-25",
-        "mode": "walk",
-        "auto": false,
-        "photos": [435, 436],
-        "km": 0.1
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [-122.40382777777778, 37.789763888888885],
-          [-122.40382777777778, 37.789763888888885]
-        ]
-      },
-      "properties": {
-        "day": "2026-10-25",
-        "mode": "walk",
-        "auto": false,
-        "photos": [438, 467],
-        "km": 0
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [-122.40543981982262, 37.790656104270134],
-          [-122.40543981982262, 37.790656104270134]
-        ]
-      },
-      "properties": {
-        "day": "2026-10-25",
-        "mode": "walk",
-        "auto": false,
-        "photos": [441, 442],
-        "km": 0
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
         "type": "Point",
-        "coordinates": [-122.50996450392321, 37.774521520769476]
+        "coordinates": [-122.50996884849516, 37.774524549357665]
       },
       "properties": {
         "feature": "visit",
         "day": "2026-10-25",
         "name": "Ocean Beach Cafe",
-        "kind": "cafe"
+        "kind": "cafe",
+        "link": "https://www.google.com/maps/place/Ocean+Beach+Cafe/@37.7749528,-122.5104735,19.37z/data=!4m6!3m5!1s0x808587a718b08a83:0xcb3ada8f14458da3!8m2!3d37.7745416!4d-122.5099581!16s%2Fg%2F11n0l9b_ny?entry=ttu&g_ep=EgoyMDI2MTEwMy4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-122.40537581718577, 37.796514716300806]
+        "coordinates": [-122.4053865460208, 37.79652319414374]
       },
       "properties": {
         "feature": "visit",
         "day": "2026-10-25",
-        "name": "House of Xian Dumpling",
-        "kind": "restaurant"
+        "name": "House of Xian Dumplings",
+        "kind": "restaurant",
+        "link": "https://www.google.com/maps/place/House+Of+Xian+Dumpling/@37.7965359,-122.4079829,17z/data=!3m1!4b1!4m6!3m5!1s0x808580f4c194921d:0xf9efdac3b36b3c6d!8m2!3d37.7965317!4d-122.405408!16s%2Fg%2F12xqkqtdd?entry=ttu&g_ep=EgoyMDI2MTEwMy4wIKXMDSoASAFQAw%3D%3D"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.40458471956835, 37.79037324131063]
+      },
+      "properties": {
+        "feature": "visit",
+        "day": "2026-10-25",
+        "name": "The Irish Bank",
+        "kind": "bar",
+        "link": "https://www.google.com/maps/place/The+Irish+Bank/@37.7903966,-122.4053143,18z/data=!3m1!4b1!4m6!3m5!1s0x8085808970c3e43b:0xe17d380c1e7aede8!8m2!3d37.7903952!4d-122.4044881!16s%2Fg%2F1tcvphch?entry=ttu&g_ep=EgoyMDI2MTEwMy4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
