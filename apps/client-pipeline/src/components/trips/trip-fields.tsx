@@ -1,5 +1,6 @@
 import type { Trip } from "@/api/trips";
 import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/date-picker";
 
 /** A Trip's name, as the Timeline shows it, and its first and last days. */
 export function TripFields({ trip, onChange }: { trip: Trip; onChange: (trip: Trip) => void }) {
@@ -15,19 +16,14 @@ export function TripFields({ trip, onChange }: { trip: Trip; onChange: (trip: Tr
       </label>
       <label className="flex flex-col gap-1.5 text-sm">
         <span className="font-medium">First day</span>
-        <Input
-          type="date"
-          value={trip.start}
-          onChange={(e) => onChange({ ...trip, start: e.target.value })}
-        />
+        <DatePicker value={trip.start} onChange={(start) => onChange({ ...trip, start })} />
       </label>
       <label className="flex flex-col gap-1.5 text-sm">
         <span className="font-medium">Last day, included</span>
-        <Input
-          type="date"
+        <DatePicker
           value={trip.end}
           min={trip.start}
-          onChange={(e) => onChange({ ...trip, end: e.target.value })}
+          onChange={(end) => onChange({ ...trip, end })}
         />
       </label>
     </div>

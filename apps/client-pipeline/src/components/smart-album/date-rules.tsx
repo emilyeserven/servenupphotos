@@ -1,7 +1,7 @@
 import { allTimelineLabels, type TimelineLabel } from "@portfolio/lib/timeline-labels";
 import type { RuleParams } from "@/components/smart-album/rule-params";
-import { Input } from "@/components/ui/input";
 import { SingleCombobox } from "@/components/ui/single-combobox";
+import { DatePicker } from "@/components/date-picker";
 
 /** The text of a rule, or "" when it isn't set. */
 function textRule(value: unknown): string {
@@ -36,19 +36,14 @@ export function DateRules({ rules, labels }: { rules: RuleParams; labels: Timeli
       </div>
       <label className="flex flex-col gap-1.5">
         <span className="font-medium">Taken on or after</span>
-        <Input
-          type="date"
-          value={textRule(rules.draft.from)}
-          onChange={(e) => set("from", e.target.value)}
-        />
+        <DatePicker value={textRule(rules.draft.from)} onChange={(day) => set("from", day)} />
       </label>
       <label className="flex flex-col gap-1.5">
         <span className="font-medium">Taken on or before</span>
-        <Input
-          type="date"
+        <DatePicker
           value={textRule(rules.draft.to)}
           min={textRule(rules.draft.from)}
-          onChange={(e) => set("to", e.target.value)}
+          onChange={(day) => set("to", day)}
         />
       </label>
     </div>
