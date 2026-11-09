@@ -126,8 +126,10 @@ draws them (`lib/trip-lines-map.ts`):
 - A drive (`car`, such as a big jump the automatic line marks) is a solid light blue line, next to walks' darker blue. Only hops by public transit with no line picked are dashed.
 - Where a line runs over an earlier one, such as walking a street one way and driving it back, the later one is
   drawn about 6 px to its side, in the next free lane, so both show. Lines are compared on a grid of about 30 m, and
-  they overlap when at least 30% of the shorter one runs along the other (`lib/trip-lanes.ts`). The pipeline's
-  Trip Lines map does the same.
+  they overlap when at least 30% of the shorter one runs along the other (`lib/trip-lanes.ts`). The lanes close up
+  as the map zooms out, from 6 px at zoom 15 to none at city zoom (12), since a short line drawn 6 px aside, such as
+  the walk from a photo to a station, looks cut off from the lines it joins there. The pipeline's Trip Lines map does
+  the same.
 
   > **Frontend analogy:** like laying out overlapping calendar events in columns: each later event takes the first
   > column none of the events it overlaps is in.
