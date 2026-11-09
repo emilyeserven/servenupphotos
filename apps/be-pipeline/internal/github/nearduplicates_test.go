@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -30,10 +31,14 @@ func hashedPhoto(file, hash, group string) string {
 }
 
 // hashReader answers each Small version's URL with its hash in hashes, and
-// fails the rest.
+// fails the rest. The photos are read in parallel, so the URLs read are
+// noted under a lock.
 func hashReader(hashes map[string]string, read *[]string) HashReader {
+	var mu sync.Mutex
 	return func(_ context.Context, small string) (string, string) {
+		mu.Lock()
 		*read = append(*read, small)
+		mu.Unlock()
 		if h, ok := hashes[small]; ok {
 			return h, ""
 		}

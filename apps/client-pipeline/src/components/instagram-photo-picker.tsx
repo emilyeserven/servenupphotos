@@ -13,10 +13,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { PickerSection, peekClass } from "@/components/picker-section";
 import { dayFormat, longDayFormat, parseIsoDate } from "@/lib/calendar";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import { type Unsaved, dateOf, photoName, pickerChoices } from "@/lib/social-schedule";
 import { type SocialFocus, isFocused, matchesFocus } from "@/lib/social-focus";
+import { type Neighbors, neighborsFor } from "@/lib/social-neighbors";
 import { type Suggestion, suggestionsFor } from "@/lib/social-suggestions";
 import { cn } from "@/lib/utils";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
@@ -76,6 +78,45 @@ function useSuggestions(
 }
 
 /**
+ * The photos taken around the last photo on the calendar before day; null when day is null, while
+ * the picker is closed or something is searched for.
+ */
+function useNeighbors(
+  photos: SocialPhoto[],
+  unsaved: Unsaved,
+  day: string | null,
+  allowed: (photo: SocialPhoto) => boolean,
+) {
+  const changed = useChangedPhotoFiles();
+  return useMemo(
+    () => (day === null ? null : neighborsFor(photos, unsaved, day, changed, allowed)),
+    [photos, unsaved, day, changed, allowed],
+  );
+}
+
+/** The paths of the photos taken around the last scheduled one. */
+function neighborPaths(neighbors: Neighbors | null): Set<string> {
+  return new Set(neighbors?.photos.map(({ photo }) => photo.path));
+}
+
+/**
+ * What the picker suggests for day: the photos taken around the last scheduled one, the most alike
+ * photos that aren't among them, and whether there are any.
+ */
+function useSuggested(
+  photos: SocialPhoto[],
+  unsaved: Unsaved,
+  day: string | null,
+  allowed: (photo: SocialPhoto) => boolean,
+) {
+  const neighbors = useNeighbors(photos, unsaved, day, allowed);
+  const similar = useSuggestions(photos, unsaved, day, allowed);
+  const inOrder = neighborPaths(neighbors);
+  const shown = similar.filter(({ photo }) => !inOrder.has(photo.path));
+  return { neighbors, shown, any: shown.length > 0 || inOrder.size > 0 };
+}
+
+/**
  * The Focus the picker filters by, and whether it's turned off for this pick; it's on again each
  * time the picker opens.
  */
@@ -94,10 +135,27 @@ function useFocus() {
 function otherChoices(
   choices: SocialPhoto[],
   suggestions: Suggestion[],
+  neighbors: Neighbors | null,
   allowed: (photo: SocialPhoto) => boolean,
 ): SocialPhoto[] {
-  const suggested = new Set(suggestions.map(({ photo }) => photo.path));
+  const suggested = neighborPaths(neighbors);
+  for (const { photo } of suggestions) suggested.add(photo.path);
   return choices.filter((photo) => !suggested.has(photo.path) && allowed(photo));
+}
+
+/** The box that adds photos already on the calendar to the list. */
+function ShowScheduledToggle(props: { checked: boolean; onChange: (checked: boolean) => void }) {
+  return (
+    <label className="flex items-center gap-2 text-sm">
+      <input
+        type="checkbox"
+        className="accent-primary size-4"
+        checked={props.checked}
+        onChange={(event) => props.onChange(event.target.checked)}
+      />
+      Show already scheduled photos
+    </label>
+  );
 }
 
 interface FocusToggleProps {
@@ -125,8 +183,9 @@ function FocusToggle({ focus, ignored, onIgnored }: FocusToggleProps) {
 }
 
 /**
- * Picks a photo for a day, or takes the day's photo off it. Photos like the 3 before the day come
- * first, under **Suggested**.
+ * Picks a photo for a day, or takes the day's photo off it. **Before and after** comes first, with
+ * the photos taken around the last scheduled one before the day, then **Suggested**, with photos
+ * like the 3 before it.
  */
 export function PhotoPicker({
   day,
@@ -142,10 +201,11 @@ export function PhotoPicker({
   const current = dayPhoto(byDay, day);
   const { focus, ignored, setIgnored, allowed, focused } = useFocus();
   const searching = search.trim() !== "";
-  const shown = useSuggestions(photos, unsaved, searching ? null : day, allowed);
+  const { neighbors, shown, any } = useSuggested(photos, unsaved, searching ? null : day, allowed);
   const choices = otherChoices(
     pickerChoices(photos, unsaved, search, showScheduled),
     shown,
+    neighbors,
     allowed,
   );
   /** Clears the search for the next day before closing. */
@@ -173,21 +233,19 @@ export function PhotoPicker({
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            className="accent-primary size-4"
-            checked={showScheduled}
-            onChange={(event) => setShowScheduled(event.target.checked)}
-          />
-          Show already scheduled photos
-        </label>
+        <ShowScheduledToggle checked={showScheduled} onChange={setShowScheduled} />
         <FocusToggle focus={focus} ignored={ignored} onIgnored={setIgnored} />
         <div className="-mx-1 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-1">
+          <NeighborChoices
+            neighbors={neighbors}
+            unsaved={unsaved}
+            current={current}
+            onPick={(photo) => choose(photo, day)}
+          />
           <SuggestedChoices suggestions={shown} onPick={(photo) => choose(photo, day)} />
           <PickerChoices
             choices={choices}
-            titled={shown.length > 0}
+            titled={any}
             focused={focused}
             searching={searching}
             hidingScheduled={!showScheduled && photos.some((p) => dateOf(unsaved, p) !== null)}
@@ -196,15 +254,20 @@ export function PhotoPicker({
             onPick={(photo) => choose(photo, day)}
           />
         </div>
-        {current && (
-          <DialogFooter>
-            <Button variant="outline" onClick={() => choose(current, null)}>
-              Remove from this day
-            </Button>
-          </DialogFooter>
-        )}
+        {current && <RemoveFooter onRemove={() => choose(current, null)} />}
       </DialogContent>
     </Dialog>
+  );
+}
+
+/** The button that takes the day's photo off the calendar. */
+function RemoveFooter({ onRemove }: { onRemove: () => void }) {
+  return (
+    <DialogFooter>
+      <Button variant="outline" onClick={onRemove}>
+        Remove from this day
+      </Button>
+    </DialogFooter>
   );
 }
 
@@ -244,7 +307,58 @@ function reasons(suggestion: Suggestion): string {
     .join(" · ");
 }
 
-/** The suggested photos, with why each one is. */
+/** Where a photo is from the last scheduled one, such as "2 before" or "1 after". */
+function offsetReason(offset: number): string {
+  return offset < 0 ? `${-offset} before` : `${offset} after`;
+}
+
+interface NeighborChoicesProps {
+  neighbors: Neighbors | null;
+  unsaved: Unsaved;
+  current: SocialPhoto | undefined;
+  onPick: (photo: SocialPhoto) => void;
+}
+
+/**
+ * **Before and after**: the photos taken just before and after the last scheduled one, in the
+ * order they were taken. Open at first; collapsed, it shows only its heading.
+ */
+function NeighborChoices({ neighbors, unsaved, current, onPick }: NeighborChoicesProps) {
+  if (!neighbors || neighbors.photos.length === 0) return null;
+  const { anchor, anchorDay } = neighbors;
+  const description = `Taken just before and after ${photoName(anchor)}, the last photo scheduled before this day (${dayFormat.format(parseIsoDate(anchorDay))}).`;
+  return (
+    <PickerSection
+      title="Before and after"
+      description={description}
+      count={neighbors.photos.length}
+      defaultOpen
+    >
+      {(collapsed) =>
+        !collapsed && (
+          <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+            {neighbors.photos.map(({ photo, offset }) => (
+              <li key={photo.path}>
+                <PickerChoice
+                  photo={photo}
+                  scheduled={dateOf(unsaved, photo)}
+                  isCurrent={photo.path === current?.path}
+                  reason={offsetReason(offset)}
+                  onPick={() => onPick(photo)}
+                />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </PickerSection>
+  );
+}
+
+/**
+ * **Suggested**: the unused photos most like the 3 before the day, with why each one is. Collapsed
+ * at first, showing just its first row.
+ */
 function SuggestedChoices(props: {
   suggestions: Suggestion[];
   onPick: (photo: SocialPhoto) => void;
@@ -252,31 +366,29 @@ function SuggestedChoices(props: {
   const { suggestions, onPick } = props;
   if (suggestions.length === 0) return null;
   return (
-    <section className="flex flex-col gap-2" aria-label="Suggested photos">
-      <div>
-        <h3 className="flex items-center gap-1.5 text-sm font-medium">
-          <SparklesIcon className="size-4" />
-          Suggested
-        </h3>
-        <p className="text-muted-foreground text-xs">
-          Unused photos most like the 3 before this day: taken nearby, around the same time, or
-          sharing tags.
-        </p>
-      </div>
-      <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-        {suggestions.map((suggestion) => (
-          <li key={suggestion.photo.path}>
-            <PickerChoice
-              photo={suggestion.photo}
-              scheduled={null}
-              isCurrent={false}
-              reason={reasons(suggestion)}
-              onPick={() => onPick(suggestion.photo)}
-            />
-          </li>
-        ))}
-      </ul>
-    </section>
+    <PickerSection
+      title="Suggested"
+      icon={<SparklesIcon className="size-4" />}
+      description="Unused photos most like the 3 before this day: taken nearby, around the same time, or sharing tags."
+      count={suggestions.length}
+      defaultOpen={false}
+    >
+      {(collapsed) => (
+        <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+          {suggestions.map((suggestion, index) => (
+            <li key={suggestion.photo.path} className={peekClass(collapsed, index)}>
+              <PickerChoice
+                photo={suggestion.photo}
+                scheduled={null}
+                isCurrent={false}
+                reason={reasons(suggestion)}
+                onPick={() => onPick(suggestion.photo)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+    </PickerSection>
   );
 }
 

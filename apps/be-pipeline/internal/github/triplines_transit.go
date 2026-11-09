@@ -51,6 +51,9 @@ func trimLine(seg *TripSegment, n int) *PublishError {
 			return perr
 		}
 	}
+	if perr := trimStationWalks(seg, n); perr != nil {
+		return perr
+	}
 	return validLine(seg.Line, n)
 }
 
@@ -96,9 +99,9 @@ func segmentFeatures(line TripLine, seg TripSegment, spots map[int]tripSpot) []t
 	}
 	coords, photos := segmentPoints(seg, spots)
 	first, last := photos[:min(1, len(photos))], photos[max(0, len(photos)-1):]
-	out := stationWalk(line, seg.Name, seg.Board, func(st [2]float64) [][2]float64 { return [][2]float64{coords[0], st} }, first)
+	out := stationWalk(line, seg.Name, seg.Board, func(st [2]float64) [][2]float64 { return walkPoints(seg.BoardWalk, coords[0], st) }, first)
 	out = append(out, f)
-	return append(out, stationWalk(line, seg.Name, seg.Alight, func(st [2]float64) [][2]float64 { return [][2]float64{st, coords[len(coords)-1]} }, last)...)
+	return append(out, stationWalk(line, seg.Name, seg.Alight, func(st [2]float64) [][2]float64 { return walkPoints(seg.AlightWalk, st, coords[len(coords)-1]) }, last)...)
 }
 
 // stationWalk is the walk between a hop's photo spot and the station it got
