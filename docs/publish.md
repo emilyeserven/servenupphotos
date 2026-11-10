@@ -64,22 +64,25 @@ feed (`feedEntries`, `feedAsOf`).
 
 ### Grid Anchors
 
-A photo on the calendar can be made a **Grid Anchor** from its day's picker (**Make Grid Anchor**, next to **Remove
-from this day**), to plan thematic rows of the feed. While a photo is an anchor, the picker also takes an optional
-name for its group. The anchor and the 2 calendar photos just before it make a group of 3, one row of the 3-column
-feed (`ANCHOR_ROW` in `apps/client-pipeline/src/lib/grid-anchors.ts`), and once there's one anchor the rest of the
-calendar's photos fall into groups of 3 counted from it: back from it for earlier photos, on from it for later ones.
-With more than one anchor, photos count back from the next anchor after them (and on from the last one), so the row
-just after an anchor can be cut short when the next anchor isn't a multiple of 3 photos away (`anchorPlaces`).
+One photo on the calendar can be the **Grid Anchor**, set from its day's picker (**Make Grid Anchor**, next to
+**Remove from this day**), to plan thematic rows of the feed. The anchor and the 2 calendar photos just before it make
+one row of the 3-column feed (`ANCHOR_ROW` in `apps/client-pipeline/src/lib/grid-anchors.ts`), and every other
+calendar photo falls into rows of 3 counted from it: back from it for earlier photos, on from it for later ones
+(`anchorPlaces`). There's only ever one: making another photo the anchor moves it there, which shifts every row, and
+**Remove Grid Anchor** on it takes the rows away. (If more than one photo is marked, such as from an older save, the
+latest on the calendar is the anchor.)
 
-Groups are outlined dark blue and light blue by turns, on the calendar and in the **Social Feed preview**, and each
-anchor gets a badge in its group's color showing the group's name when it has one. The outlines are only a
-reference: the feed doesn't flag a group that isn't lined up with a row, since groups drift in and out of line in a
-cycle.
+Rows are outlined dark blue and light blue by turns, on the calendar and in the **Social Feed preview**. The last photo
+of each row gets an anchor badge: solid in its row's color on the Grid Anchor itself, faint on the ones worked out
+from it. The outlines are only a reference: the feed doesn't flag a row that isn't lined up, since rows drift in and
+out of line in a cycle.
 
-It's saved on the anchor's JSON as `socialGridAnchor: true`, with the name as `socialGridGroupName`, kept as local
-edits until **Commit** like a moved date. Photos that aren't anchors, and groups without a name, leave the fields
-out; removing an anchor drops its name too.
+While there's an anchor, a day's picker also takes an optional **Group name** for that photo's row, shown on the badge
+of the row's last photo. The name is saved on one photo of the row (the newest that already has one, or else the
+picked photo), so it moves with its photos when the anchor shifts the rows.
+
+The anchor is saved as `socialGridAnchor: true` and a name as `socialGridGroupName` on the photo's JSON, kept as local
+edits until **Commit** like a moved date; photos without them leave the fields out.
 
 ### Suggested photos
 

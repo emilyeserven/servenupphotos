@@ -5,7 +5,7 @@ import { DayPostBackdrop, DayPostMark, InstagramPosts } from "@/components/insta
 import { InstagramFeedPreview } from "@/components/instagram-feed-preview";
 import { InstagramFocus } from "@/components/instagram-focus";
 import { AnchorOutline, GridAnchorControls, useGridAnchors } from "@/components/grid-anchor";
-import { type AnchorPlace, anchorPlaces } from "@/lib/grid-anchors";
+import type { AnchorPlace } from "@/lib/grid-anchors";
 import { ScheduleTabs } from "@/components/instagram-tabs";
 import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
 import { PhotoFiles } from "@/components/photo-files";
@@ -93,8 +93,8 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
   const [now] = useState(() => new Date());
 
   const byDay = photosByDay(calendar.photos, unsaved);
-  const anchors = useGridAnchors(calendar.photos);
-  const places = anchorPlaces(byDay, anchors.anchors);
+  const anchors = useGridAnchors(calendar.photos, byDay);
+  const { places } = anchors;
   const days = calendarDays(now, weekOffset, WEEKS);
   const schedule = (photo: SocialPhoto, day: string | null) =>
     update(moveToDay(unsaved, byDay, photo, day));
@@ -141,15 +141,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
         photos={calendar.photos}
         unsaved={unsaved}
         onClose={() => setPicking(null)}
-        footer={(photo) => (
-          <GridAnchorControls
-            name={
-              anchors.anchors.has(photo.path) ? (anchors.anchors.get(photo.path) ?? "") : undefined
-            }
-            onToggle={() => anchors.toggle(photo)}
-            onRename={(name) => anchors.rename(photo, name)}
-          />
-        )}
+        footer={(photo) => <GridAnchorControls photo={photo} anchors={anchors} />}
         onSchedule={(photo, day) => {
           schedule(photo, day);
           setPicking(null);
@@ -238,7 +230,7 @@ interface CalendarGridProps {
   unsaved: Unsaved;
   onOpen: (day: string) => void;
   onDropPhoto: (path: string, day: string) => void;
-  /** Where each photo in a Grid Anchor group stands, by file path. */
+  /** Where each photo stands in the rows worked out from the Grid Anchor, by file path. */
   places: Map<string, AnchorPlace>;
 }
 
@@ -276,9 +268,9 @@ function CalendarGrid(props: CalendarGridProps) {
         Click an empty day to pick a photo for it, or a photo to change or remove it. Drag a photo
         to another day to move it there; dropping it on another photo swaps the two. A check in a
         day&apos;s corner marks Instagram posts already scheduled on Instagram, and a clock ones
-        still planned. A Grid Anchor (set in a day&apos;s picker) and the 2 photos before it make
-        one row of the Social Feed; the rest of the calendar falls into rows of 3 from it, outlined
-        in dark and light blue by turns.
+        still planned. The Grid Anchor (set in a day&apos;s picker) and the 2 photos before it make
+        one row of the Social Feed, and every other row of 3 is counted from it, outlined dark and
+        light blue by turns; moving the anchor shifts them all.
       </p>
     </>
   );
