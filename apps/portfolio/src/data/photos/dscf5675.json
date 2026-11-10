@@ -58,7 +58,16 @@
   ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-11-10",
+      "url": "",
+      "caption": "Busy Night in Myeongdong\n\n2026.05.22\nFujifilm X-T5, XF18-135mm @ 93mm, 1/140sec, ƒ 5.6, ISO 640\n명동거리 (Myeongdong-geori)",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {

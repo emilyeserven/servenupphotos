@@ -62,7 +62,16 @@
   ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-10-19",
+      "url": "",
+      "caption": "Pumgyeseok\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 74mm, 1/1100sec, ƒ 5.6, ISO 125\n근정전 (Geunjeongjeon), in 경복궁 (Gyeongbokgung)\n\nPumgyeseok (품계석) at Gyeongbokgung Palace. These \"rank stones\" indicate where officials of each rank would stand. If you can read a small amount of Chinese characters (or Hanja, 한자, in Korean) you can probably at least read the numbers!",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {

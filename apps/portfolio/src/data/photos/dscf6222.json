@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:23 15:46:05",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "changuimun-gate",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,10 +50,24 @@
   "albums": [],
   "tags": ["gates", "wood", "patterns", "texture", "dancheong"],
   "genres": ["abstract", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "changuimun-gate"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-11-13",
+      "url": "",
+      "caption": "Gate Ceiling\n\n2026.05.23\nFujifilm X-T5, XF18-135mm @ 44mm, 1/75sec, ƒ 4.7, ISO 125\n창의문 (Changuimun Gate)",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
@@ -262,5 +276,7 @@
     "samples": 9975
   },
   "notes": "Shows painted phoenixes; 'phoenixes' isn't a tag, since only 1 photo has them.",
-  "similarPhotos": [256, 397, 33, 63, 145, 210]
+  "similarPhotos": [256, 397, 33, 63, 145, 210],
+  "noGps": false,
+  "altText": null
 }

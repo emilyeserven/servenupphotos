@@ -58,7 +58,16 @@
   ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-10-21",
+      "url": "",
+      "caption": "Palace Halls\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 18mm, 1/70sec, ƒ 5, ISO 125\n경복궁 (Gyeongbokgung)",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {

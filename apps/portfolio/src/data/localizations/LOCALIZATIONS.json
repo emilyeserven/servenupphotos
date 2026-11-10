@@ -585,6 +585,14 @@
     "localScript": "Central Park"
   },
   {
+    "id": "place-changuimun-gate",
+    "type": "place",
+    "name": "Changuimun Gate",
+    "romanization": "",
+    "pronunciation": "",
+    "localScript": "창의문"
+  },
+  {
     "id": "place-chelsea-market",
     "type": "place",
     "name": "Chelsea Market",

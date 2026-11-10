@@ -58,7 +58,16 @@
   ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-10-15",
+      "url": "",
+      "caption": "Japsang\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 110mm, 1/1100sec, ƒ 5.6, ISO 125\n경복궁 (Gyeongbokgung)\n\nJapsang (잡상) are a unique Korean architectural feature - basically little guardians of the buildings they're on. They were everywhere in Gyeongbokgung.",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {

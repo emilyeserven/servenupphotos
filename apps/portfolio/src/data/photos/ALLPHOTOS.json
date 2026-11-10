@@ -25506,7 +25506,7 @@
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
-    "socialMediaPublishDate": "2026-11-28",
+    "socialMediaPublishDate": "2026-11-24",
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
@@ -26577,14 +26577,14 @@
     "images": {
       "full": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817.jpg",
       "key": "photos/f38b5d9f4265-dscf3817.jpg",
-      "xlarge": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xlarge.webp",
-      "large": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-large.webp",
-      "medium": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-medium.webp",
-      "small": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-small.webp",
-      "xsmall": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xsmall.webp",
-      "preview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-preview.webp",
-      "thumbnail": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnail.webp?crop=1256,0,3995",
-      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnailpreview.webp?crop=1256,0,3995",
+      "xlarge": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xlarge.webp?faces=mwbb5w0p",
+      "large": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-large.webp?faces=mwbb5w0p",
+      "medium": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-medium.webp?faces=mwbb5w0p",
+      "small": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-small.webp?faces=mwbb5w0p",
+      "xsmall": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xsmall.webp?faces=mwbb5w0p",
+      "preview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-preview.webp?faces=mwbb5w0p",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnail.webp?crop=1256,0,3995&faces=mwbb5w0p",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnailpreview.webp?crop=1256,0,3995&faces=mwbb5w0p",
       "thumbnailcrop": {
         "x": 1256,
         "y": 0,
@@ -26827,7 +26827,125 @@
       "samples": 9768
     },
     "notes": "Shows hanok houses in Bukchon; 'hanok' isn't a tag, since only 2 photos have it.",
-    "similarPhotos": [210, 212, 127, 126, 124, 357]
+    "similarPhotos": [210, 212, 127, 126, 124, 357],
+    "faces": [
+      {
+        "x": 1764,
+        "y": 2292,
+        "width": 197,
+        "height": 218,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 1746,
+        "y": 2126,
+        "width": 219,
+        "height": 219,
+        "blocks": 8,
+        "keep": true
+      },
+      {
+        "x": 2674,
+        "y": 2155,
+        "width": 117,
+        "height": 177,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 2538,
+        "y": 2186,
+        "width": 108,
+        "height": 141,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 2584,
+        "y": 2069,
+        "width": 82,
+        "height": 211,
+        "blocks": 8,
+        "shape": "circle",
+        "keep": true
+      },
+      {
+        "x": 2839,
+        "y": 2318,
+        "width": 101,
+        "height": 145,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 3137,
+        "y": 2319,
+        "width": 90,
+        "height": 111,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 3044,
+        "y": 2370,
+        "width": 89,
+        "height": 79,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 3008,
+        "y": 2452,
+        "width": 219,
+        "height": 219,
+        "blocks": 8,
+        "rotation": 37,
+        "keep": true
+      },
+      {
+        "x": 3352,
+        "y": 2151,
+        "width": 108,
+        "height": 120,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 3692,
+        "y": 2237,
+        "width": 109,
+        "height": 156,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 3774,
+        "y": 2849,
+        "width": 71,
+        "height": 93,
+        "blocks": 7,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 3568,
+        "y": 2326,
+        "width": 67,
+        "height": 82,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks"
+      }
+    ]
   },
   {
     "title": "Evolving City",
@@ -33716,7 +33834,16 @@
     ],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-11-10",
+        "url": "",
+        "caption": "Busy Night in Myeongdong\n\n2026.05.22\nFujifilm X-T5, XF18-135mm @ 93mm, 1/140sec, ƒ 5.6, ISO 640\n명동거리 (Myeongdong-geori)",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -33986,7 +34113,16 @@
     ],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-11-11",
+        "url": "",
+        "caption": "Jongmyo Entrance\n\n2026.05.23\nFujifilm X-T5, XF18-135mm @ 83mm, 1/1250sec, ƒ 5.6, ISO 200\n종묘 (Jongmyo)",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -34212,8 +34348,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:23 15:46:05",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "changuimun-gate",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -34248,10 +34384,24 @@
     "albums": [],
     "tags": ["gates", "wood", "patterns", "texture", "dancheong"],
     "genres": ["abstract", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "changuimun-gate"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-11-13",
+        "url": "",
+        "caption": "Gate Ceiling\n\n2026.05.23\nFujifilm X-T5, XF18-135mm @ 44mm, 1/75sec, ƒ 4.7, ISO 125\n창의문 (Changuimun Gate)",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -34460,7 +34610,301 @@
       "samples": 9975
     },
     "notes": "Shows painted phoenixes; 'phoenixes' isn't a tag, since only 1 photo has them.",
-    "similarPhotos": [256, 397, 33, 63, 145, 210]
+    "similarPhotos": [256, 397, 33, 63, 145, 210],
+    "noGps": false,
+    "altText": null
+  },
+  {
+    "title": "Crosswalk Before the Palace",
+    "comment": null,
+    "id": 452,
+    "file": "DSCF6485.jpg",
+    "addedDate": "2026-11-10T21:57:18Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/320",
+    "iso": 125,
+    "focalLength": 29.3,
+    "gpsPosition": "37 deg 34' 30.21\" N, 126 deg 58' 36.29\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:05:23 16:39:14",
+    "customCreateDate": null,
+    "placeName": "Gyeongbokgung Palace",
+    "customCity": "Seoul",
+    "customState": null,
+    "customCountry": null,
+    "country": "South Korea",
+    "state": "Seoul",
+    "city": null,
+    "width": 7664,
+    "height": 4311,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/6725682aee56-dscf6485.jpg",
+      "key": "photos/6725682aee56-dscf6485.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/6725682aee56-dscf6485-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/6725682aee56-dscf6485-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/6725682aee56-dscf6485-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/6725682aee56-dscf6485-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/6725682aee56-dscf6485-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/6725682aee56-dscf6485-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/6725682aee56-dscf6485-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6725682aee56-dscf6485-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1676,
+        "y": 0,
+        "size": 4311,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": "2026-11-12",
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [
+      "giwa",
+      "palace",
+      "gates",
+      "city-walls",
+      "crosswalk",
+      "tourists",
+      "crowd",
+      "mountains"
+    ],
+    "genres": ["street", "architecture"],
+    "places": [
+      {
+        "relation": "",
+        "id": "gyeongbokgung-palace"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-11-12",
+        "url": "",
+        "caption": "Crosswalk Before the Palace\n\n2026.05.23\nFujifilm X-T5, XF18-135mm @ 29mm, 1/320sec, ƒ 5.6, ISO 125\n경복궁 (Gyeongbokgung)",
+        "hashtags": []
+      }
+    ],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#808994",
+        "lab": {
+          "l": 56.71,
+          "a": -0.99,
+          "b": -7.08
+        },
+        "hcl": {
+          "h": 262.06,
+          "c": 7.15,
+          "l": 56.71
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0022
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0075
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0012
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0003
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0002
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.3053
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0021
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0011
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0002
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.6798,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0498
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0414
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0323
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0218
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0172
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0389
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0403
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0384
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0422
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0331
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0394
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0491
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0271
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0097
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0089
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0104
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0134
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0902
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0686
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0075
+          }
+        ]
+      },
+      "lightness": 56.71,
+      "chroma": 9.25,
+      "peakChroma": 18.42,
+      "samples": 9975
+    },
+    "similarPhotos": [252, 127, 210, 126, 212, 259],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Buddha's Birthday",
@@ -34507,7 +34951,7 @@
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": 8,
-    "socialMediaPublishDate": "2026-11-16",
+    "socialMediaPublishDate": "2026-11-25",
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
@@ -35309,14 +35753,14 @@
     "images": {
       "full": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116.jpg",
       "key": "photos/6a45778199ce-dscf7116.jpg",
-      "xlarge": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-xlarge.webp",
-      "large": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-large.webp",
-      "medium": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-medium.webp",
-      "small": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-small.webp",
-      "xsmall": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-xsmall.webp",
-      "preview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-preview.webp",
-      "thumbnail": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnail.webp?crop=2379,0,3986",
-      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnailpreview.webp?crop=2379,0,3986",
+      "xlarge": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-xlarge.webp?faces=mwbb0266",
+      "large": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-large.webp?faces=mwbb0266",
+      "medium": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-medium.webp?faces=mwbb0266",
+      "small": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-small.webp?faces=mwbb0266",
+      "xsmall": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-xsmall.webp?faces=mwbb0266",
+      "preview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-preview.webp?faces=mwbb0266",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnail.webp?crop=2379,0,3986&faces=mwbb0266",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnailpreview.webp?crop=2379,0,3986&faces=mwbb0266",
       "thumbnailcrop": {
         "x": 2379,
         "y": 0,
@@ -35326,7 +35770,7 @@
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
-    "socialMediaPublishDate": "2026-11-20",
+    "socialMediaPublishDate": "2026-11-21",
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
@@ -35549,7 +35993,36 @@
       "peakChroma": 12.85,
       "samples": 9768
     },
-    "similarPhotos": [263, 268, 458, 456, 213, 217]
+    "similarPhotos": [263, 268, 458, 456, 213, 217],
+    "faces": [
+      {
+        "x": 4724,
+        "y": 2112,
+        "width": 97,
+        "height": 117,
+        "blocks": 4,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 5293,
+        "y": 2183,
+        "width": 84,
+        "height": 98,
+        "blocks": 5,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 6003,
+        "y": 2317,
+        "width": 117,
+        "height": 148,
+        "blocks": 5,
+        "shape": "circle",
+        "edge": "blocks"
+      }
+    ]
   },
   {
     "title": "Artery of the City",
@@ -35596,7 +36069,7 @@
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
-    "socialMediaPublishDate": "2026-11-21",
+    "socialMediaPublishDate": "2026-11-20",
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
@@ -35862,7 +36335,7 @@
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
-    "socialMediaPublishDate": "2026-11-22",
+    "socialMediaPublishDate": "2026-11-28",
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
@@ -36128,7 +36601,7 @@
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
-    "socialMediaPublishDate": "2026-11-23",
+    "socialMediaPublishDate": "2026-11-14",
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
@@ -36394,7 +36867,7 @@
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": 7,
-    "socialMediaPublishDate": "2026-11-24",
+    "socialMediaPublishDate": "2026-11-23",
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
@@ -40183,7 +40656,7 @@
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
-    "socialMediaPublishDate": "2026-11-25",
+    "socialMediaPublishDate": "2026-11-22",
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
@@ -43994,7 +44467,7 @@
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
-    "socialMediaPublishDate": "2026-11-26",
+    "socialMediaPublishDate": "2026-11-27",
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
@@ -50529,7 +51002,16 @@
     ],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-10-14",
+        "url": "",
+        "caption": "Gyeongbokgung Station on a (shockingly quiet) Saturday afternoon.\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 44mm, 1/60sec, ƒ 4.7, ISO 1600\n경복궁역 (Gyeongbokgung-yeok)\n\nOne of the first things I did when I was in Seoul was get a Climate Card (the Metrocard/Oyster Card/SUICA etc equivalent). The public transit coverage was so good that I ended up only needing to get a taxi once! As a sort-of New Yorker, one of the obvious things I could say was that the stations in Korea were extremely clean. But I think the more interesting thing ended up being the amount of emergency equipment that was available in cabinets through every station I was in. From heatstroke recovery to earthquake supplies, it really added to my overall peace of mind and struck me as very thoughtful (and probably something that can't really exist in a less collectivist society, unfortunately).",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -50795,7 +51277,16 @@
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-10-22",
+        "url": "",
+        "caption": "Gyeonghoeru Pavilion (경회루) and Gyeonghoeji Pond (경회루 연지).\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 25mm, 1/500sec, ƒ 5.6, ISO 125\n\nGyeonghoeru Pavilion (경회루) and Gyeonghoeji Pond (경회루 연지).\n\n2026.05.17\nFujifilm XT-5, XF18-135mm @ 25mm, 1/500sec, ƒ 5.6, ISO 125\n경복궁 (Gyeongbokgung Palace)\n\nThe thing about solo traveling in a country that doesn't natively speak English, is that you end up having some nice conversations with other English speakers. This doesn't always mean English is the other person's first language, but there's just enough to communicate.\n\nI had a chance to reflect on this \"English-speaking privilege\" in front of this pavilion, after having asked a stranger to get my photo using my one-shot Instax camera. This other traveler was... Romanian, I think, and he actually asked for me to take his photo with the Instax as well. As with many of these transient travel conversations, we went our separate ways without exchanging contact information. But, it's fun to think that somewhere out there, there's someone with a small instant-film photo of themselves that came out of a conversation with another traveler.",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -62399,7 +62890,16 @@
     ],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-10-15",
+        "url": "",
+        "caption": "Japsang\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 110mm, 1/1100sec, ƒ 5.6, ISO 125\n경복궁 (Gyeongbokgung)\n\nJapsang (잡상) are a unique Korean architectural feature - basically little guardians of the buildings they're on. They were everywhere in Gyeongbokgung.",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -64297,7 +64797,16 @@
     ],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-10-17",
+        "url": "",
+        "caption": "Ladies Waiting\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 74mm, 1/140sec, ƒ 5.3, ISO 125\n경복궁 (Gyeongbokgung)",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -71086,7 +71595,16 @@
     ],
     "spotlightZones": ["homepage"],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-10-13",
+        "url": "",
+        "caption": "Mirror Pond\n\n2026.05.16\nFujifilm X-T5, XF18-135mm @ 18mm, 1/60sec, ƒ 5, ISO 125\nMirror Pond, in 국립중앙박물관 (Gungnip Jungang Bangmulgwan)\n\nThe dancheong (단청) ceiling of the gazebo in the National Museum of Korea's Mirror Pond.\n\nThis ceiling is one of the first examples of Korean traditional architecture I had a chance to photograph. The bright colors and patterns really stuck out to me as something uniquely Korean, especially given my familiarity with Chinese and Japanese culture. (Turns out that \"dancheong\" is the specific term for that very Korean style.) I took a lot more dancheong photos during this trip, but I think this is the best ceiling photo I ended up getting... and I would attribute that to the reflections from the pond.",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -71294,7 +71812,8 @@
       "peakChroma": 31.74,
       "samples": 9900
     },
-    "similarPhotos": [269, 468, 129, 262, 10, 256]
+    "similarPhotos": [269, 468, 129, 262, 10, 256],
+    "socialGridAnchor": true
   },
   {
     "id": 29,
@@ -76516,7 +77035,16 @@
     ],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-10-21",
+        "url": "",
+        "caption": "Palace Halls\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 18mm, 1/70sec, ƒ 5, ISO 125\n경복궁 (Gyeongbokgung)",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -77060,7 +77588,16 @@
     ],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-10-18",
+        "url": "",
+        "caption": "Photographing photographers... Gyeongbokgung edition.\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 27mm, 1/320sec, ƒ 5.6, ISO 125\n근정문 (Geunjeongmun), in 경복궁 (Gyeongbokgung)\n\nThe one thing that can be frustrating about popular destinations is that you're kind of... damned if you do, damned if you don't. Like, yes, I definitely have to go see that palace. But also, everyone else does too. So of course, it gets really crowded. As a photographer, I try to do my best to make the presence of people \"work\" with a photo, but sometimes there's just too many people. In a case like this, sometimes it's just more fun to take photos of other photographers.",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -78690,7 +79227,16 @@
     ],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-10-19",
+        "url": "",
+        "caption": "Pumgyeseok\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 74mm, 1/1100sec, ƒ 5.6, ISO 125\n근정전 (Geunjeongjeon), in 경복궁 (Gyeongbokgung)\n\nPumgyeseok (품계석) at Gyeongbokgung Palace. These \"rank stones\" indicate where officials of each rank would stand. If you can read a small amount of Chinese characters (or Hanja, 한자, in Korean) you can probably at least read the numbers!",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {
@@ -80304,7 +80850,7 @@
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
-    "socialMediaPublishDate": "2026-11-27",
+    "socialMediaPublishDate": "2026-11-26",
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
@@ -98453,7 +98999,16 @@
     ],
     "spotlightZones": [],
     "spotlightFocus": null,
-    "socialPosts": [],
+    "socialPosts": [
+      {
+        "platform": "instagram",
+        "status": "scheduled",
+        "date": "2026-10-16",
+        "url": "",
+        "caption": "While the buildings around the palace grow and change, the japsang still look on...\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 56mm, 1/420sec, ƒ 5.6, ISO 125\n경복궁 (Gyeongbokgung)",
+        "hashtags": []
+      }
+    ],
     "reEdit": null,
     "colors": {
       "average": {

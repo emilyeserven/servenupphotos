@@ -58,7 +58,16 @@
   ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-11-11",
+      "url": "",
+      "caption": "Jongmyo Entrance\n\n2026.05.23\nFujifilm X-T5, XF18-135mm @ 83mm, 1/1250sec, ƒ 5.6, ISO 200\n종묘 (Jongmyo)",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {

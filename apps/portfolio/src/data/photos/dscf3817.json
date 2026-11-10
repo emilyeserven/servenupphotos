@@ -26,14 +26,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817.jpg",
     "key": "photos/f38b5d9f4265-dscf3817.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnail.webp?crop=1256,0,3995",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnailpreview.webp?crop=1256,0,3995",
+    "xlarge": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xlarge.webp?faces=mwbb5w0p",
+    "large": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-large.webp?faces=mwbb5w0p",
+    "medium": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-medium.webp?faces=mwbb5w0p",
+    "small": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-small.webp?faces=mwbb5w0p",
+    "xsmall": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xsmall.webp?faces=mwbb5w0p",
+    "preview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-preview.webp?faces=mwbb5w0p",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnail.webp?crop=1256,0,3995&faces=mwbb5w0p",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnailpreview.webp?crop=1256,0,3995&faces=mwbb5w0p",
     "thumbnailcrop": {
       "x": 1256,
       "y": 0,
@@ -276,5 +276,123 @@
     "samples": 9768
   },
   "notes": "Shows hanok houses in Bukchon; 'hanok' isn't a tag, since only 2 photos have it.",
-  "similarPhotos": [210, 212, 127, 126, 124, 357]
+  "similarPhotos": [210, 212, 127, 126, 124, 357],
+  "faces": [
+    {
+      "x": 1764,
+      "y": 2292,
+      "width": 197,
+      "height": 218,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 1746,
+      "y": 2126,
+      "width": 219,
+      "height": 219,
+      "blocks": 8,
+      "keep": true
+    },
+    {
+      "x": 2674,
+      "y": 2155,
+      "width": 117,
+      "height": 177,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 2538,
+      "y": 2186,
+      "width": 108,
+      "height": 141,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 2584,
+      "y": 2069,
+      "width": 82,
+      "height": 211,
+      "blocks": 8,
+      "shape": "circle",
+      "keep": true
+    },
+    {
+      "x": 2839,
+      "y": 2318,
+      "width": 101,
+      "height": 145,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 3137,
+      "y": 2319,
+      "width": 90,
+      "height": 111,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 3044,
+      "y": 2370,
+      "width": 89,
+      "height": 79,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 3008,
+      "y": 2452,
+      "width": 219,
+      "height": 219,
+      "blocks": 8,
+      "rotation": 37,
+      "keep": true
+    },
+    {
+      "x": 3352,
+      "y": 2151,
+      "width": 108,
+      "height": 120,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 3692,
+      "y": 2237,
+      "width": 109,
+      "height": 156,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 3774,
+      "y": 2849,
+      "width": 71,
+      "height": 93,
+      "blocks": 7,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 3568,
+      "y": 2326,
+      "width": 67,
+      "height": 82,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    }
+  ]
 }

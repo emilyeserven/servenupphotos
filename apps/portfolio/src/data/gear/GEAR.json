@@ -103,5 +103,110 @@
       "height": 1
     },
     "description": ""
+  },
+  {
+    "id": "lens-ef-s18-135mm-f-3-5-5-6-is-stm",
+    "kind": "lens",
+    "name": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "image": "https://cdn.servenupphotos.net/gear/0d6d1a5b0c92-canon-6097b002-18-135mm-f-3-5-5-6-is-stm-1348749508-894152.webp",
+    "original": "https://cdn.servenupphotos.net/gear/originals/d15b5b4f5f8c-canon-6097b002-18-135mm-f-3-5-5-6-is-stm-1348749508-894152.jpg",
+    "crop": {
+      "x": -0.22433333333333338,
+      "y": -0.0444444444444444,
+      "width": 1.4536666666666667,
+      "height": 1.088888888888889,
+      "fill": "white"
+    },
+    "subject": {
+      "x": 0.1725,
+      "y": 0.01,
+      "width": 0.66,
+      "height": 0.98
+    },
+    "description": ""
+  },
+  {
+    "id": "lens-ef-s18-55mm-f-3-5-5-6-is-ii",
+    "kind": "lens",
+    "name": "EF-S18-55mm f/3.5-5.6 IS II",
+    "image": "https://cdn.servenupphotos.net/gear/5b327efe9087-1330447874-519475.webp",
+    "original": "https://cdn.servenupphotos.net/gear/originals/9765188d0251-1330447874-519475.jpg",
+    "crop": {
+      "x": -0.24166666666666659,
+      "y": -0.05555555555555547,
+      "width": 1.4833333333333332,
+      "height": 1.1111111111111112,
+      "fill": "white"
+    },
+    "subject": {
+      "x": 0.1225,
+      "y": 0,
+      "width": 0.755,
+      "height": 1
+    },
+    "description": ""
+  },
+  {
+    "id": "lens-ef-s55-250mm-f-4-5-6-is-stm",
+    "kind": "lens",
+    "name": "EF-S55-250mm f/4-5.6 IS STM",
+    "image": "https://cdn.servenupphotos.net/gear/0f6fe6929601-1551349805-img-1147489.webp",
+    "original": "https://cdn.servenupphotos.net/gear/originals/c1f00a074ae2-1551349805-img-1147489.jpg",
+    "crop": {
+      "x": -0.24291666666666656,
+      "y": -0.05555555555555547,
+      "width": 1.4833333333333332,
+      "height": 1.1111111111111112,
+      "fill": "white"
+    },
+    "subject": {
+      "x": 0.2225,
+      "y": 0,
+      "width": 0.5525,
+      "height": 1
+    },
+    "description": ""
+  },
+  {
+    "id": "lens-xf18-135mmf3-5-5-6r-lm-ois-wr",
+    "kind": "lens",
+    "name": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "image": "https://cdn.servenupphotos.net/gear/98bb44d005f4-fujifilm-16432853-xf-18-135mm-f-3-5-5-6-r-1402879517-1058622.webp",
+    "original": "https://cdn.servenupphotos.net/gear/originals/770d74b02d1d-fujifilm-16432853-xf-18-135mm-f-3-5-5-6-r-1402879517-1058622.jpg",
+    "crop": {
+      "x": -0.24166666666666659,
+      "y": -0.05555555555555547,
+      "width": 1.4833333333333332,
+      "height": 1.1111111111111112,
+      "fill": "white"
+    },
+    "subject": {
+      "x": 0.1625,
+      "y": 0,
+      "width": 0.675,
+      "height": 1
+    },
+    "description": ""
+  },
+  {
+    "id": "lens-xf35mmf2-r-wr",
+    "kind": "lens",
+    "name": "XF35mmF2 R WR",
+    "image": "https://cdn.servenupphotos.net/gear/350e7d24c74e-fujifilm-xf-35mm-f-2-r-1745938327-1191420.webp",
+    "original": "https://cdn.servenupphotos.net/gear/originals/f99efc875d86-fujifilm-xf-35mm-f-2-r-1745938327-1191420.jpg",
+    "crop": {
+      "x": -0.23860416666666667,
+      "y": -0.050138888888888844,
+      "width": 1.4722083333333333,
+      "height": 1.1027777777777779,
+      "fill": "white"
+    },
+    "subject": {
+      "x": 0.0425,
+      "y": 0.005,
+      "width": 0.91,
+      "height": 0.9925
+    },
+    "description": ""
   }
 ]

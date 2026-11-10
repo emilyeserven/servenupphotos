@@ -1,9 +1,9 @@
 {
-  "id": 452,
-  "title": null,
+  "title": "Crosswalk Before the Palace",
   "comment": null,
+  "id": 452,
   "file": "DSCF6485.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-10T21:57:18Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:23 16:39:14",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Gyeongbokgung Palace",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -43,18 +43,32 @@
   },
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
-  "socialMediaPublishDate": "2026-11-14",
+  "socialMediaPublishDate": "2026-11-12",
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
   "albums": [],
   "tags": ["giwa", "palace", "gates", "city-walls", "crosswalk", "tourists", "crowd", "mountains"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "gyeongbokgung-palace"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-11-12",
+      "url": "",
+      "caption": "Crosswalk Before the Palace\n\n2026.05.23\nFujifilm X-T5, XF18-135mm @ 29mm, 1/320sec, ƒ 5.6, ISO 125\n경복궁 (Gyeongbokgung)",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
@@ -262,5 +276,8 @@
     "peakChroma": 18.42,
     "samples": 9975
   },
-  "similarPhotos": [252, 127, 210, 126, 212, 259]
+  "similarPhotos": [252, 127, 210, 126, 212, 259],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

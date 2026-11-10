@@ -1,0 +1,21 @@
+{
+  "id": "lens-xf35mmf2-r-wr",
+  "kind": "lens",
+  "name": "XF35mmF2 R WR",
+  "image": "https://cdn.servenupphotos.net/gear/350e7d24c74e-fujifilm-xf-35mm-f-2-r-1745938327-1191420.webp",
+  "original": "https://cdn.servenupphotos.net/gear/originals/f99efc875d86-fujifilm-xf-35mm-f-2-r-1745938327-1191420.jpg",
+  "crop": {
+    "x": -0.23860416666666667,
+    "y": -0.050138888888888844,
+    "width": 1.4722083333333333,
+    "height": 1.1027777777777779,
+    "fill": "white"
+  },
+  "subject": {
+    "x": 0.0425,
+    "y": 0.005,
+    "width": 0.91,
+    "height": 0.9925
+  },
+  "description": ""
+}

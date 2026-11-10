@@ -1,0 +1,21 @@
+{
+  "id": "lens-ef-s55-250mm-f-4-5-6-is-stm",
+  "kind": "lens",
+  "name": "EF-S55-250mm f/4-5.6 IS STM",
+  "image": "https://cdn.servenupphotos.net/gear/0f6fe6929601-1551349805-img-1147489.webp",
+  "original": "https://cdn.servenupphotos.net/gear/originals/c1f00a074ae2-1551349805-img-1147489.jpg",
+  "crop": {
+    "x": -0.24291666666666656,
+    "y": -0.05555555555555547,
+    "width": 1.4833333333333332,
+    "height": 1.1111111111111112,
+    "fill": "white"
+  },
+  "subject": {
+    "x": 0.2225,
+    "y": 0,
+    "width": 0.5525,
+    "height": 1
+  },
+  "description": ""
+}
