@@ -117,7 +117,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
               onOpen={setPicking}
               onDropPhoto={dropPhoto}
             />
-            <InstagramPosts days={days} postsByDay={posts} />
+            <InstagramPosts postsByDay={posts} today={isoDate(now)} />
           </>
         }
         feed={
