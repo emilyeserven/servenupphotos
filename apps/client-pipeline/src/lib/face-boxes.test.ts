@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  areaName,
   blockSide,
   drawnBox,
   type FaceBox,
@@ -12,6 +13,7 @@ import {
   resizedBox,
   roundedBox,
   sameBoxes,
+  touchedCells,
   withFacesMark,
 } from "@/lib/face-boxes";
 
@@ -92,4 +94,33 @@ test("finding faces again only adds the ones not boxed yet", () => {
   const near = { ...face, x: 110, y: 105 };
   const far = { ...face, x: 600, y: 300 };
   assert.deepEqual(newFaces([face], [near, far]), [far]);
+});
+
+test("only a circle's shape, a whole-block edge and a keep mark go to the backend", () => {
+  assert.deepEqual(roundedBox({ ...face, shape: "box", edge: "blocks" }), face);
+  assert.deepEqual(roundedBox({ ...face, shape: "circle", edge: "inside" }), {
+    ...face,
+    shape: "circle",
+  });
+  assert.deepEqual(roundedBox({ ...face, shape: "circle", edge: "blocks", keep: true }), {
+    ...face,
+    shape: "circle",
+    edge: "blocks",
+    keep: true,
+  });
+  assert.ok(!sameBoxes([face], [{ ...face, keep: true }]));
+});
+
+test("a kept area is named apart from the faces", () => {
+  assert.equal(areaName(face, 0), "Face 1");
+  assert.equal(areaName({ ...face, keep: true }, 2), "Keep 3");
+});
+
+test("a circle touches every cell of a 4 × 4 grid, and all but the corners of an 8 × 8 one", () => {
+  const square = { x: 0, y: 0, width: 40, height: 40, blocks: 8 };
+  assert.equal(touchedCells(square, 4, 4).length, 16);
+  // With 8 × 8 cells, each corner cell lies outside the circle.
+  const cells = touchedCells(square, 8, 8);
+  assert.equal(cells.length, 60);
+  assert.ok(!cells.some((cell) => cell.x === 0 && cell.y === 0));
 });

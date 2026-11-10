@@ -33,6 +33,8 @@ export function useFaceEditor(saved: FaceBox[]) {
     /** Whether another box can be added by hand. */
     canAdd: photo !== null && faces.length < MAX_FACES,
     addBox: () => photo && append([middleBox(photo)]),
+    /** Adds an area to keep as it is, such as hair over a face, in the middle of the photo. */
+    addKeep: () => photo && append([{ ...middleBox(photo), keep: true }]),
     /** Adds the found faces that aren't boxed yet. */
     addFound: (found: FaceBox[]) => append(newFaces(faces, found)),
     reset: () => replace(saved),

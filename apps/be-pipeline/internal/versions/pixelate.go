@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	"strconv"
 	"strings"
 )
 
@@ -20,6 +21,18 @@ type Face struct {
 	// Blocks is the pixelation's density: how many blocks fit across the
 	// box's longer side. Fewer blocks hide more.
 	Blocks int `json:"blocks"`
+	// Shape is ShapeCircle to pixelate only the circle (an oval when the
+	// box isn't square) that fits in the box; the whole box when empty or
+	// ShapeBox.
+	Shape string `json:"shape,omitempty"`
+	// Edge is how a circle's edge is pixelated: EdgeBlocks pixelates every
+	// block the circle touches whole, so block corners reach past it; empty
+	// or EdgeInside pixelates only the pixels inside the circle.
+	Edge string `json:"edge,omitempty"`
+	// Keep marks an area to leave as the photo has it, such as hair over
+	// a pixelated face: it undoes every face's pixelation inside its box or
+	// circle. Its Blocks is unused.
+	Keep bool `json:"keep,omitempty"`
 }
 
 // Faces are the boxes pixelated on one photo.
@@ -47,7 +60,7 @@ func (f Face) Valid() string {
 	case f.Blocks < MinBlocks || f.Blocks > MaxBlocks:
 		return fmt.Sprintf("each face needs %d to %d blocks", MinBlocks, MaxBlocks)
 	}
-	return ""
+	return f.shapeValid()
 }
 
 // Valid reports why fs can't be pixelated, or "" when they can.
@@ -84,21 +97,48 @@ func Pixelate(img image.Image, fs Faces) image.Image {
 	out := image.NewNRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
 	draw.Draw(out, out.Bounds(), img, b.Min, draw.Src)
 	for _, f := range fs {
-		pixelateFace(out, f)
+		if !f.Keep {
+			pixelateFace(out, f)
+		}
+	}
+	for _, f := range fs {
+		if f.Keep {
+			restore(out, img, f)
+		}
 	}
 	return out
 }
 
-// pixelateFace fills each block of f on img, clipped to img, with its average.
+// pixelateFace fills each block of f on img, clipped to img, with its average:
+// the whole block in a box, and in a circle the part inside it, or every block
+// it touches with EdgeBlocks.
 func pixelateFace(img *image.NRGBA, f Face) {
 	box := image.Rect(f.X, f.Y, f.X+f.Width, f.Y+f.Height).Intersect(img.Bounds())
 	side := f.blockSide()
 	for y := box.Min.Y; y < box.Max.Y; y += side {
 		for x := box.Min.X; x < box.Max.X; x += side {
-			block := image.Rect(x, y, x+side, y+side).Intersect(box)
-			draw.Draw(img, block, image.NewUniform(average(img, block)), image.Point{}, draw.Src)
+			pixelateBlock(img, f, image.Rect(x, y, x+side, y+side).Intersect(box))
 		}
 	}
+}
+
+// pixelateBlock fills the part of block that f covers with its average.
+func pixelateBlock(img *image.NRGBA, f Face, block image.Rectangle) {
+	switch {
+	case !f.isCircle():
+		fillBlock(img, block)
+	case f.Edge == EdgeBlocks:
+		if f.touches(block) {
+			fillBlock(img, block)
+		}
+	default:
+		fillInside(img, block, f.inside)
+	}
+}
+
+// fillBlock fills block on img with its average color.
+func fillBlock(img *image.NRGBA, block image.Rectangle) {
+	draw.Draw(img, block, image.NewUniform(average(img, block)), image.Point{}, draw.Src)
 }
 
 // average is the mean color of the pixels of img inside r.
@@ -122,12 +162,14 @@ func channel(sum, n int) uint8 {
 	return uint8(min(255, max(0, sum/n))) //nolint:gosec // clamped to 0–255 just above
 }
 
-// String is fs as "x,y,width,height,blocks" for each face, joined by ";",
-// how it's saved with each version in R2 so remaking a version keeps them.
+// String is fs as "x,y,width,height,blocks" for each face, with ",circle" or
+// ",circle-blocks" after a circle's and ",keep" after an area kept as it is,
+// joined by ";": how it's saved with each version in R2 so remaking a version
+// keeps them.
 func (fs Faces) String() string {
 	parts := make([]string, len(fs))
 	for i, f := range fs {
-		parts[i] = fmt.Sprintf("%d,%d,%d,%d,%d", f.X, f.Y, f.Width, f.Height, f.Blocks)
+		parts[i] = fmt.Sprintf("%d,%d,%d,%d,%d", f.X, f.Y, f.Width, f.Height, f.Blocks) + f.shapeSuffix() + f.keepSuffix()
 	}
 	return strings.Join(parts, ";")
 }
@@ -141,8 +183,8 @@ func ParseFaces(s string) (Faces, bool) {
 	parts := strings.Split(s, ";")
 	fs := make(Faces, 0, len(parts))
 	for _, part := range parts {
-		var f Face
-		if n, err := fmt.Sscanf(part, "%d,%d,%d,%d,%d", &f.X, &f.Y, &f.Width, &f.Height, &f.Blocks); err != nil || n != 5 || f.Valid() != "" {
+		f, ok := parseFace(part)
+		if !ok {
 			return nil, false
 		}
 		fs = append(fs, f)
@@ -151,4 +193,25 @@ func ParseFaces(s string) (Faces, bool) {
 		return nil, false
 	}
 	return fs, true
+}
+
+// parseFace reads one face of a Faces String.
+func parseFace(s string) (Face, bool) {
+	fields := strings.Split(s, ",")
+	if len(fields) < 5 || len(fields) > 7 {
+		return Face{}, false
+	}
+	var n [5]int
+	for i := range n {
+		v, err := strconv.Atoi(fields[i])
+		if err != nil {
+			return Face{}, false
+		}
+		n[i] = v
+	}
+	f := Face{X: n[0], Y: n[1], Width: n[2], Height: n[3], Blocks: n[4]}
+	if !f.setFlags(fields[5:]) {
+		return Face{}, false
+	}
+	return f, f.Valid() == ""
 }

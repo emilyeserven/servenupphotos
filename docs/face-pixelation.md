@@ -23,6 +23,24 @@ Pigo only finds faces looking roughly at the camera. Faces turned to the side, s
 > at many sizes, and a square that passes enough checks is a face. No machine learning runs at request time and no
 > model is downloaded, which keeps the backend a single Go binary with no C libraries.
 
+## Shapes and keep areas
+
+Each area in the list has three choices:
+
+- **Pixelate** or **Keep as is**. A keep area leaves what's under it as the photo has it, even where a face's
+  pixelation covers it, for hair, a hat or a background that doesn't need hiding. Keep areas are applied after every
+  face, whatever their order. **Add a keep area** puts one in the middle; any drawn box can be switched to one. Their
+  outlines are sky blue and they're named "Keep 2" rather than "Face 2".
+- **Box** or **Circle**. A circle is the circle (an oval, when the box isn't square) that fits in the box, drawn with
+  round corners over the preview. It works for keep areas too.
+- For a pixelated circle, its edge: **Inside the circle** pixelates only the pixels inside it, so the edge stays round
+  and the box's corners keep the photo. **Whole blocks** pixelates every block the circle touches, whole, so the
+  edge is a staircase of blocks whose corners reach past the circle.
+
+On the wire, an area adds `shape: "circle"`, `edge: "blocks"` and `keep: true` to its `{ x, y, width, height, blocks }`
+(each left out for the default: box, inside, pixelate). In R2 metadata a circle adds `,circle` or `,circle-blocks` and
+a keep area `,keep` after its five numbers.
+
 ## Density
 
 Each box has its own **Density** slider: how many blocks fit across the box's longer side, from 3 to 40 (8 to start).
@@ -38,7 +56,7 @@ touch different from the preview, but the blocks fall in the same places.
 
 ## Saving
 
-**Pixelate every version** (or **Remake versions without pixelation** once every box is removed) sends
+**Pixelate every version** (or **Remake versions without pixelation** once every area is removed) sends
 `POST /api/photos/bucket/versions` with the `key` and `faces`, a list of `{ x, y, width, height, blocks }` in pixels of
 the photo turned upright from its EXIF orientation. Giving `faces` always remakes every version, whatever `versions`
 asks for, so none still shows a face. The backend decodes the original, pixelates every box on the full-size photo,

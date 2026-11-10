@@ -1,17 +1,9 @@
 import { type PointerEvent, type RefObject, useEffect, useRef, useState } from "react";
 import type { Size } from "@/lib/crop";
+import { drawPreview, type Loaded } from "@/components/face-pixelation/draw-preview";
 import { FaceBoxOverlay } from "@/components/face-pixelation/face-box-overlay";
 import { type FaceBox, drawnBox, isBigEnough } from "@/lib/face-boxes";
 import { cn } from "@/lib/utils";
-
-/** The longest edge the preview is drawn at; the page shows it smaller, so more is wasted work. */
-const PREVIEW_EDGE = 1600;
-
-/** The photo loaded for drawing, with its size as it's shown. */
-interface Loaded {
-  image: HTMLImageElement;
-  photo: Size;
-}
 
 /**
  * The photo at src, once loaded. It's loaded without CORS, which is enough to draw it on a canvas:
@@ -33,44 +25,6 @@ function useLoadedPhoto(src: string): Loaded | null {
     };
   }, [src]);
   return loaded;
-}
-
-/**
- * Draws image on canvas with each face pixelated: the face is shrunk to one pixel per block, then
- * stretched back without smoothing, so each block is about the average of the pixels under it, as
- * the backend makes it.
- */
-function drawPreview(canvas: HTMLCanvasElement, { image, photo }: Loaded, faces: FaceBox[]) {
-  const scale = Math.min(1, PREVIEW_EDGE / Math.max(photo.width, photo.height));
-  canvas.width = Math.round(photo.width * scale);
-  canvas.height = Math.round(photo.height * scale);
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-  const tiny = document.createElement("canvas");
-  const tinyCtx = tiny.getContext("2d");
-  if (!tinyCtx) return;
-  for (const face of faces) {
-    const side = Math.max(face.width, face.height) / Math.max(1, face.blocks);
-    tiny.width = Math.max(1, Math.ceil(face.width / side));
-    tiny.height = Math.max(1, Math.ceil(face.height / side));
-    tinyCtx.imageSmoothingEnabled = true;
-    tinyCtx.imageSmoothingQuality = "high";
-    tinyCtx.drawImage(
-      image,
-      face.x,
-      face.y,
-      face.width,
-      face.height,
-      0,
-      0,
-      tiny.width,
-      tiny.height,
-    );
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(tiny, face.x * scale, face.y * scale, face.width * scale, face.height * scale);
-    ctx.imageSmoothingEnabled = true;
-  }
 }
 
 interface FacePreviewProps {

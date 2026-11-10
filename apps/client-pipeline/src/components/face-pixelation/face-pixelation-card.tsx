@@ -1,5 +1,5 @@
 import { type UseMutationResult, useMutation, useQuery } from "@tanstack/react-query";
-import { EyeIcon, EyeOffIcon, PlusIcon, ScanFaceIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, PlusIcon, ScanFaceIcon, ShieldOffIcon } from "lucide-react";
 import { detectFacesMutation, savedFacesQuery } from "@/api/faces";
 import type { Editable } from "@/components/edit-in-flight/photo-json";
 import type { Edit, Save } from "@/components/edit-in-flight/use-edit";
@@ -34,7 +34,8 @@ export function FacePixelationCard(props: FacePixelationCardProps) {
         <CardTitle>Pixelate faces</CardTitle>
         <CardDescription>
           Hide faces behind blocks of color on every version and the Square Thumbnail. Find them, or
-          drag on the photo to draw a box, then set each one's density: fewer blocks hide more.
+          drag on the photo to draw a box, then set each one's density (fewer blocks hide more) and
+          shape. A keep area leaves what's under it unpixelated, such as hair over a face.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -107,17 +108,25 @@ function Toolbar({ editor, detect, locked, onFind }: ToolbarProps) {
         {detect.isPending ? <Spinner /> : <ScanFaceIcon />}
         Find faces
       </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={locked || !editor.canAdd}
-        onClick={editor.addBox}
-      >
+      <AddButtons editor={editor} disabled={locked || !editor.canAdd} />
+      <BoxesToggle shown={editor.showBoxes} onToggle={editor.toggleBoxes} />
+    </div>
+  );
+}
+
+/** Adds a box to pixelate, or an area to keep as it is, in the middle of the photo. */
+function AddButtons({ editor, disabled }: { editor: FaceEditorState; disabled: boolean }) {
+  return (
+    <>
+      <Button variant="outline" size="sm" disabled={disabled} onClick={editor.addBox}>
         <PlusIcon />
         Add a box
       </Button>
-      <BoxesToggle shown={editor.showBoxes} onToggle={editor.toggleBoxes} />
-    </div>
+      <Button variant="outline" size="sm" disabled={disabled} onClick={editor.addKeep}>
+        <ShieldOffIcon />
+        Add a keep area
+      </Button>
+    </>
   );
 }
 

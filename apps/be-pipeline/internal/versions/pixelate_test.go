@@ -146,3 +146,102 @@ func TestDetectFacesFindsTheFace(t *testing.T) {
 		t.Errorf("blocks = %d, want %d", face.Blocks, DefaultBlocks)
 	}
 }
+
+// gray reports whether the pixel at x, y of img is pixelated stripes: neither
+// black nor white.
+func gray(img image.Image, x, y int) bool {
+	r := color.NRGBAModel.Convert(img.At(x, y)).(color.NRGBA).R
+	return r != 0 && r != 255
+}
+
+func TestPixelateCircleKeepsTheCorners(t *testing.T) {
+	out := Pixelate(stripes(40, 40), Faces{{X: 0, Y: 0, Width: 40, Height: 40, Blocks: 4, Shape: ShapeCircle}})
+	if !gray(out, 20, 20) || !gray(out, 20, 2) {
+		t.Error("the middle and top of the circle aren't pixelated")
+	}
+	for _, p := range []image.Point{{0, 0}, {39, 0}, {0, 39}, {39, 39}, {3, 3}} {
+		if gray(out, p.X, p.Y) {
+			t.Errorf("corner pixel %v is pixelated, want it kept", p)
+		}
+	}
+}
+
+func TestPixelateCircleWithWholeBlocksReachesPastIt(t *testing.T) {
+	circle := Face{X: 0, Y: 0, Width: 40, Height: 40, Blocks: 8, Shape: ShapeCircle}
+	blocks := circle
+	blocks.Edge = EdgeBlocks
+	// With 5 px blocks, the top-left block doesn't touch the circle and stays.
+	// The one next to it does, so EdgeBlocks pixelates it whole, its pixel at
+	// 5, 0 past the circle included; EdgeInside leaves that pixel alone.
+	whole := Pixelate(stripes(40, 40), Faces{blocks})
+	if gray(whole, 0, 0) {
+		t.Error("the corner block is pixelated, want it kept")
+	}
+	if !gray(whole, 5, 0) {
+		t.Error("the block touching the circle isn't pixelated whole")
+	}
+	if gray(Pixelate(stripes(40, 40), Faces{circle}), 5, 0) {
+		t.Error("EdgeInside pixelated a pixel outside the circle")
+	}
+}
+
+func TestFacesRoundTripCircles(t *testing.T) {
+	fs := Faces{
+		{X: 1, Y: 2, Width: 30, Height: 40, Blocks: 8, Shape: ShapeCircle},
+		{X: 1, Y: 2, Width: 30, Height: 40, Blocks: 8, Shape: ShapeCircle, Edge: EdgeBlocks},
+		{X: 1, Y: 2, Width: 30, Height: 40, Blocks: 8},
+	}
+	if got := fs.String(); got != "1,2,30,40,8,circle;1,2,30,40,8,circle-blocks;1,2,30,40,8" {
+		t.Errorf("String = %q", got)
+	}
+	got, ok := ParseFaces(fs.String())
+	if !ok || got[0].Shape != ShapeCircle || got[1].Edge != EdgeBlocks || got[2].Shape != "" {
+		t.Errorf("ParseFaces = %+v, %v", got, ok)
+	}
+	for _, bad := range []string{"1,2,30,40,8,oval", "1,2,30,40,8,circle,x"} {
+		if _, ok := ParseFaces(bad); ok {
+			t.Errorf("ParseFaces(%q) succeeded", bad)
+		}
+	}
+	if (Faces{{X: 0, Y: 0, Width: 9, Height: 9, Blocks: 8, Shape: "star"}}).Valid() == "" {
+		t.Error("a star shape is valid")
+	}
+}
+
+func TestKeptAreaUndoesPixelation(t *testing.T) {
+	img := stripes(40, 40)
+	for _, keep := range []Face{
+		{X: 10, Y: 0, Width: 10, Height: 10, Blocks: 8, Keep: true},
+		{X: 10, Y: 0, Width: 10, Height: 10, Blocks: 8, Keep: true, Shape: ShapeCircle},
+	} {
+		// The kept area comes first, but is still applied after every face.
+		out := Pixelate(img, Faces{keep, {X: 0, Y: 0, Width: 40, Height: 40, Blocks: 4}})
+		if got, want := out.At(15, 5), img.At(15, 5); got != want {
+			t.Errorf("kept %s pixel = %v, want the photo's %v", Faces{keep}, got, want)
+		}
+		if !gray(out, 30, 30) {
+			t.Errorf("with %s kept, the rest of the face isn't pixelated", Faces{keep})
+		}
+	}
+	// A kept circle leaves its box's corners pixelated.
+	out := Pixelate(img, Faces{{X: 0, Y: 0, Width: 40, Height: 40, Blocks: 4}, {X: 0, Y: 0, Width: 20, Height: 20, Blocks: 8, Keep: true, Shape: ShapeCircle}})
+	if !gray(out, 0, 0) {
+		t.Error("the kept circle's corner isn't pixelated")
+	}
+}
+
+func TestFacesRoundTripKeep(t *testing.T) {
+	fs := Faces{
+		{X: 1, Y: 2, Width: 30, Height: 40, Blocks: 8, Keep: true},
+		{X: 1, Y: 2, Width: 30, Height: 40, Blocks: 8, Shape: ShapeCircle, Edge: EdgeBlocks, Keep: true},
+	}
+	if got := fs.String(); got != "1,2,30,40,8,keep;1,2,30,40,8,circle-blocks,keep" {
+		t.Errorf("String = %q", got)
+	}
+	if got, ok := ParseFaces(fs.String()); !ok || !got[0].Keep || !got[1].Keep || got[1].Edge != EdgeBlocks {
+		t.Errorf("ParseFaces = %+v, %v", got, ok)
+	}
+	if _, ok := ParseFaces("1,2,30,40,8,keep,circle"); ok {
+		t.Error("ParseFaces read keep before the shape")
+	}
+}

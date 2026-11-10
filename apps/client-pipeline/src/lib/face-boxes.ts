@@ -1,8 +1,17 @@
 import type { Size } from "@/lib/crop";
 
+/** A box pixelates all of itself; a circle only the circle (an oval when it isn't square) that fits in it. */
+export type FaceShape = "box" | "circle";
+
 /**
- * A box on a photo to hide by pixelating it, in pixels of the photo as it's shown (turned upright
- * from its EXIF orientation), as the backend takes it.
+ * How a circle's edge is pixelated: only the pixels inside it, so it stays round, or every block it
+ * touches whole, so the blocks' corners reach past it.
+ */
+export type CircleEdge = "inside" | "blocks";
+
+/**
+ * An area on a photo to hide by pixelating it, or to keep as it is, in pixels of the photo as it's
+ * shown (turned upright from its EXIF orientation), as the backend takes it.
  */
 export interface FaceBox {
   /** The box's top-left corner. */
@@ -13,6 +22,12 @@ export interface FaceBox {
   height: number;
   /** The pixelation's density: how many blocks fit across the box's longer side. Fewer hide more. */
   blocks: number;
+  /** The area's shape; a box when left out. */
+  shape?: FaceShape;
+  /** A circle's edge; only the pixels inside it when left out. */
+  edge?: CircleEdge;
+  /** Keeps the area as the photo has it, undoing any pixelation there, such as hair over a face. */
+  keep?: boolean;
 }
 
 /** The fewest and most blocks a face may have across its longer side, as the backend allows. */
@@ -117,7 +132,56 @@ export function roundedBox(face: FaceBox): FaceBox {
     width: Math.max(1, Math.round(face.width)),
     height: Math.max(1, Math.round(face.height)),
     blocks: clamp(Math.round(face.blocks), MIN_BLOCKS, MAX_BLOCKS),
+    ...shapeFields(face),
   };
+}
+
+/** face's shape, edge and keep mark as the backend takes them, leaving out the defaults. */
+function shapeFields({ shape, edge, keep }: FaceBox): Partial<FaceBox> {
+  const circle = shape === "circle" ? { shape, ...(edge === "blocks" ? { edge } : {}) } : {};
+  return keep ? { ...circle, keep } : circle;
+}
+
+/** What the page calls the area at index: "Face 2", or "Keep 2" for an area kept as it is. */
+export function areaName(face: FaceBox, index: number): string {
+  return `${face.keep ? "Keep" : "Face"} ${index + 1}`;
+}
+
+/** Whether the point x, y lies in the circle (or oval) that fits in face's box. */
+function inCircle(face: FaceBox, x: number, y: number): boolean {
+  const rx = face.width / 2;
+  const ry = face.height / 2;
+  const dx = (x - face.x - rx) / rx;
+  const dy = (y - face.y - ry) / ry;
+  return dx * dx + dy * dy <= 1;
+}
+
+/** A rectangle on the photo, in its pixels. */
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * The cells of a cols × rows grid over face's box that its circle touches: the blocks a circle
+ * with whole-block edges pixelates.
+ */
+export function touchedCells(face: FaceBox, cols: number, rows: number): Rect[] {
+  const width = face.width / cols;
+  const height = face.height / rows;
+  const center = { x: face.x + face.width / 2, y: face.y + face.height / 2 };
+  const cells: Rect[] = [];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const cell = { x: face.x + col * width, y: face.y + row * height, width, height };
+      const nx = clamp(center.x, cell.x, cell.x + width);
+      const ny = clamp(center.y, cell.y, cell.y + height);
+      if (inCircle(face, nx, ny)) cells.push(cell);
+    }
+  }
+  return cells;
 }
 
 /** Whether a and b are the same boxes, in the same order, to the pixel. */
@@ -159,10 +223,11 @@ export function keyedBox(
   return move && movedBox(face, move[0], move[1], photo);
 }
 
-/** Where a box is, in words: "a 320 × 400 px box at 1200, 300, 8 blocks across". */
+/** Where an area is, in words: "a 320 × 400 px circle at 1200, 300, 8 blocks across", or "…, kept". */
 export function boxText(face: FaceBox): string {
   const { x, y, width, height, blocks } = roundedBox(face);
-  return `a ${width} × ${height} px box at ${x}, ${y}, ${blocks} blocks across`;
+  const how = face.keep ? "kept as it is" : `${blocks} blocks across`;
+  return `a ${width} × ${height} px ${face.shape ?? "box"} at ${x}, ${y}, ${how}`;
 }
 
 /** The photo's version keys in `images`, whose URLs change when the faces on them do. */

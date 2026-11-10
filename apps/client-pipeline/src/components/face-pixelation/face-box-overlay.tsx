@@ -3,6 +3,7 @@ import type { Size } from "@/lib/crop";
 import {
   type BoxCorner,
   type FaceBox,
+  areaName,
   boxText,
   keyedBox,
   movedBox,
@@ -97,27 +98,43 @@ export function FaceBoxOverlay(props: FaceBoxOverlayProps) {
       <div
         aria-hidden
         style={boxStyle(props.face, props.photo)}
-        className={boxClass(props.selected)}
+        className={boxClass(props.selected, props.face)}
       >
-        <BoxNumber index={props.index} />
+        <BoxNumber index={props.index} face={props.face} />
       </div>
     );
   }
   return <EditableBox {...props} />;
 }
 
-function boxClass(selected: boolean) {
+/** A face's outline in white, a kept area's in sky blue; solid once picked, round for a circle. */
+const OUTLINES = {
+  face: { selected: "border-white", idle: "border-white/60" },
+  keep: { selected: "border-sky-300", idle: "border-sky-300/70" },
+};
+
+function boxClass(selected: boolean, face: FaceBox) {
+  const colors = OUTLINES[face.keep ? "keep" : "face"];
   return cn(
     "absolute border-2",
-    selected ? "border-white shadow-[0_0_0_1px_rgb(0_0_0/0.6)]" : "border-dashed border-white/60",
+    face.shape === "circle" && "rounded-[50%]",
+    selected
+      ? `${colors.selected} shadow-[0_0_0_1px_rgb(0_0_0/0.6)]`
+      : `${colors.idle} border-dashed`,
   );
 }
 
-/** The face's number, as the list below names it. */
-function BoxNumber({ index }: { index: number }) {
+/** The area's name, as the list below has it. */
+function BoxNumber({ index, face }: { index: number; face: FaceBox }) {
   return (
-    <span className="pointer-events-none absolute top-0.5 left-1/2 -translate-x-1/2 rounded-sm bg-black/60 px-1 text-[10px] font-medium text-white">
-      {index + 1}
+    <span
+      className={cn(
+        "pointer-events-none absolute left-1/2 -translate-x-1/2 rounded-sm bg-black/60 px-1 text-[10px] font-medium whitespace-nowrap text-white",
+        // A kept area's name sits at its bottom, so it doesn't cover the face it overlaps.
+        face.keep ? "bottom-0.5" : "top-0.5",
+      )}
+    >
+      {areaName(face, index)}
     </span>
   );
 }
@@ -135,7 +152,7 @@ function EditableBox({ index, face, photo, selected, onSelect, onChange }: FaceB
       ref={box}
       role="button"
       tabIndex={0}
-      aria-label={`Face ${index + 1}: ${boxText(face)}`}
+      aria-label={`${areaName(face, index)}: ${boxText(face)}`}
       aria-pressed={selected}
       onFocus={onSelect}
       onKeyDown={onKeyDown}
@@ -143,11 +160,11 @@ function EditableBox({ index, face, photo, selected, onSelect, onChange }: FaceB
       {...handlers}
       style={boxStyle(face, photo)}
       className={cn(
-        boxClass(selected),
+        boxClass(selected, face),
         "focus-visible:ring-ring cursor-move outline-none focus-visible:ring-[3px]",
       )}
     >
-      <BoxNumber index={index} />
+      <BoxNumber index={index} face={face} />
       {selected &&
         CORNERS.map((corner) => (
           <span
