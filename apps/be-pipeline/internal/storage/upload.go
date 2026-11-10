@@ -145,12 +145,22 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 // as versions.Crop's String, so remaking it keeps the square picked for it.
 const cropMetadata = "crop"
 
+// facesMetadata is the object metadata the faces pixelated on a version are
+// saved under, as versions.Faces's String, so remaking it keeps them hidden.
+const facesMetadata = "faces"
+
 // putVersion uploads the encoded version v to key, with the crop of a
-// Thumbnail or ThumbnailPreview in its metadata.
+// Thumbnail or ThumbnailPreview and any pixelated faces in its metadata.
 func putVersion(ctx context.Context, client *s3.Client, cfg settings.R2, key string, v versions.Encoded) error {
-	var metadata map[string]string
+	metadata := map[string]string{}
 	if v.Crop != nil {
-		metadata = map[string]string{cropMetadata: v.Crop.String()}
+		metadata[cropMetadata] = v.Crop.String()
+	}
+	if len(v.Faces) > 0 {
+		metadata[facesMetadata] = v.Faces.String()
+	}
+	if len(metadata) == 0 {
+		metadata = nil
 	}
 	return putObject(ctx, client, cfg, key, bytes.NewReader(v.Data), int64(len(v.Data)), "image/webp", metadata)
 }

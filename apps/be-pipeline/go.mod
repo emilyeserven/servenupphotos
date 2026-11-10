@@ -10,6 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.8
 	github.com/aws/smithy-go v1.28.8
 	github.com/disintegration/imaging v1.6.2
+	github.com/esimov/pigo v1.4.6
 	github.com/gen2brain/avif v0.6.0
 	github.com/gen2brain/webp v0.6.4
 	github.com/lucasb-eyer/go-colorful v1.4.1

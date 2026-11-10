@@ -14,7 +14,7 @@ import (
 
 // regenerateFunc remakes some of a photo's versions in R2;
 // storage.RegenerateVersions in production.
-type regenerateFunc func(ctx context.Context, cfg settings.R2, key string, vs []versions.Version, crop *versions.Crop) (map[string]storage.Uploaded, error)
+type regenerateFunc func(ctx context.Context, cfg settings.R2, key string, vs []versions.Version, crop *versions.Crop, faces *versions.Faces) (map[string]storage.Uploaded, error)
 
 // thumbnailCropFunc reads the crop saved with a photo's thumbnail in R2;
 // storage.ThumbnailCrop in production.
@@ -29,6 +29,10 @@ type regenerateRequest struct {
 	// Crop is the square to cut the thumbnail from, replacing the one saved
 	// with it; the saved one when left out.
 	Crop *versions.Crop `json:"crop"`
+	// Faces are the boxes to pixelate on every version, replacing the ones
+	// saved with them, which remakes every version; an empty list stops
+	// pixelating. The saved ones when left out.
+	Faces *versions.Faces `json:"faces"`
 }
 
 type regenerateResponse struct {
@@ -55,6 +59,12 @@ func handleRegenerateVersions(loadR2 func() (settings.R2, error), regenerate reg
 			writeError(w, http.StatusBadRequest, "crop needs a size and a corner inside the photo")
 			return
 		}
+		if req.Faces != nil {
+			if msg := req.Faces.Valid(); msg != "" {
+				writeError(w, http.StatusBadRequest, msg)
+				return
+			}
+		}
 
 		cfg, err := loadR2()
 		if err != nil {
@@ -65,7 +75,7 @@ func handleRegenerateVersions(loadR2 func() (settings.R2, error), regenerate reg
 
 		ctx, cancel := context.WithTimeout(r.Context(), uploadTimeout)
 		defer cancel()
-		made, err := regenerate(ctx, cfg, req.Key, vs, req.Crop)
+		made, err := regenerate(ctx, cfg, req.Key, vs, req.Crop, req.Faces)
 		var uploadErr *storage.UploadError
 		switch {
 		case errors.As(err, &uploadErr):

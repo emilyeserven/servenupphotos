@@ -81,7 +81,7 @@ func Square(img image.Image, crop *Crop, edge int) image.Image {
 // R2: every version, then the Thumbnail and ThumbnailPreview cut from crop
 // (the CenterCrop when crop is nil).
 func EncodeUpload(r io.Reader, crop *Crop) ([]Encoded, error) {
-	return EncodeOnly(r, Published(), crop)
+	return EncodeOnly(r, Published(), crop, nil)
 }
 
 // FindPublished returns the version, Thumbnail or ThumbnailPreview called name.

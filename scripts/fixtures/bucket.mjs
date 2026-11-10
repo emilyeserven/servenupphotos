@@ -31,6 +31,15 @@ export function bucketFixtures() {
       return { key, crop: crop ? { x: crop.x, y: crop.y, size: crop.size } : null };
     },
     "POST /api/photos/bucket/versions": ({ body }) => ({ key: body?.key ?? "", versions: {} }),
+    "GET /api/photos/bucket/faces": ({ url }) => ({
+      key: url.searchParams.get("key") ?? "",
+      faces: [],
+    }),
+    // Two found faces, placed on the placeholder photo `pnpm shot` draws.
+    "POST /api/photos/bucket/faces/detect": ({ body }) => ({
+      key: body.key,
+      faces: sampleFaces(headPhotos.find(({ data }) => data.images?.key === body.key)),
+    }),
     "POST /api/photos/bucket/exif": {
       file: "DSCF3104.jpg",
       exif: {
@@ -51,4 +60,22 @@ export function bucketFixtures() {
       colors: null,
     },
   };
+}
+
+/**
+ * Two face boxes, as face finding answers, on the placeholder `pnpm shot` draws for photo: 1200 px
+ * wide in the photo's proportions (3:2 when it isn't found), one boxing the placeholder's sun.
+ */
+function sampleFaces(photo) {
+  const { width = 3, height = 2 } = photo?.data ?? {};
+  const [w, h] = [1200, Math.round((1200 * height) / width)];
+  const side = Math.round(Math.min(w, h) * 0.26);
+  const face = (cx, cy) => ({
+    x: Math.round(cx - side / 2),
+    y: Math.round(cy - side / 2),
+    width: side,
+    height: side,
+    blocks: 8,
+  });
+  return [face(w * 0.7, h * 0.32), face(w * 0.3, h * 0.45)];
 }
