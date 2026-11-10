@@ -11,12 +11,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useScheduledInstagramDays } from "@/hooks/use-social-queue";
 import {
   INSTAGRAM_DAYS_WANTED,
-  INSTAGRAM_URGENCY,
   TRIP_LINES_URGENCY,
   type PhotoProblem,
   type ProblemCount,
   URGENCY,
   instagramShortBy,
+  instagramUrgency,
   photoProblems,
 } from "@/lib/needs-attention";
 import { type StaleTripLine, staleTripLines } from "@/lib/stale-trip-lines";
@@ -159,7 +159,7 @@ function instagramRow(scheduledDays: number, short: number): AttentionRow {
       : `Instagram posts are scheduled for only ${days}`;
   return {
     id: "instagram",
-    urgency: INSTAGRAM_URGENCY,
+    urgency: instagramUrgency(short),
     label: (
       <span
         title={`The next ${INSTAGRAM_DAYS_WANTED} days should each have a post scheduled on Instagram, not only planned.`}
