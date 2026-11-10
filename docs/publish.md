@@ -30,9 +30,12 @@ page doesn't use it.)
 
 The calendar also shows the Instagram posts saved on photos under **Social media posts** (below): a day with one gets
 a check in its corner when every post that day is scheduled on Instagram, or a clock while one is still planned (with a
-count when there's more than one), and an empty day shows that photo faded behind its **+**. Under the calendar, **Instagram posts** lists
-the posts on the days shown, each with its photo, **Planned** or **Scheduled**, whether the photo is **In flight** or as
-the **Gallery** has it, a link to the post and a link to edit the photo. Gallery and in flight photos are both
+count when there's more than one), and an empty day shows that photo faded behind its **+**. Under the calendar, **Instagram posts**
+lists every post in three tabs, each with its count: **Posted** (scheduled on Instagram on a day up to today, newest
+first), **Scheduled** (scheduled on Instagram for a day after today, soonest first, and open at first) and
+**Unposted** (still planned, whatever the day, soonest first; `postsByTab` in `lib/social-post-tabs.ts`). Each post
+shows its photo, the tab's name, whether the photo is **In flight** or as the **Gallery** has it, a link to the post
+and a link to edit the photo. Gallery and in flight photos are both
 included, and nothing more is fetched for them: the posts come from the photo files the calendar already read, with
 the changes waiting for Commit and local edits the app keeps (`useChangedPhotoFiles` in the combined data store) made
 over them, so a post saved on the Photo page shows here before **Commit**. `apps/client-pipeline/src/lib/social-post-days.ts`
