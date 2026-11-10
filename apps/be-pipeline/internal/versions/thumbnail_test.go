@@ -116,7 +116,7 @@ func TestThumbnailPreviewCutsTheSameSquare(t *testing.T) {
 }
 
 func TestEncodeOnlyThumbnailRecordsItsCrop(t *testing.T) {
-	encoded, err := EncodeOnly(bytes.NewReader(testJPEG(t, 600, 400)), []Version{All[3], Thumbnail}, &Crop{X: 550, Y: 20, Size: 100})
+	encoded, err := EncodeOnly(bytes.NewReader(testJPEG(t, 600, 400)), []Version{All[3], Thumbnail}, &Crop{X: 550, Y: 20, Size: 100}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

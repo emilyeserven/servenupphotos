@@ -16,6 +16,7 @@ import { ReEditCard } from "@/components/re-edit-card";
 import { SocialPostsCard } from "@/components/social-posts-card";
 import { PickedSimilarCard } from "@/components/related-photos/picked-similar-card";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
+import { FacePixelationCard } from "@/components/face-pixelation/face-pixelation-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type Crop } from "@/lib/crop";
@@ -157,6 +158,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           locked={pending}
           lockedNote="Saving the Square Thumbnail with this square…"
         />
+        <FacePixelationCard editable={editable} edit={edit} save={save} disabled={pending} />
         <ReplaceImageCard
           editable={editable}
           saved={edit.savedData}

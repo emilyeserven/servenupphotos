@@ -1,6 +1,7 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { requestBlob, requestJson } from "@/api/request";
 import type { Crop } from "@/lib/crop";
+import { type FaceBox, roundedBox } from "@/lib/face-boxes";
 
 /** The resized WEBP versions every upload puts in R2 next to the original JPEG. */
 export const VERSIONS = [
@@ -160,6 +161,11 @@ interface RegenerateRequest {
   versions?: PublishedName[];
   /** The square to cut the Square Thumbnail from, replacing the one saved with it. */
   crop?: Crop;
+  /**
+   * The faces to pixelate on every version, replacing the ones saved with them; giving them remakes
+   * every version, and an empty list stops pixelating.
+   */
+  faces?: FaceBox[];
 }
 
 /**
@@ -167,14 +173,19 @@ interface RegenerateRequest {
  * uploads them over any already there; every version and the Square Thumbnail when versions is
  * left out. The Square Thumbnail is cut from crop when it's given, and otherwise keeps the crop
  * saved with the one already in R2, or is cut from the middle of the photo when there isn't one.
+ * The faces saved with the versions stay pixelated unless faces replaces them.
  */
 export const regenerateVersionsMutation = mutationOptions({
   mutationKey: ["photos", "bucket", "versions"],
-  mutationFn: ({ crop, ...request }: RegenerateRequest) =>
+  mutationFn: ({ crop, faces, ...request }: RegenerateRequest) =>
     requestJson<RegenerateResult>("/api/photos/bucket/versions", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ ...request, crop: crop && roundedCrop(crop) }),
+      body: JSON.stringify({
+        ...request,
+        crop: crop && roundedCrop(crop),
+        faces: faces?.map(roundedBox),
+      }),
     }),
 });
 

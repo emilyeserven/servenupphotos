@@ -10,4 +10,5 @@ a full-window view. A table too wide for the window scrolls sideways. Each butto
 original from R2, resizes it exactly as an upload does, and uploads the versions over whatever was at their keys. The
 Square Thumbnail and Thumbnail Preview are cut from the crop saved with the Square Thumbnail already in R2 (read with a `HEAD` of it), so remaking them keeps
 the square picked on the Photo page; making one that isn't there yet, for a photo uploaded before Square Thumbnails
-existed, uses the middle of the photo. It doesn't change the photo's JSON.
+existed, uses the middle of the photo. Faces saved with the Square Thumbnail stay pixelated on every remade size
+([Pixelating faces](face-pixelation.md)). It doesn't change the photo's JSON.

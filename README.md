@@ -142,6 +142,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Lightroom Albums](docs/lightroom-albums.md) (`/lightroom-albums`): your Lightroom folders and albums, read by an LLM from screenshots or a screen recording, with a stage and notes on each album as a tree or a Kanban board and the next albums to work on, imported on its own page or added by hand, kept only in the browser and moved between computers with Export and Import
 - [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, filterable, making JSON for an original that isn't saved, and deleting images
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
+- [Pixelating faces](docs/face-pixelation.md): finding or boxing faces on a photo in R2, setting each one's pixelation density with a live preview, and remaking every version with them hidden
 - [Changelog](docs/changelog.md) (`/changelog`): the pull requests merged into the repository, by day, with links to GitHub and without merge commits or photo data merges
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
 - [BFF timeouts](docs/bff-timeouts.md) (`/api/timeouts`): how long the BFF waits for each backend path, read from the backend at start-up

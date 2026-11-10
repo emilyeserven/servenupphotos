@@ -27,13 +27,19 @@ export const fileUrl = (filePath, branch = BASE_BRANCH) =>
 /** Every JSON file in a data folder except the combined one, as { path, data }. */
 export function readFolder(kind, combined) {
   const dir = path.join(root, FOLDER, kind);
-  return readdirSync(dir)
-    .filter((name) => name.endsWith(".json") && !name.startsWith(combined))
-    .toSorted()
-    .map((name) => ({
-      path: `${FOLDER}/${kind}/${name}`,
-      data: JSON.parse(readFileSync(path.join(dir, name), "utf8")),
-    }));
+  return (
+    readdirSync(dir)
+      // A place's area sits next to it as <id>.geo.json, which isn't an entry of its own.
+      .filter(
+        (name) =>
+          name.endsWith(".json") && !name.endsWith(".geo.json") && !name.startsWith(combined),
+      )
+      .toSorted()
+      .map((name) => ({
+        path: `${FOLDER}/${kind}/${name}`,
+        data: JSON.parse(readFileSync(path.join(dir, name), "utf8")),
+      }))
+  );
 }
 
 export const basePhotos = readFolder("photos", "ALLPHOTOS");

@@ -1,0 +1,75 @@
+# Pixelating faces
+
+The Photo page (`/exif?edit=<path>`) has a **Pixelate faces** card for a photo already in R2. It hides faces behind
+blocks of color on every resized version, the Square Thumbnail and its Thumbnail Preview, so the portfolio never shows
+them. The original JPEG in R2 isn't changed (see [What isn't hidden](#what-isnt-hidden)).
+
+## Picking the faces
+
+- **Find faces** sends `POST /api/photos/bucket/faces/detect` with the photo's `key`. The backend downloads the
+  original, shrinks it to 1200 px on its longest edge and runs [Pigo](https://github.com/esimov/pigo), a pure-Go face
+  finder (MIT), on it, then answers with a box for each face, a little larger than Pigo's square so it reaches the
+  hairline and chin, largest first. Nothing is saved. Finding again only adds faces that aren't boxed yet.
+- **Dragging** anywhere on the photo outside a box draws a new one; **Add a box** puts one in the middle.
+- A box can be dragged to move it, and the picked one has corner handles to resize it. A focused box moves with the
+  arrow keys (Shift for bigger steps). **Hide boxes** shows the preview without their outlines.
+
+Pigo only finds faces looking roughly at the camera. Faces turned to the side, small in the frame, or partly hidden
+(sunglasses, masks, hands) are easily missed, so the boxes are a starting point to check by eye, not a guarantee.
+
+> **Frontend analogy:** Pigo is like a very fast hand-written CSS selector for faces. Its "cascade" file
+> (`internal/versions/cascade/facefinder`, copied from Pigo's repository and embedded in the binary with `go:embed`)
+> is thousands of tiny yes/no checks such as "is this pixel brighter than that one?". It slides a square over the photo
+> at many sizes, and a square that passes enough checks is a face. No machine learning runs at request time and no
+> model is downloaded, which keeps the backend a single Go binary with no C libraries.
+
+## Density
+
+Each box has its own **Density** slider: how many blocks fit across the box's longer side, from 3 to 40 (8 to start).
+Fewer blocks hide more. Next to it is roughly how many pixels of the original each block covers.
+
+The photo above the list is a live preview, drawn in the browser on a `<canvas>`: each box is shrunk to one pixel per
+block and stretched back with smoothing off. The backend averages every block exactly, so the versions can look a
+touch different from the preview, but the blocks fall in the same places.
+
+> **ELI5:** pixelating is like looking at a face through a window made of big frosted glass squares. Each square
+> shows only one color, the average of everything behind it. The bigger the squares (the fewer blocks), the less of
+> the face you can make out.
+
+## Saving
+
+**Pixelate every version** (or **Remake versions without pixelation** once every box is removed) sends
+`POST /api/photos/bucket/versions` with the `key` and `faces`, a list of `{ x, y, width, height, blocks }` in pixels of
+the photo turned upright from its EXIF orientation. Giving `faces` always remakes every version, whatever `versions`
+asks for, so none still shows a face. The backend decodes the original, pixelates every box on the full-size photo,
+then makes each version from that, so even the Preview only ever has the blocks to show. The Square Thumbnail keeps its
+saved crop.
+
+Each version is uploaded with the faces in its R2 metadata (`x-amz-meta-faces`, `x,y,width,height,blocks` per face,
+joined by `;`), the same way the Square Thumbnail keeps its crop. Then the photo's JSON is saved through the Photo
+page's own save, with every version's URL marked `?faces=<stamp>`. The versions keep their keys when they're remade,
+so the new URLs make browsers and Cloudflare's cache fetch the pixelated versions instead of the old ones (R2 ignores
+the mark). Other unsaved changes on the page stay unsaved.
+
+`GET /api/photos/bucket/faces?key=<key>` reads the saved faces back (a `HEAD` of the Square Thumbnail), which is what
+the card starts from.
+
+> **Frontend analogy:** the metadata is like a `data-*` attribute on each image: it travels with the file itself, so
+> anything that remakes the file later can read it back without asking the photo's JSON.
+
+## Remaking versions keeps the faces hidden
+
+Every other way of remaking versions, [Manage Sizes](manage-sizes.md) and moving the Square Thumbnail's crop on the
+Photo page among them, reads the faces saved with the Square Thumbnail and pixelates them again, so remaking a version
+never brings a face back.
+
+## What isn't hidden
+
+- **The original JPEG.** It stays as it was in R2, and its URL is in the photo's JSON as `images.full` (and so in
+  `ALLPHOTOS.json`, which is public). The portfolio doesn't show it, but anyone reading the data could open it. Upload a
+  version with the face already hidden (from Lightroom, say) when the original itself must not show it.
+- **Cached copies.** Someone who loaded a version before it was pixelated may still have it in their browser cache.
+  The new URL marks mean the portfolio itself never asks for the old copy again.
+- **Uploads.** Faces are pixelated after upload, from the Photo page; the upload page and the upload queue don't
+  pixelate. The versions sit in R2 unpixelated until then, but nothing links to them before the photo's JSON is
+  committed.

@@ -33,6 +33,7 @@ func TestRegenerateVersionsHandler(t *testing.T) {
 		{"thumbnail", `{"key":"photos/k.jpg","versions":["thumbnail"]}`, nil, http.StatusOK, `"key":"photos/k.jpg"`, []string{"thumbnail"}},
 		{"no key", `{}`, nil, http.StatusBadRequest, "key is required", nil},
 		{"bad crop", `{"key":"photos/k.jpg","versions":["thumbnail"],"crop":{"x":0,"y":0,"size":0}}`, nil, http.StatusBadRequest, "crop needs a size", nil},
+		{"bad face", `{"key":"photos/k.jpg","faces":[{"x":0,"y":0,"width":10,"height":10,"blocks":1}]}`, nil, http.StatusBadRequest, "blocks", nil},
 		{"unknown version", `{"key":"photos/k.jpg","versions":["huge"]}`, nil, http.StatusBadRequest, "no such version", nil},
 		{"gone", `{"key":"photos/k.jpg"}`, &storage.UploadError{Message: "isn't in the bucket anymore", NotFound: true}, http.StatusNotFound, "anymore", every},
 		{"not set up", `{"key":"photos/k.jpg"}`, &storage.UploadError{Message: "Fill in Bucket first.", NotConfigured: true}, http.StatusBadRequest, "Fill in Bucket", every},
@@ -42,7 +43,7 @@ func TestRegenerateVersionsHandler(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var gotNames []string
-			regenerate := func(_ context.Context, _ settings.R2, key string, vs []versions.Version, _ *versions.Crop) (map[string]storage.Uploaded, error) {
+			regenerate := func(_ context.Context, _ settings.R2, key string, vs []versions.Version, _ *versions.Crop, _ *versions.Faces) (map[string]storage.Uploaded, error) {
 				out := map[string]storage.Uploaded{}
 				for _, v := range vs {
 					gotNames = append(gotNames, v.Name)
@@ -66,7 +67,7 @@ func TestRegenerateVersionsHandler(t *testing.T) {
 func TestRegenerateVersionsHandlerPassesTheCrop(t *testing.T) {
 	cfg := func() (settings.R2, error) { return settings.R2{Bucket: "photos"}, nil }
 	var got *versions.Crop
-	regenerate := func(_ context.Context, _ settings.R2, _ string, _ []versions.Version, crop *versions.Crop) (map[string]storage.Uploaded, error) {
+	regenerate := func(_ context.Context, _ settings.R2, _ string, _ []versions.Version, crop *versions.Crop, _ *versions.Faces) (map[string]storage.Uploaded, error) {
 		got = crop
 		return map[string]storage.Uploaded{}, nil
 	}
@@ -76,6 +77,32 @@ func TestRegenerateVersionsHandlerPassesTheCrop(t *testing.T) {
 	handleRegenerateVersions(cfg, regenerate)(rec, req)
 	if rec.Code != http.StatusOK || got == nil || *got != (versions.Crop{X: 12, Y: 0, Size: 800}) {
 		t.Errorf("status = %d, crop = %v; want 200 with the body's crop", rec.Code, got)
+	}
+}
+
+func TestRegenerateVersionsHandlerPassesTheFaces(t *testing.T) {
+	cfg := func() (settings.R2, error) { return settings.R2{Bucket: "photos"}, nil }
+	for _, tt := range []struct {
+		name, body string
+		want       *versions.Faces
+	}{
+		{"left out", `{"key":"photos/k.jpg"}`, nil},
+		{"none", `{"key":"photos/k.jpg","faces":[]}`, &versions.Faces{}},
+		{"one", `{"key":"photos/k.jpg","faces":[{"x":4,"y":5,"width":60,"height":70,"blocks":8}]}`, &versions.Faces{{X: 4, Y: 5, Width: 60, Height: 70, Blocks: 8}}},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			var got *versions.Faces
+			regenerate := func(_ context.Context, _ settings.R2, _ string, _ []versions.Version, _ *versions.Crop, faces *versions.Faces) (map[string]storage.Uploaded, error) {
+				got = faces
+				return map[string]storage.Uploaded{}, nil
+			}
+			req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/photos/bucket/versions", strings.NewReader(tt.body))
+			rec := httptest.NewRecorder()
+			handleRegenerateVersions(cfg, regenerate)(rec, req)
+			if rec.Code != http.StatusOK || (got == nil) != (tt.want == nil) || (got != nil && got.String() != tt.want.String()) {
+				t.Errorf("status = %d, faces = %v; want 200 with %v", rec.Code, got, tt.want)
+			}
+		})
 	}
 }
 
