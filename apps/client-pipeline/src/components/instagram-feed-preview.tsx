@@ -10,6 +10,8 @@ import { type FeedEntry, type FeedPhoto, feedAsOf, feedEntries } from "@/lib/soc
 import type { DayPost } from "@/lib/social-post-days";
 import { PHOTO_DRAG_TYPE, photoName } from "@/lib/social-schedule";
 import { useDropTarget } from "@/hooks/use-drop-target";
+import { AnchorOutline } from "@/components/grid-anchor";
+import type { AnchorPlace } from "@/lib/grid-anchors";
 import { cn } from "@/lib/utils";
 
 /** How many tiles the preview shows before **Show more**: four rows of three. */
@@ -37,6 +39,8 @@ interface InstagramFeedPreviewProps {
   today: string;
   /** Moves the calendar photo at path to day, swapping with the photo already there. */
   onDropPhoto: (path: string, day: string) => void;
+  /** Where each photo in a Grid Anchor group stands, by file path. */
+  places: Map<string, AnchorPlace>;
 }
 
 /** The calendar's photos as the feed needs them. */
@@ -54,7 +58,7 @@ function feedPhotos(byDay: Map<string, SocialPhoto>): Map<string, FeedPhoto> {
  * from the calendar's photos and the Instagram posts under Social media posts.
  */
 export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
-  const { byDay, posts, today, onDropPhoto } = props;
+  const { byDay, posts, today, onDropPhoto, places } = props;
   const [asOf, setAsOf] = useState(today);
   const [shown, setShown] = useState(PAGE);
   const entries = useMemo(() => feedEntries(feedPhotos(byDay), posts), [byDay, posts]);
@@ -72,10 +76,13 @@ export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
         {feed.length} {feed.length === 1 ? "post" : "posts"}, newest first, from the calendar and
         the Instagram posts under <strong>Social media posts</strong>, with changes not committed
         yet. Photos that post on that day are ringed. The arrow buttons, or the left and right arrow
-        keys, step a day at a time. Drag a calendar photo onto another tile to swap their days.
+        keys, step a day at a time. Drag a calendar photo onto another tile to swap their days. Once
+        there&apos;s a Grid Anchor, the calendar&apos;s photos are outlined in rows of 3 counted
+        from it, dark and light blue by turns, as a reference for lining up rows.
       </p>
       <FeedGrid
         feed={feed.slice(0, shown)}
+        places={places}
         asOf={asOf}
         today={today}
         byDay={byDay}
@@ -96,10 +103,11 @@ interface FeedGridProps {
   today: string;
   byDay: Map<string, SocialPhoto>;
   onDropPhoto: (path: string, day: string) => void;
+  places: Map<string, AnchorPlace>;
 }
 
 /** The feed as Instagram's profile grid: three columns of 3:4 tiles with thin gaps. */
-function FeedGrid({ feed, asOf, today, byDay, onDropPhoto }: FeedGridProps) {
+function FeedGrid({ feed, asOf, today, byDay, onDropPhoto, places }: FeedGridProps) {
   if (feed.length === 0) {
     return (
       <p className="text-muted-foreground rounded-md border border-dashed p-4 text-center text-sm">
@@ -117,6 +125,7 @@ function FeedGrid({ feed, asOf, today, byDay, onDropPhoto }: FeedGridProps) {
           upcoming={entry.day > today}
           onCalendar={byDay.get(entry.day)?.path === entry.path}
           onDropPhoto={(path) => onDropPhoto(path, entry.day)}
+          place={places.get(entry.path)}
         />
       ))}
     </ul>
@@ -132,13 +141,16 @@ interface FeedTileProps {
   onCalendar: boolean;
   /** Moves the dragged calendar photo at path to this tile's day. */
   onDropPhoto: (path: string) => void;
+  /** Where the photo stands in a Grid Anchor group, if it's in one. */
+  place: AnchorPlace | undefined;
 }
 
 /**
  * One photo of the feed, linking to its Photo page, with its day and where it stands on hover. A
  * calendar photo can be dragged onto another tile, which moves it to that tile's day.
  */
-function FeedTile({ entry, asOf, upcoming, onCalendar, onDropPhoto }: FeedTileProps) {
+function FeedTile(props: FeedTileProps) {
+  const { entry, asOf, upcoming, onCalendar, onDropPhoto, place } = props;
   const { over, handlers } = useDropTarget(PHOTO_DRAG_TYPE, (path) => {
     if (path !== entry.path) onDropPhoto(path);
   });
@@ -155,6 +167,7 @@ function FeedTile({ entry, asOf, upcoming, onCalendar, onDropPhoto }: FeedTilePr
       >
         <TileImage image={entry.image} />
         <TileRing over={over} chosenDay={entry.day === asOf} />
+        <AnchorOutline place={place} />
         <SourceMark entry={entry} upcoming={upcoming} />
       </Link>
     </li>
@@ -214,7 +227,7 @@ function SourceMark({ entry, upcoming }: { entry: FeedEntry; upcoming: boolean }
   return (
     <span
       className={cn(
-        "pointer-events-none absolute top-1 right-1 rounded p-0.5",
+        "pointer-events-none absolute right-1 bottom-1 rounded p-0.5",
         entry.source === "scheduled" ? "bg-emerald-600 text-white" : "bg-background/85",
       )}
     >

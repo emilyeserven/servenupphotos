@@ -4,6 +4,8 @@ import { parseIsoDate } from "@/lib/calendar";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import type { DayPost } from "@/lib/social-post-days";
 import { statusLabels } from "@/lib/social-posts";
+import { type DatedPost, type PostTab, postsByTab } from "@/lib/social-post-tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
 const dayFormat = new Intl.DateTimeFormat(undefined, {
@@ -74,17 +76,25 @@ export function DayPostBackdrop({ posts }: { posts: DayPost[] | undefined }) {
 }
 
 interface InstagramPostsProps {
-  /** The days the calendar shows, as YYYY-MM-DD. */
-  days: string[];
   postsByDay: Map<string, DayPost[]>;
+  /** Today, as YYYY-MM-DD, which tells posts on Instagram already from ones still to come. */
+  today: string;
 }
 
+/** Each tab's name, and what it says when it has no posts. */
+const TABS: { value: PostTab; label: string; empty: string }[] = [
+  { value: "posted", label: "Posted", empty: "Nothing posted on Instagram yet." },
+  { value: "scheduled", label: "Scheduled", empty: "Nothing scheduled on Instagram after today." },
+  { value: "unposted", label: "Unposted", empty: "No planned posts waiting to go on Instagram." },
+];
+
 /**
- * The Instagram posts on the days the calendar shows, from the Social media posts of every photo:
- * the Gallery's and the ones in flight, as the app has them now.
+ * Every Instagram post from the Social media posts of every photo (the Gallery's and the ones in
+ * flight, as the app has them now) in three tabs: Posted (on Instagram by today, newest first),
+ * Scheduled (on Instagram to post after today) and Unposted (still planned), both soonest first.
  */
-export function InstagramPosts({ days, postsByDay }: InstagramPostsProps) {
-  const shown = days.flatMap((day) => (postsByDay.get(day) ?? []).map((post) => ({ day, post })));
+export function InstagramPosts({ postsByDay, today }: InstagramPostsProps) {
+  const tabs = postsByTab(postsByDay, today);
   return (
     <section className="flex flex-col gap-2" aria-labelledby="instagram-posts">
       <h2 id="instagram-posts" className="text-lg font-medium">
@@ -94,22 +104,51 @@ export function InstagramPosts({ days, postsByDay }: InstagramPostsProps) {
         Posts saved on each photo&apos;s page under <strong>Social media posts</strong>, from the
         Gallery and from photos in flight, including changes not committed yet.
       </p>
-      {shown.length === 0 ? (
-        <p className="text-muted-foreground rounded-md border border-dashed p-4 text-center text-sm">
-          No Instagram posts on these days.
-        </p>
-      ) : (
-        <ul className="divide-y rounded-md border">
-          {shown.map(({ day, post }) => (
-            <PostRow key={`${day}-${post.photo.path}`} day={day} post={post} />
+      <Tabs defaultValue="scheduled">
+        <TabsList>
+          {TABS.map((tab) => (
+            <TabsTrigger key={tab.value} value={tab.value}>
+              {tab.label} ({tabs[tab.value].length})
+            </TabsTrigger>
           ))}
-        </ul>
-      )}
+        </TabsList>
+        {TABS.map((tab) => (
+          <TabsContent key={tab.value} value={tab.value}>
+            <PostList posts={tabs[tab.value]} empty={tab.empty} label={tab.label} />
+          </TabsContent>
+        ))}
+      </Tabs>
     </section>
   );
 }
 
-function PostRow({ day, post }: { day: string; post: DayPost }) {
+interface PostListProps {
+  posts: DatedPost[];
+  /** What the tab says when it has no posts. */
+  empty: string;
+  /** The tab's name, which each post's badge shows, such as "Posted". */
+  label: string;
+}
+
+/** One tab's posts, or what it says when there are none. */
+function PostList({ posts, empty, label }: PostListProps) {
+  if (posts.length === 0) {
+    return (
+      <p className="text-muted-foreground rounded-md border border-dashed p-4 text-center text-sm">
+        {empty}
+      </p>
+    );
+  }
+  return (
+    <ul className="divide-y rounded-md border">
+      {posts.map(({ day, post }) => (
+        <PostRow key={`${day}-${post.photo.path}`} day={day} post={post} label={label} />
+      ))}
+    </ul>
+  );
+}
+
+function PostRow({ day, post, label }: { day: string; post: DayPost; label: string }) {
   const { photo } = post;
   return (
     <li className="flex items-center gap-3 p-2 text-sm">
@@ -130,7 +169,7 @@ function PostRow({ day, post }: { day: string; post: DayPost }) {
         </Link>
         <span className="text-muted-foreground flex flex-wrap items-center gap-1 text-xs">
           {dayFormat.format(parseIsoDate(day))}
-          <PostBadges post={post} />
+          <PostBadges post={post} label={label} />
         </span>
       </span>
       <PostLink url={post.url} />
@@ -139,7 +178,7 @@ function PostRow({ day, post }: { day: string; post: DayPost }) {
 }
 
 /** Whether the post is on Instagram yet, and whether its photo is in flight or as the Gallery shows it. */
-function PostBadges({ post }: { post: DayPost }) {
+function PostBadges({ post, label }: { post: DayPost; label: string }) {
   return (
     <>
       <span
@@ -148,7 +187,7 @@ function PostBadges({ post }: { post: DayPost }) {
           post.status === "scheduled" ? "bg-emerald-600 text-white" : "bg-muted text-foreground",
         )}
       >
-        {statusLabel(post)}
+        {label}
       </span>
       <span className={cn(BADGE, "border")}>{post.photo.inFlight ? "In flight" : "Gallery"}</span>
     </>

@@ -30,9 +30,12 @@ page doesn't use it.)
 
 The calendar also shows the Instagram posts saved on photos under **Social media posts** (below): a day with one gets
 a check in its corner when every post that day is scheduled on Instagram, or a clock while one is still planned (with a
-count when there's more than one), and an empty day shows that photo faded behind its **+**. Under the calendar, **Instagram posts** lists
-the posts on the days shown, each with its photo, **Planned** or **Scheduled**, whether the photo is **In flight** or as
-the **Gallery** has it, a link to the post and a link to edit the photo. Gallery and in flight photos are both
+count when there's more than one), and an empty day shows that photo faded behind its **+**. Under the calendar, **Instagram posts**
+lists every post in three tabs, each with its count: **Posted** (scheduled on Instagram on a day up to today, newest
+first), **Scheduled** (scheduled on Instagram for a day after today, soonest first, and open at first) and
+**Unposted** (still planned, whatever the day, soonest first; `postsByTab` in `lib/social-post-tabs.ts`). Each post
+shows its photo, the tab's name, whether the photo is **In flight** or as the **Gallery** has it, a link to the post
+and a link to edit the photo. Gallery and in flight photos are both
 included, and nothing more is fetched for them: the posts come from the photo files the calendar already read, with
 the changes waiting for Commit and local edits the app keeps (`useChangedPhotoFiles` in the combined data store) made
 over them, so a post saved on the Photo page shows here before **Commit**. `apps/client-pipeline/src/lib/social-post-days.ts`
@@ -58,6 +61,28 @@ any other tile, in any row, to move it to that tile's day, swapping with the cal
 dragging on the calendar does (they share the same drag, so a tile can also be dropped on a calendar day). Tiles that
 come only from **Social media posts** can't be dragged, since their day is the post's, set on the Photo page. `apps/client-pipeline/src/lib/social-feed.ts` builds the
 feed (`feedEntries`, `feedAsOf`).
+
+### Grid Anchors
+
+One photo on the calendar can be the **Grid Anchor**, set from its day's picker (**Make Grid Anchor**, next to
+**Remove from this day**), to plan thematic rows of the feed. The anchor and the 2 calendar photos just before it make
+one row of the 3-column feed (`ANCHOR_ROW` in `apps/client-pipeline/src/lib/grid-anchors.ts`), and every other
+calendar photo falls into rows of 3 counted from it: back from it for earlier photos, on from it for later ones
+(`anchorPlaces`). There's only ever one: making another photo the anchor moves it there, which shifts every row, and
+**Remove Grid Anchor** on it takes the rows away. (If more than one photo is marked, such as from an older save, the
+latest on the calendar is the anchor.)
+
+Rows are outlined dark blue and light blue by turns, on the calendar and in the **Social Feed preview**. The last photo
+of each row gets an anchor badge: solid in its row's color on the Grid Anchor itself, faint on the ones worked out
+from it. The outlines are only a reference: the feed doesn't flag a row that isn't lined up, since rows drift in and
+out of line in a cycle.
+
+While there's an anchor, a day's picker also takes an optional **Group name** for that photo's row, shown on the badge
+of the row's last photo. The name is saved on one photo of the row (the newest that already has one, or else the
+picked photo), so it moves with its photos when the anchor shifts the rows.
+
+The anchor is saved as `socialGridAnchor: true` and a name as `socialGridGroupName` on the photo's JSON, kept as local
+edits until **Commit** like a moved date; photos without them leave the fields out.
 
 ### Suggested photos
 
