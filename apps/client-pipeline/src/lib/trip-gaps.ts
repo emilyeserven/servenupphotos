@@ -162,19 +162,52 @@ function sameSpot(a: TripPoint, b: TripPoint): boolean {
 
 /**
  * The draft loaded from a saved line, with its trip stops: a start spot that only stands for the
- * first trip stop put before the first photo isn't kept as a start spot of its own.
+ * first trip stop put before the first photo, or an end spot that only stands for the last one put
+ * after the last photo (`last`, by ID), isn't kept as a spot of its own.
  */
-export function withStops<T extends Pick<GapDraft, "start" | "visits">>(draft: T): T {
+export function withStops<T extends Pick<GapDraft, "start" | "end" | "visits">>(
+  draft: T,
+  last?: number,
+): T {
+  return withoutStopEnd(withoutStopStart(draft), last);
+}
+
+/** The draft without a start spot that only stands for the first trip stop put before the first photo. */
+function withoutStopStart<T extends Pick<GapDraft, "start" | "visits">>(draft: T): T {
   const stop = stopStart({ gaps: [], visits: draft.visits });
   if (!draft.start || !stop || !sameSpot(draft.start, stop)) return draft;
   const { start: _start, ...rest } = draft;
   return rest as T;
 }
 
-/** The last run, ending at the end spot with the last photo's via spots when there is one. */
+/** The draft without an end spot that only stands for the last trip stop put after photo last. */
+function withoutStopEnd<T extends Pick<GapDraft, "end" | "visits">>(draft: T, last?: number): T {
+  const stop = stopEnd(draft, last);
+  if (!draft.end || !stop || !sameSpot(draft.end, stop)) return draft;
+  const { end: _end, ...rest } = draft;
+  return rest as T;
+}
+
+/**
+ * The last run, ending at the end spot (or else the last trip stop put after the last photo) with
+ * the last photo's via spots when there is one.
+ */
 function lastRun(run: Run, draft: GapDraft): Run {
-  if (!draft.end) return run;
-  return { ...run, end: draft.end, via: [...run.via, ...viaOf(draft, String(run.photos.at(-1)))] };
+  const last = run.photos.at(-1);
+  const end = draft.end ?? stopEnd(draft, last);
+  if (!end) return run;
+  const via = viaOf(draft, String(last)).filter((v) => draft.end || !sameSpot(v, end));
+  return { ...run, end, via: [...run.via, ...via] };
+}
+
+/**
+ * Where the line ends on a day with no end spot: the last trip stop put after the day's last
+ * photo, named, so the line runs to it; none when there is none.
+ */
+function stopEnd(draft: Pick<GapDraft, "visits">, last: number | undefined): TripPoint | undefined {
+  if (last === undefined) return undefined;
+  const stop = draft.visits?.findLast((v) => !v.first && v.after === last);
+  return stop && { latitude: stop.latitude, longitude: stop.longitude, label: stop.name };
 }
 
 /** A hop's line and stations as its segment lists them, leaving out the stations it doesn't have. */

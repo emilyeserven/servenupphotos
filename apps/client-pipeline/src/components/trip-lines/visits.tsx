@@ -211,7 +211,9 @@ interface RouteSpotProps {
 function routeSpotText(photos: TripDay["photos"], after?: number, first?: boolean): string {
   if (first) return "On the route before photo 1";
   const at = photos.findIndex((p) => p.id === after);
-  return at === -1 ? "Not on the route yet" : `On the route between photos ${at + 1} and ${at + 2}`;
+  if (at === -1) return "Not on the route yet";
+  if (at === photos.length - 1) return `On the route after photo ${at + 1}, where it ends`;
+  return `On the route between photos ${at + 1} and ${at + 2}`;
 }
 
 /** Adds a trip stop at a coordinate typed or pasted in, such as from Google Maps. */

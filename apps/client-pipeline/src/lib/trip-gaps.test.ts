@@ -131,6 +131,41 @@ test("a trip stop before the first photo starts the line with no start spot, or 
   assert.deepEqual(afterHotel!.via, [{ latitude: 5, longitude: 6, visit: 0 }]);
 });
 
+test("a trip stop after the last photo ends the line with no end spot, or comes before the end spot", () => {
+  const stop: TripVisit = {
+    name: "Dinner",
+    kind: "restaurant",
+    latitude: 5,
+    longitude: 6,
+    after: 2,
+  };
+  const draft: GapDraft = { ...walkingDraft([1, 2]), visits: [stop] };
+  const [own] = segmentsOf([1, 2], draft);
+  assert.deepEqual(own!.end, { latitude: 5, longitude: 6, label: "Dinner" });
+  assert.equal(own!.via, undefined);
+  const saved = draftOf([1, 2], segmentsOf([1, 2], draft));
+  assert.equal(withStops({ ...saved, visits: [stop] }, 2).end, undefined);
+  const hotel = { latitude: 1, longitude: 2 };
+  const [toHotel] = segmentsOf([1, 2], { ...draft, end: hotel });
+  assert.deepEqual(toHotel!.end, hotel);
+  assert.deepEqual(toHotel!.via, [{ after: 2, latitude: 5, longitude: 6, visit: 0 }]);
+});
+
+test("a trip stop after the last photo ends the line after a break too", () => {
+  const stop: TripVisit = {
+    name: "Dinner",
+    kind: "restaurant",
+    latitude: 5,
+    longitude: 6,
+    after: 2,
+  };
+  const segments = segmentsOf([1, 2], { gaps: ["break"], visits: [stop] });
+  assert.deepEqual(
+    segments.map((s) => [s.photos, s.end?.label]),
+    [[[2], "Dinner"]],
+  );
+});
+
 test("the way from the trip stop before the first photo can be a bus, kept through a save", () => {
   const stop: TripVisit = {
     name: "Lunch",

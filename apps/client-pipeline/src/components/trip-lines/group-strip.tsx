@@ -11,7 +11,14 @@ import { cn } from "@/lib/utils";
 import type { TripPhoto } from "@/lib/trip-days";
 import { type Gap, type GapDraft, withGap } from "@/lib/trip-gaps";
 import { type PhotoGroup, photoGroups, withGroupName, withGroupStart } from "@/lib/trip-groups";
-import { firstStops, movedVisit, offRoute, placedVisit, visitsAfter } from "@/lib/trip-visits";
+import {
+  firstStops,
+  firstVisit,
+  movedVisit,
+  offRoute,
+  placedVisit,
+  visitsAfter,
+} from "@/lib/trip-visits";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { isWandered, withWandered } from "@/lib/trip-wander";
 
@@ -225,10 +232,12 @@ function GroupBox(props: GroupBoxProps) {
           onMove={props.onMove}
           onMoveVisit={props.onMoveVisit}
           onInsertVisit={(after, visit) => onChange(placedVisit(draft, visit, after))}
+          onInsertFirst={(visit) => onChange(firstVisit(draft, visit))}
           onOffVisit={props.onOffVisit}
           visits={draft.visits}
           vias={props.vias}
           startGap={startGapShown(draft)}
+          endsDay={group.end === photos.length}
         />
       )}
     </div>

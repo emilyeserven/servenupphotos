@@ -85,8 +85,9 @@ type StopPlace = Pick<TripVisit, "after" | "first">;
 
 /**
  * The draft with the visit put on the route one photo earlier (-1) or later (1) among ids, the day's
- * photos in order: from after the first photo to before it, and back; unchanged when it's off the
- * route or would go past the first or last gap.
+ * photos in order: from after the first photo to before it, and back, and on to after the last
+ * photo, where the line ends at it; unchanged when it's off the route or would go before the first
+ * photo's stops or past the last photo.
  */
 export function movedVisit(draft: GapDraft, visit: TripVisit, ids: number[], by: -1 | 1): GapDraft {
   const to = neighbourPlace(ids, visit, by);
@@ -102,7 +103,7 @@ function neighbourPlace(
   const at = first ? -1 : after === undefined ? undefined : ids.indexOf(after);
   if (at === undefined || (at === -1 && !first)) return undefined;
   if (at + by === -1) return { first: true };
-  const to = ids.slice(0, -1)[at + by];
+  const to = ids[at + by];
   return to === undefined ? undefined : { after: to };
 }
 
@@ -126,6 +127,11 @@ export function placedVisit(
   after: number | undefined,
 ): GapDraft {
   return withPlace(draft, visit, after === undefined ? {} : { after });
+}
+
+/** The draft with one of its trip stops put on the route before the day's first photo. */
+export function firstVisit(draft: GapDraft, visit: TripVisit): GapDraft {
+  return withPlace(draft, visit, { first: true });
 }
 
 /** The trip stops not on the route yet, which the photo strip can put between two photos. */
