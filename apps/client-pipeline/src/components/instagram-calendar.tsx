@@ -4,6 +4,7 @@ import type { SocialCalendar, SocialPhoto } from "@/api/publish";
 import { DayPostBackdrop, DayPostMark, InstagramPosts } from "@/components/instagram-posts";
 import { InstagramFeedPreview } from "@/components/instagram-feed-preview";
 import { InstagramFocus } from "@/components/instagram-focus";
+import { ScheduleTabs } from "@/components/instagram-tabs";
 import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
 import { PhotoFiles } from "@/components/photo-files";
 import { Button } from "@/components/ui/button";
@@ -102,23 +103,31 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
     <div className="flex flex-col gap-4">
       <SourceNote calendar={calendar} undecided={undecided} />
       <InstagramFocus photos={calendar.photos} />
-      <CalendarGrid
-        days={days}
-        today={isoDate(now)}
-        weekOffset={weekOffset}
-        onWeekOffset={setWeekOffset}
-        byDay={byDay}
-        posts={posts}
-        unsaved={unsaved}
-        onOpen={setPicking}
-        onDropPhoto={dropPhoto}
-      />
-      <InstagramPosts days={days} postsByDay={posts} />
-      <InstagramFeedPreview
-        byDay={byDay}
-        posts={posts}
-        today={isoDate(now)}
-        onDropPhoto={dropPhoto}
+      <ScheduleTabs
+        calendar={
+          <>
+            <CalendarGrid
+              days={days}
+              today={isoDate(now)}
+              weekOffset={weekOffset}
+              onWeekOffset={setWeekOffset}
+              byDay={byDay}
+              posts={posts}
+              unsaved={unsaved}
+              onOpen={setPicking}
+              onDropPhoto={dropPhoto}
+            />
+            <InstagramPosts days={days} postsByDay={posts} />
+          </>
+        }
+        feed={
+          <InstagramFeedPreview
+            byDay={byDay}
+            posts={posts}
+            today={isoDate(now)}
+            onDropPhoto={dropPhoto}
+          />
+        }
       />
       <PhotoPicker
         day={picking}
