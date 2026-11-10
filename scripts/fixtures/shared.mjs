@@ -317,6 +317,17 @@ export const added = {
       },
     },
   ],
+  // Days something went up on Instagram whose photo isn't in the portfolio.
+  notstored: [
+    {
+      path: `${FOLDER}/notstored/2026-11-08.json`,
+      data: { id: "2026-11-08", day: "2026-11-08", note: "Repost of a friend's photo" },
+    },
+    {
+      path: `${FOLDER}/notstored/2026-11-11.json`,
+      data: { id: "2026-11-11", day: "2026-11-11", note: "" },
+    },
+  ],
   graphs: [
     {
       path: `${FOLDER}/graphs/when.json`,

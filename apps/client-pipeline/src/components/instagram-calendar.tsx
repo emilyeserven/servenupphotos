@@ -9,6 +9,14 @@ import type { AnchorPlace } from "@/lib/grid-anchors";
 import { ScheduleTabs } from "@/components/instagram-tabs";
 import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
 import { PhotoFiles } from "@/components/photo-files";
+import {
+  MarkNotStoredButton,
+  NotStoredDay,
+  NotStoredDialog,
+  useNotStored,
+} from "@/components/not-stored-post";
+import type { NotStoredPost } from "@/api/not-stored";
+import { notStoredPath, withNotStoredDays } from "@/lib/not-stored";
 import { Button } from "@/components/ui/button";
 import { calendarDays, dayFormat, isoDate, longDayFormat, parseIsoDate } from "@/lib/calendar";
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
@@ -87,20 +95,23 @@ function useInstagramPosts(photos: SocialPhoto[]) {
 function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided: number }) {
   const { unsaved, update } = useUnsavedDates(calendar.photos);
   const posts = useInstagramPosts(calendar.photos);
+  const notStored = useNotStored();
   const [weekOffset, setWeekOffset] = useState(0);
   const [picking, setPicking] = useState<string | null>(null);
   // Read the clock once, so the calendar doesn't shift under a drag at midnight.
   const [now] = useState(() => new Date());
 
   const byDay = photosByDay(calendar.photos, unsaved);
-  const anchors = useGridAnchors(calendar.photos, byDay);
+  const rowDays = withNotStoredDays(byDay, notStored);
+  const anchors = useGridAnchors(calendar.photos, rowDays);
   const { places } = anchors;
   const days = calendarDays(now, weekOffset, WEEKS);
   const schedule = (photo: SocialPhoto, day: string | null) =>
     update(moveToDay(unsaved, byDay, photo, day));
+  /** Moves the photo at path to day, unless a Not Stored post holds that day. */
   const dropPhoto = (path: string, day: string) => {
     const dropped = calendar.photos.find((p) => p.path === path);
-    if (dropped) schedule(dropped, day);
+    if (dropped && !notStored.has(day)) schedule(dropped, day);
   };
 
   return (
@@ -116,6 +127,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
               weekOffset={weekOffset}
               onWeekOffset={setWeekOffset}
               byDay={byDay}
+              notStored={notStored}
               posts={posts}
               unsaved={unsaved}
               onOpen={setPicking}
@@ -128,6 +140,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
         feed={
           <InstagramFeedPreview
             byDay={byDay}
+            notStored={notStored}
             posts={posts}
             today={isoDate(now)}
             onDropPhoto={dropPhoto}
@@ -135,19 +148,50 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
           />
         }
       />
-      <PhotoPicker
+      <DayDialogs
         day={picking}
-        byDay={byDay}
-        photos={calendar.photos}
-        unsaved={unsaved}
+        notStored={byDay.has(picking ?? "") ? undefined : notStored.get(picking ?? "")}
         onClose={() => setPicking(null)}
-        footer={(photo) => <GridAnchorControls photo={photo} anchors={anchors} />}
-        onSchedule={(photo, day) => {
-          schedule(photo, day);
-          setPicking(null);
-        }}
-      />
+      >
+        {(day) => (
+          <PhotoPicker
+            day={day}
+            byDay={byDay}
+            photos={calendar.photos}
+            unsaved={unsaved}
+            onClose={() => setPicking(null)}
+            footer={(photo) => <GridAnchorControls photo={photo} anchors={anchors} />}
+            emptyFooter={(empty) => (
+              <MarkNotStoredButton day={empty} onDone={() => setPicking(null)} />
+            )}
+            onSchedule={(photo, to) => {
+              schedule(photo, to);
+              setPicking(null);
+            }}
+          />
+        )}
+      </DayDialogs>
     </div>
+  );
+}
+
+interface DayDialogsProps {
+  /** The day picked on the calendar, or null when none is. */
+  day: string | null;
+  /** The day's Not Stored post, when it has one and no photo. */
+  notStored: NotStoredPost | undefined;
+  onClose: () => void;
+  /** The photo picker, open on day (or closed, given null). */
+  children: (day: string | null) => ReactNode;
+}
+
+/** A picked day's dialog: its Not Stored post's own, or else the photo picker. */
+function DayDialogs({ day, notStored, onClose, children }: DayDialogsProps) {
+  return (
+    <>
+      <NotStoredDialog post={notStored} onClose={onClose} />
+      {children(notStored ? null : day)}
+    </>
   );
 }
 
@@ -225,6 +269,8 @@ interface CalendarGridProps {
   weekOffset: number;
   onWeekOffset: (offset: number) => void;
   byDay: Map<string, SocialPhoto>;
+  /** Each day's Not Stored post, by day. */
+  notStored: Map<string, NotStoredPost>;
   /** Each day's posts from the photos' Social media posts. */
   posts: Map<string, DayPost[]>;
   unsaved: Unsaved;
@@ -235,7 +281,7 @@ interface CalendarGridProps {
 }
 
 function CalendarGrid(props: CalendarGridProps) {
-  const { days, today, byDay, posts, unsaved, onOpen, onDropPhoto, places } = props;
+  const { days, today, byDay, notStored, posts, unsaved, onOpen, onDropPhoto, places } = props;
   return (
     <>
       <WeekNav {...props} />
@@ -247,26 +293,30 @@ function CalendarGrid(props: CalendarGridProps) {
         ))}
         {days.map((day) => {
           const photo = byDay.get(day);
+          const notStoredPost = notStored.get(day);
           return (
             <Day
               key={day}
               day={day}
               today={today}
               photo={photo}
+              notStored={notStoredPost}
               posts={posts.get(day)}
               unsaved={
                 photo !== undefined && dateOf(unsaved, photo) !== photo.socialMediaPublishDate
               }
               onOpen={() => onOpen(day)}
               onDropPhoto={(path) => onDropPhoto(path, day)}
-              place={photo && places.get(photo.path)}
+              place={places.get(photo?.path ?? notStoredPath(day))}
             />
           );
         })}
       </div>
       <p className="text-muted-foreground text-sm">
         Click an empty day to pick a photo for it, or a photo to change or remove it. Drag a photo
-        to another day to move it there; dropping it on another photo swaps the two. A check in a
+        to another day to move it there; dropping it on another photo swaps the two. A day posted to
+        Instagram with a photo that isn&apos;t in the portfolio can be marked{" "}
+        <strong>Not Stored</strong> from its picker, so it keeps its place in the feed. A check in a
         day&apos;s corner marks Instagram posts already scheduled on Instagram, and a clock ones
         still planned. The Grid Anchor (set in a day&apos;s picker) and the 2 photos before it make
         one row of the Social Feed, and every other row of 3 is counted from it, outlined dark and
@@ -314,6 +364,8 @@ interface DayProps {
   day: string;
   today: string;
   photo: SocialPhoto | undefined;
+  /** The day's Not Stored post, shown when it has no photo. */
+  notStored: NotStoredPost | undefined;
   /** The day's posts from the photos' Social media posts, if any. */
   posts: DayPost[] | undefined;
   /** Whether the photo on this day isn't saved there yet. */
@@ -335,9 +387,8 @@ function dayClass(day: string, today: string, over: boolean) {
 }
 
 /** One day of the calendar: a drop target holding its photo, or a button to pick one. */
-function Day({ day, today, photo, posts, unsaved, onOpen, onDropPhoto, place }: DayProps) {
+function Day({ day, today, photo, posts, notStored, onDropPhoto, place, ...rest }: DayProps) {
   const { over, handlers } = useDropTarget(PHOTO_DRAG_TYPE, onDropPhoto);
-  const label = longDayFormat.format(parseIsoDate(day));
   return (
     <div role="gridcell" className={dayClass(day, today, over)} {...handlers}>
       <DayNumber
@@ -347,20 +398,30 @@ function Day({ day, today, photo, posts, unsaved, onOpen, onDropPhoto, place }: 
       />
       <DayPostMark posts={posts} />
       <AnchorOutline place={place} />
-      {photo ? (
-        <ScheduledPhoto photo={photo} label={label} unsaved={unsaved} onOpen={onOpen} />
-      ) : (
-        <button
-          type="button"
-          onClick={onOpen}
-          className="text-muted-foreground hover:bg-accent hover:text-accent-foreground relative flex size-full items-center justify-center transition-colors"
-          aria-label={`${label}: pick a photo`}
-        >
-          <DayPostBackdrop posts={posts} />
-          <PlusIcon className="relative size-4" />
-        </button>
-      )}
+      <DayBody day={day} photo={photo} notStored={notStored} posts={posts} {...rest} />
     </div>
+  );
+}
+
+type DayBodyProps = Pick<DayProps, "day" | "photo" | "notStored" | "posts" | "unsaved" | "onOpen">;
+
+/** What fills a day: its photo, its Not Stored post, or a button to pick a photo. */
+function DayBody({ day, photo, notStored, posts, unsaved, onOpen }: DayBodyProps) {
+  const label = longDayFormat.format(parseIsoDate(day));
+  if (photo) {
+    return <ScheduledPhoto photo={photo} label={label} unsaved={unsaved} onOpen={onOpen} />;
+  }
+  if (notStored) return <NotStoredDay post={notStored} label={label} onOpen={onOpen} />;
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="text-muted-foreground hover:bg-accent hover:text-accent-foreground relative flex size-full items-center justify-center transition-colors"
+      aria-label={`${label}: pick a photo`}
+    >
+      <DayPostBackdrop posts={posts} />
+      <PlusIcon className="relative size-4" />
+    </button>
   );
 }
 

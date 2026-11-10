@@ -84,6 +84,31 @@ picked photo), so it moves with its photos when the anchor shifts the rows.
 The anchor is saved as `socialGridAnchor: true` and a name as `socialGridGroupName` on the photo's JSON, kept as local
 edits until **Commit** like a moved date; photos without them leave the fields out.
 
+### Not Stored days
+
+Sometimes something goes up on Instagram whose photo isn't in the portfolio. An empty day's picker has **Mark as Not
+Stored**, which fills that day with a dashed **NOT STORED** box instead of a photo. Clicking it opens the day's own
+dialog, with an optional note on what was posted (such as "Story repost") and **Remove Not Stored**, which frees the
+day again. A Not Stored day can't take a photo, so a photo dropped on it stays where it was; remove it first.
+
+A Not Stored day counts like a photo everywhere the feed's shape matters:
+
+- It takes a tile in the **Social Feed preview** on its day, marked **NOT STORED** with its note, which links nowhere
+  and can't be dragged.
+- It counts toward the rows of 3 worked out from the [Grid Anchor](#grid-anchors), and is outlined with its row. It
+  can't be the Grid Anchor itself or hold its row's name; those stay on photos.
+- It counts as a day scheduled on Instagram for the Dashboard's
+  [Needs Attention](dashboard.md) check of the next 7 days, since it's on Instagram already.
+
+Each is one file, `notstored/<day>.json` (`{ "id": "2026-11-10", "day": "2026-11-10", "note": "" }`), saved as a
+[change waiting for Commit](pending-changes.md) (`PUT /api/notstored/<day>` and `DELETE /api/notstored/<day>`), and
+**Commit** combines them into `notstored/NOTSTORED.json`, as it does caption templates. In the browser, a Not Stored
+day stands in for a photo with the path `not-stored:<day>` (`apps/client-pipeline/src/lib/not-stored.ts`), so the
+Grid Anchor's rows and the feed can count it without a photo file.
+
+> **Frontend analogy:** it's a placeholder item in a list, like a skeleton card that holds a slot in a CSS grid so
+> the items after it don't shift, except this one is saved.
+
 ### Suggested photos
 
 When a day is picked, the picker opens with two sections, each folded or opened by its heading. The first, **Before

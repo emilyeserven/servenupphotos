@@ -39,6 +39,7 @@ var dataKinds = []combinedKind{
 	{"triplines", TripLines.Folder, TripLines.AllFile},
 	{"graphs", GraphPresets.Folder, GraphPresets.AllFile},
 	{"gear", GearKind.Folder, GearKind.AllFile},
+	{"notstored", NotStoredKind.Folder, NotStoredKind.AllFile},
 }
 
 // combinedKinds is every kind of combined data, photos first.

@@ -74,13 +74,19 @@ export function withPostDays(
 
 /**
  * How many days in a row from today have an Instagram post marked scheduled (put on the site), from
- * each day's Instagram posts. A day with only planned posts, or only a calendar photo, ends the run.
+ * each day's Instagram posts, or a Not Stored post (notStored, its days), which is on Instagram
+ * already. A day with only planned posts, or only a calendar photo, ends the run.
  */
-export function scheduledDaysFrom(posts: Map<string, DayPost[]>, today: string): number {
+export function scheduledDaysFrom(
+  posts: Map<string, DayPost[]>,
+  today: string,
+  notStored: Iterable<string> = [],
+): number {
   const scheduled = new Set(
     [...posts]
       .filter(([, dayPosts]) => dayPosts.some((post) => post.status === "scheduled"))
       .map(([day]) => day),
   );
+  for (const day of notStored) scheduled.add(day);
   return runFrom(scheduled, today).daysLeft;
 }

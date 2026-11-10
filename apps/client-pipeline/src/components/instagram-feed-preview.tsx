@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarDaysIcon, CircleCheckIcon, ClockIcon, ImageIcon } from "lucide-react";
+import { BanIcon, CalendarDaysIcon, CircleCheckIcon, ClockIcon, ImageIcon } from "lucide-react";
+import type { NotStoredPost } from "@/api/not-stored";
+import { NotStoredFace } from "@/components/not-stored-post";
 import { type DragEvent, useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { FeedDayPicker } from "@/components/feed-day-picker";
@@ -22,17 +24,21 @@ const SOURCE_LABELS: Record<FeedEntry["source"], string> = {
   calendar: "On the calendar",
   planned: "Planned post",
   scheduled: "Scheduled on Instagram",
+  notStored: "Not stored: on Instagram, not in the portfolio",
 };
 
 const SOURCE_ICONS = {
   calendar: CalendarDaysIcon,
   planned: ClockIcon,
   scheduled: CircleCheckIcon,
+  notStored: BanIcon,
 };
 
 interface InstagramFeedPreviewProps {
   /** Each calendar day's photo, with the dates moved and not committed yet. */
   byDay: Map<string, SocialPhoto>;
+  /** Each day's Not Stored post, by day. */
+  notStored: Map<string, NotStoredPost>;
   /** Each day's posts from the photos' Social media posts. */
   posts: Map<string, DayPost[]>;
   /** Today, as YYYY-MM-DD. */
@@ -58,10 +64,13 @@ function feedPhotos(byDay: Map<string, SocialPhoto>): Map<string, FeedPhoto> {
  * from the calendar's photos and the Instagram posts under Social media posts.
  */
 export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
-  const { byDay, posts, today, onDropPhoto, places } = props;
+  const { byDay, notStored, posts, today, onDropPhoto, places } = props;
   const [asOf, setAsOf] = useState(today);
   const [shown, setShown] = useState(PAGE);
-  const entries = useMemo(() => feedEntries(feedPhotos(byDay), posts), [byDay, posts]);
+  const entries = useMemo(
+    () => feedEntries(feedPhotos(byDay), posts, notStored),
+    [byDay, posts, notStored],
+  );
   const feed = feedAsOf(entries, asOf);
   return (
     <section className="flex flex-col gap-2" aria-labelledby="social-feed-preview">
@@ -75,7 +84,8 @@ export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
         Your Instagram grid as it looks at the end of {longDayFormat.format(parseIsoDate(asOf))}:{" "}
         {feed.length} {feed.length === 1 ? "post" : "posts"}, newest first, from the calendar and
         the Instagram posts under <strong>Social media posts</strong>, with changes not committed
-        yet. Photos that post on that day are ringed. The arrow buttons, or the left and right arrow
+        yet. Days marked <strong>Not Stored</strong> on the calendar hold a tile of their own.
+        Photos that post on that day are ringed. The arrow buttons, or the left and right arrow
         keys, step a day at a time. Drag a calendar photo onto another tile to swap their days. Once
         there&apos;s a Grid Anchor, the calendar&apos;s photos are outlined in rows of 3 counted
         from it, dark and light blue by turns, as a reference for lining up rows.
@@ -145,11 +155,31 @@ interface FeedTileProps {
   place: AnchorPlace | undefined;
 }
 
+/** One tile of the feed: a Not Stored post's, or else a photo's. */
+function FeedTile(props: FeedTileProps) {
+  if (props.entry.source === "notStored") return <NotStoredTile {...props} />;
+  return <PhotoTile {...props} />;
+}
+
+/** A Not Stored post's tile, which holds its place in the feed and its row but links nowhere. */
+function NotStoredTile({ entry, asOf, upcoming, place }: FeedTileProps) {
+  const day = longDayFormat.format(parseIsoDate(entry.day));
+  const label = `${entry.name}, ${day}: ${SOURCE_LABELS.notStored}`;
+  return (
+    <li className="relative aspect-[3/4]" title={label} aria-label={label}>
+      <NotStoredFace note={entry.name === "Not stored" ? "" : entry.name} />
+      <TileRing over={false} chosenDay={entry.day === asOf} />
+      <AnchorOutline place={place} />
+      <SourceMark entry={entry} upcoming={upcoming} />
+    </li>
+  );
+}
+
 /**
  * One photo of the feed, linking to its Photo page, with its day and where it stands on hover. A
  * calendar photo can be dragged onto another tile, which moves it to that tile's day.
  */
-function FeedTile(props: FeedTileProps) {
+function PhotoTile(props: FeedTileProps) {
   const { entry, asOf, upcoming, onCalendar, onDropPhoto, place } = props;
   const { over, handlers } = useDropTarget(PHOTO_DRAG_TYPE, (path) => {
     if (path !== entry.path) onDropPhoto(path);

@@ -104,6 +104,9 @@ date, link, caption and hashtags; see [Publish](publish.md#social-media-posts). 
 The photo that is the Grid Anchor on the Instagram calendar has `socialGridAnchor: true`, and a photo can hold its
 row's optional name as `socialGridGroupName`; other photos leave both out; see [Publish](publish.md#grid-anchors).
 
+A day posted to Instagram with a photo that isn't in the portfolio is a Not Stored post, `notstored/<day>.json`,
+combined into `notstored/NOTSTORED.json`; see [Publish](publish.md#not-stored-days).
+
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
 [Re-editing a photo](replace-image.md).
 

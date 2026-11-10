@@ -35,6 +35,9 @@ type CombinedFiles struct {
 	Graphs InFlightAllPhotos `json:"graphs"`
 	// Gear is GEAR.json, the cameras' and lenses' own pictures.
 	Gear InFlightAllPhotos `json:"gear"`
+	// NotStored is NOTSTORED.json, the Instagram posts whose photo isn't in
+	// the portfolio.
+	NotStored InFlightAllPhotos `json:"notstored"`
 }
 
 // CombinedBase is CombinedFiles on the base branch: what the portfolio has.

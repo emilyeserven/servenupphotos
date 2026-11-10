@@ -36,3 +36,11 @@ test("is 0 when today has nothing scheduled", () => {
   assert.equal(scheduledDaysFrom(posts, "2026-11-10"), 0);
   assert.equal(scheduledDaysFrom(new Map(), "2026-11-10"), 0);
 });
+
+test("a Not Stored post counts as a scheduled day", () => {
+  const posts = new Map([
+    ["2026-11-10", [post("scheduled")]],
+    ["2026-11-12", [post("scheduled")]],
+  ]);
+  assert.equal(scheduledDaysFrom(posts, "2026-11-10", ["2026-11-11"]), 3);
+});

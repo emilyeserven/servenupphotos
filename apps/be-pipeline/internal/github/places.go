@@ -14,7 +14,7 @@ import (
 )
 
 // EntryKind is a kind of data file the pipeline saves whole, by ID: places,
-// localizations, metadata groups, camera overrides, custom lenses, timeline labels, viewer likes, trip lines, graph presets and gear pictures. Each is one JSON file in its kind's folder, and Commit
+// localizations, metadata groups, camera overrides, custom lenses, timeline labels, viewer likes, trip lines, graph presets, gear pictures and Not Stored posts. Each is one JSON file in its kind's folder, and Commit
 // combines them into the kind's AllFile.
 type EntryKind struct {
 	// Name is the kind's singular name, as shown: "place" or "localization".
@@ -55,8 +55,11 @@ var (
 	GraphPresets = EntryKind{Name: "graph preset", Folder: "graphs", AllFile: "GRAPHS.json"}
 	// GearKind is the cameras' and lenses' own pictures, shown in place of
 	// the portfolio's drawings of them, one file each.
-	GearKind   = EntryKind{Name: "gear picture", Folder: "gear", AllFile: "GEAR.json"}
-	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind}
+	GearKind = EntryKind{Name: "gear picture", Folder: "gear", AllFile: "GEAR.json"}
+	// NotStoredKind is the days something went up on Instagram whose photo
+	// isn't in the portfolio, one file per day, named by the day.
+	NotStoredKind = EntryKind{Name: "Not Stored post", Folder: "notstored", AllFile: "NOTSTORED.json"}
+	entryKinds    = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as

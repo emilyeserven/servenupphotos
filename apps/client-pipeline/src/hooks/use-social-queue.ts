@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
+import { notStoredPosts } from "@/api/not-stored";
 import type { SocialCalendar } from "@/api/publish";
 import { isoDate } from "@/lib/calendar";
 import { instagramPostsByDay } from "@/lib/social-post-days";
 import { photosByDay, unsavedFromEdits, withoutUndecided } from "@/lib/social-schedule";
 import { type SocialQueue, scheduledDaysFrom, socialQueue, withPostDays } from "@/lib/social-queue";
-import { useChangedPhotoFiles } from "@/stores/combined-data";
+import { useChangedPhotoFiles, useCombinedData } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
 /**
@@ -27,15 +28,17 @@ export function useSocialQueue(calendar: SocialCalendar, shown: number): SocialQ
 }
 
 /**
- * How many days in a row from today have an Instagram post marked scheduled, with the changes not
- * committed yet and without Undecided photos. Planned posts and calendar photos don't count.
+ * How many days in a row from today have an Instagram post marked scheduled, or a Not Stored post,
+ * with the changes not committed yet and without Undecided photos. Planned posts and calendar
+ * photos don't count.
  */
 export function useScheduledInstagramDays(calendar: SocialCalendar): number {
   const changed = useChangedPhotoFiles();
+  const { data } = useCombinedData();
   // Read the clock once, as the calendar does.
   const [today] = useState(() => isoDate(new Date()));
-  return useMemo(
-    () => scheduledDaysFrom(instagramPostsByDay(calendar.photos, changed), today),
-    [calendar.photos, changed, today],
-  );
+  return useMemo(() => {
+    const notStored = notStoredPosts(data).map((post) => post.day);
+    return scheduledDaysFrom(instagramPostsByDay(calendar.photos, changed), today, notStored);
+  }, [calendar.photos, changed, data, today]);
 }
