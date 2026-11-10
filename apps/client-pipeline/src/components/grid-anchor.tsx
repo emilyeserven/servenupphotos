@@ -36,9 +36,9 @@ function groupStyle(group: number): GroupStyle {
 /**
  * The one Grid Anchor on the calendar and every photo's row worked out from it, with the changes
  * not committed yet counted; and changes to them, kept as local edits until **Commit**. byDay is
- * each calendar day's photo.
+ * each calendar day's photo, or the stand-in path of its Not Stored post.
  */
-export function useGridAnchors(photos: SocialPhoto[], byDay: Map<string, SocialPhoto>) {
+export function useGridAnchors(photos: SocialPhoto[], byDay: Map<string, { path: string }>) {
   const changed = useChangedPhotoFiles();
   const setField = useLocalEditsStore((state) => state.setField);
   const { flagged, names } = useMemo(

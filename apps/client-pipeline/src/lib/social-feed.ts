@@ -1,4 +1,5 @@
 import { isoDate, parseIsoDate } from "@/lib/calendar";
+import { notStoredPath } from "@/lib/not-stored";
 import type { DayPost } from "@/lib/social-post-days";
 import type { SocialPostStatus } from "@/lib/social-posts";
 
@@ -13,9 +14,10 @@ export interface FeedPhoto {
 
 /**
  * Where a tile of the Social Feed preview comes from: a day on the Instagram calendar
- * (`socialMediaPublishDate`), or an Instagram post under Social media posts, planned or scheduled.
+ * (`socialMediaPublishDate`), an Instagram post under Social media posts, planned or scheduled, or
+ * a Not Stored post, on Instagram with no photo in the portfolio.
  */
-export type FeedSource = "calendar" | SocialPostStatus;
+export type FeedSource = "calendar" | SocialPostStatus | "notStored";
 
 /** One tile of the Social Feed preview: a photo on Instagram on a day. */
 export interface FeedEntry extends FeedPhoto {
@@ -25,7 +27,12 @@ export interface FeedEntry extends FeedPhoto {
 }
 
 /** How sure a source is that the photo is on Instagram, so a scheduled post wins over the calendar. */
-const SOURCE_RANK: Record<FeedSource, number> = { calendar: 0, planned: 1, scheduled: 2 };
+const SOURCE_RANK: Record<FeedSource, number> = {
+  calendar: 0,
+  planned: 1,
+  scheduled: 2,
+  notStored: 3,
+};
 
 /** Adds entry, or keeps the surer one when its photo is already on that day. */
 function addEntry(entries: Map<string, FeedEntry>, entry: FeedEntry) {
@@ -34,15 +41,24 @@ function addEntry(entries: Map<string, FeedEntry>, entry: FeedEntry) {
   if (!kept || SOURCE_RANK[entry.source] > SOURCE_RANK[kept.source]) entries.set(key, entry);
 }
 
+/** The tile of a day's Not Stored post: named by its note, or "Not stored", with no image. */
+function notStoredEntry(day: string, note: string): FeedEntry {
+  const name = note.trim() || "Not stored";
+  return { day, path: notStoredPath(day), name, image: null, source: "notStored" };
+}
+
 /**
- * Every photo the Instagram feed gets, newest first: each calendar day's photo (byDay) and each
- * Instagram post with a day (posts). A photo on the calendar and posted the same day is one tile.
+ * Every photo the Instagram feed gets, newest first: each calendar day's photo (byDay), each
+ * Instagram post with a day (posts) and each day's Not Stored post (notStored, by day). A photo on
+ * the calendar and posted the same day is one tile.
  */
 export function feedEntries(
   byDay: Map<string, FeedPhoto>,
   posts: Map<string, DayPost[]>,
+  notStored: Map<string, { note: string }> = new Map(),
 ): FeedEntry[] {
   const entries = new Map<string, FeedEntry>();
+  for (const [day, { note }] of notStored) addEntry(entries, notStoredEntry(day, note));
   for (const [day, { path, name, image }] of byDay) {
     addEntry(entries, { day, path, name, image, source: "calendar" });
   }

@@ -28,7 +28,8 @@ now **Settings › Status** (see [Settings](settings.md#status)).
   - **Photos without color data** (high): no `colors`, or `colors` saved before `peakChroma`, as **Update Data ›
     Colors** reads them, linking there.
   - **Instagram** (high with 5 or more days left to schedule, medium with 4 or fewer): fewer than 7 days in a row from today with an Instagram post marked **Scheduled** (put on
-    Instagram), with how many more days need one. A day with only a **Planned** post, or only a calendar photo, doesn't
+    Instagram), with how many more days need one. A [Not Stored](publish.md#not-stored-days) day counts too, since it's
+    on Instagram already. A day with only a **Planned** post, or only a calendar photo, doesn't
     count, so the row stays until the whole next week is scheduled on Instagram itself (`scheduledDaysFrom` in
     `lib/social-queue.ts`). **Next on Instagram** still counts planned days too. Links to the
     [Instagram calendar](publish.md).

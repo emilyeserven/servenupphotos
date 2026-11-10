@@ -67,3 +67,17 @@ test("steps with the bare left and right arrow keys only", () => {
   assert.equal(press("ArrowRight", true), 0);
   assert.equal(press("ArrowUp"), 0);
 });
+
+test("a Not Stored post takes a tile on its day, named by its note", () => {
+  const notStored = new Map([
+    ["2026-11-04", { note: "" }],
+    ["2026-11-06", { note: "Story repost" }],
+  ]);
+  assert.deepEqual(names(feedEntries(byDay, new Map(), notStored)), [
+    "Story repost:notStored",
+    "e:calendar",
+    "Not stored:notStored",
+    "c:calendar",
+    "a:calendar",
+  ]);
+});

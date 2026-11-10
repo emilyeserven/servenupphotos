@@ -3,6 +3,7 @@ import {
   FOLDER,
   PULL_REQUEST,
   REPO,
+  added,
   fileUrl,
   headPhotos,
   imagesOf,
@@ -67,5 +68,19 @@ export function publishFixtures() {
       unreadable: [],
     },
     "PUT /api/publish/instagram": ({ body }) => ({ ...pendingSave(), files: body?.dates?.length }),
+    "PUT /api/notstored/2026-11-11": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/notstored/2026-11-11.json`,
+      data: { ...body, id: "2026-11-11", day: "2026-11-11" },
+      before: added.notstored[1].data,
+      changed: true,
+    }),
+    "DELETE /api/notstored/2026-11-11": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/notstored/2026-11-11.json`,
+      data: null,
+      before: added.notstored[1].data,
+      changed: true,
+    }),
   };
 }

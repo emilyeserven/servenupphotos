@@ -55,6 +55,8 @@ interface PhotoPickerProps {
   onSchedule: (photo: SocialPhoto, day: string | null) => void;
   /** More buttons for the day's photo, next to **Remove from this day**. */
   footer: (photo: SocialPhoto) => ReactNode;
+  /** The footer of an empty day, such as **Mark as Not Stored**. */
+  emptyFooter: (day: string) => ReactNode;
 }
 
 /** The photo on day, if the picker is open and the day has one. */
@@ -197,6 +199,7 @@ export function PhotoPicker({
   onClose,
   onSchedule,
   footer,
+  emptyFooter,
 }: PhotoPickerProps) {
   const [search, setSearch] = useState("");
   // Kept between days, so opting in once shows them every time the picker opens.
@@ -257,12 +260,29 @@ export function PhotoPicker({
             onPick={(photo) => choose(photo, day)}
           />
         </div>
-        {current && (
-          <RemoveFooter onRemove={() => choose(current, null)}>{footer(current)}</RemoveFooter>
-        )}
+        <PickerFooter
+          day={day}
+          current={current}
+          onRemove={(photo) => choose(photo, null)}
+          footer={footer}
+          emptyFooter={emptyFooter}
+        />
       </DialogContent>
     </Dialog>
   );
+}
+
+interface PickerFooterProps extends Pick<PhotoPickerProps, "day" | "footer" | "emptyFooter"> {
+  current: SocialPhoto | undefined;
+  onRemove: (photo: SocialPhoto) => void;
+}
+
+/** The day's photo's buttons, or an empty day's own footer. */
+function PickerFooter({ day, current, onRemove, footer, emptyFooter }: PickerFooterProps) {
+  if (current) {
+    return <RemoveFooter onRemove={() => onRemove(current)}>{footer(current)}</RemoveFooter>;
+  }
+  return day === null ? null : emptyFooter(day);
 }
 
 /** The button that takes the day's photo off the calendar, after any others for the photo. */

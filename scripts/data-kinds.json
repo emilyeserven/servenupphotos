@@ -13,5 +13,6 @@
   { "folder": "likes", "all": "LIKES.json" },
   { "folder": "triplines", "all": "TRIPLINES.json" },
   { "folder": "graphs", "all": "GRAPHS.json" },
-  { "folder": "gear", "all": "GEAR.json" }
+  { "folder": "gear", "all": "GEAR.json" },
+  { "folder": "notstored", "all": "NOTSTORED.json" }
 ]
