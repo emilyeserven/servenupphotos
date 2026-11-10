@@ -7,8 +7,15 @@ import { InstagramFocus } from "@/components/instagram-focus";
 import { AnchorOutline, GridAnchorControls, useGridAnchors } from "@/components/grid-anchor";
 import type { AnchorPlace } from "@/lib/grid-anchors";
 import { ScheduleTabs } from "@/components/instagram-tabs";
-import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
+import { PhotoPicker } from "@/components/instagram-photo-picker";
+import { PhotoImage } from "@/components/instagram-picker/photo-image";
 import { PhotoFiles } from "@/components/photo-files";
+import {
+  DrawerLayout,
+  PhotoDrawer,
+  PhotoDrawerToggle,
+  usePhotoDrawer,
+} from "@/components/instagram-picker/photo-drawer";
 import {
   MarkNotStoredButton,
   NotStoredDay,
@@ -98,8 +105,10 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
   const notStored = useNotStored();
   const [weekOffset, setWeekOffset] = useState(0);
   const [picking, setPicking] = useState<string | null>(null);
+  const drawer = usePhotoDrawer();
   // Read the clock once, so the calendar doesn't shift under a drag at midnight.
   const [now] = useState(() => new Date());
+  const today = isoDate(now);
 
   const byDay = photosByDay(calendar.photos, unsaved);
   const rowDays = withNotStoredDays(byDay, notStored);
@@ -120,10 +129,25 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
       <InstagramFocus photos={calendar.photos} />
       <ScheduleTabs
         calendar={
-          <>
+          <DrawerLayout
+            drawer={
+              drawer.open && (
+                <PhotoDrawer
+                  photos={calendar.photos}
+                  unsaved={unsaved}
+                  byDay={byDay}
+                  notStored={notStored}
+                  days={days}
+                  today={today}
+                  onSchedule={schedule}
+                  onClose={drawer.toggle}
+                />
+              )
+            }
+          >
             <CalendarGrid
               days={days}
-              today={isoDate(now)}
+              today={today}
               weekOffset={weekOffset}
               onWeekOffset={setWeekOffset}
               byDay={byDay}
@@ -133,45 +157,81 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
               onOpen={setPicking}
               onDropPhoto={dropPhoto}
               places={places}
+              drawerToggle={<PhotoDrawerToggle open={drawer.open} onToggle={drawer.toggle} />}
             />
-            <InstagramPosts postsByDay={posts} today={isoDate(now)} />
-          </>
+            <InstagramPosts postsByDay={posts} today={today} />
+          </DrawerLayout>
         }
         feed={
           <InstagramFeedPreview
             byDay={byDay}
             notStored={notStored}
             posts={posts}
-            today={isoDate(now)}
+            today={today}
             onDropPhoto={dropPhoto}
             places={places}
           />
         }
       />
-      <DayDialogs
+      <DayPicker
         day={picking}
-        notStored={byDay.has(picking ?? "") ? undefined : notStored.get(picking ?? "")}
         onClose={() => setPicking(null)}
-      >
-        {(day) => (
-          <PhotoPicker
-            day={day}
-            byDay={byDay}
-            photos={calendar.photos}
-            unsaved={unsaved}
-            onClose={() => setPicking(null)}
-            footer={(photo) => <GridAnchorControls photo={photo} anchors={anchors} />}
-            emptyFooter={(empty) => (
-              <MarkNotStoredButton day={empty} onDone={() => setPicking(null)} />
-            )}
-            onSchedule={(photo, to) => {
-              schedule(photo, to);
-              setPicking(null);
-            }}
-          />
-        )}
-      </DayDialogs>
+        byDay={byDay}
+        notStored={notStored}
+        photos={calendar.photos}
+        unsaved={unsaved}
+        anchors={anchors}
+        onSchedule={schedule}
+      />
     </div>
+  );
+}
+
+interface DayPickerProps {
+  /** The day picked on the calendar, or null when none is. */
+  day: string | null;
+  onClose: () => void;
+  byDay: Map<string, SocialPhoto>;
+  /** Each day's Not Stored post, by day. */
+  notStored: Map<string, NotStoredPost>;
+  photos: SocialPhoto[];
+  unsaved: Unsaved;
+  anchors: ReturnType<typeof useGridAnchors>;
+  /** Puts photo on day, or takes it off the calendar when day is null. */
+  onSchedule: (photo: SocialPhoto, day: string | null) => void;
+}
+
+/** The picked day's photo picker, or its Not Stored post's dialog when it has one and no photo. */
+function DayPicker({
+  day,
+  onClose,
+  byDay,
+  notStored,
+  anchors,
+  onSchedule,
+  ...rest
+}: DayPickerProps) {
+  return (
+    <DayDialogs
+      day={day}
+      notStored={byDay.has(day ?? "") ? undefined : notStored.get(day ?? "")}
+      onClose={onClose}
+    >
+      {(open) => (
+        <PhotoPicker
+          day={open}
+          byDay={byDay}
+          {...rest}
+          onClose={onClose}
+          footer={(photo) => <GridAnchorControls photo={photo} anchors={anchors} />}
+          emptyFooter={(empty) => <MarkNotStoredButton day={empty} onDone={onClose} />}
+          onSchedule={(photo, to) => {
+            onSchedule(photo, to);
+            onClose();
+          }}
+        />
+      )}
+    </DayDialogs>
   );
 }
 
@@ -278,6 +338,8 @@ interface CalendarGridProps {
   onDropPhoto: (path: string, day: string) => void;
   /** Where each photo stands in the rows worked out from the Grid Anchor, by file path. */
   places: Map<string, AnchorPlace>;
+  /** The button that opens and closes the photo drawer, after the week buttons. */
+  drawerToggle: ReactNode;
 }
 
 function CalendarGrid(props: CalendarGridProps) {
@@ -314,20 +376,21 @@ function CalendarGrid(props: CalendarGridProps) {
       </div>
       <p className="text-muted-foreground text-sm">
         Click an empty day to pick a photo for it, or a photo to change or remove it. Drag a photo
-        to another day to move it there; dropping it on another photo swaps the two. A day posted to
-        Instagram with a photo that isn&apos;t in the portfolio can be marked{" "}
-        <strong>Not Stored</strong> from its picker, so it keeps its place in the feed. A check in a
-        day&apos;s corner marks Instagram posts already scheduled on Instagram, and a clock ones
-        still planned. The Grid Anchor (set in a day&apos;s picker) and the 2 photos before it make
-        one row of the Social Feed, and every other row of 3 is counted from it, outlined dark and
-        light blue by turns; moving the anchor shifts them all.
+        to another day to move it there; dropping it on another photo swaps the two.{" "}
+        <strong>Photos</strong> opens a drawer beside the calendar with the picker&apos;s photos and
+        filters, to drag onto days. A day posted to Instagram with a photo that isn&apos;t in the
+        portfolio can be marked <strong>Not Stored</strong> from its picker, so it keeps its place
+        in the feed. A check in a day&apos;s corner marks Instagram posts already scheduled on
+        Instagram, and a clock ones still planned. The Grid Anchor (set in a day&apos;s picker) and
+        the 2 photos before it make one row of the Social Feed, and every other row of 3 is counted
+        from it, outlined dark and light blue by turns; moving the anchor shifts them all.
       </p>
     </>
   );
 }
 
 /** The days shown, with buttons to page a week at a time. */
-function WeekNav({ days, today, weekOffset, onWeekOffset }: CalendarGridProps) {
+function WeekNav({ days, today, weekOffset, onWeekOffset, drawerToggle }: CalendarGridProps) {
   const first = parseIsoDate(days[0] ?? today);
   const last = parseIsoDate(days.at(-1) ?? today);
   return (
@@ -355,6 +418,7 @@ function WeekNav({ days, today, weekOffset, onWeekOffset }: CalendarGridProps) {
         >
           <ChevronRightIcon />
         </Button>
+        {drawerToggle}
       </div>
     </div>
   );

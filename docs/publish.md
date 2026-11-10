@@ -136,13 +136,32 @@ constants at the top set the weights and distances.
 > **Frontend analogy:** it's a "related items" sort done in the browser: every candidate gets a weighted score
 > against the last few items, like ranking search results by several fields at once.
 
+### Photo drawer
+
+**Photos**, after the week buttons on the Calendar tab, opens a drawer beside the calendar (under it on a narrow
+screen) with the same photos and filters as a day's picker: the search, **Show already scheduled photos**, the
+**Focus** box, **Before and after**, **Suggested** and **All photos**, three photos wide. Its **Suggest for** names the
+day the two suggestion sections are worked out for: an open day shown on the calendar from today on (no photo and not
+Not Stored), the first one unless another is picked, moving on to the next open day once that one gets a photo.
+
+A photo in the drawer can be dragged onto any day, with the same drag as moving a photo on the calendar (dropping it
+on a day with a photo swaps the two, and a Not Stored day takes nothing), or clicked to go on the **Suggest for** day.
+Dragging a calendar photo onto the drawer takes it off the calendar, like **Remove from this day**. Every move is a
+local edit kept for **Commit**, as on the calendar. The drawer stays open or closed after a reload (`localStorage`).
+The day's own buttons (**Make Grid Anchor**, **Mark as Not Stored**) stay in the day's picker. The drawer is
+`components/instagram-picker/photo-drawer.tsx`; it and the picker share `use-picker-photos.ts` and `picker-lists.tsx`
+in the same folder.
+
+> **Frontend analogy:** it's the picker dialog's body rendered a second time in a non-modal side panel, sharing one
+> hook for its state, with each tile a native HTML5 drag source for the calendar's existing drop targets.
+
 ### Focus
 
 **Focus**, folded above the calendar, sets the filters the picker starts with each time it opens: dates taken from and
 to, a place (text in the photo's city, state, country or place name), tags and genres (any of several, with commas),
 and only photos eligible for social media. Both **Suggested** and **All photos** follow it, and a photo without a
 date is left out while dates are set. In the picker, a **Focus** box shows what it filters and can be unticked to see
-every photo for that one pick. The Focus is kept in this browser (`localStorage`, `stores/social-focus.ts`), not on
+every photo for that one pick (in the photo drawer, until it's ticked again). The Focus is kept in this browser (`localStorage`, `stores/social-focus.ts`), not on
 GitHub; the filters are in `lib/social-focus.ts`.
 
 > **Frontend analogy:** it's saved default filters, like a persisted Zustand slice for a table's filter bar.

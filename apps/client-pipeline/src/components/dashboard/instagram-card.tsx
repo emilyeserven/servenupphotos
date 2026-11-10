@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { SocialCalendar } from "@/api/publish";
-import { PhotoImage } from "@/components/instagram-photo-picker";
+import { PhotoImage } from "@/components/instagram-picker/photo-image";
 import { PhotoFiles } from "@/components/photo-files";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSocialQueue } from "@/hooks/use-social-queue";
