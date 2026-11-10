@@ -10,8 +10,8 @@ import { type FeedEntry, type FeedPhoto, feedAsOf, feedEntries } from "@/lib/soc
 import type { DayPost } from "@/lib/social-post-days";
 import { PHOTO_DRAG_TYPE, photoName } from "@/lib/social-schedule";
 import { useDropTarget } from "@/hooks/use-drop-target";
-import { AnchorAlignments, AnchorOutline } from "@/components/grid-anchor";
-import { type AnchorGroup, type AnchorPlace, feedAlignments } from "@/lib/grid-anchors";
+import { AnchorOutline } from "@/components/grid-anchor";
+import type { AnchorPlace } from "@/lib/grid-anchors";
 import { cn } from "@/lib/utils";
 
 /** How many tiles the preview shows before **Show more**: four rows of three. */
@@ -39,8 +39,6 @@ interface InstagramFeedPreviewProps {
   today: string;
   /** Moves the calendar photo at path to day, swapping with the photo already there. */
   onDropPhoto: (path: string, day: string) => void;
-  /** The Grid Anchor groups on the calendar. */
-  groups: AnchorGroup[];
   /** Where each photo in a Grid Anchor group stands, by file path. */
   places: Map<string, AnchorPlace>;
 }
@@ -60,12 +58,11 @@ function feedPhotos(byDay: Map<string, SocialPhoto>): Map<string, FeedPhoto> {
  * from the calendar's photos and the Instagram posts under Social media posts.
  */
 export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
-  const { byDay, posts, today, onDropPhoto, groups, places } = props;
+  const { byDay, posts, today, onDropPhoto, places } = props;
   const [asOf, setAsOf] = useState(today);
   const [shown, setShown] = useState(PAGE);
   const entries = useMemo(() => feedEntries(feedPhotos(byDay), posts), [byDay, posts]);
   const feed = feedAsOf(entries, asOf);
-  const names = new Map(entries.map((entry) => [entry.path, entry.name]));
   return (
     <section className="flex flex-col gap-2" aria-labelledby="social-feed-preview">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -80,9 +77,9 @@ export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
         the Instagram posts under <strong>Social media posts</strong>, with changes not committed
         yet. Photos that post on that day are ringed. The arrow buttons, or the left and right arrow
         keys, step a day at a time. Drag a calendar photo onto another tile to swap their days. Grid
-        Anchor groups (an anchor and the 2 calendar photos before it) are outlined in their color.
+        Anchor groups (an anchor and the 2 calendar photos before it) are outlined in their color,
+        as a reference for lining up rows.
       </p>
-      <AnchorAlignments alignments={feedAlignments(feed, groups)} names={names} />
       <FeedGrid
         feed={feed.slice(0, shown)}
         places={places}

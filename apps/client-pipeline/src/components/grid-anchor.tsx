@@ -2,13 +2,9 @@ import { AnchorIcon } from "lucide-react";
 import { useMemo } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { Button } from "@/components/ui/button";
-import {
-  ANCHOR_ROW,
-  type AnchorPlace,
-  type FeedAlignment,
-  alignmentText,
-} from "@/lib/grid-anchors";
-import { GRID_ANCHOR } from "@/lib/photo-fields";
+import { Input } from "@/components/ui/input";
+import { ANCHOR_ROW, type AnchorPlace } from "@/lib/grid-anchors";
+import { GRID_ANCHOR, GRID_GROUP_NAME } from "@/lib/photo-fields";
 import { currentData } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
@@ -31,40 +27,80 @@ function groupStyle(group: number): GroupStyle {
   return GROUP_STYLES[group % GROUP_STYLES.length] ?? GROUP_STYLES[0];
 }
 
-function isAnchored(data: unknown): boolean {
-  return (
-    typeof data === "object" &&
-    data !== null &&
-    (data as Record<string, unknown>)[GRID_ANCHOR] === true
-  );
+function fieldOf(data: unknown, key: string): unknown {
+  return typeof data === "object" && data !== null
+    ? (data as Record<string, unknown>)[key]
+    : undefined;
+}
+
+/** The anchor's group name, null when it has none, or undefined when the photo isn't an anchor. */
+function anchorName(data: unknown): string | null | undefined {
+  if (fieldOf(data, GRID_ANCHOR) !== true) return undefined;
+  const name = fieldOf(data, GRID_GROUP_NAME);
+  return typeof name === "string" && name.trim() ? name : null;
 }
 
 /**
- * The calendar photos marked as Grid Anchors, with the changes not committed yet counted, and a
- * toggle that keeps the change as a local edit until **Commit**.
+ * The calendar photos marked as Grid Anchors, each with its group's name (or null), with the
+ * changes not committed yet counted; and changes to them, kept as local edits until **Commit**.
  */
 export function useGridAnchors(photos: SocialPhoto[]) {
   const changed = useChangedPhotoFiles();
   const setField = useLocalEditsStore((state) => state.setField);
-  const anchored = useMemo(
-    () =>
-      new Set(photos.filter((photo) => isAnchored(currentData(photo, changed))).map((p) => p.path)),
-    [photos, changed],
-  );
-  const toggle = (photo: SocialPhoto) =>
-    setField(GRID_ANCHOR, [
-      { path: photo.path, before: photo.data, value: anchored.has(photo.path) ? null : true },
-    ]);
-  return { anchored, toggle };
+  const anchors = useMemo(() => {
+    const names = new Map<string, string | null>();
+    for (const photo of photos) {
+      const name = anchorName(currentData(photo, changed));
+      if (name !== undefined) names.set(photo.path, name);
+    }
+    return names;
+  }, [photos, changed]);
+  const change = (photo: SocialPhoto, value: unknown) => [
+    { path: photo.path, before: photo.data, value },
+  ];
+  /** Makes the photo an anchor, or stops it being one and drops its group's name. */
+  const toggle = (photo: SocialPhoto) => {
+    const on = !anchors.has(photo.path);
+    setField(GRID_ANCHOR, change(photo, on ? true : null));
+    if (!on) setField(GRID_GROUP_NAME, change(photo, null));
+  };
+  /** Names the anchor's group; an empty name leaves it without one. */
+  const rename = (photo: SocialPhoto, name: string) =>
+    setField(GRID_GROUP_NAME, change(photo, name.trim() ? name : null));
+  return { anchors, toggle, rename };
 }
 
-interface GridAnchorToggleProps {
-  anchored: boolean;
+interface GridAnchorControlsProps {
+  /** The group's name ("" when it has none), or undefined when the photo isn't an anchor. */
+  name: string | undefined;
   onToggle: () => void;
+  onRename: (name: string) => void;
 }
 
-/** The picker's button that makes the day's photo a Grid Anchor, or stops it being one. */
-export function GridAnchorToggle({ anchored, onToggle }: GridAnchorToggleProps) {
+/**
+ * The picker's controls for the day's photo as a Grid Anchor: a button that makes it one or stops
+ * it being one, and while it is one, its group's optional name.
+ */
+export function GridAnchorControls({ name, onToggle, onRename }: GridAnchorControlsProps) {
+  const anchored = name !== undefined;
+  return (
+    <div className="flex flex-1 flex-wrap items-center gap-2">
+      <AnchorToggle anchored={anchored} onToggle={onToggle} />
+      {anchored && (
+        <Input
+          className="h-8 w-48"
+          placeholder="Group name (optional)"
+          aria-label="Grid Anchor group name"
+          value={name}
+          onChange={(event) => onRename(event.target.value)}
+        />
+      )}
+    </div>
+  );
+}
+
+/** The button that makes the day's photo a Grid Anchor, or stops it being one. */
+function AnchorToggle({ anchored, onToggle }: { anchored: boolean; onToggle: () => void }) {
   return (
     <Button
       variant={anchored ? "secondary" : "outline"}
@@ -92,49 +128,25 @@ export function AnchorOutline({ place }: { place: AnchorPlace | undefined }) {
           style.ring,
         )}
       />
-      {place.isAnchor && <AnchorBadge style={style} />}
+      {place.isAnchor && <AnchorBadge style={style} name={place.name} />}
     </>
   );
 }
 
-/** The badge on a Grid Anchor's own photo. */
-function AnchorBadge({ style }: { style: GroupStyle }) {
+/** The badge on a Grid Anchor's own photo, with its group's name when it has one. */
+function AnchorBadge({ style, name }: { style: GroupStyle; name: string | null }) {
+  const label = name ? `Grid Anchor: ${name}` : "Grid Anchor";
   return (
     <span
-      className={cn("pointer-events-none absolute top-1 right-1 z-20 rounded p-0.5", style.badge)}
-      title="Grid Anchor"
+      className={cn(
+        "pointer-events-none absolute top-1 right-1 z-20 flex max-w-[80%] items-center gap-0.5 rounded p-0.5 text-[10px] font-medium",
+        style.badge,
+      )}
+      title={label}
     >
-      <AnchorIcon className="size-3" aria-hidden />
-      <span className="sr-only">Grid Anchor</span>
+      <AnchorIcon className="size-3 shrink-0" aria-hidden />
+      {name && <span className="truncate">{name.trim()}</span>}
+      <span className="sr-only">{label}</span>
     </span>
-  );
-}
-
-interface AnchorAlignmentsProps {
-  alignments: FeedAlignment[];
-  /** Each photo's name, by file path. */
-  names: Map<string, string>;
-}
-
-/** Whether each Grid Anchor group in the feed fills a row, above the Social Feed preview's grid. */
-export function AnchorAlignments({ alignments, names }: AnchorAlignmentsProps) {
-  if (alignments.length === 0) return null;
-  return (
-    <ul className="flex flex-col gap-1 text-sm">
-      {alignments.map((alignment) => {
-        const { group } = alignment;
-        return (
-          <li key={group.anchor} className="flex items-center gap-2">
-            <span className={cn("rounded p-0.5", groupStyle(group.index).badge)}>
-              <AnchorIcon className="size-3" aria-hidden />
-            </span>
-            <span className={alignment.aligned ? "" : "text-destructive"}>
-              <strong>{names.get(group.anchor) ?? group.anchor}</strong>&apos;s group{" "}
-              {alignmentText(alignment)}
-            </span>
-          </li>
-        );
-      })}
-    </ul>
   );
 }

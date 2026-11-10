@@ -66,14 +66,15 @@ feed (`feedEntries`, `feedAsOf`).
 
 A photo on the calendar can be made a **Grid Anchor** from its day's picker (**Make Grid Anchor**, next to **Remove
 from this day**), to plan thematic rows of the feed. The anchor and the 2 calendar photos just before it make a
-group of 3, one row of the 3-column feed (`ANCHOR_ROW` in `apps/client-pipeline/src/lib/grid-anchors.ts`). Each
-group is outlined in its own color on the calendar and in the **Social Feed preview**, with an anchor badge on the
-anchor itself. Above the preview's grid, each group in the feed on the chosen day says whether it fills a row (the
-anchor starts the row, with the other two after it in the same row) or how many tiles into its row the anchor is,
-and how many more posts after it, or fewer, would line it up (`feedAlignments`).
+group of 3, one row of the 3-column feed (`ANCHOR_ROW` in `apps/client-pipeline/src/lib/grid-anchors.ts`). While a
+photo is an anchor, the picker also takes an optional name for its group. Each group is outlined in its own color on
+the calendar and in the **Social Feed preview**, with a badge on the anchor itself showing the group's name when it
+has one. The outlines are only a reference: the feed doesn't flag a group that isn't lined up with a row, since
+groups drift in and out of line between anchors.
 
-It's saved as `socialGridAnchor: true` on the photo's JSON, kept as a local edit until **Commit** like a moved date,
-and left out of photos that aren't anchors.
+It's saved on the anchor's JSON as `socialGridAnchor: true`, with the name as `socialGridGroupName`, kept as local
+edits until **Commit** like a moved date. Photos that aren't anchors, and groups without a name, leave the fields
+out; removing an anchor drops its name too.
 
 ### Suggested photos
 

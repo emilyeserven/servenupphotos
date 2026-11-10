@@ -54,3 +54,6 @@ export const UNDECIDED = "undecided";
  * `null`). The anchor and the photos just before it on the calendar make one row of the feed.
  */
 export const GRID_ANCHOR = "socialGridAnchor";
+
+/** The photo JSON field holding the optional name of a Grid Anchor's group, on the anchor; left out when it has none. */
+export const GRID_GROUP_NAME = "socialGridGroupName";

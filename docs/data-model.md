@@ -101,7 +101,8 @@ album without a [photo order](albums-and-tags.md#photo-order), in their old orde
 A photo's `socialPosts` lists its posts on social media, each with its platform, status (`planned` or `scheduled`),
 date, link, caption and hashtags; see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.
 
-A photo marked as a Grid Anchor on the Instagram calendar has `socialGridAnchor: true`; other photos leave it out; see
+A photo marked as a Grid Anchor on the Instagram calendar has `socialGridAnchor: true`, and its group's optional name as
+`socialGridGroupName`; other photos leave both out; see
 [Publish](publish.md#grid-anchors).
 
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see

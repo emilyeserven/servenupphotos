@@ -4,7 +4,7 @@ import type { SocialCalendar, SocialPhoto } from "@/api/publish";
 import { DayPostBackdrop, DayPostMark, InstagramPosts } from "@/components/instagram-posts";
 import { InstagramFeedPreview } from "@/components/instagram-feed-preview";
 import { InstagramFocus } from "@/components/instagram-focus";
-import { AnchorOutline, GridAnchorToggle, useGridAnchors } from "@/components/grid-anchor";
+import { AnchorOutline, GridAnchorControls, useGridAnchors } from "@/components/grid-anchor";
 import { type AnchorPlace, anchorGroups, anchorPlaces } from "@/lib/grid-anchors";
 import { ScheduleTabs } from "@/components/instagram-tabs";
 import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
@@ -94,7 +94,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
 
   const byDay = photosByDay(calendar.photos, unsaved);
   const anchors = useGridAnchors(calendar.photos);
-  const groups = anchorGroups(byDay, anchors.anchored);
+  const groups = anchorGroups(byDay, anchors.anchors);
   const places = anchorPlaces(groups);
   const days = calendarDays(now, weekOffset, WEEKS);
   const schedule = (photo: SocialPhoto, day: string | null) =>
@@ -132,7 +132,6 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
             posts={posts}
             today={isoDate(now)}
             onDropPhoto={dropPhoto}
-            groups={groups}
             places={places}
           />
         }
@@ -144,9 +143,12 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
         unsaved={unsaved}
         onClose={() => setPicking(null)}
         footer={(photo) => (
-          <GridAnchorToggle
-            anchored={anchors.anchored.has(photo.path)}
+          <GridAnchorControls
+            name={
+              anchors.anchors.has(photo.path) ? (anchors.anchors.get(photo.path) ?? "") : undefined
+            }
             onToggle={() => anchors.toggle(photo)}
+            onRename={(name) => anchors.rename(photo, name)}
           />
         )}
         onSchedule={(photo, day) => {
