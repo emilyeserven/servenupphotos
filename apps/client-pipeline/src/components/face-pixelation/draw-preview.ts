@@ -1,8 +1,10 @@
 import type { Size } from "@/lib/crop";
 import { type FaceBox, touchedCells } from "@/lib/face-boxes";
 
-/** The longest edge the preview is drawn at; the page shows it smaller, so more is wasted work. */
+/** The longest edge the preview is drawn at unzoomed; the page shows it smaller, so more is wasted. */
 const PREVIEW_EDGE = 1600;
+/** The longest edge it's ever drawn at, however far it's zoomed in, to keep the canvas's memory small. */
+const MAX_EDGE = 4096;
 
 /** The photo loaded for drawing, with its size as it's shown. */
 export interface Loaded {
@@ -18,10 +20,16 @@ interface Target {
 
 /**
  * Draws image on canvas as the versions will show it: every face pixelated, then every kept area
- * drawn back from the photo, the way the backend makes them.
+ * drawn back from the photo, the way the backend makes them. Zoomed in, it's drawn sharper.
  */
-export function drawPreview(canvas: HTMLCanvasElement, { image, photo }: Loaded, faces: FaceBox[]) {
-  const scale = Math.min(1, PREVIEW_EDGE / Math.max(photo.width, photo.height));
+export function drawPreview(
+  canvas: HTMLCanvasElement,
+  { image, photo }: Loaded,
+  faces: FaceBox[],
+  zoom = 1,
+) {
+  const edge = Math.min(MAX_EDGE, PREVIEW_EDGE * zoom);
+  const scale = Math.min(1, edge / Math.max(photo.width, photo.height));
   canvas.width = Math.round(photo.width * scale);
   canvas.height = Math.round(photo.height * scale);
   const ctx = canvas.getContext("2d");

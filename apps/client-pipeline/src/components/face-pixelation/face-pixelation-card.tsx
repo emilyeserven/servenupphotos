@@ -127,7 +127,7 @@ function FaceEditor({
 
 /** How tall the photo may be: as tall as the window allows in full screen, 28rem in the card. */
 function previewHeight(fullScreen: boolean): string {
-  return fullScreen ? "calc(100dvh - 11rem)" : "28rem";
+  return fullScreen ? "calc(100dvh - 13rem)" : "28rem";
 }
 
 /** The face editor laid out in the card, one part under the other. */

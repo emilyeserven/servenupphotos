@@ -2,6 +2,8 @@ import { type PointerEvent, type RefObject, useEffect, useRef, useState } from "
 import type { Size } from "@/lib/crop";
 import { drawPreview, type Loaded } from "@/components/face-pixelation/draw-preview";
 import { FaceBoxOverlay } from "@/components/face-pixelation/face-box-overlay";
+import { type PreviewZoom, usePreviewZoom } from "@/components/face-pixelation/use-preview-zoom";
+import { ZoomControls } from "@/components/face-pixelation/zoom-controls";
 import { type FaceBox, drawnBox, isBigEnough } from "@/lib/face-boxes";
 import { cn } from "@/lib/utils";
 
@@ -70,45 +72,82 @@ function LoadedPreview({
   maxHeight = "28rem",
 }: LoadedPreviewProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const viewport = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLDivElement>(null);
+  const zoom = usePreviewZoom(viewport, canvas);
   useEffect(() => {
-    if (canvas.current) drawPreview(canvas.current, loaded, faces);
-  }, [loaded, faces]);
+    if (canvas.current) drawPreview(canvas.current, loaded, faces, zoom.zoom);
+  }, [loaded, faces, zoom.zoom]);
   const draw = useDrawBox(frame, loaded.photo, faces, onFacesChange, onSelect);
-  const boxes = showBoxes ? faces : [];
 
   return (
-    <div
-      ref={frame}
-      className={cn(
-        "relative mx-auto w-fit touch-none overflow-hidden rounded-lg border",
-        !locked && "cursor-crosshair",
-      )}
-      {...(locked ? {} : draw)}
-    >
-      <canvas
-        ref={canvas}
-        aria-label="Preview of the photo with its faces pixelated"
-        role="img"
-        className="block max-w-full select-none"
+    <div className="flex max-w-full min-w-0 flex-col gap-2">
+      <div
+        ref={viewport}
+        className="mx-auto w-fit max-w-full overflow-auto rounded-lg border"
         style={{ maxHeight }}
-      />
-      {boxes.map((face, index) => (
-        <FaceBoxOverlay
-          // Boxes have no ids of their own; their place in the list is what the page names them by.
-          // oxlint-disable-next-line react/no-array-index-key
-          key={index}
-          index={index}
-          face={face}
-          photo={loaded.photo}
-          selected={selected === index}
-          locked={locked}
-          onSelect={() => onSelect(index)}
-          onChange={(next) => onFacesChange(faces.map((f, i) => (i === index ? next : f)))}
-        />
-      ))}
+      >
+        <div
+          ref={frame}
+          className={cn("relative w-fit touch-none", frameCursor(zoom.moving, locked))}
+          {...frameHandlers(zoom, draw, locked)}
+        >
+          <canvas
+            ref={canvas}
+            aria-label="Preview of the photo with its faces pixelated"
+            role="img"
+            className="block max-w-full select-none"
+            style={zoom.canvasStyle ?? { maxHeight }}
+          />
+          <Boxes
+            faces={showBoxes ? faces : []}
+            photo={loaded.photo}
+            selected={selected}
+            // While moving around, a drag on a box moves the photo, not the box.
+            locked={locked || zoom.moving}
+            onSelect={onSelect}
+            onFacesChange={onFacesChange}
+          />
+        </div>
+      </div>
+      <ZoomControls zoom={zoom} />
     </div>
   );
+}
+
+/** The pointer over the photo: a hand while moving around, a crosshair to draw a box. */
+function frameCursor(moving: boolean, locked: boolean): string | false {
+  if (moving) return "cursor-grab active:cursor-grabbing";
+  return !locked && "cursor-crosshair";
+}
+
+type BoxesProps = Pick<
+  LoadedPreviewProps,
+  "faces" | "selected" | "locked" | "onSelect" | "onFacesChange"
+> & { photo: Size };
+
+/** A box over each face, to drag, resize or pick. */
+function Boxes({ faces, photo, selected, locked, onSelect, onFacesChange }: BoxesProps) {
+  return faces.map((face, index) => (
+    <FaceBoxOverlay
+      // Boxes have no ids of their own; their place in the list is what the page names them by.
+      // oxlint-disable-next-line react/no-array-index-key
+      key={index}
+      index={index}
+      face={face}
+      photo={photo}
+      selected={selected === index}
+      locked={locked}
+      onSelect={() => onSelect(index)}
+      onChange={(next) => onFacesChange(faces.map((f, i) => (i === index ? next : f)))}
+    />
+  ));
+}
+
+/** What dragging on the photo does: moves around it while moving is on, else draws a box. */
+function frameHandlers(zoom: PreviewZoom, draw: ReturnType<typeof useDrawBox>, locked: boolean) {
+  if (zoom.moving) return zoom.pan;
+  return locked ? {} : draw;
 }
 
 /** The photo's pixels per screen pixel in the frame, and where a pointer is on the photo. */

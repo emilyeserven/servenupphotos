@@ -40,8 +40,8 @@ export function FullScreenEditor({ open, onOpenChange, parts }: FullScreenEditor
         </DialogHeader>
         {parts.toolbar}
         {parts.notes}
-        <div className="grid min-h-0 flex-1 gap-4 overflow-y-auto lg:grid-cols-[1fr_24rem] lg:overflow-hidden">
-          <div className="flex items-start justify-center lg:min-h-0">{parts.preview}</div>
+        <div className="grid min-h-0 flex-1 gap-4 overflow-y-auto lg:grid-cols-[minmax(0,1fr)_24rem] lg:overflow-hidden">
+          <div className="flex min-w-0 items-start justify-center lg:min-h-0">{parts.preview}</div>
           <div className="flex flex-col gap-4 lg:min-h-0 lg:overflow-y-auto">
             {parts.list}
             {parts.actions}

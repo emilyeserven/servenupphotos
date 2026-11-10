@@ -13,6 +13,10 @@ them. The original JPEG in R2 isn't changed (see [What isn't hidden](#what-isnt-
 - **Dragging** anywhere on the photo outside a box draws a new one; **Add a box** puts one in the middle.
 - A box can be dragged to move it, and the picked one has corner handles to resize it. A focused box moves with the
   arrow keys (Shift for bigger steps). **Hide boxes** shows the preview without their outlines.
+- **Zoom** with the − and + buttons under the photo (up to 800%), or Ctrl (⌘ on a Mac) + scroll or a trackpad pinch,
+  which zooms toward the pointer. **Fit** goes back to the whole photo. Zoomed in, scroll to move around, or turn on
+  **Move around** to drag the photo instead of drawing a box (the only way on a phone). The preview is drawn sharper
+  as it zooms, up to 4096 px on its longest edge.
 - **Full screen** opens the same editor filling the window, with the photo as large as it fits and the list of areas
   beside it (below it on a phone), for drawing small faces more precisely. It edits the same areas as the card, so
   closing it (Esc or the close button) keeps every change, and it can save from there too.
