@@ -52,7 +52,7 @@ function handView(ids: number[], line: TripLine): EditorView {
   if (line.planned && ids.length > 0) return { kind: "none" };
   const extras = { visits: line.visits, fences: line.fences, order: line.order };
   const drawn = line.planned ? walkingDraft(ids) : draftOf(ids, line.segments);
-  return { kind: "hand", draft: withStops({ ...drawn, ...extras }) };
+  return { kind: "hand", draft: withStops({ ...drawn, ...extras }, ids.at(-1)) };
 }
 
 /** The view, with a hand-drawn draft that has no groups yet grouped by its photos' places. */
@@ -111,10 +111,13 @@ function stripDraft(
 ): GapDraft {
   if (view.kind === "hand") return view.draft;
   const ids = photos.map((p) => p.id);
-  const drawn = withStops({
-    ...(segments.length > 0 ? draftOf(ids, segments) : walkingDraft(ids)),
-    ...keptStops(view, saved),
-  });
+  const drawn = withStops(
+    {
+      ...(segments.length > 0 ? draftOf(ids, segments) : walkingDraft(ids)),
+      ...keptStops(view, saved),
+    },
+    ids.at(-1),
+  );
   return drawn.groups === undefined ? { ...drawn, ...placeGroups(photos) } : drawn;
 }
 
@@ -416,10 +419,13 @@ function DayActions(props: DayActionsProps) {
       onEditOwn={() =>
         setView({
           kind: "hand",
-          draft: withStops({
-            ...draftOf(ids, auto.data?.segments ?? []),
-            ...keptStops(view, saved),
-          }),
+          draft: withStops(
+            {
+              ...draftOf(ids, auto.data?.segments ?? []),
+              ...keptStops(view, saved),
+            },
+            ids.at(-1),
+          ),
         })
       }
       setView={setView}

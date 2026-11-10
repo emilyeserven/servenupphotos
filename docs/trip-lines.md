@@ -257,14 +257,19 @@ link to the Trip Stops page to add more). `after` is the photo it comes after. T
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
 two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
-route (it stops at the last gap), and a cross that takes it off the route again. Moving one earlier from after the
+route, and a cross that takes it off the route again. Moving one earlier from after the
 first photo puts it before the first photo, as `"first": true` with no `after`, such as lunch before the first photo
 was taken: the line goes from the start spot through it to the first photo (as a via spot after the start spot), or,
 with no start spot, starts at it. The way from there to the first photo shows before photo 1 in the strip and can be
 changed like any gap, such as a bus from lunch: the line is then a hop from the start to the first photo before the
-walk, saved as the first segment with that mode, a `start` and only the first photo. A place not on the route is a pin
-only. A place put after a break or after the last
-photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
+walk, saved as the first segment with that mode, a `start` and only the first photo. Moving one later from the last gap,
+or picking it from the pin with a plus after the last photo (shown on hover), puts it after the last photo, such as
+dinner after the last photo was taken: the line ends there. With an end spot, the line goes from the last photo
+through it to the end spot (as a via spot after the last photo); with none, the last segment's `end` is the place,
+named after it, and when the day ends with more than one such place, the line goes through the others to the last one
+added. The strip shows the walk and the place's icon after the last photo, and loading the line again
+keeps that `end` as the place rather than an end spot of its own. A place not on the route is a pin only, and a place
+put after a break in the middle of the day has no line to sit on, so it stays a pin too. The editor works the via spot out from `after` each
 time, so moving or removing the place keeps the line in step; the backend checks that `after` is one of the day's
 photos with an exact spot (not necessarily on a drawn segment, so a stop can follow a photo on an automatic line or at
 a break) and that every `visit` names a place the day has.

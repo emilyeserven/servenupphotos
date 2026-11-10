@@ -12,6 +12,8 @@ interface VisitInsertProps {
   choices: TripVisit[];
   /** Puts the trip stop on the route here. */
   onInsert: (visit: TripVisit) => void;
+  /** What the menu says the stop is put as; between the two photos when left out. */
+  heading?: string;
   className?: string;
 }
 
@@ -19,7 +21,7 @@ interface VisitInsertProps {
  * Puts one of the day's trip stops between two photos: the ones added on the day's Trip Stops page
  * and not on the route yet, or a link there when there are none.
  */
-export function VisitInsert({ choices, onInsert, className }: VisitInsertProps) {
+export function VisitInsert({ choices, onInsert, heading, className }: VisitInsertProps) {
   const [open, setOpen] = useState(false);
   const insert = (visit: TripVisit) => {
     onInsert(visit);
@@ -38,7 +40,9 @@ export function VisitInsert({ choices, onInsert, className }: VisitInsertProps) 
         </button>
       </PopoverTrigger>
       <PopoverContent align="start" className="flex w-64 flex-col gap-1 p-2">
-        <p className="text-muted-foreground px-1 text-xs">A trip stop between these photos</p>
+        <p className="text-muted-foreground px-1 text-xs">
+          {heading ?? "A trip stop between these photos"}
+        </p>
         {choices.map((visit, i) => (
           <Choice key={i} visit={visit} onPick={() => insert(visit)} />
         ))}

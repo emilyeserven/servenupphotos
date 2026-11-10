@@ -229,6 +229,7 @@ function GroupBox(props: GroupBoxProps) {
           visits={draft.visits}
           vias={props.vias}
           startGap={startGapShown(draft)}
+          endsDay={group.end === photos.length}
         />
       )}
     </div>

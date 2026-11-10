@@ -4,6 +4,7 @@ import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
 import { GAPS, gapInfo } from "@/components/trip-lines/modes";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
+import { StripEnd } from "@/components/trip-lines/strip-end";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { type StripVia, ViaChips } from "@/components/trip-lines/via-list";
 import type { TripPhoto } from "@/lib/trip-days";
@@ -40,10 +41,16 @@ interface PhotoStripProps {
    * photo; left out when it has neither, so no way shows before the first photo.
    */
   startGap?: Gap;
+  /**
+   * Whether the strip's last photo is the day's last, so the trip stops the route ends at show after
+   * it; left out, it is.
+   */
+  endsDay?: boolean;
 }
 
 /** The day's photos in the order they were taken, with what happened between each two. */
-export function PhotoStrip({ photos, visits, vias, offset = 0, ...rest }: PhotoStripProps) {
+export function PhotoStrip(props: PhotoStripProps) {
+  const { photos, visits, vias, offset = 0, endsDay = true, ...rest } = props;
   const choices = offRoute(visits);
   // Relative, so screen-reader labels (absolutely placed) scroll with the strip instead of widening the page.
   return (
@@ -60,11 +67,32 @@ export function PhotoStrip({ photos, visits, vias, offset = 0, ...rest }: PhotoS
           prev={photos[i - 1]}
           before={stopsBefore(visits, photos[i - 1]?.id, offset + i)}
           viasBefore={vias?.get(p.id)}
+          endsAtStop={endsDay && i === photos.length - 1 && visitsAfter(visits, p.id).length > 0}
           choices={choices}
           {...rest}
         />
       ))}
+      {endsDay && <RouteEnd {...props} choices={choices} />}
     </ol>
+  );
+}
+
+/**
+ * The trip stops the route ends at after the strip's last photo, and putting one there while the
+ * day has a line and stops can be put on it; nothing for a strip with no photos.
+ */
+function RouteEnd(props: PhotoStripProps & { choices: TripVisit[] }) {
+  const { photos, visits, gaps, choices, onInsertVisit, onMoveVisit, onOffVisit } = props;
+  const last = photos.at(-1);
+  if (!last || !gaps || !onInsertVisit) return null;
+  return (
+    <StripEnd
+      stops={visitsAfter(visits, last.id)}
+      choices={choices}
+      onInsert={(visit) => onInsertVisit(last.id, visit)}
+      onMove={onMoveVisit}
+      onOff={onOffVisit}
+    />
   );
 }
 
@@ -86,6 +114,8 @@ interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits" | "vi
   viasBefore?: StripVia[];
   /** The day's trip stops not on the route yet, which can be put before this photo. */
   choices: TripVisit[];
+  /** Whether the route goes on from this photo, the day's last, to the trip stops it ends at. */
+  endsAtStop?: boolean;
   /** Its index among the strip's photos. */
   local: number;
   offset: number;
@@ -93,7 +123,7 @@ interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits" | "vi
 
 /** One photo in the strip, after the gap before it (none before the strip's first photo). */
 function StripItem(props: StripItemProps) {
-  const { photo, local, offset, gaps, onHover, onMove } = props;
+  const { photo, local, offset, gaps, onHover, onMove, endsAtStop } = props;
   const i = offset + local;
   return (
     <li className="flex shrink-0 items-center gap-1">
@@ -101,7 +131,7 @@ function StripItem(props: StripItemProps) {
       <StripPhoto
         photo={photo}
         n={i + 1}
-        ends={endsAt(gaps, i)}
+        ends={endsAtStop ? { ...endsAt(gaps, i), ends: false } : endsAt(gaps, i)}
         onHover={onHover}
         onMove={onMove}
       />
