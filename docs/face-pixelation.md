@@ -13,6 +13,9 @@ them. The original JPEG in R2 isn't changed (see [What isn't hidden](#what-isnt-
 - **Dragging** anywhere on the photo outside a box draws a new one; **Add a box** puts one in the middle.
 - A box can be dragged to move it, and the picked one has corner handles to resize it. A focused box moves with the
   arrow keys (Shift for bigger steps). **Hide boxes** shows the preview without their outlines.
+- **Full screen** opens the same editor filling the window, with the photo as large as it fits and the list of areas
+  beside it (below it on a phone), for drawing small faces more precisely. It edits the same areas as the card, so
+  closing it (Esc or the close button) keeps every change, and it can save from there too.
 
 Pigo only finds faces looking roughly at the camera. Faces turned to the side, small in the frame, or partly hidden
 (sunglasses, masks, hands) are easily missed, so the boxes are a starting point to check by eye, not a guarantee.

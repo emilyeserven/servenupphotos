@@ -40,6 +40,8 @@ interface FacePreviewProps {
   showBoxes: boolean;
   /** The faces can't change, while saving. */
   locked: boolean;
+  /** How tall the photo may be drawn; 28rem unless set, such as taller in full screen. */
+  maxHeight?: string;
 }
 
 /**
@@ -65,6 +67,7 @@ function LoadedPreview({
   onFacesChange,
   showBoxes,
   locked,
+  maxHeight = "28rem",
 }: LoadedPreviewProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const frame = useRef<HTMLDivElement>(null);
@@ -87,7 +90,8 @@ function LoadedPreview({
         ref={canvas}
         aria-label="Preview of the photo with its faces pixelated"
         role="img"
-        className="block max-h-[28rem] max-w-full select-none"
+        className="block max-w-full select-none"
+        style={{ maxHeight }}
       />
       {boxes.map((face, index) => (
         <FaceBoxOverlay

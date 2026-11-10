@@ -1,10 +1,22 @@
 import { type UseMutationResult, useMutation, useQuery } from "@tanstack/react-query";
-import { EyeIcon, EyeOffIcon, PlusIcon, ScanFaceIcon, ShieldOffIcon } from "lucide-react";
+import { useState } from "react";
+import {
+  EyeIcon,
+  EyeOffIcon,
+  Maximize2Icon,
+  PlusIcon,
+  ScanFaceIcon,
+  ShieldOffIcon,
+} from "lucide-react";
 import { detectFacesMutation, savedFacesQuery } from "@/api/faces";
 import type { Editable } from "@/components/edit-in-flight/photo-json";
 import type { Edit, Save } from "@/components/edit-in-flight/use-edit";
 import { FaceList } from "@/components/face-pixelation/face-list";
 import { FacePreview } from "@/components/face-pixelation/face-preview";
+import {
+  type EditorParts,
+  FullScreenEditor,
+} from "@/components/face-pixelation/full-screen-editor";
 import { PixelateActions } from "@/components/face-pixelation/pixelate-actions";
 import { type FaceEditorState, useFaceEditor } from "@/components/face-pixelation/use-face-editor";
 import { usePixelateSave } from "@/components/face-pixelation/use-pixelate-save";
@@ -59,14 +71,24 @@ function FaceEditor({
   const editor = useFaceEditor(saved);
   const detect = useMutation(detectFacesMutation);
   const pixelate = usePixelateSave(editable, edit, save);
+  const [fullScreen, setFullScreen] = useState(false);
   const locked = disabled || pixelate.mutation.isPending;
   const find = () =>
     detect.mutate({ key: editable.image.key }, { onSuccess: (found) => editor.addFound(found) });
 
-  return (
-    <div className="flex flex-col gap-4">
-      <Toolbar editor={editor} detect={detect} locked={locked} onFind={find} />
-      <DetectNote detect={detect} />
+  const parts: EditorParts = {
+    toolbar: (
+      <Toolbar
+        editor={editor}
+        detect={detect}
+        locked={locked}
+        onFind={find}
+        fullScreen={fullScreen}
+        onFullScreen={() => setFullScreen(true)}
+      />
+    ),
+    notes: <DetectNote detect={detect} />,
+    preview: (
       <FacePreview
         src={editable.image.url}
         faces={editor.faces}
@@ -76,11 +98,10 @@ function FaceEditor({
         onLoad={editor.onLoad}
         showBoxes={editor.showBoxes}
         locked={locked}
+        maxHeight={previewHeight(fullScreen)}
       />
-      <p className="text-muted-foreground text-xs">
-        The preview is drawn by the browser; the versions average each block exactly, so they can
-        look a touch different. Arrow keys move a focused box (Shift for bigger steps).
-      </p>
+    ),
+    list: (
       <FaceList
         faces={editor.faces}
         selected={editor.selected}
@@ -88,7 +109,40 @@ function FaceEditor({
         onFacesChange={editor.setFaces}
         disabled={locked}
       />
-      <PixelateActions editor={editor} saved={saved} pixelate={pixelate} locked={locked} />
+    ),
+    actions: <PixelateActions editor={editor} saved={saved} pixelate={pixelate} locked={locked} />,
+  };
+
+  return (
+    <>
+      <FullScreenEditor open={fullScreen} onOpenChange={setFullScreen} parts={parts} />
+      {fullScreen ? (
+        <p className="text-muted-foreground text-sm">Editing in full screen…</p>
+      ) : (
+        <InlineEditor parts={parts} />
+      )}
+    </>
+  );
+}
+
+/** How tall the photo may be: as tall as the window allows in full screen, 28rem in the card. */
+function previewHeight(fullScreen: boolean): string {
+  return fullScreen ? "calc(100dvh - 11rem)" : "28rem";
+}
+
+/** The face editor laid out in the card, one part under the other. */
+function InlineEditor({ parts }: { parts: EditorParts }) {
+  return (
+    <div className="flex flex-col gap-4">
+      {parts.toolbar}
+      {parts.notes}
+      {parts.preview}
+      <p className="text-muted-foreground text-xs">
+        The preview is drawn by the browser; the versions average each block exactly, so they can
+        look a touch different. Arrow keys move a focused box (Shift for bigger steps).
+      </p>
+      {parts.list}
+      {parts.actions}
     </div>
   );
 }
@@ -98,10 +152,13 @@ interface ToolbarProps {
   detect: DetectMutation;
   locked: boolean;
   onFind: () => void;
+  /** The editor already fills the window, so it has no Full screen button. */
+  fullScreen: boolean;
+  onFullScreen: () => void;
 }
 
 /** Find faces, add a box by hand, and show or hide the boxes over the preview. */
-function Toolbar({ editor, detect, locked, onFind }: ToolbarProps) {
+function Toolbar({ editor, detect, locked, onFind, fullScreen, onFullScreen }: ToolbarProps) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Button variant="outline" size="sm" onClick={onFind} disabled={locked || detect.isPending}>
@@ -110,6 +167,7 @@ function Toolbar({ editor, detect, locked, onFind }: ToolbarProps) {
       </Button>
       <AddButtons editor={editor} disabled={locked || !editor.canAdd} />
       <BoxesToggle shown={editor.showBoxes} onToggle={editor.toggleBoxes} />
+      <FullScreenButton hidden={fullScreen} onClick={onFullScreen} />
     </div>
   );
 }
@@ -127,6 +185,17 @@ function AddButtons({ editor, disabled }: { editor: FaceEditorState; disabled: b
         Add a keep area
       </Button>
     </>
+  );
+}
+
+/** Opens the editor filling the window, for a bigger photo to draw on. */
+function FullScreenButton({ hidden, onClick }: { hidden: boolean; onClick: () => void }) {
+  if (hidden) return null;
+  return (
+    <Button variant="outline" size="sm" className="ml-auto" onClick={onClick}>
+      <Maximize2Icon />
+      Full screen
+    </Button>
   );
 }
 
