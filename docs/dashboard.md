@@ -27,8 +27,11 @@ now **Settings › Status** (see [Settings](settings.md#status)).
     lines never are, since they're worked out again at every Commit.
   - **Photos without color data** (high): no `colors`, or `colors` saved before `peakChroma`, as **Update Data ›
     Colors** reads them, linking there.
-  - **Instagram** (medium): fewer than 7 **days left** in the queue (counted as **Next on Instagram** counts them), with
-    how many photos it would take to fill a week. Links to the [Instagram calendar](publish.md).
+  - **Instagram** (medium): fewer than 7 days in a row from today with an Instagram post marked **Scheduled** (put on
+    Instagram), with how many more days need one. A day with only a **Planned** post, or only a calendar photo, doesn't
+    count, so the row stays until the whole next week is scheduled on Instagram itself (`scheduledDaysFrom` in
+    `lib/social-queue.ts`). **Next on Instagram** still counts planned days too. Links to the
+    [Instagram calendar](publish.md).
   - **Photos without a place** (medium), counted as [Bulk Places](update-data.md#bulk-places) picks them, linking there.
     A photo without GPS is counted in the GPS row instead, since that's more serious, and one marked as going without
     GPS is left out.

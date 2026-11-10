@@ -8,7 +8,7 @@ import {
 } from "@/components/dashboard/needs-attention-table";
 import { PhotoFiles } from "@/components/photo-files";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useSocialQueue } from "@/hooks/use-social-queue";
+import { useScheduledInstagramDays } from "@/hooks/use-social-queue";
 import {
   INSTAGRAM_DAYS_WANTED,
   INSTAGRAM_URGENCY,
@@ -86,7 +86,7 @@ const PROBLEMS: Record<PhotoProblem, { label: string; fix: (first: string) => Re
 
 /**
  * What needs fixing across the photo files, each problem with how many photos have it and a link to
- * the page that fixes it, and an Instagram queue shorter than a week, in a table sorted most urgent
+ * the page that fixes it, and fewer than a week of Instagram posts scheduled, in a table sorted most urgent
  * first.
  */
 export function NeedsAttentionCard() {
@@ -112,10 +112,10 @@ function Problems({ calendar }: { calendar: SocialCalendar }) {
     () => photoProblems(calendar.photos, changed),
     [calendar.photos, changed],
   );
-  const queue = useSocialQueue(calendar, 0);
-  const short = instagramShortBy(queue.daysLeft);
+  const scheduledDays = useScheduledInstagramDays(calendar);
+  const short = instagramShortBy(scheduledDays);
   const rows = [...useTripLineRows(), ...problems.map(problemRow)];
-  if (short > 0) rows.push(instagramRow(queue.daysLeft, short));
+  if (short > 0) rows.push(instagramRow(scheduledDays, short));
   if (rows.length === 0) return <AllClear />;
   return <NeedsAttentionTable rows={rows} />;
 }
@@ -147,22 +147,29 @@ function problemRow(found: ProblemCount): AttentionRow {
   };
 }
 
-/** The Instagram queue lasting less than a week, and how many photos would fill it. */
-function instagramRow(daysLeft: number, short: number): AttentionRow {
-  const days = daysLeft === 1 ? "1 day" : `${daysLeft} days`;
+/**
+ * Fewer than a week of days from today with an Instagram post scheduled on the site, and how many
+ * more days need one. Planned posts don't count until they're marked scheduled.
+ */
+function instagramRow(scheduledDays: number, short: number): AttentionRow {
+  const days = scheduledDays === 1 ? "1 day" : `${scheduledDays} days`;
   const label =
-    daysLeft === 0
-      ? "Nothing is queued on Instagram for today"
-      : `Instagram posts are queued for only ${days}`;
+    scheduledDays === 0
+      ? "Nothing is scheduled on Instagram for today"
+      : `Instagram posts are scheduled for only ${days}`;
   return {
     id: "instagram",
     urgency: INSTAGRAM_URGENCY,
     label: (
-      <span title={`The queue should last at least ${INSTAGRAM_DAYS_WANTED} days.`}>{label}</span>
+      <span
+        title={`The next ${INSTAGRAM_DAYS_WANTED} days should each have a post scheduled on Instagram, not only planned.`}
+      >
+        {label}
+      </span>
     ),
     labelText: label,
     count: short,
-    countText: `${photos(short)} to schedule`,
+    countText: short === 1 ? "1 day to schedule" : `${short} days to schedule`,
     fix: (
       <FixLink>
         <Link to="/instagram">Instagram calendar</Link>

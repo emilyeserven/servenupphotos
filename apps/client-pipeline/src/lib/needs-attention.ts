@@ -2,7 +2,7 @@ import type { SocialPhoto } from "@/api/publish";
 import { isCasual } from "@/lib/drafts";
 import { currentData } from "@/lib/social-schedule";
 
-/** How many days of Instagram posts in a row from today the queue should have, at least. */
+/** How many days in a row from today should have an Instagram post scheduled on the site, at least. */
 export const INSTAGRAM_DAYS_WANTED = 7;
 
 /** One of the problems the Needs Attention card looks for in the photo files. */
@@ -118,7 +118,7 @@ export function photoProblems(
   });
 }
 
-/** How many more photos the Instagram queue needs to last INSTAGRAM_DAYS_WANTED days; 0 when it does. */
+/** How many more days need an Instagram post scheduled to reach INSTAGRAM_DAYS_WANTED; 0 when they have one. */
 export function instagramShortBy(daysLeft: number): number {
   return Math.max(0, INSTAGRAM_DAYS_WANTED - daysLeft);
 }
