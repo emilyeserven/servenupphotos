@@ -4,8 +4,8 @@ import type { Size } from "@/lib/crop";
 export type FaceShape = "box" | "circle";
 
 /**
- * How a circle's edge is pixelated: only the pixels inside it, so it stays round, or every block it
- * touches whole, so the blocks' corners reach past it.
+ * How a circle's or a turned box's edge is pixelated: only the pixels inside it, so it keeps its
+ * shape, or every block it touches whole, so the blocks' corners reach past it.
  */
 export type CircleEdge = "inside" | "blocks";
 
@@ -24,8 +24,13 @@ export interface FaceBox {
   blocks: number;
   /** The area's shape; a box when left out. */
   shape?: FaceShape;
-  /** A circle's edge; only the pixels inside it when left out. */
+  /** A circle's or turned box's edge; only the pixels inside it when left out. */
   edge?: CircleEdge;
+  /**
+   * How far the area is turned clockwise about its middle, in whole degrees from -180 to 180; not
+   * turned when left out. x, y, width and height are the box before it's turned.
+   */
+  rotation?: number;
   /** Keeps the area as the photo has it, undoing any pixelation there, such as hair over a face. */
   keep?: boolean;
 }
@@ -38,7 +43,7 @@ export const MAX_BLOCKS = 40;
 const DEFAULT_BLOCKS = 8;
 
 /** The most boxes one photo may have, as the backend allows. */
-export const MAX_FACES = 40;
+export const MAX_FACES = 30;
 
 /** The smallest a box can shrink to, in the photo's pixels. */
 const MIN_SIDE = 16;
@@ -110,12 +115,28 @@ export function isBigEnough(face: FaceBox): boolean {
   return face.width >= MIN_SIDE && face.height >= MIN_SIDE;
 }
 
-/** A square box in the middle of the photo, a sixth of its shorter side, for adding one by hand. */
-export function middleBox(photo: Size, blocks = DEFAULT_BLOCKS): FaceBox {
-  const side = Math.max(MIN_SIDE, Math.round(Math.min(photo.width, photo.height) / 6));
+/** A point on the photo, in its pixels. */
+export interface Point {
+  x: number;
+  y: number;
+}
+
+/**
+ * A square box for adding one by hand, centered on `at` (the middle of the photo unless set) and
+ * kept inside the photo: a sixth of the photo's shorter side, or of `view`'s when the preview is
+ * zoomed in to show only part of it.
+ */
+export function middleBox(
+  photo: Size,
+  at?: Point,
+  view: Size = photo,
+  blocks = DEFAULT_BLOCKS,
+): FaceBox {
+  const side = Math.max(MIN_SIDE, Math.round(Math.min(view.width, view.height) / 6));
+  const center = at ?? { x: photo.width / 2, y: photo.height / 2 };
   return {
-    x: Math.round((photo.width - side) / 2),
-    y: Math.round((photo.height - side) / 2),
+    x: Math.round(clamp(center.x - side / 2, 0, photo.width - side)),
+    y: Math.round(clamp(center.y - side / 2, 0, photo.height - side)),
     width: side,
     height: side,
     blocks,
@@ -136,10 +157,27 @@ export function roundedBox(face: FaceBox): FaceBox {
   };
 }
 
-/** face's shape, edge and keep mark as the backend takes them, leaving out the defaults. */
-function shapeFields({ shape, edge, keep }: FaceBox): Partial<FaceBox> {
-  const circle = shape === "circle" ? { shape, ...(edge === "blocks" ? { edge } : {}) } : {};
-  return keep ? { ...circle, keep } : circle;
+/** degrees as a whole turn from -180 to 180, the way the backend takes it. */
+export function normalRotation(degrees: number): number {
+  const turn = Math.round(degrees) % 360;
+  if (turn > 180) return turn - 360;
+  return turn <= -180 ? turn + 360 : turn;
+}
+
+/** face's shape, edge, turn and keep mark as the backend takes them, leaving out the defaults. */
+function shapeFields({ shape, edge, rotation = 0, keep }: FaceBox): Partial<FaceBox> {
+  const turn = normalRotation(rotation);
+  return {
+    ...(shape === "circle" ? { shape } : {}),
+    ...(edge === "blocks" && (shape === "circle" || turn !== 0) ? { edge } : {}),
+    ...(turn === 0 ? {} : { rotation: turn }),
+    ...(keep ? { keep } : {}),
+  };
+}
+
+/** Whether face's edge choice matters: a circle's or a turned box's, but not a plain box's. */
+export function hasEdge(face: FaceBox): boolean {
+  return face.shape === "circle" || normalRotation(face.rotation ?? 0) !== 0;
 }
 
 /** What the page calls the area at index: "Face 2", or "Keep 2" for an area kept as it is. */
@@ -223,11 +261,15 @@ export function keyedBox(
   return move && movedBox(face, move[0], move[1], photo);
 }
 
-/** Where an area is, in words: "a 320 × 400 px circle at 1200, 300, 8 blocks across", or "…, kept". */
+/**
+ * Where an area is, in words: "a 320 × 400 px circle at 1200, 300, 8 blocks across", with
+ * ", turned 30°" after where a turned one is, or "…, kept as it is".
+ */
 export function boxText(face: FaceBox): string {
-  const { x, y, width, height, blocks } = roundedBox(face);
+  const { x, y, width, height, blocks, rotation } = roundedBox(face);
   const how = face.keep ? "kept as it is" : `${blocks} blocks across`;
-  return `a ${width} × ${height} px ${face.shape ?? "box"} at ${x}, ${y}, ${how}`;
+  const turned = rotation ? `, turned ${rotation}°` : "";
+  return `a ${width} × ${height} px ${face.shape ?? "box"} at ${x}, ${y}${turned}, ${how}`;
 }
 
 /** The photo's version keys in `images`, whose URLs change when the faces on them do. */

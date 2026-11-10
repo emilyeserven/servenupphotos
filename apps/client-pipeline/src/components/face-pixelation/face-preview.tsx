@@ -1,10 +1,18 @@
-import { type PointerEvent, type RefObject, useEffect, useRef, useState } from "react";
+import {
+  type PointerEvent,
+  type Ref,
+  type RefObject,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import type { Size } from "@/lib/crop";
 import { drawPreview, type Loaded } from "@/components/face-pixelation/draw-preview";
 import { FaceBoxOverlay } from "@/components/face-pixelation/face-box-overlay";
 import { type PreviewZoom, usePreviewZoom } from "@/components/face-pixelation/use-preview-zoom";
 import { ZoomControls } from "@/components/face-pixelation/zoom-controls";
-import { type FaceBox, drawnBox, isBigEnough } from "@/lib/face-boxes";
+import { type FaceBox, type Point, drawnBox, isBigEnough } from "@/lib/face-boxes";
 import { cn } from "@/lib/utils";
 
 /**
@@ -44,6 +52,34 @@ interface FacePreviewProps {
   locked: boolean;
   /** How tall the photo may be drawn; 28rem unless set, such as taller in full screen. */
   maxHeight?: string;
+  /** Asks the preview which part of the photo it shows, zoomed in and scrolled. */
+  ref?: Ref<PreviewHandle>;
+}
+
+/** The part of the photo the preview shows: its middle and size, in the photo's pixels. */
+export interface VisibleArea {
+  center: Point;
+  view: Size;
+}
+
+/** What the face editor can ask the preview. */
+export interface PreviewHandle {
+  /** The part of the photo in view, or undefined before it's loaded. */
+  visibleArea: () => VisibleArea | undefined;
+}
+
+/** The part of the photo shown in viewport, from where it's scrolled and how big canvas is drawn. */
+function visibleArea(viewport: HTMLElement, canvas: HTMLElement, photo: Size): VisibleArea {
+  const scale = photo.width / canvas.clientWidth;
+  const width = Math.min(viewport.clientWidth, canvas.clientWidth);
+  const height = Math.min(viewport.clientHeight, canvas.clientHeight);
+  return {
+    center: {
+      x: (viewport.scrollLeft + width / 2) * scale,
+      y: (viewport.scrollTop + height / 2) * scale,
+    },
+    view: { width: width * scale, height: height * scale },
+  };
 }
 
 /**
@@ -70,9 +106,16 @@ function LoadedPreview({
   showBoxes,
   locked,
   maxHeight = "28rem",
+  ref,
 }: LoadedPreviewProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
+  useImperativeHandle(ref, () => ({
+    visibleArea: () =>
+      viewport.current && canvas.current
+        ? visibleArea(viewport.current, canvas.current, loaded.photo)
+        : undefined,
+  }));
   const frame = useRef<HTMLDivElement>(null);
   const zoom = usePreviewZoom(viewport, canvas);
   useEffect(() => {

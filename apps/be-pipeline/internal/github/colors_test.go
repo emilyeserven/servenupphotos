@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
@@ -23,9 +24,13 @@ const coloredPhoto = `{
 `
 
 // colorReader reads every photo as red, except failKey, and records the keys read.
+// The originals are read a few at a time, so the keys are recorded under a lock.
 func colorReader(failKey string, keys *[]string) ColorReader {
+	var mu sync.Mutex
 	return func(_ context.Context, key string) (colors.Summary, string) {
+		mu.Lock()
 		*keys = append(*keys, key)
+		mu.Unlock()
 		if key == failKey {
 			return colors.Summary{}, "That photo isn't in the bucket anymore."
 		}
