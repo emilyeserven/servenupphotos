@@ -1,3 +1,4 @@
+import { isoDate, parseIsoDate } from "@/lib/calendar";
 import type { DayPost } from "@/lib/social-post-days";
 import type { SocialPostStatus } from "@/lib/social-posts";
 
@@ -57,4 +58,27 @@ export function feedEntries(
 /** The feed as it looks at the end of asOf (YYYY-MM-DD): only the photos posted by then, newest first. */
 export function feedAsOf(entries: FeedEntry[], asOf: string): FeedEntry[] {
   return entries.filter((entry) => entry.day <= asOf);
+}
+
+/** The day (YYYY-MM-DD) by days after day, or before it when by is negative. */
+export function shiftDay(day: string, by: number): string {
+  const date = parseIsoDate(day);
+  return isoDate(new Date(date.getFullYear(), date.getMonth(), date.getDate() + by));
+}
+
+/** The keys of a key press that say which way to step. */
+interface StepKey {
+  key: string;
+  altKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  shiftKey: boolean;
+}
+
+const STEPS: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1 };
+
+/** How many days a key press steps the Social Feed: -1 for ←, 1 for →, 0 for anything else or with a modifier. */
+export function arrowStep({ key, altKey, ctrlKey, metaKey, shiftKey }: StepKey): number {
+  if (altKey || ctrlKey || metaKey || shiftKey) return 0;
+  return STEPS[key] ?? 0;
 }

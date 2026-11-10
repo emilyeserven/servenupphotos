@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { type FeedPhoto, feedAsOf, feedEntries } from "@/lib/social-feed";
+import { type FeedPhoto, arrowStep, feedAsOf, feedEntries, shiftDay } from "@/lib/social-feed";
 import type { DayPost } from "@/lib/social-post-days";
 
 function photo(name: string): FeedPhoto {
@@ -51,4 +51,19 @@ test("keeps a photo posted on two days twice", () => {
     "c:calendar",
     "a:calendar",
   ]);
+});
+
+test("steps a day forward and back across months and years", () => {
+  assert.equal(shiftDay("2026-11-30", 1), "2026-12-01");
+  assert.equal(shiftDay("2026-01-01", -1), "2025-12-31");
+  assert.equal(shiftDay("2028-02-28", 1), "2028-02-29");
+});
+
+test("steps with the bare left and right arrow keys only", () => {
+  const press = (key: string, shiftKey = false) =>
+    arrowStep({ key, shiftKey, altKey: false, ctrlKey: false, metaKey: false });
+  assert.equal(press("ArrowLeft"), -1);
+  assert.equal(press("ArrowRight"), 1);
+  assert.equal(press("ArrowRight", true), 0);
+  assert.equal(press("ArrowUp"), 0);
 });

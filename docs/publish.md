@@ -43,9 +43,12 @@ does the merging (`postedPhotoFiles`, `postsByDay`), for any page that needs eac
 
 ### Social Feed preview
 
-Below **Instagram posts**, **Social Feed preview** shows the Instagram profile grid as it will look at the end of a
-chosen day: three columns of 3:4 tiles, newest first, like the profile page. The day starts as today; pick another
-with the date picker to see the feed on any day before or after, and **Today** goes back. The tiles are every photo on
+The page has two tabs under the Focus: **Calendar** (the calendar and **Instagram posts**) and **Social Feed**. The
+open tab is kept in the address as `?tab=feed`, so a reload or a link opens the same one. On the **Social Feed** tab,
+**Social Feed preview** shows the Instagram profile grid as it will look at the end of a
+chosen day: three columns of 3:4 tiles, newest first, like the profile page. The day starts as today; pick another with the date picker to see the feed on any day before or after, step a day at
+a time with the arrow buttons on either side of it or the left and right arrow keys (unless a field, menu or the tabs
+have focus), and **Today** goes back. The tiles are every photo on
 the calendar (with dates moved and not committed yet) and every Instagram post with a day under **Social media
 posts**, up to that day; a photo that is on the calendar and has a post on the same day is one tile. Photos that post
 on the chosen day are ringed, and ones still to come after today get a corner mark: a calendar for a calendar day, a

@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { CalendarDaysIcon, CircleCheckIcon, ClockIcon, ImageIcon } from "lucide-react";
 import { type DragEvent, useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
-import { DatePicker } from "@/components/date-picker";
+import { FeedDayPicker } from "@/components/feed-day-picker";
 import { Button } from "@/components/ui/button";
 import { longDayFormat, parseIsoDate } from "@/lib/calendar";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
@@ -65,14 +65,14 @@ export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
         <h2 id="social-feed-preview" className="text-lg font-medium">
           Social Feed preview
         </h2>
-        <AsOfPicker asOf={asOf} today={today} onChange={setAsOf} />
+        <FeedDayPicker day={asOf} today={today} onChange={setAsOf} />
       </div>
       <p className="text-muted-foreground text-sm">
         Your Instagram grid as it looks at the end of {longDayFormat.format(parseIsoDate(asOf))}:{" "}
         {feed.length} {feed.length === 1 ? "post" : "posts"}, newest first, from the calendar and
         the Instagram posts under <strong>Social media posts</strong>, with changes not committed
-        yet. Photos that post on that day are ringed. Drag a calendar photo onto another tile to
-        swap their days.
+        yet. Photos that post on that day are ringed. The arrow buttons, or the left and right arrow
+        keys, step a day at a time. Drag a calendar photo onto another tile to swap their days.
       </p>
       <FeedGrid
         feed={feed.slice(0, shown)}
@@ -87,29 +87,6 @@ export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
         </Button>
       )}
     </section>
-  );
-}
-
-interface AsOfPickerProps {
-  asOf: string;
-  today: string;
-  onChange: (day: string) => void;
-}
-
-/** The day the preview shows the feed on, with a button back to today. Clearing it goes to today. */
-function AsOfPicker({ asOf, today, onChange }: AsOfPickerProps) {
-  return (
-    <div className="flex items-center gap-1">
-      <DatePicker
-        value={asOf}
-        onChange={(day) => onChange(day || today)}
-        aria-label="Show the feed as of"
-        className="w-52"
-      />
-      <Button variant="outline" disabled={asOf === today} onClick={() => onChange(today)}>
-        Today
-      </Button>
-    </div>
   );
 }
 
