@@ -21,12 +21,12 @@ function nextDay(day: string): string {
   return isoDate(date);
 }
 
-/** How many days in a row from today have a photo, and the last of them. */
-function runFrom(byDay: Map<string, SocialPhoto>, today: string) {
+/** How many days in a row from today are in days, and the last of them. */
+function runFrom(days: { has: (day: string) => boolean }, today: string) {
   let day = today;
   let lastDay: string | null = null;
   let count = 0;
-  while (byDay.has(day)) {
+  while (days.has(day)) {
     lastDay = day;
     count += 1;
     day = nextDay(day);
@@ -70,4 +70,17 @@ export function withPostDays(
     if (photo && !days.has(day)) days.set(day, photo);
   }
   return days;
+}
+
+/**
+ * How many days in a row from today have an Instagram post marked scheduled (put on the site), from
+ * each day's Instagram posts. A day with only planned posts, or only a calendar photo, ends the run.
+ */
+export function scheduledDaysFrom(posts: Map<string, DayPost[]>, today: string): number {
+  const scheduled = new Set(
+    [...posts]
+      .filter(([, dayPosts]) => dayPosts.some((post) => post.status === "scheduled"))
+      .map(([day]) => day),
+  );
+  return runFrom(scheduled, today).daysLeft;
 }

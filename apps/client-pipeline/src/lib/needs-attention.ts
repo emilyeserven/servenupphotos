@@ -2,7 +2,7 @@ import type { SocialPhoto } from "@/api/publish";
 import { isCasual } from "@/lib/drafts";
 import { currentData } from "@/lib/social-schedule";
 
-/** How many days of Instagram posts in a row from today the queue should have, at least. */
+/** How many days in a row from today should have an Instagram post scheduled on the site, at least. */
 export const INSTAGRAM_DAYS_WANTED = 7;
 
 /** One of the problems the Needs Attention card looks for in the photo files. */
@@ -11,8 +11,8 @@ export type PhotoProblem = "noGps" | "noColors" | "noPlaces" | "untagged" | "noG
 /** How soon a problem should be fixed, which the card sorts its rows by. */
 export type Urgency = "high" | "medium" | "low";
 
-/** How urgent the Instagram queue running short is. */
-export const INSTAGRAM_URGENCY: Urgency = "medium";
+/** The most days left to schedule on Instagram that are only medium urgency; more are high. */
+const INSTAGRAM_MEDIUM_MOST = 4;
 
 /** How urgent a hand-marked trip line out of date with its day's photos is: the map draws it wrong. */
 export const TRIP_LINES_URGENCY: Urgency = "high";
@@ -118,7 +118,15 @@ export function photoProblems(
   });
 }
 
-/** How many more photos the Instagram queue needs to last INSTAGRAM_DAYS_WANTED days; 0 when it does. */
+/** How many more days need an Instagram post scheduled to reach INSTAGRAM_DAYS_WANTED; 0 when they have one. */
 export function instagramShortBy(daysLeft: number): number {
   return Math.max(0, INSTAGRAM_DAYS_WANTED - daysLeft);
+}
+
+/**
+ * How urgent it is that short days still need an Instagram post scheduled: medium for 4 or fewer,
+ * high for more (the whole week when nothing is scheduled today).
+ */
+export function instagramUrgency(short: number): Urgency {
+  return short > INSTAGRAM_MEDIUM_MOST ? "high" : "medium";
 }
