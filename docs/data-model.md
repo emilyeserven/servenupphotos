@@ -126,6 +126,10 @@ the mean `lightness` and `chroma`, and `peakChroma`, the chroma the most vivid t
 percentile), so a muted photo with a small vivid part still scores high. New photos get it when they're saved after uploading to R2 (see [Saving photo data to GitHub](saving-to-github.md)), and older files once Update Data's **Colors** has read it; see
 [Update Data](update-data.md).
 
+A photo's `faces` lists the areas pixelated on its versions, each `{ x, y, width, height, blocks }` with `shape`,
+`edge`, `rotation` and `keep` when set, so the Photo page's **Pixelate faces** card can edit them again; it's left out
+when none are. See [Pixelating faces](face-pixelation.md#saving).
+
 A photo's `perceptualHash` is 16 hex digits fingerprinting what it looks like, read from its Small version, so photos
 that look nearly the same can be put in a compare group together; see
 [Near duplicates](compare-groups.md#near-duplicates). New photos get it when they're saved, and older files from

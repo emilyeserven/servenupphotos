@@ -1,5 +1,5 @@
 import { type UseMutationResult, useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   EyeIcon,
   EyeOffIcon,
@@ -12,7 +12,7 @@ import { detectFacesMutation, savedFacesQuery } from "@/api/faces";
 import type { Editable } from "@/components/edit-in-flight/photo-json";
 import type { Edit, Save } from "@/components/edit-in-flight/use-edit";
 import { FaceList } from "@/components/face-pixelation/face-list";
-import { FacePreview } from "@/components/face-pixelation/face-preview";
+import { FacePreview, type PreviewHandle } from "@/components/face-pixelation/face-preview";
 import {
   type EditorParts,
   FullScreenEditor,
@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import type { FaceBox } from "@/lib/face-boxes";
+import { facesFromJson } from "@/lib/face-json";
 
 interface FacePixelationCardProps {
   editable: Editable;
@@ -39,7 +40,13 @@ interface FacePixelationCardProps {
  * set how coarse each one's blocks are with a live preview, then remake the versions.
  */
 export function FacePixelationCard(props: FacePixelationCardProps) {
-  const saved = useQuery(savedFacesQuery(props.editable.image.key));
+  // A photo pixelated before its areas were saved in its JSON has them only in R2, with its versions.
+  const fromJson = facesFromJson(props.edit.savedData);
+  const inR2 = useQuery({
+    ...savedFacesQuery(props.editable.image.key),
+    enabled: fromJson === undefined,
+  });
+  const saved = fromJson ?? inR2.data;
   return (
     <Card>
       <CardHeader>
@@ -51,9 +58,13 @@ export function FacePixelationCard(props: FacePixelationCardProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <QueryResult query={saved} pendingLabel="Reading the pixelated faces from R2…">
-          {(faces) => <FaceEditor saved={faces} {...props} />}
-        </QueryResult>
+        {saved ? (
+          <FaceEditor saved={saved} {...props} />
+        ) : (
+          <QueryResult query={inR2} pendingLabel="Reading the pixelated faces from R2…">
+            {() => null}
+          </QueryResult>
+        )}
       </CardContent>
     </Card>
   );
@@ -72,6 +83,8 @@ function FaceEditor({
   const detect = useMutation(detectFacesMutation);
   const pixelate = usePixelateSave(editable, edit, save);
   const [fullScreen, setFullScreen] = useState(false);
+  const preview = useRef<PreviewHandle>(null);
+  const add = (keep: boolean) => editor.add(keep, preview.current?.visibleArea());
   const locked = disabled || pixelate.mutation.isPending;
   const find = () =>
     detect.mutate({ key: editable.image.key }, { onSuccess: (found) => editor.addFound(found) });
@@ -83,6 +96,7 @@ function FaceEditor({
         detect={detect}
         locked={locked}
         onFind={find}
+        onAdd={add}
         fullScreen={fullScreen}
         onFullScreen={() => setFullScreen(true)}
       />
@@ -90,6 +104,7 @@ function FaceEditor({
     notes: <DetectNote detect={detect} />,
     preview: (
       <FacePreview
+        ref={preview}
         src={editable.image.url}
         faces={editor.faces}
         selected={editor.selected}
@@ -152,35 +167,45 @@ interface ToolbarProps {
   detect: DetectMutation;
   locked: boolean;
   onFind: () => void;
+  /** Adds a box to pixelate, or with `keep` an area to keep, in the middle of the photo in view. */
+  onAdd: (keep: boolean) => void;
   /** The editor already fills the window, so it has no Full screen button. */
   fullScreen: boolean;
   onFullScreen: () => void;
 }
 
 /** Find faces, add a box by hand, and show or hide the boxes over the preview. */
-function Toolbar({ editor, detect, locked, onFind, fullScreen, onFullScreen }: ToolbarProps) {
+function Toolbar({
+  editor,
+  detect,
+  locked,
+  onFind,
+  onAdd,
+  fullScreen,
+  onFullScreen,
+}: ToolbarProps) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Button variant="outline" size="sm" onClick={onFind} disabled={locked || detect.isPending}>
         {detect.isPending ? <Spinner /> : <ScanFaceIcon />}
         Find faces
       </Button>
-      <AddButtons editor={editor} disabled={locked || !editor.canAdd} />
+      <AddButtons onAdd={onAdd} disabled={locked || !editor.canAdd} />
       <BoxesToggle shown={editor.showBoxes} onToggle={editor.toggleBoxes} />
       <FullScreenButton hidden={fullScreen} onClick={onFullScreen} />
     </div>
   );
 }
 
-/** Adds a box to pixelate, or an area to keep as it is, in the middle of the photo. */
-function AddButtons({ editor, disabled }: { editor: FaceEditorState; disabled: boolean }) {
+/** Adds a box to pixelate, or an area to keep as it is, in the middle of the photo in view. */
+function AddButtons({ onAdd, disabled }: { onAdd: (keep: boolean) => void; disabled: boolean }) {
   return (
     <>
-      <Button variant="outline" size="sm" disabled={disabled} onClick={editor.addBox}>
+      <Button variant="outline" size="sm" disabled={disabled} onClick={() => onAdd(false)}>
         <PlusIcon />
         Add a box
       </Button>
-      <Button variant="outline" size="sm" disabled={disabled} onClick={editor.addKeep}>
+      <Button variant="outline" size="sm" disabled={disabled} onClick={() => onAdd(true)}>
         <ShieldOffIcon />
         Add a keep area
       </Button>

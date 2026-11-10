@@ -1,5 +1,5 @@
 import { Trash2Icon } from "lucide-react";
-import { useId } from "react";
+import { type ReactNode, useId } from "react";
 import { AreaOptions } from "@/components/face-pixelation/area-options";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +8,7 @@ import {
   MIN_BLOCKS,
   areaName,
   blockSide,
+  normalRotation,
   roundedBox,
 } from "@/lib/face-boxes";
 import { cn } from "@/lib/utils";
@@ -83,11 +84,48 @@ function FaceRow({ index, face, selected, onSelect, onChange, onRemove, disabled
       {!face.keep && (
         <DensitySlider face={face} onChange={onChange} onFocus={onSelect} disabled={disabled} />
       )}
+      <TurnSlider face={face} onChange={onChange} onFocus={onSelect} disabled={disabled} />
     </li>
   );
 }
 
-interface DensitySliderProps {
+interface SliderRowProps {
+  label: string;
+  min: number;
+  max: number;
+  value: number;
+  onChange: (value: number) => void;
+  onFocus: () => void;
+  disabled: boolean;
+  /** What the slider's value means, for screen readers. */
+  valueText: string;
+  /** What's shown at the right of the slider. */
+  readout: ReactNode;
+}
+
+/** A labelled slider across an area's row, with what it's set to at its right. */
+function SliderRow({ label, onChange, valueText, readout, ...input }: SliderRowProps) {
+  const id = useId();
+  return (
+    <div className="col-span-2 flex items-center gap-3">
+      <label htmlFor={id} className="text-muted-foreground w-14 text-xs">
+        {label}
+      </label>
+      <input
+        id={id}
+        type="range"
+        step={1}
+        {...input}
+        onChange={(event) => onChange(Number(event.target.value))}
+        aria-valuetext={valueText}
+        className="accent-primary min-w-0 flex-1"
+      />
+      <span className="w-32 text-right text-xs tabular-nums">{readout}</span>
+    </div>
+  );
+}
+
+interface AreaSliderProps {
   face: FaceBox;
   onChange: (face: FaceBox) => void;
   onFocus: () => void;
@@ -95,30 +133,39 @@ interface DensitySliderProps {
 }
 
 /** How many blocks fit across the face, and how big each is on the photo. */
-function DensitySlider({ face, onChange, onFocus, disabled }: DensitySliderProps) {
-  const id = useId();
+function DensitySlider({ face, onChange, ...props }: AreaSliderProps) {
   const { blocks } = roundedBox(face);
   return (
-    <div className="col-span-2 flex items-center gap-3">
-      <label htmlFor={id} className="text-muted-foreground text-xs">
-        Density
-      </label>
-      <input
-        id={id}
-        type="range"
-        min={MIN_BLOCKS}
-        max={MAX_BLOCKS}
-        step={1}
-        value={blocks}
-        disabled={disabled}
-        onFocus={onFocus}
-        onChange={(event) => onChange({ ...face, blocks: Number(event.target.value) })}
-        aria-valuetext={`${blocks} blocks across`}
-        className="accent-primary min-w-0 flex-1"
-      />
-      <span className="w-32 text-right text-xs tabular-nums">
-        {blocks} blocks <span className="text-muted-foreground">· ~{blockSide(face)} px</span>
-      </span>
-    </div>
+    <SliderRow
+      label="Density"
+      min={MIN_BLOCKS}
+      max={MAX_BLOCKS}
+      value={blocks}
+      onChange={(next) => onChange({ ...face, blocks: next })}
+      valueText={`${blocks} blocks across`}
+      readout={
+        <>
+          {blocks} blocks <span className="text-muted-foreground">· ~{blockSide(face)} px</span>
+        </>
+      }
+      {...props}
+    />
+  );
+}
+
+/** How far the area is turned, clockwise, from -180° to 180°. */
+function TurnSlider({ face, onChange, ...props }: AreaSliderProps) {
+  const turn = normalRotation(face.rotation ?? 0);
+  return (
+    <SliderRow
+      label="Turn"
+      min={-180}
+      max={180}
+      value={turn}
+      onChange={(next) => onChange({ ...face, rotation: next })}
+      valueText={`turned ${turn} degrees`}
+      readout={`${turn}°`}
+      {...props}
+    />
   );
 }

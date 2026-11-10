@@ -25,10 +25,14 @@ type Face struct {
 	// box isn't square) that fits in the box; the whole box when empty or
 	// ShapeBox.
 	Shape string `json:"shape,omitempty"`
-	// Edge is how a circle's edge is pixelated: EdgeBlocks pixelates every
-	// block the circle touches whole, so block corners reach past it; empty
-	// or EdgeInside pixelates only the pixels inside the circle.
+	// Edge is how a circle's or a turned box's edge is pixelated: EdgeBlocks
+	// pixelates every block the area touches whole, so block corners reach
+	// past it; empty or EdgeInside pixelates only the pixels inside it.
 	Edge string `json:"edge,omitempty"`
+	// Rotation turns the box or circle clockwise about its middle, in whole
+	// degrees from -180 to 180; X, Y, Width and Height are the box before
+	// it's turned. Its blocks stay square with the photo.
+	Rotation int `json:"rotation,omitempty"`
 	// Keep marks an area to leave as the photo has it, such as hair over
 	// a pixelated face: it undoes every face's pixelation inside its box or
 	// circle. Its Blocks is unused.
@@ -48,7 +52,7 @@ const (
 
 // MaxFaces is the most boxes one photo may have, so their String fits in an
 // R2 object's metadata (2 KB in all).
-const MaxFaces = 40
+const MaxFaces = 30
 
 // Valid reports why f can't be pixelated, or "" when it can.
 func (f Face) Valid() string {
@@ -110,10 +114,11 @@ func Pixelate(img image.Image, fs Faces) image.Image {
 }
 
 // pixelateFace fills each block of f on img, clipped to img, with its average:
-// the whole block in a box, and in a circle the part inside it, or every block
-// it touches with EdgeBlocks.
+// the whole block in a box, and in a circle or a turned box the part inside
+// it, or every block it touches with EdgeBlocks. The blocks start at the top
+// left of the area's bounds, the box itself when it isn't turned.
 func pixelateFace(img *image.NRGBA, f Face) {
-	box := image.Rect(f.X, f.Y, f.X+f.Width, f.Y+f.Height).Intersect(img.Bounds())
+	box := f.bounds().Intersect(img.Bounds())
 	side := f.blockSide()
 	for y := box.Min.Y; y < box.Max.Y; y += side {
 		for x := box.Min.X; x < box.Max.X; x += side {
@@ -125,7 +130,7 @@ func pixelateFace(img *image.NRGBA, f Face) {
 // pixelateBlock fills the part of block that f covers with its average.
 func pixelateBlock(img *image.NRGBA, f Face, block image.Rectangle) {
 	switch {
-	case !f.isCircle():
+	case !f.isCircle() && f.Rotation == 0:
 		fillBlock(img, block)
 	case f.Edge == EdgeBlocks:
 		if f.touches(block) {
@@ -163,13 +168,15 @@ func channel(sum, n int) uint8 {
 }
 
 // String is fs as "x,y,width,height,blocks" for each face, with ",circle" or
-// ",circle-blocks" after a circle's and ",keep" after an area kept as it is,
+// ",circle-blocks" after a circle's (",box-blocks" after a box pixelated in
+// whole blocks), ",rot<degrees>" after a turned one's and ",keep" after an
+// area kept as it is,
 // joined by ";": how it's saved with each version in R2 so remaking a version
 // keeps them.
 func (fs Faces) String() string {
 	parts := make([]string, len(fs))
 	for i, f := range fs {
-		parts[i] = fmt.Sprintf("%d,%d,%d,%d,%d", f.X, f.Y, f.Width, f.Height, f.Blocks) + f.shapeSuffix() + f.keepSuffix()
+		parts[i] = fmt.Sprintf("%d,%d,%d,%d,%d", f.X, f.Y, f.Width, f.Height, f.Blocks) + f.shapeSuffix() + f.rotationSuffix() + f.keepSuffix()
 	}
 	return strings.Join(parts, ";")
 }
@@ -198,7 +205,7 @@ func ParseFaces(s string) (Faces, bool) {
 // parseFace reads one face of a Faces String.
 func parseFace(s string) (Face, bool) {
 	fields := strings.Split(s, ",")
-	if len(fields) < 5 || len(fields) > 7 {
+	if len(fields) < 5 || len(fields) > 8 {
 		return Face{}, false
 	}
 	var n [5]int

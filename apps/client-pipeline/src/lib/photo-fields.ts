@@ -57,3 +57,10 @@ export const GRID_ANCHOR = "socialGridAnchor";
 
 /** The photo JSON field holding the optional name of a Grid Anchor's group, on the anchor; left out when it has none. */
 export const GRID_GROUP_NAME = "socialGridGroupName";
+
+/**
+ * The photo JSON field listing the areas pixelated on its versions, each `{ x, y, width, height,
+ * blocks }` with `shape`, `edge`, `rotation` and `keep` when set (see `FaceBox`), so they can be
+ * edited again; left out when none are.
+ */
+export const FACES = "faces";

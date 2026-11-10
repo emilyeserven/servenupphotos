@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import type { CircleEdge, FaceBox, FaceShape } from "@/lib/face-boxes";
+import { type CircleEdge, type FaceBox, type FaceShape, hasEdge } from "@/lib/face-boxes";
 
 interface Choice<T extends string> {
   value: T;
@@ -53,10 +53,13 @@ const SHAPES: Choice<FaceShape>[] = [
   { value: "circle", label: "Circle" },
 ];
 
-const EDGES: Choice<CircleEdge>[] = [
-  { value: "inside", label: "Inside the circle" },
-  { value: "blocks", label: "Whole blocks" },
-];
+/** The edge choices for a circle or a turned box, named for its shape. */
+function edgeChoices(shape: FaceShape): Choice<CircleEdge>[] {
+  return [
+    { value: "inside", label: shape === "circle" ? "Inside the circle" : "Inside the box" },
+    { value: "blocks", label: "Whole blocks" },
+  ];
+}
 
 interface AreaOptionsProps {
   face: FaceBox;
@@ -65,8 +68,8 @@ interface AreaOptionsProps {
 }
 
 /**
- * Whether the area is pixelated or kept as it is, its shape, and for a pixelated circle whether only
- * its inside is pixelated or every block it touches.
+ * Whether the area is pixelated or kept as it is, its shape, and for a pixelated circle or turned
+ * box whether only its inside is pixelated or every block it touches.
  */
 export function AreaOptions({ face, onChange, disabled }: AreaOptionsProps) {
   return (
@@ -98,13 +101,16 @@ function shapeOf(face: FaceBox): FaceShape {
   return face.shape ?? "box";
 }
 
-/** For a pixelated circle, whether only its inside is pixelated or every block it touches. */
+/**
+ * For a pixelated circle or turned box, whether only its inside is pixelated or every block it
+ * touches.
+ */
 function EdgeOptions({ face, onChange, disabled }: AreaOptionsProps) {
-  if (shapeOf(face) !== "circle" || face.keep) return null;
+  if (!hasEdge(face) || face.keep) return null;
   return (
     <Segmented
-      label="Circle edge"
-      choices={EDGES}
+      label="Edge"
+      choices={edgeChoices(shapeOf(face))}
       value={face.edge ?? "inside"}
       onChange={(edge) => onChange({ ...face, edge })}
       disabled={disabled}

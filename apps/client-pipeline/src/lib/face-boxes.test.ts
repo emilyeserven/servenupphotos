@@ -5,11 +5,13 @@ import {
   blockSide,
   drawnBox,
   type FaceBox,
+  hasEdge,
   isBigEnough,
   keyedBox,
   middleBox,
   movedBox,
   newFaces,
+  normalRotation,
   resizedBox,
   roundedBox,
   sameBoxes,
@@ -54,6 +56,37 @@ test("a box drawn backwards is the same box, clipped to the photo", () => {
 
 test("a box added by hand sits in the middle", () => {
   assert.deepEqual(middleBox(photo), { x: 450, y: 250, width: 100, height: 100, blocks: 8 });
+});
+
+test("a box added while zoomed in sits in the middle of the view, sized to it, inside the photo", () => {
+  const view = { width: 300, height: 180 };
+  assert.deepEqual(middleBox(photo, { x: 200, y: 100 }, view), {
+    x: 185,
+    y: 85,
+    width: 30,
+    height: 30,
+    blocks: 8,
+  });
+  assert.deepEqual(middleBox(photo, { x: 990, y: 5 }, view), {
+    x: 970,
+    y: 0,
+    width: 30,
+    height: 30,
+    blocks: 8,
+  });
+});
+
+test("the backend gets a whole turn from -180 to 180, and an edge only where it matters", () => {
+  const box = { x: 0, y: 0, width: 10, height: 10, blocks: 8 };
+  assert.deepEqual(roundedBox({ ...box, rotation: 270.4, edge: "blocks" }), {
+    ...box,
+    rotation: -90,
+    edge: "blocks",
+  });
+  assert.deepEqual(roundedBox({ ...box, rotation: 360, edge: "blocks" }), box);
+  assert.equal(normalRotation(-180), 180);
+  assert.equal(hasEdge({ ...box, rotation: 5 }), true);
+  assert.equal(hasEdge(box), false);
 });
 
 test("the backend gets whole pixels and blocks in range", () => {
