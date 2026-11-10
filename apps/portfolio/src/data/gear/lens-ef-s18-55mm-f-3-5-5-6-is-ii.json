@@ -1,0 +1,21 @@
+{
+  "id": "lens-ef-s18-55mm-f-3-5-5-6-is-ii",
+  "kind": "lens",
+  "name": "EF-S18-55mm f/3.5-5.6 IS II",
+  "image": "https://cdn.servenupphotos.net/gear/5b327efe9087-1330447874-519475.webp",
+  "original": "https://cdn.servenupphotos.net/gear/originals/9765188d0251-1330447874-519475.jpg",
+  "crop": {
+    "x": -0.24166666666666659,
+    "y": -0.05555555555555547,
+    "width": 1.4833333333333332,
+    "height": 1.1111111111111112,
+    "fill": "white"
+  },
+  "subject": {
+    "x": 0.1225,
+    "y": 0,
+    "width": 0.755,
+    "height": 1
+  },
+  "description": ""
+}

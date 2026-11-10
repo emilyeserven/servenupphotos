@@ -62,7 +62,16 @@
   ],
   "spotlightZones": ["homepage"],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-10-13",
+      "url": "",
+      "caption": "Mirror Pond\n\n2026.05.16\nFujifilm X-T5, XF18-135mm @ 18mm, 1/60sec, ƒ 5, ISO 125\nMirror Pond, in 국립중앙박물관 (Gungnip Jungang Bangmulgwan)\n\nThe dancheong (단청) ceiling of the gazebo in the National Museum of Korea's Mirror Pond.\n\nThis ceiling is one of the first examples of Korean traditional architecture I had a chance to photograph. The bright colors and patterns really stuck out to me as something uniquely Korean, especially given my familiarity with Chinese and Japanese culture. (Turns out that \"dancheong\" is the specific term for that very Korean style.) I took a lot more dancheong photos during this trip, but I think this is the best ceiling photo I ended up getting... and I would attribute that to the reflections from the pond.",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
@@ -270,5 +279,6 @@
     "peakChroma": 31.74,
     "samples": 9900
   },
-  "similarPhotos": [269, 468, 129, 262, 10, 256]
+  "similarPhotos": [269, 468, 129, 262, 10, 256],
+  "socialGridAnchor": true
 }

@@ -195,6 +195,14 @@
     "longitude": -73.96560105308485
   },
   {
+    "id": "changuimun-gate",
+    "name": "Changuimun Gate",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
     "id": "chelsea-market",
     "name": "Chelsea Market",
     "description": "",

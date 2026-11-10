@@ -1,0 +1,21 @@
+{
+  "id": "lens-xf18-135mmf3-5-5-6r-lm-ois-wr",
+  "kind": "lens",
+  "name": "XF18-135mmF3.5-5.6R LM OIS WR",
+  "image": "https://cdn.servenupphotos.net/gear/98bb44d005f4-fujifilm-16432853-xf-18-135mm-f-3-5-5-6-r-1402879517-1058622.webp",
+  "original": "https://cdn.servenupphotos.net/gear/originals/770d74b02d1d-fujifilm-16432853-xf-18-135mm-f-3-5-5-6-r-1402879517-1058622.jpg",
+  "crop": {
+    "x": -0.24166666666666659,
+    "y": -0.05555555555555547,
+    "width": 1.4833333333333332,
+    "height": 1.1111111111111112,
+    "fill": "white"
+  },
+  "subject": {
+    "x": 0.1625,
+    "y": 0,
+    "width": 0.675,
+    "height": 1
+  },
+  "description": ""
+}

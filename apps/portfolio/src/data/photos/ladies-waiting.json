@@ -58,7 +58,16 @@
   ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-10-17",
+      "url": "",
+      "caption": "Ladies Waiting\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 74mm, 1/140sec, ƒ 5.3, ISO 125\n경복궁 (Gyeongbokgung)",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {

@@ -58,7 +58,16 @@
   ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-10-16",
+      "url": "",
+      "caption": "While the buildings around the palace grow and change, the japsang still look on...\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 56mm, 1/420sec, ƒ 5.6, ISO 125\n경복궁 (Gyeongbokgung)",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {

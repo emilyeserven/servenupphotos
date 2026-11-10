@@ -62,7 +62,16 @@
   ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-10-18",
+      "url": "",
+      "caption": "Photographing photographers... Gyeongbokgung edition.\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 27mm, 1/320sec, ƒ 5.6, ISO 125\n근정문 (Geunjeongmun), in 경복궁 (Gyeongbokgung)\n\nThe one thing that can be frustrating about popular destinations is that you're kind of... damned if you do, damned if you don't. Like, yes, I definitely have to go see that palace. But also, everyone else does too. So of course, it gets really crowded. As a photographer, I try to do my best to make the presence of people \"work\" with a photo, but sometimes there's just too many people. In a case like this, sometimes it's just more fun to take photos of other photographers.",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {

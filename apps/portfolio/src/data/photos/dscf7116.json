@@ -26,14 +26,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116.jpg",
     "key": "photos/6a45778199ce-dscf7116.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnail.webp?crop=2379,0,3986",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnailpreview.webp?crop=2379,0,3986",
+    "xlarge": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-xlarge.webp?faces=mwbb0266",
+    "large": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-large.webp?faces=mwbb0266",
+    "medium": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-medium.webp?faces=mwbb0266",
+    "small": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-small.webp?faces=mwbb0266",
+    "xsmall": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-xsmall.webp?faces=mwbb0266",
+    "preview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-preview.webp?faces=mwbb0266",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnail.webp?crop=2379,0,3986&faces=mwbb0266",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnailpreview.webp?crop=2379,0,3986&faces=mwbb0266",
     "thumbnailcrop": {
       "x": 2379,
       "y": 0,
@@ -43,7 +43,7 @@
   },
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
-  "socialMediaPublishDate": "2026-11-20",
+  "socialMediaPublishDate": "2026-11-21",
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
@@ -266,5 +266,34 @@
     "peakChroma": 12.85,
     "samples": 9768
   },
-  "similarPhotos": [263, 268, 458, 456, 213, 217]
+  "similarPhotos": [263, 268, 458, 456, 213, 217],
+  "faces": [
+    {
+      "x": 4724,
+      "y": 2112,
+      "width": 97,
+      "height": 117,
+      "blocks": 4,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 5293,
+      "y": 2183,
+      "width": 84,
+      "height": 98,
+      "blocks": 5,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 6003,
+      "y": 2317,
+      "width": 117,
+      "height": 148,
+      "blocks": 5,
+      "shape": "circle",
+      "edge": "blocks"
+    }
+  ]
 }
