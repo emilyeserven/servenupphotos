@@ -15,16 +15,14 @@ interface GroupStyle {
   badge: string;
 }
 
-/** Each group's outline and badge colors, by its index; groups past the last start again. */
-const GROUP_STYLES: [GroupStyle, ...GroupStyle[]] = [
-  { ring: "ring-amber-500", badge: "bg-amber-500 text-white" },
-  { ring: "ring-sky-500", badge: "bg-sky-500 text-white" },
-  { ring: "ring-fuchsia-500", badge: "bg-fuchsia-500 text-white" },
-  { ring: "ring-lime-600", badge: "bg-lime-600 text-white" },
+/** The outline and badge colors groups take by turns along the calendar: dark blue, then light blue. */
+const GROUP_STYLES: [GroupStyle, GroupStyle] = [
+  { ring: "ring-blue-800", badge: "bg-blue-800 text-white" },
+  { ring: "ring-sky-300", badge: "bg-sky-300 text-sky-950" },
 ];
 
 function groupStyle(group: number): GroupStyle {
-  return GROUP_STYLES[group % GROUP_STYLES.length] ?? GROUP_STYLES[0];
+  return GROUP_STYLES[group % 2] ?? GROUP_STYLES[0];
 }
 
 function fieldOf(data: unknown, key: string): unknown {
@@ -114,7 +112,7 @@ function AnchorToggle({ anchored, onToggle }: { anchored: boolean; onToggle: () 
 }
 
 /**
- * The outline of a photo in a Grid Anchor group, in its group's color, with an anchor badge on
+ * The outline of a photo in a Grid Anchor group, in its group's color (dark or light blue by turns), with an anchor badge on
  * the anchor itself. Shown over a calendar day or a feed tile.
  */
 export function AnchorOutline({ place }: { place: AnchorPlace | undefined }) {

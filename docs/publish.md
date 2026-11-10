@@ -65,12 +65,17 @@ feed (`feedEntries`, `feedAsOf`).
 ### Grid Anchors
 
 A photo on the calendar can be made a **Grid Anchor** from its day's picker (**Make Grid Anchor**, next to **Remove
-from this day**), to plan thematic rows of the feed. The anchor and the 2 calendar photos just before it make a
-group of 3, one row of the 3-column feed (`ANCHOR_ROW` in `apps/client-pipeline/src/lib/grid-anchors.ts`). While a
-photo is an anchor, the picker also takes an optional name for its group. Each group is outlined in its own color on
-the calendar and in the **Social Feed preview**, with a badge on the anchor itself showing the group's name when it
-has one. The outlines are only a reference: the feed doesn't flag a group that isn't lined up with a row, since
-groups drift in and out of line between anchors.
+from this day**), to plan thematic rows of the feed. While a photo is an anchor, the picker also takes an optional
+name for its group. The anchor and the 2 calendar photos just before it make a group of 3, one row of the 3-column
+feed (`ANCHOR_ROW` in `apps/client-pipeline/src/lib/grid-anchors.ts`), and once there's one anchor the rest of the
+calendar's photos fall into groups of 3 counted from it: back from it for earlier photos, on from it for later ones.
+With more than one anchor, photos count back from the next anchor after them (and on from the last one), so the row
+just after an anchor can be cut short when the next anchor isn't a multiple of 3 photos away (`anchorPlaces`).
+
+Groups are outlined dark blue and light blue by turns, on the calendar and in the **Social Feed preview**, and each
+anchor gets a badge in its group's color showing the group's name when it has one. The outlines are only a
+reference: the feed doesn't flag a group that isn't lined up with a row, since groups drift in and out of line in a
+cycle.
 
 It's saved on the anchor's JSON as `socialGridAnchor: true`, with the name as `socialGridGroupName`, kept as local
 edits until **Commit** like a moved date. Photos that aren't anchors, and groups without a name, leave the fields

@@ -76,9 +76,9 @@ export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
         {feed.length} {feed.length === 1 ? "post" : "posts"}, newest first, from the calendar and
         the Instagram posts under <strong>Social media posts</strong>, with changes not committed
         yet. Photos that post on that day are ringed. The arrow buttons, or the left and right arrow
-        keys, step a day at a time. Drag a calendar photo onto another tile to swap their days. Grid
-        Anchor groups (an anchor and the 2 calendar photos before it) are outlined in their color,
-        as a reference for lining up rows.
+        keys, step a day at a time. Drag a calendar photo onto another tile to swap their days. Once
+        there&apos;s a Grid Anchor, the calendar&apos;s photos are outlined in rows of 3 counted
+        from it, dark and light blue by turns, as a reference for lining up rows.
       </p>
       <FeedGrid
         feed={feed.slice(0, shown)}

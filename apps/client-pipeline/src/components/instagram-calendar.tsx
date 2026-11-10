@@ -5,7 +5,7 @@ import { DayPostBackdrop, DayPostMark, InstagramPosts } from "@/components/insta
 import { InstagramFeedPreview } from "@/components/instagram-feed-preview";
 import { InstagramFocus } from "@/components/instagram-focus";
 import { AnchorOutline, GridAnchorControls, useGridAnchors } from "@/components/grid-anchor";
-import { type AnchorPlace, anchorGroups, anchorPlaces } from "@/lib/grid-anchors";
+import { type AnchorPlace, anchorPlaces } from "@/lib/grid-anchors";
 import { ScheduleTabs } from "@/components/instagram-tabs";
 import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
 import { PhotoFiles } from "@/components/photo-files";
@@ -94,8 +94,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
 
   const byDay = photosByDay(calendar.photos, unsaved);
   const anchors = useGridAnchors(calendar.photos);
-  const groups = anchorGroups(byDay, anchors.anchors);
-  const places = anchorPlaces(groups);
+  const places = anchorPlaces(byDay, anchors.anchors);
   const days = calendarDays(now, weekOffset, WEEKS);
   const schedule = (photo: SocialPhoto, day: string | null) =>
     update(moveToDay(unsaved, byDay, photo, day));
@@ -277,8 +276,9 @@ function CalendarGrid(props: CalendarGridProps) {
         Click an empty day to pick a photo for it, or a photo to change or remove it. Drag a photo
         to another day to move it there; dropping it on another photo swaps the two. A check in a
         day&apos;s corner marks Instagram posts already scheduled on Instagram, and a clock ones
-        still planned. A Grid Anchor (set in a day&apos;s picker) and the 2 photos before it are
-        outlined in their color: they make one row of the Social Feed.
+        still planned. A Grid Anchor (set in a day&apos;s picker) and the 2 photos before it make
+        one row of the Social Feed; the rest of the calendar falls into rows of 3 from it, outlined
+        in dark and light blue by turns.
       </p>
     </>
   );

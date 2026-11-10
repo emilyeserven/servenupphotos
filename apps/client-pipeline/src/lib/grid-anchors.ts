@@ -1,50 +1,51 @@
 /** How many photos a Grid Anchor's group holds: the anchor and the ones just before it, one row of the feed. */
 export const ANCHOR_ROW = 3;
 
-/** A Grid Anchor and the calendar photos just before it, which should fill one row of the feed. */
-export interface AnchorGroup {
-  /** The anchor's photo file path. */
-  anchor: string;
-  /** The group's photo file paths, newest first: the anchor, then the ones before it. */
-  members: string[];
-  /** The group's place among the calendar's groups, oldest first, from 0; it picks the group's color. */
-  index: number;
-  /** The group's name, or null when it has none. */
+/** Where a photo stands in the groups of the calendar: its group, and whether it's that group's anchor. */
+export interface AnchorPlace {
+  /** The group's place along the calendar, oldest first, from 0; groups alternate colors by it. */
+  group: number;
+  isAnchor: boolean;
+  /** The anchor's group name, on its group's photos; null for a group without one or with no anchor of its own. */
   name: string | null;
 }
 
 /**
- * Each Grid Anchor on the calendar with the photos on the calendar's days just before it, up to
- * ANCHOR_ROW in all. byDay is each calendar day's photo; anchors is each anchor's group name (or
- * null when it has none), by the anchor's file path.
+ * The index of the last photo in the group of the photo at i, counting rows of ANCHOR_ROW from
+ * the anchor at a: back from it for photos up to the anchor, on from it for photos after it.
  */
-export function anchorGroups(
+function groupEnd(i: number, a: number): number {
+  if (i <= a) return a - ANCHOR_ROW * Math.floor((a - i) / ANCHOR_ROW);
+  return a + ANCHOR_ROW * Math.ceil((i - a) / ANCHOR_ROW);
+}
+
+/** The anchor the photo at i counts its row from: the next one at or after it, or else the last. */
+function anchorFor(i: number, anchorAt: number[]): number {
+  return anchorAt.find((a) => a >= i) ?? anchorAt.at(-1) ?? i;
+}
+
+/**
+ * Every calendar photo's group, by file path, once there's a Grid Anchor: each anchor ends a group
+ * of ANCHOR_ROW with the photos just before it, and the rest of the calendar falls into rows of
+ * ANCHOR_ROW counted from the anchors (photos before an anchor from it, photos after the last one
+ * on from it), so a row cut short between two anchors is a group of its own. byDay is each
+ * calendar day's photo; anchors is each anchor's group name (or null), by its file path. Empty
+ * when there's no anchor.
+ */
+export function anchorPlaces(
   byDay: Map<string, { path: string }>,
   anchors: Map<string, string | null>,
-): AnchorGroup[] {
+): Map<string, AnchorPlace> {
   const paths = [...byDay.keys()].toSorted().map((day) => byDay.get(day)?.path ?? "");
-  const groups: AnchorGroup[] = [];
-  paths.forEach((path, i) => {
-    if (!anchors.has(path)) return;
-    const members = paths.slice(Math.max(0, i - ANCHOR_ROW + 1), i + 1).toReversed();
-    groups.push({ anchor: path, members, index: groups.length, name: anchors.get(path) ?? null });
-  });
-  return groups;
-}
-
-/** Where a photo stands in the Grid Anchor groups: its group's index and name, and whether it's the anchor. */
-export interface AnchorPlace {
-  group: number;
-  isAnchor: boolean;
-  /** The group's name, or null when it has none. */
-  name: string | null;
-}
-
-/** Each grouped photo's place, by file path. A photo in two groups takes the later one. */
-export function anchorPlaces(groups: AnchorGroup[]): Map<string, AnchorPlace> {
+  const anchorAt = paths.flatMap((path, i) => (anchors.has(path) ? [i] : []));
   const places = new Map<string, AnchorPlace>();
-  for (const { anchor, members, index, name } of groups) {
-    for (const path of members) places.set(path, { group: index, isAnchor: path === anchor, name });
-  }
+  if (anchorAt.length === 0) return places;
+  const groupIndex = new Map<number, number>();
+  paths.forEach((path, i) => {
+    const end = groupEnd(i, anchorFor(i, anchorAt));
+    if (!groupIndex.has(end)) groupIndex.set(end, groupIndex.size);
+    const name = anchors.get(paths[end] ?? "") ?? null;
+    places.set(path, { group: groupIndex.get(end) ?? 0, isAnchor: anchors.has(path), name });
+  });
   return places;
 }
