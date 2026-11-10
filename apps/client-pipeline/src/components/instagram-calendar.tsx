@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { calendarDays, dayFormat, isoDate, longDayFormat, parseIsoDate } from "@/lib/calendar";
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
 import {
+  PHOTO_DRAG_TYPE,
   type Unsaved,
   dateChanges,
   dateOf,
@@ -30,9 +31,6 @@ import { PUBLISH_DATE } from "@/lib/photo-fields";
 const WEEKS = 3;
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-/** The type the dragged photo's file path is carried under. */
-const DRAG_TYPE = "application/x-photo-path";
 
 /** "1 photo", "2 photos". */
 function count(n: number, word: string): string {
@@ -95,6 +93,10 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
   const days = calendarDays(now, weekOffset, WEEKS);
   const schedule = (photo: SocialPhoto, day: string | null) =>
     update(moveToDay(unsaved, byDay, photo, day));
+  const dropPhoto = (path: string, day: string) => {
+    const dropped = calendar.photos.find((p) => p.path === path);
+    if (dropped) schedule(dropped, day);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -109,13 +111,15 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
         posts={posts}
         unsaved={unsaved}
         onOpen={setPicking}
-        onDropPhoto={(path, day) => {
-          const dropped = calendar.photos.find((p) => p.path === path);
-          if (dropped) schedule(dropped, day);
-        }}
+        onDropPhoto={dropPhoto}
       />
       <InstagramPosts days={days} postsByDay={posts} />
-      <InstagramFeedPreview byDay={byDay} posts={posts} today={isoDate(now)} />
+      <InstagramFeedPreview
+        byDay={byDay}
+        posts={posts}
+        today={isoDate(now)}
+        onDropPhoto={dropPhoto}
+      />
       <PhotoPicker
         day={picking}
         byDay={byDay}
@@ -309,7 +313,7 @@ function dayClass(day: string, today: string, over: boolean) {
 
 /** One day of the calendar: a drop target holding its photo, or a button to pick one. */
 function Day({ day, today, photo, posts, unsaved, onOpen, onDropPhoto }: DayProps) {
-  const { over, handlers } = useDropTarget(DRAG_TYPE, onDropPhoto);
+  const { over, handlers } = useDropTarget(PHOTO_DRAG_TYPE, onDropPhoto);
   const label = longDayFormat.format(parseIsoDate(day));
   return (
     <div role="gridcell" className={dayClass(day, today, over)} {...handlers}>
@@ -366,7 +370,7 @@ function ScheduledPhoto({ photo, label, unsaved, onOpen }: ScheduledPhotoProps) 
       type="button"
       draggable
       onDragStart={(event) => {
-        event.dataTransfer.setData(DRAG_TYPE, photo.path);
+        event.dataTransfer.setData(PHOTO_DRAG_TYPE, photo.path);
         event.dataTransfer.effectAllowed = "move";
       }}
       onClick={onOpen}

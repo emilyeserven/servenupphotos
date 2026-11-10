@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { CalendarDaysIcon, CircleCheckIcon, ClockIcon, ImageIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { type DragEvent, useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { DatePicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,8 @@ import { longDayFormat, parseIsoDate } from "@/lib/calendar";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import { type FeedEntry, type FeedPhoto, feedAsOf, feedEntries } from "@/lib/social-feed";
 import type { DayPost } from "@/lib/social-post-days";
-import { photoName } from "@/lib/social-schedule";
+import { PHOTO_DRAG_TYPE, photoName } from "@/lib/social-schedule";
+import { useDropTarget } from "@/hooks/use-drop-target";
 import { cn } from "@/lib/utils";
 
 /** How many tiles the preview shows before **Show more**: four rows of three. */
@@ -34,6 +35,8 @@ interface InstagramFeedPreviewProps {
   posts: Map<string, DayPost[]>;
   /** Today, as YYYY-MM-DD. */
   today: string;
+  /** Moves the calendar photo at path to day, swapping with the photo already there. */
+  onDropPhoto: (path: string, day: string) => void;
 }
 
 /** The calendar's photos as the feed needs them. */
@@ -50,7 +53,8 @@ function feedPhotos(byDay: Map<string, SocialPhoto>): Map<string, FeedPhoto> {
  * The Social Feed preview: the Instagram profile grid as it looks on a chosen day, newest first,
  * from the calendar's photos and the Instagram posts under Social media posts.
  */
-export function InstagramFeedPreview({ byDay, posts, today }: InstagramFeedPreviewProps) {
+export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
+  const { byDay, posts, today, onDropPhoto } = props;
   const [asOf, setAsOf] = useState(today);
   const [shown, setShown] = useState(PAGE);
   const entries = useMemo(() => feedEntries(feedPhotos(byDay), posts), [byDay, posts]);
@@ -67,9 +71,16 @@ export function InstagramFeedPreview({ byDay, posts, today }: InstagramFeedPrevi
         Your Instagram grid as it looks at the end of {longDayFormat.format(parseIsoDate(asOf))}:{" "}
         {feed.length} {feed.length === 1 ? "post" : "posts"}, newest first, from the calendar and
         the Instagram posts under <strong>Social media posts</strong>, with changes not committed
-        yet. Photos that post on that day are ringed.
+        yet. Photos that post on that day are ringed. Drag a calendar photo onto another tile to
+        swap their days.
       </p>
-      <FeedGrid feed={feed.slice(0, shown)} asOf={asOf} today={today} />
+      <FeedGrid
+        feed={feed.slice(0, shown)}
+        asOf={asOf}
+        today={today}
+        byDay={byDay}
+        onDropPhoto={onDropPhoto}
+      />
       {feed.length > shown && (
         <Button variant="outline" className="self-center" onClick={() => setShown(shown + PAGE)}>
           Show more ({feed.length - shown} left)
@@ -106,10 +117,12 @@ interface FeedGridProps {
   feed: FeedEntry[];
   asOf: string;
   today: string;
+  byDay: Map<string, SocialPhoto>;
+  onDropPhoto: (path: string, day: string) => void;
 }
 
 /** The feed as Instagram's profile grid: three columns of 3:4 tiles with thin gaps. */
-function FeedGrid({ feed, asOf, today }: FeedGridProps) {
+function FeedGrid({ feed, asOf, today, byDay, onDropPhoto }: FeedGridProps) {
   if (feed.length === 0) {
     return (
       <p className="text-muted-foreground rounded-md border border-dashed p-4 text-center text-sm">
@@ -125,6 +138,8 @@ function FeedGrid({ feed, asOf, today }: FeedGridProps) {
           entry={entry}
           asOf={asOf}
           upcoming={entry.day > today}
+          onCalendar={byDay.get(entry.day)?.path === entry.path}
+          onDropPhoto={(path) => onDropPhoto(path, entry.day)}
         />
       ))}
     </ul>
@@ -136,28 +151,63 @@ interface FeedTileProps {
   asOf: string;
   /** Whether its day is after today, so it isn't on Instagram yet. */
   upcoming: boolean;
+  /** Whether the photo is on the calendar that day, so it can be dragged to another tile's day. */
+  onCalendar: boolean;
+  /** Moves the dragged calendar photo at path to this tile's day. */
+  onDropPhoto: (path: string) => void;
 }
 
-/** One photo of the feed, linking to its Photo page, with its day and where it stands on hover. */
-function FeedTile({ entry, asOf, upcoming }: FeedTileProps) {
+/**
+ * One photo of the feed, linking to its Photo page, with its day and where it stands on hover. A
+ * calendar photo can be dragged onto another tile, which moves it to that tile's day.
+ */
+function FeedTile({ entry, asOf, upcoming, onCalendar, onDropPhoto }: FeedTileProps) {
+  const { over, handlers } = useDropTarget(PHOTO_DRAG_TYPE, (path) => {
+    if (path !== entry.path) onDropPhoto(path);
+  });
   const day = longDayFormat.format(parseIsoDate(entry.day));
   const label = `${entry.name}, ${day}: ${SOURCE_LABELS[entry.source]}`;
   return (
-    <li className="relative aspect-[3/4]">
+    <li className="relative aspect-[3/4]" {...handlers}>
       <Link
         to="/exif"
         search={{ edit: entry.path }}
         title={label}
         aria-label={label}
-        className="bg-muted block size-full overflow-hidden"
+        {...dragProps(entry.path, onCalendar)}
       >
         <TileImage image={entry.image} />
-        {entry.day === asOf && (
-          <span className="ring-primary pointer-events-none absolute inset-0 ring-2 ring-inset" />
-        )}
+        <TileRing over={over} chosenDay={entry.day === asOf} />
         <SourceMark entry={entry} upcoming={upcoming} />
       </Link>
     </li>
+  );
+}
+
+/** What makes a tile draggable when its photo is on the calendar, and its look either way. */
+function dragProps(path: string, onCalendar: boolean) {
+  const className = "bg-muted block size-full overflow-hidden";
+  if (!onCalendar) return { draggable: false, className };
+  return {
+    draggable: true,
+    className: cn(className, "cursor-grab active:cursor-grabbing"),
+    onDragStart: (event: DragEvent) => {
+      event.dataTransfer.setData(PHOTO_DRAG_TYPE, path);
+      event.dataTransfer.effectAllowed = "move";
+    },
+  };
+}
+
+/** The ring of a tile a photo is dragged over, or of one that posts on the chosen day. */
+function TileRing({ over, chosenDay }: { over: boolean; chosenDay: boolean }) {
+  if (!over && !chosenDay) return null;
+  return (
+    <span
+      className={cn(
+        "pointer-events-none absolute inset-0 ring-inset",
+        over ? "ring-ring ring-4" : "ring-primary ring-2",
+      )}
+    />
   );
 }
 

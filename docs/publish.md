@@ -50,7 +50,10 @@ the calendar (with dates moved and not committed yet) and every Instagram post w
 posts**, up to that day; a photo that is on the calendar and has a post on the same day is one tile. Photos that post
 on the chosen day are ringed, and ones still to come after today get a corner mark: a calendar for a calendar day, a
 clock for a planned post, and a check for one scheduled on Instagram. Each tile links to its Photo page, and the grid
-shows four rows at a time with **Show more** for the rest. `apps/client-pipeline/src/lib/social-feed.ts` builds the
+shows four rows at a time with **Show more** for the rest. A tile whose photo is on the calendar can be dragged onto
+any other tile, in any row, to move it to that tile's day, swapping with the calendar photo already there, just as
+dragging on the calendar does (they share the same drag, so a tile can also be dropped on a calendar day). Tiles that
+come only from **Social media posts** can't be dragged, since their day is the post's, set on the Photo page. `apps/client-pipeline/src/lib/social-feed.ts` builds the
 feed (`feedEntries`, `feedAsOf`).
 
 ### Suggested photos
