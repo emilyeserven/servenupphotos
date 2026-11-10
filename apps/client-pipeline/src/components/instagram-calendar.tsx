@@ -2,6 +2,7 @@ import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
 import type { SocialCalendar, SocialPhoto } from "@/api/publish";
 import { DayPostBackdrop, DayPostMark, InstagramPosts } from "@/components/instagram-posts";
+import { InstagramFeedPreview } from "@/components/instagram-feed-preview";
 import { InstagramFocus } from "@/components/instagram-focus";
 import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
 import { PhotoFiles } from "@/components/photo-files";
@@ -114,6 +115,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
         }}
       />
       <InstagramPosts days={days} postsByDay={posts} />
+      <InstagramFeedPreview byDay={byDay} posts={posts} today={isoDate(now)} />
       <PhotoPicker
         day={picking}
         byDay={byDay}
