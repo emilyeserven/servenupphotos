@@ -48,3 +48,9 @@ export const UNSELECTED = "unselected";
 
 /** The photo JSON field marking a photo as Undecided: `true`, or left out (or `null`) when it isn't. */
 export const UNDECIDED = "undecided";
+
+/**
+ * The photo JSON field marking a Grid Anchor on the Instagram calendar: `true`, or left out (or
+ * `null`). The anchor and the photos just before it on the calendar make one row of the feed.
+ */
+export const GRID_ANCHOR = "socialGridAnchor";

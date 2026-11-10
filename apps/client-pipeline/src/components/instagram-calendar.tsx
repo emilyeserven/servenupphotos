@@ -4,6 +4,8 @@ import type { SocialCalendar, SocialPhoto } from "@/api/publish";
 import { DayPostBackdrop, DayPostMark, InstagramPosts } from "@/components/instagram-posts";
 import { InstagramFeedPreview } from "@/components/instagram-feed-preview";
 import { InstagramFocus } from "@/components/instagram-focus";
+import { AnchorOutline, GridAnchorToggle, useGridAnchors } from "@/components/grid-anchor";
+import { type AnchorPlace, anchorGroups, anchorPlaces } from "@/lib/grid-anchors";
 import { ScheduleTabs } from "@/components/instagram-tabs";
 import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
 import { PhotoFiles } from "@/components/photo-files";
@@ -91,6 +93,9 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
   const [now] = useState(() => new Date());
 
   const byDay = photosByDay(calendar.photos, unsaved);
+  const anchors = useGridAnchors(calendar.photos);
+  const groups = anchorGroups(byDay, anchors.anchored);
+  const places = anchorPlaces(groups);
   const days = calendarDays(now, weekOffset, WEEKS);
   const schedule = (photo: SocialPhoto, day: string | null) =>
     update(moveToDay(unsaved, byDay, photo, day));
@@ -116,6 +121,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
               unsaved={unsaved}
               onOpen={setPicking}
               onDropPhoto={dropPhoto}
+              places={places}
             />
             <InstagramPosts postsByDay={posts} today={isoDate(now)} />
           </>
@@ -126,6 +132,8 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
             posts={posts}
             today={isoDate(now)}
             onDropPhoto={dropPhoto}
+            groups={groups}
+            places={places}
           />
         }
       />
@@ -135,6 +143,12 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
         photos={calendar.photos}
         unsaved={unsaved}
         onClose={() => setPicking(null)}
+        footer={(photo) => (
+          <GridAnchorToggle
+            anchored={anchors.anchored.has(photo.path)}
+            onToggle={() => anchors.toggle(photo)}
+          />
+        )}
         onSchedule={(photo, day) => {
           schedule(photo, day);
           setPicking(null);
@@ -223,10 +237,12 @@ interface CalendarGridProps {
   unsaved: Unsaved;
   onOpen: (day: string) => void;
   onDropPhoto: (path: string, day: string) => void;
+  /** Where each photo in a Grid Anchor group stands, by file path. */
+  places: Map<string, AnchorPlace>;
 }
 
 function CalendarGrid(props: CalendarGridProps) {
-  const { days, today, byDay, posts, unsaved, onOpen, onDropPhoto } = props;
+  const { days, today, byDay, posts, unsaved, onOpen, onDropPhoto, places } = props;
   return (
     <>
       <WeekNav {...props} />
@@ -250,6 +266,7 @@ function CalendarGrid(props: CalendarGridProps) {
               }
               onOpen={() => onOpen(day)}
               onDropPhoto={(path) => onDropPhoto(path, day)}
+              place={photo && places.get(photo.path)}
             />
           );
         })}
@@ -258,7 +275,8 @@ function CalendarGrid(props: CalendarGridProps) {
         Click an empty day to pick a photo for it, or a photo to change or remove it. Drag a photo
         to another day to move it there; dropping it on another photo swaps the two. A check in a
         day&apos;s corner marks Instagram posts already scheduled on Instagram, and a clock ones
-        still planned.
+        still planned. A Grid Anchor (set in a day&apos;s picker) and the 2 photos before it are
+        outlined in their color: they make one row of the Social Feed.
       </p>
     </>
   );
@@ -308,6 +326,8 @@ interface DayProps {
   unsaved: boolean;
   onOpen: () => void;
   onDropPhoto: (path: string) => void;
+  /** Where the day's photo stands in a Grid Anchor group, if it's in one. */
+  place: AnchorPlace | undefined;
 }
 
 /** A day's box: dimmed in the past, ringed today and while a photo is dragged over it. */
@@ -321,7 +341,7 @@ function dayClass(day: string, today: string, over: boolean) {
 }
 
 /** One day of the calendar: a drop target holding its photo, or a button to pick one. */
-function Day({ day, today, photo, posts, unsaved, onOpen, onDropPhoto }: DayProps) {
+function Day({ day, today, photo, posts, unsaved, onOpen, onDropPhoto, place }: DayProps) {
   const { over, handlers } = useDropTarget(PHOTO_DRAG_TYPE, onDropPhoto);
   const label = longDayFormat.format(parseIsoDate(day));
   return (
@@ -332,6 +352,7 @@ function Day({ day, today, photo, posts, unsaved, onOpen, onDropPhoto }: DayProp
         onPhoto={photo !== undefined || !!posts?.[0]?.photo.image}
       />
       <DayPostMark posts={posts} />
+      <AnchorOutline place={place} />
       {photo ? (
         <ScheduledPhoto photo={photo} label={label} unsaved={unsaved} onOpen={onOpen} />
       ) : (

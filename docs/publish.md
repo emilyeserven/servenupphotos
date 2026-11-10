@@ -62,6 +62,19 @@ dragging on the calendar does (they share the same drag, so a tile can also be d
 come only from **Social media posts** can't be dragged, since their day is the post's, set on the Photo page. `apps/client-pipeline/src/lib/social-feed.ts` builds the
 feed (`feedEntries`, `feedAsOf`).
 
+### Grid Anchors
+
+A photo on the calendar can be made a **Grid Anchor** from its day's picker (**Make Grid Anchor**, next to **Remove
+from this day**), to plan thematic rows of the feed. The anchor and the 2 calendar photos just before it make a
+group of 3, one row of the 3-column feed (`ANCHOR_ROW` in `apps/client-pipeline/src/lib/grid-anchors.ts`). Each
+group is outlined in its own color on the calendar and in the **Social Feed preview**, with an anchor badge on the
+anchor itself. Above the preview's grid, each group in the feed on the chosen day says whether it fills a row (the
+anchor starts the row, with the other two after it in the same row) or how many tiles into its row the anchor is,
+and how many more posts after it, or fewer, would line it up (`feedAlignments`).
+
+It's saved as `socialGridAnchor: true` on the photo's JSON, kept as a local edit until **Commit** like a moved date,
+and left out of photos that aren't anchors.
+
 ### Suggested photos
 
 When a day is picked, the picker opens with two sections, each folded or opened by its heading. The first, **Before

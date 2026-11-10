@@ -1,5 +1,5 @@
 import { ImageIcon, SparklesIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
 import { focusSummary } from "@/components/instagram-focus";
@@ -53,6 +53,8 @@ interface PhotoPickerProps {
   onClose: () => void;
   /** Puts photo on day, or takes it off the calendar when day is null. */
   onSchedule: (photo: SocialPhoto, day: string | null) => void;
+  /** More buttons for the day's photo, next to **Remove from this day**. */
+  footer: (photo: SocialPhoto) => ReactNode;
 }
 
 /** The photo on day, if the picker is open and the day has one. */
@@ -194,6 +196,7 @@ export function PhotoPicker({
   unsaved,
   onClose,
   onSchedule,
+  footer,
 }: PhotoPickerProps) {
   const [search, setSearch] = useState("");
   // Kept between days, so opting in once shows them every time the picker opens.
@@ -254,16 +257,19 @@ export function PhotoPicker({
             onPick={(photo) => choose(photo, day)}
           />
         </div>
-        {current && <RemoveFooter onRemove={() => choose(current, null)} />}
+        {current && (
+          <RemoveFooter onRemove={() => choose(current, null)}>{footer(current)}</RemoveFooter>
+        )}
       </DialogContent>
     </Dialog>
   );
 }
 
-/** The button that takes the day's photo off the calendar. */
-function RemoveFooter({ onRemove }: { onRemove: () => void }) {
+/** The button that takes the day's photo off the calendar, after any others for the photo. */
+function RemoveFooter({ onRemove, children }: { onRemove: () => void; children?: ReactNode }) {
   return (
     <DialogFooter>
+      {children}
       <Button variant="outline" onClick={onRemove}>
         Remove from this day
       </Button>
