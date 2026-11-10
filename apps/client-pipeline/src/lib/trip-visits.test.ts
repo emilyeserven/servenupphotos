@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { TripVisit } from "@/api/trip-lines";
 import type { GapDraft } from "@/lib/trip-gaps";
-import { firstStops, movedVisit, offRoute, visitsAfter } from "@/lib/trip-visits";
+import { firstStops, firstVisit, movedVisit, offRoute, visitsAfter } from "@/lib/trip-visits";
 
 const lunch: TripVisit = { name: "Lunch", kind: "restaurant", latitude: 1, longitude: 1, after: 1 };
 const ids = [1, 2, 3];
@@ -29,6 +29,12 @@ test("a trip stop moves on to after the last photo, where the route ends, and no
   assert.deepEqual(last.visits, [{ ...lunch, after: 3 }]);
   assert.deepEqual(visitsAfter(last.visits, 3), last.visits);
   assert.equal(movedVisit(last, last.visits![0]!, ids, 1), last);
+});
+
+test("a trip stop off the route can be put before the first photo", () => {
+  const off = omitAfter(lunch);
+  const draft = firstVisit({ gaps: [], visits: [off] }, off);
+  assert.deepEqual(draft.visits, [{ ...off, first: true }]);
 });
 
 function omitAfter({ after: _after, ...rest }: TripVisit): TripVisit {

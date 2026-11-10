@@ -4,7 +4,7 @@ import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
 import { GAPS, gapInfo } from "@/components/trip-lines/modes";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
-import { StripEnd } from "@/components/trip-lines/strip-end";
+import { StartInsert, StripEnd } from "@/components/trip-lines/strip-ends";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { type StripVia, ViaChips } from "@/components/trip-lines/via-list";
 import type { TripPhoto } from "@/lib/trip-days";
@@ -30,6 +30,8 @@ interface PhotoStripProps {
   onMoveVisit?: (visit: TripVisit, by: -1 | 1) => void;
   /** Puts a trip stop on the route right after photo `after`; left out, none can be put there. */
   onInsertVisit?: (after: number, visit: TripVisit) => void;
+  /** Puts a trip stop on the route before the day's first photo; left out, none can be put there. */
+  onInsertFirst?: (visit: TripVisit) => void;
   /** Takes a trip stop off the route; left out, they can't be taken off. */
   onOffVisit?: (visit: TripVisit) => void;
   /** The day's trip stops; the ones put on the route show between their two photos. */
@@ -168,11 +170,22 @@ function Between(props: StripItemProps & { i: number }) {
  */
 function FromStart(props: StripItemProps) {
   const { startGap, gaps, onGap } = props;
-  if (!startGap || !gaps) return <StopsHere {...props} />;
+  if (!startGap || !gaps) return <StartStops {...props} />;
   return (
     <>
-      <StopsHere {...props} />
+      <StartStops {...props} />
       <GapPicker gap={startGap} index={-1} onGap={onGap} choices={START_GAPS} />
+    </>
+  );
+}
+
+/** Putting a trip stop before the first photo while the day has a line, then the ones there. */
+function StartStops(props: StripItemProps) {
+  const { gaps, onInsertFirst, choices } = props;
+  return (
+    <>
+      {gaps && onInsertFirst && <StartInsert choices={choices} onInsert={onInsertFirst} />}
+      <StopsHere {...props} />
     </>
   );
 }

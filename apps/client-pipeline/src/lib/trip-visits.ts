@@ -129,6 +129,11 @@ export function placedVisit(
   return withPlace(draft, visit, after === undefined ? {} : { after });
 }
 
+/** The draft with one of its trip stops put on the route before the day's first photo. */
+export function firstVisit(draft: GapDraft, visit: TripVisit): GapDraft {
+  return withPlace(draft, visit, { first: true });
+}
+
 /** The trip stops not on the route yet, which the photo strip can put between two photos. */
 export function offRoute(visits: TripVisit[] | undefined): TripVisit[] {
   return (visits ?? []).filter((v) => v.after === undefined && !v.first);

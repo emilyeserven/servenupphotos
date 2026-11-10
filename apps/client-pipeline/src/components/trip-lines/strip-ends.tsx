@@ -51,3 +51,28 @@ function StopsAtEnd({ stops, onMove, onOff }: Omit<StripEndProps, "choices" | "o
     </>
   );
 }
+
+interface StartInsertProps {
+  /** The day's trip stops not on the route yet, which can start it. */
+  choices: TripVisit[];
+  /** Puts a trip stop on the route before the first photo. */
+  onInsert: (visit: TripVisit) => void;
+}
+
+/**
+ * Puts a trip stop on the route before the day's first photo, such as lunch before the first photo
+ * was taken: after the start spot when the day has one, or else the line starts there. Shown on
+ * hover, before the first photo in the photo strip.
+ */
+export function StartInsert({ choices, onInsert }: StartInsertProps) {
+  return (
+    <span className="group/start flex h-20 items-center">
+      <VisitInsert
+        choices={choices}
+        onInsert={onInsert}
+        heading="A trip stop the route starts at, before the first photo"
+        className="opacity-0 group-hover/start:opacity-100 focus-visible:opacity-100"
+      />
+    </span>
+  );
+}
