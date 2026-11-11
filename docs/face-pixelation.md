@@ -33,7 +33,8 @@ Pigo only finds faces looking roughly at the camera. Faces turned to the side, s
 
 ## Shapes and keep areas
 
-Each area in the list has three choices:
+Every new area, drawn, added or found, starts as a **Circle** with **Whole blocks** edges. Each area in the list has
+these choices:
 
 - **Pixelate** or **Keep as is**. A keep area leaves what's under it as the photo has it, even where a face's
   pixelation covers it, for hair, a hat or a background that doesn't need hiding. Keep areas are applied after every

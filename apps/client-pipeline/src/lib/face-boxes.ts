@@ -42,6 +42,17 @@ export const MAX_BLOCKS = 40;
 /** How many blocks a new box starts with, the same as a found face. */
 const DEFAULT_BLOCKS = 8;
 
+/**
+ * What every new area starts as, drawn, added or found: a circle, pixelating every block it touches
+ * whole. Its shape and edge can be changed in the list.
+ */
+const NEW_AREA = { shape: "circle", edge: "blocks" } as const satisfies Partial<FaceBox>;
+
+/** face as a new area starts: a circle with whole-block edges. */
+export function newArea(face: FaceBox): FaceBox {
+  return { ...face, ...NEW_AREA };
+}
+
 /** The most boxes one photo may have, as the backend allows. */
 export const MAX_FACES = 30;
 
@@ -96,7 +107,7 @@ export function resizedBox(
   return { ...start, x: h.start, width: h.length, y: v.start, height: v.length };
 }
 
-/** The box drawn by dragging from one point to another, inside the photo, with blocks. */
+/** The circle drawn by dragging from one point to another, inside the photo, with blocks. */
 export function drawnBox(
   from: { x: number; y: number },
   to: { x: number; y: number },
@@ -107,7 +118,7 @@ export function drawnBox(
   const y0 = clamp(Math.min(from.y, to.y), 0, photo.height);
   const x1 = clamp(Math.max(from.x, to.x), 0, photo.width);
   const y1 = clamp(Math.max(from.y, to.y), 0, photo.height);
-  return { x: x0, y: y0, width: x1 - x0, height: y1 - y0, blocks };
+  return newArea({ x: x0, y: y0, width: x1 - x0, height: y1 - y0, blocks });
 }
 
 /** Whether a drawn box is big enough to keep, rather than a stray click. */
@@ -122,7 +133,7 @@ export interface Point {
 }
 
 /**
- * A square box for adding one by hand, centered on `at` (the middle of the photo unless set) and
+ * A circle in a square box for adding one by hand, centered on `at` (the middle of the photo unless set) and
  * kept inside the photo: a sixth of the photo's shorter side, or of `view`'s when the preview is
  * zoomed in to show only part of it.
  */
@@ -134,13 +145,13 @@ export function middleBox(
 ): FaceBox {
   const side = Math.max(MIN_SIDE, Math.round(Math.min(view.width, view.height) / 6));
   const center = at ?? { x: photo.width / 2, y: photo.height / 2 };
-  return {
+  return newArea({
     x: Math.round(clamp(center.x - side / 2, 0, photo.width - side)),
     y: Math.round(clamp(center.y - side / 2, 0, photo.height - side)),
     width: side,
     height: side,
     blocks,
-  };
+  });
 }
 
 /** face in whole pixels with its blocks in range, as the backend takes it. */
