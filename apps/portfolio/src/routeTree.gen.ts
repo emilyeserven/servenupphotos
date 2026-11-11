@@ -16,6 +16,7 @@ import { Route as GridRouteImport } from './routes/grid'
 import { Route as LikesRouteImport } from './routes/likes'
 import { Route as LuckyRouteImport } from './routes/lucky'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as RawVsEditedRouteImport } from './routes/raw-vs-edited'
 import { Route as SpotlightRouteImport } from './routes/spotlight'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as TableRouteImport } from './routes/table'
@@ -61,6 +62,11 @@ const LuckyRoute = LuckyRouteImport.update({
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RawVsEditedRoute = RawVsEditedRouteImport.update({
+  id: '/raw-vs-edited',
+  path: '/raw-vs-edited',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SpotlightRoute = SpotlightRouteImport.update({
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/likes': typeof LikesRoute
   '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
+  '/raw-vs-edited': typeof RawVsEditedRoute
   '/spotlight': typeof SpotlightRoute
   '/stats': typeof StatsRoute
   '/table': typeof TableRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/likes': typeof LikesRoute
   '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
+  '/raw-vs-edited': typeof RawVsEditedRoute
   '/spotlight': typeof SpotlightRoute
   '/stats': typeof StatsRoute
   '/table': typeof TableRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/likes': typeof LikesRoute
   '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
+  '/raw-vs-edited': typeof RawVsEditedRoute
   '/spotlight': typeof SpotlightRoute
   '/stats': typeof StatsRoute
   '/table': typeof TableRoute
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/likes'
     | '/lucky'
     | '/map'
+    | '/raw-vs-edited'
     | '/spotlight'
     | '/stats'
     | '/table'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/likes'
     | '/lucky'
     | '/map'
+    | '/raw-vs-edited'
     | '/spotlight'
     | '/stats'
     | '/table'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/likes'
     | '/lucky'
     | '/map'
+    | '/raw-vs-edited'
     | '/spotlight'
     | '/stats'
     | '/table'
@@ -251,6 +263,7 @@ export interface RootRouteChildren {
   LikesRoute: typeof LikesRoute
   LuckyRoute: typeof LuckyRoute
   MapRoute: typeof MapRoute
+  RawVsEditedRoute: typeof RawVsEditedRoute
   SpotlightRoute: typeof SpotlightRoute
   StatsRoute: typeof StatsRoute
   TableRoute: typeof TableRoute
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/map'
       fullPath: '/map'
       preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/raw-vs-edited': {
+      id: '/raw-vs-edited'
+      path: '/raw-vs-edited'
+      fullPath: '/raw-vs-edited'
+      preLoaderRoute: typeof RawVsEditedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/spotlight': {
@@ -403,6 +423,7 @@ const rootRouteChildren: RootRouteChildren = {
   LikesRoute: LikesRoute,
   LuckyRoute: LuckyRoute,
   MapRoute: MapRoute,
+  RawVsEditedRoute: RawVsEditedRoute,
   SpotlightRoute: SpotlightRoute,
   StatsRoute: StatsRoute,
   TableRoute: TableRoute,

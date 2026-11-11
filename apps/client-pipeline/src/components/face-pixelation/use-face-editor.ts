@@ -3,10 +3,13 @@ import type { VisibleArea } from "@/components/face-pixelation/face-preview";
 import type { Size } from "@/lib/crop";
 import { type FaceBox, MAX_FACES, middleBox, newArea, newFaces, sameBoxes } from "@/lib/face-boxes";
 
-/** The faces being edited against the saved ones, which one is picked, and how to change them. */
-export function useFaceEditor(saved: FaceBox[]) {
-  const [faces, setAllFaces] = useState<FaceBox[]>(saved);
-  const [selected, setSelected] = useState<number | null>(saved.length > 0 ? 0 : null);
+/**
+ * The faces being edited against the saved ones, which one is picked, and how to change them. They
+ * start as initial, the saved ones unless another start is given.
+ */
+export function useFaceEditor(saved: FaceBox[], initial: FaceBox[] = saved) {
+  const [faces, setAllFaces] = useState<FaceBox[]>(initial);
+  const [selected, setSelected] = useState<number | null>(initial.length > 0 ? 0 : null);
   const [photo, setPhoto] = useState<Size | null>(null);
   const [showBoxes, setShowBoxes] = useState(true);
   const setFaces = (next: FaceBox[]) => setAllFaces(next.slice(0, MAX_FACES));
@@ -41,6 +44,8 @@ export function useFaceEditor(saved: FaceBox[]) {
       photo && append([addedArea(photo, keep, visible)]),
     /** Adds the found faces that aren't boxed yet, as circles with whole-block edges. */
     addFound: (found: FaceBox[]) => append(newFaces(faces, found).map(newArea)),
+    /** Adds the areas that aren't boxed yet as they are, keeping their shapes and densities. */
+    addAreas: (areas: FaceBox[]) => append(newFaces(faces, areas)),
     reset: () => replace(saved),
     clear: () => replace([]),
   };

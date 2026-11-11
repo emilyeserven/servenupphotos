@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type UseMutationResult, useMutation, useQueryClient } from "@tanstack/react-query";
 import { savedFacesQuery } from "@/api/faces";
 import { regenerateVersionsMutation } from "@/api/versions";
 import type { Editable } from "@/components/edit-in-flight/photo-json";
@@ -12,7 +12,7 @@ import { withPixelatedFaces } from "@/lib/face-json";
  * the Photo page's own save, so browsers and Cloudflare fetch the remade versions. Other unsaved
  * edits on the page stay unsaved.
  */
-export function usePixelateSave({ image }: Editable, edit: Edit, save: Save) {
+export function usePixelateSave({ image }: Editable, edit: Edit, save: Save): PixelateSave {
   const queryClient = useQueryClient();
   const regenerate = useMutation(regenerateVersionsMutation);
   const mutation = useMutation({
@@ -29,5 +29,9 @@ export function usePixelateSave({ image }: Editable, edit: Edit, save: Save) {
   return { mutation, remadeOnly };
 }
 
-/** Pixelating the versions, from `usePixelateSave`. */
-export type PixelateSave = ReturnType<typeof usePixelateSave>;
+/** Pixelating the versions with the faces being edited, and saving the JSON that points at them. */
+export interface PixelateSave {
+  mutation: UseMutationResult<void, Error, FaceBox[]>;
+  /** The versions were remade with the faces, but saving the JSON failed. */
+  remadeOnly: boolean;
+}

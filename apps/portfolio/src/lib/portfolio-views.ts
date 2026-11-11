@@ -9,6 +9,7 @@ import {
   Heart,
   MapPin,
   Palette,
+  SquareSplitHorizontal,
   Tags,
 } from "lucide-react";
 
@@ -23,14 +24,15 @@ export interface PortfolioView {
     | "/grid"
     | "/color"
     | "/lucky"
-    | "/likes";
+    | "/likes"
+    | "/raw-vs-edited";
   label: string;
   description: string;
   icon: LucideIcon;
   /** False for a view that's linked but not ready to visit yet. */
   enabled: boolean;
   /**
-   * True for a lesser view (Albums, Tags, Numbers, Graph, Lucky, My Likes): the site menu lists it in small text under the
+   * True for a lesser view (Albums, Tags, Numbers, Graph, Lucky, My Likes, Raw vs Edited): the site menu lists it in small text under the
    * big icon tiles, and the homepage leaves it out.
    */
   minor?: boolean;
@@ -113,6 +115,14 @@ const portfolioViews: PortfolioView[] = [
     label: "My Likes",
     description: "The photos liked in this browser, with a list of their titles to copy.",
     icon: Heart,
+    enabled: true,
+    minor: true,
+  },
+  {
+    to: "/raw-vs-edited",
+    label: "Raw vs Edited",
+    description: "A few photos next to their unedited originals, to see what editing changed.",
+    icon: SquareSplitHorizontal,
     enabled: true,
     minor: true,
   },

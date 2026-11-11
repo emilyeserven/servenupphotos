@@ -35,6 +35,9 @@ The **heart** button, left of the eye button, likes the photo or takes the like 
 The **Related** button, left of the link button, opens the **More like this** drawer of related photos; see
 [More Like This](more-like-this.md).
 
+On a photo whose unedited original is shown on the portfolio, a **split square** button between Related and the link
+button opens it on the Raw vs Edited page, next to its original; see [Unedited originals](unedited-originals.md).
+
 | Page         | The photos it moves through                                                                                              |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------ |
 | Grid         | Every photo, in the chosen sort (newest or oldest first)                                                                 |

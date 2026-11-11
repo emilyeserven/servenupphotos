@@ -124,6 +124,12 @@ versions.
 
 A photo pixelated before the areas were saved in its JSON has nothing to reapply; pixelate it again after replacing.
 
+## Unedited originals
+
+A photo's [unedited original](unedited-originals.md#in-the-pipeline-the-photo-pages-original-section) has its own
+**Pixelate the original** card, the same editor on the original, starting from the photo's areas scaled into the
+edit's crop. The portfolio won't show the original until its areas are saved against the photo's current ones.
+
 ## What isn't hidden
 
 - **The original JPEG.** It stays as it was in R2, and its URL is in the photo's JSON as `images.full` (and so in

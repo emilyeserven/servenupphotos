@@ -64,3 +64,10 @@ export const GRID_GROUP_NAME = "socialGridGroupName";
  * edited again; left out when none are.
  */
 export const FACES = "faces";
+
+/**
+ * The photo JSON field that holds its unedited original, uploaded on the Photo page's Original
+ * section: `{ file, width, height, images, showOnPortfolio, faces }` (see `OriginalEntry`), or left
+ * out when it has none.
+ */
+export const ORIGINAL = "original";
