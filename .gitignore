@@ -15,3 +15,7 @@ apps/be-pipeline/data/
 apps/portfolio/src/data/*/*.local.json
 # Made by `pnpm shot`.
 screenshots/
+# Claude Code's personal settings and notes. "Yes, and don't ask again" saves the approved command
+# here, so it can hold tokens or keys typed into a command.
+.claude/settings.local.json
+CLAUDE.local.md
