@@ -13,6 +13,9 @@ its last four characters, so after saving you can replace or clear a secret but 
 The GitHub card also has **Keep untitled photos as drafts**, on by default, saved as `includeUntitled: false`; leaving
 `includeUntitled` out of a `PUT /settings/github` body keeps it. See [Drafts](drafts.md).
 
+Below them, **Edit in Pipeline (Chrome extension)** downloads the [Chrome extension](chrome-extension.md) made for the
+pipeline's own address, with the steps to install it.
+
 ## Status
 
 **Settings › Status** (`/settings/status`, under Settings in the sidebar) checks the pipeline itself: whether the BFF

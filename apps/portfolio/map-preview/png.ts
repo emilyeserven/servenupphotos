@@ -7,6 +7,8 @@
  * > `toBlob()` part written out by hand.
  */
 
+import { crc32 } from "../src/lib/crc32.ts";
+
 /** An image as straight RGBA bytes, four per pixel, row by row from the top left. */
 export interface Rgba {
   width: number;
@@ -227,19 +229,6 @@ export async function decodePng(bytes: Uint8Array): Promise<Rgba> {
     height: chunks.header.height,
     data: rowsToRgba(rows, chunks),
   };
-}
-
-const CRC_TABLE = Array.from({ length: 256 }, (_, n) => {
-  let c = n;
-  for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-  return c >>> 0;
-});
-
-/** The CRC-32 of the bytes, as PNG chunks end with. */
-function crc32(bytes: Uint8Array): number {
-  let c = 0xffffffff;
-  for (const b of bytes) c = CRC_TABLE[(c ^ b) & 0xff]! ^ (c >>> 8);
-  return (c ^ 0xffffffff) >>> 0;
 }
 
 /** One PNG chunk: its length, type, data and CRC. */
