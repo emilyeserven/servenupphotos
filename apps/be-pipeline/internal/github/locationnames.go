@@ -17,9 +17,17 @@ import (
 const maxOtherNames = 50
 
 // LocationNames are the names that win over other ways of writing a country
-// or city, from the localizations' OtherNames: by localization type, then by
-// the other name (see nameKey), the name that wins.
-type LocationNames map[string]map[string]string
+// or city, from the localizations' OtherNames, and the cities the
+// localizations know, so a photo with only a state named like a city gets that
+// city too (see cityOfState).
+type LocationNames struct {
+	// others is, by localization type, then by the other name (see nameKey),
+	// the name that wins.
+	others map[string]map[string]string
+	// cities is every city localization's name, by the name and by each of
+	// its other names (see nameKey).
+	cities map[string]string
+}
 
 // photoLocationFields are the photo JSON fields with a country, state or city in
 // them, and which.
@@ -43,13 +51,16 @@ func nameKey(name string) string {
 // parseLocationNames is the other names of the country, state and city
 // localizations in entries that can be read.
 func parseLocationNames(entries []Entry) LocationNames {
-	names := LocationNames{}
+	names := LocationNames{others: map[string]map[string]string{}, cities: map[string]string{}}
 	for _, l := range parseLocalizations(entries) {
+		if l.Type == LocalizationCity {
+			names.addCity(l)
+		}
 		for _, other := range l.OtherNames {
-			if names[l.Type] == nil {
-				names[l.Type] = map[string]string{}
+			if names.others[l.Type] == nil {
+				names.others[l.Type] = map[string]string{}
 			}
-			names[l.Type][nameKey(other)] = l.Name
+			names.others[l.Type][nameKey(other)] = l.Name
 		}
 	}
 	return names
@@ -70,21 +81,22 @@ func parseLocalizations(entries []Entry) []Localization {
 // winner is the name that wins over name, a country, state or city as typ says,
 // and whether name is another name of one.
 func (n LocationNames) winner(typ, name string) (string, bool) {
-	w, ok := n[typ][nameKey(name)]
+	w, ok := n.others[typ][nameKey(name)]
 	return w, ok
 }
 
 // count is how many other names there are.
 func (n LocationNames) count() int {
 	total := 0
-	for _, names := range n {
+	for _, names := range n.others {
 		total += len(names)
 	}
 	return total
 }
 
 // Apply is s with each country, state and city that's another name of one written
-// as the name that wins, as a new photo's JSON gets them.
+// as the name that wins, and its city filled in from a state named like a city
+// (see fillCity), as a new photo's JSON gets them.
 func (n LocationNames) Apply(s exif.Sanitized) exif.Sanitized {
 	for _, f := range []struct {
 		value **string
@@ -101,7 +113,7 @@ func (n LocationNames) Apply(s exif.Sanitized) exif.Sanitized {
 			*f.value = &w
 		}
 	}
-	return s
+	return n.fillCity(s)
 }
 
 // renamedFields is the changes the location names make to fields, a file's
@@ -266,7 +278,11 @@ func (ls *locationScan) add(path, fileURL, kind string, content []byte, fields m
 	if json.Unmarshal(content, &values) != nil {
 		return
 	}
-	if changes := ls.names.renamedFields(values, fields); len(changes) > 0 {
+	changes := ls.names.renamedFields(values, fields)
+	if kind == "photo" {
+		changes = append(changes, ls.names.cityFromState(values, changes)...)
+	}
+	if len(changes) > 0 {
 		ls.files = append(ls.files, LocationNameFile{Path: path, FileURL: fileURL, Kind: kind, Changes: changes})
 		ls.content[path] = content
 	}

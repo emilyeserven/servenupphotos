@@ -405,6 +405,22 @@ change files already rewritten.
 > **Frontend analogy:** it's a redirect map, like `{ "/old-path": "/new-path" }` in a router: the list follows the
 > redirect as soon as it's saved, and Update Data rewrites the old links in the files themselves.
 
+### A city from its state
+
+Some photos have a state but no city because their state is a city too: Seoul and Busan are each a state and a city,
+and the EXIF often writes only the state. When a photo has a state but no city (neither `city` nor `customCity`), and
+the state is named like a city that has a localization (its name or one of its [other names](#other-names), ignoring
+case), the city is filled in with that city's name. A `customState` fills in `customCity`; otherwise the EXIF `state`
+fills in `city`. A photo with a custom state that isn't a city is left as it is, even when its EXIF state is one.
+
+A new photo gets it when its EXIF is read, after the other names (`fillCity` in `be-pipeline/internal/github/statecity.go`).
+**Places → Location Names** fills it in on photos already saved, listing each one in its preview with the other
+names' changes before saving anything. A city counts once it has a localization, so a state named like a city no photo
+has yet needs **New → City** first.
+
+> **Frontend analogy:** it's a default value, like `city ?? (isKnownCity(state) ? state : undefined)`, written into
+> the data instead of computed on every render.
+
 Saves of places and localizations go through one queue: each checks the others' names and parents, so a save made
 while another runs waits its turn (its button says **Queued…**, then **Saving…**) instead of racing it. A row already queued isn't queued again.
 
