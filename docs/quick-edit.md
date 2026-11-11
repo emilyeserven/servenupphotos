@@ -21,6 +21,9 @@ empty field goes there at once when the link matches; otherwise the modal says w
 
 A view of many photos with none of these, such as `/grid?size=large`, has nothing to open, and the modal says so.
 
+The same matching runs as a page: `/quick-edit?url=<portfolio link>` redirects straight to the link's page, or shows
+why it can't with the field to paste another. The [Chrome extension](chrome-extension.md) opens it.
+
 The Places page reads `?edit=` once as it opens and selects that row: a place by its ID, a country, state or city by its
 name written the way map page addresses write it (`placeSlug` in the portfolio's `lib/place-slug.ts`, shared with
 `map-pages.ts`).

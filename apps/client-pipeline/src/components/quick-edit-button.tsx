@@ -33,12 +33,18 @@ export function QuickEditButton({ onNavigate }: { onNavigate?: () => void }) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           {open && (
-            <QuickEditForm
-              onDone={() => {
-                setOpen(false);
-                onNavigate?.();
-              }}
-            />
+            <>
+              <DialogHeader>
+                <DialogTitle>Quick Edit</DialogTitle>
+                <DialogDescription>{QUICK_EDIT_HELP}</DialogDescription>
+              </DialogHeader>
+              <QuickEditForm
+                onDone={() => {
+                  setOpen(false);
+                  onNavigate?.();
+                }}
+              />
+            </>
           )}
         </DialogContent>
       </Dialog>
@@ -46,8 +52,15 @@ export function QuickEditButton({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-/** The modal's field: pasting a link that matches goes straight to its page; Enter or Open goes too. */
-function QuickEditForm({ onDone }: { onDone: () => void }) {
+/** What Quick Edit takes, under its title. */
+export const QUICK_EDIT_HELP =
+  "Paste a link from the portfolio to edit what it shows: a photo (or any view with one open), an album, a Trip, a tag, a genre or a place.";
+
+/**
+ * Quick Edit's field, in the modal and on the `/quick-edit` page: pasting a link that matches goes
+ * straight to its page; Enter or Open goes too.
+ */
+export function QuickEditForm({ onDone }: { onDone?: () => void }) {
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const target = text.trim() === "" ? undefined : quickEditTarget(text);
@@ -55,7 +68,7 @@ function QuickEditForm({ onDone }: { onDone: () => void }) {
   function go(value: string) {
     const next = quickEditTarget(value);
     if (!("href" in next)) return;
-    onDone();
+    onDone?.();
     void navigate({ href: next.href });
   }
 
@@ -66,13 +79,6 @@ function QuickEditForm({ onDone }: { onDone: () => void }) {
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
-      <DialogHeader>
-        <DialogTitle>Quick Edit</DialogTitle>
-        <DialogDescription>
-          Paste a link from the portfolio to edit what it shows: a photo (or any view with one
-          open), an album, a Trip, a tag, a genre or a place.
-        </DialogDescription>
-      </DialogHeader>
       <div className="flex gap-2">
         <Input
           autoFocus
