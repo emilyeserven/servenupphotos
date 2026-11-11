@@ -17,6 +17,7 @@ import {
 import { SidebarCollapseButton } from "@/components/sidebar-collapse-button";
 import { navGroups } from "@/components/sidebar/nav-groups";
 import { NavItem } from "@/components/sidebar/nav-item";
+import { QuickEditButton } from "@/components/quick-edit-button";
 import { ThemeButton } from "@/components/theme-button";
 import { UploadButtons } from "@/components/upload-buttons";
 
@@ -51,6 +52,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
         <UploadButtons onNavigate={closeOnMobile} />
+        <QuickEditButton onNavigate={closeOnMobile} />
       </SidebarHeader>
       <SidebarContent>
         {navGroups.map((group) => (

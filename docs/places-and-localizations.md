@@ -16,7 +16,8 @@ ignoring case.
 A place can't be in itself or in a place that's in it, and its parent must be a place. `city` and `country` are
 where it is, or `""`; older place files don't have these three, and read as empty.
 
-The Places page is a list on the left and an edit panel on the right (on a phone, the panel comes first). The list is
+The Places page is a list on the left and an edit panel on the right (on a phone, the panel comes first). A link with
+`?edit=city/seoul` (or `place/<id>`), as [Quick Edit](quick-edit.md) opens, starts with that row in the panel. The list is
 one tree of every country, the cities in it, and the places in each city, each with an icon on the left: a globe for a
 country, a building for a city and a pin for a place (with a check inside for a place marked as an exact location). A place is listed under the place it's in, or else its city (its
 own, or a place above it's), or else its country; a city under its country; anything with nothing above it at the top,

@@ -148,6 +148,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Pixelating faces](docs/face-pixelation.md): finding or boxing faces on a photo in R2 (as boxes or circles, with areas to keep unpixelated), setting each one's pixelation density with a live preview, and remaking every version with them hidden
 - [Changelog](docs/changelog.md) (`/changelog`): the pull requests merged into the repository, by day, with links to GitHub and without merge commits or photo data merges
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
+- [Quick Edit](docs/quick-edit.md): pasting a portfolio link to open the pipeline page that edits it
 - [BFF timeouts](docs/bff-timeouts.md) (`/api/timeouts`): how long the BFF waits for each backend path, read from the backend at start-up
 - [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
 
