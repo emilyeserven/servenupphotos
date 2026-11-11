@@ -107,6 +107,9 @@ row's optional name as `socialGridGroupName`; other photos leave both out; see [
 A day posted to Instagram with a photo that isn't in the portfolio is a Not Stored post, `notstored/<day>.json`,
 combined into `notstored/NOTSTORED.json`; see [Publish](publish.md#not-stored-days).
 
+Each mockup on the Photo Book page is `photobooks/<id>.json`, combined into `photobooks/PHOTOBOOKS.json`; see
+[Photo Book](photo-book.md).
+
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
 [Re-editing a photo](replace-image.md).
 

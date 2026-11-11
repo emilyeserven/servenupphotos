@@ -1,7 +1,7 @@
 # Caption Templates
 
-`/caption-templates`, under **Configuration** in the sidebar, keeps captions for social media posts with placeholders
-for a photo's fields. On the Photo page, each post in the **Social media posts** card has a template picker and a
+`/caption-templates`, **Captions** under **Publish** in the sidebar, keeps captions for social media posts and the
+[Photo Book](photo-book.md) with placeholders for a photo's fields. There's one bank of templates for both. On the Photo page, each post in the **Social media posts** card has a template picker and a
 **Generate** button above its caption, which fills the template in from the photo's data, including changes not saved
 yet, and the post's hashtags. Generate asks before writing over a caption that has text. The picker starts on the first
 template for the post's platform, or else the first one for any platform.
@@ -83,7 +83,8 @@ by the sync button as a caption template.
 
 - **`name`** is how the picker lists it. Two templates can't share a name, ignoring case. The ID is made from it when
   the template is first saved, and kept after that.
-- **`platform`** is a platform ID from the Social media posts card, such as `instagram`, or `""` for any.
+- **`platform`** is a platform ID from the Social media posts card, such as `instagram`, `photobook` for the Photo
+  Book, or `""` for any. It only sets which template each place starts on; any template can be picked in either.
 - **`template`** is up to 5,000 characters, saved without trailing blank lines.
 
 Filling templates in happens in the browser (`apps/client-pipeline/src/lib/caption-template.ts`), so the backend only

@@ -43,6 +43,8 @@ const baseGear = readFolder("gear", "GEAR");
 
 const baseNotStored = readFolder("notstored", "NOTSTORED");
 
+const basePhotoBooks = readFolder("photobooks", "PHOTOBOOKS");
+
 const headAlbums = [...baseAlbums, added.album];
 
 const headGenres = [...baseGenres, ...added.genres];
@@ -66,6 +68,8 @@ const headGraphs = withAdded(baseGraphs, added.graphs);
 const headGear = withAdded(baseGear, added.gear);
 
 const headNotStored = withAdded(baseNotStored, added.notstored);
+
+const headPhotoBooks = withAdded(basePhotoBooks, added.photobooks);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -96,6 +100,7 @@ function combinedFiles(
     graphs,
     gear,
     notstored,
+    photobooks,
   ],
   branch,
 ) {
@@ -116,6 +121,7 @@ function combinedFiles(
     graphs: combinedFile("graphs", "GRAPHS.json", graphs, branch),
     gear: combinedFile("gear", "GEAR.json", gear, branch),
     notstored: combinedFile("notstored", "NOTSTORED.json", notstored, branch),
+    photobooks: combinedFile("photobooks", "PHOTOBOOKS.json", photobooks, branch),
   };
 }
 
@@ -155,6 +161,7 @@ export function photosFixtures() {
           baseGraphs,
           baseGear,
           baseNotStored,
+          basePhotoBooks,
         ]),
         branch: BASE_BRANCH,
       },
@@ -177,6 +184,7 @@ export function photosFixtures() {
             headGraphs,
             headGear,
             headNotStored,
+            headPhotoBooks,
           ],
           PULL_REQUEST.branch,
         ),

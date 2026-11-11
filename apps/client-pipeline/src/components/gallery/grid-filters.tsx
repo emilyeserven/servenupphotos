@@ -54,6 +54,9 @@ function gridFilterCount(search: Record<string, unknown>): number {
   return filterCount(parseFilters(search)) + camera + colorFilterCount(parseColorFilters(search));
 }
 
+/** A photo file the Grid's filters can read: its path and its JSON, or why it couldn't be read. */
+type GridFile = Pick<InFlightFileRead, "path" | "data" | "error">;
+
 /** The Gallery's photos as the portfolio reads them, and which file each one is, by its ID. */
 interface GalleryPhotos {
   photos: Photo[];
@@ -64,7 +67,7 @@ interface GalleryPhotos {
  * The files as the portfolio reads its photos, with the local edits made. A file whose JSON
  * couldn't be read, or that has no date, has no photo, so the Grid's filters never show it.
  */
-function galleryPhotos(files: InFlightFileRead[], edits: Record<string, LocalEdit>): GalleryPhotos {
+function galleryPhotos(files: GridFile[], edits: Record<string, LocalEdit>): GalleryPhotos {
   const entries = files.flatMap((file) => {
     const data = editedData(file, edits);
     return typeof data === "object" && data !== null ? [{ path: file.path, data }] : [];
@@ -74,11 +77,11 @@ function galleryPhotos(files: InFlightFileRead[], edits: Record<string, LocalEdi
 }
 
 /**
- * The portfolio Grid's filters on the Gallery: the photos of `files` (some of `all`, the Gallery's
+ * The portfolio Grid's filters on the Gallery (and the Photo Book's drawer): the photos of `files` (some of `all`, the Gallery's
  * every file), which the filters' counts are out of, and the files the URL's filters leave, in the
  * same order. While none is set, every file is left, even one the portfolio couldn't place in time.
  */
-export function useGridFilters<T extends InFlightFileRead>(all: T[], files: T[]) {
+export function useGridFilters<T extends GridFile>(all: T[], files: T[]) {
   const search = useSearch({ strict: false }) as Record<string, unknown>;
   const edits = useLocalEditsStore((s) => s.edits);
   const { photos: every, paths } = useMemo(() => galleryPhotos(all, edits), [all, edits]);

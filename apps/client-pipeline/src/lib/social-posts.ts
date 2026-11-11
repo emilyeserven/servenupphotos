@@ -168,7 +168,15 @@ export function socialPostsChanged(data: Record<string, unknown>, drafts: Social
   return canonicalJson(saved) !== canonicalJson(socialPostsToSave(drafts));
 }
 
+/**
+ * What a caption template can be for besides a social media site: the Photo Book page's captions.
+ * Posts on the Photo page can't be made for it.
+ */
+export const PHOTO_BOOK_PLATFORM: SocialPlatform = { id: "photobook", label: "Photo Book" };
+
 /** The platform's name, or its id when the Photo page doesn't list it. */
 export function platformLabel(id: string): string {
-  return socialPlatforms.find((platform) => platform.id === id)?.label ?? id;
+  return (
+    [...socialPlatforms, PHOTO_BOOK_PLATFORM].find((platform) => platform.id === id)?.label ?? id
+  );
 }

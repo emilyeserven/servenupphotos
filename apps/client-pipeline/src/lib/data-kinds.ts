@@ -22,6 +22,7 @@ const COMBINED_KINDS = [
   "graphs",
   "gear",
   "notstored",
+  "photobooks",
 ] as const;
 
 /** A kind of combined data, by its name, which is also its folder in the data folder. */
@@ -61,6 +62,7 @@ export const KIND_INFO: Record<CombinedKind, KindInfo> = {
   graphs: { file: "GRAPHS.json", heading: "Graph presets", pending: "graph preset" },
   gear: { file: "GEAR.json", heading: "Gear pictures", pending: "gear picture" },
   notstored: { file: "NOTSTORED.json", heading: "Not Stored posts", pending: "Not Stored post" },
+  photobooks: { file: "PHOTOBOOKS.json", heading: "Photo books", pending: "photo book" },
 };
 
 /** An object with value(kind) for each of kinds, by kind. */

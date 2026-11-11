@@ -14,7 +14,7 @@ import (
 )
 
 // EntryKind is a kind of data file the pipeline saves whole, by ID: places,
-// localizations, metadata groups, camera overrides, custom lenses, timeline labels, viewer likes, trip lines, graph presets, gear pictures and Not Stored posts. Each is one JSON file in its kind's folder, and Commit
+// localizations, metadata groups, camera overrides, custom lenses, timeline labels, viewer likes, trip lines, graph presets, gear pictures, Not Stored posts and photo books. Each is one JSON file in its kind's folder, and Commit
 // combines them into the kind's AllFile.
 type EntryKind struct {
 	// Name is the kind's singular name, as shown: "place" or "localization".
@@ -59,7 +59,10 @@ var (
 	// NotStoredKind is the days something went up on Instagram whose photo
 	// isn't in the portfolio, one file per day, named by the day.
 	NotStoredKind = EntryKind{Name: "Not Stored post", Folder: "notstored", AllFile: "NOTSTORED.json"}
-	entryKinds    = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind}
+	// PhotoBooks is the Photo Book page's rough mockups of photo books, one
+	// file per book.
+	PhotoBooks = EntryKind{Name: "photo book", Folder: "photobooks", AllFile: "PHOTOBOOKS.json"}
+	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind, PhotoBooks}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as

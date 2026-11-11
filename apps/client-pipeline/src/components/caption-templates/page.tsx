@@ -17,7 +17,7 @@ export function CaptionTemplatesPage() {
     <Page
       wide
       title="Caption Templates"
-      description="Captions for social media posts with placeholders for the photo's fields, such as {title} or {camera}. Generate on the Photo page fills one in for a post. Each template is one JSON file, combined into CAPTIONS.json."
+      description="Captions for social media posts and the Photo Book, with placeholders for the photo's fields, such as {title} or {camera}. Generate on the Photo page fills one in for a post, and the Photo Book fills its captions in with one. Each template is one JSON file, combined into CAPTIONS.json."
     >
       <GitHubGate>{() => <Templates />}</GitHubGate>
     </Page>

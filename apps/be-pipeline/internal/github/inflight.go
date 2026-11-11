@@ -120,6 +120,8 @@ type InFlightResult struct {
 	Gear InFlightGroups `json:"gear"`
 	// NotStored are the Not Stored post files in the pull request.
 	NotStored InFlightGroups `json:"notstored"`
+	// PhotoBooks are the photo book files in the pull request.
+	PhotoBooks InFlightGroups `json:"photobooks"`
 }
 
 // addGroups fills r's field for each kind but photos (see groupKinds) with

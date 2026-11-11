@@ -28,6 +28,20 @@ function socialPhoto({ path: filePath, data }, i) {
     isSocialMediaEligible: i % 2 === 0,
     socialMediaPublishDate,
     data: { ...data, socialMediaPublishDate },
+    "PUT /api/photobooks/sample-book": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/photobooks/sample-book.json`,
+      data: { ...body, id: "sample-book" },
+      before: added.photobooks[0].data,
+      changed: true,
+    }),
+    "DELETE /api/photobooks/sample-book": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/photobooks/sample-book.json`,
+      data: null,
+      before: added.photobooks[0].data,
+      changed: true,
+    }),
   };
 }
 
@@ -45,6 +59,30 @@ function attentionPhoto(file, i) {
   } = photo.data;
   const peakChroma = colors?.peakChroma;
   return { ...photo, data: peakChroma === undefined ? rest : { ...rest, colors: { peakChroma } } };
+}
+
+/**
+ * Saving and removing the setting file folder/id, which was before: `PUT` answers the body as
+ * saved made into the file's data, and `DELETE` answers it removed.
+ */
+function entryFixtures(folder, id, before, saved) {
+  const path = `${FOLDER}/${folder}/${id}.json`;
+  return {
+    [`PUT /api/${folder}/${id}`]: ({ body }) => ({
+      ...pendingSave(),
+      path,
+      data: saved(body),
+      before,
+      changed: true,
+    }),
+    [`DELETE /api/${folder}/${id}`]: () => ({
+      ...pendingSave(),
+      path,
+      data: null,
+      before,
+      changed: true,
+    }),
+  };
 }
 
 /** The sample answers for the publish routes, keyed "METHOD /api/path". */
@@ -68,19 +106,14 @@ export function publishFixtures() {
       unreadable: [],
     },
     "PUT /api/publish/instagram": ({ body }) => ({ ...pendingSave(), files: body?.dates?.length }),
-    "PUT /api/notstored/2026-11-11": ({ body }) => ({
-      ...pendingSave(),
-      path: `${FOLDER}/notstored/2026-11-11.json`,
-      data: { ...body, id: "2026-11-11", day: "2026-11-11" },
-      before: added.notstored[1].data,
-      changed: true,
-    }),
-    "DELETE /api/notstored/2026-11-11": () => ({
-      ...pendingSave(),
-      path: `${FOLDER}/notstored/2026-11-11.json`,
-      data: null,
-      before: added.notstored[1].data,
-      changed: true,
-    }),
+    ...entryFixtures("notstored", "2026-11-11", added.notstored[1].data, (body) => ({
+      ...body,
+      id: "2026-11-11",
+      day: "2026-11-11",
+    })),
+    ...entryFixtures("photobooks", "sample-book", added.photobooks[0].data, (body) => ({
+      ...body,
+      id: "sample-book",
+    })),
   };
 }

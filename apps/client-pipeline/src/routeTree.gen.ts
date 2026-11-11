@@ -31,6 +31,7 @@ import { Route as InstagramPlannedRouteImport } from './routes/instagram-planned
 import { Route as LocalizationsRouteImport } from './routes/localizations'
 import { Route as LocationNamesRouteImport } from './routes/location-names'
 import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
+import { Route as PhotoBookRouteImport } from './routes/photo-book'
 import { Route as PlacesRouteImport } from './routes/places'
 import { Route as RelatedPhotosRouteImport } from './routes/related-photos'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -168,6 +169,11 @@ const LocationNamesRoute = LocationNamesRouteImport.update({
 const MetadataGroupsRoute = MetadataGroupsRouteImport.update({
   id: '/metadata-groups',
   path: '/metadata-groups',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PhotoBookRoute = PhotoBookRouteImport.update({
+  id: '/photo-book',
+  path: '/photo-book',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlacesRoute = PlacesRouteImport.update({
@@ -334,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/localizations': typeof LocalizationsRoute
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
+  '/photo-book': typeof PhotoBookRoute
   '/places': typeof PlacesRoute
   '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
@@ -386,6 +393,7 @@ export interface FileRoutesByTo {
   '/localizations': typeof LocalizationsRoute
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
+  '/photo-book': typeof PhotoBookRoute
   '/places': typeof PlacesRoute
   '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
@@ -438,6 +446,7 @@ export interface FileRoutesById {
   '/localizations': typeof LocalizationsRoute
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
+  '/photo-book': typeof PhotoBookRoute
   '/places': typeof PlacesRoute
   '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
@@ -492,6 +501,7 @@ export interface FileRouteTypes {
     | '/localizations'
     | '/location-names'
     | '/metadata-groups'
+    | '/photo-book'
     | '/places'
     | '/related-photos'
     | '/settings'
@@ -544,6 +554,7 @@ export interface FileRouteTypes {
     | '/localizations'
     | '/location-names'
     | '/metadata-groups'
+    | '/photo-book'
     | '/places'
     | '/related-photos'
     | '/settings'
@@ -595,6 +606,7 @@ export interface FileRouteTypes {
     | '/localizations'
     | '/location-names'
     | '/metadata-groups'
+    | '/photo-book'
     | '/places'
     | '/related-photos'
     | '/settings'
@@ -648,6 +660,7 @@ export interface RootRouteChildren {
   LocalizationsRoute: typeof LocalizationsRoute
   LocationNamesRoute: typeof LocationNamesRoute
   MetadataGroupsRoute: typeof MetadataGroupsRoute
+  PhotoBookRoute: typeof PhotoBookRoute
   PlacesRoute: typeof PlacesRoute
   RelatedPhotosRoute: typeof RelatedPhotosRoute
   SettingsRoute: typeof SettingsRoute
@@ -830,6 +843,13 @@ declare module '@tanstack/react-router' {
       path: '/metadata-groups'
       fullPath: '/metadata-groups'
       preLoaderRoute: typeof MetadataGroupsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/photo-book': {
+      id: '/photo-book'
+      path: '/photo-book'
+      fullPath: '/photo-book'
+      preLoaderRoute: typeof PhotoBookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/places': {
@@ -1068,6 +1088,7 @@ const rootRouteChildren: RootRouteChildren = {
   LocalizationsRoute: LocalizationsRoute,
   LocationNamesRoute: LocationNamesRoute,
   MetadataGroupsRoute: MetadataGroupsRoute,
+  PhotoBookRoute: PhotoBookRoute,
   PlacesRoute: PlacesRoute,
   RelatedPhotosRoute: RelatedPhotosRoute,
   SettingsRoute: SettingsRoute,

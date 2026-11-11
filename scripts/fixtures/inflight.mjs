@@ -73,6 +73,7 @@ export function inflightFixtures() {
       graphs: { folder: `${FOLDER}/graphs`, files: added.graphs.map(groupFile) },
       gear: { folder: `${FOLDER}/gear`, files: added.gear.map(groupFile) },
       notstored: { folder: `${FOLDER}/notstored`, files: added.notstored.map(groupFile) },
+      photobooks: { folder: `${FOLDER}/photobooks`, files: added.photobooks.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/published": {
