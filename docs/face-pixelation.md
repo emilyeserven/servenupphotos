@@ -101,6 +101,10 @@ Every other way of remaking versions, [Manage Sizes](manage-sizes.md) and moving
 Photo page among them, reads the faces saved with the Square Thumbnail and pixelates them again, so remaking a version
 never brings a face back.
 
+Once a photo's faces are pixelated, the Photo page's **Square Thumbnail** card shows its largest pixelated version (the
+first of `xlarge`, `large` or `medium` whose URL has the `faces=` mark) in place of the original, so picking the square
+and its preview never shows a face. The square is still measured in the original's pixels, the same shape.
+
 ## What isn't hidden
 
 - **The original JPEG.** It stays as it was in R2, and its URL is in the photo's JSON as `images.full` (and so in

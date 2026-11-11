@@ -44,6 +44,11 @@ interface ThumbnailCropProps {
   lockedNote?: string;
   /** The card's title; "Square Thumbnail" unless set. */
   title?: string;
+  /**
+   * A version of the photo to show instead, the same shape, such as one with its faces pixelated.
+   * The crop is still measured on `photo`, in its pixels.
+   */
+  shown?: string;
 }
 
 /**
@@ -53,6 +58,7 @@ interface ThumbnailCropProps {
 export function ThumbnailCrop({
   photo,
   title = "Square Thumbnail",
+  shown,
   ...editor
 }: ThumbnailCropProps) {
   const [objectUrl, setFile] = useObjectUrl();
@@ -69,7 +75,7 @@ export function ThumbnailCrop({
           {THUMBNAIL.maxEdge} × {THUMBNAIL.maxEdge} px WEBP, whatever its size here.
         </CardDescription>
       </CardHeader>
-      <CardContent>{url && <CropEditor src={url} {...editor} />}</CardContent>
+      <CardContent>{url && <CropEditor src={url} shown={shown ?? url} {...editor} />}</CardContent>
     </Card>
   );
 }
@@ -84,22 +90,45 @@ function placement(photo: Size | null, crop: Crop | null): Placed | null {
   return photo && crop ? { photo, crop } : null;
 }
 
-type CropEditorProps = Omit<ThumbnailCropProps, "photo"> & { src: string };
+type CropEditorProps = Omit<ThumbnailCropProps, "photo" | "shown"> & {
+  /** The photo the crop is measured on. */
+  src: string;
+  /** What's drawn: src, or a version of it the same shape. */
+  shown: string;
+};
+
+/** The size of the photo at src, turned upright from its EXIF orientation, once it's loaded. */
+function usePhotoSize(src: string): Size | null {
+  const [size, setSize] = useState<{ src: string; size: Size } | null>(null);
+  useEffect(() => {
+    let current = true;
+    const image = new Image();
+    image.addEventListener("load", () => {
+      // Browsers report the size of a photo turned upright from its EXIF orientation.
+      if (current)
+        setSize({ src, size: { width: image.naturalWidth, height: image.naturalHeight } });
+    });
+    image.src = src;
+    return () => {
+      current = false;
+    };
+  }, [src]);
+  return size?.src === src ? size.size : null;
+}
 
 /** The photo with the crop over it, then the thumbnail it makes. */
-function CropEditor({ src, crop, onCropChange, locked, lockedNote }: CropEditorProps) {
-  const [photo, setPhoto] = useState<Size | null>(null);
+function CropEditor({ src, shown, crop, onCropChange, locked, lockedNote }: CropEditorProps) {
+  const photo = usePhotoSize(src);
   // The crop starts in the middle once the photo's size is known.
-  const onLoad = (loaded: Size) => {
-    setPhoto(loaded);
-    if (!crop) onCropChange(centerCrop(loaded));
-  };
+  useEffect(() => {
+    if (photo && !crop) onCropChange(centerCrop(photo));
+  }, [photo, crop, onCropChange]);
   const placed = placement(photo, crop);
   const [overlays, toggleOverlay] = useOverlays();
 
   return (
     <div className="flex flex-col gap-4">
-      <CropFrame src={src} onLoad={onLoad}>
+      <CropFrame src={shown}>
         {placed && (
           <CropBox
             placed={placed}
@@ -111,7 +140,7 @@ function CropEditor({ src, crop, onCropChange, locked, lockedNote }: CropEditorP
       </CropFrame>
       {placed && <OverlayToggles overlays={overlays} onToggle={toggleOverlay} />}
       <CropSummary
-        src={src}
+        src={shown}
         placed={placed}
         overlays={overlays}
         locked={locked}
@@ -279,22 +308,17 @@ function CenterReticle() {
 
 interface CropFrameProps {
   src: string;
-  onLoad: (size: Size) => void;
   children: ReactNode;
 }
 
 /** The photo, shrunk to fit, with the crop box laid over it in percentages of its size. */
-function CropFrame({ src, onLoad, children }: CropFrameProps) {
+function CropFrame({ src, children }: CropFrameProps) {
   return (
     <div className="relative mx-auto w-fit touch-none overflow-hidden rounded-lg border">
       <img
         src={src}
         alt="The chosen photo"
         draggable={false}
-        onLoad={({ currentTarget: image }) =>
-          // Browsers report the size of a photo turned upright from its EXIF orientation.
-          onLoad({ width: image.naturalWidth, height: image.naturalHeight })
-        }
         className="block max-h-96 max-w-full select-none"
       />
       {children}

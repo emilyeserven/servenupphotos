@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { facesFromJson, withFaces } from "@/lib/face-json";
+import { facesFromJson, pixelatedVersionUrl, withFaces } from "@/lib/face-json";
 
 const area = { x: 1, y: 2, width: 30, height: 40, blocks: 8 };
 
@@ -18,4 +18,15 @@ test("the areas are read back from the photo JSON, skipping anything that isn't 
   assert.deepEqual(facesFromJson({ faces: [turned, { x: "no" }, null] }), [turned]);
   assert.equal(facesFromJson({}), undefined);
   assert.deepEqual(facesFromJson({ faces: [] }), []);
+});
+
+test("the largest version is shown in place of the original once the faces are pixelated", () => {
+  const images = { full: "f.jpg", xlarge: "x.webp?faces=abc", large: "l.webp?faces=abc" };
+  assert.equal(pixelatedVersionUrl({ images }), "x.webp?faces=abc");
+  assert.equal(pixelatedVersionUrl({ images: { ...images, xlarge: "" } }), "l.webp?faces=abc");
+  assert.equal(
+    pixelatedVersionUrl({ images: { full: "f.jpg", xlarge: "x.webp?crop=1" } }),
+    undefined,
+  );
+  assert.equal(pixelatedVersionUrl({}), undefined);
 });
