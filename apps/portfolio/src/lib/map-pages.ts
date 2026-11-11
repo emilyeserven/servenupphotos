@@ -1,6 +1,7 @@
 import { placeById } from "@/lib/localize";
 import { fitView, type MapView } from "@/lib/map-preview-view";
 import { photos, type Photo } from "@/lib/photos";
+import { placeSlug } from "@/lib/place-slug";
 
 /**
  * The map's shareable pages (see docs/map-link-previews.md): one for every country, state, city and
@@ -31,17 +32,6 @@ export interface MapPage {
 /** The page for every photo, and the address the map's Copy link falls back to. */
 const ALL_PHOTOS_PATH = "/maps/all/";
 
-/** A name as it goes in an address: lowercase letters and digits with dashes, or else encoded. */
-function slugOf(name: string): string {
-  const ascii = name
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-  return ascii || encodeURIComponent(name);
-}
-
 /** One of the places a photo is in: its kind, its name, and the part of its address after its kind. */
 interface PhotoPlace {
   kind: PlaceKind;
@@ -52,7 +42,7 @@ interface PhotoPlace {
 /** The country, state or city a photo is in, when it says. */
 function fieldPlace(photo: Photo, kind: "country" | "state" | "city"): PhotoPlace[] {
   const name = photo[kind];
-  return name ? [{ kind, name, slug: slugOf(name) }] : [];
+  return name ? [{ kind, name, slug: placeSlug(name) }] : [];
 }
 
 /** A place on the Places page a photo is in, by its ID. */

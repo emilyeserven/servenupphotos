@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import {
   type Localization,
@@ -18,6 +19,7 @@ import { locationNames } from "@/lib/location-names";
 import { cityRows, countryRows, stateRows } from "@/lib/place-cities";
 import { unmappedPlacePhotos } from "@/lib/place-gps";
 import { placePhotoCounts, shownPhotos } from "@/lib/place-seeds";
+import { placeKeyForEdit } from "@/lib/quick-edit";
 import { type RegionKind, type RegionNode, regionNodes } from "@/lib/region-tree";
 import { useCombinedData } from "@/stores/combined-data";
 
@@ -34,11 +36,15 @@ export function PlacesPage() {
   );
 }
 
+const route = getRouteApi("/places");
+
 function PlacesLayout({ folder }: { folder: string }) {
   const read = useQuery(placesQuery);
+  // Quick Edit's `?edit=city/seoul` opens that row; a new one starts the panes afresh.
+  const { edit } = route.useSearch();
   return (
     <QueryResult query={read} pendingLabel="Reading places…">
-      {(data) => <PlacesPanes folder={folder} data={data} />}
+      {(data) => <PlacesPanes key={edit} folder={folder} data={data} quickEdit={edit} />}
     </QueryResult>
   );
 }
@@ -73,12 +79,24 @@ function useRegionList(data: PlacesResponse): RegionListData {
 }
 
 /** The list on the left and the edit panel on the right; on a phone the panel comes first. */
-function PlacesPanes({ folder, data }: { folder: string; data: PlacesResponse }) {
+function PlacesPanes({
+  folder,
+  data,
+  quickEdit,
+}: {
+  folder: string;
+  data: PlacesResponse;
+  /** The row Quick Edit opens, such as `city/seoul`. */
+  quickEdit?: string;
+}) {
   const list = useRegionList(data);
   const panel = useRef<HTMLDivElement>(null);
   // The key of the row being edited, or "" for a new place, or `new:<kind>` for a new city, state
   // or country. Bumped starts the panel afresh.
-  const [editing, setEditing] = useState({ key: "", count: 0 });
+  const [editing, setEditing] = useState(() => ({
+    key: placeKeyForEdit(list.nodes, quickEdit),
+    count: 0,
+  }));
   const edit = (key: string) => {
     setEditing((e) => ({ key, count: e.count + 1 }));
     panel.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
