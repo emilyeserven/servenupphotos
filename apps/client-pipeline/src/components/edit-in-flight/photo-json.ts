@@ -212,17 +212,17 @@ export interface EditedFields {
   overrides: Record<string, unknown> | null;
 }
 
-/** Whether the details, albums, tags, social media posts or re-edit mark differ from the ones saved in data, or overrides were applied. */
-export function fieldsChanged(data: PhotoJson, fields: EditedFields) {
-  const checks = [
-    () => fields.overrides !== null,
-    () => detailsChanged(data, fields.details),
-    () => !sameGroups(savedGroups(data), fields.groups),
-    () => socialPostsChanged(data, fields.socialPosts),
-    () => reEditChanged(data, fields.reEdit),
-    () => picksChanged(savedPicks(data), fields.pickedSimilar),
-  ];
-  return checks.some((changed) => changed());
+/** Which of the edited fields differ from the ones saved in data; overrides counts once they change anything. */
+export function changedFields(data: PhotoJson, fields: EditedFields): (keyof EditedFields)[] {
+  const checks: Record<keyof EditedFields, () => boolean> = {
+    overrides: () => fields.overrides !== null,
+    details: () => detailsChanged(data, fields.details),
+    groups: () => !sameGroups(savedGroups(data), fields.groups),
+    socialPosts: () => socialPostsChanged(data, fields.socialPosts),
+    reEdit: () => reEditChanged(data, fields.reEdit),
+    pickedSimilar: () => picksChanged(savedPicks(data), fields.pickedSimilar),
+  };
+  return (Object.keys(checks) as (keyof EditedFields)[]).filter((name) => checks[name]());
 }
 
 /**

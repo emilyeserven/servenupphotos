@@ -25,7 +25,7 @@ import {
   type SaveRequest,
   type SquareUrls,
   cropChanged,
-  fieldsChanged,
+  changedFields,
   madeUrls,
   markedUrls,
   namesUntitled,
@@ -71,7 +71,8 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
   const overrides = lensEditFields(savedData, lensEdit, settings);
   const fields = { details, groups, socialPosts, reEdit, pickedSimilar, overrides };
   const remakeSquares = cropChanged(crop, baseline, savedData);
-  const changed = remakeSquares || fieldsChanged(savedData, fields);
+  const changedNames = changedFields(savedData, fields);
+  const changed = remakeSquares || changedNames.length > 0;
   const request = {
     ...saveRequest(savedData, fields, crop, baseline, remakeSquares),
     name: newFileName(file, savedData, details.title),
@@ -98,6 +99,10 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
     setLensEdit,
     /** The fields they change, or null when they change none. */
     overrides,
+    /** Whether the Square Thumbnail's square has moved from the saved one. */
+    cropMoved: remakeSquares,
+    /** The edited fields that differ from the saved JSON, for marking where the unsaved changes are. */
+    changedFields: changedNames,
     /** What saving would do, when there's anything to save. */
     request: changed ? request : null,
     /** The JSON saving would write, when there's anything to save. */
@@ -163,7 +168,12 @@ export function useSave(
           photosInFlightQuery.queryKey,
           (data) => data && renamedInFlight(data, file.path, result.update),
         );
-        void navigate({ to: "/exif", search: { edit: result.update.path }, replace: true });
+        void navigate({
+          to: "/exif",
+          // Keeps the section the page shows.
+          search: (prev) => ({ ...prev, edit: result.update.path }),
+          replace: true,
+        });
       }
       void queryClient.invalidateQueries({ queryKey: thumbnailCropQuery(image.key).queryKey });
       void queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey });

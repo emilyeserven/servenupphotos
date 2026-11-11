@@ -9,6 +9,7 @@ import { ResultsColumn } from "@/components/add-photo/results-column";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import { ChangePhotoButton } from "@/components/choose-photo-dialog";
 import { EditInFlightPhoto } from "@/components/edit-in-flight";
+import { type PhotoSection, photoSectionSearch } from "@/components/edit-in-flight/photo-sections";
 import { withNewLens } from "@/components/edit-in-flight/lens-edit";
 import { useLensSettings } from "@/components/edit-in-flight/use-edit";
 import { EditPhotoById, photoIdSearch } from "@/components/edit-photo-by-id";
@@ -30,6 +31,8 @@ interface PhotoSearch {
   from?: "gallery";
   /** The ID of a photo to edit, when the page linking here knows only that, such as Trip Lines. */
   photo?: number;
+  /** The section of the photo being edited that the page shows; Details unless set. */
+  section?: PhotoSection;
 }
 
 export const Route = createFileRoute("/exif")({
@@ -38,6 +41,7 @@ export const Route = createFileRoute("/exif")({
   validateSearch: (search: Record<string, unknown>): PhotoSearch => ({
     ...editSearch(search),
     ...photoIdSearch(search),
+    ...photoSectionSearch(search),
   }),
 });
 
