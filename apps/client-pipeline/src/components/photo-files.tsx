@@ -1,9 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { type ReactNode, useCallback } from "react";
-import { type SocialCalendar, type SocialCalendarRead, socialCalendarQuery } from "@/api/publish";
+import { type ReactNode, useCallback, useMemo } from "react";
+import {
+  type SocialCalendar,
+  type SocialCalendarRead,
+  type SocialPhoto,
+  socialCalendarQuery,
+} from "@/api/publish";
 import { QueryResult } from "@/components/query-result";
 import { withBaseAllPhotos } from "@/lib/combined";
-import { useCombinedData } from "@/stores/combined-data";
+import { withoutUndecided } from "@/lib/social-schedule";
+import { useChangedPhotoFiles, useCombinedData } from "@/stores/combined-data";
 
 /**
  * Reads every photo file, as the Publish pages pick from them, and shows children with them once
@@ -31,4 +37,29 @@ export function PhotoFiles({
       {children}
     </QueryResult>
   );
+}
+
+/**
+ * Reads every photo file, as PhotoFiles does, and shows children with all of them but those set
+ * aside as Undecided, the photos a page such as the Photo Book or the Bio can use.
+ */
+export function DecidedPhotoFiles({
+  children,
+}: {
+  children: (photos: SocialPhoto[]) => ReactNode;
+}) {
+  return <PhotoFiles>{(calendar) => <Decided calendar={calendar}>{children}</Decided>}</PhotoFiles>;
+}
+
+function Decided(props: {
+  calendar: SocialCalendar;
+  children: (photos: SocialPhoto[]) => ReactNode;
+}) {
+  const { calendar, children } = props;
+  const changed = useChangedPhotoFiles();
+  const { photos } = useMemo(
+    () => withoutUndecided(calendar.photos, changed),
+    [calendar.photos, changed],
+  );
+  return children(photos);
 }

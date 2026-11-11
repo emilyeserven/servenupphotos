@@ -34,6 +34,7 @@ import {
   SparklesIcon,
   TagIcon,
   TagsIcon,
+  UserRoundIcon,
 } from "lucide-react";
 import type { FileRoutesByTo } from "@/routeTree.gen";
 import { tagTools, updateDataSections } from "@/components/update-data/sections";
@@ -136,6 +137,7 @@ export const navGroups: readonly NavGroup[] = [
       },
       { title: "Captions", url: "/caption-templates", icon: MessageSquareTextIcon },
       { title: "Photo Book", url: "/photo-book", icon: BookOpenIcon },
+      { title: "Bio", url: "/bio", icon: UserRoundIcon },
       { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
       { title: "Related Photos", url: "/related-photos", icon: GalleryHorizontalIcon },
       { title: "User Likes", url: "/viewer-likes", icon: HeartIcon },

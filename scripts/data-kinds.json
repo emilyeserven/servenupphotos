@@ -15,5 +15,6 @@
   { "folder": "graphs", "all": "GRAPHS.json" },
   { "folder": "gear", "all": "GEAR.json" },
   { "folder": "notstored", "all": "NOTSTORED.json" },
-  { "folder": "photobooks", "all": "PHOTOBOOKS.json" }
+  { "folder": "photobooks", "all": "PHOTOBOOKS.json" },
+  { "folder": "bio", "all": "BIO.json" }
 ]

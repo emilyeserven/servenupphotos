@@ -41,6 +41,7 @@ var relayTimeouts = map[string]time.Duration{
 	"/data/near-duplicates": nearDuplicatesTimeout,
 	"/publish/":             baseURLTimeout,
 	"/transit/":             transitTimeout,
+	"/bio/portrait":         photoBodyAllowance + bioUploadTimeout,
 }
 
 // defaultRelayTimeout is how long the backend may spend on every other path:

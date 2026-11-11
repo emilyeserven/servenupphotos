@@ -4,7 +4,6 @@ import type { SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
 import { GridFilterBar, useGridFilters } from "@/components/gallery/grid-filters";
 import { PhotoImage } from "@/components/instagram-picker/photo-image";
-import { BOOK_PHOTO_DRAG_TYPE, FROM_PAGE_DRAG_TYPE } from "@/components/photo-book/page-slot";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDropTarget } from "@/hooks/use-drop-target";
@@ -12,22 +11,43 @@ import { takenDay } from "@/lib/social-focus";
 import { photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
 
-interface BookDrawerProps {
-  photos: SocialPhoto[];
-  /** The paths of the photos already in the book. */
-  inBook: Set<string>;
-  /** Puts the photo in the book's first empty place. */
-  onPick: (photo: SocialPhoto) => void;
-  /** Takes the photo at path off the book. */
-  onRemove: (path: string) => void;
-  onClose: () => void;
+/** The words a page's photo drawer uses for what it adds photos to. */
+interface DrawerWords {
+  /** Under the heading: how to add a photo, and take one out. */
+  help: string;
+  /** The checkbox that also lists photos already used, such as "Show photos already in the book". */
+  showUsed: string;
+  /** The badge on a photo already used, such as "In book". */
+  usedBadge: string;
 }
 
-/** The photos whose title or file name has search, newest taken first, without those in the book unless shown. */
-function searched(photos: SocialPhoto[], search: string, inBook: Set<string> | null) {
+/** Taking a photo out by dropping it on the drawer. */
+interface TakeOff {
+  /** The drag type that marks a drag from the page, not from the drawer itself. */
+  fromType: string;
+  /** Takes the photo at path out. */
+  onRemove: (path: string) => void;
+}
+
+interface PhotoDrawerPanelProps {
+  photos: SocialPhoto[];
+  /** The paths of the photos already used. */
+  used: Set<string>;
+  /** Adds the photo, as clicking it does. */
+  onPick: (photo: SocialPhoto) => void;
+  onClose: () => void;
+  /** The drag type a photo dragged from the drawer carries its file's path as. */
+  dragType: string;
+  words: DrawerWords;
+  /** Dropping a photo from the page here takes it out; left out, the drawer takes no drops. */
+  takeOff?: TakeOff;
+}
+
+/** The photos whose title or file name has search, newest taken first, without those used unless shown. */
+function searched(photos: SocialPhoto[], search: string, used: Set<string> | null) {
   const query = search.trim().toLowerCase();
   return photos
-    .filter((p) => !inBook?.has(p.path))
+    .filter((p) => !used?.has(p.path))
     .filter((p) => `${photoName(p)} ${p.file}`.toLowerCase().includes(query))
     .toSorted(
       (a, b) =>
@@ -37,31 +57,32 @@ function searched(photos: SocialPhoto[], search: string, inBook: Set<string> | n
 }
 
 /**
- * Drag handlers that take a photo dragged off a page out of the book. A photo dragged from the
- * drawer itself can't be dropped back on it.
+ * Drag handlers that take a photo dragged off the page out, when the drawer can. A photo dragged
+ * from the drawer itself can't be dropped back on it.
  */
-function useTakeOffDrop(onRemove: (path: string) => void) {
-  const { over, handlers } = useDropTarget(BOOK_PHOTO_DRAG_TYPE, onRemove);
+function useTakeOffDrop(dragType: string, takeOff: TakeOff | undefined) {
+  const { over, handlers } = useDropTarget(dragType, (path) => takeOff?.onRemove(path));
   const onDragOver = (event: DragEvent) => {
-    if (event.dataTransfer.types.includes(FROM_PAGE_DRAG_TYPE)) handlers.onDragOver(event);
+    if (takeOff && event.dataTransfer.types.includes(takeOff.fromType)) handlers.onDragOver(event);
   };
   return { over, handlers: { ...handlers, onDragOver } };
 }
 
 /**
- * A panel beside the book, like the Instagram calendar's photo drawer, listing the photos to drag
- * onto a page, with a search and the portfolio Grid's filters. Clicking a photo puts it in the first
- * empty place; a photo dropped here from a page comes off the book.
+ * A panel beside a page's content, like the Instagram calendar's photo drawer, listing the photos to
+ * drag onto it, with a search and the portfolio Grid's filters. Clicking a photo adds it; with
+ * takeOff, a photo dropped here from the page comes out.
  */
-export function BookDrawer({ photos, inBook, onPick, onRemove, onClose }: BookDrawerProps) {
+export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
+  const { photos, used, onPick, onClose, dragType, words, takeOff } = props;
   const [search, setSearch] = useState("");
   const [showUsed, setShowUsed] = useState(false);
   const listed = useMemo(
-    () => searched(photos, search, showUsed ? null : inBook),
-    [photos, search, showUsed, inBook],
+    () => searched(photos, search, showUsed ? null : used),
+    [photos, search, showUsed, used],
   );
   const grid = useGridFilters(photos, listed);
-  const { over, handlers } = useTakeOffDrop(onRemove);
+  const { over, handlers } = useTakeOffDrop(dragType, takeOff);
   return (
     <aside
       aria-label="Photo drawer"
@@ -74,10 +95,7 @@ export function BookDrawer({ photos, inBook, onPick, onRemove, onClose }: BookDr
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-col gap-0.5">
           <h2 className="font-semibold">Photos</h2>
-          <p className="text-muted-foreground text-xs">
-            Drag a photo onto a page, or click it to fill the first empty place. Drop a photo from a
-            page here to take it out of the book.
-          </p>
+          <p className="text-muted-foreground text-xs">{words.help}</p>
         </div>
         <Button variant="ghost" size="icon" aria-label="Close photo drawer" onClick={onClose}>
           <PanelRightCloseIcon />
@@ -97,13 +115,19 @@ export function BookDrawer({ photos, inBook, onPick, onRemove, onClose }: BookDr
           checked={showUsed}
           onChange={(event) => setShowUsed(event.target.checked)}
         />
-        Show photos already in the book
+        {words.showUsed}
       </label>
       <div className="shrink-0">
         <GridFilterBar photos={grid.photos} />
       </div>
       <div className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1">
-        <DrawerPhotos photos={grid.shown} inBook={inBook} onPick={onPick} />
+        <DrawerPhotos
+          photos={grid.shown}
+          used={used}
+          onPick={onPick}
+          dragType={dragType}
+          usedBadge={words.usedBadge}
+        />
       </div>
     </aside>
   );
@@ -111,10 +135,12 @@ export function BookDrawer({ photos, inBook, onPick, onRemove, onClose }: BookDr
 
 function DrawerPhotos(props: {
   photos: SocialPhoto[];
-  inBook: Set<string>;
+  used: Set<string>;
   onPick: (photo: SocialPhoto) => void;
+  dragType: string;
+  usedBadge: string;
 }) {
-  const { photos, inBook, onPick } = props;
+  const { photos, used, onPick, dragType, usedBadge } = props;
   if (photos.length === 0) {
     return <p className="text-muted-foreground py-6 text-center text-sm">No photos match.</p>;
   }
@@ -126,7 +152,7 @@ function DrawerPhotos(props: {
             type="button"
             draggable
             onDragStart={(event) => {
-              event.dataTransfer.setData(BOOK_PHOTO_DRAG_TYPE, photo.path);
+              event.dataTransfer.setData(dragType, photo.path);
               event.dataTransfer.effectAllowed = "move";
             }}
             onClick={() => onPick(photo)}
@@ -139,9 +165,9 @@ function DrawerPhotos(props: {
                   data={photo.data}
                   className="rounded bg-violet-600 px-1 text-[10px] font-medium text-white"
                 />
-                {inBook.has(photo.path) && (
+                {used.has(photo.path) && (
                   <span className="bg-primary text-primary-foreground rounded px-1 text-[10px] font-medium">
-                    In book
+                    {usedBadge}
                   </span>
                 )}
               </span>

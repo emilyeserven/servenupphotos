@@ -1,5 +1,6 @@
 // Sample answers for the routes in routes_publish.go.
 import {
+  CDN,
   FOLDER,
   PULL_REQUEST,
   REPO,
@@ -115,5 +116,18 @@ export function publishFixtures() {
       ...body,
       id: "sample-book",
     })),
+    "PUT /api/bio/bio": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/bio/bio.json`,
+      data: { ...body, id: "bio" },
+      before: added.bio[0].data,
+      changed: true,
+    }),
+    "POST /api/bio/portrait": {
+      image: `${CDN}/bio/2b3c4d5e6f7a-portrait.webp`,
+      small: `${CDN}/bio/2b3c4d5e6f7a-portrait-small.webp`,
+      width: 1800,
+      height: 1200,
+    },
   };
 }
