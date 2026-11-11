@@ -110,7 +110,7 @@ function DayCard({ day, line, status }: DayCardProps) {
   return (
     <Link
       to="/trip-lines/$day/$part"
-      params={{ day: day.day, part: day.photos.length > 0 ? "order" : "stops" }}
+      params={{ day: day.day, part: day.photos.length > 0 ? "route" : "stops" }}
       className="hover:bg-muted/50 flex h-full flex-col gap-2 rounded-lg border p-3 text-sm"
     >
       <span className="flex items-baseline justify-between gap-2">

@@ -34,8 +34,8 @@ interface VisitsProps {
 /**
  * The day's trip stops, such as restaurants and museums, with or without a photo: added by
  * clicking the map, from the saved places nearby or by a coordinate, each with a kind, a note and a
- * link to it on Google Maps, Naver Map or another map. The photo strip on Photo order and Route puts
- * them on the route.
+ * link to it on Google Maps, Naver Map or another map. Each one's Where on the route menu, or the
+ * photo strip on Route, puts it on the route.
  */
 export function Visits({ day, draft, onChange, picking, onPicking }: VisitsProps) {
   const visits = draft.visits ?? [];
@@ -155,7 +155,7 @@ function VisitRow({ visit, day, onChange }: VisitRowProps) {
         onChange={(e) => set({ note: e.target.value })}
       />
       <LinkField link={visit.link} onLink={(link) => set({ link })} />
-      <RouteSpot photos={day.photos} after={visit.after} first={visit.first} />
+      <RouteSpot photos={day.photos} visit={visit} onChange={onChange} />
       <Button
         variant="ghost"
         size="icon"
@@ -194,26 +194,53 @@ function LinkField({ link, onLink }: { link?: string; onLink: (link: string) => 
   );
 }
 
-/** Where the place is on the route, which the photo strip sets: between which photos, or not yet. */
-function RouteSpot({ photos, after, first }: RouteSpotProps) {
+interface RouteSpotProps {
+  photos: TripDay["photos"];
+  visit: TripVisit;
+  onChange: (visit: TripVisit) => void;
+}
+
+/**
+ * Where the stop is on the route, picked from a menu: not on it, before the first photo (where the
+ * route starts), or after a photo, between it and the next or, after the last, where it ends. The
+ * photo strip on Route sets the same.
+ */
+function RouteSpot({ photos, visit, onChange }: RouteSpotProps) {
   return (
-    <span className="text-muted-foreground text-xs">{routeSpotText(photos, after, first)}</span>
+    <select
+      aria-label="Where on the route"
+      className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+      value={spotValue(visit)}
+      onChange={(e) => onChange(atSpot(visit, e.target.value))}
+    >
+      <option value="">Not on the route</option>
+      {photos.length > 0 && <option value="first">Before photo 1, where the route starts</option>}
+      {photos.map((p, i) => (
+        <option key={p.id} value={p.id}>
+          {spotLabel(i, photos.length)}
+        </option>
+      ))}
+    </select>
   );
 }
 
-interface RouteSpotProps {
-  photos: TripDay["photos"];
-  after?: number;
-  first?: boolean;
+/** The stop's place on the route as the menu's value. */
+function spotValue({ first, after }: TripVisit): string {
+  if (first) return "first";
+  return after === undefined ? "" : String(after);
 }
 
-/** Where a trip stop is on the route, in words. */
-function routeSpotText(photos: TripDay["photos"], after?: number, first?: boolean): string {
-  if (first) return "On the route before photo 1";
-  const at = photos.findIndex((p) => p.id === after);
-  if (at === -1) return "Not on the route yet";
-  if (at === photos.length - 1) return `On the route after photo ${at + 1}, where it ends`;
-  return `On the route between photos ${at + 1} and ${at + 2}`;
+/** How the menu names the place after the photo at index i of n. */
+function spotLabel(i: number, n: number): string {
+  if (i === n - 1) return `After photo ${i + 1}, where the route ends`;
+  return `Between photos ${i + 1} and ${i + 2}`;
+}
+
+/** The stop moved to the place the menu's value names. */
+function atSpot(visit: TripVisit, value: string): TripVisit {
+  const { after: _after, first: _first, ...rest } = visit;
+  if (value === "first") return { ...rest, first: true };
+  return value === "" ? rest : { ...rest, after: Number(value) };
 }
 
 /** Adds a trip stop at a coordinate typed or pasted in, such as from Google Maps. */

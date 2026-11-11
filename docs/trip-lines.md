@@ -139,16 +139,29 @@ them. A new photo opens with a break on both sides, ready to join the line.
 
 A card opens the day's own pages, each a tab with its own link:
 
-| Page        | Path                      | What it has                                                                                             |
-| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Photo order | `/trip-lines/<day>/order` | The photo strip on its own, its groups stacked top to bottom with what happened between them in between |
-| Route       | `/trip-lines/<day>/route` | The strip with the map and its tools, as below                                                          |
-| Trip Stops  | `/trip-lines/<day>/stops` | The strip, the map, and the [trip stops](#trip-stops) list                                              |
-| Story       | `/trip-lines/<day>/story` | The [Trip page story](#trip-page-story)                                                                 |
+| Page       | Path                      | What it has                                             |
+| ---------- | ------------------------- | ------------------------------------------------------- |
+| Route      | `/trip-lines/<day>/route` | The line switch, the photo strip, the map and its tools |
+| Trip Stops | `/trip-lines/<day>/stops` | The map and the [trip stops](#trip-stops) list          |
+| Story      | `/trip-lines/<day>/story` | The [Trip page story](#trip-page-story)                 |
 
-`/trip-lines/<day>` opens Photo order. The pages share one editor that stays mounted while hidden, so a change made on
-Photo order shows on Route before it's saved, and **Save route** on either saves both. **Every day** goes back to the
-list.
+`/trip-lines/<day>` opens Route, and so does an old `/trip-lines/<day>/order` link: the Photo order page it had is now
+Route's **Stack groups**, which lays the strip's groups out top to bottom with what happened between them in between.
+The pages share one editor that stays mounted while hidden, so a change made on Trip Stops shows on Route before it's
+saved. **Every day** goes back to the list.
+
+### The save bar
+
+Under the editor on Route and Trip Stops, the save bar stays at the bottom of the screen. It says whether the day has
+**Unsaved changes**, and its one button saves the day as the line switch shows it, as a change waiting for Commit:
+**Save route** for a line by hand, **Turn on automatic line** or **Update automatic line** for the automatic line, and
+**Remove route** (or **Save trip stops**, when there was no line) for **No line**. Beside it, a note says what saving
+does that the button doesn't, such as that it turns the automatic line off. Leaving the day with changes not saved, by
+**Every day**, the sidebar or closing the tab, asks first; moving between the day's own pages doesn't
+(`components/trip-lines/day-save.ts`, `lib/trip-line-view.ts`).
+
+> **Frontend analogy:** it's a form's dirty state with a sticky submit bar, plus TanStack Router's `useBlocker` as the
+> "you have unsaved changes" prompt.
 
 > **Frontend analogy:** the editor's state lives above the tabs, like lifting `useState` into a layout so switching
 > nested routes doesn't reset a form.
@@ -162,6 +175,7 @@ read by each route's `validateSearch`):
 | `show`  | The list | The day list's filter: `marked`, `out-of-date`, `automatic`, `none`     | All        |
 | `trip`  | The list | A Trip on the Trips tab, from an older link: opens [its page](trips.md) | None       |
 | `group` | A day    | The group shown alone on the map (the eye), by its name                 | None       |
+| `stack` | A day    | `true` lays the photo strip's groups out top to bottom                  | In a row   |
 
 For example, `/trip-lines?show=out-of-date` or `/trip-lines/2026-09-29/route?group=Engyoji%20Temple`. Clicks replace
 the history entry rather than adding one, so Back leaves the page. A new Trip isn't in the URL until it's saved. A link
@@ -174,19 +188,25 @@ The Route page edits the day: its photos in the order they were taken, with what
 a map of the line drawn through them (photos as numbered dots; walks solid, hops dashed). Pointing at a photo
 highlights its dot.
 
-- A day with no line offers **Preview automatic line**, drawn fainter and not saved, and **Mark by hand**, which starts
-  from one walk through every photo. From the preview, **Turn on automatic line** saves `{ "auto": true }`, and **Edit as
-  my own** copies it into the photo strip to change by hand.
+- The line switch above the strip picks the day's kind of line: **No line**, **Automatic** or **By hand**. Picking one
+  changes nothing saved until the save bar saves it. **Automatic** on a day without it shows a preview, drawn fainter,
+  and saving turns it on as `{ "auto": true }`. **By hand** starts from the line shown by hand last, or else the line
+  saved by hand, or else the automatic line (so it copies the preview to change by hand), or else one walk through
+  every photo.
 - By hand, each gap between two photos is a menu: **Keep walking**, **Break** (the line stops, and starts again at the
-  next photo), or a hop. An arrow marks each photo a line starts at and a flag each one it ends at (not a pin, since every photo in the strip has an exact spot; ones without go in [areas](#areas) instead). **Starts from** and
-  **Ends at** set a spot with no photo by clicking the map, with a label such as "Hotel". **Save route** saves it.
-- An automatic day shows the line as the next Commit would draw it, with **Update automatic line**, **Edit as my own**
-  and **Turn off automatic line**. Putting trip stops on the route, moving them or taking them off (in the strip or on
-  Trip Stops) keeps the line automatic, with a note that they aren't saved yet; any other change, such as a gap or the
-  photo order, starts a line by hand. **Update automatic line** saves the line again as the day's photos and stops
-  draw it now, so photos added since show without waiting for Commit.
-- Changing what kind of line a day has never loses its trip stops or areas. **Turn on automatic line**, **Edit as my
-  own** and **Turn off automatic line** carry them over, and removing the route of a day with stops keeps them as a line
+  next photo), or a hop. An arrow marks each photo a line starts at and a flag each one it ends at (not a pin, since every photo in the strip has an exact spot; ones without go in [areas](#areas) instead).
+- **Start**, before the first photo, and **End**, after the last, are always at the ends of the strip
+  (`components/trip-lines/strip-ends.tsx`). Each names what's there: a spot with no photo, such as "Hotel", or the trip
+  stop the route starts or ends at; dashed with **Set** when there's nothing. Its menu picks a spot with no photo on the
+  map (a note over the map says to click it, with **Cancel**), labels or removes it, or puts a trip stop there. Setting
+  a spot on an automatic day, or one with no line, starts a line by hand from what's shown.
+- An automatic day shows the line as the next Commit would draw it. Putting trip stops on the route, moving them or
+  taking them off (in the strip or on Trip Stops) keeps the line automatic, with a note that they aren't saved yet; any
+  other change, such as a gap or the photo order, starts a line by hand. **Update automatic line** saves the line again
+  as the day's photos and stops draw it now, so photos added since show without waiting for Commit. A day with **No
+  line** likewise keeps no line when only its trip stops change.
+- Changing what kind of line a day has never loses its trip stops or areas. The line switch carries them over, and
+  removing the route of a day with stops keeps them as a line
   with no segments, marked `"planned": true` like a [planned day](#planned-days), which opens with no line drawn and its
   stops still on the map. A day with no stops or areas is removed outright.
 
@@ -216,7 +236,8 @@ of the day's photos, named after it; and **Add at this coordinate** adds one at 
 pasted in, such as `34.6672, 135.5013` from Google Maps (degrees and minutes work too); and **Add a station** finds a
 train, subway, bus or ferry station by name within 30 km of the day's first photo (the [station search](trips.md) a
 Trip's legs use) and adds it as a **Station** stop, such as one changed trains at. Each row says where the stop
-is on the route, which Photo order and Route set. Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
+is on the route, and its **Where on the route** menu sets it: not on the route, before photo 1, or after any photo (the
+photo strip on Route sets the same). Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
 Map or any other map, which opens from the row. The map shows each as a round pin with its kind's icon.
 
 ### Casual photos
@@ -251,19 +272,18 @@ They're saved with the line as `visits`:
 }
 ```
 
-The photo strip on **Photo order** and **Route** puts these places on the route: the pin with a plus under each gap,
-shown on hover, lists the day's places not on the route yet, and picking one puts it between those two photos (with a
-link to the Trip Stops page to add more). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
+The photo strip on **Route** puts these places on the route too: the plus under each gap lists the day's places not on
+the route yet, and picking one puts it between those two photos (with a link to the Trip Stops page to add more). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
 two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
 route, and a cross that takes it off the route again. Moving one earlier from after the
-first photo, or picking it from the pin with a plus before the first photo (shown on hover), puts it before the first photo, as `"first": true` with no `after`, such as lunch before the first photo
+first photo, or picking it from the strip's **Start**, puts it before the first photo, as `"first": true` with no `after`, such as lunch before the first photo
 was taken: the line goes from the start spot through it to the first photo (as a via spot after the start spot), or,
 with no start spot, starts at it. The way from there to the first photo shows before photo 1 in the strip and can be
 changed like any gap, such as a bus from lunch: the line is then a hop from the start to the first photo before the
 walk, saved as the first segment with that mode, a `start` and only the first photo. Moving one later from the last gap,
-or picking it from the pin with a plus after the last photo (shown on hover), puts it after the last photo, such as
+or picking it from the strip's **End**, puts it after the last photo, such as
 dinner after the last photo was taken: the line ends there. With an end spot, the line goes from the last photo
 through it to the end spot (as a via spot after the last photo); with none, the last segment's `end` is the place,
 named after it, and when the day ends with more than one such place, the line goes through the others to the last one
@@ -352,8 +372,8 @@ with a name:
 - Every day shows its groups from the start, whatever its line: a day with no line or an automatic one is grouped by
   their [place](places-and-localizations.md) over the line it shows. A group starts wherever the first place of a
   photo changes, named after it, and a photo with no place stays in the group before it. Changing anything in the
-  strip (a gap, a name, a split) starts a hand-drawn line from what was shown, as **Mark by hand** or **Edit as my
-  own** would; nothing is saved until **Save route**.
+  strip (a gap, a name, a split) starts a hand-drawn line from what was shown, as picking **By hand** would; nothing is
+  saved until **Save route**.
 - Clicking a photo opens it on the Photo page in a new tab (`/exif?photo=<id>`, which finds the photo's file in the
   pull request or else on the base branch), to change its Place or anything else. Reload the Trip Lines page after
   saving it there to see the groups follow the new Place.
@@ -369,8 +389,8 @@ with a name:
 - Pointing at a photo shows arrows that move it one place earlier or later in the day, for a camera whose clock was
   off. The new order is saved with the line as `order`, and the map's numbers and line follow it. A photo added to the
   day since goes after the photo taken just before it.
-- Pointing at the menu between two photos shows the scissors under it: **Cut to a new place here** starts a new group
-  at the photo after it. The join button between two groups merges them. The menu between two groups picks what
+- The plus under the menu between two photos has **Start a new group here**, which starts a new group at the photo
+  after it. The join button between two groups merges them. The menu between two groups picks what
   happened between them, like any gap.
 - The shuffle button on a group's header marks it as an [area wandered](#areas-wandered).
 

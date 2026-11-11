@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Flag, Play, Scissors } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flag, Play, Plus, Scissors } from "lucide-react";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
 import { GAPS, gapInfo } from "@/components/trip-lines/modes";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
-import { StartInsert, StripEnd } from "@/components/trip-lines/strip-ends";
+import { EndChip, StripEnd, type StripEnds } from "@/components/trip-lines/strip-ends";
+import { Button } from "@/components/ui/button";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { type StripVia, ViaChips } from "@/components/trip-lines/via-list";
 import type { TripPhoto } from "@/lib/trip-days";
@@ -48,6 +49,11 @@ interface PhotoStripProps {
    * it; left out, it is.
    */
   endsDay?: boolean;
+  /**
+   * The day's start and end spots, shown and set from the Start and End at the strip's ends while
+   * the day has a line; left out, neither shows.
+   */
+  ends?: StripEnds;
 }
 
 /** The day's photos in the order they were taken, with what happened between each two. */
@@ -74,7 +80,7 @@ export function PhotoStrip(props: PhotoStripProps) {
           {...rest}
         />
       ))}
-      {endsDay && <RouteEnd {...props} choices={choices} />}
+      {endsDay && props.ends && <RouteEnd {...props} ends={props.ends} choices={choices} />}
     </ol>
   );
 }
@@ -83,14 +89,15 @@ export function PhotoStrip(props: PhotoStripProps) {
  * The trip stops the route ends at after the strip's last photo, and putting one there while the
  * day has a line and stops can be put on it; nothing for a strip with no photos.
  */
-function RouteEnd(props: PhotoStripProps & { choices: TripVisit[] }) {
-  const { photos, visits, gaps, choices, onInsertVisit, onMoveVisit, onOffVisit } = props;
+function RouteEnd(props: PhotoStripProps & { choices: TripVisit[]; ends: StripEnds }) {
+  const { photos, visits, gaps, choices, onInsertVisit, onMoveVisit, onOffVisit, ends } = props;
   const last = photos.at(-1);
   if (!last || !gaps || !onInsertVisit) return null;
   return (
     <StripEnd
       stops={visitsAfter(visits, last.id)}
       choices={choices}
+      ends={ends}
       onInsert={(visit) => onInsertVisit(last.id, visit)}
       onMove={onMoveVisit}
       onOff={onOffVisit}
@@ -179,12 +186,23 @@ function FromStart(props: StripItemProps) {
   );
 }
 
-/** Putting a trip stop before the first photo while the day has a line, then the ones there. */
+/**
+ * Where the day starts while it has a line (its start spot, or putting a trip stop there), then
+ * the trip stops before the first photo.
+ */
 function StartStops(props: StripItemProps) {
-  const { gaps, onInsertFirst, choices } = props;
+  const { gaps, onInsertFirst, choices, ends, before } = props;
   return (
     <>
-      {gaps && onInsertFirst && <StartInsert choices={choices} onInsert={onInsertFirst} />}
+      {gaps && onInsertFirst && ends && (
+        <EndChip
+          which="start"
+          ends={ends}
+          stops={before}
+          choices={choices}
+          onInsert={onInsertFirst}
+        />
+      )}
       <StopsHere {...props} />
     </>
   );
@@ -359,19 +377,22 @@ interface GapColumnProps extends GapPickerProps {
 }
 
 /**
- * What happened between two photos, with the scissors and adding a trip stop under it, shown
- * on hover.
+ * What happened between two photos, with a plus under it that adds something here: a trip stop,
+ * or a new group starting at the next photo.
  */
 function GapColumn({ onSplit, insert, ...picker }: GapColumnProps) {
   return (
-    <div className="group/gap flex flex-col items-center gap-1">
+    <div className="flex flex-col items-center gap-1">
       <GapPicker {...picker} />
-      <span className="flex">
-        {onSplit && <CutButton onClick={onSplit} />}
-        {insert && (
-          <VisitInsert {...insert} className={cn("group-hover/gap:opacity-100", ON_HOVER)} />
-        )}
-      </span>
+      {insert && (
+        <VisitInsert
+          {...insert}
+          icon={Plus}
+          title="Add a trip stop or a new group here"
+          className="text-muted-foreground hover:text-foreground"
+          actions={onSplit && ((close) => <CutButton onClick={() => (onSplit(), close())} />)}
+        />
+      )}
     </div>
   );
 }
@@ -379,15 +400,10 @@ function GapColumn({ onSplit, insert, ...picker }: GapColumnProps) {
 /** Cuts the strip here into a new group: a new place between these areas. */
 function CutButton({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      type="button"
-      title="Cut to a new place here"
-      onClick={onClick}
-      className={cn("hover:bg-muted rounded-sm p-0.5 group-hover/gap:opacity-100", ON_HOVER)}
-    >
-      <Scissors className="size-3.5" aria-hidden />
-      <span className="sr-only">Cut to a new place here</span>
-    </button>
+    <Button variant="ghost" size="sm" className="justify-start border-b" onClick={onClick}>
+      <Scissors aria-hidden />
+      Start a new group here
+    </Button>
   );
 }
 

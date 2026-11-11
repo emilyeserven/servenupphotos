@@ -18,14 +18,13 @@ import { useSessionData } from "@/hooks/use-session-data";
 
 /** What each of a day's pages is called in its tabs. */
 export const PART_LABELS: Record<DayPart, string> = {
-  order: "Photo order",
   route: "Route",
   stops: "Trip Stops",
   story: "Story",
 };
 
 /**
- * One day's pages on Trip Lines: the photo order, the route on the map, the trip stops, and the
+ * One day's pages on Trip Lines: the route (the photo strip and the map), the trip stops, and the
  * story for the portfolio's Trip page, each its own link.
  */
 export function TripDayPage() {
@@ -34,7 +33,7 @@ export function TripDayPage() {
     <Page
       wide
       title={dayTitle(day)}
-      description="This day's trip line, step by step: the photos' order and groups, the route drawn on the map, the trip stops along it, and the story the portfolio's Trip page tells."
+      description="The day's route on the map, the stops along it, and the story its Trip page tells."
       action={
         <Button asChild variant="outline" size="sm">
           <Link to="/trip-lines">
@@ -110,9 +109,9 @@ function DayParts({ data, day }: { data: CombinedData; day: TripDay }) {
   );
 }
 
-/** The editor's page for the part shown: itself, or Photo order behind the Story. */
+/** The editor's page for the part shown: itself, or the Route behind the Story. */
 function editorPart(part: string): EditorPart {
-  return part === "route" || part === "stops" ? part : "order";
+  return part === "stops" ? "stops" : "route";
 }
 
 /** The day's pages as tabs, each a link, keeping the group shown alone. */
