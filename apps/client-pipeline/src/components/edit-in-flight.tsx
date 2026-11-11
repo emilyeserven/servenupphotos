@@ -1,3 +1,4 @@
+import { pixelatedVersionUrl } from "@/lib/face-json";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeftIcon } from "lucide-react";
@@ -180,6 +181,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
             <>
               <ThumbnailCrop
                 photo={editable.image.url}
+                shown={pixelatedVersionUrl(edit.savedData)}
                 crop={edit.crop}
                 onCropChange={edit.onCropChange}
                 locked={pending}

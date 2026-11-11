@@ -38,3 +38,19 @@ export function withFaces(
   const { [FACES]: _old, ...rest } = data;
   return faces.length === 0 ? rest : { ...rest, [FACES]: faces.map(roundedBox) };
 }
+
+/** The largest versions first, whichever the photo has, to show in place of its original. */
+const SHOWN_VERSIONS = ["xlarge", "large", "medium"] as const;
+
+/**
+ * The URL of the photo's largest version once its faces have been pixelated (its URL carries the
+ * `faces=` mark), to show instead of the original, which never is; undefined before that.
+ */
+export function pixelatedVersionUrl(data: Record<string, unknown>): string | undefined {
+  const images = data.images;
+  if (typeof images !== "object" || images === null) return undefined;
+  const urls = images as Record<string, unknown>;
+  return SHOWN_VERSIONS.map((name) => urls[name]).find(
+    (url): url is string => typeof url === "string" && /[?&]faces=/.test(url),
+  );
+}
