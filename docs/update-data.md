@@ -102,7 +102,9 @@ changed top-level fields are rewritten, and nothing is saved while any photo fil
 `"United States of America"`, as the name that wins, in the photo files' `country`, `city`, `customCountry` and
 `customCity` and the place files' `country` and `city` (`POST /api/data/location-names/preview`, then
 `POST /api/data/location-names`). The other names are picked on the Places page; see
-[Other names](places-and-localizations.md#other-names).
+[Other names](places-and-localizations.md#other-names). It also fills in the city of a photo with a state but no
+city when the state is named like a city, such as Seoul; see
+[A city from its state](places-and-localizations.md#a-city-from-its-state).
 
 ## Bulk tagging
 

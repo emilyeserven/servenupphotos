@@ -19,7 +19,8 @@ export function LocationNamesCard() {
           <Link to="/places" className="text-foreground underline underline-offset-4">
             Places
           </Link>{" "}
-          page. New photos get the winning names when their EXIF is read.
+          page. It also fills in the city of a photo with a state but no city when the state is
+          named like a city, such as Seoul. New photos get both when their EXIF is read.
         </>
       }
       preview={locationNamesPreviewQuery}
