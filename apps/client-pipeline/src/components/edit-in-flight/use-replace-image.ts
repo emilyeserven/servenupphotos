@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { exifMutation, type SanitizedExif } from "@/api/exif";
 import { photosInFlightQuery, publishedPhotosQuery, updateInFlightMutation } from "@/api/photos";
@@ -13,14 +13,17 @@ import {
   savedSize,
 } from "@/components/edit-in-flight/replace-image";
 import { useLensSettings } from "@/components/edit-in-flight/use-edit";
+import { useReapplyFaces } from "@/components/edit-in-flight/use-reapply-faces";
 import { type Crop } from "@/lib/crop";
 import { useReplacedImageStore } from "@/stores/replaced-image";
 
 /**
  * Replacing a saved photo's image with a new JPEG, such as a re-edit of the same shot: reading the
  * new image's EXIF, the square its Square Thumbnail is cut from (the saved one when the new image is
- * the same size, or else one picked on it), uploading it with every version, and saving the photo's
- * JSON with its new links as a change waiting for Commit.
+ * the same size, or else one picked on it), uploading it with every version, pixelating the saved
+ * faces on them again when the new image is the same size (and dropping them when it isn't, since
+ * they'd be in the wrong places), and saving the photo's JSON with its new links as a change waiting
+ * for Commit.
  */
 export function useReplaceImage({ file }: Editable, saved: PhotoJson, savedCrop: Crop | null) {
   const queryClient = useQueryClient();
@@ -31,6 +34,7 @@ export function useReplaceImage({ file }: Editable, saved: PhotoJson, savedCrop:
   const [refreshExif, setRefreshExif] = useState(false);
   const upload = useMutation(uploadMutation);
   const update = useMutation(updateInFlightMutation);
+  const faces = useReapplyFaces(saved);
   const square = squareFor(read.data?.sanitized, saved, savedCrop, newCrop);
 
   const replace = useMutation({
@@ -43,17 +47,15 @@ export function useReplaceImage({ file }: Editable, saved: PhotoJson, savedCrop:
         crop: square.crop ?? undefined,
       });
       const replacement = { sanitized: chosen.sanitized, refreshExif };
-      const data = replacedJson(saved, uploaded, replacement, settings);
+      const replaced = replacedJson(saved, uploaded, replacement, settings);
+      const data = await faces.reapply(uploaded.key, replaced, square.keepsCrop);
       const updated = await update.mutateAsync({ path: file.path, data });
       return { key: uploaded.key, path: updated.path, name: chosen.photo.name };
     },
     onSuccess: ({ key, path, name }) => {
       note(path, name);
       read.reset();
-      // The editor starts over from the saved file, with the new image.
-      for (const query of [thumbnailCropQuery(key), photosInFlightQuery, publishedPhotosQuery]) {
-        void queryClient.invalidateQueries({ queryKey: query.queryKey });
-      }
+      refetchReplaced(queryClient, key);
     },
   });
 
@@ -68,6 +70,8 @@ export function useReplaceImage({ file }: Editable, saved: PhotoJson, savedCrop:
     },
     /** Whether the new image is the same size as the old, so the saved square is kept. */
     keepsCrop: square.keepsCrop,
+    /** How many pixelated areas the photo's JSON saves, which a new image of the same size keeps. */
+    savedAreas: faces.savedAreas,
     /** Whether there's a square to cut the new Square Thumbnail from yet. */
     hasCrop: square.crop !== null,
     /** The square picked on a new image of another size. */
@@ -93,6 +97,13 @@ function squareFor(
 ): { keepsCrop: boolean; crop: Crop | null } {
   const keepsCrop = sameSize(savedSize(saved), newSize(sanitized));
   return { keepsCrop, crop: keepsCrop ? savedCrop : newCrop };
+}
+
+/** Reads the photo files and the new image's square again, so the editor starts over with it. */
+function refetchReplaced(queryClient: QueryClient, key: string) {
+  for (const query of [thumbnailCropQuery(key), photosInFlightQuery, publishedPhotosQuery]) {
+    void queryClient.invalidateQueries({ queryKey: query.queryKey });
+  }
 }
 
 /** The chosen JPEG and its EXIF, once it has been read. */

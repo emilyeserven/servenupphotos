@@ -105,6 +105,25 @@ Once a photo's faces are pixelated, the Photo page's **Square Thumbnail** card s
 first of `xlarge`, `large` or `medium` whose URL has the `faces=` mark) in place of the original, so picking the square
 and its preview never shows a face. The square is still measured in the original's pixels, the same shape.
 
+## Pixelated versions are shown in place of the original
+
+Wherever the pipeline shows a photo large, it shows its largest pixelated version once there is one, and the original
+only before that (`shownImageUrl` in `lib/face-json.ts`): the Gallery's and Compare's full-size view, the In Flight
+page's photo, and Trip Lines' casual photos. Squares and small tiles already come from the versions. The face editor
+itself still draws on the original, since it needs every face to place the areas. The portfolio only ever shows
+versions.
+
+## Replace image keeps the faces hidden
+
+**Replace image** on the Photo page uploads the new JPEG with every version, then:
+
+- **Same size as the old image:** remakes every version with the areas saved in the photo's JSON and marks their URLs
+  anew, as saving them in the editor does, so a re-edit of the same shot stays pixelated.
+- **Another size:** drops the saved areas from the JSON, since they'd be in the wrong places, and the card says to
+  pixelate the faces again. The new versions are unpixelated until then.
+
+A photo pixelated before the areas were saved in its JSON has nothing to reapply; pixelate it again after replacing.
+
 ## What isn't hidden
 
 - **The original JPEG.** It stays as it was in R2, and its URL is in the photo's JSON as `images.full` (and so in

@@ -3,8 +3,8 @@ import { savedFacesQuery } from "@/api/faces";
 import { regenerateVersionsMutation } from "@/api/versions";
 import type { Editable } from "@/components/edit-in-flight/photo-json";
 import type { Edit, Save } from "@/components/edit-in-flight/use-edit";
-import { type FaceBox, withFacesMark } from "@/lib/face-boxes";
-import { withFaces } from "@/lib/face-json";
+import type { FaceBox } from "@/lib/face-boxes";
+import { withPixelatedFaces } from "@/lib/face-json";
 
 /**
  * Remakes every version of the photo in R2 with faces pixelated (none stops pixelating), then saves
@@ -18,13 +18,7 @@ export function usePixelateSave({ image }: Editable, edit: Edit, save: Save) {
   const mutation = useMutation({
     mutationFn: async (faces: FaceBox[]) => {
       await regenerate.mutateAsync({ key: image.key, faces });
-      const data = withFaces(
-        {
-          ...edit.savedData,
-          images: withFacesMark(edit.savedData.images, Date.now().toString(36)),
-        },
-        faces,
-      );
+      const data = withPixelatedFaces(edit.savedData, faces, Date.now().toString(36));
       await save.mutation.mutateAsync({ crop: null, data });
     },
     onSettled: () =>

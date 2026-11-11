@@ -1,3 +1,4 @@
+import { shownImageUrl } from "@/lib/face-json";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { GitPullRequestArrowIcon, ImageOffIcon, PencilIcon } from "lucide-react";
@@ -334,5 +335,5 @@ function MissingTile() {
 function tileUrls(file: PublishedFile, imageUrl?: string) {
   if (!imageUrl) return undefined;
   const square = squareImages(fileData(file), imageUrl);
-  return square && { ...square, full: imageUrl };
+  return square && { ...square, full: shownImageUrl(fileData(file), imageUrl) };
 }

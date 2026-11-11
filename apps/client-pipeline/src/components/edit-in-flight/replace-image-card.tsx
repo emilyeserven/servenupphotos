@@ -185,7 +185,8 @@ function NewImageChoices({ replace, old, disabled }: NewImageChoicesProps) {
   return (
     <>
       <p className="text-sm">
-        <CropNote keepsCrop={replace.keepsCrop} size={newSize(sanitized)} old={old} />
+        <CropNote keepsCrop={replace.keepsCrop} size={newSize(sanitized)} old={old} />{" "}
+        <FacesNote keepsCrop={replace.keepsCrop} areas={replace.savedAreas} />
       </p>
       <SettingsSwitch
         id="replace-image-exif"
@@ -235,6 +236,19 @@ function CropNote({
     <>
       It&apos;s {sizeText(size)} and the old image is {sizeText(old)}, so pick its Square Thumbnail
       again below. It starts in the middle.
+    </>
+  );
+}
+
+/** Whether the photo's pixelated areas are pixelated again on the new image, or dropped. */
+function FacesNote({ keepsCrop, areas }: { keepsCrop: boolean; areas: number }) {
+  if (areas === 0) return null;
+  const them = areas === 1 ? "its pixelated area" : `its ${areas} pixelated areas`;
+  if (keepsCrop) return <>The new image&apos;s versions get {them} again.</>;
+  return (
+    <>
+      The saved pixelated areas would be in the wrong places on it, so they&apos;re dropped:
+      pixelate the faces again after replacing it.
     </>
   );
 }

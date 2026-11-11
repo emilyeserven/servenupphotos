@@ -1,4 +1,4 @@
-import { type FaceBox, roundedBox } from "@/lib/face-boxes";
+import { type FaceBox, roundedBox, withFacesMark } from "@/lib/face-boxes";
 import { FACES } from "@/lib/photo-fields";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -39,6 +39,20 @@ export function withFaces(
   return faces.length === 0 ? rest : { ...rest, [FACES]: faces.map(roundedBox) };
 }
 
+/**
+ * data after its versions were remade with faces pixelated (none stops pixelating): its areas set to
+ * faces, to edit them again later, and every version's URL marked with mark, so browsers and
+ * Cloudflare fetch the remade versions.
+ */
+export function withPixelatedFaces(
+  data: Record<string, unknown>,
+  faces: FaceBox[],
+  mark: string,
+): Record<string, unknown> {
+  const images = withFacesMark(data.images as Record<string, unknown> | undefined, mark);
+  return withFaces({ ...data, images }, faces);
+}
+
 /** The largest versions first, whichever the photo has, to show in place of its original. */
 const SHOWN_VERSIONS = ["xlarge", "large", "medium"] as const;
 
@@ -46,11 +60,41 @@ const SHOWN_VERSIONS = ["xlarge", "large", "medium"] as const;
  * The URL of the photo's largest version once its faces have been pixelated (its URL carries the
  * `faces=` mark), to show instead of the original, which never is; undefined before that.
  */
-export function pixelatedVersionUrl(data: Record<string, unknown>): string | undefined {
-  const images = data.images;
+export function pixelatedVersionUrl(data: unknown): string | undefined {
+  const images = isRecord(data) ? data.images : undefined;
   if (typeof images !== "object" || images === null) return undefined;
   const urls = images as Record<string, unknown>;
   return SHOWN_VERSIONS.map((name) => urls[name]).find(
     (url): url is string => typeof url === "string" && /[?&]faces=/.test(url),
   );
+}
+
+/**
+ * The image to show for a photo: its largest pixelated version once its faces have been pixelated,
+ * or else original, so a photo with hidden faces never shows them.
+ */
+export function shownImageUrl(data: unknown, original: string): string;
+export function shownImageUrl(data: unknown, original: string | undefined): string | undefined;
+export function shownImageUrl(data: unknown, original: string | undefined): string | undefined {
+  return pixelatedVersionUrl(data) ?? original;
+}
+
+/**
+ * The areas to pixelate again on a photo's replaced image: the ones its JSON saves when the new
+ * image is the same size as the old, or none when it isn't, since they'd be in the wrong places.
+ */
+export function facesToReapply(saved: Record<string, unknown>, sameSize: boolean): FaceBox[] {
+  return sameSize ? (facesFromJson(saved) ?? []) : [];
+}
+
+/**
+ * A replaced image's JSON with faces pixelated again on its versions (their areas saved and URLs
+ * marked with mark), or with the saved areas dropped when there are none to reapply.
+ */
+export function withReappliedFaces(
+  data: Record<string, unknown>,
+  faces: FaceBox[],
+  mark: string,
+): Record<string, unknown> {
+  return faces.length > 0 ? withPixelatedFaces(data, faces, mark) : withFaces(data, []);
 }

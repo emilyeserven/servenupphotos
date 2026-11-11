@@ -1,3 +1,4 @@
+import { shownImageUrl } from "@/lib/face-json";
 import { useQuery } from "@tanstack/react-query";
 import { ImagePlus, X } from "lucide-react";
 import { useMemo } from "react";
@@ -56,7 +57,7 @@ function useDayFiles(day: string): DayFile[] | undefined {
         id: (e.data as { id: number }).id,
         path: e.path,
         name: e.name,
-        imageUrl: e.imageUrl,
+        imageUrl: shownImageUrl(e.data, e.imageUrl),
         before: raw.get(e.path) ?? {},
       }));
   }, [published.data, inFlight.data, inFlight.isPending, edits, day]);
