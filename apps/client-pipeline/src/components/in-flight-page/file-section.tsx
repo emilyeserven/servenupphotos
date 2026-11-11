@@ -1,3 +1,4 @@
+import { shownImageUrl } from "@/lib/face-json";
 import { Link } from "@tanstack/react-router";
 import { CircleMinusIcon, ImageOffIcon, PencilIcon } from "lucide-react";
 import { useState } from "react";
@@ -66,7 +67,11 @@ function PhotoImages({ file, images }: { file: InFlightFile; images: InFlightIma
   const square = squareImages(file.data, url);
   return (
     <div className="flex min-w-0 flex-col gap-3">
-      <PhotoImage name={photoName(file)} url={url} checked={images.checked} />
+      <PhotoImage
+        name={photoName(file)}
+        url={url && shownImageUrl(file.data, url)}
+        checked={images.checked}
+      />
       {square && (
         <SquareThumbnailImage
           key={square.square}
@@ -116,7 +121,7 @@ const MISSING_IMAGE = {
   unchecked: { Icon: ImageOffIcon, label: "Couldn't check R2", className: "text-muted-foreground" },
 };
 
-/** The photo's image from R2, opening full size in a lightbox, or a "do not enter" sign when it has none. */
+/** The photo's image from R2 (its pixelated version once its faces are pixelated), opening full size in a lightbox, or a "do not enter" sign when it has none. */
 function PhotoImage({ name, url, checked }: { name: string; url?: string; checked: boolean }) {
   const [failed, setFailed] = useState(false);
   const [open, setOpen] = useState(false);

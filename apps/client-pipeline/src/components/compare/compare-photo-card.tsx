@@ -1,3 +1,4 @@
+import { shownImageUrl } from "@/lib/face-json";
 import { Link } from "@tanstack/react-router";
 import { ImageOffIcon, PencilIcon, TrophyIcon, XIcon } from "lucide-react";
 import { useState } from "react";
@@ -74,7 +75,7 @@ function CompareImage({ photo }: { photo: ComparePhoto }) {
         open={open}
         onClose={() => setOpen(false)}
         title={name}
-        src={photo.imageUrl ?? src}
+        src={shownImageUrl(photo.data, photo.imageUrl) ?? src}
         description={`${name} at full size.`}
       />
     </>
