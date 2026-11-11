@@ -74,15 +74,29 @@ interface SavedImage {
   file?: string;
   url?: string;
   key?: string;
+  /** The R2 key of its unedited original, when it has one (docs/unedited-originals.md). */
+  originalKey?: string;
 }
 
+type SavedEntry = {
+  file?: unknown;
+  images?: { full?: unknown; key?: unknown };
+  original?: { images?: { key?: unknown } } | null;
+};
+
 function savedImage(entry: unknown): SavedImage {
-  const photo = (entry ?? {}) as { file?: unknown; images?: { full?: unknown; key?: unknown } };
+  const photo = (entry ?? {}) as SavedEntry;
   return {
     file: stringOrUndefined(photo.file),
     url: stringOrUndefined(photo.images?.full),
     key: stringOrUndefined(photo.images?.key),
+    originalKey: originalKeyOf(photo),
   };
+}
+
+/** The R2 key saved for the entry's unedited original, when it has one. */
+function originalKeyOf(photo: SavedEntry): string | undefined {
+  return stringOrUndefined(photo.original?.images?.key);
 }
 
 function stringOrUndefined(value: unknown): string | undefined {
@@ -90,13 +104,22 @@ function stringOrUndefined(value: unknown): string | undefined {
 }
 
 /**
- * Keys of the images whose photo is an ALLPHOTOS.json entry, plus each one's resized versions. An
+ * Keys of the images whose photo is an ALLPHOTOS.json entry, and of its unedited original when it
+ * has one, plus each one's resized versions. An
  * entry is matched by its saved R2 key, then its R2 URL, then, for one saved without either, the
  * name stem its file name would get in a key, as Photos in Flight matches photos.
  */
 function publishedImages(images: BucketImage[], entries: unknown[]): Set<string> {
-  const keys = entries.flatMap((entry) => matchingKeys(images, savedImage(entry)));
+  const keys = entries.flatMap((entry) => {
+    const saved = savedImage(entry);
+    return [...matchingKeys(images, saved), ...originalKeys(saved)];
+  });
   return new Set([...keys, ...keys.flatMap(versionKeys)]);
+}
+
+/** The key of the entry's unedited original, when it has one. */
+function originalKeys({ originalKey }: SavedImage): string[] {
+  return originalKey ? [originalKey] : [];
 }
 
 function matchingKeys(images: BucketImage[], saved: SavedImage): string[] {

@@ -33,6 +33,7 @@ import {
 import { CameraOverridesCard } from "@/components/edit-in-flight/camera-overrides-card";
 import { LensSection } from "@/components/edit-in-flight/lens-section";
 import { ReplaceImageCard } from "@/components/edit-in-flight/replace-image-card";
+import { UneditedOriginalCards } from "@/components/edit-in-flight/unedited-original-card";
 import { useLocationPrompt } from "@/components/edit-in-flight/location-prompt";
 import { TagPromptButton } from "@/components/edit-in-flight/tag-prompt-button";
 import { PhotoSections } from "@/components/edit-in-flight/photo-sections";
@@ -196,6 +197,14 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
                 disabled={pending}
               />
             </>
+          ),
+          original: (
+            <UneditedOriginalCards
+              editable={editable}
+              saved={edit.savedData}
+              unsaved={edit.request !== null}
+              disabled={pending}
+            />
           ),
           camera: <LensCards edit={edit} disabled={pending} />,
           sharing: (

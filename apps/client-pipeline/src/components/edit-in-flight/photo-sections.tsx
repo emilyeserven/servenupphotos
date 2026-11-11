@@ -6,6 +6,7 @@ import {
   ImageIcon,
   type LucideIcon,
   Share2Icon,
+  SquareSplitHorizontalIcon,
   TagsIcon,
 } from "lucide-react";
 import type { ReactNode } from "react";
@@ -14,7 +15,15 @@ import type { Edit } from "@/components/edit-in-flight/use-edit";
 import { cn } from "@/lib/utils";
 
 /** The Photo page's sections, in the order the subnavigation lists them. */
-const PHOTO_SECTIONS = ["details", "groups", "image", "camera", "sharing", "json"] as const;
+const PHOTO_SECTIONS = [
+  "details",
+  "groups",
+  "image",
+  "original",
+  "camera",
+  "sharing",
+  "json",
+] as const;
 
 /** One of the Photo page's sections, kept in the URL as `?section=`. */
 export type PhotoSection = (typeof PHOTO_SECTIONS)[number];
@@ -30,6 +39,7 @@ const SECTIONS: Record<PhotoSection, SectionInfo> = {
   details: { label: "Details", icon: FileTextIcon, fields: ["details", "reEdit"] },
   groups: { label: "Albums & tags", icon: TagsIcon, fields: ["groups"] },
   image: { label: "Image", icon: ImageIcon, fields: [] },
+  original: { label: "Original", icon: SquareSplitHorizontalIcon, fields: [] },
   camera: { label: "Camera & lens", icon: CameraIcon, fields: ["overrides"] },
   sharing: { label: "Posts & related", icon: Share2Icon, fields: ["socialPosts", "pickedSimilar"] },
   json: { label: "JSON", icon: BracesIcon, fields: [] },
