@@ -1,0 +1,312 @@
+{
+  "id": 526,
+  "title": null,
+  "comment": null,
+  "altText": null,
+  "notes": null,
+  "file": "DSCF0318.jpg",
+  "addedDate": null,
+  "camera": "Fujifilm X-T5",
+  "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+  "aperture": 5.6,
+  "exposure": "1/340",
+  "iso": 125,
+  "focalLength": 122.6,
+  "gpsPosition": "37 deg 34' 18.53\" N, 126 deg 59' 21.27\" E",
+  "customGpsPosition": null,
+  "createDate": "2026:05:25 13:27:13",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "South Korea",
+  "state": "Seoul",
+  "city": null,
+  "width": 7728,
+  "height": 4347,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/70a64d383463-dscf0318.jpg",
+    "key": "photos/70a64d383463-dscf0318.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/70a64d383463-dscf0318-xlarge.webp?faces=mwbnov5c",
+    "large": "https://cdn.servenupphotos.net/photos/70a64d383463-dscf0318-large.webp?faces=mwbnov5c",
+    "medium": "https://cdn.servenupphotos.net/photos/70a64d383463-dscf0318-medium.webp?faces=mwbnov5c",
+    "small": "https://cdn.servenupphotos.net/photos/70a64d383463-dscf0318-small.webp?faces=mwbnov5c",
+    "xsmall": "https://cdn.servenupphotos.net/photos/70a64d383463-dscf0318-xsmall.webp?faces=mwbnov5c",
+    "preview": "https://cdn.servenupphotos.net/photos/70a64d383463-dscf0318-preview.webp?faces=mwbnov5c",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/70a64d383463-dscf0318-thumbnail.webp?faces=mwbnov5c",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/70a64d383463-dscf0318-thumbnailpreview.webp?faces=mwbnov5c",
+    "thumbnailcrop": {
+      "x": 1690,
+      "y": 0,
+      "size": 4347,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "genres": [],
+  "places": [],
+  "noGps": false,
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "spotlightPlacement": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "pickedSimilar": [],
+  "pickedSimilarNotes": {},
+  "similarPhotos": [],
+  "perceptualHash": "324254437272c607",
+  "colors": {
+    "average": {
+      "hex": "#545452",
+      "lab": {
+        "l": 35.63,
+        "a": -0.61,
+        "b": 1.23
+      },
+      "hcl": {
+        "h": 116.31,
+        "c": 1.38,
+        "l": 35.63
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0178
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0242
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.0269
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.0506
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.011
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0.0017
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.0019
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.0351
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.0122
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0.0007
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0.0007
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0.0032
+      }
+    ],
+    "neutrals": {
+      "share": 0.8139,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.1021
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0884
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0878
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0785
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0535
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0451
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0363
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0323
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0287
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0334
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0282
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0249
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0289
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0223
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0298
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0208
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0266
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0259
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0133
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0.0074
+        }
+      ]
+    },
+    "lightness": 35.63,
+    "chroma": 9.4,
+    "peakChroma": 23.67,
+    "samples": 10050
+  },
+  "faces": [
+    {
+      "x": 2846,
+      "y": 2902,
+      "width": 53,
+      "height": 76,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks",
+      "rotation": -15
+    },
+    {
+      "x": 3348,
+      "y": 2944,
+      "width": 82,
+      "height": 89,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 4547,
+      "y": 3014,
+      "width": 47,
+      "height": 70,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks",
+      "rotation": 16
+    },
+    {
+      "x": 4771,
+      "y": 2974,
+      "width": 51,
+      "height": 73,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    }
+  ]
+}
