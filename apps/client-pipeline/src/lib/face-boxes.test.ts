@@ -43,6 +43,9 @@ test("dragging the top left corner keeps the bottom right one in place", () => {
   assert.deepEqual(grown, { ...face, x: 50, width: 250, y: 160, height: 40 });
 });
 
+/** What every new area starts as: a circle with whole-block edges. */
+const circle = { shape: "circle", edge: "blocks" };
+
 test("a box drawn backwards is the same box, clipped to the photo", () => {
   assert.deepEqual(drawnBox({ x: 300, y: 700 }, { x: 100, y: 500 }, photo, 5), {
     x: 100,
@@ -50,15 +53,23 @@ test("a box drawn backwards is the same box, clipped to the photo", () => {
     width: 200,
     height: 100,
     blocks: 5,
+    ...circle,
   });
   assert.equal(isBigEnough(drawnBox({ x: 10, y: 10 }, { x: 12, y: 40 }, photo)), false);
 });
 
-test("a box added by hand sits in the middle", () => {
-  assert.deepEqual(middleBox(photo), { x: 450, y: 250, width: 100, height: 100, blocks: 8 });
+test("a circle added by hand sits in the middle", () => {
+  assert.deepEqual(middleBox(photo), {
+    x: 450,
+    y: 250,
+    width: 100,
+    height: 100,
+    blocks: 8,
+    ...circle,
+  });
 });
 
-test("a box added while zoomed in sits in the middle of the view, sized to it, inside the photo", () => {
+test("a circle added while zoomed in sits in the middle of the view, sized to it, inside the photo", () => {
   const view = { width: 300, height: 180 };
   assert.deepEqual(middleBox(photo, { x: 200, y: 100 }, view), {
     x: 185,
@@ -66,6 +77,7 @@ test("a box added while zoomed in sits in the middle of the view, sized to it, i
     width: 30,
     height: 30,
     blocks: 8,
+    ...circle,
   });
   assert.deepEqual(middleBox(photo, { x: 990, y: 5 }, view), {
     x: 970,
@@ -73,6 +85,7 @@ test("a box added while zoomed in sits in the middle of the view, sized to it, i
     width: 30,
     height: 30,
     blocks: 8,
+    ...circle,
   });
 });
 

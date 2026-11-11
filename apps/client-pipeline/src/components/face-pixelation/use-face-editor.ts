@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import type { VisibleArea } from "@/components/face-pixelation/face-preview";
 import type { Size } from "@/lib/crop";
-import { type FaceBox, MAX_FACES, middleBox, newFaces, sameBoxes } from "@/lib/face-boxes";
+import { type FaceBox, MAX_FACES, middleBox, newArea, newFaces, sameBoxes } from "@/lib/face-boxes";
 
 /** The faces being edited against the saved ones, which one is picked, and how to change them. */
 export function useFaceEditor(saved: FaceBox[]) {
@@ -37,16 +37,17 @@ export function useFaceEditor(saved: FaceBox[]) {
      * Adds a box to pixelate, or with `keep` an area to keep as it is (such as hair over a face),
      * in the middle of the part of the photo in view, the whole photo unless zoomed in.
      */
-    add: (keep: boolean, visible?: VisibleArea) => photo && append([newArea(photo, keep, visible)]),
-    /** Adds the found faces that aren't boxed yet. */
-    addFound: (found: FaceBox[]) => append(newFaces(faces, found)),
+    add: (keep: boolean, visible?: VisibleArea) =>
+      photo && append([addedArea(photo, keep, visible)]),
+    /** Adds the found faces that aren't boxed yet, as circles with whole-block edges. */
+    addFound: (found: FaceBox[]) => append(newFaces(faces, found).map(newArea)),
     reset: () => replace(saved),
     clear: () => replace([]),
   };
 }
 
 /** A new box in the middle of the part of the photo in view, kept as it is with `keep`. */
-function newArea(photo: Size, keep: boolean, visible: VisibleArea | undefined): FaceBox {
+function addedArea(photo: Size, keep: boolean, visible: VisibleArea | undefined): FaceBox {
   const box = middleBox(photo, visible?.center, visible?.view);
   return keep ? { ...box, keep } : box;
 }

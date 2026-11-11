@@ -85,7 +85,8 @@ export function AreaOptions({ face, onChange, disabled }: AreaOptionsProps) {
         label="Shape"
         choices={SHAPES}
         value={shapeOf(face)}
-        onChange={(shape) => onChange({ ...face, shape })}
+        // Whole blocks is the edge a circle starts with.
+        onChange={(shape) => onChange({ ...face, shape, edge: face.edge ?? "blocks" })}
         disabled={disabled}
       />
       <EdgeOptions face={face} onChange={onChange} disabled={disabled} />
