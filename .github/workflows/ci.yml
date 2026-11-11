@@ -102,7 +102,14 @@ jobs:
           version: v2.14.0
           working-directory: apps/be-pipeline
       # The race detector catches data races in the backend's concurrent R2 and GitHub reads (internal/throttle, memo, progress).
-      - run: go test -race ./...
+      # versions and storage start no goroutines of their own, but their tests encode real WEBP and AVIF
+      # files, which the race detector slows about twentyfold (over two minutes instead of five seconds),
+      # so they run without it.
+      - name: go test
+        run: |
+          mapfile -t raced < <(go list ./... | grep -v -e '/internal/versions$' -e '/internal/storage$')
+          go test -race "${raced[@]}"
+          go test ./internal/versions/ ./internal/storage/
         env:
           # Fail, rather than skip, the oxfmt comparison if oxfmt is missing.
           REQUIRE_OXFMT: "1"
