@@ -41,6 +41,7 @@ var dataKinds = []combinedKind{
 	{"gear", GearKind.Folder, GearKind.AllFile},
 	{"notstored", NotStoredKind.Folder, NotStoredKind.AllFile},
 	{"photobooks", PhotoBooks.Folder, PhotoBooks.AllFile},
+	{"bio", BioKind.Folder, BioKind.AllFile},
 }
 
 // combinedKinds is every kind of combined data, photos first.

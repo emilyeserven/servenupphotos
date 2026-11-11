@@ -51,8 +51,17 @@ func handleDeleteGear(store *settings.Store, gh *github.Client) http.HandlerFunc
 // multipart form in R2 right away, unchanged, responding with its key, URL and
 // size, for a crop to be cut from.
 func handleUploadGearImage(loadR2 func() (settings.R2, error), upload gearUploadFunc) http.HandlerFunc {
+	return handlePictureUpload(loadR2, maxGearImageBytes, gearUploadTimeout, upload)
+}
+
+// handlePictureUpload hands the JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF of up
+// to maxBytes in the "image" field of a multipart form to upload, with
+// timeout, and answers with where upload put it.
+func handlePictureUpload[T any](loadR2 func() (settings.R2, error), maxBytes int64, timeout time.Duration,
+	upload func(ctx context.Context, cfg settings.R2, name string, body io.Reader) (T, error),
+) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		name, body, ok := receiveGearImage(w, r)
+		name, body, ok := receivePicture(w, r, maxBytes)
 		if !ok {
 			return
 		}
@@ -62,7 +71,7 @@ func handleUploadGearImage(loadR2 func() (settings.R2, error), upload gearUpload
 			writeError(w, http.StatusInternalServerError, "could not read settings")
 			return
 		}
-		ctx, cancel := context.WithTimeout(r.Context(), gearUploadTimeout)
+		ctx, cancel := context.WithTimeout(r.Context(), timeout)
 		defer cancel()
 		res, err := upload(ctx, cfg, name, body)
 		writeGearUpload(w, res, err)
@@ -98,25 +107,26 @@ func handleCropGearImage(loadR2 func() (settings.R2, error), crop gearCropFunc) 
 	}
 }
 
-// writeGearUpload answers with where the picture went, or why it didn't.
+// writeGearUpload answers with where a gear picture or self-portrait went,
+// or why it didn't.
 func writeGearUpload[T any](w http.ResponseWriter, res T, err error) {
 	var uploadErr *storage.UploadError
 	switch {
 	case errors.As(err, &uploadErr):
 		writeJSON(w, uploadErrorStatus(uploadErr), uploadErrorResponse{Message: uploadErr.Message, Cloudflare: uploadErr.Cloudflare})
 	case err != nil:
-		slog.Error("gear upload failed", "err", err)
+		slog.Error("picture upload failed", "err", err)
 		writeError(w, http.StatusInternalServerError, "could not upload the picture")
 	default:
 		writeJSON(w, http.StatusOK, res)
 	}
 }
 
-// receiveGearImage finds the "image" part of the multipart body and returns
-// its file name and a reader of it, after checking it's a picture a gear
-// picture can be (storage.GearPictureType).
-func receiveGearImage(w http.ResponseWriter, r *http.Request) (string, io.Reader, bool) {
-	r.Body = http.MaxBytesReader(w, r.Body, maxGearImageBytes)
+// receivePicture finds the "image" part of a multipart body of up to
+// maxBytes and returns its file name and a reader of it, after checking it's
+// a picture a gear picture or self-portrait can be (storage.GearPictureType).
+func receivePicture(w http.ResponseWriter, r *http.Request, maxBytes int64) (string, io.Reader, bool) {
+	r.Body = http.MaxBytesReader(w, r.Body, maxBytes)
 	mr, err := r.MultipartReader()
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "expected a multipart/form-data body")

@@ -34,6 +34,7 @@ branches that add pages don't clash:
     - Planned Posts
   - Captions (the Caption Templates page)
   - Photo Book
+  - Bio
   - Site Spotlight
   - Related Photos
   - User Likes

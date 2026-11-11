@@ -508,6 +508,29 @@ added.photobooks = [
   },
 ];
 
+/** The bio, with a self-portrait first and three of the portfolio's photos after it. */
+added.bio = [
+  {
+    path: `${FOLDER}/bio/bio.json`,
+    data: {
+      id: "bio",
+      text: "# Hi, I'm Emily\n\nI photograph **cities**, trains and the people in them, mostly in Korea and Japan.\n\nWhen I'm not out with a camera, I build websites.",
+      photos: [
+        {
+          portrait: {
+            image: `${CDN}/bio/1a2b3c4d5e6f-me-in-seoul.webp`,
+            small: `${CDN}/bio/1a2b3c4d5e6f-me-in-seoul-small.webp`,
+            width: 1200,
+            height: 1800,
+            alt: "Me holding a camera on a Seoul street",
+          },
+        },
+        ...decidedPhotos.slice(4, 7).map(({ path: photo }) => ({ photo })),
+      ],
+    },
+  },
+];
+
 export const headTags = [...baseTags, added.tag];
 
 /** base with each of added's files in place of the base file at its path, or added at the end. */

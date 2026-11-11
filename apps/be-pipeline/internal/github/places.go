@@ -14,7 +14,7 @@ import (
 )
 
 // EntryKind is a kind of data file the pipeline saves whole, by ID: places,
-// localizations, metadata groups, camera overrides, custom lenses, timeline labels, viewer likes, trip lines, graph presets, gear pictures, Not Stored posts and photo books. Each is one JSON file in its kind's folder, and Commit
+// localizations, metadata groups, camera overrides, custom lenses, timeline labels, viewer likes, trip lines, graph presets, gear pictures, Not Stored posts, photo books and the bio. Each is one JSON file in its kind's folder, and Commit
 // combines them into the kind's AllFile.
 type EntryKind struct {
 	// Name is the kind's singular name, as shown: "place" or "localization".
@@ -62,7 +62,10 @@ var (
 	// PhotoBooks is the Photo Book page's rough mockups of photo books, one
 	// file per book.
 	PhotoBooks = EntryKind{Name: "photo book", Folder: "photobooks", AllFile: "PHOTOBOOKS.json"}
-	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind, PhotoBooks}
+	// BioKind is the bio the portfolio will show about the photographer,
+	// one file, bio.json.
+	BioKind    = EntryKind{Name: "bio", Folder: "bio", AllFile: "BIO.json"}
+	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind, PhotoBooks, BioKind}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as

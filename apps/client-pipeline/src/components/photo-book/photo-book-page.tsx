@@ -1,15 +1,17 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { photoBooks } from "@/api/photo-books";
-import type { SocialCalendar, SocialPhoto } from "@/api/publish";
+import type { SocialPhoto } from "@/api/publish";
 import { PhotoDrawerToggle } from "@/components/instagram-picker/photo-drawer";
 import { AddPageButton } from "@/components/photo-book/add-page-button";
 import { BookChooser, BookSettings } from "@/components/photo-book/book-bar";
 import { useBookTemplate, useCaptionFor } from "@/components/photo-book/book-captions";
-import { BookDrawer } from "@/components/photo-book/book-drawer";
 import { BookPage, type PageActions } from "@/components/photo-book/book-page";
+import { BOOK_PHOTO_DRAG_TYPE, FROM_PAGE_DRAG_TYPE } from "@/components/photo-book/page-slot";
 import { usePhotoBookDraft } from "@/components/photo-book/use-photo-book";
-import { PhotoFiles } from "@/components/photo-files";
+import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
+import { DecidedPhotoFiles } from "@/components/photo-files";
+import { SaveState } from "@/components/save-state";
 import {
   type PhotoBook,
   addPage,
@@ -23,22 +25,18 @@ import {
   setLayout,
   setTitle,
 } from "@/lib/photo-book";
-import { withoutUndecided } from "@/lib/social-schedule";
-import { useChangedPhotoFiles, useCombinedData } from "@/stores/combined-data";
+import { useCombinedData } from "@/stores/combined-data";
+
+/** What the photo drawer says beside the book. */
+const BOOK_DRAWER_WORDS = {
+  help: "Drag a photo onto a page, or click it to fill the first empty place. Drop a photo from a page here to take it out of the book.",
+  showUsed: "Show photos already in the book",
+  usedBadge: "In book",
+};
 
 /** The Photo Book page's content: the books, once the photo files are read. */
 export function PhotoBookPlanner() {
-  return <PhotoFiles>{(calendar) => <DecidedPhotos calendar={calendar} />}</PhotoFiles>;
-}
-
-/** The photos the book can use: every one but those set aside as Undecided. */
-function DecidedPhotos({ calendar }: { calendar: SocialCalendar }) {
-  const changed = useChangedPhotoFiles();
-  const { photos } = useMemo(
-    () => withoutUndecided(calendar.photos, changed),
-    [calendar.photos, changed],
-  );
-  return <Books photos={photos} />;
+  return <DecidedPhotoFiles>{(photos) => <Books photos={photos} />}</DecidedPhotoFiles>;
 }
 
 /** The book chosen in the address (`?book=`), or else the first one. */
@@ -131,24 +129,19 @@ function BookEditor({ saved, photos }: { saved: PhotoBook; photos: SocialPhoto[]
         </div>
       </div>
       {drawerOpen && (
-        <BookDrawer
+        <PhotoDrawerPanel
           photos={photos}
-          inBook={inBook}
+          used={inBook}
           onPick={pick}
-          onRemove={(path) => update(removePhoto(book, path))}
           onClose={() => setDrawerOpen(false)}
+          dragType={BOOK_PHOTO_DRAG_TYPE}
+          words={BOOK_DRAWER_WORDS}
+          takeOff={{
+            fromType: FROM_PAGE_DRAG_TYPE,
+            onRemove: (path) => update(removePhoto(book, path)),
+          }}
         />
       )}
     </div>
-  );
-}
-
-/** Whether the book's last change is saved for Commit, being saved, or failed to save and why. */
-function SaveState({ saving, error }: { saving: boolean; error: Error | null }) {
-  if (error) return <span className="text-destructive text-xs">{error.message}</span>;
-  return (
-    <span className="text-muted-foreground text-xs" aria-live="polite">
-      {saving ? "Saving…" : "Saved for Commit"}
-    </span>
   );
 }

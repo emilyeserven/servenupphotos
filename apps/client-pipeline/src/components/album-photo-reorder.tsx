@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { GripVerticalIcon, ImageOffIcon } from "lucide-react";
-import { type DragEvent, useState } from "react";
+import { useState } from "react";
 import { type Group, organizeQuery, setAlbumPhotoOrderMutation } from "@/api/organize";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
 import { MoveArrows } from "@/components/move-arrows";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { type DragOrder, useDragOrder } from "@/hooks/use-drag-order";
 import { albumPhotoOrder, moved, photoId, savedPhotoOrder } from "@/lib/album-photo-order";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { cn } from "@/lib/utils";
@@ -25,9 +26,9 @@ interface AlbumPhotoReorderProps {
  */
 export function AlbumPhotoReorder({ album, photos, onDone }: AlbumPhotoReorderProps) {
   const [list, setList] = useState(() => albumPhotoOrder(photos, album.photoOrder));
-  const drag = useDragOrder(setList);
-  const save = usePhotoOrderSave(onDone);
   const move = (from: number, to: number) => setList((current) => moved(current, from, to));
+  const drag = useDragOrder(move);
+  const save = usePhotoOrderSave(onDone);
   const saveOrder = (order: number[]) => save.mutate({ id: album.id, photoIds: order });
 
   return (
@@ -71,31 +72,6 @@ function usePhotoOrderSave(onDone: () => void) {
     },
   });
 }
-
-/**
- * The tile being dragged, by its place, and the handlers that move it to the place of each tile it
- * passes over, so the grid shows the new order as it's dragged.
- */
-function useDragOrder(setList: (update: (list: CombinedPhoto[]) => CombinedPhoto[]) => void) {
-  const [dragging, setDragging] = useState<number | null>(null);
-  return {
-    dragging,
-    start: (place: number, event: DragEvent) => {
-      event.dataTransfer.effectAllowed = "move";
-      // Firefox only starts a drag that carries data.
-      event.dataTransfer.setData("text/plain", String(place));
-      setDragging(place);
-    },
-    enter: (place: number) => {
-      if (dragging === null || dragging === place) return;
-      setList((list) => moved(list, dragging, place));
-      setDragging(place);
-    },
-    end: () => setDragging(null),
-  };
-}
-
-type DragOrder = ReturnType<typeof useDragOrder>;
 
 interface ReorderTileProps {
   photo: CombinedPhoto;
