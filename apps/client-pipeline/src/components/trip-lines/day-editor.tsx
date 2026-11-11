@@ -1,21 +1,29 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Rows3 } from "lucide-react";
+import { useRef, useState } from "react";
 import {
   autoTripLineQuery,
-  deleteTripLineMutation,
-  saveTripLineMutation,
   type TripFence,
   type TripLine,
   type TripPoint,
   type TripSegment,
 } from "@/api/trip-lines";
-import { EditorActions, type EditorView } from "@/components/trip-lines/editor-actions";
+import {
+  type EditorView,
+  type LineMode,
+  LineSwitch,
+  SaveBar,
+} from "@/components/trip-lines/editor-actions";
+import { useDaySave, useLeaveGuard } from "@/components/trip-lines/day-save";
+import { editedView, modeView } from "@/lib/trip-line-view";
+import { type EndKey, PickHint } from "@/components/trip-lines/end-spots";
 import { useDayPlaceAreas } from "@/components/trip-lines/use-day-place-areas";
 import { newVisit, withVisit } from "@/lib/trip-visits";
 import { GroupStrip } from "@/components/trip-lines/group-strip";
 import { stripVias } from "@/components/trip-lines/via-list";
 import { RouteMap } from "@/components/trip-lines/route-map";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import type { TripDay, TripPhoto } from "@/lib/trip-days";
 import { placeGroups } from "@/lib/trip-groups";
 import { draftOf, type GapDraft, segmentsOf, walkingDraft, withStops } from "@/lib/trip-gaps";
@@ -25,14 +33,7 @@ import { useTripDaySearch } from "@/lib/trip-lines-search";
 import { isAreaPick, withAreaEnd } from "@/lib/trip-wander";
 import { MapTools, type MapPick } from "@/components/trip-lines/route-tools";
 import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
-import {
-  hasStops,
-  keptStops,
-  type KeptStops,
-  lineStops,
-  onlyStopsChanged,
-  withStopVias,
-} from "@/lib/trip-stops-kept";
+import { keptStops, type KeptStops, withStopVias } from "@/lib/trip-stops-kept";
 
 /**
  * What the editor shows first: the saved line by hand, the automatic line, or nothing yet. A day
@@ -87,18 +88,6 @@ function viewSegments(
 }
 
 /**
- * The view after the strip or map changes the draft shown: on the automatic line, a change to its
- * trip stops alone keeps it automatic, to save with **Update automatic line**; any other change
- * starts a line drawn by hand.
- */
-function editedView(view: EditorView, shown: GapDraft, draft: GapDraft): EditorView {
-  if (view.kind === "auto" && onlyStopsChanged(shown, draft)) {
-    return { kind: "auto", stops: lineStops(draft) };
-  }
-  return { kind: "hand", draft };
-}
-
-/**
  * The draft the group strip shows: the hand-drawn one, or else the drawn segments (walking all day
  * with no line yet) grouped by place, so the groups show before drawing by hand. Changing it starts
  * a hand-drawn line from it.
@@ -145,11 +134,8 @@ function startingView(day: TripDay, line: TripLine | undefined): EditorView {
   );
 }
 
-/**
- * The day's pages the editor shows on: the photo order (the strip alone), the route (the strip and
- * the map with its tools), and the trip stops (the map and the list of places).
- */
-export type EditorPart = "order" | "route" | "stops";
+/** The day's pages the editor shows on: the route (the strip, the map and its tools) and the trip stops. */
+export type EditorPart = "route" | "stops";
 
 interface DayEditorProps {
   day: TripDay;
@@ -157,63 +143,93 @@ interface DayEditorProps {
   part: EditorPart;
 }
 
-/** What each page is called on its card. */
-const PART_TITLES: Record<EditorPart, string> = {
-  order: "Photo order",
-  route: "Route",
-  stops: "Trip Stops",
-};
-
 /** What each page says the editor is for. */
 const PART_NOTES: Record<EditorPart, string> = {
-  order:
-    "Put the photos in order, cut them into groups by place, and pick what happened between each two: keep walking, a break, or a hop by train, subway, bus or car.",
-  route:
-    "Pick what happened between each two photos, and shape the line on the map: via points, the day's start and end, transit lines and areas.",
+  route: "Put the photos in order and into groups, and draw the day's line through them.",
   stops:
-    "The stops along the day's route, such as restaurants and shops, with or without a photo, and the casual photos taken there, which show only on the Trip page: add stops on the map, from the saved places or by a coordinate. Put them on the route between two photos in the strip on Photo order or Route.",
+    "Restaurants, shops and other stops along the day, with or without a photo, and the casual photos taken there. Each one's Where on the route menu puts it on the line.",
 };
 
-/** Edits one day's trip line: the photo strip, the map on the Route page, and saving. */
+/** The start or end spot being picked on the map, if that's what is. */
+function endPicking(picking: MapPick | undefined): EndKey | undefined {
+  return picking === "start" || picking === "end" ? picking : undefined;
+}
+
+/**
+ * Edits one day's trip line: the line switch and photo strip on the Route page, the map with the
+ * page's tools, and the save bar under them.
+ */
 export function DayEditor({ day: taken, line, part }: DayEditorProps) {
   const [view, setRawView] = useState<EditorView>(() => startingView(taken, line));
+  const [dirty, setDirty] = useState(false);
+  // The line by hand last shown, so switching to another kind of line and back keeps it.
+  const lastHand = useRef<GapDraft>(undefined);
   // The day with its photos in the view's order: as taken, unless moved by hand.
   const day = { ...taken, photos: orderedPhotos(taken.photos, draftOrder(view)) };
   const ids = day.photos.map((p) => p.id);
-  const setView = (next: EditorView) =>
+  const show = (next: EditorView, changed = true) => {
+    if (view.kind === "hand") lastHand.current = view.draft;
     setRawView(withPlaceGroups(next, orderedPhotos(taken.photos, draftOrder(next))));
+    setDirty(changed);
+  };
   const [hovered, setHovered] = useState<number>();
+  const [picking, setPicking] = useState<MapPick>();
   const { search, set } = useTripDaySearch();
-  const focus = search.group;
-  const setFocus = (group: string | undefined) => set({ group });
   const auto = useQuery({ ...autoTripLineQuery(day.day), enabled: showsAuto(view) });
   const segments = viewSegments(ids, view, auto.data, line);
   const placeAreas = useDayPlaceAreas(day.photos);
   const shownDraft = stripDraft(view, day.photos, segments, line);
-  const editDraft = (draft: GapDraft) => setView(editedView(view, shownDraft, draft));
+  const editDraft = (draft: GapDraft) => show(editedView(view, shownDraft, draft));
+  const onMode = (mode: LineMode) =>
+    show(modeView(mode, { view, ids, saved: line, auto: auto.data, lastHand: lastHand.current }));
+  // Setting a spot with no photo draws the line by hand, so the map can be clicked.
+  const pickSpot = (which: EndKey) => {
+    if (view.kind !== "hand") show({ kind: "hand", draft: shownDraft });
+    setPicking(which);
+  };
+  const { save, remove, run } = useDaySave({
+    day: day.day,
+    ids,
+    view,
+    segments,
+    order: orderToSave(taken.photos, ids),
+    saved: line,
+    refetchAuto: auto.refetch,
+    onSaved: (next) => show(next, false),
+  });
+  useLeaveGuard(day.day, dirty);
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{PART_TITLES[part]}</CardTitle>
-        <CardDescription>
-          {day.photos.length} photos at {day.spots} spots. {PART_NOTES[part]}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {part !== "stops" && (
-          <GroupStrip
-            photos={day.photos}
-            draft={shownDraft}
-            onChange={editDraft}
-            onMove={(id, by) => editDraft({ ...shownDraft, order: movedId(ids, id, by) })}
-            onHover={setHovered}
-            focus={focus}
-            onFocus={setFocus}
-            stacked={part === "order"}
-            vias={part === "route" ? stripVias(day, shownDraft, segments) : undefined}
-          />
-        )}
-        {part !== "order" && (
+    <div className="flex flex-col gap-3">
+      <Card>
+        <CardHeader>
+          <CardDescription>
+            {day.photos.length} photos at {day.spots} spots. {PART_NOTES[part]}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          {part === "route" && (
+            <>
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <LineSwitch view={view} onMode={onMode} autoBusy={auto.isFetching} />
+                <StackButton
+                  on={search.stack === true}
+                  onToggle={(on) => set({ stack: on || undefined })}
+                />
+              </div>
+              <GroupStrip
+                photos={day.photos}
+                draft={shownDraft}
+                onChange={editDraft}
+                onMove={(id, by) => editDraft({ ...shownDraft, order: movedId(ids, id, by) })}
+                onHover={setHovered}
+                focus={search.group}
+                onFocus={(group) => set({ group })}
+                stacked={search.stack === true}
+                vias={stripVias(day, shownDraft, segments)}
+                spots={{ picking: endPicking(picking), onPick: pickSpot }}
+              />
+            </>
+          )}
           <DayMap
             day={day}
             part={part}
@@ -221,29 +237,46 @@ export function DayEditor({ day: taken, line, part }: DayEditorProps) {
             shown={shownDraft}
             segments={segments}
             highlighted={hovered}
-            focus={focus}
+            focus={search.group}
             placeAreas={placeAreas}
             onChange={editDraft}
+            picking={picking}
+            onPicking={setPicking}
           />
-        )}
-        <DayActions
-          day={day}
-          ids={ids}
-          view={view}
-          setView={setView}
-          auto={auto}
-          segments={segments}
-          order={orderToSave(taken.photos, ids)}
-          saved={line}
-        />
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      <SaveBar
+        view={view}
+        dirty={dirty}
+        saved={line}
+        autoError={auto.error}
+        autoBusy={auto.isFetching}
+        save={save}
+        remove={remove}
+        onSave={run}
+      />
+    </div>
+  );
+}
+
+/** Lays the photo strip's groups out top to bottom, with what happened between them in between. */
+function StackButton({ on, onToggle }: { on: boolean; onToggle: (on: boolean) => void }) {
+  return (
+    <Button
+      variant={on ? "secondary" : "outline"}
+      size="sm"
+      aria-pressed={on}
+      onClick={() => onToggle(!on)}
+    >
+      <Rows3 aria-hidden />
+      Stack groups
+    </Button>
   );
 }
 
 interface DayMapProps extends Omit<HandMapProps, "draft"> {
   view: EditorView;
-  /** The draft the strip shows, which adding a trip stop starts a hand-drawn line from. */
+  /** The draft the strip shows, which adding a trip stop starts from. */
   shown: GapDraft;
 }
 
@@ -294,6 +327,9 @@ interface HandMapProps {
   onChange: (draft: GapDraft) => void;
   /** The page the map is on, which picks its tools. */
   part: EditorPart;
+  /** What a click on the map places now, if anything; the photo strip's start and end set it too. */
+  picking?: MapPick;
+  onPicking: (picking: MapPick | undefined) => void;
 }
 
 /**
@@ -302,14 +338,15 @@ interface HandMapProps {
  */
 function HandMap(props: HandMapProps) {
   const { day, draft, segments, highlighted, focus, placeAreas, onChange, part } = props;
-  const [picking, setPicking] = useState<MapPick>();
+  const { picking, onPicking } = props;
   const [addingVia, setAddingVia] = useState(false);
   const pick = (point: TripPoint) => {
     onChange(picked(draft, picking, point, () => withVia(draft, segments, day.photos, point)));
-    setPicking(undefined);
+    onPicking(undefined);
   };
   return (
     <>
+      <PickHint picking={endPicking(picking)} onCancel={() => onPicking(undefined)} />
       <RouteMap
         day={day.day}
         photos={day.photos}
@@ -331,105 +368,10 @@ function HandMap(props: HandMapProps) {
         segments={segments}
         onChange={onChange}
         picking={picking}
-        onPicking={setPicking}
+        onPicking={onPicking}
         addingVia={addingVia}
         onAddingVia={setAddingVia}
       />
     </>
-  );
-}
-
-/** A line with its route removed and its trip stops kept: by hand, with nothing drawn. */
-function stopsOnly(): Pick<TripLine, "auto" | "planned" | "segments"> {
-  return { auto: false, planned: true, segments: [] };
-}
-
-/**
- * How a line drawn by hand is saved: by hand, and planned ahead while its day has no photos yet,
- * so its trip stops wait for them.
- */
-function plannedOf(ids: number[]): Pick<TripLine, "auto" | "planned"> {
-  return ids.length === 0 ? { auto: false, planned: true } : { auto: false };
-}
-
-/** The trip stops and areas in a hand-drawn view, as the line file lists them; none otherwise. */
-function extrasOf(view: EditorView): KeptStops {
-  return view.kind === "hand" ? lineStops(view.draft) : {};
-}
-
-interface DayActionsProps {
-  day: TripDay;
-  ids: number[];
-  view: EditorView;
-  setView: (view: EditorView) => void;
-  auto: {
-    data?: TripLine;
-    isFetching: boolean;
-    error: Error | null;
-    refetch: () => Promise<unknown>;
-  };
-  segments: TripSegment[];
-  /** The photo order moved into by hand, to save with the line; none while it's as taken. */
-  order?: number[];
-  saved?: TripLine;
-}
-
-/** The buttons under the map, which save and remove the line as changes waiting for Commit. */
-function DayActions(props: DayActionsProps) {
-  const { day, ids, view, setView, auto, segments, order, saved } = props;
-  const save = useMutation(saveTripLineMutation);
-  const remove = useMutation(deleteTripLineMutation);
-  const base = { id: day.day, day: day.day };
-  return (
-    <EditorActions
-      view={view}
-      saved={saved !== undefined}
-      autoError={auto.error}
-      autoBusy={auto.isFetching}
-      save={save}
-      remove={remove}
-      onSaveHand={() =>
-        save.mutate({
-          ...base,
-          ...plannedOf(ids),
-          segments,
-          ...extrasOf(view),
-          ...(order && { order }),
-        })
-      }
-      onTurnOnAuto={() =>
-        save.mutate(
-          { ...base, auto: true, segments: [], ...keptStops(view, saved) },
-          { onSuccess: () => setView({ kind: "auto" }) },
-        )
-      }
-      onUpdateAuto={() =>
-        save.mutate(
-          { ...base, auto: true, segments: [], ...keptStops(view, saved), ...(order && { order }) },
-          { onSuccess: () => void auto.refetch().then(() => setView({ kind: "auto" })) },
-        )
-      }
-      onRemove={() => {
-        const stops = keptStops(view, saved);
-        const done = { onSuccess: () => setView({ kind: "none" }) };
-        // With trip stops, the route goes but they stay, as a line with none drawn.
-        if (hasStops(stops)) save.mutate({ ...base, ...stopsOnly(), ...stops }, done);
-        else remove.mutate(day.day, done);
-      }}
-      onEditOwn={() =>
-        setView({
-          kind: "hand",
-          draft: withStops(
-            {
-              ...draftOf(ids, auto.data?.segments ?? []),
-              ...keptStops(view, saved),
-            },
-            ids.at(-1),
-          ),
-        })
-      }
-      setView={setView}
-      ids={ids}
-    />
   );
 }

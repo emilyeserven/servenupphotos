@@ -1,8 +1,9 @@
-import { ChevronDown, ChevronRight, Eye, EyeOff, Merge, Shuffle } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye, EyeOff, Merge, Plus, Shuffle } from "lucide-react";
 import { useState } from "react";
 import type { TripVisit } from "@/api/trip-lines";
 import { GroupAreaButton } from "@/components/trip-lines/group-area-button";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
+import type { StripEnds } from "@/components/trip-lines/strip-ends";
 import type { StripVia } from "@/components/trip-lines/via-list";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,8 @@ interface GroupStripProps {
   vias?: Map<number, StripVia[]>;
   /** Lays the groups out top to bottom, with what happened between them in between, instead of in a row. */
   stacked?: boolean;
+  /** Picking the day's start or end spot on the map, from the Start and End at the strip's ends. */
+  spots: Pick<StripEnds, "onPick" | "picking">;
 }
 
 /**
@@ -94,6 +97,7 @@ export function GroupStrip(props: GroupStripProps) {
             onMoveVisit={onMoveVisit}
             onOffVisit={onOffVisit}
             vias={props.vias}
+            spots={props.spots}
           />
         </li>
       ))}
@@ -129,6 +133,8 @@ function GroupGap(props: GroupGapProps) {
         <VisitInsert
           choices={offRoute(draft.visits)}
           onInsert={(visit) => onChange(placedVisit(draft, visit, a.id))}
+          icon={Plus}
+          className="text-muted-foreground hover:text-foreground"
         />
       )}
       <Button
@@ -204,6 +210,17 @@ interface GroupBoxProps {
   onMoveVisit: (visit: TripVisit, by: -1 | 1) => void;
   onOffVisit: (visit: TripVisit) => void;
   vias?: Map<number, StripVia[]>;
+  spots: Pick<StripEnds, "onPick" | "picking">;
+}
+
+/** The day's start and end spots as the strip's ends show and set them. */
+function stripEnds(
+  draft: GapDraft,
+  onChange: (d: GapDraft) => void,
+  spots: GroupBoxProps["spots"],
+) {
+  const onSpot: StripEnds["onSpot"] = (which, spot) => onChange({ ...draft, [which]: spot });
+  return { start: draft.start, end: draft.end, onSpot, ...spots };
 }
 
 /**
@@ -238,6 +255,7 @@ function GroupBox(props: GroupBoxProps) {
           vias={props.vias}
           startGap={startGapShown(draft)}
           endsDay={group.end === photos.length}
+          ends={stripEnds(draft, onChange, props.spots)}
         />
       )}
     </div>

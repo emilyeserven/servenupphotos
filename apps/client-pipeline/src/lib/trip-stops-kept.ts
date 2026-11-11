@@ -13,12 +13,12 @@ export function lineStops(line: Partial<KeptStops> | undefined): KeptStops {
 
 /**
  * The trip stops and areas to keep when the line changes kind: the hand-drawn draft's, the ones
- * changed on the automatic line and not saved yet, or else the saved line's, so turning the
- * automatic line on or off, or removing the route, never loses them.
+ * changed beside the automatic line (or no line) and not saved yet, or else the saved line's, so
+ * turning the automatic line on or off, or removing the route, never loses them.
  */
 export function keptStops(view: EditorView, saved: TripLine | undefined): KeptStops {
   if (view.kind === "hand") return lineStops(view.draft);
-  return view.kind === "auto" && view.stops ? view.stops : lineStops(saved);
+  return view.stops ?? lineStops(saved);
 }
 
 /** Whether there are trip stops or areas to keep. */

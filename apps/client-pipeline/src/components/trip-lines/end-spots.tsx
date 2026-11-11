@@ -1,72 +1,54 @@
-import { Flag, MapPin, X } from "lucide-react";
+import { X } from "lucide-react";
 import type { TripPoint } from "@/api/trip-lines";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { GapDraft } from "@/lib/trip-gaps";
 
-/** Which of the day's spots with no photo the map is waiting to have picked. */
+/** Which of the day's spots with no photo, the start or the end, the map is waiting to have picked. */
 export type EndKey = "start" | "end";
 
-interface EndSpotsProps {
-  draft: GapDraft;
-  onChange: (draft: GapDraft) => void;
-  picking?: EndKey;
-  onPicking: (key: EndKey | undefined) => void;
-}
+/** What the map is waiting for, as the hint over it says. */
+const HINTS: Record<EndKey, string> = {
+  start: "Click the map where the day starts, such as the hotel.",
+  end: "Click the map where the day ends, such as the hotel.",
+};
 
-/** The spots with no photo the day starts from and ends at, such as the hotel: set on the map, with a label. */
-export function EndSpots(props: EndSpotsProps) {
+/**
+ * Says over the map that the next click sets the day's start or end spot, picked from the photo
+ * strip's Start or End, with a way to stop; nothing while neither is being picked.
+ */
+export function PickHint({ picking, onCancel }: { picking?: EndKey; onCancel: () => void }) {
+  if (!picking) return null;
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      <EndSpot {...props} which="start" title="Starts from" icon={<MapPin className="size-4" />} />
-      <EndSpot {...props} which="end" title="Ends at" icon={<Flag className="size-4" />} />
+    <div className="bg-muted flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm">
+      {HINTS[picking]}
+      <Button variant="ghost" size="sm" onClick={onCancel}>
+        Cancel
+      </Button>
     </div>
   );
 }
 
-interface EndSpotProps extends EndSpotsProps {
-  which: EndKey;
-  title: string;
-  icon: React.ReactNode;
-}
-
-function EndSpot({ draft, onChange, picking, onPicking, which, title, icon }: EndSpotProps) {
-  const spot = draft[which];
-  const set = (next: TripPoint | undefined) => onChange({ ...draft, [which]: next });
-  return (
-    <div className="flex flex-col gap-1.5">
-      <span className="flex items-center gap-1.5 text-sm font-medium">
-        {icon}
-        {title}
-      </span>
-      {spot ? (
-        <SpotLabel spot={spot} onChange={set} />
-      ) : (
-        <Button
-          variant={picking === which ? "secondary" : "outline"}
-          size="sm"
-          className="self-start"
-          onClick={() => onPicking(picking === which ? undefined : which)}
-        >
-          {picking === which ? "Click the map…" : "A spot with no photo"}
-        </Button>
-      )}
-    </div>
-  );
-}
-
-function SpotLabel({ spot, onChange }: { spot: TripPoint; onChange: (spot?: TripPoint) => void }) {
+/** A spot with no photo's label, such as "Hotel", and removing the spot. */
+export function SpotLabel({
+  spot,
+  onChange,
+}: {
+  spot: TripPoint;
+  onChange: (spot?: TripPoint) => void;
+}) {
   return (
     <div className="flex gap-1">
       <Input
         value={spot.label ?? ""}
         placeholder="Hotel"
         aria-label="The spot's label"
+        className="h-8"
         onChange={(e) => onChange({ ...spot, label: e.target.value })}
       />
       <Button
         variant="ghost"
         size="icon"
+        className="size-8"
         aria-label="Remove the spot"
         onClick={() => onChange(undefined)}
       >

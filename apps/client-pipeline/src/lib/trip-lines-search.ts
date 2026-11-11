@@ -6,8 +6,8 @@ const DAY_FILTERS = ["marked", "out-of-date", "automatic", "planned", "none"] as
 /** A day list filter other than All. */
 export type DayFilter = (typeof DAY_FILTERS)[number];
 
-/** A day's pages: the photo order, the route on the map, the trip stops, and the Trip page story. */
-export const DAY_PARTS = ["order", "route", "stops", "story"] as const;
+/** A day's pages: the route (the photo strip and the map), the trip stops, and the Trip page story. */
+export const DAY_PARTS = ["route", "stops", "story"] as const;
 
 /** One of a day's pages. */
 export type DayPart = (typeof DAY_PARTS)[number];
@@ -35,9 +35,12 @@ export interface TripLinesSearch {
   trip?: string;
 }
 
-/** A day page's search: the group shown alone on the day's map, the others faded. */
+/** A day page's search: the group shown alone on the day's map, and how the photo strip is laid out. */
 export interface TripDaySearch {
+  /** The name of the group shown alone on the map, the others faded. */
   group?: string;
+  /** Lays the photo strip's groups out top to bottom instead of in one row. */
+  stack?: true;
 }
 
 /** The value when it's a string that passes test, under key; nothing otherwise. */
@@ -69,7 +72,8 @@ export function parseTripLinesSearch(search: Record<string, unknown>): TripLines
 
 /** Reads a day page's search. */
 export function parseTripDaySearch(search: Record<string, unknown>): TripDaySearch {
-  return stringParam("group", search.group, isText);
+  const stack = search.stack === true || search.stack === "true";
+  return { ...stringParam("group", search.group, isText), ...(stack && { stack: true }) };
 }
 
 /**
