@@ -73,6 +73,12 @@ drafts turned off in Settings an Undecided photo goes in `ALLPHOTOS.json` like a
 **Compare**, beside **Undecided** on each photo and on each draft tile, puts the photo in a
 [compare group](compare-groups.md), to weigh it head-to-head against others before deciding which gets posted.
 
+**Re-edit**, just left of **Compare** on each photo in flight, [marks it for re-editing](replace-image.md#marking-a-photo-for-re-editing)
+without leaving the page: a small form asks why (optional, such as "Too warm"), and Enter or **Mark for re-edit** saves
+the photo JSON's `reEdit` as a [change waiting for Commit](pending-changes.md), as the Photo page's **Re-edit** card
+does. On a photo already marked the button is filled in, and the form changes the note (**Save note**) or takes the
+mark off (**Take off**). It's `ReEditButton` in `components/in-flight-page/re-edit-button.tsx`.
+
 ### Drafts on the base branch
 
 After the photos in flight (or alone, when none are), the page lists the [drafts](drafts.md) already on the base
