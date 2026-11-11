@@ -38,6 +38,8 @@ type CombinedFiles struct {
 	// NotStored is NOTSTORED.json, the Instagram posts whose photo isn't in
 	// the portfolio.
 	NotStored InFlightAllPhotos `json:"notstored"`
+	// PhotoBooks is PHOTOBOOKS.json, the Photo Book page's mockups.
+	PhotoBooks InFlightAllPhotos `json:"photobooks"`
 }
 
 // CombinedBase is CombinedFiles on the base branch: what the portfolio has.

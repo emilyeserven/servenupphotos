@@ -3,7 +3,7 @@ import { requestJson } from "@/api/request";
 import type { CombinedData } from "@/api/photos";
 import type { FileChange } from "@/lib/optimistic";
 
-/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets, gear pictures or Not Stored posts. */
+/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets, gear pictures, Not Stored posts or photo books. */
 type SettingKind =
   | "cameras"
   | "lenses"
@@ -13,7 +13,8 @@ type SettingKind =
   | "triplines"
   | "graphs"
   | "gear"
-  | "notstored";
+  | "notstored"
+  | "photobooks";
 
 /** What saving or removing a setting file did; nothing is saved when it already had that content. */
 interface SettingResult<T> {

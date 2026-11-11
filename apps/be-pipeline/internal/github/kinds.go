@@ -40,6 +40,7 @@ var dataKinds = []combinedKind{
 	{"graphs", GraphPresets.Folder, GraphPresets.AllFile},
 	{"gear", GearKind.Folder, GearKind.AllFile},
 	{"notstored", NotStoredKind.Folder, NotStoredKind.AllFile},
+	{"photobooks", PhotoBooks.Folder, PhotoBooks.AllFile},
 }
 
 // combinedKinds is every kind of combined data, photos first.

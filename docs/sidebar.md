@@ -32,7 +32,8 @@ branches that add pages don't clash:
 - **Publish**
   - Instagram
     - Planned Posts
-    - Caption Templates
+  - Captions (the Caption Templates page)
+  - Photo Book
   - Site Spotlight
   - Related Photos
   - User Likes

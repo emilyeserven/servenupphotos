@@ -467,6 +467,47 @@ function localizationFile(type, slug, name, romanization, pronunciation, localSc
 
 export const headPhotos = [...basePhotos, added.photo];
 
+/** The photos the Photo Book can use: those not set aside as Undecided. */
+const decidedPhotos = headPhotos.filter(({ data }) => !data.undecided);
+
+/** A photo book on the Photo Book page, laid out with the first few photos. */
+added.photobooks = [
+  {
+    path: `${FOLDER}/photobooks/sample-book.json`,
+    data: {
+      id: "sample-book",
+      name: "Sample book",
+      template: "",
+      pages: [
+        {
+          id: "p1",
+          layout: "full",
+          title: "Chapter one",
+          slots: [{ photo: decidedPhotos[0]?.path ?? "", caption: null }],
+        },
+        {
+          id: "p2",
+          layout: "pair-left",
+          title: null,
+          slots: [
+            { photo: decidedPhotos[1]?.path ?? "", caption: null },
+            { photo: decidedPhotos[2]?.path ?? "", caption: "A caption written by hand." },
+          ],
+        },
+        {
+          id: "p3",
+          layout: "pair-right",
+          title: null,
+          slots: [
+            { photo: decidedPhotos[3]?.path ?? "", caption: null },
+            { photo: "", caption: null },
+          ],
+        },
+      ],
+    },
+  },
+];
+
 export const headTags = [...baseTags, added.tag];
 
 /** base with each of added's files in place of the base file at its path, or added at the end. */

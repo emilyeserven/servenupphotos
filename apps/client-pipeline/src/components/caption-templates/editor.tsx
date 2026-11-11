@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { STARTER_TEMPLATE } from "@/lib/caption-template";
 import { canonicalJson } from "@/lib/combined";
-import { socialPlatforms } from "@/lib/social-posts";
+import { PHOTO_BOOK_PLATFORM, socialPlatforms } from "@/lib/social-posts";
 
 const NEW: CaptionTemplate = { id: "", name: "", platform: "", template: STARTER_TEMPLATE };
 
@@ -114,7 +114,7 @@ function PlatformSelect({ value, onChange }: { value: string; onChange: (v: stri
       className="border-input dark:bg-input/30 h-9 w-full rounded-md border bg-transparent px-2 text-sm shadow-xs"
     >
       <option value="">Any</option>
-      {socialPlatforms.map((platform) => (
+      {[...socialPlatforms, PHOTO_BOOK_PLATFORM].map((platform) => (
         <option key={platform.id} value={platform.id}>
           {platform.label}
         </option>

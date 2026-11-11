@@ -80,3 +80,11 @@ export function tileImageUrl(data: unknown): string | undefined {
 export function offlineXSmallUrl(data: unknown): string | undefined {
   return offlineUrl(savedImageUrl(data, "xsmall"));
 }
+
+/**
+ * A photo's Small version (500px on its long edge, in its own shape) from the offline copy, or else
+ * its Square Thumbnail, for the Photo Book's pages; undefined when its JSON saves neither.
+ */
+export function offlineSmallImage(data: unknown): string | undefined {
+  return offlineUrl(savedImageUrl(data, "small") ?? savedImageUrl(data, "thumbnail"));
+}
