@@ -74,7 +74,10 @@ The Slider and Switch draw the original's crop stretched to the edit's box, so t
 
 ## On the portfolio: Raw vs Edited
 
-`/raw-vs-edited` (`routes/raw-vs-edited.tsx`) is a minor view, listed in the site menu's small links. It lists the
+`/raw-vs-edited` (`routes/raw-vs-edited.tsx`) is a minor view, listed in the site menu's small links only once at
+least one photo's original is shown there. The menu knows without loading the photos: the `shown-originals` Vite
+plugin (in `private-notes.ts`) counts them from the same photo list the app reads and gives the count as
+`virtual:shown-originals`. It lists the
 photos with a shown original, newest first, each as a square split down the middle (original on the left), and
 `?photo=<id>` opens one compared with its original, with the mode kept as `?mode=side` or `?mode=switch`. The photo
 viewer has a button for it (a split square, before Copy link) on photos with a shown original.

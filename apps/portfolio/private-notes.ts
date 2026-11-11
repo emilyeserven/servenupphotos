@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import type { Plugin } from "vite";
 import { publicOriginal } from "./src/lib/unedited-original";
 
@@ -46,6 +48,40 @@ export function privatePhotoNotes(): Plugin {
     transform(code, id) {
       if (!ALL_PHOTOS.test(id.split("?")[0] ?? id)) return null;
       return { code: withoutPrivateFields(code), map: null };
+    },
+  };
+}
+
+/** The module that says how many photos have an unedited original shown on the portfolio. */
+const SHOWN_ORIGINALS = "virtual:shown-originals";
+
+/** The photos in a combined photo list at path, or none when it's missing or unreadable. */
+function readPhotos(path: string): object[] {
+  try {
+    const photos: unknown = JSON.parse(readFileSync(path, "utf8"));
+    return Array.isArray(photos) ? photos : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Gives the app `virtual:shown-originals`, how many photos have an unedited original the portfolio
+ * may show, counted from the same list the app reads (ALLPHOTOS.local.json when it has photos, or
+ * else ALLPHOTOS.json), so the site menu can leave out Raw vs Edited without loading every photo.
+ * See docs/unedited-originals.md.
+ */
+export function shownOriginals(photosFolder: string): Plugin {
+  return {
+    name: "shown-originals",
+    resolveId: (id) => (id === SHOWN_ORIGINALS ? `\0${SHOWN_ORIGINALS}` : null),
+    load(id) {
+      if (id !== `\0${SHOWN_ORIGINALS}`) return null;
+      const local = readPhotos(path.join(photosFolder, "ALLPHOTOS.local.json"));
+      const photos =
+        local.length > 0 ? local : readPhotos(path.join(photosFolder, "ALLPHOTOS.json"));
+      const count = photos.filter((photo) => publicOriginal(photo)).length;
+      return `export const shownOriginals = ${count};`;
     },
   };
 }
