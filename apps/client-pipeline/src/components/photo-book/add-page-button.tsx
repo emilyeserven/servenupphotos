@@ -33,7 +33,7 @@ export function AddPageButton({ onAdd }: { onAdd: (layout: PageLayout) => void }
               >
                 <LayoutGlyph
                   layout={layout.id}
-                  className="text-muted-foreground h-12 w-10 shrink-0"
+                  className="text-muted-foreground h-9 w-12 shrink-0"
                 />
                 <span className="flex flex-col gap-0.5">
                   <span className="text-sm font-medium">{layout.label}</span>

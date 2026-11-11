@@ -33,7 +33,7 @@ export function BookPage({ page, index, last, photos, captionFor, actions }: Boo
   return (
     <section aria-label={`Page ${index + 1}`} className="flex flex-col gap-2">
       <PageControls page={page} index={index} last={last} actions={actions} />
-      <div className="aspect-[4/5] rounded-sm border bg-white p-[6%] text-neutral-900 shadow-sm dark:bg-neutral-100">
+      <div className="aspect-[22/17] rounded-sm border bg-white p-[4%] text-neutral-900 shadow-sm dark:bg-neutral-100">
         <div className="flex size-full flex-col gap-[4%]">
           {page.title !== null && (
             <input
@@ -133,7 +133,7 @@ function PageControls({ page, index, last, actions }: PageControlsProps) {
             title={layout.label}
             onClick={() => actions.onLayout(layout.id)}
           >
-            <LayoutGlyph layout={layout.id} className="h-4 w-3.5" />
+            <LayoutGlyph layout={layout.id} className="h-3.5 w-4.5" />
           </Button>
         ))}
       </div>

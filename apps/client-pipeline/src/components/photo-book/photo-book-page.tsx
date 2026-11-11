@@ -113,7 +113,7 @@ function BookEditor({ saved, photos }: { saved: PhotoBook; photos: SocialPhoto[]
             No pages yet. Add one to start laying out the book.
           </p>
         )}
-        <div className="grid gap-x-1 gap-y-6 sm:grid-cols-2">
+        <div className="grid gap-x-1 gap-y-6 2xl:grid-cols-2">
           {book.pages.map((page, index) => (
             <BookPage
               key={page.id}

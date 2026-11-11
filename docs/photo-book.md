@@ -2,7 +2,7 @@
 
 `/photo-book`, **Photo Book** under **Publish** in the sidebar, is for roughing out a photo book before laying it out
 for real in the book maker's own software: which photos go on which page, in what layout, and what their captions
-say. The pages are only a sketch (a 4:5 page with rough proportions), not the printed size, so they're for reference
+say. The pages are only a sketch (a landscape page, 11:8.5, with rough proportions), not the printed size, so they're for reference
 while placing the photos and captions by hand.
 
 ## Books
@@ -20,7 +20,7 @@ removes the open one after asking. Under it, **Name** renames the book and **Cap
 - **Two photos on the left:** two photos down the left side, each with its caption beside it on the right.
 - **Two photos on the right:** the same, mirrored: photos on the right, captions on the left.
 
-Pages are shown two to a row, like spreads. Above each page, its number, its layout's three buttons (to switch it; a
+Pages are shown one to a row, or two like spreads on a very wide screen. Above each page, its number, its layout's three buttons (to switch it; a
 photo past the new layout's places comes off the page), the **H** button that adds or takes off a title above the top
 photo (typed on the page itself), the arrows that move it earlier or later, and the bin that removes it.
 
