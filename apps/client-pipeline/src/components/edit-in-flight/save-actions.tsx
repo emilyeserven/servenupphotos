@@ -48,7 +48,7 @@ export function SaveStatus({
   save: Save;
 }) {
   return (
-    <div className="flex flex-col gap-3 text-sm empty:hidden lg:col-span-2">
+    <div className="flex flex-col gap-3 text-sm empty:hidden">
       <RenameNote file={file} edit={edit} />
       <SaveOutcome save={save} />
     </div>

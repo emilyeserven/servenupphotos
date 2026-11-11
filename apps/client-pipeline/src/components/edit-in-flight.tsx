@@ -34,6 +34,7 @@ import { LensSection } from "@/components/edit-in-flight/lens-section";
 import { ReplaceImageCard } from "@/components/edit-in-flight/replace-image-card";
 import { useLocationPrompt } from "@/components/edit-in-flight/location-prompt";
 import { TagPromptButton } from "@/components/edit-in-flight/tag-prompt-button";
+import { PhotoSections } from "@/components/edit-in-flight/photo-sections";
 import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
 import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
 import { type Edit, useEdit, useLensSettings, useSave } from "@/components/edit-in-flight/use-edit";
@@ -147,62 +148,76 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
   });
 
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-2">
+    <>
       <SaveActions edit={edit} save={save} />
       <SaveStatus file={editable.file} edit={edit} save={save} />
-      <div className="flex min-w-0 flex-col gap-6">
-        <ThumbnailCrop
-          photo={editable.image.url}
-          crop={edit.crop}
-          onCropChange={edit.onCropChange}
-          locked={pending}
-          lockedNote="Saving the Square Thumbnail with this square…"
-        />
-        <FacePixelationCard editable={editable} edit={edit} save={save} disabled={pending} />
-        <ReplaceImageCard
-          editable={editable}
-          saved={edit.savedData}
-          savedCrop={edit.baseline}
-          unsaved={edit.request !== null}
-          disabled={pending}
-        />
-        <PhotoGroupsCard
-          value={edit.groups}
-          onChange={edit.setGroups}
-          description="Saving changes writes them over the ones in the JSON."
-          disabled={pending}
-          tagPrompt={<TagPromptButton imageUrl={imageUrl} details={edit.details} exif={exif} />}
-        />
-      </div>
-      <div className="flex min-w-0 flex-col gap-6">
-        <PhotoDetailsCard
-          value={edit.details}
-          onChange={edit.setDetails}
-          fallbackTitle={fallbackTitle}
-          exifPlace={exif}
-          description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
-          disabled={pending}
-          locationPrompt={locationPrompt}
-        />
-        <SocialPostsCard
-          value={edit.socialPosts}
-          onChange={edit.setSocialPosts}
-          path={editable.file.path}
-          calendarDate={calendarDate(edit.savedData)}
-          disabled={pending}
-          photo={edit.next ?? edit.savedData}
-        />
-        <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
-        <PickedSimilarCard
-          saved={edit.savedData}
-          value={edit.pickedSimilar}
-          onChange={edit.setPickedSimilar}
-          disabled={pending}
-        />
-        <LensCards edit={edit} disabled={pending} />
-        <JsonPreview file={editable.file} edit={edit} />
-      </div>
-    </div>
+      <PhotoSections edit={edit}>
+        {{
+          details: (
+            <>
+              <PhotoDetailsCard
+                value={edit.details}
+                onChange={edit.setDetails}
+                fallbackTitle={fallbackTitle}
+                exifPlace={exif}
+                description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
+                disabled={pending}
+                locationPrompt={locationPrompt}
+              />
+              <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
+            </>
+          ),
+          groups: (
+            <PhotoGroupsCard
+              value={edit.groups}
+              onChange={edit.setGroups}
+              description="Saving changes writes them over the ones in the JSON."
+              disabled={pending}
+              tagPrompt={<TagPromptButton imageUrl={imageUrl} details={edit.details} exif={exif} />}
+            />
+          ),
+          image: (
+            <>
+              <ThumbnailCrop
+                photo={editable.image.url}
+                crop={edit.crop}
+                onCropChange={edit.onCropChange}
+                locked={pending}
+                lockedNote="Saving the Square Thumbnail with this square…"
+              />
+              <FacePixelationCard editable={editable} edit={edit} save={save} disabled={pending} />
+              <ReplaceImageCard
+                editable={editable}
+                saved={edit.savedData}
+                savedCrop={edit.baseline}
+                unsaved={edit.request !== null}
+                disabled={pending}
+              />
+            </>
+          ),
+          camera: <LensCards edit={edit} disabled={pending} />,
+          sharing: (
+            <>
+              <SocialPostsCard
+                value={edit.socialPosts}
+                onChange={edit.setSocialPosts}
+                path={editable.file.path}
+                calendarDate={calendarDate(edit.savedData)}
+                disabled={pending}
+                photo={edit.next ?? edit.savedData}
+              />
+              <PickedSimilarCard
+                saved={edit.savedData}
+                value={edit.pickedSimilar}
+                onChange={edit.setPickedSimilar}
+                disabled={pending}
+              />
+            </>
+          ),
+          json: <JsonPreview file={editable.file} edit={edit} />,
+        }}
+      </PhotoSections>
+    </>
   );
 }
 

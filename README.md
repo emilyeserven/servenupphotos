@@ -114,6 +114,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
 - [Saving photo data to GitHub](docs/saving-to-github.md): saving a photo's JSON to the Add photo data pull request, uploading to R2, resized versions and the Square Thumbnail
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails
+- [Photo page sections](docs/photo-page.md) (`/exif?edit=…`): the Photo page's cards for a saved photo grouped into Details, Albums & tags, Image, Camera & lens, Posts & related and JSON, with a subnavigation and dots for unsaved changes
 - [Photos in Flight](docs/photos-in-flight.md) (`/in-flight`): the open pull request's photos, removing and editing them
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums, tags and genres
 - [All Photos](docs/all-photos.md) (`/all-photos`): every photo in the portfolio's order, sorted any way, with drafts and Undecided photos shown among them and a box to jump to each
