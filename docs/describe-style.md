@@ -37,3 +37,19 @@ subjects, composition, light and color, gear and settings, how the places and ye
 then one numbered section per photo with its link, title, date, place, camera and lens, settings, genres and tags.
 **Anything to focus on** adds a question of your own at the end of the asks, such as "How has my street photography
 changed since 2020?". The whole prompt is shown under the photos to read before copying it.
+
+### The answer as a Markdown note
+
+The prompt asks for the answer as one Markdown note to save as it is in a notes app such as an Obsidian vault, in a
+` ```markdown ` code block so the chat doesn't render it before you copy it:
+
+- YAML front matter (Obsidian's **Properties**): `title`, `date` (the day the prompt was copied, in the browser's time
+  zone), `photos`, `taken`, `places`, and `tags`, which include `photography-style` and a few kebab-case words for the
+  style.
+- A `#` heading naming the style, then one `##` heading per ask, in the prompt's order, plus one for the
+  **Anything to focus on** question when there is one.
+- Photos linked by number to their Small version, such as `[Photo 3](https://…)`, and plain Markdown only (no tables,
+  HTML or emoji).
+
+> **Frontend analogy:** the front matter is like the frontmatter in an MDX or Astro content file: typed fields above
+> the body that the notes app can filter and sort by, the way a content collection's schema does.

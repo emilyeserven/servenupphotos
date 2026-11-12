@@ -133,6 +133,20 @@ function span(photos: StylePhoto[]): string[] {
   ];
 }
 
+/**
+ * How the style prompt asks for its answer: one Markdown note, with properties a notes app such as
+ * Obsidian reads, so it can be saved as it is.
+ */
+function markdownAnswer({ focus, today }: Pick<StylePromptInput, "focus" | "today">): string {
+  const question = focus.trim() ? ", plus one for my question" : "";
+  return `Write your answer as one Markdown note I can save as it is in my notes (an Obsidian vault):
+- Start with YAML front matter between --- lines, with: title, date (${today}), photos (how many you looked at), taken (the dates they span), places (a list of the countries), and tags (a list that includes photography-style and a few lowercase-kebab-case words for the style itself).
+- Then a # heading with a short name for my style, and a ## heading for each of the points above, in that order${question}.
+- When you point to a photo, link its number to its URL, such as [Photo 3](https://...).
+- Use plain Markdown only: no tables, HTML or emoji.
+- Put the whole note in one \`\`\`markdown code block, with nothing before or after it, so I can copy it.`;
+}
+
 /** What the style prompt is asked about. */
 export interface StylePromptInput {
   /** The photos it links, in date order. */
@@ -143,6 +157,8 @@ export interface StylePromptInput {
   filtered: boolean;
   /** What the photographer wants to hear about most, in their own words; "" for nothing. */
   focus: string;
+  /** Today's date as YYYY-MM-DD, for the note's front matter. */
+  today: string;
 }
 
 /** Where the linked photos came from, such as "30 of the 212 photos that match my filters". */
@@ -173,6 +189,8 @@ Open every link and look at the photo itself; the facts listed under each one ar
 - What makes my photos recognizably mine, and one or two things I could try next.
 
 Point to photos by their number when you give an example.${focus ? `\n\nMost of all, I'd like to know: ${focus}` : ""}
+
+${markdownAnswer(input)}
 
 ${input.photos.map((photo, i) => stylePhotoSection(photo, i + 1)).join("\n\n")}`;
 }

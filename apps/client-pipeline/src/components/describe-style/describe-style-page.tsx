@@ -39,12 +39,15 @@ function DescribeStyle({ photos }: { photos: SocialPhoto[] }) {
   const [count, setCount] = useState(String(defaultStyleCount));
   const [seed, setSeed] = useState<number>();
   const [focus, setFocus] = useState("");
+  // en-CA writes dates as YYYY-MM-DD, in the browser's own time zone.
+  const [today] = useState(() => new Date().toLocaleDateString("en-CA"));
   const picked = samplePhotos(grid.shown, styleCount(count), seed);
   const prompt = stylePrompt({
     photos: picked,
     matching: grid.shown.length,
     filtered: grid.count > 0,
     focus,
+    today,
   });
   return (
     <div className="flex flex-col gap-6">

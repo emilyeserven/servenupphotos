@@ -90,12 +90,41 @@ test("the prompt says where the photos came from, their span, and the focus", ()
     matching: 40,
     filtered: true,
     focus: "How has my street photography changed?",
+    today: "2026-11-12",
   });
   assert.match(prompt, /2 of the 40 photos that match the filters I chose/);
   assert.match(prompt, /- Taken from 2016-12-16 to 2026-09-25\n- In Netherlands, Japan/);
   assert.match(prompt, /Most of all, I'd like to know: How has my street photography changed\?/);
   assert.match(prompt, /1\. https:\/\/cdn\/canal-small\.webp[\s\S]*2\. https:\/\/cdn\/temple\.jpg/);
-  const all = stylePrompt({ photos: [canal], matching: 1, filtered: false, focus: " " });
+  const all = stylePrompt({
+    photos: [canal],
+    matching: 1,
+    filtered: false,
+    focus: " ",
+    today: "2026-11-12",
+  });
   assert.match(all, /all 1 photos in my portfolio/);
   assert.doesNotMatch(all, /Most of all/);
+});
+
+test("the prompt asks for one Markdown note with front matter for a notes app", () => {
+  const asked = stylePrompt({
+    photos: [canal],
+    matching: 1,
+    filtered: false,
+    focus: "Why?",
+    today: "2026-11-12",
+  });
+  assert.match(asked, /one Markdown note I can save as it is in my notes \(an Obsidian vault\)/);
+  assert.match(asked, /date \(2026-11-12\)/);
+  assert.match(asked, /in that order, plus one for my question\./);
+  assert.match(asked, /one ```markdown code block/);
+  const plain = stylePrompt({
+    photos: [canal],
+    matching: 1,
+    filtered: false,
+    focus: "",
+    today: "2026-11-12",
+  });
+  assert.match(plain, /in that order\./);
 });
