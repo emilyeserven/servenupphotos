@@ -23,6 +23,7 @@ import {
   MapPinIcon,
   MapPinnedIcon,
   MessageSquareTextIcon,
+  PaletteIcon,
   PlaneIcon,
   RefreshCwIcon,
   ScaleIcon,
@@ -155,6 +156,13 @@ export const navGroups: readonly NavGroup[] = [
           { title: "Changelog", url: "/changelog", icon: HistoryIcon },
           { title: "Explore Bucket", url: "/bucket", icon: DatabaseIcon },
           { title: "Manage Sizes", url: "/sizes", icon: ScalingIcon },
+          // Tools that don't change the photo data, under an Extra header.
+          {
+            title: "Describe my style",
+            url: "/describe-style",
+            icon: PaletteIcon,
+            heading: "Extra",
+          },
         ],
       },
       {
