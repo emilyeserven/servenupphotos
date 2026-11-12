@@ -10,6 +10,7 @@ import { FloatingFlyout } from "@/components/floating-flyout";
 import { PublishSuccess } from "@/components/github-save";
 import { Spinner } from "@/components/ui/spinner";
 import { jsonFileName } from "@/lib/file-name";
+import { photoData } from "@/lib/photo-data";
 
 type Publish = UseMutationResult<PublishResult, Error, PhotoData>;
 
@@ -53,10 +54,7 @@ function canSave(github: GitHub | null, publish: Publish): boolean {
 function usePublish({ file, sanitized, groups, onSaved }: Omit<PhotoSaveButtonProps, "uploaded">) {
   const publish = useMutation({ ...publishPhotoMutation, onSuccess: onSaved });
   const name = jsonFileName(sanitized.title, file);
-  // The places go next to the albums and tags, which the backend adds to the JSON itself.
-  const { places, ...exif } = sanitized;
-  const save = () =>
-    publish.mutate({ name, file, sanitized: exif, ...groups, places: places ?? [] });
+  const save = () => publish.mutate(photoData(name, file, sanitized, groups));
   return { publish, name, save };
 }
 

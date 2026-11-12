@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { jsonFileName } from "@/lib/file-name";
+import { photoData } from "@/lib/photo-data";
 
 type GitHubSettings = SettingsResponse["github"];
 
@@ -93,8 +94,6 @@ function GitHubSaveForm({
   onSaved,
 }: GitHubSaveCardProps & { github: GitHubSettings }) {
   const publish = useMutation({ ...publishPhotoMutation, onSuccess: () => onSaved?.() });
-  // The places go next to the albums and tags, which the backend adds to the JSON itself.
-  const { places = [], ...exif } = sanitized;
   const suggestedName = jsonFileName(sanitized.title, file);
 
   const form = useForm({
@@ -102,7 +101,7 @@ function GitHubSaveForm({
     validators: { onSubmit: ({ value }) => validateName(value.name) },
     onSubmit: async ({ value }) => {
       await publish
-        .mutateAsync({ name: value.name.trim(), file, sanitized: exif, ...groups, places })
+        .mutateAsync(photoData(value.name.trim(), file, sanitized, groups))
         .catch(() => {});
     },
   });

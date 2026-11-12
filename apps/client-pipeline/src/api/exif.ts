@@ -97,6 +97,8 @@ export interface SanitizedExif {
    * chosen on the Photo page. Saved as the JSON's "places", next to its albums and tags.
    */
   places?: PhotoPlace[];
+  /** The Photo page's "no GPS on purpose" box; Save sends it next to the places, as `noGps`. */
+  noGps?: boolean;
   /** A city, state and country written on the Photo page, which the portfolio shows instead of the EXIF ones. */
   customCity: string | null;
   customState?: string | null;
