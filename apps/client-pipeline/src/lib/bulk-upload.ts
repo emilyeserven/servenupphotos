@@ -19,6 +19,7 @@ import { allPhotosCheck, type CombinedView } from "@/lib/combined";
 import type { Crop } from "@/lib/crop";
 import { jsonFileName } from "@/lib/file-name";
 import { withChanges } from "@/lib/optimistic";
+import { photoData } from "@/lib/photo-data";
 import { withImages } from "@/lib/photo-images";
 import { useCombinedDataStore } from "@/stores/combined-data";
 
@@ -161,10 +162,9 @@ function groupsOf(photo: BulkPhoto): PhotoGroups {
 /** Adds the photo's JSON to the photo data pull request, named after its title or else its file name. */
 async function save(photo: BulkPhoto, queryClient: QueryClient): Promise<StepResult> {
   const file = fileOf(photo);
-  // The places go next to the albums and tags, as Add to Batch sends them.
-  const { places = [], ...sanitized } = withUpload(photo);
+  const sanitized = withUpload(photo);
   const name = jsonFileName(sanitized.title, file);
-  const variables = { name, file, sanitized, ...groupsOf(photo), places };
+  const variables = photoData(name, file, sanitized, groupsOf(photo));
   return { step: "added", saved: await runMutation(queryClient, publishPhotoMutation, variables) };
 }
 

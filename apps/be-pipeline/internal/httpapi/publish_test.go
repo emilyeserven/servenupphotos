@@ -18,7 +18,8 @@ func TestPublishPhoto(t *testing.T) {
 		status int
 		want   string
 	}{
-		{"invalid body", `{"unknown":1}`, http.StatusBadRequest, "invalid photo data body"},
+		{"invalid body", `{"unknown":1}`, http.StatusBadRequest, `invalid photo data body: json: unknown field \"unknown\"`},
+		{"no GPS on purpose", `{"name":"DSC0001","file":"DSC0001.jpg","sanitized":{},"noGps":true}`, http.StatusBadRequest, "Settings first"},
 		{"not set up", `{"name":"DSC0001","file":"DSC0001.jpg","sanitized":{}}`, http.StatusBadRequest, "Settings first"},
 	}
 	for _, tt := range tests {

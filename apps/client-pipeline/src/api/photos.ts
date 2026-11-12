@@ -18,6 +18,8 @@ export interface PhotoData {
   genres: string[];
   /** Where the photo was taken, as places from PLACES.json. */
   places: PhotoPlace[];
+  /** Whether the photo won't have a GPS position on purpose, such as a studio photo. */
+  noGps: boolean;
 }
 
 /** Where a photo's data was saved: as a change waiting for Commit, nothing on GitHub yet. */

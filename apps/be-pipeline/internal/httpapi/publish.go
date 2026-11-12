@@ -34,7 +34,8 @@ func handlePublishPhoto(store *settings.Store, gh *github.Client, readColors git
 		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
 		dec.DisallowUnknownFields()
 		if err := dec.Decode(&photo); err != nil {
-			writeError(w, http.StatusBadRequest, "invalid photo data body")
+			// The reason names the field, such as `unknown field "noGps"`.
+			writeError(w, http.StatusBadRequest, "invalid photo data body: "+err.Error())
 			return
 		}
 		cfg, err := store.GitHub()

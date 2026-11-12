@@ -201,7 +201,8 @@ Under the field, **This photo won't have a GPS position** marks a photo that goe
 studio photo. It's saved as `"noGps": true` (`false` otherwise, which new photos get and **Update Data → Missing
 fields** adds to older ones), the summary then reads **None, on purpose**, and the Dashboard's
 [Needs attention](dashboard.md) leaves the photo out of its **Photos without GPS** and **Photos without a place** rows.
-It changes nothing on the portfolio.
+It changes nothing on the portfolio. Save sends it next to the places and the albums and tags, not inside the sanitized
+EXIF, which the backend refuses with any field it doesn't know.
 
 When the photo has no GPS position of its own (EXIF or custom), each chosen place with none either (its own or a place above it's) has
 **Add a GPS position for …** under that line, which opens a `latitude, longitude` field and **Save**. It saves the

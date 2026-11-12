@@ -297,3 +297,19 @@ func TestPublishSavesColors(t *testing.T) {
 		t.Errorf("colors aren't after reEdit in %s", saved)
 	}
 }
+
+func TestPublishSavesNoGPS(t *testing.T) {
+	_, c := newFakeGitHub(t)
+	p := photo("DSC0001")
+	p.NoGPS = true
+	got, err := c.Publish(t.Context(), gh, p)
+	if err != nil {
+		t.Fatalf("Publish() error = %v", err)
+	}
+	var data struct {
+		NoGPS bool `json:"noGps"`
+	}
+	if err := json.Unmarshal(got.Data, &data); err != nil || !data.NoGPS {
+		t.Errorf("saved noGps = %v (%v), want true", data.NoGPS, err)
+	}
+}
