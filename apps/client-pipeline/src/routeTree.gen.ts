@@ -21,6 +21,7 @@ import { Route as CameraOverridesRouteImport } from './routes/camera-overrides'
 import { Route as CaptionTemplatesRouteImport } from './routes/caption-templates'
 import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as CompareRouteImport } from './routes/compare'
+import { Route as DescribeStyleRouteImport } from './routes/describe-style'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as GearPicturesRouteImport } from './routes/gear-pictures'
@@ -121,6 +122,11 @@ const ChangelogRoute = ChangelogRouteImport.update({
 const CompareRoute = CompareRouteImport.update({
   id: '/compare',
   path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DescribeStyleRoute = DescribeStyleRouteImport.update({
+  id: '/describe-style',
+  path: '/describe-style',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExifRoute = ExifRouteImport.update({
@@ -342,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/caption-templates': typeof CaptionTemplatesRoute
   '/changelog': typeof ChangelogRoute
   '/compare': typeof CompareRoute
+  '/describe-style': typeof DescribeStyleRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/gear-pictures': typeof GearPicturesRoute
@@ -397,6 +404,7 @@ export interface FileRoutesByTo {
   '/caption-templates': typeof CaptionTemplatesRoute
   '/changelog': typeof ChangelogRoute
   '/compare': typeof CompareRoute
+  '/describe-style': typeof DescribeStyleRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/gear-pictures': typeof GearPicturesRoute
@@ -452,6 +460,7 @@ export interface FileRoutesById {
   '/caption-templates': typeof CaptionTemplatesRoute
   '/changelog': typeof ChangelogRoute
   '/compare': typeof CompareRoute
+  '/describe-style': typeof DescribeStyleRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/gear-pictures': typeof GearPicturesRoute
@@ -509,6 +518,7 @@ export interface FileRouteTypes {
     | '/caption-templates'
     | '/changelog'
     | '/compare'
+    | '/describe-style'
     | '/exif'
     | '/gallery'
     | '/gear-pictures'
@@ -564,6 +574,7 @@ export interface FileRouteTypes {
     | '/caption-templates'
     | '/changelog'
     | '/compare'
+    | '/describe-style'
     | '/exif'
     | '/gallery'
     | '/gear-pictures'
@@ -618,6 +629,7 @@ export interface FileRouteTypes {
     | '/caption-templates'
     | '/changelog'
     | '/compare'
+    | '/describe-style'
     | '/exif'
     | '/gallery'
     | '/gear-pictures'
@@ -674,6 +686,7 @@ export interface RootRouteChildren {
   CaptionTemplatesRoute: typeof CaptionTemplatesRoute
   ChangelogRoute: typeof ChangelogRoute
   CompareRoute: typeof CompareRoute
+  DescribeStyleRoute: typeof DescribeStyleRoute
   ExifRoute: typeof ExifRoute
   GalleryRoute: typeof GalleryRoute
   GearPicturesRoute: typeof GearPicturesRoute
@@ -799,6 +812,13 @@ declare module '@tanstack/react-router' {
       path: '/compare'
       fullPath: '/compare'
       preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/describe-style': {
+      id: '/describe-style'
+      path: '/describe-style'
+      fullPath: '/describe-style'
+      preLoaderRoute: typeof DescribeStyleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/exif': {
@@ -1118,6 +1138,7 @@ const rootRouteChildren: RootRouteChildren = {
   CaptionTemplatesRoute: CaptionTemplatesRoute,
   ChangelogRoute: ChangelogRoute,
   CompareRoute: CompareRoute,
+  DescribeStyleRoute: DescribeStyleRoute,
   ExifRoute: ExifRoute,
   GalleryRoute: GalleryRoute,
   GearPicturesRoute: GearPicturesRoute,

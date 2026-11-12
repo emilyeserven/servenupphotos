@@ -45,6 +45,7 @@ branches that add pages don't clash:
     - Changelog
     - Explore Bucket
     - Manage Sizes
+    - Extra: Describe my style
   - Update Data (each of its subpages)
   - Metadata Groups
   - Camera Overrides
