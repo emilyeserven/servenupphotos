@@ -29,7 +29,7 @@ func writePublishError(w http.ResponseWriter, perr *github.PublishError) {
 		slog.Warn("github call failed", "step", perr.GitHub.Step, "method", perr.GitHub.Method, "path", perr.GitHub.Path,
 			"status", perr.GitHub.Status, "message", perr.GitHub.Message, "requestId", perr.GitHub.RequestID)
 	}
-	writeJSON(w, perr.Status, publishErrorBody{Message: perr.Message, GitHub: perr.GitHub})
+	writeJSON(w, perr.Status, publishErrorBody{Message: perr.Message, GitHub: perr.GitHub, SuggestedName: perr.SuggestedName})
 }
 
 // publishErrorBody is the answer to a request that failed with a
@@ -37,6 +37,9 @@ func writePublishError(w http.ResponseWriter, perr *github.PublishError) {
 type publishErrorBody struct {
 	Message string          `json:"message"`
 	GitHub  *github.Failure `json:"github,omitempty"`
+	// SuggestedName is a free file name to offer when the one asked for is
+	// taken.
+	SuggestedName string `json:"suggestedName,omitempty"`
 }
 
 // githubSettings reads the GitHub settings for a handler, answering that they

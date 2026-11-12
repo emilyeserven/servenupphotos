@@ -313,3 +313,22 @@ func TestPublishSavesNoGPS(t *testing.T) {
 		t.Errorf("saved noGps = %v (%v), want true", data.NoGPS, err)
 	}
 }
+
+func TestPublishSuggestsFreeName(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	f.files["main:photos/data/photos/sunset.json"] = "{}"
+	f.files["main:photos/data/photos/sunset-2.json"] = "{}"
+	f.openPull("photo-data/x", map[string]string{"photos/data/photos/sunset-3.json": "{}"})
+	if _, err := c.Publish(t.Context(), gh, photo("sunset-4")); err != nil {
+		t.Fatalf("Publish() error = %v", err)
+	}
+
+	var perr *PublishError
+	_, err := c.Publish(t.Context(), gh, photo("sunset"))
+	if !errors.As(err, &perr) || perr.SuggestedName != "sunset-5" {
+		t.Errorf("Publish() error = %+v, want a conflict suggesting sunset-5, past the names on main, in the pull request and waiting for Commit", err)
+	}
+	if _, err := c.Publish(t.Context(), gh, photo(perr.SuggestedName)); err != nil {
+		t.Errorf("Publish() under the suggested name: error = %v", err)
+	}
+}

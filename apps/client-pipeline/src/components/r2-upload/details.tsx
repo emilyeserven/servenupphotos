@@ -1,4 +1,3 @@
-import { useForm } from "@tanstack/react-form";
 import { Link } from "@tanstack/react-router";
 import { CheckIcon, CopyIcon, ImageOffIcon } from "lucide-react";
 import { Fragment, type ReactNode, useState } from "react";
@@ -12,9 +11,11 @@ import {
   renamePhoto,
 } from "@/api/upload";
 import { type R2Upload, sameNameError } from "@/components/r2-upload/use-r2-upload";
+import { RenameForm } from "@/components/rename-prompt";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { uploadNameProblem } from "@/lib/file-name";
 
 interface R2DetailsProps {
   r2: R2Upload;
@@ -141,90 +142,30 @@ function SameNamePrompt({ error, photo, onUpload }: SameNamePromptProps) {
           </li>
         ))}
       </ul>
-      <RenameForm photo={photo} onUpload={onUpload} />
-    </div>
-  );
-}
-
-function RenameForm({ photo, onUpload }: Omit<SameNamePromptProps, "error">) {
-  const form = useForm({
-    defaultValues: { name: `${photo.name.replace(/\.[^.]*$/, "")}-2` },
-    onSubmit: ({ value }) => onUpload({ photo: renamePhoto(photo, value.name) }),
-  });
-  const submit = (event: React.FormEvent) => {
-    event.preventDefault();
-    void form.handleSubmit();
-  };
-
-  return (
-    <form className="flex flex-col gap-2" onSubmit={submit}>
-      <form.Field name="name" validators={{ onChange: ({ value }) => validateName(value) }}>
-        {(field) => (
-          <RenameField
-            value={field.state.value}
-            error={field.state.meta.errors[0]}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-          />
-        )}
-      </form.Field>
-      <div className="flex flex-wrap gap-2">
-        <form.Subscribe selector={(state) => state.canSubmit}>
-          {(canSubmit) => (
-            <Button type="submit" disabled={!canSubmit}>
-              Rename and upload
-            </Button>
-          )}
-        </form.Subscribe>
+      <RenameForm
+        id="r2-upload-name"
+        suggested={suggestedUploadName(error, photo)}
+        extension=".jpg"
+        submitLabel="Rename and upload"
+        validate={uploadNameProblem}
+        onRename={(name) => onUpload({ photo: renamePhoto(photo, name) })}
+      >
         <Button
           type="button"
           variant="outline"
+          size="sm"
           onClick={() => onUpload({ photo, keepSameName: true })}
         >
           Keep {photo.name}
         </Button>
-      </div>
-    </form>
-  );
-}
-
-interface RenameFieldProps {
-  value: string;
-  error: string | undefined;
-  onChange: (value: string) => void;
-  onBlur: () => void;
-}
-
-function RenameField({ value, error, onChange, onBlur }: RenameFieldProps) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor="r2-upload-name" className="text-sm font-medium">
-        New name
-      </label>
-      <div className="flex items-center gap-2">
-        <Input
-          id="r2-upload-name"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          aria-invalid={error !== undefined}
-          aria-describedby={error ? "r2-upload-name-error" : undefined}
-        />
-        <span className="text-muted-foreground text-sm">.jpg</span>
-      </div>
-      {error && (
-        <p id="r2-upload-name-error" className="text-destructive text-sm">
-          {error}
-        </p>
-      )}
+      </RenameForm>
     </div>
   );
 }
 
-/** Why name can't be used for an upload, or undefined if it can. Keys keep only letters and numbers. */
-function validateName(name: string): string | undefined {
-  if (!/[a-z0-9]/i.test(name)) return "Use at least one letter or number.";
-  return undefined;
+/** The name to try instead: the backend's free one, or this one with "-2" added. */
+function suggestedUploadName(error: UploadError, photo: File): string {
+  return error.suggestedName ?? `${photo.name.replace(/\.[^.]*$/, "")}-2`;
 }
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });

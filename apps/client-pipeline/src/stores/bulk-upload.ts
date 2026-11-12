@@ -1,6 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { create } from "zustand";
-import { BULK_STEPS, type BulkPhoto, failure, isJpeg } from "@/lib/bulk-upload";
+import { BULK_STEPS, type BulkPhoto, type RetryChange, failure, isJpeg } from "@/lib/bulk-upload";
 
 /**
  * The photos chosen on Bulk Upload. They're worked through one at a time, in the order chosen, so
@@ -16,8 +16,11 @@ interface BulkUploadState {
    * square, albums and tags, so it's uploaded and saved even after leaving the page.
    */
   addAnalyzed: (photo: AnalyzedPhoto, queryClient: QueryClient) => void;
-  /** Puts a failed photo back in the queue; with keepSameName, its upload keeps the name R2 has. */
-  retry: (id: string, queryClient: QueryClient, keepSameName?: boolean) => void;
+  /**
+   * Puts a failed photo back in the queue, with change made over it: keepSameName to upload it under
+   * the name R2 has, or a new file or JSON name from `renamed` when its name was taken.
+   */
+  retry: (id: string, queryClient: QueryClient, change?: RetryChange) => void;
   /** Takes a photo that's waiting or finished off the list. */
   remove: (id: string) => void;
   /** Takes every added and skipped photo off the list. */
@@ -95,8 +98,9 @@ export const useBulkUploadStore = create<BulkUploadState>()((set, get) => {
       set((state) => ({ photos: [...state.photos, queuedPhoto] }));
       void drain(queryClient);
     },
-    retry: (id, queryClient, keepSameName) => {
-      update(id, { step: "waiting", error: undefined, sameName: [], keepSameName });
+    retry: (id, queryClient, change) => {
+      const cleared = { error: undefined, sameName: [], suggestedName: undefined };
+      update(id, { step: "waiting", ...cleared, keepSameName: undefined, ...change });
       void drain(queryClient);
     },
     remove: (id) => set((state) => ({ photos: state.photos.filter((photo) => photo.id !== id) })),
