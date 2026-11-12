@@ -1,5 +1,5 @@
 import { type UseMutationResult, useMutation, useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import {
   EyeIcon,
   EyeOffIcon,
@@ -19,7 +19,7 @@ import {
 } from "@/components/face-pixelation/full-screen-editor";
 import { PixelateActions } from "@/components/face-pixelation/pixelate-actions";
 import { type FaceEditorState, useFaceEditor } from "@/components/face-pixelation/use-face-editor";
-import { usePixelateSave } from "@/components/face-pixelation/use-pixelate-save";
+import { type PixelateSave, usePixelateSave } from "@/components/face-pixelation/use-pixelate-save";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,7 +59,7 @@ export function FacePixelationCard(props: FacePixelationCardProps) {
       </CardHeader>
       <CardContent>
         {saved ? (
-          <FaceEditor saved={saved} {...props} />
+          <PhotoFaceEditor saved={saved} {...props} />
         ) : (
           <QueryResult query={inR2} pendingLabel="Reading the pixelated faces from R2…">
             {() => null}
@@ -72,22 +72,46 @@ export function FacePixelationCard(props: FacePixelationCardProps) {
 
 type DetectMutation = UseMutationResult<FaceBox[], Error, { key: string }>;
 
-function FaceEditor({
+/** The face editor on the photo's own image, saving through the Photo page. */
+function PhotoFaceEditor({
   editable,
   edit,
   save,
   disabled,
   saved,
 }: FacePixelationCardProps & { saved: FaceBox[] }) {
-  const editor = useFaceEditor(saved);
-  const detect = useMutation(detectFacesMutation);
   const pixelate = usePixelateSave(editable, edit, save);
+  return (
+    <FaceEditor image={editable.image} saved={saved} pixelate={pixelate} disabled={disabled} />
+  );
+}
+
+interface FaceEditorProps {
+  /** The JPEG in R2 whose versions are pixelated, drawn on and searched for faces. */
+  image: { key: string; url: string };
+  /** The areas saved for it. */
+  saved: FaceBox[];
+  /** The areas to start editing from; the saved ones when left out. */
+  initial?: FaceBox[];
+  pixelate: PixelateSave;
+  disabled: boolean;
+  /** More buttons for the toolbar, given the faces being edited. */
+  tools?: (editor: FaceEditorState, locked: boolean) => ReactNode;
+}
+
+/**
+ * Finding and drawing the areas to pixelate on an image in R2, with a live preview, and remaking its
+ * versions with them: the photo's own on its Pixelate faces card, or its unedited original's.
+ */
+export function FaceEditor({ image, saved, initial, pixelate, disabled, tools }: FaceEditorProps) {
+  const editor = useFaceEditor(saved, initial);
+  const detect = useMutation(detectFacesMutation);
   const [fullScreen, setFullScreen] = useState(false);
   const preview = useRef<PreviewHandle>(null);
   const add = (keep: boolean) => editor.add(keep, preview.current?.visibleArea());
   const locked = disabled || pixelate.mutation.isPending;
   const find = () =>
-    detect.mutate({ key: editable.image.key }, { onSuccess: (found) => editor.addFound(found) });
+    detect.mutate({ key: image.key }, { onSuccess: (found) => editor.addFound(found) });
 
   const parts: EditorParts = {
     toolbar: (
@@ -99,13 +123,15 @@ function FaceEditor({
         onAdd={add}
         fullScreen={fullScreen}
         onFullScreen={() => setFullScreen(true)}
-      />
+      >
+        {tools?.(editor, locked)}
+      </Toolbar>
     ),
     notes: <DetectNote detect={detect} />,
     preview: (
       <FacePreview
         ref={preview}
-        src={editable.image.url}
+        src={image.url}
         faces={editor.faces}
         selected={editor.selected}
         onSelect={editor.setSelected}
@@ -172,6 +198,8 @@ interface ToolbarProps {
   /** The editor already fills the window, so it has no Full screen button. */
   fullScreen: boolean;
   onFullScreen: () => void;
+  /** More buttons, after Add a keep area. */
+  children?: ReactNode;
 }
 
 /** Find faces, add a box by hand, and show or hide the boxes over the preview. */
@@ -183,6 +211,7 @@ function Toolbar({
   onAdd,
   fullScreen,
   onFullScreen,
+  children,
 }: ToolbarProps) {
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -191,6 +220,7 @@ function Toolbar({
         Find faces
       </Button>
       <AddButtons onAdd={onAdd} disabled={locked || !editor.canAdd} />
+      {children}
       <BoxesToggle shown={editor.showBoxes} onToggle={editor.toggleBoxes} />
       <FullScreenButton hidden={fullScreen} onClick={onFullScreen} />
     </div>

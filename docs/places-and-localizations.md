@@ -16,7 +16,8 @@ ignoring case.
 A place can't be in itself or in a place that's in it, and its parent must be a place. `city` and `country` are
 where it is, or `""`; older place files don't have these three, and read as empty.
 
-The Places page is a list on the left and an edit panel on the right (on a phone, the panel comes first). The list is
+The Places page is a list on the left and an edit panel on the right (on a phone, the panel comes first). A link with
+`?edit=city/seoul` (or `place/<id>`), as [Quick Edit](quick-edit.md) opens, starts with that row in the panel. The list is
 one tree of every country, the cities in it, and the places in each city, each with an icon on the left: a globe for a
 country, a building for a city and a pin for a place (with a check inside for a place marked as an exact location). A place is listed under the place it's in, or else its city (its
 own, or a place above it's), or else its country; a city under its country; anything with nothing above it at the top,
@@ -200,7 +201,8 @@ Under the field, **This photo won't have a GPS position** marks a photo that goe
 studio photo. It's saved as `"noGps": true` (`false` otherwise, which new photos get and **Update Data → Missing
 fields** adds to older ones), the summary then reads **None, on purpose**, and the Dashboard's
 [Needs attention](dashboard.md) leaves the photo out of its **Photos without GPS** and **Photos without a place** rows.
-It changes nothing on the portfolio.
+It changes nothing on the portfolio. Save sends it next to the places and the albums and tags, not inside the sanitized
+EXIF, which the backend refuses with any field it doesn't know.
 
 When the photo has no GPS position of its own (EXIF or custom), each chosen place with none either (its own or a place above it's) has
 **Add a GPS position for …** under that line, which opens a `latitude, longitude` field and **Save**. It saves the
@@ -403,6 +405,22 @@ change files already rewritten.
 
 > **Frontend analogy:** it's a redirect map, like `{ "/old-path": "/new-path" }` in a router: the list follows the
 > redirect as soon as it's saved, and Update Data rewrites the old links in the files themselves.
+
+### A city from its state
+
+Some photos have a state but no city because their state is a city too: Seoul and Busan are each a state and a city,
+and the EXIF often writes only the state. When a photo has a state but no city (neither `city` nor `customCity`), and
+the state is named like a city that has a localization (its name or one of its [other names](#other-names), ignoring
+case), the city is filled in with that city's name. A `customState` fills in `customCity`; otherwise the EXIF `state`
+fills in `city`. A photo with a custom state that isn't a city is left as it is, even when its EXIF state is one.
+
+A new photo gets it when its EXIF is read, after the other names (`fillCity` in `be-pipeline/internal/github/statecity.go`).
+**Places → Location Names** fills it in on photos already saved, listing each one in its preview with the other
+names' changes before saving anything. A city counts once it has a localization, so a state named like a city no photo
+has yet needs **New → City** first.
+
+> **Frontend analogy:** it's a default value, like `city ?? (isKnownCity(state) ? state : undefined)`, written into
+> the data instead of computed on every render.
 
 Saves of places and localizations go through one queue: each checks the others' names and parents, so a save made
 while another runs waits its turn (its button says **Queued…**, then **Saving…**) instead of racing it. A row already queued isn't queued again.

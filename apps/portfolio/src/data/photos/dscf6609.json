@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "make the woman on the right more prominent",
+    "date": "2026-11-11"
+  },
   "colors": {
     "average": {
       "hex": "#4d555a",

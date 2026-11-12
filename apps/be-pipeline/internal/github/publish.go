@@ -41,6 +41,9 @@ type Photo struct {
 	// Places are where the photo was taken, as places from PLACES.json;
 	// none when they're left out.
 	Places []PhotoPlace `json:"places,omitempty"`
+	// NoGPS marks a photo that won't have a GPS position on purpose, as
+	// ticked on the Photo page; saved as the file's "noGps".
+	NoGPS bool `json:"noGps,omitempty"`
 	// Colors is the photo's color summary, which the backend reads from its
 	// original in R2; nil when it couldn't, and the file has no "colors".
 	Colors *colors.Summary `json:"-"`
@@ -270,6 +273,7 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 	data.Albums, data.Tags = appendMissing(data.Albums, photo.Albums), appendMissing(data.Tags, photo.Tags)
 	data.Genres = appendMissing(data.Genres, photo.Genres)
 	data.Places = append(data.Places, photo.Places...)
+	data.NoGPS = photo.NoGPS
 	data.Colors, data.PerceptualHash = photo.Colors, photo.PerceptualHash
 	content, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {

@@ -7,6 +7,7 @@ import { LikeBurst, LikeButton } from "@/components/like-button";
 import { MoreLikeThis, RelatedButton, toggleMoreLikeThis } from "@/components/more-like-this";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLocation } from "@/components/photo-location";
+import { RawVsEditedLink } from "@/components/raw-vs-edited-link";
 import { Button } from "@/components/ui/button";
 import { viewOnMapLink } from "@/components/view-on-map-link";
 import { like } from "@/lib/likes";
@@ -224,6 +225,7 @@ function LightboxHeader({
       <span className="shrink-0 text-sm text-white/60 tabular-nums empty:hidden">{position}</span>
       <div className="flex shrink-0 items-center">
         {related}
+        <RawVsEditedLink photo={photo} />
         <CopyPhotoLinkButton id={photo.id} />
         <LikeButton id={photo.id} />
         <Button

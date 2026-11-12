@@ -108,6 +108,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
 - [Dashboard](docs/dashboard.md) (`/`): the home page, with the next Lightroom albums, drafts, Compare sets, Instagram queue and Site Spotlight dates
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets, and Status (`/settings/status`), the services and connections check
+- [Edit in Pipeline Chrome extension](docs/chrome-extension.md) (downloaded from `/settings`): a toolbar button that opens the pipeline's editor for the portfolio page you are on, through `/quick-edit?url=…`, even with the pipeline on plain HTTP
 - [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, colors), and the tag tools (`/tag-tools/<name>`, under Tools in the Tags submenu) for bulk tagging, the whole tag library, pruning and tag descriptions
 - [Photographer notes](docs/photo-notes.md): private notes on a photo, written on the Photo page or by the Tag library, which the portfolio's build leaves out
 - [Alt text](docs/alt-text.md) (`/alt-text`): a description of each photo for screen readers, written on the Photo page or for many photos at once with an LLM prompt, which the portfolio uses as the images' `alt`
@@ -134,6 +135,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Camera Overrides](docs/camera-overrides.md) (`/camera-overrides`): per-camera rules that write other values over a photo's EXIF, such as a lens's name for "21.0 mm", applied to new photos and again from Update Data and the Photo page, kept in `CAMERAS.json`
 - [Custom Lenses](docs/custom-lenses.md) (Metadata Groups → Lenses): lenses the EXIF doesn't name well, such as manual ones, picked for a photo on the Photo page, with a Manual/unknown aperture option, kept in `LENSES.json`
 - [Photo Book](docs/photo-book.md) (`/photo-book`): rough mockups of a photo book's pages, with photos dragged from a drawer and captions filled in from a caption template, kept in `PHOTOBOOKS.json`
+- [Bio](docs/bio.md) (`/bio`): the bio the portfolio will show, in Markdown, with self-portraits only it shows and portfolio photos, in order, kept in `BIO.json`
 - [Caption Templates](docs/caption-templates.md) (`/caption-templates`): social media captions with placeholders for a photo's fields, filled in by **Generate** on the Photo page's posts, kept in `CAPTIONS.json`
 - [Trips](docs/trips.md) (the Trip Lines page's Trips tab, a page per Trip): names for runs of days, such as "Japan", shown beside those days on the portfolio Timeline, with the ferries and flights between days drawn on the map and a Trip page for their stories, kept in `TIMELINE.json`
 - [Trip Lines](docs/trip-lines.md) (`/trip-lines`): the route of a day, walking from photo to photo and hopping by train, subway, bus or car, kept in `TRIPLINES.json` and baked into `TRIPLINES.geo.json` for the portfolio map
@@ -144,9 +146,11 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Lightroom Albums](docs/lightroom-albums.md) (`/lightroom-albums`): your Lightroom folders and albums, read by an LLM from screenshots or a screen recording, with a stage and notes on each album as a tree or a Kanban board and the next albums to work on, imported on its own page or added by hand, kept only in the browser and moved between computers with Export and Import
 - [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, filterable, making JSON for an original that isn't saved, and deleting images
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
+- [Unedited originals](docs/unedited-originals.md) (`/raw-vs-edited` on the portfolio): keeping a photo's straight-from-camera original in the pipeline, with its crop and pixelated faces, compared by slider, side by side or switching, and shown on the portfolio's Raw vs Edited page only when marked to
 - [Pixelating faces](docs/face-pixelation.md): finding or boxing faces on a photo in R2 (as boxes or circles, with areas to keep unpixelated), setting each one's pixelation density with a live preview, and remaking every version with them hidden
 - [Changelog](docs/changelog.md) (`/changelog`): the pull requests merged into the repository, by day, with links to GitHub and without merge commits or photo data merges
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
+- [Quick Edit](docs/quick-edit.md): pasting a portfolio link to open the pipeline page that edits it
 - [BFF timeouts](docs/bff-timeouts.md) (`/api/timeouts`): how long the BFF waits for each backend path, read from the backend at start-up
 - [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
 

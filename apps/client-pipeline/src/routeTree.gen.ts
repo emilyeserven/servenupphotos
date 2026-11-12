@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AlbumSuggestionsRouteImport } from './routes/album-suggestions'
 import { Route as AllPhotosRouteImport } from './routes/all-photos'
 import { Route as AltTextRouteImport } from './routes/alt-text'
+import { Route as BioRouteImport } from './routes/bio'
 import { Route as BucketRouteImport } from './routes/bucket'
 import { Route as BulkPlacesRouteImport } from './routes/bulk-places'
 import { Route as BulkUploadRouteImport } from './routes/bulk-upload'
@@ -33,6 +34,7 @@ import { Route as LocationNamesRouteImport } from './routes/location-names'
 import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
 import { Route as PhotoBookRouteImport } from './routes/photo-book'
 import { Route as PlacesRouteImport } from './routes/places'
+import { Route as QuickEditRouteImport } from './routes/quick-edit'
 import { Route as RelatedPhotosRouteImport } from './routes/related-photos'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
@@ -79,6 +81,11 @@ const AllPhotosRoute = AllPhotosRouteImport.update({
 const AltTextRoute = AltTextRouteImport.update({
   id: '/alt-text',
   path: '/alt-text',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BioRoute = BioRouteImport.update({
+  id: '/bio',
+  path: '/bio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BucketRoute = BucketRouteImport.update({
@@ -179,6 +186,11 @@ const PhotoBookRoute = PhotoBookRouteImport.update({
 const PlacesRoute = PlacesRouteImport.update({
   id: '/places',
   path: '/places',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuickEditRoute = QuickEditRouteImport.update({
+  id: '/quick-edit',
+  path: '/quick-edit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RelatedPhotosRoute = RelatedPhotosRouteImport.update({
@@ -322,6 +334,7 @@ export interface FileRoutesByFullPath {
   '/album-suggestions': typeof AlbumSuggestionsRoute
   '/all-photos': typeof AllPhotosRoute
   '/alt-text': typeof AltTextRoute
+  '/bio': typeof BioRoute
   '/bucket': typeof BucketRoute
   '/bulk-places': typeof BulkPlacesRoute
   '/bulk-upload': typeof BulkUploadRoute
@@ -342,6 +355,7 @@ export interface FileRoutesByFullPath {
   '/metadata-groups': typeof MetadataGroupsRoute
   '/photo-book': typeof PhotoBookRoute
   '/places': typeof PlacesRoute
+  '/quick-edit': typeof QuickEditRoute
   '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
@@ -375,6 +389,7 @@ export interface FileRoutesByTo {
   '/album-suggestions': typeof AlbumSuggestionsRoute
   '/all-photos': typeof AllPhotosRoute
   '/alt-text': typeof AltTextRoute
+  '/bio': typeof BioRoute
   '/bucket': typeof BucketRoute
   '/bulk-places': typeof BulkPlacesRoute
   '/bulk-upload': typeof BulkUploadRoute
@@ -395,6 +410,7 @@ export interface FileRoutesByTo {
   '/metadata-groups': typeof MetadataGroupsRoute
   '/photo-book': typeof PhotoBookRoute
   '/places': typeof PlacesRoute
+  '/quick-edit': typeof QuickEditRoute
   '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
@@ -428,6 +444,7 @@ export interface FileRoutesById {
   '/album-suggestions': typeof AlbumSuggestionsRoute
   '/all-photos': typeof AllPhotosRoute
   '/alt-text': typeof AltTextRoute
+  '/bio': typeof BioRoute
   '/bucket': typeof BucketRoute
   '/bulk-places': typeof BulkPlacesRoute
   '/bulk-upload': typeof BulkUploadRoute
@@ -448,6 +465,7 @@ export interface FileRoutesById {
   '/metadata-groups': typeof MetadataGroupsRoute
   '/photo-book': typeof PhotoBookRoute
   '/places': typeof PlacesRoute
+  '/quick-edit': typeof QuickEditRoute
   '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
@@ -483,6 +501,7 @@ export interface FileRouteTypes {
     | '/album-suggestions'
     | '/all-photos'
     | '/alt-text'
+    | '/bio'
     | '/bucket'
     | '/bulk-places'
     | '/bulk-upload'
@@ -503,6 +522,7 @@ export interface FileRouteTypes {
     | '/metadata-groups'
     | '/photo-book'
     | '/places'
+    | '/quick-edit'
     | '/related-photos'
     | '/settings'
     | '/site-spotlight'
@@ -536,6 +556,7 @@ export interface FileRouteTypes {
     | '/album-suggestions'
     | '/all-photos'
     | '/alt-text'
+    | '/bio'
     | '/bucket'
     | '/bulk-places'
     | '/bulk-upload'
@@ -556,6 +577,7 @@ export interface FileRouteTypes {
     | '/metadata-groups'
     | '/photo-book'
     | '/places'
+    | '/quick-edit'
     | '/related-photos'
     | '/settings'
     | '/site-spotlight'
@@ -588,6 +610,7 @@ export interface FileRouteTypes {
     | '/album-suggestions'
     | '/all-photos'
     | '/alt-text'
+    | '/bio'
     | '/bucket'
     | '/bulk-places'
     | '/bulk-upload'
@@ -608,6 +631,7 @@ export interface FileRouteTypes {
     | '/metadata-groups'
     | '/photo-book'
     | '/places'
+    | '/quick-edit'
     | '/related-photos'
     | '/settings'
     | '/site-spotlight'
@@ -642,6 +666,7 @@ export interface RootRouteChildren {
   AlbumSuggestionsRoute: typeof AlbumSuggestionsRoute
   AllPhotosRoute: typeof AllPhotosRoute
   AltTextRoute: typeof AltTextRoute
+  BioRoute: typeof BioRoute
   BucketRoute: typeof BucketRoute
   BulkPlacesRoute: typeof BulkPlacesRoute
   BulkUploadRoute: typeof BulkUploadRoute
@@ -662,6 +687,7 @@ export interface RootRouteChildren {
   MetadataGroupsRoute: typeof MetadataGroupsRoute
   PhotoBookRoute: typeof PhotoBookRoute
   PlacesRoute: typeof PlacesRoute
+  QuickEditRoute: typeof QuickEditRoute
   RelatedPhotosRoute: typeof RelatedPhotosRoute
   SettingsRoute: typeof SettingsRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
@@ -717,6 +743,13 @@ declare module '@tanstack/react-router' {
       path: '/alt-text'
       fullPath: '/alt-text'
       preLoaderRoute: typeof AltTextRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bio': {
+      id: '/bio'
+      path: '/bio'
+      fullPath: '/bio'
+      preLoaderRoute: typeof BioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bucket': {
@@ -857,6 +890,13 @@ declare module '@tanstack/react-router' {
       path: '/places'
       fullPath: '/places'
       preLoaderRoute: typeof PlacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quick-edit': {
+      id: '/quick-edit'
+      path: '/quick-edit'
+      fullPath: '/quick-edit'
+      preLoaderRoute: typeof QuickEditRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/related-photos': {
@@ -1070,6 +1110,7 @@ const rootRouteChildren: RootRouteChildren = {
   AlbumSuggestionsRoute: AlbumSuggestionsRoute,
   AllPhotosRoute: AllPhotosRoute,
   AltTextRoute: AltTextRoute,
+  BioRoute: BioRoute,
   BucketRoute: BucketRoute,
   BulkPlacesRoute: BulkPlacesRoute,
   BulkUploadRoute: BulkUploadRoute,
@@ -1090,6 +1131,7 @@ const rootRouteChildren: RootRouteChildren = {
   MetadataGroupsRoute: MetadataGroupsRoute,
   PhotoBookRoute: PhotoBookRoute,
   PlacesRoute: PlacesRoute,
+  QuickEditRoute: QuickEditRoute,
   RelatedPhotosRoute: RelatedPhotosRoute,
   SettingsRoute: SettingsRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,

@@ -110,6 +110,8 @@ combined into `notstored/NOTSTORED.json`; see [Publish](publish.md#not-stored-da
 Each mockup on the Photo Book page is `photobooks/<id>.json`, combined into `photobooks/PHOTOBOOKS.json`; see
 [Photo Book](photo-book.md).
 
+The bio is one file, `bio/bio.json`, combined into `bio/BIO.json`; see [Bio](bio.md).
+
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
 [Re-editing a photo](replace-image.md).
 
@@ -135,6 +137,11 @@ percentile), so a muted photo with a small vivid part still scores high. New pho
 A photo's `faces` lists the areas pixelated on its versions, each `{ x, y, width, height, blocks }` with `shape`,
 `edge`, `rotation` and `keep` when set, so the Photo page's **Pixelate faces** card can edit them again; it's left out
 when none are. See [Pixelating faces](face-pixelation.md#saving).
+
+A photo's `original` is its unedited original, uploaded on the Photo page's **Original** section: its file name, size,
+images, `showOnPortfolio`, and once saved its `crop` (the part the edit shows), `faces` and `matchedFaces`. Only photos
+with one have it, and the portfolio's build leaves it out unless it's shown. See
+[Unedited originals](unedited-originals.md#the-field).
 
 A photo's `perceptualHash` is 16 hex digits fingerprinting what it looks like, read from its Small version, so photos
 that look nearly the same can be put in a compare group together; see

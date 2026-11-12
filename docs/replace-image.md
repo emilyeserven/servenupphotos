@@ -5,7 +5,8 @@ A photo can be marked for re-editing, with a reason, and its image replaced with
 ## Marking a photo for re-editing
 
 The Photo page for a saved photo has a **Re-edit** card: **Marked for re-editing**, and a **Reason** such as "Too warm"
-once it's on. **Save changes** writes it into the photo's JSON as `reEdit`, a [change waiting for
+once it's on (or, quicker, **Re-edit** beside **Compare** in [Photos in Flight](photos-in-flight.md#undecided), which
+saves it straight away). **Save changes** writes it into the photo's JSON as `reEdit`, a [change waiting for
 Commit](pending-changes.md):
 
 ```json

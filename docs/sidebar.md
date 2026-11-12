@@ -3,7 +3,8 @@
 The pipeline's sidebar (`components/app-sidebar.tsx`, with its parts in `components/sidebar/`) starts with the
 **Photo Pipeline** logo, which opens the Status page (`/`), and the split **Bulk Upload** button: its main part opens
 the Bulk Upload modal, and the smaller **Upload** icon on its right uploads one photo. The Bulk Upload page
-(`/bulk-upload`) has no sidebar link of its own; it's linked from the upload queue and the Photo page.
+(`/bulk-upload`) has no sidebar link of its own; it's linked from the upload queue and the Photo page. Under it,
+[**Quick Edit**](quick-edit.md) opens a modal to paste a portfolio link and jump to the page that edits it.
 
 Below them every page is listed under its section, with the pages in its submenu under it. One page per line here, so
 branches that add pages don't clash:
@@ -34,6 +35,7 @@ branches that add pages don't clash:
     - Planned Posts
   - Captions (the Caption Templates page)
   - Photo Book
+  - Bio
   - Site Spotlight
   - Related Photos
   - User Likes

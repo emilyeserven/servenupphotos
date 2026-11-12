@@ -23,6 +23,11 @@ import {
 } from "@portfolio/lib/photo-places";
 import { type CameraSettings, cameraSettings } from "@portfolio/lib/photo-settings";
 import { withSmartAlbums } from "@portfolio/lib/smart-albums";
+import {
+  type OriginalCrop,
+  type OriginalEntry,
+  publicOriginal,
+} from "@portfolio/lib/unedited-original";
 import { relatedPhotos, type RelatedPhoto } from "@portfolio/lib/related-photos";
 import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 
@@ -73,6 +78,11 @@ export interface Photo {
   approximatePosition: boolean;
   /** The photo's resized versions in R2; null for photos not uploaded yet. */
   image: PhotoImage | null;
+  /**
+   * The resized versions of its unedited original, for the Raw vs Edited page; null unless one was
+   * uploaded in the pipeline and marked to show on the portfolio.
+   */
+  original: OriginalImage | null;
   /**
    * The country, state and city it was taken in, in English, as the location filter matches them:
    * the custom ones, or else the EXIF ones, or else the first of its places (or a place it's in)
@@ -126,6 +136,9 @@ export interface Photo {
    */
   contrast: number | null;
 }
+
+/** A photo's unedited original as a view draws it: its resized versions, and the part the edit shows. */
+export type OriginalImage = PhotoImage & { crop: OriginalCrop | null };
 
 /** A point of a photo, in percent across from the left and down from the top. */
 export interface SpotlightFocus {
@@ -211,6 +224,10 @@ export interface PhotoEntry {
   pickedSimilarNotes?: Record<string, string>;
   /** The IDs of the photos most like it, best first, as the pipeline's Find Related Photos saved them. */
   similarPhotos?: number[];
+  /** Its unedited original, uploaded on the pipeline's Photo page; most entries don't have one. */
+  original?: OriginalEntry | null;
+  /** The areas pixelated on its versions, which a shown original's must match; left out when none are. */
+  faces?: unknown[];
 }
 
 // ALLPHOTOS.local.json is made by `pnpm photos:local` (which `pnpm dev` runs) and git-ignored, so
@@ -230,6 +247,13 @@ function photoTitle(photo: PhotoEntry): string {
 /** The alt text written in the pipeline, or else the photo's title. */
 function photoAlt(photo: PhotoEntry): string {
   return photo.altText?.trim() || photoTitle(photo);
+}
+
+/** The resized versions of its unedited original, when it's shown on the portfolio. */
+function originalImage(photo: PhotoEntry): OriginalImage | null {
+  const original = publicOriginal(photo);
+  const image = original && parseImage(original);
+  return image ? { ...image, crop: original.crop ?? null } : null;
 }
 
 /** The Markdown comment written on the Photo page, or null without one. */
@@ -298,6 +322,7 @@ function fromPhotoData(data: PhotoEntry[]): Photo[] {
       location: photoLocation(photo),
       ...photoPosition(photo),
       image: parseImage(photo),
+      original: originalImage(photo),
       ...locationFields(photo),
       ...groupFields(photo),
       palette: photoColors(photo.colors),
