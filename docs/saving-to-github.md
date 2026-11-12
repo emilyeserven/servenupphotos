@@ -9,8 +9,10 @@ is open, so one pull request collects every photo until you merge it. An existin
 it's on GitHub or waiting for Commit.
 
 The file is always named after the photo's title, made into a file name (lowercase, accents dropped, spaces turned into
-dashes), or after the photo's file name without its extension when there's no title; it can't be typed in by hand. If a
-file with that name is already there, the save fails and says so: change the title and save again. **Save**'s chevron
+dashes), or after the photo's file name without its extension when there's no title. If a file with that name is already
+there, on GitHub or waiting for Commit, the save stops and its flyout offers a free name: the same name with the lowest
+number from 2 up that no file has yet, such as `sunset-2`, which can be changed before **Rename and save**. (The backend
+answers 409 with that name as `suggestedName`.) **Save**'s chevron
 opens a flyout saying which file it will write and where, warning when the photo isn't in R2 yet, and once it's saved,
 saying it's waiting for Commit and which pull request Commit will add it to.
 
@@ -92,7 +94,9 @@ middle of its resized versions for photos saved before thumbnails existed.
 
 Before uploading, **Upload to R2** looks in the bucket for a different photo saved under the same name
 (`photos/<hash>-<name>.jpg` with another hash), since Photos in Flight matches photos by name. If there is one, its
-flyout shows that photo and asks for a new name, or you can keep the name anyway (a `sameName=keep` form field before the photo). When
+flyout shows that photo and asks for a new name, filled in with the first free one, such as `img-0001-2` (or `-3` when
+`-2` is taken too; the backend's 409 answer carries it as `suggestedName`), or you can keep the name anyway (a
+`sameName=keep` form field before the photo). When
 Cloudflare rejects a request, the flyout also shows Cloudflare's own answer (HTTP status, error code and message) under
 the plain-language reason.
 

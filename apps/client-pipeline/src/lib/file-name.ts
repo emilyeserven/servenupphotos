@@ -18,3 +18,21 @@ export function jsonFileName(title: string | null | undefined, file: string): st
     .replace(/[.-]+$/, "");
   return name || "photo";
 }
+
+/** Matches the backend's rule for a photo JSON file name: plain file names only. */
+const JSON_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$/;
+
+/** Why name, with or without .json, can't be a photo JSON file's name, or undefined if it can. */
+export function jsonNameProblem(name: string): string | undefined {
+  const stem = name.trim().replace(/\.json$/, "");
+  if (!JSON_NAME_PATTERN.test(stem)) {
+    return "Use letters, numbers, dots, dashes and underscores, starting with a letter or number.";
+  }
+  return undefined;
+}
+
+/** Why name can't be a photo's name for an upload to R2, or undefined if it can. Keys keep only letters and numbers. */
+export function uploadNameProblem(name: string): string | undefined {
+  if (!/[a-z0-9]/i.test(name)) return "Use at least one letter or number.";
+  return undefined;
+}

@@ -2,14 +2,16 @@ import { type UseMutationResult, useMutation, useQuery } from "@tanstack/react-q
 import { Link } from "@tanstack/react-router";
 import { CheckIcon, SaveIcon, TriangleAlertIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import { suggestedNameOf } from "@/api/errors";
 import type { SanitizedExif } from "@/api/exif";
 import type { PhotoGroups } from "@/api/organize";
 import { type PhotoData, type PublishResult, publishPhotoMutation } from "@/api/photos";
 import { type SettingsResponse, dataFolder, githubIsSetUp, settingsQuery } from "@/api/settings";
 import { FloatingFlyout } from "@/components/floating-flyout";
 import { PublishSuccess } from "@/components/github-save";
+import { RenameForm } from "@/components/rename-prompt";
 import { Spinner } from "@/components/ui/spinner";
-import { jsonFileName } from "@/lib/file-name";
+import { jsonFileName, jsonNameProblem } from "@/lib/file-name";
 import { photoData } from "@/lib/photo-data";
 
 type Publish = UseMutationResult<PublishResult, Error, PhotoData>;
@@ -53,9 +55,11 @@ function canSave(github: GitHub | null, publish: Publish): boolean {
 /** Saving the photo's JSON, named after its title. */
 function usePublish({ file, sanitized, groups, onSaved }: Omit<PhotoSaveButtonProps, "uploaded">) {
   const publish = useMutation({ ...publishPhotoMutation, onSuccess: onSaved });
-  const name = jsonFileName(sanitized.title, file);
-  const save = () => publish.mutate(photoData(name, file, sanitized, groups));
-  return { publish, name, save };
+  const named = jsonFileName(sanitized.title, file);
+  /** Saves under name, or the one after the title when left out. */
+  const save = (name = named) => publish.mutate(photoData(name, file, sanitized, groups));
+  // After a rename, the flyout shows the name last tried.
+  return { publish, name: publish.variables?.name ?? named, save };
 }
 
 /**
@@ -71,11 +75,17 @@ export function PhotoSaveButton({ uploaded, ...photo }: PhotoSaveButtonProps) {
     <FloatingFlyout
       {...lookOf(publish)}
       title="Save"
-      onRun={canSave(github, publish) ? save : undefined}
+      onRun={canSave(github, publish) ? () => save() : undefined}
       disabled={publish.isPending}
     >
       <p className="font-medium">Save to the batch</p>
-      <SaveDetails github={github} name={name} uploaded={uploaded} publish={publish} />
+      <SaveDetails
+        github={github}
+        name={name}
+        uploaded={uploaded}
+        publish={publish}
+        onRename={save}
+      />
     </FloatingFlyout>
   );
 }
@@ -85,12 +95,45 @@ interface SaveDetailsProps {
   name: string;
   uploaded: boolean;
   publish: Publish;
+  /** Saves under a new name, when the one asked for is taken. */
+  onRename: (name: string) => void;
 }
 
-function SaveDetails({ github, publish, ...rest }: SaveDetailsProps) {
+function SaveDetails({ github, publish, onRename, ...rest }: SaveDetailsProps) {
   if (!github) return <GitHubNotSetUp />;
   if (publish.isSuccess) return <PublishSuccess result={publish.data} />;
-  return <SaveIntro github={github} error={publish.error} {...rest} />;
+  return (
+    <>
+      <SaveIntro github={github} error={publish.error} {...rest} />
+      <TakenNamePrompt error={publish.error} pending={publish.isPending} onRename={onRename} />
+    </>
+  );
+}
+
+/** When the name is taken, offers a free one, which can be changed, to save under instead. */
+function TakenNamePrompt({
+  error,
+  pending,
+  onRename,
+}: {
+  error: Error | null;
+  pending: boolean;
+  onRename: (name: string) => void;
+}) {
+  const suggested = suggestedNameOf(error);
+  if (!suggested) return null;
+  return (
+    <RenameForm
+      key={suggested}
+      id="photo-save-name"
+      suggested={suggested}
+      extension=".json"
+      submitLabel="Rename and save"
+      validate={jsonNameProblem}
+      onRename={onRename}
+      disabled={pending}
+    />
+  );
 }
 
 interface SaveIntroProps {

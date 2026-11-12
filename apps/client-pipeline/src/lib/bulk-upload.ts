@@ -3,6 +3,7 @@ import {
   type MutationObserverOptions,
   type QueryClient,
 } from "@tanstack/react-query";
+import { suggestedNameOf } from "@/api/errors";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
 import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import {
@@ -14,7 +15,7 @@ import {
   publishPhotoMutation,
   pullRequestCheckQuery,
 } from "@/api/photos";
-import { UploadError, type UploadResponse, uploadMutation } from "@/api/upload";
+import { UploadError, type UploadResponse, renamePhoto, uploadMutation } from "@/api/upload";
 import { allPhotosCheck, type CombinedView } from "@/lib/combined";
 import type { Crop } from "@/lib/crop";
 import { jsonFileName } from "@/lib/file-name";
@@ -50,6 +51,13 @@ export interface BulkPhoto {
   sameName?: BucketImage[];
   /** Upload even though a different photo in R2 has its name, as the Photo page's "keep the name". */
   keepSameName?: boolean;
+  /**
+   * A free name the backend offered when its name was taken, in R2 before it's uploaded or for its
+   * JSON once it is, so the row can offer to rename it.
+   */
+  suggestedName?: string;
+  /** The name to save its JSON under, when it was renamed; else after its title or file name. */
+  jsonName?: string;
   /** Places the already-saved check couldn't read, so it may be saved twice. */
   warning?: string;
   /** Its EXIF and colors, once analyzed; with its title and other details for one from the Photo page. */
@@ -163,7 +171,7 @@ function groupsOf(photo: BulkPhoto): PhotoGroups {
 async function save(photo: BulkPhoto, queryClient: QueryClient): Promise<StepResult> {
   const file = fileOf(photo);
   const sanitized = withUpload(photo);
-  const name = jsonFileName(sanitized.title, file);
+  const name = photo.jsonName ?? jsonFileName(sanitized.title, file);
   const variables = photoData(name, file, sanitized, groupsOf(photo));
   return { step: "added", saved: await runMutation(queryClient, publishPhotoMutation, variables) };
 }
@@ -187,5 +195,41 @@ export const BULK_STEPS: Step[] = [
 export function failure(error: unknown): StepResult {
   const message = error instanceof Error ? error.message : String(error);
   const sameName = error instanceof UploadError ? error.sameName : [];
-  return { step: "failed", error: message, retryable: true, sameName };
+  return {
+    step: "failed",
+    error: message,
+    retryable: true,
+    sameName,
+    suggestedName: suggestedNameOf(error),
+  };
+}
+
+/** Whether a different photo in R2 under the same name stopped the photo's upload. */
+export function hasSameName(photo: BulkPhoto): boolean {
+  return (photo.sameName?.length ?? 0) > 0;
+}
+
+/**
+ * Whether trying a failed photo again as it is could help: not for one that isn't a JPEG, nor for
+ * one whose JSON name is taken, which only renaming fixes. A name taken in R2 can be kept.
+ */
+export function canRetry(photo: BulkPhoto): boolean {
+  if (!photo.retryable) return false;
+  return hasSameName(photo) || !photo.suggestedName;
+}
+
+/** What trying a failed photo again can change about it. */
+export type RetryChange = Partial<Pick<BulkPhoto, "keepSameName" | "file" | "jsonName">>;
+
+/**
+ * What renaming a photo whose name was taken changes: the JSON's name once it's in R2, or else the
+ * file it uploads, along with the JSON's name when it has no title to be named after.
+ */
+export function renamed(photo: BulkPhoto, name: string): RetryChange {
+  if (photo.upload) return { jsonName: name };
+  const titled = Boolean(photo.exif?.sanitized?.title?.trim());
+  return {
+    file: renamePhoto(photo.file, name),
+    jsonName: titled ? undefined : jsonFileName(null, name),
+  };
 }
