@@ -10,11 +10,18 @@ import {
   XIcon,
 } from "lucide-react";
 import { type ReactNode, useEffect } from "react";
+import { BulkRename } from "@/components/bulk-upload/bulk-rename";
 import { NearDuplicatesNote } from "@/components/compare/near-duplicates-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useObjectUrl } from "@/hooks/use-object-url";
-import { BULK_STEPS, type BulkPhoto, type BulkStep } from "@/lib/bulk-upload";
+import {
+  BULK_STEPS,
+  type BulkPhoto,
+  type BulkStep,
+  canRetry,
+  hasSameName,
+} from "@/lib/bulk-upload";
 import { useBulkUploadStore } from "@/stores/bulk-upload";
 
 /** What each step in progress says it's doing. */
@@ -149,9 +156,10 @@ function Failed({ photo }: { photo: BulkPhoto }) {
           <a href={other.url} target="_blank" rel="noreferrer" className={LINK}>
             a different photo under this name
           </a>
-          . Keep the name to upload it anyway, or rename the file and add it again.
+          . Keep the name to upload it anyway, or rename it.
         </p>
       )}
+      <BulkRename photo={photo} />
     </>
   );
 }
@@ -178,18 +186,18 @@ function AddedActions({ photo }: { photo: BulkPhoto }) {
   );
 }
 
-function hasSameName(photo: BulkPhoto): boolean {
-  return (photo.sameName?.length ?? 0) > 0;
-}
-
 function FailedActions({ photo }: { photo: BulkPhoto }) {
   const queryClient = useQueryClient();
   const retry = useBulkUploadStore((state) => state.retry);
   const sameName = hasSameName(photo);
   return (
     <div className="flex shrink-0 items-center gap-1">
-      {photo.retryable && (
-        <Button variant="outline" size="sm" onClick={() => retry(photo.id, queryClient, sameName)}>
+      {canRetry(photo) && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => retry(photo.id, queryClient, { keepSameName: sameName })}
+        >
           {sameName ? "Keep name" : "Retry"}
         </Button>
       )}

@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import type { SanitizedExif } from "@/api/exif";
+import { suggestedNameOf } from "@/api/errors";
 import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import { type PublishResult, publishPhotoMutation } from "@/api/photos";
 import { type SettingsResponse, dataFolder, settingsQuery } from "@/api/settings";
@@ -13,21 +14,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
-import { jsonFileName } from "@/lib/file-name";
+import { jsonFileName, jsonNameProblem } from "@/lib/file-name";
 import { photoData } from "@/lib/photo-data";
 
 type GitHubSettings = SettingsResponse["github"];
-
-/** Matches the backend's rule: plain file names only. */
-const FILE_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$/;
-
-function validateName(name: string): string | undefined {
-  const stem = name.trim().replace(/\.json$/, "");
-  if (!FILE_NAME_PATTERN.test(stem)) {
-    return "Use letters, numbers, dots, dashes and underscores, starting with a letter or number.";
-  }
-  return undefined;
-}
 
 function jsonPath(folder: string, name: string): string {
   const file = `${name.trim().replace(/\.json$/, "")}.json`;
@@ -98,7 +88,7 @@ function GitHubSaveForm({
 
   const form = useForm({
     defaultValues: { name: suggestedName },
-    validators: { onSubmit: ({ value }) => validateName(value.name) },
+    validators: { onSubmit: ({ value }) => jsonNameProblem(value.name) },
     onSubmit: async ({ value }) => {
       await publish
         .mutateAsync(photoData(value.name.trim(), file, sanitized, groups))
@@ -122,7 +112,7 @@ function GitHubSaveForm({
         void form.handleSubmit();
       }}
     >
-      <form.Field name="name" validators={{ onChange: ({ value }) => validateName(value) }}>
+      <form.Field name="name" validators={{ onChange: ({ value }) => jsonNameProblem(value) }}>
         {(field) => {
           const error = field.state.meta.errors[0];
           return (
@@ -160,6 +150,13 @@ function GitHubSaveForm({
       </form.Field>
 
       {publish.isError && <p className="text-destructive text-sm">{publish.error.message}</p>}
+      <UseFreeName
+        error={publish.error}
+        onUse={(name) => {
+          form.setFieldValue("name", name);
+          void form.handleSubmit();
+        }}
+      />
 
       <form.Subscribe selector={(state) => state.canSubmit}>
         {(canSubmit) => (
@@ -170,6 +167,17 @@ function GitHubSaveForm({
         )}
       </form.Subscribe>
     </form>
+  );
+}
+
+/** When the name is taken, a button to save under the free name the backend offered instead. */
+function UseFreeName({ error, onUse }: { error: Error | null; onUse: (name: string) => void }) {
+  const suggested = suggestedNameOf(error);
+  if (!suggested) return null;
+  return (
+    <Button type="button" variant="outline" className="self-start" onClick={() => onUse(suggested)}>
+      Save as {suggested}.json
+    </Button>
   );
 }
 
