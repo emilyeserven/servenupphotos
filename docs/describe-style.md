@@ -16,7 +16,7 @@ many photos the prompt links out of how many the filters leave.
 
 ## Which photos are linked
 
-**Photos to link** (30 at first, 1 to 100) caps how many go in the prompt. The photos the filters leave are put in the
+**Photos to link** (30 at first, with no upper limit) sets how many go in the prompt, and **All** next to it links every photo the filters leave. A very long prompt may be more links than a chat will open, so a smaller number spread across the photos is usually enough. The photos the filters leave are put in the
 order they were taken, oldest first, and that many are picked spread evenly from the first to the last, so a long trip
 or several years are covered from end to end rather than only the start. **Shuffle** picks others at random (still in
 date order in the prompt), and **Spread evenly again** goes back. The picked photos are shown numbered, as the prompt

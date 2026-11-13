@@ -66,6 +66,7 @@ function DescribeStyle({ photos }: { photos: SocialPhoto[] }) {
         <CardContent className="flex flex-col gap-4">
           <StyleOptions
             count={count}
+            matching={grid.shown.length}
             onCount={setCount}
             shuffled={seed !== undefined}
             onShuffle={() => setSeed(Math.floor(Math.random() * 2 ** 32))}

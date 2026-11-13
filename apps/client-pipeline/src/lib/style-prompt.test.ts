@@ -38,9 +38,9 @@ const temple = {
   },
 };
 
-test("the typed count is a whole number up to 100, or the default", () => {
+test("the typed count is any whole number of 1 or more, or the default", () => {
   assert.equal(styleCount("12.4"), 12);
-  assert.equal(styleCount("500"), 100);
+  assert.equal(styleCount("5000"), 5000);
   assert.equal(styleCount("0"), defaultStyleCount);
   assert.equal(styleCount("lots"), defaultStyleCount);
 });

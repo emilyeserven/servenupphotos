@@ -1,11 +1,13 @@
 import { ShuffleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { maxStyleCount, styleCount } from "@/lib/style-prompt";
+import { styleCount } from "@/lib/style-prompt";
 
 interface StyleOptionsProps {
   /** How many photos to link, as typed. */
   count: string;
+  /** How many photos the filters leave, which All links every one of. */
+  matching: number;
   onCount: (value: string) => void;
   /** Whether the photos were picked at random rather than spread evenly. */
   shuffled: boolean;
@@ -14,7 +16,14 @@ interface StyleOptionsProps {
 }
 
 /** How many photos the style prompt links, and whether they're spread evenly or shuffled. */
-export function StyleOptions({ count, onCount, shuffled, onShuffle, onSpread }: StyleOptionsProps) {
+export function StyleOptions({
+  count,
+  matching,
+  onCount,
+  shuffled,
+  onShuffle,
+  onSpread,
+}: StyleOptionsProps) {
   return (
     <div className="flex flex-wrap items-center gap-3">
       <label className="flex items-center gap-2 text-sm">
@@ -22,7 +31,6 @@ export function StyleOptions({ count, onCount, shuffled, onShuffle, onSpread }: 
         <Input
           type="number"
           min={1}
-          max={maxStyleCount}
           step={1}
           className="w-20"
           value={count}
@@ -30,6 +38,9 @@ export function StyleOptions({ count, onCount, shuffled, onShuffle, onSpread }: 
           onBlur={() => onCount(String(styleCount(count)))}
         />
       </label>
+      <Button type="button" variant="ghost" onClick={() => onCount(String(matching))}>
+        All {matching}
+      </Button>
       <Button type="button" variant="outline" onClick={onShuffle}>
         <ShuffleIcon />
         Shuffle
