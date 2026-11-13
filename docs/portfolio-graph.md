@@ -197,7 +197,7 @@ no photos has no filter.
   `filterWithCamera` the Grid uses) are counted again by the other stat. A split with more than 8 values shows the first
   7 in their own colors and the rest together as **Other**. With **Share of photos**, a split value is its share of
   that x value's photos, so stacked bars reach 100%.
-- **Pie**: past 8 slices, the rest go together as **Other**. Once its box is at least 560px wide, each slice is named around the pie with its value, such as Fujifilm X-T5 173 (`pie-parts.tsx`); **Display Options** beside **Wide** opens its display options, where **Pie → Slice names and values** turns that off (it's on at first, and narrower pies, such as on phones, leave the naming to the key). Its tooltip follows the cursor instead of sitting at the slice's middle.
+- **Pie**: past 8 slices, the rest go together as **Other**. Once its box is at least 560px wide, each slice is named around the pie with its value, such as Fujifilm X-T5 173 (`pie-parts.tsx`). The names on each side line up in one column, spaced at least a line apart and kept inside the box, so small or neighboring slices' names and lines never overlap or cross; each line runs from its slice to its name in the slice's color (`lib/pie-label-layout.ts`); **Display Options** beside **Wide** opens its display options, where **Pie → Slice names and values** turns that off (it's on at first, and narrower pies, such as on phones, leave the naming to the key). Its tooltip follows the cursor instead of sitting at the slice's middle.
 - A photo can be in more than one row of a lens or camera category, so those parts can add up to more than the photos.
 
 A scatterplot puts both stats' values on a grid, with a dot where they meet as big as how many photos have both, such as

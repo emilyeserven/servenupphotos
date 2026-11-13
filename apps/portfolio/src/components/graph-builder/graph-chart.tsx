@@ -174,7 +174,10 @@ export function LineGraph({ graph, measure }: CartesianProps) {
 export function PieGraph({ graph, measure }: CartesianProps) {
   const slices = flat(graph.data);
   const { pick, onPick } = useGraphPick();
-  const [ref, labels] = usePieLabels(measure);
+  const [ref, labels] = usePieLabels(
+    measure,
+    slices.map((slice) => Number(slice.value)),
+  );
   const cursor = useCursorTooltip();
   const pickSlice = (_: unknown, index: number) => {
     const picked = pickOf(graph.data[index]);
