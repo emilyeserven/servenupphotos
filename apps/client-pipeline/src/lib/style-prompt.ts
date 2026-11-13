@@ -3,20 +3,16 @@ import { promptImageUrl } from "@/lib/tag-prompt";
 /** How many photos the style prompt links until another number is chosen. */
 export const defaultStyleCount = 30;
 
-/** The most photos the style prompt links: past this, most chats won't open every link. */
-export const maxStyleCount = 100;
-
 /** A photo the style prompt can link: its file's path and its JSON. */
 export interface StylePhoto {
   path: string;
   data: Record<string, unknown>;
 }
 
-/** The typed count as a whole number from 1 to `maxStyleCount`, or the default when it isn't one. */
+/** The typed count as a whole number of 1 or more, with no upper limit, or the default when it isn't one. */
 export function styleCount(typed: string): number {
   const count = Math.round(Number(typed));
-  if (!Number.isFinite(count) || count < 1) return defaultStyleCount;
-  return Math.min(count, maxStyleCount);
+  return Number.isFinite(count) && count >= 1 ? count : defaultStyleCount;
 }
 
 /** The field's text, trimmed, or "" when it isn't text. */
