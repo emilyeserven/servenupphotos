@@ -8,9 +8,9 @@ import type { Photo } from "@portfolio/lib/photos";
 export type ConfigChange = (change: Partial<GraphConfig>) => void;
 
 /**
- * The graph's settings, in the Adjust Graph box, as three buttons that each open a picker:
- * **Graph type** (its type, and what splits a bar, line or photo dot graph), **Axes** (what's along each
- * axis, and the x axis's order) and **Range** (each axis's ends, how many values show, the photos
+ * The graph's settings, in the Adjust Graph box, as three buttons that each open a picker, the
+ * data first: **Axes** (what's along each axis, and the x axis's order), **Graph type** (its type,
+ * with the ones that suit the axes marked, and what splits a bar, line or photo dot graph) and **Range** (each axis's ends, how many values show, the photos
  * a value needs, empty ends, and buckets).
  */
 export function GraphControls({
@@ -20,13 +20,13 @@ export function GraphControls({
 }: {
   config: GraphConfig;
   onChange: ConfigChange;
-  /** The photos the Range picker's choices are read from; every photo when left out. */
+  /** The photos the Range picker's choices and the type suggestion are read from; every photo when left out. */
   list?: Photo[];
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <GraphTypePicker config={config} onChange={onChange} />
       <AxesPicker config={config} onChange={onChange} />
+      <GraphTypePicker config={config} onChange={onChange} list={list} />
       <RangePicker config={config} onChange={onChange} list={list} />
     </div>
   );

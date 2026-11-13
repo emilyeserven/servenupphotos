@@ -18,6 +18,7 @@ import { PickedPhotos } from "@/components/graph-builder/picked-photos";
 import { ScatterGraph } from "@/components/graph-builder/scatter-graph";
 import { TypeButtons } from "@/components/graph-builder/type-buttons";
 import { GraphTable, ScatterTable } from "@/components/graph-builder/graph-table";
+import { TypeNudge, useTypeFits, useTypeNudge } from "@/components/graph-builder/type-suggestion";
 import {
   type GraphConfig,
   type GraphData,
@@ -67,16 +68,32 @@ export function GraphBuilder({
   const [view, setView] = useState<View>("graph");
   const [pick, setPick] = useState<GraphPick | null>(null);
   const [display, setDisplay] = useState(DEFAULT_GRAPH_DISPLAY);
-  const onChange: ConfigChange = (change) => {
+  const nudge = useTypeNudge();
+  const fits = useTypeFits(config, kept);
+  const apply: ConfigChange = (change) => {
     onConfigChange({ ...config, ...change });
     setPick(null);
+  };
+  const onChange: ConfigChange = (change) => {
+    nudge.watch(change);
+    apply(change);
+  };
+  const onPreset: ConfigChange = (change) => {
+    nudge.dismiss();
+    apply(change);
   };
   const onPick = (next: GraphPick) => setPick(samePick(pick, next) ? null : next);
   return (
     <div className="flex flex-col gap-4">
       <div className={cn(COLUMN, "flex flex-col gap-4")}>
-        <SpotlightPresets config={config} onPick={onChange} />
-        <GraphTabs config={config} onChange={onChange} photos={photos} list={kept} />
+        <SpotlightPresets config={config} onPick={onPreset} />
+        <GraphTabs
+          config={config}
+          onChange={onChange}
+          onPreset={onPreset}
+          photos={photos}
+          list={kept}
+        />
       </div>
       <section className={cn(BOX_CLASS, !wide && COLUMN)}>
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -86,10 +103,17 @@ export function GraphBuilder({
           <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
             <DisplayButton config={config} view={view} display={display} onChange={setDisplay} />
             <WideButton wide={wide} onChange={onWideChange} />
-            <TypeButtons type={config.type} onChange={onChange} />
+            <TypeButtons type={config.type} onChange={onChange} fits={fits} />
             <ViewButtons view={view} onChange={setView} />
           </div>
         </div>
+        <TypeNudge
+          armed={nudge.armed}
+          config={config}
+          list={kept}
+          onSwitch={(type) => onChange({ type })}
+          onDismiss={nudge.dismiss}
+        />
         <GraphDisplayContext value={display}>
           <GraphPickContext value={{ pick, onPick }}>
             <GraphArea list={kept} config={config} view={view} onChange={onChange} />

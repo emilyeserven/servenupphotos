@@ -64,11 +64,11 @@ The left side lists the presets and groups in the Graph page's order, each group
 and **New preset** and **New group** under them. The right side edits the chosen one:
 
 - A **preset** has its name, its order, its **Group** (or **None, listed under Other**), **Spotlight**, and the graph it sets, picked with
-  the same dropdowns as the Graph page's Adjust Graph box (imported from the portfolio, so a stat added to the Numbers
-  page shows up here too).
+  the same dropdowns as the Graph page's Adjust Graph box, **Axes** first (imported from the portfolio, so a stat added to the Numbers
+  page shows up here too, and the **Graph type** list marks the type that suits the axes, counted from every photo).
 - A **group** has its name and order, and says which presets are in it. A group with no presets isn't shown on the
   Graph page, and **Remove group** waits until its presets are moved out.
-- A group with presets also has **Change every preset in it**: the same **Graph type**, **Axes** and **Range** buttons,
+- A group with presets also has **Change every preset in it**: the same **Axes**, **Graph type** and **Range** buttons,
   starting from its first preset's graph, for changing a setting in all its presets at once, such as making them all
   pie charts. Only the settings picked there change (listed under the buttons with what they'll be); each preset keeps
   its others. **Save N presets** saves each preset that the change makes different, one after another, the same way
