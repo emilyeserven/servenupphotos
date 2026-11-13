@@ -43,6 +43,13 @@ export const spotlightZones: SpotlightZone[] = [
       "Fades in and out, one photo at a time, above the Stats page's title, up to 30% of the screen's height, fading into the page at the bottom.",
     fallback: "No album picked, so the Stats page starts with its title.",
   },
+  {
+    id: "settings-header",
+    label: "Settings Header",
+    description:
+      "Fades in and out, one photo at a time, above the Settings page's title, up to 30% of the screen's height, fading into the page at the bottom.",
+    fallback: "No album picked, so the Settings page starts with its title.",
+  },
 ];
 
 /** The album picked for the zone, the first that lists it when several do; undefined for none. */

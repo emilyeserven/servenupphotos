@@ -10,6 +10,7 @@ import {
 } from "@portfolio/lib/graph-ranges";
 import { type AxisBuckets, axisBucketRows, bucketNames } from "@portfolio/lib/graph-buckets";
 import { PHOTO_STATS } from "@portfolio/lib/graph-photo-stats";
+import { uniqueStats } from "@portfolio/lib/graph-stat-ids";
 import { SETTING_STATS } from "@portfolio/lib/graph-settings";
 import { STAT_SECTIONS } from "@portfolio/lib/stats";
 
@@ -36,13 +37,16 @@ function statsOf(def: GroupDef, section: string): GraphStat[] {
 
 /**
  * Every stat a graph can be drawn by: the Numbers page's, in its order, then the camera settings,
- * then the ones only the Graph page has, such as Genre and Main color.
+ * then the ones only the Graph page has, such as Genre and Main color. Those last ones are added
+ * after `uniqueStats`, so none of them is renamed.
  */
 export const GRAPH_STATS: GraphStat[] = [
-  ...STAT_SECTIONS.flatMap((section) =>
-    section.groups.flatMap((def) => statsOf(def, section.title)),
+  ...uniqueStats(
+    STAT_SECTIONS.flatMap((section) =>
+      section.groups.flatMap((def) => statsOf(def, section.title)),
+    ),
+    SETTING_STATS,
   ),
-  ...SETTING_STATS,
   ...PHOTO_STATS,
 ];
 
