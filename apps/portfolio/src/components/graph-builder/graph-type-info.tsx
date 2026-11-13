@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { type GraphType, seriesColor } from "@portfolio/lib/graph-data";
+import type { Fit, TypeFit } from "@portfolio/lib/graph-suggest";
 
 /** What a graph type is for: the data it suits best. */
 interface TypeNote {
@@ -171,11 +172,27 @@ const DIAGRAMS: Record<GraphType, () => ReactNode> = {
   photos: PhotosDiagram,
 };
 
+/** How the info pane names each fit. */
+const FIT_NAMES: Record<Fit, string> = {
+  best: "Suggested.",
+  good: "A good fit.",
+  poor: "A poor fit.",
+};
+
 /**
  * The Graph type picker's info pane: a little diagram of the type pointed at, or else the one
- * chosen, and under a **Best for** heading, the data it suits best.
+ * chosen, under a **Best for** heading the data it suits best, and under **For these axes** how it
+ * suits what's on them, and why.
  */
-export function GraphTypeInfo({ type, name }: { type: GraphType; name: string }) {
+export function GraphTypeInfo({
+  type,
+  name,
+  fit,
+}: {
+  type: GraphType;
+  name: string;
+  fit: TypeFit;
+}) {
   const Diagram = DIAGRAMS[type];
   const note = NOTES[type];
   return (
@@ -192,6 +209,14 @@ export function GraphTypeInfo({ type, name }: { type: GraphType; name: string })
       <div className="flex flex-col gap-1">
         <h4 className="text-xs font-semibold tracking-wide text-foreground uppercase">Best for</h4>
         <p className="text-muted-foreground">{note.best}</p>
+      </div>
+      <div className="flex flex-col gap-1">
+        <h4 className="text-xs font-semibold tracking-wide text-foreground uppercase">
+          For these axes
+        </h4>
+        <p className="text-muted-foreground">
+          <span className="font-medium text-foreground">{FIT_NAMES[fit.fit]}</span> {fit.reason}
+        </p>
       </div>
     </div>
   );

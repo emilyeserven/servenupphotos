@@ -32,6 +32,8 @@ function useFilterCount(): number {
 interface GraphTabsProps {
   config: GraphConfig;
   onChange: ConfigChange;
+  /** Picking a preset, which the type nudge doesn't count as changing an axis. */
+  onPreset: ConfigChange;
   /** Every photo, which the filters are read from. */
   photos: Photo[];
   /** The photos the filters keep, which the Range group's choices are read from. */
@@ -113,13 +115,14 @@ function TabPanel({
   tab,
   config,
   onChange,
+  onPreset,
   photos,
   list,
   saved,
   onSaved,
 }: GraphTabsProps & { tab: GraphTab; saved: SavedGraphs; onSaved: () => void }) {
   const panels: Record<GraphTab, () => ReactNode> = {
-    presets: () => <PresetPicker config={config} list={list} saved={saved} onPick={onChange} />,
+    presets: () => <PresetPicker config={config} list={list} saved={saved} onPick={onPreset} />,
     adjust: () => <GraphControls config={config} onChange={onChange} list={list} />,
     filters: () => <CameraFilterBar photos={photos} bare />,
     save: () => <SavePresetForm saved={saved} config={config} onSaved={onSaved} />,
