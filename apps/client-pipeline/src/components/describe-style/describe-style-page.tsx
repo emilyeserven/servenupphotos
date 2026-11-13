@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
+import { SavedPrompts } from "@/components/describe-style/saved-prompts";
 import { StyleOptions } from "@/components/describe-style/style-options";
 import { StylePhotos } from "@/components/describe-style/style-photos";
 import { GridFilterBar, useGridFilters } from "@/components/gallery/grid-filters";
@@ -51,6 +52,15 @@ function DescribeStyle({ photos }: { photos: SocialPhoto[] }) {
   });
   return (
     <div className="flex flex-col gap-6">
+      <SavedPrompts
+        count={count}
+        focus={focus}
+        onLoad={(saved) => {
+          setCount(saved.count);
+          setFocus(saved.focus);
+          setSeed(undefined);
+        }}
+      />
       <GridFilterBar photos={grid.photos} />
       <Card>
         <CardHeader>

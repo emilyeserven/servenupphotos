@@ -14,6 +14,15 @@ search works here too. To ask about one trip, pick its dates in the **When** pic
 cities in **Places**; for a year, its date range; for a camera, lens or genre, those pickers. The card's title says how
 many photos the prompt links out of how many the filters leave.
 
+## Saved prompts
+
+**Saved prompts**, at the top, saves the page as it is under a name: the filters in the URL, **Photos to link** and
+**Anything to focus on**. **Load** puts them back (the photos are spread evenly again), and the bin deletes one.
+Saving under a name already used replaces that one. They're kept in this browser's local storage
+(`stores/style-prompts.ts`, a Zustand store persisted under `pipeline-style-prompts`), not on GitHub, so they don't
+wait for Commit and another browser doesn't see them. The prompt's photos aren't saved, only how they're picked, so a
+loaded prompt picks from the photos as they are now.
+
 ## Which photos are linked
 
 **Photos to link** (30 at first, with no upper limit) sets how many go in the prompt, and **All** next to it links every photo the filters leave. A very long prompt may be more links than a chat will open, so a smaller number spread across the photos is usually enough. The photos the filters leave are put in the
