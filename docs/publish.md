@@ -7,7 +7,8 @@ when it isn't spotlighted; and `socialMediaPublishDate` (`null`), the day the ph
 media, as `YYYY-MM-DD`. Older files may be missing them, which means the same as the defaults.
 
 `/instagram` is a calendar of the photos scheduled to post, one a day. It shows three weeks, starting with this one
-(Sunday first), and pages a week at a time. Clicking an empty day picks a photo for it from the photo files, read
+(Sunday first), and pages a week at a time; the menu before the week buttons shows 2 to 12 weeks instead, and the
+choice stays after a reload (`localStorage`). Clicking an empty day picks a photo for it from the photo files, read
 where Update Data reads them, so photos in flight on the **Add photo data** pull request are included and marked as
 such (eligible photos first), and ones without a title are marked **Draft** (see [Drafts](drafts.md)): they can be
 scheduled, but aren't on the portfolio; clicking a scheduled photo changes or removes it. Dragging a photo to another
