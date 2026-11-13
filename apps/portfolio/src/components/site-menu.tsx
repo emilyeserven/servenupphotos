@@ -1,12 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { MenuIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
+import { MenuIcon, Settings } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
-import { useScriptDisplay } from "@/components/script-display-provider";
-import { type Theme, useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import type { ScriptDisplay } from "@/lib/localize";
 import { parseCameraFilters } from "@/lib/camera-filters";
 import { parseFilters } from "@/lib/photo-filters";
 import { parseTextSearch } from "@/lib/text-search";
@@ -38,31 +35,8 @@ function carriedTextSearch(to: PortfolioView["to"], prev: Record<string, unknown
 /** The views with a text search box. */
 const SEARCHABLE_VIEWS: readonly string[] = ["/grid", "/timeline"];
 
-interface Option<T> {
-  value: T;
-  label: string;
-  Icon?: typeof SunIcon;
-}
-
-const themeOptions: Option<Theme>[] = [
-  { value: "light", label: "Light", Icon: SunIcon },
-  { value: "dark", label: "Dark", Icon: MoonIcon },
-  { value: "system", label: "System", Icon: MonitorIcon },
-];
-
-// Least to most native. A name without the chosen way saved shows the most native way it has
-// short of it, down to English.
-const scriptOptions: Option<ScriptDisplay>[] = [
-  { value: "english", label: "English" },
-  { value: "romanized", label: "Romanized" },
-  { value: "phonetic", label: "Phonetic" },
-  { value: "native", label: "Native" },
-];
-
 export function SiteMenu() {
   const [open, setOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const { script, setScript } = useScriptDisplay();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -111,29 +85,29 @@ export function SiteMenu() {
             ))}
           </ul>
         </nav>
-        <p
-          id="script-display-label"
-          className="mt-3 px-1 pb-1 text-xs font-medium text-muted-foreground"
+        <Link
+          to="/settings"
+          onClick={() => setOpen(false)}
+          className={cn(LINK_CLASSES, "mt-1 gap-2 px-2 py-1.5 text-xs")}
+          activeProps={ACTIVE_PROPS}
         >
-          Script display
-        </p>
-        <Choices
-          labelledBy="script-display-label"
-          options={scriptOptions}
-          value={script}
-          onChange={setScript}
-        />
-        <Choices
-          label="Color theme"
-          className="mt-2"
-          options={themeOptions}
-          value={theme}
-          onChange={setTheme}
-        />
+          <Settings className="size-3.5" aria-hidden />
+          Settings
+        </Link>
       </PopoverContent>
     </Popover>
   );
 }
+
+/** How each link in the site menu looks: the views' and Settings'. */
+const LINK_CLASSES =
+  "flex items-center rounded-md font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-40";
+
+/** What a site menu link gets on its own page: highlighted, and marked as the current page. */
+const ACTIVE_PROPS = {
+  className: "bg-accent text-accent-foreground",
+  "aria-current": "page",
+} as const;
 
 interface ViewLinkProps {
   view: PortfolioView;
@@ -150,61 +124,10 @@ function ViewLink({ view, onClick, className, children }: ViewLinkProps) {
       search={(prev: Record<string, unknown>) => carriedSearch(view.to, prev)}
       disabled={!view.enabled}
       onClick={onClick}
-      className={cn(
-        "flex items-center rounded-md font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-40",
-        className,
-      )}
-      activeProps={{
-        className: "bg-accent text-accent-foreground",
-        "aria-current": "page",
-      }}
+      className={cn(LINK_CLASSES, className)}
+      activeProps={ACTIVE_PROPS}
     >
       {children}
     </Link>
-  );
-}
-
-interface ChoicesProps<T extends string> {
-  label?: string;
-  labelledBy?: string;
-  className?: string;
-  options: Option<T>[];
-  value: T;
-  onChange: (value: T) => void;
-}
-
-/** A row of buttons that picks one of the options, like radio buttons. */
-function Choices<T extends string>({
-  label,
-  labelledBy,
-  className,
-  options,
-  value,
-  onChange,
-}: ChoicesProps<T>) {
-  return (
-    <div
-      role="radiogroup"
-      aria-label={label}
-      aria-labelledby={labelledBy}
-      className={cn("flex rounded-md border bg-muted/50 p-0.5", className)}
-    >
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          role="radio"
-          aria-checked={value === option.value}
-          onClick={() => onChange(option.value)}
-          className={cn(
-            "flex flex-1 items-center justify-center gap-1.5 rounded-sm px-1.5 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50",
-            value === option.value && "bg-background text-foreground shadow-xs",
-          )}
-        >
-          {option.Icon && <option.Icon className="size-3.5" aria-hidden />}
-          {option.label}
-        </button>
-      ))}
-    </div>
   );
 }

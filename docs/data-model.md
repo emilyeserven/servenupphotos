@@ -115,6 +115,9 @@ The bio is one file, `bio/bio.json`, combined into `bio/BIO.json`; see [Bio](bio
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
 [Re-editing a photo](replace-image.md).
 
+A photo's `lowerTier` is `true` when it's a Lower Tier photo, and left out (or `null`) otherwise; see
+[Lower Tier photos](lower-tier.md).
+
 A photo's `pickedSimilar` and `similarPhotos` are the IDs its portfolio **More like this** drawer shows: the ones picked
 by hand first, then the ones **Find related photos** found, best first. `pickedSimilarNotes` holds the note shown
 beside each picked photo, by its ID, such as `{ "286": "Same morning, deeper in the woods" }`; see

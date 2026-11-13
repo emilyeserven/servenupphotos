@@ -9,6 +9,7 @@ import {
   yDomain,
 } from "@portfolio/lib/graph-ranges";
 import { type AxisBuckets, axisBucketRows, bucketNames } from "@portfolio/lib/graph-buckets";
+import { uniqueStats } from "@portfolio/lib/graph-stat-ids";
 import { SETTING_STATS } from "@portfolio/lib/graph-settings";
 import { STAT_SECTIONS } from "@portfolio/lib/stats";
 
@@ -34,12 +35,10 @@ function statsOf(def: GroupDef, section: string): GraphStat[] {
 }
 
 /** Every stat a graph can be drawn by: the Numbers page's, in its order, then the camera settings. */
-export const GRAPH_STATS: GraphStat[] = [
-  ...STAT_SECTIONS.flatMap((section) =>
-    section.groups.flatMap((def) => statsOf(def, section.title)),
-  ),
-  ...SETTING_STATS,
-];
+export const GRAPH_STATS: GraphStat[] = uniqueStats(
+  STAT_SECTIONS.flatMap((section) => section.groups.flatMap((def) => statsOf(def, section.title))),
+  SETTING_STATS,
+);
 
 /** The stat with the ID, or the first one when there's none, such as after the groups change. */
 export function statById(id: string): GraphStat {

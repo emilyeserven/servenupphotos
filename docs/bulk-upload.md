@@ -28,8 +28,10 @@ page, analyzed as if it had been chosen there.
 
 When a step fails, the row says why and **Retry** picks up from that step: a photo that was uploaded isn't uploaded
 again. Anything but a JPEG fails straight away. When R2 already has a different photo under the same name, the row
-links to it; **Keep name** uploads it anyway (as the Photo page's "keep the name"), or rename the file and drop it
-again. **Clear finished** takes the added and skipped photos off the list, and an added photo's × hides just that one once you're done with it (it stays in the batch).
+links to it and offers a new name, the first free one such as `img-0001-2`, which can be changed: **Rename and upload**
+uploads it under that name (and, for a photo without a title, saves its JSON under it too), and **Keep name** uploads it
+anyway (as the Photo page's "keep the name"). When its JSON's name is already taken, on GitHub or waiting for Commit,
+the row offers a free one the same way, and **Rename and save** saves it under that name without uploading it again. **Clear finished** takes the added and skipped photos off the list, and an added photo's × hides just that one once you're done with it (it stays in the batch).
 
 > **Frontend analogy:** it's a download manager's queue. Every file is a row with its own progress and its own retry
 > button, but only one downloads at a time, and a failed one doesn't hold up the rest.

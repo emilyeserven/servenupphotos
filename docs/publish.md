@@ -250,8 +250,8 @@ scheduled, the card says for which day and links to it; that day is still set on
 `/site-spotlight` picks the album each **spotlight zone** of the portfolio shows. The zones are listed in
 `apps/client-pipeline/src/lib/site-spotlight.ts`: **Homepage** (`"homepage"`), the photos fading in and
 out behind the [portfolio homepage](portfolio-homepage.md), then **Timeline Header** (`"timeline-header"`) and **Grid
-Header** (`"grid-header"`) and **Stats Header** (`"stats-header"`), photos fading in and out across the top of the
-[Timeline](portfolio-timeline.md), the [Grid](portfolio-grid.md) and the [Stats page](portfolio-stats.md) (see [Header spotlights](#header-spotlights)). A zone shows every photo in its album and the album's
+Header** (`"grid-header"`), **Stats Header** (`"stats-header"`) and **Settings Header** (`"settings-header"`), photos fading in and out across the top of the
+[Timeline](portfolio-timeline.md), the [Grid](portfolio-grid.md), the [Stats page](portfolio-stats.md) and the [Settings page](portfolio-settings.md) (see [Header spotlights](#header-spotlights)). A zone shows every photo in its album and the album's
 sub-albums, in the album's order (see [Portfolio Albums](portfolio-albums.md)). With no album picked, the homepage shows the 5 newest photos instead.
 
 Each zone is a card with an **Album** picker and the photos the zone will show, read from `ALLPHOTOS.json` in the
@@ -308,8 +308,8 @@ It's a [local edit](combined-data-store.md#local-edits) until **Commit**.
 
 ### Header spotlights
 
-On the portfolio, the Timeline, Grid and Stats pages each start with their zone's photos when an album is picked for it
-(`components/header-spotlight.tsx`, placed by `routes/__root.tsx` for the `/timeline`, `/grid` and `/stats` paths). They span
+On the portfolio, the Timeline, Grid, Stats and Settings pages each start with their zone's photos when an album is picked for it
+(`components/header-spotlight.tsx`, placed by `routes/__root.tsx` for the `/timeline`, `/grid`, `/stats` and `/settings` paths). They span
 the page's width, 30% of the screen's height (`30svh`), fading in and out every 7 seconds like the homepage, each
 cropped around its focus point and placement, with a fade into the page's background over the bottom two thirds. The
 page's title, filters and the rest come after them, and the site menu stays fixed at the top right. With no album

@@ -275,6 +275,9 @@ func TestUploadPhotoSameName(t *testing.T) {
 		if got := uploadErr.SameName[0].URL; got != "https://pub-123.r2.dev/photos/bbbbbbbbbbbb-img-0001.jpg" {
 			t.Errorf("URL = %q", got)
 		}
+		if uploadErr.SuggestedName != "img-0001-3" {
+			t.Errorf("SuggestedName = %q, want img-0001-3, past the img-0001-2 already there", uploadErr.SuggestedName)
+		}
 		if fake.path != "" {
 			t.Errorf("uploaded to %q despite the same name", fake.path)
 		}
@@ -336,6 +339,30 @@ func TestPhotoKey(t *testing.T) {
 			}
 			if rest, _ := io.ReadAll(body); string(rest) != "hello" {
 				t.Errorf("body not rewound: %q left", rest)
+			}
+		})
+	}
+}
+
+func TestFreeStem(t *testing.T) {
+	long := strings.Repeat("a", 60)
+	tests := []struct {
+		name, stem string
+		taken      []string
+		want       string
+	}{
+		{"first free number", "img", []string{"img"}, "img-2"},
+		{"skips taken numbers", "img", []string{"img", "img-2", "img-3"}, "img-4"},
+		{"stays within 60 characters", long, []string{long}, strings.Repeat("a", 58) + "-2"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			taken := map[string]bool{}
+			for _, s := range tt.taken {
+				taken[s] = true
+			}
+			if got := freeStem(tt.stem, taken); got != tt.want {
+				t.Errorf("freeStem(%q) = %q, want %q", tt.stem, got, tt.want)
 			}
 		})
 	}

@@ -28,11 +28,17 @@ import {
   useGallerySort,
 } from "@/components/gallery/gallery-sort";
 import {
-  type UndecidedChoice,
   UndecidedToggle,
   parseUndecided,
   useUndecidedFilter,
 } from "@/components/gallery/undecided-filter";
+import {
+  LowerTierToggle,
+  parseLowerTier,
+  useLowerTierFilter,
+} from "@/components/gallery/lower-tier-filter";
+import { BulkLowerTier } from "@/components/gallery/bulk-lower-tier";
+import type { MarkChoice } from "@/components/gallery/mark-filter";
 import {
   type PlaceSearch,
   PlaceFilterToggles,
@@ -57,13 +63,21 @@ import { OfflineNotice } from "@/components/offline-notice";
 const HAS_FILTERS = "has";
 
 /** The search params of the Gallery's own filters besides the With and Without ones. */
-const GALLERY_FILTER_PARAMS = ["undecided", "placeId", "placeGps", ...GRID_FILTER_PARAMS];
+const GALLERY_FILTER_PARAMS = [
+  "undecided",
+  "lowerTier",
+  "placeId",
+  "placeGps",
+  ...GRID_FILTER_PARAMS,
+];
 
 type GallerySearch = GalleryOwnSearch & GridFilters;
 
 interface GalleryOwnSearch extends PlaceSearch {
   /** Whether Undecided photos are shown too, or only they are; hidden when left out. */
-  undecided?: UndecidedChoice;
+  undecided?: MarkChoice;
+  /** Whether Lower Tier photos are shown too, or only they are; hidden when left out. */
+  lowerTier?: MarkChoice;
   /** Sorts by when each photo was added to the portfolio; by when it was taken when left out. */
   sort?: GallerySort;
 }
@@ -76,6 +90,7 @@ export const Route = createFileRoute("/gallery")({
     ...parseGridFilters(search),
     ...parsePlaceSearch(search),
     undecided: parseUndecided(search),
+    lowerTier: parseLowerTier(search),
     sort: parseGallerySort(search),
   }),
 });
@@ -128,12 +143,15 @@ function PublishedPhotos() {
       />
       <GalleryFilters files={files} />
       {selection.selected && published.data && (
-        <BulkGroupsCard
-          files={published.data.files}
-          shown={shown}
-          selection={selection.selected}
-          onSelectionChange={selection.setSelected}
-        />
+        <>
+          <BulkGroupsCard
+            files={published.data.files}
+            shown={shown}
+            selection={selection.selected}
+            onSelectionChange={selection.setSelected}
+          />
+          <BulkLowerTier files={published.data.files} selection={selection.selected} />
+        </>
       )}
       <QueryResult query={published} pendingLabel="Reading the portfolio's photos…">
         {(data) => (
@@ -151,11 +169,11 @@ function PublishedPhotos() {
 }
 
 /**
- * The Gallery's filters: its With and Without ones with its place, Undecided and sort, then the
+ * The Gallery's filters: its With and Without ones with its place, Undecided, Lower Tier and sort, then the
  * portfolio Grid's.
  */
 function GalleryFilters({ files }: { files: ShownFiles }) {
-  const { shown, total, filters, undecided, sort, place, grid } = files;
+  const { shown, total, filters, undecided, lowerTier, sort, place, grid } = files;
   return (
     <>
       <PhotoFilterBar
@@ -169,6 +187,7 @@ function GalleryFilters({ files }: { files: ShownFiles }) {
       >
         <PlaceFilterToggles filter={place} />
         <UndecidedToggle choice={undecided} />
+        <LowerTierToggle choice={lowerTier} />
         <GallerySortToggle sort={sort} />
       </PhotoFilterBar>
       <GridFilterBar photos={grid.photos} />
@@ -181,8 +200,8 @@ const NO_FILES: PublishedFile[] = [];
 type ShownFiles = ReturnType<typeof useShownFiles>;
 
 /** Whether one of the Gallery's filters besides the With and Without ones is set. */
-function otherChosen(undecided: unknown, placeId: unknown, gridCount: number): boolean {
-  return undecided !== undefined || placeId !== undefined || gridCount > 0;
+function otherChosen(marks: unknown[], placeId: unknown, gridCount: number): boolean {
+  return marks.some((mark) => mark !== undefined) || placeId !== undefined || gridCount > 0;
 }
 
 /**
@@ -193,20 +212,22 @@ function otherChosen(undecided: unknown, placeId: unknown, gridCount: number): b
 function useShownFiles(data: PublishedResponse | undefined, filter: string) {
   const { filters, filter: applyFilters } = usePhotoFilters(HAS_FILTERS);
   const { choice: undecided, apply: applyUndecided } = useUndecidedFilter();
+  const { choice: lowerTier, apply: applyLowerTier } = useLowerTierFilter();
   const sort = useGallerySort();
   const place = usePlaceFilter();
   const all = data?.files ?? NO_FILES;
   const grid = useGridFilters(
     all,
-    place.apply(applyUndecided(applyFilters(shownFiles(all, filter, sort)))),
+    place.apply(applyLowerTier(applyUndecided(applyFilters(shownFiles(all, filter, sort))))),
   );
   return {
     filters,
     undecided,
+    lowerTier,
     sort,
     place,
     grid,
-    extraChosen: otherChosen(undecided, place.placeId, grid.count),
+    extraChosen: otherChosen([undecided, lowerTier], place.placeId, grid.count),
     shown: grid.shown,
     total: all.length,
   };

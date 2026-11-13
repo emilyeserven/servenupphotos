@@ -6,7 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	pathpkg "path"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -219,6 +221,9 @@ type PublishError struct {
 	// GitHub is GitHub's own answer, when a GitHub call failed, so the page
 	// can show exactly what went wrong.
 	GitHub *Failure
+	// SuggestedName is a file name, without .json, that no photo has yet,
+	// offered as the new name when the one asked for is taken.
+	SuggestedName string
 }
 
 func (e *PublishError) Error() string { return e.Message }
@@ -265,6 +270,10 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 	}
 	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
+		return PublishResult{}, perr
+	}
+	if perr := w.ensureAbsent(path); perr != nil {
+		perr.SuggestedName = w.freeName(path)
 		return PublishResult{}, perr
 	}
 	data := newPhotoJSON(photo.File, photo.Sanitized)
@@ -325,6 +334,24 @@ func (w *workspace) ensureAbsent(path string) *PublishError {
 		return publishErr(http.StatusConflict, "%s already exists on %s. Pick another file name.", path, w.branch())
 	}
 	return nil
+}
+
+// freeName is the name of the taken file at path, without .json, with the
+// lowest number from 2 up added, such as "sunset-2" for "sunset.json", that
+// no file in its folder has, cut to fit the 100-character limit on names.
+func (w *workspace) freeName(taken string) string {
+	dir, stem := pathpkg.Dir(taken), strings.TrimSuffix(pathpkg.Base(taken), ".json")
+	for n := 2; ; n++ {
+		suffix := "-" + strconv.Itoa(n)
+		head := stem
+		if len(head)+len(suffix) > 100 {
+			head = strings.TrimRight(head[:100-len(suffix)], ".-_")
+		}
+		candidate := head + suffix
+		if w.ensureAbsent(dir+"/"+candidate+".json") == nil {
+			return candidate
+		}
+	}
 }
 
 func (c *Client) now() time.Time {

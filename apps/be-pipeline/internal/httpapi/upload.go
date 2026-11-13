@@ -23,11 +23,15 @@ const uploadTimeout = 120 * time.Second
 type uploadFunc func(ctx context.Context, cfg settings.R2, name string, body io.ReadSeeker, opts storage.UploadOptions) (storage.UploadResult, error)
 
 // uploadErrorResponse is the body of a failed upload: the reason, plus the
-// photos already under that name or what Cloudflare answered, when known.
+// photos already under that name with a free name to use instead, or what
+// Cloudflare answered, when known.
 type uploadErrorResponse struct {
-	Message    string                      `json:"message"`
-	SameName   []storage.BucketImage       `json:"sameName,omitempty"`
-	Cloudflare *storage.CloudflareResponse `json:"cloudflare,omitempty"`
+	Message  string                `json:"message"`
+	SameName []storage.BucketImage `json:"sameName,omitempty"`
+	// SuggestedName is a name no photo in the bucket has yet, offered with
+	// SameName as the photo's new name.
+	SuggestedName string                      `json:"suggestedName,omitempty"`
+	Cloudflare    *storage.CloudflareResponse `json:"cloudflare,omitempty"`
 }
 
 // handleUpload uploads the JPEG in the "photo" field of a multipart form, and
@@ -75,9 +79,10 @@ func handleUpload(loadR2 func() (settings.R2, error), upload uploadFunc, cache *
 		switch {
 		case errors.As(err, &uploadErr):
 			writeJSON(w, uploadErrorStatus(uploadErr), uploadErrorResponse{
-				Message:    uploadErr.Message,
-				SameName:   uploadErr.SameName,
-				Cloudflare: uploadErr.Cloudflare,
+				Message:       uploadErr.Message,
+				SameName:      uploadErr.SameName,
+				SuggestedName: uploadErr.SuggestedName,
+				Cloudflare:    uploadErr.Cloudflare,
 			})
 		case err != nil:
 			slog.Error("upload failed", "err", err)
