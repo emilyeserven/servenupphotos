@@ -54,7 +54,8 @@ function daypartBucket(daypart: Daypart): Bucket {
 
 /** Whether the photo was taken in the bucket's hours. */
 function inHours(photo: Photo, bucket: Bucket): boolean {
-  return (bucket.filter?.hour ?? []).includes(String(photo.takenAt.getHours()));
+  const hours: (string | number)[] = [bucket.filter?.hour ?? []].flat();
+  return hours.includes(String(photo.takenAt.getHours()));
 }
 
 /** The year the photo was taken in. */
