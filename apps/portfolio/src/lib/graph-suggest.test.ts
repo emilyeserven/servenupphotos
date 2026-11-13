@@ -24,7 +24,16 @@ test("other times suit bars best, then a line", () => {
 });
 
 test("a camera setting suits photo dots best", () => {
-  for (const x of ["aperture", "exposure", "iso", "focalLength", "focal-length"]) {
+  for (const x of [
+    "aperture",
+    "aperture-ranges",
+    "exposure",
+    "iso",
+    "iso-ranges",
+    "focalLength",
+    "focal-length",
+    "lightness",
+  ]) {
     const fits = fitsOf({ x, xCount: 10 });
     assert.deepEqual(
       [fits.photos, fits.bar, fits.line, fits.pie],
@@ -41,12 +50,15 @@ test("a category suits bars best, a pie only with 8 or fewer values, and never a
   assert.match(many.pie.reason, /Other/);
 });
 
-test("an unknown stat counts as a category", () => {
-  assert.equal(suggestedType(typeFits({ x: "something-new", xCount: 3 })), "bar");
+test("an unknown stat, a main color or an orientation counts as a category", () => {
+  for (const x of ["something-new", "mainColor", "orientation"]) {
+    assert.equal(suggestedType(typeFits({ x, xCount: 3 })), "bar");
+    assert.equal(typeFits({ x, xCount: 3 }).pie.fit, "good");
+  }
 });
 
 test("a stat where a photo can be in several rows makes a pie poor", () => {
-  for (const x of ["lens-brands", "cameras-1"]) {
+  for (const x of ["lens-brands", "cameras-1", "genre", "tags"]) {
     const pie = typeFits({ x, xCount: 3 }).pie;
     assert.equal(pie.fit, "poor");
     assert.match(pie.reason, /100%/);

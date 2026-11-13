@@ -33,8 +33,11 @@ const KINDS: Record<string, StatKind> = {
   exposure: "scale",
   "shutter-speed": "scale",
   iso: "scale",
+  "iso-ranges": "scale",
+  "aperture-ranges": "scale",
   focalLength: "scale",
   "focal-length": "scale",
+  lightness: "scale",
 };
 
 /** The stat's kind. */
@@ -42,12 +45,15 @@ function kindOf(id: string): StatKind {
   return KINDS[id] ?? "category";
 }
 
+/** The stats where one photo can count in several rows, besides the camera categories. */
+const MANY_ROWS: ReadonlySet<string> = new Set(["lens-brands", "genre", "tags"]);
+
 /**
  * Whether one photo can count in several of the stat's rows: the lens and camera categories set on
- * the pipeline (each camera, `cameras-0`, can't).
+ * the pipeline (each camera, `cameras-0`, can't), genres and tags.
  */
 function manyRows(id: string): boolean {
-  return id === "lens-brands" || /^cameras-[1-9]/.test(id);
+  return MANY_ROWS.has(id) || /^cameras-[1-9]/.test(id);
 }
 
 /** A type's fit and why, as written in the tables below. */

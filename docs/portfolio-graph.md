@@ -36,18 +36,20 @@ why (`lib/graph-suggest.ts`). It goes by each stat's kind and how many values th
 filters keep:
 
 - **Time**: Year, Season, Month, Time of day and Day of the week.
-- **Number scale**: the camera settings (Aperture, Exposure, ISO, Focal length in mm) and the Numbers page's Aperture,
-  Shutter speed, ISO and Focal length.
-- **Category**: everything else, so a stat added to the Numbers page later counts as one.
+- **Number scale**: the camera settings (Aperture, Exposure, ISO, Focal length in mm), the Numbers page's Aperture,
+  Shutter speed, ISO and Focal length (and their `aperture-ranges` and `iso-ranges` IDs), and Lightness, whose five
+  bands run from Very dark to Very light.
+- **Category**: everything else, such as Main color and Orientation, so a stat added to the Numbers page later counts
+  as one.
 
-| X axis                  | Best       | Good                | Poor                                                                   |
-| ----------------------- | ---------- | ------------------- | ---------------------------------------------------------------------- |
-| Year                    | Line       | Bar, Photo dots     | Pie ("slices lose the order")                                          |
-| Another time            | Bar        | Line, Photo dots    | Pie                                                                    |
-| Number scale            | Photo dots | Bar, Line           | Pie                                                                    |
-| Category, 8 or fewer    | Bar        | Pie, Photo dots     | Line ("a line suggests an order these don't have")                     |
-| Category, more than 8   | Bar        | Photo dots          | Pie ("past 8 slices the rest go into Other"), Line                     |
-| Camera or lens category | as above   | as above, minus Pie | Pie ("a photo can be in more than one slice, so the shares pass 100%") |
+| X axis                               | Best       | Good                | Poor                                                                   |
+| ------------------------------------ | ---------- | ------------------- | ---------------------------------------------------------------------- |
+| Year                                 | Line       | Bar, Photo dots     | Pie ("slices lose the order")                                          |
+| Another time                         | Bar        | Line, Photo dots    | Pie                                                                    |
+| Number scale                         | Photo dots | Bar, Line           | Pie                                                                    |
+| Category, 8 or fewer                 | Bar        | Pie, Photo dots     | Line ("a line suggests an order these don't have")                     |
+| Category, more than 8                | Bar        | Photo dots          | Pie ("past 8 slices the rest go into Other"), Line                     |
+| Camera or lens category, genre, tags | as above   | as above, minus Pie | Pie ("a photo can be in more than one slice, so the shares pass 100%") |
 
 **Scatter** and **Heatmap** compare two stats, so they're good for any x axis. While the graph is one of them, the y
 axis's stat counts too: with both axes a time or number scale, Heatmap is best and Scatter good, and with a category on
