@@ -6,6 +6,7 @@ import { StatChoices } from "@portfolio/components/graph-builder/stat-choices";
 import { GraphPicker } from "@portfolio/components/graph-builder/graph-picker";
 import { useTypeFits } from "@portfolio/components/graph-builder/type-suggestion";
 import { GRAPH_TYPES, graphTypeOf } from "@portfolio/components/graph-builder/graph-types";
+import { hasParts, PARTS } from "@portfolio/components/graph-builder/parts-buttons";
 import { type GraphConfig, type GraphType, SPLIT_TYPES, statById } from "@portfolio/lib/graph-data";
 import { suggestedType, type TypeFit } from "@portfolio/lib/graph-suggest";
 import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
@@ -20,12 +21,6 @@ export function graphTypeName(type: GraphType): string {
 
 /** One section of the Graph type picker. */
 type TypeSection = "type" | "split" | "parts";
-
-/** What a split bar's parts can be, with their names. */
-const PARTS: [boolean, string][] = [
-  [true, "Stacked"],
-  [false, "Side by side"],
-];
 
 /** What the split section says it's set to: the stat that splits the graph, or Nothing. */
 function splitText(config: GraphConfig): string {
@@ -42,7 +37,7 @@ function sectionsOf(config: GraphConfig): [TypeSection, string, string][] {
   const sections: [TypeSection, string, string][] = [["type", "Type", graphTypeOf(config.type)[1]]];
   if (!SPLIT_TYPES.has(config.type)) return sections;
   sections.push(["split", "Split by", splitText(config)]);
-  if (config.type === "bar" && config.split !== "") {
+  if (hasParts(config)) {
     sections.push(["parts", "Parts", partsText(config)]);
   }
   return sections;
