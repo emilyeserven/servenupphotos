@@ -27,9 +27,14 @@ The graph's type and split can be changed there too (`type-buttons.tsx`, `split-
   The row adds no marks of its own; the phone's list marks the suggested type **Suggested**, as the picker does.
 - **Split by** (bar, line and photo dot graphs only): a dropdown like the axes' names, at the right end of the y
   axis's row just before the **Key** button, since the key lists the split's colors. It lists **None** and every stat
-  but the x axis's. A split bar's **Stacked** / **Side by side** stays in Adjust Graph.
+  but the x axis's.
+- **Stacked** / **Side by side** (a split bar only, `parts-buttons.tsx`): two small joined icon buttons just after
+  **Split by**, the chosen one pressed and each named in a tooltip and for screen readers. They show exactly when
+  Adjust Graph's **Parts** does: on a bar graph whose split isn't None, since a line or photo dot graph's parts don't
+  stack. A graph left side by side, such as by a preset, shows them too, so a visitor can turn stacking on in place. On
+  a phone they wrap to the second line with **Split by** and **Key**.
 
-Both write the same settings as Adjust Graph, so the two always agree, and like any change they clear a picked bar.
+All of them write the same settings as Adjust Graph, so the two always agree, and like any change they clear a picked bar.
 They count for the type nudge as Adjust Graph does: picking a type there hides it, and changing an axis from its name's
 dropdown can show it.
 

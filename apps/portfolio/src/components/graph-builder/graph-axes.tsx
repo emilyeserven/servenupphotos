@@ -4,6 +4,7 @@ import { AxisSelect as AxisPicker } from "@/components/graph-builder/axis-select
 import { KeyRow } from "@/components/graph-builder/graph-key";
 import type { ConfigChange } from "@/components/graph-builder/graph-controls";
 import { StatOptions } from "@/components/graph-builder/graph-field";
+import { PartsButtons } from "@/components/graph-builder/parts-buttons";
 import { SplitPicker } from "@/components/graph-builder/split-picker";
 import { type GraphConfig, hasYStat, type Measure, SPLIT_TYPES } from "@/lib/graph-data";
 
@@ -53,7 +54,8 @@ function XPicker({ config, onChange }: { config: GraphConfig; onChange: ConfigCh
  * The graph with each axis named, each name a dropdown to change it: the y axis's over the graph's
  * top left, the x axis's centered under it. A pie names its slices and size over it. The graph's
  * key, when it has one, sits at the right end of the row over it (see `KeyRow`), after the
- * **Split by** dropdown on a bar, line or photo dot graph.
+ * **Split by** dropdown on a bar, line or photo dot graph, and on a split bar its **Stacked** /
+ * **Side by side** buttons (see `PartsButtons`).
  */
 export function AxisLabels({
   config,
@@ -81,7 +83,10 @@ export function AxisLabels({
     );
   }
   const split = SPLIT_TYPES.has(config.type) ? (
-    <SplitPicker config={config} onChange={onChange} />
+    <>
+      <SplitPicker config={config} onChange={onChange} />
+      <PartsButtons config={config} onChange={onChange} />
+    </>
   ) : undefined;
   return (
     <div className="flex flex-col gap-2">
