@@ -6,7 +6,7 @@ either and by the same **Title**, **Place**, **GPS position**, **Albums**, **Tag
 [Photos in Flight](photos-in-flight.md#filters), kept in the URL with a `has` prefix (`?hasTitle=without`,
 `?hasPlace=with`) so they don't clash with the [portfolio Grid's filters](#the-portfolio-grids-filters) below them. [Undecided](photos-in-flight.md#undecided) photos are hidden
 until the **Undecided** filter is changed from **Hidden** to **Shown** (with the rest) or **Only** (`?undecided=show` or
-`?undecided=only`); the count under the filters says how many are shown while any are hidden. **Sort** beside it
+`?undecided=only`), and [Lower Tier](lower-tier.md) photos the same way by the **Lower Tier** filter beside it (`?lowerTier=show` or `?lowerTier=only`); the count under the filters says how many are shown while any are hidden. **Sort** beside it
 switches from **Date taken** (newest first) to **Date added** (`?sort=added`): the photos most recently added to the
 portfolio first, by their [`addedDate`](data-model.md#date-added), then the ones without one by when they were taken. **Time of day** (`?sort=time`) orders them by the time of day they were taken, from just after midnight to just before, by the clock where they were taken (the custom date, or else the EXIF date), with photos that have no date at the end. Photos the open **Add photo data** pull request changes are marked "Changes in flight" (or "Removed in flight"),
 linked to Photos in Flight. A photo with no title on the base branch is a [draft](drafts.md), listed here but marked
@@ -81,4 +81,4 @@ Compare page before deciding which gets posted.
 filtered ones, and an **Add albums, tags and genres** card with an album, a tag and a genre combobox. **Add to N photos**
 (`POST /api/photos/groups` with `paths`, `albums`, `tags` and `genres`) adds them to each chosen photo's `albums`, `tags` and `genres`
 after the ones it has, changing nothing else in the files, as [changes waiting for Commit](pending-changes.md), the
-way Update Data saves. It warns when a chosen photo is already in another album.
+way Update Data saves. It warns when a chosen photo is already in another album. Under it, a **Lower Tier** card marks the chosen photos [Lower Tier](lower-tier.md) or takes the mark off.
