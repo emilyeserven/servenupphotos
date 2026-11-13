@@ -127,6 +127,6 @@ It also picks how much of each photo's location the **Place** column shows, unde
 | Include country         | Its places, its city, its state and its country                             | `?placeDetail=country` |
 
 A photo without places shows its city, state and country (whichever it has). The most specific place is the one inside the most others
-(see [Places](places-and-localizations.md#places)). Names are written the way the menu's **Script display** says, and
+(see [Places](places-and-localizations.md#places)). Names are written the way the **Script display** setting says, and
 hovering a place shows its GPS position, and its state and country when the text leaves them out. The column sorts by the text it
 shows, in English. The choice stays with the Grid: the menu's links to other views don't carry it.

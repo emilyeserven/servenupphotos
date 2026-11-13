@@ -7,6 +7,7 @@ import {
   focusIn,
   GRID_HEADER_ZONE,
   type ImagePhoto,
+  SETTINGS_HEADER_ZONE,
   spotlightPhotos,
   STATS_HEADER_ZONE,
   TIMELINE_HEADER_ZONE,
@@ -25,11 +26,12 @@ const ZONE_BY_PATH: Record<string, string> = {
   "/grid": GRID_HEADER_ZONE,
   "/timeline": TIMELINE_HEADER_ZONE,
   "/stats": STATS_HEADER_ZONE,
+  "/settings": SETTINGS_HEADER_ZONE,
 };
 
 /**
  * The zones whose page lists its photos below, so **Jump to Cover Image** has somewhere to go; the
- * Stats page shows numbers, not photos, so its header has no button.
+ * Stats and Settings pages show no photos, so their headers have no button.
  */
 const JUMP_ZONES: ReadonlySet<string> = new Set([GRID_HEADER_ZONE, TIMELINE_HEADER_ZONE]);
 

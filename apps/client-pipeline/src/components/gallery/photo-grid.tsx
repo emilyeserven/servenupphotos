@@ -15,6 +15,7 @@ import { CompareButton } from "@/components/compare/compare-button";
 import { UnselectedMark } from "@/components/compare/unselected-mark";
 import { DraftMark } from "@/components/draft-mark";
 import { ReEditMark } from "@/components/re-edit-card";
+import { LowerTierMark } from "@/components/lower-tier";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { PlaceGpsMark } from "@/components/gallery/place-filter";
 import { LikesMark, useLikeCounts } from "@/components/viewer-likes/likes-mark";
@@ -124,6 +125,7 @@ function PhotoCard({ file, images, likes, selected, onToggle }: PhotoCardProps) 
           <DraftMark data={file.data} path={file.path} />
         </UnselectedMark>
         <ReEditMark data={file.data} />
+        <LowerTierMark file={file} />
         <div className="mt-auto flex flex-wrap items-center gap-2">
           {problem ? (
             <p className="text-muted-foreground text-xs">{problem}</p>

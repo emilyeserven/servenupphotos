@@ -2,7 +2,7 @@
 
 `/places` and `/localizations`, under **Configuration** in the sidebar, keep two more kinds of data next to the photos,
 albums and tags. The portfolio shows each photo's places, and writes places, cities and countries the way its
-**Script display** setting says (see [On the portfolio](#on-the-portfolio)).
+**Script display** setting on the portfolio's Settings page says (see [On the portfolio](#on-the-portfolio)).
 
 ## Places
 
@@ -433,7 +433,7 @@ the combined data store's `PLACES.json` and `LOCALIZATIONS.json` until a **Commi
 
 ## On the portfolio
 
-The portfolio's menu has a **Script display** setting above the color theme: English, Romanized, Phonetic or Native,
+The portfolio's [Settings page](portfolio-settings.md) has a **Script display** setting above the color theme: English, Romanized, Phonetic or Native,
 remembered in the visitor's browser (English until they pick). Every place, city and country the portfolio shows
 (Timeline, Table, Map, Grid and the photo viewer) is written that way:
 

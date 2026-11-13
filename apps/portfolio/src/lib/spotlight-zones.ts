@@ -16,12 +16,16 @@ export const GRID_HEADER_ZONE = "grid-header";
 /** The spotlight zone above the Stats page's title. */
 export const STATS_HEADER_ZONE = "stats-header";
 
+/** The spotlight zone above the Settings page's title. */
+export const SETTINGS_HEADER_ZONE = "settings-header";
+
 /** What each spotlight zone is called, by ID, for the Albums page to say where an album shows. */
 const ZONE_LABELS: Record<string, string> = {
   [HOMEPAGE_ZONE]: "the homepage",
   [TIMELINE_HEADER_ZONE]: "the Timeline's header",
   [GRID_HEADER_ZONE]: "the Grid's header",
   [STATS_HEADER_ZONE]: "the Stats page's header",
+  [SETTINGS_HEADER_ZONE]: "the Settings page's header",
 };
 
 /**
