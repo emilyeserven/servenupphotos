@@ -2,6 +2,7 @@
   "id": "month-by-year",
   "kind": "preset",
   "name": "Month by year",
+  "description": "Which months of each year have the most photos.",
   "order": 2,
   "group": "time-heatmaps",
   "graph": {

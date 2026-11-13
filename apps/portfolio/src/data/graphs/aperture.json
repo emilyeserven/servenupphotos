@@ -2,6 +2,7 @@
   "id": "aperture",
   "kind": "preset",
   "name": "Aperture",
+  "description": "A dot for each photo, by how wide the lens was open.",
   "order": 1,
   "group": "technical-details",
   "graph": {

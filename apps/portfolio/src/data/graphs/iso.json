@@ -2,6 +2,7 @@
   "id": "iso",
   "kind": "preset",
   "name": "ISO",
+  "description": "A dot for each photo, by how sensitive to light the camera was set.",
   "order": 3,
   "group": "technical-details",
   "graph": {

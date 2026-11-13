@@ -27,6 +27,10 @@ type GraphPreset struct {
 	Kind string `json:"kind"`
 	// Name is what the Graph page shows on its button or dropdown.
 	Name string `json:"name"`
+	// Description is a preset's one-line caption under its name in the Graph
+	// page's Presets picker, saying what it shows; left out when it has none,
+	// and the picker words one from its settings. Groups leave it out.
+	Description string `json:"description,omitempty"`
 	// Order is where it sits among the presets and groups, lowest first; a
 	// preset in a group sits among the group's presets.
 	Order int `json:"order"`
@@ -169,6 +173,7 @@ func groupStillUsed(others []GraphPreset, id string) *PublishError {
 // validGraphPreset checks p and returns it trimmed, as it will be saved.
 func validGraphPreset(p GraphPreset) (GraphPreset, *PublishError) {
 	p.ID, p.Name, p.Group = strings.TrimSpace(p.ID), strings.TrimSpace(p.Name), strings.TrimSpace(p.Group)
+	p.Description = strings.TrimSpace(p.Description)
 	if perr := validEntryID(GraphPresets.Name, p.ID); perr != nil {
 		return p, perr
 	}
@@ -178,9 +183,12 @@ func validGraphPreset(p GraphPreset) (GraphPreset, *PublishError) {
 	if utf8.RuneCountInString(p.Name) > maxEntryTextLength {
 		return p, publishErr(http.StatusBadRequest, "Keep the name to %d characters.", maxEntryTextLength)
 	}
+	if utf8.RuneCountInString(p.Description) > maxEntryTextLength {
+		return p, publishErr(http.StatusBadRequest, "Keep the description to %d characters.", maxEntryTextLength)
+	}
 	switch p.Kind {
 	case graphGroupKind:
-		p.Group, p.Graph, p.Spotlight = "", nil, false
+		p.Group, p.Graph, p.Spotlight, p.Description = "", nil, false, ""
 		return p, nil
 	case graphPresetKind:
 		return p, validPresetGraph(p)

@@ -1,10 +1,8 @@
-import { X } from "lucide-react";
 import { useState } from "react";
-import { ChoiceRow } from "@/components/choice-row";
 import { PresetSettings } from "@/components/graph-builder/preset-settings";
+import { PresetTiles } from "@/components/graph-builder/preset-tiles";
 import { InfoButton } from "@/components/info-button";
 import { SectionPicker } from "@/components/section-picker";
-import { Button } from "@/components/ui/button";
 import type { GraphConfig } from "@/lib/graph-data";
 import {
   type GraphPreset,
@@ -12,6 +10,7 @@ import {
   presetIsOn as isOn,
   presetSections,
 } from "@/lib/graph-presets";
+import type { Photo } from "@/lib/photos";
 import type { SavedGraphs } from "@/lib/saved-graphs";
 
 /** Picking a preset: the graph takes its settings, and the filters stay as they are. */
@@ -34,6 +33,8 @@ function sectionText(section: PresetSection, config: GraphConfig): string {
 
 interface PickerProps {
   config: GraphConfig;
+  /** The photos the filters keep, which each preset's thumbnail draws. */
+  list: Photo[];
   saved: SavedGraphs;
   onPick: OnPick;
 }
@@ -41,7 +42,8 @@ interface PickerProps {
 /**
  * The Presets tab's insides, like the Grid's **Groups** picker: the preset groups on the left (the
  * presets in no group as Other, and the visitor's own as Yours), and the chosen group's presets on
- * the right; picking one sets the graph to it. The (i) button adds a panel further right with the
+ * the right as tiles, each with a small drawing of its graph and a line saying what it shows;
+ * picking one sets the graph to it. The (i) button adds a panel further right with the
  * settings of the preset pointed at, or the one the graph is set as.
  */
 export function PresetPicker(props: PickerProps) {
@@ -101,9 +103,16 @@ function PickerPanels({ sections, section, onSection, ...props }: PanelsProps) {
         ) : undefined
       }
     >
-      <div className="-m-2 flex flex-col">
+      <div className="-m-2 flex flex-col gap-1">
         <PanelHeader name={section.name} info={info} onInfo={onInfo} />
-        <PresetList {...props} section={section} onPoint={setPointed} />
+        <PresetTiles
+          presets={section.presets}
+          config={config}
+          list={props.list}
+          onPick={props.onPick}
+          onPoint={setPointed}
+          saved={section.id === YOURS ? props.saved : undefined}
+        />
       </div>
     </SectionPicker>
   );
@@ -126,54 +135,5 @@ function PanelHeader({ name, info, onInfo }: { name: string; info: boolean; onIn
       <span className="text-xs font-medium text-muted-foreground">{name}</span>
       <InfoButton open={info} label="preset settings" onClick={onInfo} />
     </div>
-  );
-}
-
-/** The section's presets, each picking itself, and the visitor's own each with an X to remove it. */
-function PresetList({
-  section,
-  config,
-  saved,
-  onPick,
-  onPoint,
-}: PickerProps & {
-  section: PresetSection;
-  onPoint: (preset: GraphPreset | undefined) => void;
-}) {
-  return (
-    <div className="flex flex-col" onMouseLeave={() => onPoint(undefined)}>
-      {section.presets.map((preset) => (
-        <div
-          key={preset.id}
-          className="flex items-center [&>button:first-child]:min-w-0 [&>button:first-child]:flex-1"
-          onMouseEnter={() => onPoint(preset)}
-          onFocus={() => onPoint(preset)}
-        >
-          <ChoiceRow
-            label={preset.name}
-            on={isOn(preset, config)}
-            onClick={() => onPick(preset.graph)}
-          />
-          {section.id === YOURS && <RemoveButton preset={preset} saved={saved} />}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** The X that removes one of the visitor's own presets. */
-function RemoveButton({ preset, saved }: { preset: GraphPreset; saved: SavedGraphs }) {
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      aria-label={`Remove ${preset.name}`}
-      title="Remove this preset"
-      onClick={() => saved.remove(preset.id)}
-      className="size-7"
-    >
-      <X aria-hidden />
-    </Button>
   );
 }

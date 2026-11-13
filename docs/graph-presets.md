@@ -3,7 +3,8 @@
 `/graph-presets`, under **Configuration** in the sidebar, makes the ready-made graphs over the portfolio's
 [Graph](portfolio-graph.md) page, such as a photo dot graph of **Aperture**, and **preset groups**. The Graph page's
 **Presets** button opens a picker with the groups on the left, such as **When**, and the chosen group's presets, such as
-**Seasons by year** and **Time of day**, on the right; presets in no group are listed together as **Other**. A
+**Seasons by year** and **Time of day**, on the right as tiles, each with a small drawing of its graph and its
+description; presets in no group are listed together as **Other**. A
 **spotlight** preset also shows as its own button above Presets and Adjust Graph.
 
 > **Frontend analogy:** a preset is a saved `Partial<GraphConfig>` that the Graph page spreads over its state when its
@@ -20,6 +21,7 @@ way it combines the [Trips](trips.md) into `TIMELINE.json`:
   "id": "time-of-day",
   "kind": "preset",
   "name": "Time of day",
+  "description": "How the photos split between morning, afternoon, evening and night.",
   "order": 2,
   "group": "when",
   "graph": {
@@ -39,7 +41,10 @@ way it combines the [Trips](trips.md) into `TIMELINE.json`:
 { "id": "when", "kind": "group", "name": "When", "order": 5 }
 ```
 
-- **`kind`** is `preset` or `group`. A group has no `group` or `graph`.
+- **`kind`** is `preset` or `group`. A group has no `group`, `graph` or `description`.
+- **`description`** is the one line under a preset's tile in the Graph page's Presets, saying what it shows, such as
+  "Which months of each year have the most photos." Left out when it has none; the tile then says the graph's type
+  and axes, such as "Heatmap of Month by Year". Saving trims it and fails past 200 characters.
 - **`order`** places it in the row, lowest first, ties by name. A preset in a group is ordered among that group's
   presets, and a group among the presets in no group.
 - **`group`** is the ID of the group a preset is in; left out, the preset is listed under **Other**. A preset whose
@@ -58,12 +63,17 @@ way it combines the [Trips](trips.md) into `TIMELINE.json`:
 
 Saving checks that a preset's group is a saved group, and removing a group fails while presets are still in it.
 
+> **Frontend analogy:** the backend's `GraphPreset` struct (`internal/github/graphpresets.go`) is the file's type, like
+> `GraphPresetFile` in `lib/graph-presets.ts`. Its `omitempty` fields, such as `description`, work like optional props
+> left `undefined`: an empty one isn't written to the file at all.
+
 ## The page
 
 The left side lists the presets and groups in the Graph page's order, each group with its presets indented under it,
 and **New preset** and **New group** under them. The right side edits the chosen one:
 
-- A **preset** has its name, its order, its **Group** (or **None, listed under Other**), **Spotlight**, and the graph it sets, picked with
+- A **preset** has its name, its order, its **Description** (the line under its tile on the Graph page; left empty,
+  the tile words one from its settings), its **Group** (or **None, listed under Other**), **Spotlight**, and the graph it sets, picked with
   the same dropdowns as the Graph page's Adjust Graph box (imported from the portfolio, so a stat added to the Numbers
   page shows up here too).
 - A **group** has its name and order, and says which presets are in it. A group with no presets isn't shown on the

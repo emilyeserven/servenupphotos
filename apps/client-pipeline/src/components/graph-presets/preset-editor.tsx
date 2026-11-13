@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { lastOrder, newPresetId } from "@/api/graph-presets";
 import { EditorButtons, Field, NameAndOrder } from "@/components/graph-presets/editor-parts";
+import { DescriptionField } from "@/components/graph-presets/description-field";
 import {
   fullGraph,
   presetGraph,
@@ -16,6 +17,8 @@ import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 /** The preset as typed. */
 interface PresetDraft {
   name: string;
+  /** The one-line caption under its name in the Graph page's Presets picker, or "" for one made from its settings. */
+  description: string;
   /** The group's ID, or "" for none. */
   group: string;
   order: number;
@@ -26,13 +29,21 @@ interface PresetDraft {
 
 /** A new preset's draft, last in the row. */
 function newDraft(files: GraphPresetFile[]): PresetDraft {
-  return { name: "", group: "", order: lastOrder(files), graph: START_GRAPH, spotlight: false };
+  return {
+    name: "",
+    description: "",
+    group: "",
+    order: lastOrder(files),
+    graph: START_GRAPH,
+    spotlight: false,
+  };
 }
 
 /** A saved preset's draft. */
 function savedDraft(preset: GraphPresetFile): PresetDraft {
   return {
     name: preset.name,
+    description: preset.description ?? "",
     group: preset.group ?? "",
     order: preset.order,
     graph: fullGraph(preset.graph),
@@ -57,9 +68,16 @@ function presetOf(
   return withExtras(file, draft);
 }
 
-/** The file with the draft's group and spotlight, each left out while it's off. */
-function withExtras(file: GraphPresetFile, { group, spotlight }: PresetDraft): GraphPresetFile {
-  return { ...file, ...(group && { group }), ...(spotlight && { spotlight }) };
+/** The file with the draft's description, group and spotlight, each left out while it's empty or off. */
+function withExtras(file: GraphPresetFile, draft: PresetDraft): GraphPresetFile {
+  const { group, spotlight } = draft;
+  const description = draft.description.trim();
+  return {
+    ...file,
+    ...(description && { description }),
+    ...(group && { group }),
+    ...(spotlight && { spotlight }),
+  };
 }
 
 interface PresetEditorProps {
@@ -89,6 +107,10 @@ export function PresetEditor({ preset, files, onSaved }: PresetEditorProps) {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <NameAndOrder name={draft.name} order={draft.order} placeholder="Aperture" onChange={set} />
+        <DescriptionField
+          value={draft.description}
+          onChange={(description) => set({ description })}
+        />
         <GroupSelect value={draft.group} files={files} onChange={(group) => set({ group })} />
         <SpotlightBox checked={draft.spotlight} onChange={(spotlight) => set({ spotlight })} />
         <section aria-label="Graph settings" className="flex flex-col gap-2">

@@ -90,12 +90,16 @@ function newPhoto() {
   };
 }
 
-/** A graph preset file the pull request adds, in a group, with the rest of its graph's settings as the Graph page starts them. */
-function graphPresetFile(id, name, order, group, graph) {
+/**
+ * A graph preset file the pull request adds, in a group, with the rest of its graph's settings as
+ * the Graph page starts them, and its description when it has one.
+ */
+function graphPresetFile(id, name, order, group, graph, description) {
   const settings = { measure: "count", y: "", split: "", stacked: false, sort: "group", limit: 0 };
+  const data = { id, kind: "preset", name, ...(description && { description }), order, group };
   return {
     path: `${FOLDER}/graphs/${id}.json`,
-    data: { id, kind: "preset", name, order, group, graph: { ...settings, ...graph } },
+    data: { ...data, graph: { ...settings, ...graph } },
   };
 }
 
@@ -340,7 +344,14 @@ export const added = {
       stacked: true,
       sort: "reverse",
     }),
-    graphPresetFile("time-of-day", "Time of day", 2, "when", { type: "pie", x: "daypart" }),
+    graphPresetFile(
+      "time-of-day",
+      "Time of day",
+      2,
+      "when",
+      { type: "pie", x: "daypart" },
+      "How the photos split between morning, afternoon, evening and night.",
+    ),
   ],
   timeline: [
     {
