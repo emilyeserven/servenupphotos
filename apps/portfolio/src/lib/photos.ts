@@ -29,6 +29,7 @@ import {
   publicOriginal,
 } from "@portfolio/lib/unedited-original";
 import { relatedPhotos, type RelatedPhoto } from "@portfolio/lib/related-photos";
+import { shownTiers } from "@portfolio/lib/lower-tier";
 import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 
 export type { PhotoImage } from "@portfolio/lib/photo-image";
@@ -63,6 +64,11 @@ export interface Photo {
    * older photos, when its file was first committed. Null until Update Data dates it.
    */
   addedAt: Date | null;
+  /**
+   * Whether the photo is marked Lower Tier in the pipeline: kept, but not among the best. The
+   * portfolio leaves these out unless **Show Lower Tier photos** is on on the Settings page.
+   */
+  lowerTier: boolean;
   /** Null when the photo has no places, city or country, so there's nothing to say. */
   location: LocalizedLocation | null;
   /**
@@ -228,6 +234,8 @@ export interface PhotoEntry {
   original?: OriginalEntry | null;
   /** The areas pixelated on its versions, which a shown original's must match; left out when none are. */
   faces?: unknown[];
+  /** True when the photo is marked Lower Tier in the pipeline; left out or null otherwise. */
+  lowerTier?: boolean | null;
 }
 
 // ALLPHOTOS.local.json is made by `pnpm photos:local` (which `pnpm dev` runs) and git-ignored, so
@@ -319,6 +327,7 @@ function fromPhotoData(data: PhotoEntry[]): Photo[] {
       lens: photo.lens ?? null,
       takenAt,
       addedAt: parseAddedDate(photo.addedDate),
+      lowerTier: photo.lowerTier === true,
       location: photoLocation(photo),
       ...photoPosition(photo),
       image: parseImage(photo),
@@ -353,7 +362,9 @@ const localPhotos = localData ? photosFromData(localData) : [];
 
 /**
  * The photos in ALLPHOTOS.local.json when there are any (the photos in flight, locally), or else
- * the photos in data/photos/ALLPHOTOS.json, which the "Combine photo data" workflow builds.
+ * the photos in data/photos/ALLPHOTOS.json, which the "Combine photo data" workflow builds. Lower
+ * Tier photos are left out unless **Show Lower Tier photos** is on on the Settings page.
  */
-export const photos: Photo[] =
-  localPhotos.length > 0 ? localPhotos : photosFromData(committedData as PhotoEntry[]);
+export const photos: Photo[] = shownTiers(
+  localPhotos.length > 0 ? localPhotos : photosFromData(committedData as PhotoEntry[]),
+);
