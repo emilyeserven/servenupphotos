@@ -1,0 +1,18 @@
+{
+  "id": "where-i-zoom",
+  "kind": "preset",
+  "name": "Where I zoom",
+  "order": 2,
+  "group": "gear",
+  "graph": {
+    "type": "photos",
+    "x": "focalLength",
+    "measure": "count",
+    "y": "",
+    "split": "lenses",
+    "stacked": false,
+    "sort": "group",
+    "limit": 0,
+    "xWidth": 25
+  }
+}
