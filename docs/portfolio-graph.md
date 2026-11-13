@@ -17,6 +17,22 @@ the **Graph** / **Table** buttons, and names each axis: the y axis over the top 
 graph (a pie names its slices and size over it). Each axis name is a dropdown, so clicking it changes what's on that
 axis without opening Adjust Graph.
 
+The graph's type and split can be changed there too (`type-buttons.tsx`, `split-picker.tsx`):
+
+- **Graph type**: the six types' icons (Bar, Line, Pie, Scatter, Heatmap, Photo dots) in a joined row beside
+  **Graph** / **Table**, the chosen one pressed, each named in a tooltip. On a phone the row folds into one button
+  with the chosen type's icon, which opens the list of types. They read the same fit as the Graph type picker (see
+  [Suggested type](#suggested-type)): a poor fit's icon is faded but can still be picked, and its tooltip and name for
+  screen readers add the fit, such as "Line, suggested" or "Pie, a poor fit: slices lose the order these values have".
+  The row adds no marks of its own; the phone's list marks the suggested type **Suggested**, as the picker does.
+- **Split by** (bar, line and photo dot graphs only): a dropdown like the axes' names, at the right end of the y
+  axis's row just before the **Key** button, since the key lists the split's colors. It lists **None** and every stat
+  but the x axis's. A split bar's **Stacked** / **Side by side** stays in Adjust Graph.
+
+Both write the same settings as Adjust Graph, so the two always agree, and like any change they clear a picked bar.
+They count for the type nudge as Adjust Graph does: picking a type there hides it, and changing an axis from its name's
+dropdown can show it.
+
 ## What you can pick
 
 Adjust Graph's box has three buttons, data first: **Axes**, **Graph type** and **Range**, each opening a picker like the
@@ -89,7 +105,9 @@ are no groups) and the visitor's own as **Yours**, and the chosen group's preset
 graph's type, axes, split, order, how many values show and its Range group; the filters stay as they are. The **(i)**
 button over the presets opens the picker's info pane, further right (under the presets on phones), listing the settings of the preset pointed at, or the one the graph
 is set as (`preset-settings.tsx`). A group with no presets isn't shown. The committed presets are photo dot graphs of
-**Aperture**, **Exposure**, **ISO** and **Focal length**, plus Month by year and Time of day by weekday heatmaps.
+**Aperture**, **Exposure**, **ISO** and **Focal length**, an **Aperture by focal length** heatmap, bar graphs of
+**Lenses**, **Genre**, **Main color** and **Tags**, a **Where I zoom** photo dot graph, plus Month by year and Time of
+day by weekday heatmaps.
 
 Whenever the graph's settings match a preset, whether it was picked, set by hand in Adjust Graph, or opened from a
 link, that preset is checked off in the picker and its group names it (`presetIsOn` in `lib/graph-presets.ts`). A
@@ -178,8 +196,11 @@ its photos; its **Table** shows each x value's photo counts (`lib/graph-photo-do
 Every graph has a tooltip on hover, a key when it's split, a pie or photo dots (`graph-key.tsx`): a **Key** button at the right end of the y axis's row over the graph (`KeyRow`), so folded it covers nothing and takes no room of its own, and open at first, its list floating over the graph's top right corner, apart from the y axis, and a **Table** button that
 shows its numbers as a table.
 
-The site's presets come in two groups: **Technical Details** (Aperture, Exposure, ISO and Focal length) and **Time
-Heatmaps**: **Time of day by weekday** (days of the week across, times of day down) and **Month by year** (months across,
+The site's presets come in four groups. **Technical Details** has Aperture, Exposure, ISO, Focal length and **Aperture
+by focal length** (a heatmap of focal length in even 25 mm ranges across and aperture in 1 stop ranges down). **Gear**
+has **Lenses** (a bar graph of the five lenses with the most photos) and **Where I zoom** (photo dots by focal length in
+25 mm ranges, split by lens). **Subject & Color** has **Genre**, **Main color** (around the color wheel from red) and
+**Tags** (the 20 with the most photos). **Time Heatmaps** has **Time of day by weekday** (days of the week across, times of day down) and **Month by year** (months across,
 years down).
 
 The series colors are `--series-1` to `--series-8` in `styles.css`, with their own steps for dark mode, picked so

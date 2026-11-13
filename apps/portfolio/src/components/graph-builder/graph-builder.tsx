@@ -16,8 +16,9 @@ import { HeatmapGraph } from "@/components/graph-builder/heatmap-graph";
 import { PhotoDotsGraph } from "@/components/graph-builder/photo-dots-graph";
 import { PickedPhotos } from "@/components/graph-builder/picked-photos";
 import { ScatterGraph } from "@/components/graph-builder/scatter-graph";
+import { TypeButtons } from "@/components/graph-builder/type-buttons";
 import { GraphTable, ScatterTable } from "@/components/graph-builder/graph-table";
-import { TypeNudge, useTypeNudge } from "@/components/graph-builder/type-suggestion";
+import { TypeNudge, useTypeFits, useTypeNudge } from "@/components/graph-builder/type-suggestion";
 import {
   type GraphConfig,
   type GraphData,
@@ -42,7 +43,7 @@ type View = "graph" | "table";
  * presets come first, then the tabs (see `GraphTabs`): Presets, Adjust Graph (the graph's type, the
  * stat along each axis, what splits a bar or line graph), Filters (the site's usual filters,
  * kept in the URL, which pick the photos it counts) and Save as preset, each opening a box. Under them, the graph's box names each axis with a dropdown to change it,
- * and shows its numbers as a table too. Clicking a bar, point, slice or dot shows its photos under
+ * has the graph type's icons and a Split by dropdown to change those in place too, and shows its numbers as a table. Clicking a bar, point, slice or dot shows its photos under
  * the graph; changing the graph clears it.
  */
 export function GraphBuilder({
@@ -68,6 +69,7 @@ export function GraphBuilder({
   const [pick, setPick] = useState<GraphPick | null>(null);
   const [display, setDisplay] = useState(DEFAULT_GRAPH_DISPLAY);
   const nudge = useTypeNudge();
+  const fits = useTypeFits(config, kept);
   const apply: ConfigChange = (change) => {
     onConfigChange({ ...config, ...change });
     setPick(null);
@@ -98,9 +100,10 @@ export function GraphBuilder({
           <span className="text-sm text-muted-foreground tabular-nums">
             {kept.length.toLocaleString()} of {photos.length.toLocaleString()} photos
           </span>
-          <div className="flex items-center gap-2">
+          <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
             <DisplayButton config={config} view={view} display={display} onChange={setDisplay} />
             <WideButton wide={wide} onChange={onWideChange} />
+            <TypeButtons type={config.type} onChange={onChange} fits={fits} />
             <ViewButtons view={view} onChange={setView} />
           </div>
         </div>

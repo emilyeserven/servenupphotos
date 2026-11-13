@@ -1,0 +1,17 @@
+{
+  "id": "tags",
+  "kind": "preset",
+  "name": "Tags",
+  "order": 3,
+  "group": "subject-color",
+  "graph": {
+    "type": "bar",
+    "x": "tags",
+    "measure": "count",
+    "y": "",
+    "split": "",
+    "stacked": false,
+    "sort": "count",
+    "limit": 20
+  }
+}
