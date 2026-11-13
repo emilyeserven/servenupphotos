@@ -1,0 +1,17 @@
+{
+  "id": "lenses",
+  "kind": "preset",
+  "name": "Lenses",
+  "order": 1,
+  "group": "gear",
+  "graph": {
+    "type": "bar",
+    "x": "lenses",
+    "measure": "count",
+    "y": "",
+    "split": "",
+    "stacked": false,
+    "sort": "count",
+    "limit": 5
+  }
+}

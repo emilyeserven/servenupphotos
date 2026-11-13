@@ -1,0 +1,17 @@
+{
+  "id": "genre",
+  "kind": "preset",
+  "name": "Genre",
+  "order": 1,
+  "group": "subject-color",
+  "graph": {
+    "type": "bar",
+    "x": "genre",
+    "measure": "count",
+    "y": "",
+    "split": "",
+    "stacked": false,
+    "sort": "count",
+    "limit": 0
+  }
+}
