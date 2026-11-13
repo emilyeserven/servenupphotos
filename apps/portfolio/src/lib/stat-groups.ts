@@ -10,9 +10,10 @@ export interface StatRow {
   count: number;
   /**
    * The filter that narrows the photos to the row's, as the URL writes it, such as
-   * `{ camera: "Fujifilm X-T5" }`; left out when no filter can.
+   * `{ camera: "Fujifilm X-T5" }`, or the photos themselves chosen one by one, `{ ids: [3, 9] }`;
+   * left out when no filter can.
    */
-  filter?: Record<string, string | string[]>;
+  filter?: Record<string, string | string[] | number[]>;
   /** The rows a Graph bucket puts together, such as f/1.4 and f/2 in f/1.4 – f/2; left out on a row of its own. */
   parts?: StatRow[];
 }

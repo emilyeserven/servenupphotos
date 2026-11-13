@@ -9,11 +9,12 @@ import {
   yDomain,
 } from "@portfolio/lib/graph-ranges";
 import { type AxisBuckets, axisBucketRows, bucketNames } from "@portfolio/lib/graph-buckets";
+import { PHOTO_STATS } from "@portfolio/lib/graph-photo-stats";
 import { SETTING_STATS } from "@portfolio/lib/graph-settings";
 import { STAT_SECTIONS } from "@portfolio/lib/stats";
 
 /** A stat a graph can be drawn by: one of the Numbers page's groups, such as Cameras or
- * Season, or a camera setting, such as Aperture. */
+ * Season, a camera setting, such as Aperture, or one only the Graph page has, such as Genre. */
 export interface GraphStat {
   id: string;
   label: string;
@@ -33,12 +34,16 @@ function statsOf(def: GroupDef, section: string): GraphStat[] {
   }));
 }
 
-/** Every stat a graph can be drawn by: the Numbers page's, in its order, then the camera settings. */
+/**
+ * Every stat a graph can be drawn by: the Numbers page's, in its order, then the camera settings,
+ * then the ones only the Graph page has, such as Genre and Main color.
+ */
 export const GRAPH_STATS: GraphStat[] = [
   ...STAT_SECTIONS.flatMap((section) =>
     section.groups.flatMap((def) => statsOf(def, section.title)),
   ),
   ...SETTING_STATS,
+  ...PHOTO_STATS,
 ];
 
 /** The stat with the ID, or the first one when there's none, such as after the groups change. */
