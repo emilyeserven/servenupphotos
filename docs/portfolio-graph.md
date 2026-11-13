@@ -17,6 +17,17 @@ the **Graph** / **Table** buttons, and names each axis: the y axis over the top 
 graph (a pie names its slices and size over it). Each axis name is a dropdown, so clicking it changes what's on that
 axis without opening Adjust Graph.
 
+The graph's type and split can be changed there too (`type-buttons.tsx`, `split-picker.tsx`):
+
+- **Graph type**: the six types' icons (Bar, Line, Pie, Scatter, Heatmap, Photo dots) in a joined row beside
+  **Graph** / **Table**, the chosen one pressed, each named in a tooltip. On a phone the row folds into one button
+  with the chosen type's icon, which opens the list of types.
+- **Split by** (bar, line and photo dot graphs only): a dropdown like the axes' names, at the right end of the y
+  axis's row just before the **Key** button, since the key lists the split's colors. It lists **None** and every stat
+  but the x axis's. A split bar's **Stacked** / **Side by side** stays in Adjust Graph.
+
+Both write the same settings as Adjust Graph, so the two always agree, and like any change they clear a picked bar.
+
 ## What you can pick
 
 Adjust Graph's box has three buttons, each opening a picker like the Grid's **Gear & settings** (`graph-picker.tsx`):

@@ -14,15 +14,31 @@ const KeySlot = createContext<HTMLElement | null>(null);
 /**
  * The row over the graph, with `start` (the y axis's name) on the left and room for the key's
  * button on the right, so folded the key takes no space from the graph; then the graph. The row
- * hides while it has nothing in it.
+ * hides while it has nothing in it. `end`, such as the **Split by** dropdown, goes just before the
+ * key's button, which lists its colors.
  */
-export function KeyRow({ start, children }: { start: ReactNode; children: ReactNode }) {
+export function KeyRow({
+  start,
+  end,
+  children,
+}: {
+  start: ReactNode;
+  end?: ReactNode;
+  children: ReactNode;
+}) {
   const [slot, setSlot] = useState<HTMLDivElement | null>(null);
   return (
     <>
       <div className="hidden min-h-7 flex-wrap items-center justify-between gap-2 has-[>:not(:empty)]:flex">
         {start}
-        <div ref={setSlot} className="ml-auto" />
+        {end ? (
+          <div className="ml-auto flex items-center gap-2">
+            {end}
+            <div ref={setSlot} />
+          </div>
+        ) : (
+          <div ref={setSlot} className="ml-auto" />
+        )}
       </div>
       <KeySlot value={slot}>{children}</KeySlot>
     </>
