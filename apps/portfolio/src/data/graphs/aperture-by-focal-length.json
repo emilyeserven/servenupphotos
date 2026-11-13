@@ -1,0 +1,20 @@
+{
+  "id": "aperture-by-focal-length",
+  "kind": "preset",
+  "name": "Aperture by focal length",
+  "description": "Which apertures go with which focal lengths, in 25 mm and 1 stop ranges.",
+  "order": 5,
+  "group": "technical-details",
+  "graph": {
+    "type": "heatmap",
+    "x": "focalLength",
+    "measure": "count",
+    "y": "aperture",
+    "split": "",
+    "stacked": false,
+    "sort": "group",
+    "limit": 0,
+    "xWidth": 25,
+    "yWidth": 1
+  }
+}

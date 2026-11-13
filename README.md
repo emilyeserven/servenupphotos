@@ -93,6 +93,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio Timeline](docs/portfolio-timeline.md) (`/timeline` on the portfolio): photos by month and day, with technical info and a scrubber
 - [Portfolio Grid](docs/portfolio-grid.md) (`/grid` on the portfolio): square and natural tiles (vertical photos in rows of their own) and the Table view, with its sorting, Columns menu and place names
 - [Portfolio Lucky](docs/portfolio-lucky.md) (`/lucky` on the portfolio): whole rows of photos picked at random from the ones the filters leave, with Shuffle
+- [Portfolio Settings](docs/portfolio-settings.md) (`/settings` on the portfolio): Script display, color theme and Show Lower Tier photos, each with a short description, linked from the bottom of the site menu
 - [Portfolio Likes](docs/portfolio-likes.md) (`/likes` on the portfolio): double tap a photo to like it, then My Likes lists them with your comments and text to send over Discord or Messenger/Text
 - [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
 - [Map Link Previews](docs/map-link-previews.md): the map's Copy link, and the place pages built on deploy whose link previews show a picture of the map
@@ -121,6 +122,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [All Photos](docs/all-photos.md) (`/all-photos`): every photo in the portfolio's order, sorted any way, with drafts and Undecided photos shown among them and a box to jump to each
 - [Compare groups](docs/compare-groups.md) (`/compare`): putting Gallery and in-flight photos in groups to weigh them side by side and pick the ones to post, and Unselected Photos for the rest, with why and what's kept in R2; only in the pipeline
 - [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
+- [Lower Tier photos](docs/lower-tier.md): marking photos you like but don't want shown unless chosen, on the Photo page or in bulk from the Gallery, which hides them until its Lower Tier filter shows them
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
 - [Offline mode](docs/offline-mode.md): the Gallery, Undecided queue and drafts without the internet, from Square Thumbnails kept on disk and fetched from R2 when the pipeline starts; in-flight work kept in the browser, and exported or imported as JSON
 - [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
@@ -146,6 +148,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Lightroom Albums](docs/lightroom-albums.md) (`/lightroom-albums`): your Lightroom folders and albums, read by an LLM from screenshots or a screen recording, with a stage and notes on each album as a tree or a Kanban board and the next albums to work on, imported on its own page or added by hand, kept only in the browser and moved between computers with Export and Import
 - [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, filterable, making JSON for an original that isn't saved, and deleting images
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
+- [Describe my style](docs/describe-style.md) (`/describe-style`): a prompt that asks an LLM to describe your photography style from links to your photos, narrowed by the portfolio's filters
 - [Unedited originals](docs/unedited-originals.md) (`/raw-vs-edited` on the portfolio): keeping a photo's straight-from-camera original in the pipeline, with its crop and pixelated faces, compared by slider, side by side or switching, and shown on the portfolio's Raw vs Edited page only when marked to
 - [Pixelating faces](docs/face-pixelation.md): finding or boxing faces on a photo in R2 (as boxes or circles, with areas to keep unpixelated), setting each one's pixelation density with a live preview, and remaking every version with them hidden
 - [Changelog](docs/changelog.md) (`/changelog`): the pull requests merged into the repository, by day, with links to GitHub and without merge commits or photo data merges

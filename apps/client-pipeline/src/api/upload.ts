@@ -38,14 +38,23 @@ export interface UploadRequest {
 
 /** A failed upload, with the photos already under that name or Cloudflare's answer when known. */
 export class UploadError extends Error {
+  /** Other photos in the bucket under the same name, newest first, when that stopped the upload. */
+  readonly sameName: BucketImage[];
+  readonly cloudflare?: CloudflareResponse;
+  /** A name no photo in the bucket has yet, offered with sameName as the new name. */
+  readonly suggestedName?: string;
+
   constructor(
     message: string,
-    /** Other photos in the bucket under the same name, newest first, when that stopped the upload. */
-    readonly sameName: BucketImage[] = [],
-    readonly cloudflare?: CloudflareResponse,
+    sameName: BucketImage[] = [],
+    cloudflare?: CloudflareResponse,
+    suggestedName?: string,
   ) {
     super(message);
     this.name = "UploadError";
+    this.sameName = sameName;
+    this.cloudflare = cloudflare;
+    this.suggestedName = suggestedName;
   }
 }
 
@@ -53,6 +62,7 @@ type UploadErrorBody = {
   message?: string;
   sameName?: BucketImage[];
   cloudflare?: CloudflareResponse;
+  suggestedName?: string;
 };
 
 async function uploadPhoto({ photo, keepSameName, crop }: UploadRequest): Promise<UploadResponse> {
@@ -76,7 +86,7 @@ async function uploadPhoto({ photo, keepSameName, crop }: UploadRequest): Promis
 async function toUploadError(res: Response): Promise<UploadError> {
   const json = (await res.json().catch(() => ({}))) as UploadErrorBody;
   const message = json.message ?? `/api/upload responded ${res.status}`;
-  return new UploadError(message, json.sameName, json.cloudflare);
+  return new UploadError(message, json.sameName, json.cloudflare, json.suggestedName);
 }
 
 /** photo under a new name, keeping its .jpg extension. */

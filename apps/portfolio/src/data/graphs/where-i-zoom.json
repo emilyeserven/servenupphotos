@@ -1,0 +1,19 @@
+{
+  "id": "where-i-zoom",
+  "kind": "preset",
+  "name": "Where I zoom",
+  "description": "A dot for each photo, by focal length in 25 mm ranges, colored by lens.",
+  "order": 2,
+  "group": "gear",
+  "graph": {
+    "type": "photos",
+    "x": "focalLength",
+    "measure": "count",
+    "y": "",
+    "split": "lenses",
+    "stacked": false,
+    "sort": "group",
+    "limit": 0,
+    "xWidth": 25
+  }
+}

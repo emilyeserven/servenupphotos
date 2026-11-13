@@ -12,6 +12,7 @@ import { fileName } from "@/components/in-flight-checks";
 import { AllPhotosMark, FileJson } from "@/components/in-flight-file-json";
 import { FileLink, FileStatus } from "@/components/in-flight-pending";
 import { ReEditMark } from "@/components/re-edit-card";
+import { LowerTierMark } from "@/components/lower-tier";
 import { ReEditButton } from "@/components/in-flight-page/re-edit-button";
 import { RemoveFile } from "@/components/remove-in-flight-file";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
@@ -50,6 +51,7 @@ export function FileSection({
           </DraftMark>
         </UnselectedMark>
         <ReEditMark data={file.status === "removed" ? undefined : file.data} />
+        {file.status !== "removed" && <LowerTierMark file={file} />}
         <MoveToUndecided file={file} />
         <ReEditButton file={file} />
         <CompareButton file={file} />

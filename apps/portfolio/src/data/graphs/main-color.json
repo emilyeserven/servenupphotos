@@ -1,0 +1,18 @@
+{
+  "id": "main-color",
+  "kind": "preset",
+  "name": "Main color",
+  "description": "How many photos each main color has, around the color wheel from red.",
+  "order": 2,
+  "group": "subject-color",
+  "graph": {
+    "type": "bar",
+    "x": "mainColor",
+    "measure": "count",
+    "y": "",
+    "split": "",
+    "stacked": false,
+    "sort": "group",
+    "limit": 0
+  }
+}

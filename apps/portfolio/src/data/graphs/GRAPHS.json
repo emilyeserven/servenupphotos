@@ -1,5 +1,25 @@
 [
   {
+    "id": "aperture-by-focal-length",
+    "kind": "preset",
+    "name": "Aperture by focal length",
+    "description": "Which apertures go with which focal lengths, in 25 mm and 1 stop ranges.",
+    "order": 5,
+    "group": "technical-details",
+    "graph": {
+      "type": "heatmap",
+      "x": "focalLength",
+      "measure": "count",
+      "y": "aperture",
+      "split": "",
+      "stacked": false,
+      "sort": "group",
+      "limit": 0,
+      "xWidth": 25,
+      "yWidth": 1
+    }
+  },
+  {
     "id": "aperture",
     "kind": "preset",
     "name": "Aperture",
@@ -54,6 +74,30 @@
     }
   },
   {
+    "id": "gear",
+    "kind": "group",
+    "name": "Gear",
+    "order": 2
+  },
+  {
+    "id": "genre",
+    "kind": "preset",
+    "name": "Genre",
+    "description": "How many photos each genre has, most first.",
+    "order": 1,
+    "group": "subject-color",
+    "graph": {
+      "type": "bar",
+      "x": "genre",
+      "measure": "count",
+      "y": "",
+      "split": "",
+      "stacked": false,
+      "sort": "count",
+      "limit": 0
+    }
+  },
+  {
     "id": "iso",
     "kind": "preset",
     "name": "ISO",
@@ -63,6 +107,42 @@
     "graph": {
       "type": "photos",
       "x": "iso",
+      "measure": "count",
+      "y": "",
+      "split": "",
+      "stacked": false,
+      "sort": "group",
+      "limit": 0
+    }
+  },
+  {
+    "id": "lenses",
+    "kind": "preset",
+    "name": "Lenses",
+    "description": "The five lenses with the most photos, most first.",
+    "order": 1,
+    "group": "gear",
+    "graph": {
+      "type": "bar",
+      "x": "lenses",
+      "measure": "count",
+      "y": "",
+      "split": "",
+      "stacked": false,
+      "sort": "count",
+      "limit": 5
+    }
+  },
+  {
+    "id": "main-color",
+    "kind": "preset",
+    "name": "Main color",
+    "description": "How many photos each main color has, around the color wheel from red.",
+    "order": 2,
+    "group": "subject-color",
+    "graph": {
+      "type": "bar",
+      "x": "mainColor",
       "measure": "count",
       "y": "",
       "split": "",
@@ -90,6 +170,30 @@
     }
   },
   {
+    "id": "subject-color",
+    "kind": "group",
+    "name": "Subject & Color",
+    "order": 3
+  },
+  {
+    "id": "tags",
+    "kind": "preset",
+    "name": "Tags",
+    "description": "The 20 tags with the most photos, most first.",
+    "order": 3,
+    "group": "subject-color",
+    "graph": {
+      "type": "bar",
+      "x": "tags",
+      "measure": "count",
+      "y": "",
+      "split": "",
+      "stacked": false,
+      "sort": "count",
+      "limit": 20
+    }
+  },
+  {
     "id": "technical-details",
     "kind": "group",
     "name": "Technical Details",
@@ -99,7 +203,7 @@
     "id": "time-heatmaps",
     "kind": "group",
     "name": "Time Heatmaps",
-    "order": 2
+    "order": 4
   },
   {
     "id": "time-of-day-by-weekday",
@@ -117,6 +221,25 @@
       "stacked": false,
       "sort": "group",
       "limit": 0
+    }
+  },
+  {
+    "id": "where-i-zoom",
+    "kind": "preset",
+    "name": "Where I zoom",
+    "description": "A dot for each photo, by focal length in 25 mm ranges, colored by lens.",
+    "order": 2,
+    "group": "gear",
+    "graph": {
+      "type": "photos",
+      "x": "focalLength",
+      "measure": "count",
+      "y": "",
+      "split": "lenses",
+      "stacked": false,
+      "sort": "group",
+      "limit": 0,
+      "xWidth": 25
     }
   }
 ]

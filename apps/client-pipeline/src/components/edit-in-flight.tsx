@@ -13,6 +13,7 @@ import { PhotoGroupsCard } from "@/components/photo-groups-card";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-details";
 import { QueryResult } from "@/components/query-result";
+import { LowerTierCard } from "@/components/lower-tier";
 import { ReEditCard } from "@/components/re-edit-card";
 import { SocialPostsCard } from "@/components/social-posts-card";
 import { PickedSimilarCard } from "@/components/related-photos/picked-similar-card";
@@ -167,6 +168,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
                 locationPrompt={locationPrompt}
               />
               <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
+              <LowerTierCard file={editable.file} disabled={pending} />
             </>
           ),
           groups: (

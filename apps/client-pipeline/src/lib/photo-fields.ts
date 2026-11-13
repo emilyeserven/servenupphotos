@@ -71,3 +71,10 @@ export const FACES = "faces";
  * out when it has none.
  */
 export const ORIGINAL = "original";
+
+/**
+ * The photo JSON field marking a Lower Tier photo: `true`, or left out (or `null`) when it isn't. A
+ * Lower Tier photo is one you like and may put in an album or a trip line, but that isn't shown
+ * unless you choose to show it.
+ */
+export const LOWER_TIER = "lowerTier";

@@ -1,0 +1,18 @@
+{
+  "id": "tags",
+  "kind": "preset",
+  "name": "Tags",
+  "description": "The 20 tags with the most photos, most first.",
+  "order": 3,
+  "group": "subject-color",
+  "graph": {
+    "type": "bar",
+    "x": "tags",
+    "measure": "count",
+    "y": "",
+    "split": "",
+    "stacked": false,
+    "sort": "count",
+    "limit": 20
+  }
+}

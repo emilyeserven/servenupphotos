@@ -28,12 +28,15 @@ class ApiError extends Error {
   readonly status: number;
   /** GitHub's answer, when a GitHub call is what failed. */
   readonly github?: GitHubFailure;
+  /** A free file name to offer instead, when the one asked for is taken. */
+  readonly suggestedName?: string;
 
-  constructor(message: string, status: number, github?: GitHubFailure) {
+  constructor(message: string, status: number, github?: GitHubFailure, suggestedName?: string) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.github = github;
+    this.suggestedName = suggestedName;
   }
 }
 
@@ -41,14 +44,32 @@ class ApiError extends Error {
 export interface ErrorBody {
   message?: string;
   github?: GitHubFailure;
+  /** A free file name to offer instead, when the one asked for is taken. */
+  suggestedName?: string;
 }
 
 /** The error for a failed request to url, from its status and body. */
 export function apiErrorOf(url: string, status: number, body: ErrorBody | null): ApiError {
-  return new ApiError(body?.message ?? `${url} responded ${status}`, status, body?.github);
+  const message = body?.message ?? `${url} responded ${status}`;
+  return new ApiError(message, status, body?.github, body?.suggestedName);
 }
 
 /** GitHub's answer carried by error, when it's an ApiError from a failed GitHub call. */
 export function githubFailureOf(error: unknown): GitHubFailure | undefined {
   return error instanceof ApiError ? error.github : undefined;
+}
+
+/**
+ * The free name the backend offers when a save or upload stopped because its name is taken, from
+ * an ApiError or an UploadError; undefined for any other failure.
+ */
+export function suggestedNameOf(error: unknown): string | undefined {
+  if (
+    error instanceof Error &&
+    "suggestedName" in error &&
+    typeof error.suggestedName === "string"
+  ) {
+    return error.suggestedName || undefined;
+  }
+  return undefined;
 }

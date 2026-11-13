@@ -25,7 +25,7 @@ that narrows the photos to ones whose **title**, **location** or **camera model*
 `lib/text-search.ts`). Each word has to be found somewhere in those, in any order, so "seoul x-t5" finds the photos
 taken in Seoul on a Fujifilm X-T5. It ignores case and accents ("sao paulo" finds São Paulo), and the location is
 matched every way it can be written: its places, city, state and country in English, romanized, phonetic and native
-script, whichever the menu's **Script display** shows.
+script, whichever the **Script display** setting shows.
 
 The URL changes as you type, replacing the page's history entry rather than adding one per letter. The search counts
 as one filter on the **Show filters** button, the X inside the box or the button's clear X clears it, and the filters'
@@ -47,7 +47,7 @@ into view. Each place has a checkbox, and any number can be checked in any colum
 be chosen at once; a place with nothing in it is checked by clicking its name too. **Clear** unchecks them all. The
 picker opens on the columns around the first chosen place, or the only country when there's one. A search swaps the
 columns for every matching place, with what it's in under its name, such as "Japan › Yamaguchi › Hagi". Names are
-written the way the menu's **Script display** says, and a search matches them that way or in English. The button shows
+written the way the **Script display** setting says, and a search matches them that way or in English. The button shows
 the one chosen name, or how many are chosen.
 `?state=none` keeps the photos with no state, province or prefecture, as the Numbers page's **No region** row links to;
 the button then says **No region**.
