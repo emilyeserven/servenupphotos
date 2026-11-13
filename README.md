@@ -93,6 +93,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio Timeline](docs/portfolio-timeline.md) (`/timeline` on the portfolio): photos by month and day, with technical info and a scrubber
 - [Portfolio Grid](docs/portfolio-grid.md) (`/grid` on the portfolio): square and natural tiles (vertical photos in rows of their own) and the Table view, with its sorting, Columns menu and place names
 - [Portfolio Lucky](docs/portfolio-lucky.md) (`/lucky` on the portfolio): whole rows of photos picked at random from the ones the filters leave, with Shuffle
+- [Portfolio Settings](docs/portfolio-settings.md) (`/settings` on the portfolio): Script display, color theme and Show Lower Tier photos, each with a short description, linked from the bottom of the site menu
 - [Portfolio Likes](docs/portfolio-likes.md) (`/likes` on the portfolio): double tap a photo to like it, then My Likes lists them with your comments and text to send over Discord or Messenger/Text
 - [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
 - [Map Link Previews](docs/map-link-previews.md): the map's Copy link, and the place pages built on deploy whose link previews show a picture of the map
