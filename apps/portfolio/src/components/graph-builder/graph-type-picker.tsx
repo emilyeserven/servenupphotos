@@ -1,41 +1,18 @@
-import {
-  ChartColumn,
-  ChartLine,
-  ChartPie,
-  ChartScatter,
-  Grip,
-  Grid3x3,
-  type LucideIcon,
-} from "lucide-react";
 import { useState } from "react";
 import { ChoiceRow } from "@portfolio/components/choice-row";
 import { GraphTypeInfo } from "@portfolio/components/graph-builder/graph-type-info";
 import { PickerPart } from "@portfolio/components/section-picker";
 import { StatChoices } from "@portfolio/components/graph-builder/stat-choices";
 import { GraphPicker } from "@portfolio/components/graph-builder/graph-picker";
+import { GRAPH_TYPES, graphTypeOf } from "@portfolio/components/graph-builder/graph-types";
 import { type GraphConfig, type GraphType, SPLIT_TYPES, statById } from "@portfolio/lib/graph-data";
 
 /** A change to some of the graph's settings. */
 type ConfigChange = (change: Partial<GraphConfig>) => void;
 
-/** The graph types, with their names and icons. */
-const TYPES: [GraphType, string, LucideIcon][] = [
-  ["bar", "Bar", ChartColumn],
-  ["line", "Line", ChartLine],
-  ["pie", "Pie", ChartPie],
-  ["scatter", "Scatter", ChartScatter],
-  ["heatmap", "Heatmap", Grid3x3],
-  ["photos", "Photo dots", Grip],
-];
-
-/** The graph type's name and icon. */
-function typeOf(type: GraphType): [GraphType, string, LucideIcon] {
-  return TYPES.find(([each]) => each === type) ?? TYPES[0]!;
-}
-
 /** The graph type's name, such as Bar, for the Presets picker's settings. */
 export function graphTypeName(type: GraphType): string {
-  return typeOf(type)[1];
+  return graphTypeOf(type)[1];
 }
 
 /** One section of the Graph type picker. */
@@ -59,7 +36,7 @@ function partsText(config: GraphConfig): string {
 
 /** Each section the graph has, with its name and what it's set to: Split by only when the type can be split, Parts only for a split bar. */
 function sectionsOf(config: GraphConfig): [TypeSection, string, string][] {
-  const sections: [TypeSection, string, string][] = [["type", "Type", typeOf(config.type)[1]]];
+  const sections: [TypeSection, string, string][] = [["type", "Type", graphTypeOf(config.type)[1]]];
   if (!SPLIT_TYPES.has(config.type)) return sections;
   sections.push(["split", "Split by", splitText(config)]);
   if (config.type === "bar" && config.split !== "") {
@@ -92,11 +69,11 @@ export function GraphTypePicker({
   const [open, setOpen] = useState(false);
   const [pointed, setPointed] = useState<GraphType | undefined>();
   const info: TypeInfo = { open, onToggle: () => setOpen(!open), onPoint: setPointed };
-  const shown = typeOf(pointed ?? config.type);
+  const shown = graphTypeOf(pointed ?? config.type);
   return (
     <GraphPicker
       label="Graph type"
-      Icon={typeOf(config.type)[2]}
+      Icon={graphTypeOf(config.type)[2]}
       sections={sectionsOf(config)}
       aside={(section) =>
         section === "type" && open ? <GraphTypeInfo type={shown[0]} name={shown[1]} /> : undefined
@@ -140,7 +117,7 @@ function TypeChoices({
     <div className="p-1">
       <PickerPart intro="How the graph draws its values." info={info}>
         <div className="-mx-1 flex flex-col" onMouseLeave={() => info.onPoint(undefined)}>
-          {TYPES.map(([type, label, Icon]) => (
+          {GRAPH_TYPES.map(([type, label, Icon]) => (
             <ChoiceRow
               key={type}
               label={label}
