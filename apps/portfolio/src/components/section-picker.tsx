@@ -38,6 +38,11 @@ interface SectionPickerProps<K extends string> {
    * phones), such as what each choice does while its (i) button is on.
    */
   aside?: ReactNode;
+  /**
+   * Whether the picker grows to fit its controls rather than scrolling them in a fixed height, for
+   * one that sits in the page instead of a popover, such as the Graph page's Presets.
+   */
+  fit?: boolean;
 }
 
 /**
@@ -56,7 +61,7 @@ export function SectionPicker<K extends string>(props: SectionPickerProps<K>) {
   };
   const hasAside = props.aside !== undefined;
   return (
-    <div className={pickerClass(props.width, hasAside)}>
+    <div className={cn(pickerClass(props.width, hasAside), props.fit && "max-h-none")}>
       <ListToggle section={current} open={listOpen} onClick={() => setListOpen(!listOpen)} />
       <SectionList {...props} listOpen={listOpen} onChoose={choose} />
       <div role="tabpanel" aria-label={current?.label} className={panelClass(listOpen, hasAside)}>

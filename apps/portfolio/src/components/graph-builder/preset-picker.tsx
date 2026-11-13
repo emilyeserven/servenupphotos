@@ -97,6 +97,7 @@ function PickerPanels({ sections, section, onSection, ...props }: PanelsProps) {
       chosen={section.id}
       onChoose={onSection}
       width="w-full"
+      fit
       aside={
         info ? (
           <SettingsPanel config={config} preset={pointed ?? onIn(section, config)} />

@@ -61,7 +61,8 @@ the heading, buttons, Adjust Graph box and Selected Photos stay in the column (*
 **Presets** tab opens a `SectionPicker` like the Grid's **Groups** (`preset-picker.tsx`): the preset groups on the left, each
 saying which of its presets the graph is set as, with the presets in no group as **Other** (or **Presets** when there
 are no groups) and the visitor's own as **Yours**, and the chosen group's presets on the right as a gallery of tiles
-(`preset-tiles.tsx`), two to a row on phones and up to four beside them. Each tile has a small drawing of the preset's
+(`preset-tiles.tsx`), two to a row on phones and up to four beside them; the picker grows to fit every row of
+tiles (`SectionPicker`'s `fit`) rather than scrolling them, as the pickers in popovers do. Each tile has a small drawing of the preset's
 graph, its name (with a check while the graph is set as it) and a line saying what it shows: the preset's own
 **Description** from the pipeline, or else one made from its settings, such as **Heatmap of Month by Year** (`settingsCaption`
 in `preset-settings.tsx`). The visitor's own presets get tiles too, with the × to remove them over the drawing's corner.
