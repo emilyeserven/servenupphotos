@@ -3,6 +3,7 @@
     "id": "aperture-by-focal-length",
     "kind": "preset",
     "name": "Aperture by focal length",
+    "description": "Which apertures go with which focal lengths, in 25 mm and 1 stop ranges.",
     "order": 5,
     "group": "technical-details",
     "graph": {
@@ -22,6 +23,7 @@
     "id": "aperture",
     "kind": "preset",
     "name": "Aperture",
+    "description": "A dot for each photo, by how wide the lens was open.",
     "order": 1,
     "group": "technical-details",
     "graph": {
@@ -39,6 +41,7 @@
     "id": "exposure",
     "kind": "preset",
     "name": "Exposure",
+    "description": "A dot for each photo, by how long the shutter was open.",
     "order": 2,
     "group": "technical-details",
     "graph": {
@@ -56,6 +59,7 @@
     "id": "focal-length",
     "kind": "preset",
     "name": "Focal length",
+    "description": "A dot for each photo, by how far the lens was zoomed.",
     "order": 4,
     "group": "technical-details",
     "graph": {
@@ -79,6 +83,7 @@
     "id": "genre",
     "kind": "preset",
     "name": "Genre",
+    "description": "How many photos each genre has, most first.",
     "order": 1,
     "group": "subject-color",
     "graph": {
@@ -96,6 +101,7 @@
     "id": "iso",
     "kind": "preset",
     "name": "ISO",
+    "description": "A dot for each photo, by how sensitive to light the camera was set.",
     "order": 3,
     "group": "technical-details",
     "graph": {
@@ -113,6 +119,7 @@
     "id": "lenses",
     "kind": "preset",
     "name": "Lenses",
+    "description": "The five lenses with the most photos, most first.",
     "order": 1,
     "group": "gear",
     "graph": {
@@ -130,6 +137,7 @@
     "id": "main-color",
     "kind": "preset",
     "name": "Main color",
+    "description": "How many photos each main color has, around the color wheel from red.",
     "order": 2,
     "group": "subject-color",
     "graph": {
@@ -147,6 +155,7 @@
     "id": "month-by-year",
     "kind": "preset",
     "name": "Month by year",
+    "description": "Which months of each year have the most photos.",
     "order": 2,
     "group": "time-heatmaps",
     "graph": {
@@ -170,6 +179,7 @@
     "id": "tags",
     "kind": "preset",
     "name": "Tags",
+    "description": "The 20 tags with the most photos, most first.",
     "order": 3,
     "group": "subject-color",
     "graph": {
@@ -199,6 +209,7 @@
     "id": "time-of-day-by-weekday",
     "kind": "preset",
     "name": "Time of day by weekday",
+    "description": "Which days and times of day have the most photos.",
     "order": 1,
     "group": "time-heatmaps",
     "graph": {
@@ -216,6 +227,7 @@
     "id": "where-i-zoom",
     "kind": "preset",
     "name": "Where I zoom",
+    "description": "A dot for each photo, by focal length in 25 mm ranges, colored by lens.",
     "order": 2,
     "group": "gear",
     "graph": {

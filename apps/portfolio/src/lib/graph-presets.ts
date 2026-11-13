@@ -20,6 +20,8 @@ export interface GraphPresetFile {
   kind: "preset" | "group";
   /** What its button or dropdown says. */
   name: string;
+  /** A preset's one-line caption under its name in the Presets picker, saying what it shows; left out when it has none. */
+  description?: string;
   /** Where it sits among the presets and groups, lowest first; a preset in a group, among the group's. */
   order: number;
   /** A preset's group, by ID; left out when it's in none. */
@@ -34,6 +36,8 @@ export interface GraphPresetFile {
 export interface GraphPreset {
   id: string;
   name: string;
+  /** The one line under its name in the Presets picker; left out for one with none, such as the visitor's own. */
+  description?: string;
   graph: Partial<PresetGraph>;
 }
 
@@ -60,7 +64,7 @@ function byOrder(a: GraphPresetFile, b: GraphPresetFile): number {
 /** The file as a preset to pick. */
 function presetOf(file: GraphPresetFile): GraphPreset {
   const graph = { ...NO_RANGES, ...file.graph, type: currentType(file.graph?.type) };
-  return { id: file.id, name: file.name, graph };
+  return { id: file.id, name: file.name, description: file.description, graph };
 }
 
 /** The presets in the group, in their order. */

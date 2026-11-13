@@ -65,6 +65,18 @@ function settingLines(config: GraphConfig): SettingLine[] {
   ];
 }
 
+/**
+ * A preset's caption made from its settings, for one with no description of its own: its type and
+ * what's along each axis, such as "Heatmap of Month by Year" or "Bar of Year, split by Season".
+ */
+export function settingsCaption(config: GraphConfig): string {
+  const type = graphTypeName(config.type);
+  const x = statById(config.x).label;
+  if (hasYStat(config.type)) return `${type} of ${x} by ${statById(config.y).label}`;
+  const split = SPLIT_TYPES.has(config.type) && config.split !== "";
+  return split ? `${type} of ${x}, split by ${statById(config.split).label}` : `${type} of ${x}`;
+}
+
 /** The settings panel of the Presets picker: what the preset pointed at, or picked, sets the graph to. */
 export function PresetSettings({ name, config }: { name?: string; config?: GraphConfig }) {
   if (!name || !config) {

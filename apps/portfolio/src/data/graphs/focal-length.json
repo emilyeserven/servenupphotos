@@ -2,6 +2,7 @@
   "id": "focal-length",
   "kind": "preset",
   "name": "Focal length",
+  "description": "A dot for each photo, by how far the lens was zoomed.",
   "order": 4,
   "group": "technical-details",
   "graph": {

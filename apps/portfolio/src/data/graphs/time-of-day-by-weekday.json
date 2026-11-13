@@ -2,6 +2,7 @@
   "id": "time-of-day-by-weekday",
   "kind": "preset",
   "name": "Time of day by weekday",
+  "description": "Which days and times of day have the most photos.",
   "order": 1,
   "group": "time-heatmaps",
   "graph": {

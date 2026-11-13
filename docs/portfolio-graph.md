@@ -101,13 +101,30 @@ the heading, buttons, Adjust Graph box and Selected Photos stay in the column (*
 **Presets** are made on the pipeline's [Graph Presets](graph-presets.md) page and read from `graphs/GRAPHS.json`. The
 **Presets** tab opens a `SectionPicker` like the Grid's **Groups** (`preset-picker.tsx`): the preset groups on the left, each
 saying which of its presets the graph is set as, with the presets in no group as **Other** (or **Presets** when there
-are no groups) and the visitor's own as **Yours**, and the chosen group's presets on the right. Picking one sets the
+are no groups) and the visitor's own as **Yours**, and the chosen group's presets on the right as a gallery of tiles
+(`preset-tiles.tsx`), two to a row on phones and up to four beside them; the picker grows to fit every row of
+tiles (`SectionPicker`'s `fit`) rather than scrolling them, as the pickers in popovers do. Each tile has a small drawing of the preset's
+graph, its name (with a check while the graph is set as it) and a line saying what it shows: the preset's own
+**Description** from the pipeline, or else one made from its settings, such as **Heatmap of Month by Year** (`settingsCaption`
+in `preset-settings.tsx`). The visitor's own presets get tiles too, with the × to remove them over the drawing's corner.
+Picking one sets the
 graph's type, axes, split, order, how many values show and its Range group; the filters stay as they are. The **(i)**
 button over the presets opens the picker's info pane, further right (under the presets on phones), listing the settings of the preset pointed at, or the one the graph
 is set as (`preset-settings.tsx`). A group with no presets isn't shown. The committed presets are photo dot graphs of
 **Aperture**, **Exposure**, **ISO** and **Focal length**, an **Aperture by focal length** heatmap, bar graphs of
 **Lenses**, **Genre**, **Main color** and **Tags**, a **Where I zoom** photo dot graph, plus Month by year and Time of
 day by weekday heatmaps.
+
+Each drawing (`preset-thumbnail.tsx`) is the preset's graph of the photos the filters keep, worked out by the same
+functions the real graph uses (`graphData`, `scatterData` and `photoDots`), then turned into a few SVG shapes by
+`lib/graph-thumbnail.ts`: bars as rects, a line graph as one line per series, a pie as slices, a heatmap as a grid of
+cells as strong as their counts, a scatterplot as dots as big as theirs, and photo dots as stacks of dots (past 14 dots
+high, each dot stands for a few photos). It has no axes, names, tooltip or key, and is drawn faint until it's pointed
+at or picked. Drawings are kept once drawn for the photos the filters keep, so switching groups or pointing at presets
+doesn't draw them again; changing the filters does.
+
+> **Frontend analogy:** the drawing is a sparkline: the same selector the full chart reads, rendered as bare SVG, and
+> memoized by the filtered array and the preset's settings.
 
 Whenever the graph's settings match a preset, whether it was picked, set by hand in Adjust Graph, or opened from a
 link, that preset is checked off in the picker and its group names it (`presetIsOn` in `lib/graph-presets.ts`). A

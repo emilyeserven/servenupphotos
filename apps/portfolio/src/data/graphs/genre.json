@@ -2,6 +2,7 @@
   "id": "genre",
   "kind": "preset",
   "name": "Genre",
+  "description": "How many photos each genre has, most first.",
   "order": 1,
   "group": "subject-color",
   "graph": {

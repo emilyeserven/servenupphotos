@@ -2,6 +2,7 @@
   "id": "lenses",
   "kind": "preset",
   "name": "Lenses",
+  "description": "The five lenses with the most photos, most first.",
   "order": 1,
   "group": "gear",
   "graph": {

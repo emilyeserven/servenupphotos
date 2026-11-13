@@ -186,8 +186,9 @@ alike:
 - **Grouping is optional and starts off.** The first grouping is **None**, the list A to Z, and the others are Brand
   and Type. A list opens on None unless what's chosen is a group only another grouping lists.
 - **Choice lists are text.** A row in a list of choices (`ChoiceRow`) has its check, name and count, and no icon or
-  picture; pictures belong in the info pane. The one exception is the Graph page's **Graph type** list, whose rows
-  each have their type's icon (`ChoiceRow`'s `icon`), as the owner asked. Headings in a list, such as **DSLR**, are plain small text, not choices.
+  picture; pictures belong in the info pane. The exceptions are the Graph page's **Graph type** list, whose rows
+  each have their type's icon (`ChoiceRow`'s `icon`), as the owner asked, and its **Presets**, whose choices are tiles
+  with a small, faint drawing of each preset's graph and a caption: the drawing is the preset itself, not an icon. Headings in a list, such as **DSLR**, are plain small text, not choices.
 - **A button that opens filters clears them with an X.** Build it with `FilterPickerButton` (or wrap it in
   `ClearableTrigger`) and pass the `onClear` that clears its filters; never add a separate Clear button beside it.
 - **Defaults aren't news.** A section that's at its default says "Any" (or its default's name) in the list, and a button

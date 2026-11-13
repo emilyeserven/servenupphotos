@@ -122,7 +122,7 @@ function TabPanel({
   onSaved,
 }: GraphTabsProps & { tab: GraphTab; saved: SavedGraphs; onSaved: () => void }) {
   const panels: Record<GraphTab, () => ReactNode> = {
-    presets: () => <PresetPicker config={config} saved={saved} onPick={onPreset} />,
+    presets: () => <PresetPicker config={config} list={list} saved={saved} onPick={onPreset} />,
     adjust: () => <GraphControls config={config} onChange={onChange} list={list} />,
     filters: () => <CameraFilterBar photos={photos} bare />,
     save: () => <SavePresetForm saved={saved} config={config} onSaved={onSaved} />,

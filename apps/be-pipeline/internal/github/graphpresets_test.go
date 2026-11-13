@@ -14,17 +14,20 @@ func TestSaveGraphPreset(t *testing.T) {
 	_, c := newMainRepo(t, map[string]string{
 		dataRoot + "/graphs/camera.json": `{"id":"camera","kind":"group","name":"Camera settings","order":1}`,
 	})
-	preset := GraphPreset{ID: "aperture", Kind: "preset", Name: " Aperture ", Order: 2, Group: "camera", Graph: dotGraph, Spotlight: true}
+	preset := GraphPreset{ID: "aperture", Kind: "preset", Name: " Aperture ", Order: 2, Group: "camera", Graph: dotGraph, Spotlight: true, Description: " How wide the lens was open. "}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, preset); err != nil {
 		t.Fatalf("SaveGraphPreset() error = %v", err)
 	}
 	saved := staged(t, c, dataRoot+"/graphs/aperture.json")
-	if !strings.Contains(saved, `"name": "Aperture"`) || !strings.Contains(saved, `"group": "camera"`) || !strings.Contains(saved, `"x": "aperture"`) || !strings.Contains(saved, `"spotlight": true`) {
+	if !strings.Contains(saved, `"name": "Aperture"`) || !strings.Contains(saved, `"group": "camera"`) || !strings.Contains(saved, `"x": "aperture"`) || !strings.Contains(saved, `"spotlight": true`) || !strings.Contains(saved, `"description": "How wide the lens was open."`) {
 		t.Errorf("saved %s", saved)
 	}
 	ranged := GraphPreset{ID: "mid", Kind: "preset", Name: "Mid", Graph: &GraphSettings{Type: "photos", X: "aperture", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XFrom: "f/2", XTo: "f/8", MinPhotos: 5, XBucket: 2}}}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, ranged); err != nil {
 		t.Fatalf("SaveGraphPreset(ranges) error = %v", err)
+	}
+	if saved := staged(t, c, dataRoot+"/graphs/mid.json"); strings.Contains(saved, "description") {
+		t.Errorf("a preset with no description leaves it out: %s", saved)
 	}
 	if saved := staged(t, c, dataRoot+"/graphs/mid.json"); !strings.Contains(saved, `"xTo": "f/8"`) || !strings.Contains(saved, `"minPhotos": 5`) || !strings.Contains(saved, `"xBucket": 2`) || strings.Contains(saved, "yBucket") || strings.Contains(saved, "hideZeros") {
 		t.Errorf("ranges saved as %s, want xTo, minPhotos and xBucket only", saved)
@@ -40,18 +43,19 @@ func TestSaveGraphPreset(t *testing.T) {
 	if saved := staged(t, c, dataRoot+"/graphs/months.json"); !strings.Contains(saved, `"type": "heatmap"`) {
 		t.Errorf("heatmap saved as %s", saved)
 	}
-	group := GraphPreset{ID: "time", Kind: "group", Name: "Time", Group: "camera", Graph: dotGraph, Spotlight: true}
+	group := GraphPreset{ID: "time", Kind: "group", Name: "Time", Group: "camera", Graph: dotGraph, Spotlight: true, Description: "Times"}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, group); err != nil {
 		t.Fatalf("SaveGraphPreset(group) error = %v", err)
 	}
-	if saved := staged(t, c, dataRoot+"/graphs/time.json"); strings.Contains(saved, "graph") || strings.Contains(saved, "camera") || strings.Contains(saved, "spotlight") {
-		t.Errorf("a group keeps no graph, group or spotlight: %s", saved)
+	if saved := staged(t, c, dataRoot+"/graphs/time.json"); strings.Contains(saved, "graph") || strings.Contains(saved, "camera") || strings.Contains(saved, "spotlight") || strings.Contains(saved, "description") {
+		t.Errorf("a group keeps no graph, group, spotlight or description: %s", saved)
 	}
 	tests := []struct {
 		name   string
 		preset GraphPreset
 	}{
 		{"no name", GraphPreset{ID: "a", Kind: "preset", Graph: dotGraph}},
+		{"long description", GraphPreset{ID: "a", Kind: "preset", Name: "A", Description: strings.Repeat("a", 201), Graph: dotGraph}},
 		{"no graph", GraphPreset{ID: "a", Kind: "preset", Name: "A"}},
 		{"odd kind", GraphPreset{ID: "a", Kind: "folder", Name: "A"}},
 		{"odd type", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "radar", X: "iso", Measure: "count", Sort: "group"}}},

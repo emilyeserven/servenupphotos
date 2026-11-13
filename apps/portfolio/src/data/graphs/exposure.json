@@ -2,6 +2,7 @@
   "id": "exposure",
   "kind": "preset",
   "name": "Exposure",
+  "description": "A dot for each photo, by how long the shutter was open.",
   "order": 2,
   "group": "technical-details",
   "graph": {
