@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hangul", "crowd", "neon", "signage", "pedestrians", "night"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

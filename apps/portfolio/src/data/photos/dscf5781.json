@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["park", "path", "trees", "street-lights", "rain", "symmetry"],
-  "genres": [],
+  "genres": ["landscape", "street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

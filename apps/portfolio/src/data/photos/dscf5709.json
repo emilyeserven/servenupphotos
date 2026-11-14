@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["park", "path", "trees", "street-lights", "pedestrians", "rain"],
-  "genres": [],
+  "genres": ["street", "landscape"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

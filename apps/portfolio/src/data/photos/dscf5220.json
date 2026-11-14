@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["manhole-covers", "brick", "fallen-leaves", "autumn", "texture", "sidewalk"],
-  "genres": [],
+  "genres": ["abstract", "street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

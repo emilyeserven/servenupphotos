@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["chinatown", "murals", "street-art", "graffiti", "cars", "walls"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

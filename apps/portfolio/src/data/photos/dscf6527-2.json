@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hanok", "windows", "wood", "brick", "symmetry"],
-  "genres": [],
+  "genres": ["architecture", "abstract"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

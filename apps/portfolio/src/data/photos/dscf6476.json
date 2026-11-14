@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["giwa", "rooftops", "power-lines", "pagoda", "hills", "city"],
-  "genres": [],
+  "genres": ["cityscape", "architecture"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["church", "park", "trees", "skyscrapers", "street-lights", "autumn"],
-  "genres": [],
+  "genres": ["architecture", "cityscape"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

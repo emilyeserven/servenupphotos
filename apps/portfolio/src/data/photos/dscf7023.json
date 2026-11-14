@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hiking-trail", "stairs", "boardwalk", "forest", "pedestrians", "trees"],
-  "genres": [],
+  "genres": ["street", "landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

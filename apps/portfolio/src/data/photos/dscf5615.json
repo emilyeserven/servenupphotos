@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["autumn", "park", "trees", "grass", "street-lights"],
-  "genres": [],
+  "genres": ["landscape"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

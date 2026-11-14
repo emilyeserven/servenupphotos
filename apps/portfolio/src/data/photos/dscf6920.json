@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["boardwalk", "hiking-trail", "trees", "branches", "fence", "forest", "shadows", "path"],
-  "genres": [],
+  "tags": ["boardwalk", "hiking-trail", "trees", "branches", "fences", "forest", "shadows", "path"],
+  "genres": ["landscape", "nature"],
   "places": [
     {
       "relation": "",

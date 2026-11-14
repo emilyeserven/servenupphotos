@@ -114,17 +114,13 @@
   {
     "id": "calligraphy",
     "name": "calligraphy",
-    "description": "brush-written characters on signs, walls, lanterns and lamps"
+    "description": "brush-written characters on signs, walls, lanterns and lamps",
+    "parent": "typography"
   },
   {
     "id": "cameras",
     "name": "cameras",
     "description": "cameras in the frame, often photographers taking photos"
-  },
-  {
-    "id": "camouflage",
-    "name": "camouflage",
-    "description": "animals blending into the rocks, sand or leaves around them"
   },
   {
     "id": "canal",
@@ -197,11 +193,6 @@
     "id": "clocks",
     "name": "clocks",
     "description": "clocks on walls, towers and in stations"
-  },
-  {
-    "id": "clockwork",
-    "name": "clockwork",
-    "description": "the inner gears and mechanisms of clocks"
   },
   {
     "id": "clouds",
@@ -297,11 +288,6 @@
     "description": "older people going about their day"
   },
   {
-    "id": "emergency-vehicles",
-    "name": "emergency-vehicles",
-    "description": ""
-  },
-  {
     "id": "facade",
     "name": "facade",
     "description": "the outer faces of buildings, often seen straight on"
@@ -317,8 +303,8 @@
     "description": "leaves lying on the ground, paths and water"
   },
   {
-    "id": "fence",
-    "name": "fence",
+    "id": "fences",
+    "name": "fences",
     "description": "fences and railings of wood, metal or chain-link"
   },
   {
@@ -350,13 +336,8 @@
   {
     "id": "flight",
     "name": "flight",
-    "description": "birds caught in flight"
-  },
-  {
-    "id": "flowers",
-    "name": "flowers",
-    "description": "blooming flowers, from blossoming trees to bouquets",
-    "parent": "plants"
+    "description": "birds caught in flight",
+    "parent": "birds"
   },
   {
     "id": "fog",
@@ -453,12 +434,6 @@
     "parent": "houses"
   },
   {
-    "id": "hanzi",
-    "name": "hanzi",
-    "description": "Chinese characters, as seen on signs, lanterns and inscriptions in Chinese communities",
-    "parent": "letters"
-  },
-  {
     "id": "harbor",
     "name": "harbor",
     "description": "sheltered waters where boats are moored"
@@ -478,12 +453,6 @@
     "name": "hieroglyphs",
     "description": "ancient Egyptian picture writing carved into stone",
     "parent": "inscriptions"
-  },
-  {
-    "id": "highway",
-    "name": "highway",
-    "description": "multi-lane highways and major roads",
-    "parent": "road"
   },
   {
     "id": "hiking-trail",
@@ -544,11 +513,6 @@
     "parent": "plants"
   },
   {
-    "id": "kamon",
-    "name": "kamon",
-    "description": "a Japanese family or temple crest, often printed on curtains, roof tiles and lanterns"
-  },
-  {
     "id": "kanji",
     "name": "kanji",
     "description": "the Chinese-derived characters used in written Japanese",
@@ -606,7 +570,7 @@
   {
     "id": "manhole-covers",
     "name": "manhole-covers",
-    "description": ""
+    "description": "patterned or worn manhole covers set into streets and sidewalks"
   },
   {
     "id": "market",
@@ -631,17 +595,13 @@
   {
     "id": "moat",
     "name": "moat",
-    "description": "water-filled ditches around a castle"
+    "description": "water-filled ditches around a castle",
+    "parent": "castle"
   },
   {
     "id": "monuments",
     "name": "monuments",
     "description": "monuments, memorials and landmark structures"
-  },
-  {
-    "id": "moon",
-    "name": "moon",
-    "description": ""
   },
   {
     "id": "mosque",
@@ -682,12 +642,6 @@
     "parent": "fungi"
   },
   {
-    "id": "musicians",
-    "name": "musicians",
-    "description": "people playing music",
-    "parent": "street-performers"
-  },
-  {
     "id": "necropolis",
     "name": "necropolis",
     "description": "ancient burial grounds and city-like clusters of tombs",
@@ -726,7 +680,8 @@
   {
     "id": "omikuji",
     "name": "omikuji",
-    "description": "paper fortunes drawn at Japanese temples and shrines, tied to branches or racks to leave bad luck behind"
+    "description": "paper fortunes drawn at Japanese temples and shrines, tied to branches or racks to leave bad luck behind",
+    "parent": "prayers"
   },
   {
     "id": "padlocks",
@@ -736,7 +691,7 @@
   {
     "id": "pagoda",
     "name": "pagoda",
-    "description": ""
+    "description": "tiered towers of East Asian temples and palaces"
   },
   {
     "id": "palace",
@@ -802,11 +757,6 @@
     "parent": "trees"
   },
   {
-    "id": "pipes",
-    "name": "pipes",
-    "description": ""
-  },
-  {
     "id": "plants",
     "name": "plants",
     "description": "plants of all kinds, from moss and grass to trees"
@@ -835,7 +785,7 @@
   {
     "id": "power-lines",
     "name": "power-lines",
-    "description": "",
+    "description": "overhead electrical lines strung between utility poles along streets",
     "parent": "cables"
   },
   {
@@ -955,7 +905,8 @@
   {
     "id": "senjafuda",
     "name": "senjafuda",
-    "description": "name slips pasted by pilgrims on Japanese temple and shrine buildings"
+    "description": "name slips pasted by pilgrims on Japanese temple and shrine buildings",
+    "parent": "prayers"
   },
   {
     "id": "shadows",
@@ -978,11 +929,6 @@
     "name": "shimenawa",
     "description": "sacred straw ropes marking holy places at Shinto shrines",
     "parent": "shrine"
-  },
-  {
-    "id": "shingles",
-    "name": "shingles",
-    "description": "wooden shingles covering walls and roofs"
   },
   {
     "id": "shinto",
@@ -1022,9 +968,10 @@
     "description": "people or objects seen as dark shapes against light"
   },
   {
-    "id": "skylight",
-    "name": "skylight",
-    "description": "windows set into roofs and ceilings, including round oculi"
+    "id": "skylights",
+    "name": "skylights",
+    "description": "windows set into roofs and ceilings, including round oculi",
+    "parent": "windows"
   },
   {
     "id": "skyline",
@@ -1045,11 +992,6 @@
     "id": "snow",
     "name": "snow",
     "description": "snow-covered scenes and falling snow"
-  },
-  {
-    "id": "solar-panels",
-    "name": "solar-panels",
-    "description": ""
   },
   {
     "id": "sports",
@@ -1099,14 +1041,9 @@
     "description": "art made in public spaces, such as murals, paste-ups, stencils and stickers"
   },
   {
-    "id": "street-food",
-    "name": "street-food",
-    "description": ""
-  },
-  {
     "id": "street-lights",
     "name": "street-lights",
-    "description": "",
+    "description": "lamps on poles lighting streets, paths and parks",
     "parent": "lamps"
   },
   {
@@ -1117,7 +1054,8 @@
   {
     "id": "string-lights",
     "name": "string-lights",
-    "description": "strands of small lights or lanterns strung overhead"
+    "description": "strands of small lights or lanterns strung overhead",
+    "parent": "lamps"
   },
   {
     "id": "subway",
@@ -1128,12 +1066,6 @@
     "id": "sunrise",
     "name": "sunrise",
     "description": "the sun rising, and the light of early morning"
-  },
-  {
-    "id": "suspension-cables",
-    "name": "suspension-cables",
-    "description": "the main cables and hangers of suspension bridges",
-    "parent": "cables"
   },
   {
     "id": "symmetry",
@@ -1249,11 +1181,6 @@
     "id": "walls",
     "name": "walls",
     "description": "walls of stone, brick, plaster or concrete"
-  },
-  {
-    "id": "wanikuchi",
-    "name": "wanikuchi",
-    "description": "a flat bronze gong hung at the front of a Japanese temple or shrine hall and struck by swinging a rope"
   },
   {
     "id": "washitsu",

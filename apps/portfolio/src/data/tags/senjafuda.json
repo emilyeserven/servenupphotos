@@ -1,5 +1,6 @@
 {
   "id": "senjafuda",
   "name": "senjafuda",
-  "description": "name slips pasted by pilgrims on Japanese temple and shrine buildings"
+  "description": "name slips pasted by pilgrims on Japanese temple and shrine buildings",
+  "parent": "prayers"
 }

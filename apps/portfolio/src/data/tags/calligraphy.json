@@ -1,5 +1,6 @@
 {
   "id": "calligraphy",
   "name": "calligraphy",
-  "description": "brush-written characters on signs, walls, lanterns and lamps"
+  "description": "brush-written characters on signs, walls, lanterns and lamps",
+  "parent": "typography"
 }
