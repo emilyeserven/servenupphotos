@@ -18,7 +18,8 @@ const MAX_HEIGHT_SHARE = 0.9;
 
 /**
  * The Grid's **Natural** view: each photo at its own aspect ratio, in justified rows, with
- * vertical photos gathered into taller rows of their own so they show larger (`lib/natural-rows.ts`).
+ * vertical photos gathered into taller rows of their own so they show about as big as wide ones
+ * (`lib/natural-rows.ts`).
  * A full row's tiles grow together to fill its width, so they only get taller; the last rows keep
  * their starting size.
  */

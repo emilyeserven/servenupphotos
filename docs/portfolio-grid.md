@@ -71,20 +71,22 @@ The square is a 500px image, so at Large it can look a little soft on high-densi
 
 Each photo at its own aspect ratio (`?view=natural`), in justified rows (`components/natural-grid.tsx`,
 `lib/natural-rows.ts`): a row's tiles are all the same height, and a full row's tiles grow together to fill its width.
-Vertical photos (narrower than 0.9 of their height) are gathered into rows of their own, which start tall enough for
-each photo to be at least 400px wide (rows of wide photos start 250px tall), so they show larger instead of being squeezed between wide photos. Each row starts with the next photo in
+Vertical photos (narrower than 0.9 of their height) are gathered into rows of their own, which start taller so each
+vertical photo covers about the same area of the page as a 3:2 wide photo: a 2:3 photo's row starts 1.5 times as tall
+as a row of wide photos (the row's height is the wide height times √(1.5 ÷ the photo's width over height)). Matching
+area rather than width keeps a vertical photo from coming out several times bigger than the wide photos around it. Each row starts with the next photo in
 the sort and takes the next photos of the same kind until another wouldn't fit, so photos stay close to their place in
 the sort, moved at most a row or so. When too few photos of one kind are left to fill a row, the rest share rows of the
-wide height. The last row isn't stretched.
+wide height. The last row isn't stretched. At Large, rows of wide photos start 250px tall.
 
 Those starting sizes are for **Large**, the default. The other sizes move them:
 
-| Size            | Rows of wide photos start | Vertical photos start |
-| --------------- | ------------------------- | --------------------- |
-| Small           | 100px tall                | 200px wide            |
-| Medium          | 150px tall                | 300px wide            |
-| Large (default) | 250px tall                | 400px wide            |
-| X-Large         | 350px tall                | 500px wide            |
+| Size            | Rows of wide photos start | Rows of 2:3 vertical photos start |
+| --------------- | ------------------------- | --------------------------------- |
+| Small           | 100px tall                | 150px tall                        |
+| Medium          | 150px tall                | 225px tall                        |
+| Large (default) | 250px tall                | 375px tall                        |
+| X-Large         | 350px tall                | 525px tall                        |
 
 Since a full row's tiles grow to fill it, a bigger size means fewer photos per row rather than exactly that height:
 at X-Large on a laptop, a row of wide photos often holds two. No tile grows taller than 90% of the window (`90vh`); a row whose tiles

@@ -17,14 +17,18 @@ const GAP_PX = 12;
 
 /** How big the rows start out, before their tiles grow to fill them. */
 export interface RowSizes {
-  /** How tall a row of wide (or square) photos is at least, in pixels. */
+  /**
+   * How tall a row of wide (or square) photos is at least, in pixels. Rows of vertical photos
+   * start taller, so each vertical photo covers about as much of the page as a 3:2 wide one.
+   */
   wide: number;
-  /** How wide a vertical photo is at least, in pixels, so its row is tall enough to show it large. */
-  tall: number;
 }
 
 /** The width over height below which a photo counts as vertical. */
 const TALL_RATIO = 0.9;
+
+/** The shape of a typical wide photo, 3:2, that vertical photos are matched to in size. */
+const WIDE_RATIO = 3 / 2;
 
 /** A photo's width over its height. */
 export function ratioOf(photo: Shaped): number {
@@ -36,9 +40,14 @@ function isTall(photo: Shaped): boolean {
   return ratioOf(photo) < TALL_RATIO;
 }
 
-/** How tall a photo's row is at least, for picking a sharp enough version of it. */
+/**
+ * How tall a photo's row is at least, in pixels. A vertical photo's row is as tall as it takes for
+ * the photo to cover the same area as a 3:2 wide photo in a row `sizes.wide` tall, so a 2:3 photo's
+ * row is 1.5 times as tall: vertical photos come out about as big as wide ones, not several times bigger.
+ */
 export function rowHeightOf(photo: Shaped, sizes: RowSizes): number {
-  return isTall(photo) ? sizes.tall / ratioOf(photo) : sizes.wide;
+  if (!isTall(photo)) return sizes.wide;
+  return sizes.wide * Math.sqrt(WIDE_RATIO / ratioOf(photo));
 }
 
 /**
@@ -46,8 +55,8 @@ export function rowHeightOf(photo: Shaped, sizes: RowSizes): number {
  * putting vertical photos in rows of their own, which are taller, so they show larger. Each row
  * starts with the first photo not yet placed and takes the next photos of the same kind until
  * another wouldn't fit. When too few of that kind are left to fill a row, the rest are mixed into
- * rows of the wide height. A row of vertical photos is tall enough for its first photo to be
- * `sizes.tall` pixels wide (400px at the Natural tiles' starting size, Large), but never taller than maxHeight pixels.
+ * rows of the wide height. A row of vertical photos is tall enough for its first photo to cover
+ * about the same area as a 3:2 wide photo (`rowHeightOf`), but never taller than maxHeight pixels.
  */
 export function naturalRows<T extends Shaped>(
   photos: T[],

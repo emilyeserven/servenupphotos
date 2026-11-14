@@ -66,14 +66,14 @@ export function sizeParam(view: SizedView, size: GridSize): GridSize | undefined
 }
 
 /**
- * How big Natural rows start out at each size: the height of rows of wide photos and the width of
- * vertical photos. Large is the size they had before there were smaller ones.
+ * How big Natural rows start out at each size: the height of rows of wide photos, which rows of
+ * vertical photos are matched to (`rowHeightOf`). Large is the size they had before there were smaller ones.
  */
 export const NATURAL_ROW_SIZES: Record<GridSize, RowSizes> = {
-  small: { wide: 100, tall: 200 },
-  medium: { wide: 150, tall: 300 },
-  large: { wide: 250, tall: 400 },
-  xlarge: { wide: 350, tall: 500 },
+  small: { wide: 100 },
+  medium: { wide: 150 },
+  large: { wide: 250 },
+  xlarge: { wide: 350 },
 };
 
 /** Square tiles' columns at each size: fewer columns make bigger tiles. */
