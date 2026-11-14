@@ -207,7 +207,9 @@ This runs the production builds, so code changes need another `docker compose up
 
 #### Raspberry Pi
 
-Requires a Raspberry Pi 3, 4 or 5 running **Raspberry Pi OS 64-bit** (arm64). The images are built on the Pi itself.
+Requires a Raspberry Pi 4 or 5 running **Raspberry Pi OS 64-bit** (arm64), with 4 GB of RAM or more: building the
+images and resizing full-size photos both take a lot of memory. The images are built on the Pi itself. Deploy with
+[Coolify](#with-coolify) or with Docker Compose directly (below).
 
 1. Install Docker ([Debian install guide](https://docs.docker.com/engine/install/debian/)), and let your user run it without `sudo` ([post-install steps](https://docs.docker.com/engine/install/linux-postinstall/)):
 
@@ -231,6 +233,27 @@ Requires a Raspberry Pi 3, 4 or 5 running **Raspberry Pi OS 64-bit** (arm64). Th
 3. Open `http://<pi-hostname>.local:8080` (e.g. `http://raspberrypi.local:8080`) from any device on the same network.
 
 Both services use `restart: unless-stopped`, so with Docker enabled at boot the pipeline comes back up after the Pi restarts.
+
+#### With Coolify
+
+[Coolify](https://coolify.io/docs/get-started/installation) supports Raspberry Pi OS 64-bit and needs at least 2 cores
+and 2 GB of RAM of its own ([requirements](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/start-with-self-hosted.mdx)).
+Only the pipeline goes on Coolify; the portfolio stays on GitHub Pages.
+
+1. In Coolify, add a resource from this repository with the **Docker Compose** build pack and `/docker-compose.yml` as
+   the Compose file.
+2. Under **Environment Variables**, set `PIPELINE_PORT` to a host port no other app on the Pi uses (it starts at
+   `8080`, the default in `docker-compose.yml`, and Coolify keeps your value when the Compose file changes;
+   [defaults](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/applications/builds/docker-compose.mdx)).
+3. Leave the services' domains empty and deploy. Open `http://<pi-hostname>:<PIPELINE_PORT>`, such as the Pi's
+   Tailscale name; the pipeline has no login, so keep that port on a private network like a tailnet.
+
+The `./apps/portfolio/src/data` folder mounted into `be-pipeline` starts empty under Coolify, which keeps relative
+bind folders in its own folder; the backend then downloads the photo data from GitHub instead. Settings stay on the
+`pipeline-data` volume across deploys.
+
+> **Frontend analogy:** Coolify is a self-hosted Vercel dashboard on the Pi: it pulls the repo, runs
+> `docker compose up --build` for you on each deploy, and keeps the environment variables in its UI instead of `.env`.
 
 #### Day-to-day commands
 
