@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["inscriptions", "monuments", "stones", "texture", "shadows", "walls"],
   "genres": [],
   "places": [],
   "noGps": false,

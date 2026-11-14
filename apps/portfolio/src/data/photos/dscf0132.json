@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["observation-towers", "skyscrapers", "road", "traffic", "hills", "trees"],
   "genres": [],
   "places": [],
   "noGps": false,

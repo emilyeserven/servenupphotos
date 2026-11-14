@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["hangul", "signage", "storefronts", "sidewalk", "skyscrapers", "posters"],
   "genres": [],
   "places": [],
   "noGps": false,

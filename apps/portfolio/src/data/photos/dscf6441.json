@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["hangul", "signage", "neon", "pedestrians", "cars", "night"],
   "genres": [],
   "places": [],
   "noGps": false,

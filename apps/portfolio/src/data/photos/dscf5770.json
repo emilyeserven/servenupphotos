@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["church", "park", "trees", "skyscrapers", "street-lights", "autumn"],
   "genres": [],
   "places": [],
   "noGps": false,

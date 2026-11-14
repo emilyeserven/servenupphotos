@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["hanzi", "chinatown", "flags", "facade", "storefronts", "crosswalk", "pedestrians"],
   "genres": [],
   "places": [],
   "noGps": false,

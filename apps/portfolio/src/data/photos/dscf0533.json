@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["power-lines", "cables", "signage", "cars", "pedestrians", "sidewalk"],
   "genres": [],
   "places": [],
   "noGps": false,

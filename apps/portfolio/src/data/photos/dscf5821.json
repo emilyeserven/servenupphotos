@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["brick", "ironwork", "fence", "flags", "balconies", "cars"],
   "genres": [],
   "places": [],
   "noGps": false,

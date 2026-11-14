@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["hangul", "road", "signposts", "street-lights", "storefronts", "night"],
   "genres": [],
   "places": [],
   "noGps": false,

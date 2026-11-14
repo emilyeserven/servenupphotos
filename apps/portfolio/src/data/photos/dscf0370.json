@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["hangul", "alley", "signage", "lanterns", "string-lights", "pedestrians"],
   "genres": [],
   "places": [],
   "noGps": false,

@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["hanja", "hangul", "storefronts", "signage", "pedestrians", "lanterns"],
   "genres": [],
   "places": [],
   "noGps": false,
