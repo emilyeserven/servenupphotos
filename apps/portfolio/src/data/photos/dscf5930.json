@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["subway", "platform", "commuters", "train-station", "shadows"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

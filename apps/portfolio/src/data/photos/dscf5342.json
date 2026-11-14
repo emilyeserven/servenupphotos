@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["buddhism", "chinatown", "murals", "street-art", "faces", "cars"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

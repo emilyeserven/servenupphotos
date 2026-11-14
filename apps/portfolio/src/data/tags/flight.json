@@ -1,5 +1,6 @@
 {
   "id": "flight",
   "name": "flight",
-  "description": "birds caught in flight"
+  "description": "birds caught in flight",
+  "parent": "birds"
 }

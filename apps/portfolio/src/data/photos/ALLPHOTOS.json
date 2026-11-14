@@ -49,7 +49,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["canal", "houses", "facade", "bicycles", "fence", "windows"],
+    "tags": ["canal", "houses", "facade", "bicycles", "fences", "windows"],
     "genres": ["architecture", "street"],
     "places": [],
     "spotlightZones": [],
@@ -3030,7 +3030,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["necropolis", "pyramids", "doorways", "stairs", "stones", "fence", "tourists"],
+    "tags": ["necropolis", "pyramids", "doorways", "stairs", "stones", "fences", "tourists"],
     "genres": ["architecture"],
     "places": [
       {
@@ -4658,7 +4658,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["bicycles", "signage", "fence", "sidewalk", "windows", "walls"],
+    "tags": ["bicycles", "signage", "fences", "sidewalk", "windows", "walls"],
     "genres": ["street", "architecture"],
     "places": [
       {
@@ -6277,7 +6277,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["flowers", "monuments"],
+    "tags": ["plants", "monuments"],
     "genres": ["street"],
     "places": [
       {
@@ -9531,7 +9531,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["volleyball", "beach", "crowd", "sand", "repetition", "patterns", "shadows"],
+    "tags": ["volleyball", "beach", "crowd", "sand", "repetition", "patterns", "shadows", "sports"],
     "genres": ["street", "abstract"],
     "places": [],
     "spotlightZones": [],
@@ -9797,7 +9797,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["tall-grass", "boardwalk", "path", "fence", "trees"],
+    "tags": ["tall-grass", "boardwalk", "path", "fences", "trees"],
     "genres": ["portrait"],
     "places": [],
     "spotlightZones": [],
@@ -10879,7 +10879,7 @@
     "customLens": null,
     "albums": [],
     "tags": [
-      "suspension-cables",
+      "cables",
       "bridges",
       "footbridges",
       "birds",
@@ -12506,7 +12506,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["suspension-cables", "bridges", "skyline", "skyscrapers", "city", "steel", "patterns"],
+    "tags": ["cables", "bridges", "skyline", "skyscrapers", "city", "steel", "patterns"],
     "genres": ["architecture", "street"],
     "places": [
       {
@@ -13876,7 +13876,7 @@
       "skyline",
       "skyscrapers",
       "ivy",
-      "fence",
+      "fences",
       "pedestrians",
       "trees"
     ],
@@ -15235,7 +15235,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": ["timeline-spotlight"],
-    "tags": ["clockwork", "clocks", "gears", "machinery", "steel"],
+    "tags": ["gears", "clocks", "machinery", "steel"],
     "genres": ["abstract", "architecture"],
     "places": [
       {
@@ -17414,7 +17414,16 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["hills", "road", "pedestrians", "silhouettes", "cars", "trees", "scale"],
+    "tags": [
+      "hills",
+      "road",
+      "pedestrians",
+      "silhouettes",
+      "cars",
+      "trees",
+      "scale",
+      "manhole-covers"
+    ],
     "genres": ["street"],
     "places": [],
     "spotlightZones": [],
@@ -17628,7 +17637,7 @@
       "peakChroma": 18.69,
       "samples": 9828
     },
-    "notes": "Shows a manhole cover; 'manhole-cover' isn't a tag, since only 2 photos have one.",
+    "notes": "Shows a manhole cover; 'manhole-cover' isn't a tag, since only 2 photos have one.\n\nShows a manhole cover, now tagged 'manhole-covers' (4 photos have one).",
     "similarPhotos": [492, 490, 494, 444, 158, 412]
   },
   {
@@ -18759,7 +18768,7 @@
     "customLens": null,
     "albums": [],
     "tags": [
-      "skylight",
+      "skylights",
       "patterns",
       "glass",
       "steel",
@@ -20655,7 +20664,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["silhouettes", "pedestrians", "signage", "skylight", "covered-street"],
+    "tags": ["silhouettes", "pedestrians", "signage", "skylights", "covered-street"],
     "genres": ["street", "architecture"],
     "places": [
       {
@@ -22273,7 +22282,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["kanji", "typography", "inscriptions", "wood", "texture"],
+    "tags": ["kanji", "typography", "inscriptions", "wood", "texture", "letters"],
     "genres": ["abstract"],
     "places": [],
     "spotlightZones": [],
@@ -24966,7 +24975,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["autumn", "forest", "path", "fence", "pedestrians", "trees", "fallen-leaves"],
+    "tags": ["autumn", "forest", "path", "fences", "pedestrians", "trees", "fallen-leaves"],
     "genres": ["landscape", "street"],
     "places": [
       {
@@ -26599,7 +26608,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["giwa", "alley", "crowd", "tourists", "umbrellas", "walls", "houses"],
+    "tags": ["giwa", "alley", "crowd", "tourists", "umbrellas", "walls", "houses", "hanok"],
     "genres": ["street", "architecture"],
     "places": [
       {
@@ -26826,7 +26835,7 @@
       "peakChroma": 16.79,
       "samples": 9768
     },
-    "notes": "Shows hanok houses in Bukchon; 'hanok' isn't a tag, since only 2 photos have it.",
+    "notes": "Shows hanok houses in Bukchon; 'hanok' isn't a tag, since only 2 photos have it.\n\nShows hanok houses in Bukchon, now tagged 'hanok'.",
     "similarPhotos": [210, 212, 127, 126, 124, 357],
     "faces": [
       {
@@ -26997,7 +27006,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["palace", "apartments", "rooftops", "city", "mountains", "haze"],
+    "tags": ["palace", "apartments", "rooftops", "city", "mountains", "haze", "hanok", "pagoda"],
     "genres": ["cityscape", "architecture"],
     "places": [],
     "spotlightZones": [],
@@ -27219,7 +27228,7 @@
       "peakChroma": 21.53,
       "samples": 9975
     },
-    "notes": "Shows hanok roofs and a pagoda; 'hanok' and 'pagoda' aren't tags, since only 1–2 photos have them.",
+    "notes": "Shows hanok roofs and a pagoda; 'hanok' and 'pagoda' aren't tags, since only 1–2 photos have them.\n\nShows hanok roofs and a pagoda, now tagged 'hanok' and 'pagoda'.",
     "similarPhotos": [395, 396, 387, 461, 388, 419]
   },
   {
@@ -27499,7 +27508,7 @@
       "peakChroma": 21.97,
       "samples": 10050
     },
-    "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.",
+    "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.\n\nShows street food; 'street-food' isn't a tag, since only 2 photos have it.",
     "similarPhotos": [306, 302, 282, 250, 319, 304]
   },
   {
@@ -31369,7 +31378,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["autumn", "boardwalk", "hiking-trail", "forest", "fence", "fallen-leaves"],
+    "tags": ["autumn", "boardwalk", "hiking-trail", "forest", "fences", "fallen-leaves"],
     "genres": ["landscape", "nature"],
     "places": [
       {
@@ -35504,12 +35513,12 @@
       "hiking-trail",
       "trees",
       "branches",
-      "fence",
+      "fences",
       "forest",
       "shadows",
       "path"
     ],
-    "genres": [],
+    "genres": ["landscape", "nature"],
     "places": [
       {
         "relation": "",
@@ -35778,8 +35787,8 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["skyline", "city", "apartments", "pine-trees", "tourists", "fence"],
-    "genres": [],
+    "tags": ["skyline", "city", "apartments", "pine-trees", "tourists", "fences"],
+    "genres": ["cityscape", "landscape"],
     "places": [
       {
         "relation": "",
@@ -36078,7 +36087,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["city", "river", "bridges", "apartments", "traffic", "aerial-view"],
-    "genres": [],
+    "genres": ["cityscape"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -39861,7 +39870,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["fallen-leaves", "autumn", "ironwork", "patterns", "texture"],
+    "tags": ["fallen-leaves", "autumn", "ironwork", "patterns", "texture", "manhole-covers"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -40074,7 +40083,7 @@
       "peakChroma": 9.32,
       "samples": 9900
     },
-    "notes": "Shows a ginkgo leaf on a manhole cover; 'ginkgo' and 'manhole-cover' aren't tags, since only 1–2 photos have them.",
+    "notes": "Shows a ginkgo leaf on a manhole cover; 'ginkgo' and 'manhole-cover' aren't tags, since only 1–2 photos have them.\n\nShows a ginkgo leaf on a manhole cover; 'ginkgo' isn't a tag, since only 1 photo has one.",
     "similarPhotos": [478, 397, 119, 53, 477, 183]
   },
   {
@@ -40929,7 +40938,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["hangul", "signage", "typography", "fence", "humor"],
+    "tags": ["hangul", "signage", "typography", "fences", "humor", "hanja"],
     "genres": [],
     "places": [
       {
@@ -41147,7 +41156,7 @@
       "peakChroma": 16.9,
       "samples": 9975
     },
-    "notes": "Shows hanja characters; 'hanja' isn't a tag, since only 2 photos have them.",
+    "notes": "Shows hanja characters; 'hanja' isn't a tag, since only 2 photos have them.\n\nShows hanja characters, now tagged 'hanja'.",
     "similarPhotos": [327, 231, 319, 120, 251, 250]
   },
   {
@@ -46102,7 +46111,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["skylight", "patterns", "minimalism", "night", "texture"],
+    "tags": ["skylights", "patterns", "minimalism", "night", "texture"],
     "genres": [],
     "places": [
       {
@@ -48540,7 +48549,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["clockwork", "gears", "machinery", "steel", "cables"],
+    "tags": ["gears", "machinery", "steel", "cables"],
     "genres": [],
     "places": [
       {
@@ -48810,7 +48819,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["clockwork", "gears", "machinery", "steel", "symmetry"],
+    "tags": ["gears", "machinery", "steel", "symmetry"],
     "genres": [],
     "places": [
       {
@@ -52365,7 +52374,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["highway", "road", "cars", "pedestrians", "haze", "trees", "signage"],
+    "tags": ["road", "cars", "pedestrians", "haze", "trees", "signage"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -54006,7 +54015,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["signage", "typography", "humor", "trees", "ivy", "fence"],
+    "tags": ["signage", "typography", "humor", "trees", "ivy", "fences"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -57506,7 +57515,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["street-performers", "park", "pedestrians", "benches", "musicians"],
+    "tags": ["street-performers", "park", "pedestrians", "benches"],
     "genres": [],
     "places": [
       {
@@ -58857,7 +58866,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["night", "clouds", "countryside", "night-sky", "fence", "silhouettes"],
+    "tags": ["night", "clouds", "countryside", "night-sky", "fences", "silhouettes"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -60996,7 +61005,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": ["timeline-spotlight"],
-    "tags": ["highway", "bridges", "columns", "steel", "houses", "snow", "winter"],
+    "tags": ["road", "bridges", "columns", "steel", "houses", "snow", "winter"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -61271,7 +61280,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["storefronts", "signage", "doors", "windows", "bicycles", "shingles", "sidewalk"],
+    "tags": ["storefronts", "signage", "doors", "windows", "bicycles", "wood", "sidewalk"],
     "genres": [],
     "places": [
       {
@@ -61541,7 +61550,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["night", "crowd", "storefronts", "shingles", "signage", "sidewalk"],
+    "tags": ["night", "crowd", "storefronts", "wood", "signage", "sidewalk"],
     "genres": [],
     "places": [
       {
@@ -63708,7 +63717,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["art-installations", "subway", "faces", "fence", "patterns"],
+    "tags": ["art-installations", "subway", "faces", "fences", "patterns"],
     "genres": [],
     "places": [
       {
@@ -64790,7 +64799,17 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["hanbok", "dancheong", "giwa", "palace", "windows", "columns", "tourists", "trees"],
+    "tags": [
+      "hanbok",
+      "dancheong",
+      "giwa",
+      "palace",
+      "windows",
+      "columns",
+      "tourists",
+      "trees",
+      "traditional-clothing"
+    ],
     "genres": [],
     "places": [
       {
@@ -66422,7 +66441,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["padlocks", "chains", "rust", "fence", "gates", "urban-decay"],
+    "tags": ["padlocks", "chains", "rust", "fences", "gates", "urban-decay"],
     "genres": [],
     "places": [
       {
@@ -66692,7 +66711,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["padlocks", "fence", "city"],
+    "tags": ["padlocks", "fences", "city"],
     "genres": [],
     "places": [
       {
@@ -69145,7 +69164,7 @@
       "forest",
       "hiking-trail",
       "footbridges",
-      "fence",
+      "fences",
       "stream",
       "fallen-leaves",
       "trees"
@@ -74055,7 +74074,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["skylight", "steel", "patterns", "symmetry", "minimalism", "interior", "glass"],
+    "tags": ["skylights", "steel", "patterns", "symmetry", "minimalism", "interior", "glass"],
     "genres": [],
     "places": [
       {
@@ -74857,7 +74876,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["bridges", "steel", "graffiti", "signage", "symmetry", "path", "fence"],
+    "tags": ["bridges", "steel", "graffiti", "signage", "symmetry", "path", "fences"],
     "genres": [],
     "places": [
       {
@@ -78130,7 +78149,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["footbridges", "pedestrians", "tourists", "water", "houses", "mountains", "fence"],
+    "tags": ["footbridges", "pedestrians", "tourists", "water", "houses", "mountains", "fences"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -79216,7 +79235,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["hanbok", "palace", "stones", "inscriptions", "repetition"],
+    "tags": ["hanbok", "palace", "stones", "inscriptions", "repetition", "hanja"],
     "genres": [],
     "places": [
       {
@@ -79447,7 +79466,7 @@
       "peakChroma": 10.63,
       "samples": 9900
     },
-    "notes": "Shows pumgyeseok rank stones inscribed in hanja; 'pumgyeseok' and 'hanja' aren't tags, since only 1–2 photos have them.",
+    "notes": "Shows pumgyeseok rank stones inscribed in hanja; 'pumgyeseok' and 'hanja' aren't tags, since only 1–2 photos have them.\n\nShows pumgyeseok rank stones inscribed in hanja; 'pumgyeseok' isn't a tag, since only 1 photo has them.",
     "similarPhotos": [129, 213, 128, 126, 210, 389]
   },
   {
@@ -83013,7 +83032,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["flowers", "park", "path", "trees", "stones", "pedestrians"],
+    "tags": ["plants", "park", "path", "trees", "stones", "pedestrians"],
     "genres": [],
     "places": [
       {
@@ -83284,7 +83303,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["sports", "autumn", "fence", "trees", "typography"],
+    "tags": ["sports", "autumn", "fences", "trees", "typography"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -87047,7 +87066,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["street-art", "stickers", "fence", "padlocks", "signage", "alley"],
+    "tags": ["street-art", "stickers", "fences", "padlocks", "signage", "alley"],
     "genres": [],
     "places": [
       {
@@ -91654,7 +91673,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["snow", "winter", "humor", "park", "fence"],
+    "tags": ["snow", "winter", "humor", "park", "fences"],
     "genres": [],
     "places": [
       {
@@ -91925,7 +91944,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["hiking-trail", "stairs", "fence", "rope", "plants", "houses"],
+    "tags": ["hiking-trail", "stairs", "fences", "rope", "plants", "houses"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -94093,7 +94112,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["graffiti", "pedestrians", "shadows", "walls", "sidewalk", "fence"],
+    "tags": ["graffiti", "pedestrians", "shadows", "walls", "sidewalk", "fences"],
     "genres": [],
     "places": [
       {

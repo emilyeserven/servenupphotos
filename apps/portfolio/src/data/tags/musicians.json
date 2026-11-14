@@ -1,6 +1,0 @@
-{
-  "id": "musicians",
-  "name": "musicians",
-  "description": "people playing music",
-  "parent": "street-performers"
-}

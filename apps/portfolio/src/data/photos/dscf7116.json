@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["skyline", "city", "apartments", "pine-trees", "tourists", "fence"],
-  "genres": [],
+  "tags": ["skyline", "city", "apartments", "pine-trees", "tourists", "fences"],
+  "genres": ["cityscape", "landscape"],
   "places": [
     {
       "relation": "",

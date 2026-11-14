@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hanok", "giwa", "hanbok", "tourists", "path", "observation-towers"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

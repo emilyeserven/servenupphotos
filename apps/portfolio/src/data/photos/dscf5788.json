@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["monuments", "sculpture", "birds", "carvings", "fallen-leaves", "autumn"],
-  "genres": [],
+  "genres": ["architecture"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

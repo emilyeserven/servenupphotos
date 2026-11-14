@@ -1,5 +1,6 @@
 {
   "id": "moat",
   "name": "moat",
-  "description": "water-filled ditches around a castle"
+  "description": "water-filled ditches around a castle",
+  "parent": "castle"
 }

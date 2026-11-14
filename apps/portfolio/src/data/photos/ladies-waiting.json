@@ -48,7 +48,17 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["hanbok", "dancheong", "giwa", "palace", "windows", "columns", "tourists", "trees"],
+  "tags": [
+    "hanbok",
+    "dancheong",
+    "giwa",
+    "palace",
+    "windows",
+    "columns",
+    "tourists",
+    "trees",
+    "traditional-clothing"
+  ],
   "genres": [],
   "places": [
     {

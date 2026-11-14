@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["city", "river", "bridges", "apartments", "traffic", "aerial-view"],
-  "genres": [],
+  "genres": ["cityscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

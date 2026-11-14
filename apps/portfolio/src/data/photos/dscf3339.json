@@ -50,15 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "bridges",
-    "suspension-cables",
-    "palm-trees",
-    "water",
-    "city",
-    "twilight",
-    "silhouettes"
-  ],
+  "tags": ["bridges", "cables", "palm-trees", "water", "city", "twilight", "silhouettes"],
   "genres": ["landscape", "cityscape", "architecture"],
   "places": [],
   "spotlightZones": [],

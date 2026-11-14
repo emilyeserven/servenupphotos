@@ -1,6 +1,0 @@
-{
-  "id": "highway",
-  "name": "highway",
-  "description": "multi-lane highways and major roads",
-  "parent": "road"
-}

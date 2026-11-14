@@ -1,5 +1,6 @@
 {
   "id": "string-lights",
   "name": "string-lights",
-  "description": "strands of small lights or lanterns strung overhead"
+  "description": "strands of small lights or lanterns strung overhead",
+  "parent": "lamps"
 }

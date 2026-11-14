@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["brick", "doorways", "ironwork", "rust", "urban-decay"],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

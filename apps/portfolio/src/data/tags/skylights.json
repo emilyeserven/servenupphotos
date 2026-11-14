@@ -1,0 +1,6 @@
+{
+  "id": "skylights",
+  "name": "skylights",
+  "description": "windows set into roofs and ceilings, including round oculi",
+  "parent": "windows"
+}

@@ -1,6 +1,6 @@
 {
   "id": "street-lights",
   "name": "street-lights",
-  "description": "",
+  "description": "lamps on poles lighting streets, paths and parks",
   "parent": "lamps"
 }
