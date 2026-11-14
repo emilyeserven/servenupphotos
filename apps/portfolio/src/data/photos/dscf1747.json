@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["road", "signposts", "hills", "street-lights", "sidewalk", "night"],
   "genres": [],
   "places": [],
   "noGps": false,

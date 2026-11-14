@@ -297,6 +297,11 @@
     "description": "older people going about their day"
   },
   {
+    "id": "emergency-vehicles",
+    "name": "emergency-vehicles",
+    "description": ""
+  },
+  {
     "id": "facade",
     "name": "facade",
     "description": "the outer faces of buildings, often seen straight on"
@@ -433,6 +438,24 @@
     "id": "hangul",
     "name": "hangul",
     "description": "the Korean alphabet on signs, posters and street art",
+    "parent": "letters"
+  },
+  {
+    "id": "hanja",
+    "name": "hanja",
+    "description": "Chinese characters as used in Korean writing, seen on older signs, monuments and inscriptions",
+    "parent": "letters"
+  },
+  {
+    "id": "hanok",
+    "name": "hanok",
+    "description": "a traditional Korean house with a wooden frame, tiled roof and earth-and-stone walls",
+    "parent": "houses"
+  },
+  {
+    "id": "hanzi",
+    "name": "hanzi",
+    "description": "Chinese characters, as seen on signs, lanterns and inscriptions in Chinese communities",
     "parent": "letters"
   },
   {
@@ -581,6 +604,11 @@
     "description": "machines and their moving parts"
   },
   {
+    "id": "manhole-covers",
+    "name": "manhole-covers",
+    "description": ""
+  },
+  {
     "id": "market",
     "name": "market",
     "description": "markets and market halls with stalls and shops"
@@ -609,6 +637,11 @@
     "id": "monuments",
     "name": "monuments",
     "description": "monuments, memorials and landmark structures"
+  },
+  {
+    "id": "moon",
+    "name": "moon",
+    "description": ""
   },
   {
     "id": "mosque",
@@ -701,6 +734,11 @@
     "description": "padlocks on fences, gates and chains"
   },
   {
+    "id": "pagoda",
+    "name": "pagoda",
+    "description": ""
+  },
+  {
     "id": "palace",
     "name": "palace",
     "description": "royal palaces, with their halls, gates and courtyards"
@@ -762,6 +800,11 @@
     "name": "pine-trees",
     "description": "pine trees in forests, gardens and temple grounds",
     "parent": "trees"
+  },
+  {
+    "id": "pipes",
+    "name": "pipes",
+    "description": ""
   },
   {
     "id": "plants",
@@ -1004,6 +1047,11 @@
     "description": "snow-covered scenes and falling snow"
   },
   {
+    "id": "solar-panels",
+    "name": "solar-panels",
+    "description": ""
+  },
+  {
     "id": "sports",
     "name": "sports",
     "description": "people playing or watching sports, and the courts, fields and gear they use"
@@ -1049,6 +1097,11 @@
     "id": "street-art",
     "name": "street-art",
     "description": "art made in public spaces, such as murals, paste-ups, stencils and stickers"
+  },
+  {
+    "id": "street-food",
+    "name": "street-food",
+    "description": ""
   },
   {
     "id": "street-lights",

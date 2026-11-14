@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["subway", "trains", "platform", "train-station"],
   "genres": [],
   "places": [],
   "noGps": false,

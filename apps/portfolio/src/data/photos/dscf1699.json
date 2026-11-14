@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["hangul", "hanja", "inscriptions", "calligraphy", "walls"],
   "genres": [],
   "places": [],
   "noGps": false,

@@ -50,7 +50,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "street-food",
+    "market",
+    "rain",
+    "umbrellas",
+    "reflections",
+    "pedestrians",
+    "neon",
+    "night"
+  ],
   "genres": [],
   "places": [],
   "noGps": false,
