@@ -15,9 +15,9 @@ import (
 // after the page that asked for it stops waiting (see sharedRead).
 const snapshotTimeout = 3 * time.Minute
 
-// maxChangedBlobs is how many new files readChanged reads in one query
-// before reading every file again is simpler.
-const maxChangedBlobs = 100
+// blobsPerQuery is how many files readBlobs reads the content of in one
+// GraphQL query: small enough for GitHub to answer well inside its time limit.
+const blobsPerQuery = 100
 
 // stillReading is the answer to a page that stopped waiting for a snapshot
 // still being read.
@@ -100,31 +100,6 @@ func addBlobs(known map[string][]byte, s *snapshot) {
 	}
 }
 
-// readChanged reads root at commit as its file names and blob SHAs only, with
-// the content of the files known already (by blob SHA) reused, and the rest
-// read in one more query. A merge of the photo data pull request leaves the
-// base branch with the files the pipeline last read, so this costs one cheap
-// query instead of the content of every file again. ok is false, with nothing
-// read but the names, when more than maxChangedBlobs files are new.
-func (c *Client) readChanged(ctx context.Context, t target, root, commit string, known map[string][]byte) (*snapshot, bool, *PublishError) {
-	answer, perr := c.readFolders(ctx, t, root, commit, treeQuery)
-	if perr != nil {
-		return nil, false, perr
-	}
-	s := &snapshot{commit: commit, tree: answer.Repository.Commit.Tree.OID, files: map[string]snapFile{}}
-	missing := map[string]string{}
-	for folder, tree := range answer.folders() {
-		addKnown(s, root+"/"+folder, tree, known, missing)
-	}
-	if len(missing) > maxChangedBlobs {
-		return nil, false, nil
-	}
-	if perr := c.readBlobs(ctx, t, s, missing); perr != nil {
-		return nil, false, perr
-	}
-	return s, true, nil
-}
-
 // addKnown adds the files of tree, the folder at folder, to s when known has
 // their content, and the rest to missing (path → blob SHA).
 func addKnown(s *snapshot, folder string, tree treeAnswer, known map[string][]byte, missing map[string]string) {
@@ -164,14 +139,22 @@ func blobsQuery(n int) string {
 		fields.String() + "  }\n}"
 }
 
-// readBlobs adds the files of missing (path → blob SHA) to s, read in one
-// query. A file GraphQL didn't give the text of is read from its blob, as
-// addFolder does.
+// readBlobs adds the files of missing (path → blob SHA) to s, read
+// blobsPerQuery at a time. A file GraphQL didn't give the text of, such as a
+// large combined list, is read from its blob.
 func (c *Client) readBlobs(ctx context.Context, t target, s *snapshot, missing map[string]string) *PublishError {
-	if len(missing) == 0 {
-		return nil
-	}
 	paths := slices.Sorted(maps.Keys(missing))
+	for batch := range slices.Chunk(paths, blobsPerQuery) {
+		if perr := c.readBlobBatch(ctx, t, s, missing, batch); perr != nil {
+			return perr
+		}
+	}
+	return nil
+}
+
+// readBlobBatch adds the files at paths, whose blob SHAs are in missing, to s,
+// read in one query.
+func (c *Client) readBlobBatch(ctx context.Context, t target, s *snapshot, missing map[string]string, paths []string) *PublishError {
 	vars := map[string]any{"owner": t.owner, "name": t.name}
 	for i, p := range paths {
 		vars["b"+strconv.Itoa(i)] = missing[p]

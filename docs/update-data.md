@@ -285,7 +285,7 @@ checks one) and adds the ticked genres to each photo's `genres` after the ones i
 [changes waiting for Commit](pending-changes.md). Nothing is saved when a genre can't be made or a photo can't be read.
 
 **Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
-how far it has got, with a bar once it can count: reading the photo files from GitHub (one query, so no count),
+how far it has got, with a bar once it can count: reading the photo files from GitHub (no count),
 asking GitHub when the files were created (50 files a query, only files not asked before), then reading the originals in R2,
 such as "Reading each photo's colors from its original in R2: 42 of 150". The backend keeps each task's latest progress
 in memory (`github.WithProgress`, kept by `readProgress` in `be-pipeline/internal/httpapi/progress.go`), and the page

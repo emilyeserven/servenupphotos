@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -54,7 +55,7 @@ func TestSnapshotReadOutlivesThePage(t *testing.T) {
 	if _, err := c.InFlight(t.Context(), pullGH); err != nil {
 		t.Fatalf("InFlight() again error = %v", err)
 	}
-	if n := f.count("graphql snapshot"); n != 1 {
+	if n := f.count("graphql tree"); n != 1 {
 		t.Errorf("read the base branch %d times, want once: the second page waits for the first read", n)
 	}
 }
@@ -86,5 +87,24 @@ func TestFirstReadReusesTheCheckout(t *testing.T) {
 	if s == nil || string(s.files[dataRoot+"/photos/a.json"].content) != same ||
 		string(s.files[dataRoot+"/photos/b.json"].content) != changed {
 		t.Errorf("snapshot = %+v, want a.json from the checkout and b.json from GitHub (Combined: %+v)", s, got.Base)
+	}
+}
+
+func TestFirstReadAsksForFilesInBatches(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	n := 2*blobsPerQuery + 1
+	for i := range n {
+		f.files["main:"+dataRoot+"/photos/p"+strconv.Itoa(i)+".json"] = `{"file":"p` + strconv.Itoa(i) + `.jpg"}`
+	}
+
+	if _, err := c.Combined(t.Context(), pullGH); err != nil {
+		t.Fatalf("Combined() error = %v", err)
+	}
+	if got := f.count("graphql blobs"); got != 3 {
+		t.Errorf("blobs queries = %d, want 3: %d files, %d per query, so GitHub answers each in time", got, n, blobsPerQuery)
+	}
+	s, _ := c.reads().snapshot(snapshotKey(target{owner: "owner", name: "repo"}, dataRoot, f.head("main")))
+	if s == nil || len(s.files) != n || string(s.files[dataRoot+"/photos/p200.json"].content) != `{"file":"p200.jpg"}` {
+		t.Errorf("snapshot has %d files, want all %d with their content", len(s.files), n)
 	}
 }
