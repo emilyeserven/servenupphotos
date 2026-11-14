@@ -1,6 +1,6 @@
 import { type UseMutationOptions, useMutation } from "@tanstack/react-query";
-import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
+import { CopyTextButton } from "@/components/copy-text";
 import { PickCount, bulkTagCount } from "@/components/bulk-tagging/pick-count";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -97,28 +97,25 @@ interface CopyPromptButtonProps {
   label: string;
   disabled: boolean;
   prompt: () => string;
+  /** Called once the prompt is copied, or shown for copying by hand. */
+  onCopied?: () => void;
 }
 
-/** Copies the prompt for the picked photos, showing "Copied" for a moment once it has. */
-export function CopyPromptButton({ label, disabled, prompt }: CopyPromptButtonProps) {
-  const [copied, setCopied] = useState(false);
-  const copy = () => {
-    void navigator.clipboard.writeText(prompt()).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
+/**
+ * Copies the prompt for the picked photos, showing "Copied" for a moment once it has, with a
+ * button next to it that shows the whole prompt in a modal (which also opens when the browser
+ * won't copy, as on a plain HTTP address).
+ */
+export function CopyPromptButton({ label, disabled, prompt, onCopied }: CopyPromptButtonProps) {
   return (
-    <Button
-      type="button"
-      variant="outline"
-      className="self-start"
+    <CopyTextButton
+      label={label}
       disabled={disabled}
-      onClick={copy}
-    >
-      {copied ? <CheckIcon /> : <CopyIcon />}
-      {copied ? "Copied" : label}
-    </Button>
+      title="The prompt"
+      showLabel="Show the prompt"
+      text={prompt}
+      onCopied={onCopied}
+    />
   );
 }
 

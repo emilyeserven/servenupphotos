@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 import type { Place } from "@/api/places";
+import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { bulkTagCount, PickCount } from "@/components/bulk-tagging/pick-count";
 import { useLocalizationRows } from "@/components/localization-drafts";
 import { LocalizationFillReview } from "@/components/localization-fill/localization-fill-review";
@@ -58,7 +58,7 @@ export function LocalizationFillCard() {
                 disabled={false}
                 onChange={setTyped}
               />
-              <CopyPromptButton
+              <CopyNamesPrompt
                 rows={toFill.slice(0, bulkTagCount(typed, defaultNameCount))}
                 places={places}
                 onCopied={setAsked}
@@ -94,28 +94,22 @@ function FillStatus({ toFill, total }: { toFill: number; total: number }) {
   );
 }
 
-interface CopyPromptButtonProps {
+interface CopyNamesPromptProps {
   rows: LocalizationRow[];
   places: Place[];
   /** Called with the IDs the copied prompt asks about. */
   onCopied: (ids: string[]) => void;
 }
 
-/** Copies the prompt for the next names to fill in. */
-function CopyPromptButton({ rows, places, onCopied }: CopyPromptButtonProps) {
-  const [copied, setCopied] = useState(false);
-  const copy = () => {
-    void navigator.clipboard.writeText(localizationPrompt(rows, places)).then(() => {
-      onCopied(rows.map((row) => row.id));
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
+/** Copies the prompt for the next names to fill in, or shows it to copy by hand. */
+function CopyNamesPrompt({ rows, places, onCopied }: CopyNamesPromptProps) {
   return (
-    <Button type="button" variant="outline" disabled={rows.length === 0} onClick={copy}>
-      {copied ? <CheckIcon /> : <CopyIcon />}
-      {copied ? "Copied" : `Copy the prompt for ${count(rows.length, "name")}`}
-    </Button>
+    <CopyPromptButton
+      label={`Copy the prompt for ${count(rows.length, "name")}`}
+      disabled={rows.length === 0}
+      prompt={() => localizationPrompt(rows, places)}
+      onCopied={() => onCopied(rows.map((row) => row.id))}
+    />
   );
 }
 

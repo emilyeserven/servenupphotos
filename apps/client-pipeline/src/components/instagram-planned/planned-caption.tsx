@@ -1,8 +1,6 @@
-import { CheckIcon, CopyIcon } from "lucide-react";
-import { useState } from "react";
 import { type CaptionTemplate } from "@/api/captions";
+import { CopyTextButton } from "@/components/copy-text";
 import { NoTemplates } from "@/components/generate-caption";
-import { Button } from "@/components/ui/button";
 
 interface PlannedCaptionProps {
   caption: string;
@@ -30,29 +28,11 @@ export function PlannedCaption({ caption, template, written }: PlannedCaptionPro
           </h2>
           <p className="text-muted-foreground text-xs">{sourceNote(template, written)}</p>
         </div>
-        <CopyCaption caption={caption} />
+        <CopyTextButton label="Copy caption" size="lg" title="The caption" text={() => caption} />
       </div>
       <pre className="bg-muted/40 max-h-80 overflow-auto rounded-md border p-3 font-sans text-sm whitespace-pre-wrap">
         {caption || "The template made an empty caption for this photo."}
       </pre>
     </section>
-  );
-}
-
-/** Copies the caption, showing a check for a moment once it has. */
-function CopyCaption({ caption }: { caption: string }) {
-  const [copied, setCopied] = useState(false);
-  const copy = () => {
-    void navigator.clipboard.writeText(caption).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-  const Icon = copied ? CheckIcon : CopyIcon;
-  return (
-    <Button variant="outline" size="lg" onClick={copy}>
-      <Icon />
-      {copied ? "Copied" : "Copy caption"}
-    </Button>
   );
 }
