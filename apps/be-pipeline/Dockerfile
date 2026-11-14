@@ -14,9 +14,12 @@ FROM --platform=$BUILDPLATFORM golang:1.27-alpine AS build
 ARG TARGETOS TARGETARCH
 WORKDIR /src
 COPY go.mod go.sum ./
-RUN go mod download
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
 COPY . .
-RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /out/api ./cmd/api
+# Go's build cache survives between builds, so a change recompiles only the packages it touches instead of every
+# dependency (the AWS SDK, the WEBP and AVIF encoders): minutes on a Raspberry Pi.
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /out/api ./cmd/api
 
 # exiftool is a Perl program, so the runtime needs a distro that ships it (go-exiftool shells out to it).
 FROM alpine:3.22

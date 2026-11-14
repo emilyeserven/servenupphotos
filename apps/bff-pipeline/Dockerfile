@@ -9,9 +9,15 @@ RUN npm install -g corepack@latest && corepack enable
 WORKDIR /repo
 
 FROM base AS build
-COPY . .
+# The package manifests first, so the install below stays cached until a dependency changes, rather than rerunning
+# whenever any file does (such as each merge of the photo data pull request). On a Raspberry Pi that saves minutes.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/bff-pipeline/package.json apps/bff-pipeline/
+COPY apps/client-pipeline/package.json apps/client-pipeline/
+COPY apps/portfolio/package.json apps/portfolio/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile --filter @servenup/bff-pipeline... --filter @servenup/client-pipeline...
+COPY . .
 RUN pnpm --filter @servenup/client-pipeline --filter @servenup/bff-pipeline build
 RUN pnpm deploy --legacy --filter @servenup/bff-pipeline --prod /out
 
