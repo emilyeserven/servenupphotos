@@ -7,12 +7,11 @@ import {
 } from "@/api/genre-suggestions";
 import { organizeQuery } from "@/api/organize";
 import {
-  PlannedPhoto,
   SaveReviewed,
   UnknownPhotos,
-  pickedTitle,
   useReviewedSave,
 } from "@/components/bulk-tagging/review-parts";
+import { type GenreOption, PhotoGenreRow } from "@/components/genre-suggestions/photo-genre-row";
 import { count } from "@/components/update-data-shared";
 import { toggled } from "@/lib/bulk-tags";
 import { type GenreChoices, NO_GENRE_CHOICES, genresToSave } from "@/lib/genre-suggestions";
@@ -23,8 +22,9 @@ interface GenreReviewProps {
 }
 
 /**
- * The review of the LLM's answer: the new genres to make, each with its description, and the
- * genres each photo gets, any of which can be unticked, then a button that saves the rest.
+ * The review of the LLM's answer: the new genres to make, each with its description, and each photo
+ * next to a dropdown per suggested genre, which can pick another genre or none, then a button that
+ * saves them.
  */
 export function GenreReview({ preview, pick }: GenreReviewProps) {
   const [choices, setChoices] = useState<GenreChoices>(NO_GENRE_CHOICES);
@@ -63,7 +63,7 @@ interface ChoicesProps {
   disabled: boolean;
 }
 
-/** Each photo's genres to add, by name: the new ones by the names the answer gave them. */
+/** Each photo with its image and a dropdown per suggested genre, starting at that genre. */
 function PhotoGenreList({
   preview,
   pick,
@@ -72,26 +72,36 @@ function PhotoGenreList({
   disabled,
 }: ChoicesProps & GenreReviewProps) {
   const genres = useQuery(organizeQuery).data?.genres ?? [];
-  const names = new Map([...genres, ...preview.newGenres].map((genre) => [genre.id, genre.name]));
-  const fresh = new Set(preview.newGenres.map((genre) => genre.id));
+  const options = genreOptions(genres, preview.newGenres, choices.dropped);
   return (
     <ul className="flex flex-col gap-3">
       {preview.photos.map((plan) => (
-        <PlannedPhoto
+        <PhotoGenreRow
           key={plan.path}
           plan={plan}
-          title={pickedTitle(pick.photos, plan.path)}
-          noun="genres"
-          label={(id) => names.get(id) ?? id}
-          fresh={fresh}
-          dropped={choices.dropped}
-          removed={choices.removed}
+          photo={pick.photos.find((photo) => photo.path === plan.path)}
+          options={options}
+          choices={choices}
+          onChange={onChange}
           disabled={disabled}
-          onToggle={(key) => onChange({ ...choices, removed: toggled(choices.removed, key) })}
         />
       ))}
     </ul>
   );
+}
+
+/** Every genre there is, then the new ones that will be made, each by name. */
+function genreOptions(
+  genres: { id: string; name: string }[],
+  fresh: GenreSuggestionsPreview["newGenres"],
+  dropped: ReadonlySet<string>,
+): GenreOption[] {
+  return [
+    ...genres.map(({ id, name }) => ({ id, name, fresh: false })),
+    ...fresh
+      .filter(({ id }) => !dropped.has(id))
+      .map(({ id, name }) => ({ id, name, fresh: true })),
+  ];
 }
 
 /** The new genres the answer names, each of which can be left out. */

@@ -279,9 +279,13 @@ Paste the answer and **Review the genres** (`POST /api/data/genre-suggestions/pr
 backend reads it as it reads a Bulk tagging answer (`github/genresuggest.go`): a name matching a genre's ID or name
 (ignoring case, or by the ID made from it) is that genre; one an album, tag or metadata group has is left out saying
 why; the rest are new genres, named as the answer first wrote them, with their descriptions. The review lists the new
-genres with a checkbox each, then each photo with a checkbox per genre, by name, marking the new ones. **Save genres
-for N photos** (`POST /api/data/genre-suggestions`) makes the ticked new genres (checked as **New genre** on `/genres`
-checks one) and adds the ticked genres to each photo's `genres` after the ones it has, in one save of
+genres with a checkbox each, then each photo as a row with its image on the left and, on the right, a dropdown for
+each genre the answer suggested, starting at that genre. Each dropdown lists **No genre** and
+then every genre, with the new ones still ticked marked "(new)", so a suggestion can be swapped for another genre or
+left out; a photo the answer gave no genre gets one dropdown starting at **No genre**. Unticking a new genre turns its
+dropdowns to **No genre**. **Save genres for N photos** (`POST /api/data/genre-suggestions`) makes the ticked new
+genres (checked as **New genre** on `/genres` checks one) and adds the genres the dropdowns show (each once) to each
+photo's `genres` after the ones it has, in one save of
 [changes waiting for Commit](pending-changes.md). Nothing is saved when a genre can't be made or a photo can't be read.
 
 **Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and

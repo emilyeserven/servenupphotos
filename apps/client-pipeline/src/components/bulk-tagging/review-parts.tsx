@@ -123,6 +123,15 @@ export function PlannedPhoto({ plan, title, noun, ...boxes }: PlannedPhotoProps)
           <PlannedBox key={id} id={id} path={plan.path} {...boxes} />
         ))}
       </div>
+      <PlanNotes plan={plan} />
+    </li>
+  );
+}
+
+/** What a photo already has of what the answer names, and the answer's names left out of it, with why. */
+export function PlanNotes({ plan }: { plan: BulkTagPhotoPlan }) {
+  return (
+    <>
       {plan.already.length > 0 && (
         <p className="text-muted-foreground">Already has {plan.already.join(", ")}.</p>
       )}
@@ -131,7 +140,7 @@ export function PlannedPhoto({ plan, title, noun, ...boxes }: PlannedPhotoProps)
           Left out “{name}”: {reason}.
         </p>
       ))}
-    </li>
+    </>
   );
 }
 
