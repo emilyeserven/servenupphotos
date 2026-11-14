@@ -18,6 +18,13 @@ Copying uses `copyText` (`lib/copy-text.ts`):
    over plain HTTP in today's browsers.
 3. When both fail, the button opens the modal instead, so the text can be copied by hand (Ctrl+C, or ⌘C on a Mac).
 
+On a phone or tablet (a touch screen with no mouse, `(pointer: coarse)`) over plain HTTP, step 2 is skipped and the
+button opens the modal straight away, because iOS Safari can answer that it copied when nothing reached the clipboard.
+In the modal, **Copy** runs the copy command on the box on screen, in the same tap, and shows "Copied" without
+closing the modal, so the text can still be copied by hand if it didn't work: press and hold it, choose **Select
+All**, then **Copy**. The box selects its text with `setSelectionRange`, since iOS ignores `select()` on a read-only
+box.
+
 This matters when the pipeline runs on another machine, such as a Raspberry Pi reached over Tailscale at
 `http://<name>:<port>`: that address isn't a secure context, so step 1 never runs there.
 

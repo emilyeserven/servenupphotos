@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { copyText } from "@/lib/copy-text";
+import { copyFromBox, copyText, isTouchOnly, selectAll } from "@/lib/copy-text";
 
 interface CopyTextOptions {
   /** The modal's title when the text is shown, such as "The tag prompt". */
@@ -99,15 +99,21 @@ interface TextDialogBodyProps {
 function TextDialogBody({ title, shown, onCopied }: TextDialogBodyProps) {
   const box = useRef<HTMLTextAreaElement>(null);
   const [failed, setFailed] = useState(shown.failed);
+  const [copied, setCopied] = useState(false);
+  const finish = (ok: boolean) => {
+    if (ok && !isTouchOnly()) {
+      onCopied();
+      return;
+    }
+    // A phone's browser can say it copied when it didn't, so the modal stays open to copy by hand.
+    setCopied(ok);
+    setFailed(!ok);
+    if (box.current) selectAll(box.current);
+  };
   const copy = () => {
-    void copyText(shown.text).then((ok) => {
-      if (ok) {
-        onCopied();
-        return;
-      }
-      setFailed(true);
-      box.current?.select();
-    });
+    // Outside a secure context, copy from the box on screen, while the tap still counts.
+    if (!window.isSecureContext && box.current) finish(copyFromBox(box.current));
+    else void copyText(shown.text).then(finish);
   };
   return (
     <>
@@ -124,20 +130,22 @@ function TextDialogBody({ title, shown, onCopied }: TextDialogBodyProps) {
         aria-label={title}
         value={shown.text}
         className="max-h-[60vh] min-h-40 overflow-auto font-mono text-xs"
-        onFocus={(event) => event.currentTarget.select()}
+        onFocus={(event) => selectAll(event.currentTarget)}
       />
       <DialogFooter>
         <Button type="button" onClick={copy}>
-          <CopyIcon />
-          Copy
+          <CopyLabel copied={copied} label="Copy" />
         </Button>
       </DialogFooter>
     </>
   );
 }
 
-/** Says how to copy the text: by hand, once the browser wouldn't. */
+/** Says how to copy the text: by hand on a phone, or once the browser wouldn't. */
 function CopyHint({ failed }: { failed: boolean }) {
+  if (isTouchOnly()) {
+    return "Press Copy, or press and hold the text, choose Select All, then Copy.";
+  }
   return failed
     ? "This browser won't copy from here. The text is selected: press Ctrl+C (⌘C on a Mac) to copy it."
     : "Select the text and copy it, or press Copy.";
