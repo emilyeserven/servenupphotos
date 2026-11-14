@@ -43,12 +43,12 @@ func TestLocalCopyKeepsSnapshotsAcrossRuns(t *testing.T) {
 	if _, err := withLocalCopy(c, path).InFlight(t.Context(), pullGH); err != nil {
 		t.Fatalf("first run InFlight() error = %v", err)
 	}
-	read := f.count("graphql snapshot")
+	read := f.count("graphql tree")
 	got, err := withLocalCopy(c, path).InFlight(t.Context(), pullGH)
 	if err != nil || len(got.Files) != 1 {
 		t.Fatalf("second run InFlight() = %+v, %v; want DSC0001.json", got.Files, err)
 	}
-	if n := f.count("graphql snapshot"); n != read {
+	if n := f.count("graphql tree"); n != read {
 		t.Errorf("snapshot queries = %d, want %d: the second run reads its local copy", n, read)
 	}
 	if n := f.count("graphql state"); n != 2 {

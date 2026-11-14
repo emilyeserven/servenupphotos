@@ -59,11 +59,11 @@ func TestKindsMatchTheScriptsList(t *testing.T) {
 	}
 }
 
-func TestSnapshotQueryReadsEveryKind(t *testing.T) {
+func TestTreeQueryReadsEveryKind(t *testing.T) {
 	for _, k := range combinedKinds() {
 		field := "    " + k.name + ": object(expression: $" + k.name + ") { ...files }\n"
-		if !strings.Contains(snapshotQuery, field) || !strings.Contains(snapshotQuery, "$"+k.name+": String!") {
-			t.Errorf("snapshotQuery doesn't read %s", k.name)
+		if !strings.Contains(treeQuery, field) || !strings.Contains(treeQuery, "$"+k.name+": String!") {
+			t.Errorf("treeQuery doesn't read %s", k.name)
 		}
 	}
 }

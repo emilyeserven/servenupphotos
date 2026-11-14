@@ -13,8 +13,7 @@ import (
 
 // snapshot is every file directly in the data folder's subfolders (one per
 // kind in dataKinds) at one commit. A commit never
-// changes, so a snapshot is read from GitHub once, with one GraphQL query, and
-// kept.
+// changes, so a snapshot is read from GitHub once and kept.
 type snapshot struct {
 	commit string
 	// tree is the commit's tree, which a new commit's tree is made on.
@@ -46,40 +45,34 @@ func snapshotFolders() string {
 		fields.String() + "  }\n}\n"
 }
 
-// snapshotQuery reads every data subfolder's files with their content.
-var snapshotQuery = snapshotFolders() +
-	`fragment files on Tree { entries { name type oid object { ... on Blob { text isTruncated isBinary } } } }`
-
 // treeQuery reads only the names and blob SHAs of every data subfolder's
-// files, which costs GitHub far less than their content (see readChanged).
+// files. Their content is read in batches afterwards (see readBlobs): asking
+// for every file's content in one query is more than GitHub answers before its
+// own time limit once the data folder holds a few thousand files, and it
+// responds 502.
 var treeQuery = snapshotFolders() + `fragment files on Tree { entries { name type oid } }`
 
-// treeAnswer is a folder in snapshotQuery's answer; nil when the folder isn't
+// treeAnswer is a folder in treeQuery's answer; nil when the folder isn't
 // there.
 type treeAnswer *struct {
 	Entries []struct {
-		Name   string `json:"name"`
-		Type   string `json:"type"`
-		OID    string `json:"oid"`
-		Object struct {
-			Text        *string `json:"text"`
-			IsTruncated bool    `json:"isTruncated"`
-			IsBinary    bool    `json:"isBinary"`
-		} `json:"object"`
+		Name string `json:"name"`
+		Type string `json:"type"`
+		OID  string `json:"oid"`
 	} `json:"entries"`
 }
 
-// snapshotAnswer is the data of snapshotQuery.
+// snapshotAnswer is the data of treeQuery.
 type snapshotAnswer struct {
 	Repository *snapshotRepo `json:"repository"`
 }
 
-// snapshotCommit is the commit in snapshotQuery's answer.
+// snapshotCommit is the commit in treeQuery's answer.
 type snapshotCommit struct {
 	Tree gitObject `json:"tree"`
 }
 
-// snapshotRepo is the repository in snapshotQuery's answer: the commit, and
+// snapshotRepo is the repository in treeQuery's answer: the commit, and
 // each kind's folder by the kind's name.
 type snapshotRepo struct {
 	Commit *snapshotCommit
@@ -142,34 +135,36 @@ func (c *Client) keptSnapshot(key string) (*snapshot, bool) {
 	return s, ok
 }
 
-// readSnapshot reads root at commit from GitHub: only the files that differ
-// from the snapshots kept, when there are few of them, as after a merge, or
-// else every file.
+// readSnapshot reads root at commit from GitHub: the file names and blob SHAs
+// first, then the content of the files not known already (by blob SHA, from
+// the snapshots kept and the checkout), in batches. A merge of the photo data
+// pull request leaves the base branch with the files the pipeline last read,
+// so after one the read is a single cheap query.
 func (c *Client) readSnapshot(ctx context.Context, t target, root, commit string) (*snapshot, *PublishError) {
-	if known := c.knownBlobs(t, root); len(known) > 0 {
-		if s, ok, perr := c.readChanged(ctx, t, root, commit, known); ok || perr != nil {
-			return s, perr
-		}
-	}
-	answer, perr := c.readFolders(ctx, t, root, commit, snapshotQuery)
+	answer, perr := c.readFolders(ctx, t, root, commit)
 	if perr != nil {
 		return nil, perr
 	}
 	s := &snapshot{commit: commit, tree: answer.Repository.Commit.Tree.OID, files: map[string]snapFile{}}
+	known := c.knownBlobs(t, root)
+	missing := map[string]string{}
 	for folder, tree := range answer.folders() {
-		c.addFolder(ctx, t, s, root+"/"+folder, tree)
+		addKnown(s, root+"/"+folder, tree, known, missing)
+	}
+	if perr := c.readBlobs(ctx, t, s, missing); perr != nil {
+		return nil, perr
 	}
 	return s, nil
 }
 
-// readFolders runs query (snapshotQuery or treeQuery) for root at commit.
-func (c *Client) readFolders(ctx context.Context, t target, root, commit, query string) (snapshotAnswer, *PublishError) {
+// readFolders runs treeQuery for root at commit.
+func (c *Client) readFolders(ctx context.Context, t target, root, commit string) (snapshotAnswer, *PublishError) {
 	vars := map[string]any{"owner": t.owner, "name": t.name, "commit": commit}
 	for _, k := range combinedKinds() {
 		vars[k.name] = commit + ":" + root + "/" + k.folder
 	}
 	var answer snapshotAnswer
-	if perr := c.graphql(ctx, t, query, vars, &answer, "reading the photo data"); perr != nil {
+	if perr := c.graphql(ctx, t, treeQuery, vars, &answer, "reading the photo data"); perr != nil {
 		return answer, perr
 	}
 	if answer.Repository == nil || answer.Repository.Commit == nil {
@@ -189,30 +184,6 @@ func (c *Client) keepSnapshot(key string, s *snapshot) {
 // kept by.
 func snapshotKey(t target, root, commit string) string {
 	return repoKey(t) + "\x00" + root + "\x00" + commit
-}
-
-// addFolder adds the files of tree, the folder at folder, to s. A file
-// GraphQL didn't give the text of, such as a large combined list, is read
-// from its blob.
-func (c *Client) addFolder(ctx context.Context, t target, s *snapshot, folder string, tree treeAnswer) {
-	if tree == nil {
-		return
-	}
-	for _, e := range tree.Entries {
-		if e.Type != "blob" {
-			continue
-		}
-		f := snapFile{sha: e.OID}
-		switch {
-		case e.Object.IsBinary:
-			f.err = "The file isn't text."
-		case e.Object.Text == nil || e.Object.IsTruncated:
-			f.content, f.err = c.readBlobContent(ctx, t, e.OID)
-		default:
-			f.content = []byte(*e.Object.Text)
-		}
-		s.files[folder+"/"+e.Name] = f
-	}
 }
 
 // readBlobContent reads the blob sha, or says why it couldn't.

@@ -17,7 +17,7 @@ const token = "github_pat_abcdefgh1234"
 
 // fakeGitHub is an in-memory owner/repo with default branch main: the GraphQL
 // queries state and snapshot make, and the Git data API calls Commit makes.
-// Every request is counted in calls, as "graphql state", "graphql snapshot",
+// Every request is counted in calls, as "graphql state",
 // "graphql tree", "graphql blobs" or "METHOD /path".
 type fakeGitHub struct {
 	mu sync.Mutex
@@ -363,7 +363,7 @@ func (f *fakeGitHub) graphql(w http.ResponseWriter, r *http.Request) {
 		Variables map[string]any `json:"variables"`
 	}
 	_ = json.NewDecoder(r.Body).Decode(&in)
-	kind := "snapshot"
+	kind := "tree"
 	switch {
 	case strings.Contains(in.Query, "pullRequests"):
 		kind = "state"
@@ -371,8 +371,6 @@ func (f *fakeGitHub) graphql(w http.ResponseWriter, r *http.Request) {
 		kind = "history"
 	case strings.Contains(in.Query, "GitObjectID"):
 		kind = "blobs"
-	case !strings.Contains(in.Query, "isTruncated"):
-		kind = "tree"
 	}
 	f.calls = append(f.calls, "graphql "+kind)
 	if status := f.fail["graphql "+kind]; status != 0 {
@@ -398,7 +396,7 @@ func (f *fakeGitHub) graphql(w http.ResponseWriter, r *http.Request) {
 	}
 	repo := map[string]any{"commit": map[string]any{"tree": map[string]any{"oid": "tree:" + in.Variables["commit"].(string)}}}
 	for _, k := range combinedKinds() {
-		repo[k.name] = f.tree(in.Variables[k.name].(string), kind == "snapshot")
+		repo[k.name] = f.tree(in.Variables[k.name].(string))
 	}
 	writeBody(w, http.StatusOK, map[string]any{"data": map[string]any{"repository": repo}})
 }
@@ -472,10 +470,9 @@ func (f *fakeGitHub) blobObject(sha string) any {
 	return nil
 }
 
-// tree answers an expression "<oid>:<folder>" with the folder's files on the
-// oid's branch, or nil when it has none; with their content when withText is
-// set, as the snapshot query asks, and only names and SHAs for the tree query.
-func (f *fakeGitHub) tree(expr string, withText bool) any {
+// tree answers an expression "<oid>:<folder>" with the names and SHAs of the
+// folder's files on the oid's branch, or nil when it has none.
+func (f *fakeGitHub) tree(expr string) any {
 	oid, folder, _ := strings.Cut(expr, ":")
 	prefix := branchOf(oid) + ":" + folder + "/"
 	var names []string
@@ -491,15 +488,7 @@ func (f *fakeGitHub) tree(expr string, withText bool) any {
 	entries := []map[string]any{}
 	for _, name := range names {
 		content := f.files[prefix+name]
-		object := map[string]any{"text": content, "isTruncated": false, "isBinary": false}
-		if f.truncated[folder+"/"+name] {
-			object = map[string]any{"text": nil, "isTruncated": true, "isBinary": false}
-		}
-		entry := map[string]any{"name": name, "type": "blob", "oid": blobSHA([]byte(content))}
-		if withText {
-			entry["object"] = object
-		}
-		entries = append(entries, entry)
+		entries = append(entries, map[string]any{"name": name, "type": "blob", "oid": blobSHA([]byte(content))})
 	}
 	return map[string]any{"entries": entries}
 }
