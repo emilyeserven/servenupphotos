@@ -1,6 +1,6 @@
-import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 import type { Group } from "@/api/organize";
+import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import {
   type SaveDescriptions,
   TagDescriptionReview,
@@ -60,8 +60,9 @@ function BatchPrompt({ batch, tags, photos, save }: TagDescriptionBatchProps) {
         ))}
       </ul>
       <CopyPromptButton
+        label={`Copy the description prompt for ${batch.length === 1 ? "1 tag" : `${batch.length} tags`}`}
+        disabled={false}
         prompt={() => tagDescriptionPrompt(batch, tags, photos)}
-        size={batch.length}
       />
       <Textarea
         aria-label="The LLM's answer"
@@ -76,24 +77,5 @@ function BatchPrompt({ batch, tags, photos, save }: TagDescriptionBatchProps) {
       {error && <p className="text-destructive text-sm">{error}</p>}
       {read && <TagDescriptionReview key={answer} read={read} save={save} />}
     </div>
-  );
-}
-
-/** Copies the prompt for the batch's tags. */
-function CopyPromptButton({ prompt, size }: { prompt: () => string; size: number }) {
-  const [copied, setCopied] = useState(false);
-  const copy = () => {
-    void navigator.clipboard.writeText(prompt()).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-  return (
-    <Button type="button" variant="outline" className="self-start" onClick={copy}>
-      {copied ? <CheckIcon /> : <CopyIcon />}
-      {copied
-        ? "Copied"
-        : `Copy the description prompt for ${size === 1 ? "1 tag" : `${size} tags`}`}
-    </Button>
   );
 }

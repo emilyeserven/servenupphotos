@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CheckIcon, CopyIcon, ImageOffIcon } from "lucide-react";
+import { ImageOffIcon } from "lucide-react";
 import { Fragment, type ReactNode, useState } from "react";
 import type { BucketImage } from "@/api/photos";
 import { PUBLISHED } from "@/api/versions";
@@ -11,6 +11,7 @@ import {
   renamePhoto,
 } from "@/api/upload";
 import { type R2Upload, sameNameError } from "@/components/r2-upload/use-r2-upload";
+import { CopyTextButton } from "@/components/copy-text";
 import { RenameForm } from "@/components/rename-prompt";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -215,7 +216,7 @@ function Uploaded({ r2, result }: { r2: R2Upload; result: UploadResponse }) {
           aria-label="Photo URL"
           onFocus={(e) => e.target.select()}
         />
-        <CopyButton text={result.url} />
+        <CopyTextButton label="Copy" title="The URL" text={() => result.url} />
       </div>
       <ul className="flex flex-col gap-1 text-sm">
         {PUBLISHED.map((version) => (
@@ -260,24 +261,5 @@ function RemakeStatus({ r2 }: { r2: R2Upload }) {
       The square has moved since the Square Thumbnail was cut. Remake thumbnail cuts it and its
       Thumbnail Preview again from the new square, over the ones in R2.
     </p>
-  );
-}
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      onClick={() => {
-        void navigator.clipboard.writeText(text).then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        });
-      }}
-    >
-      {copied ? <CheckIcon /> : <CopyIcon />}
-      {copied ? "Copied" : "Copy"}
-    </Button>
   );
 }

@@ -155,6 +155,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
 - [Quick Edit](docs/quick-edit.md): pasting a portfolio link to open the pipeline page that edits it
 - [BFF timeouts](docs/bff-timeouts.md) (`/api/timeouts`): how long the BFF waits for each backend path, read from the backend at start-up
+- [Copying prompts](docs/copy-prompts.md): copying an LLM prompt, or showing it in a modal to copy by hand when the browser won't (the pipeline over plain HTTP)
 - [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
 
 ## Checks (same as CI)
