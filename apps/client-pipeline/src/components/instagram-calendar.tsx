@@ -10,6 +10,7 @@ import { ScheduleTabs } from "@/components/instagram-tabs";
 import { PhotoPicker } from "@/components/instagram-photo-picker";
 import { PhotoImage } from "@/components/instagram-picker/photo-image";
 import { PhotoFiles } from "@/components/photo-files";
+import { WeeksSelect, useCalendarWeeks } from "@/components/calendar-weeks";
 import {
   DrawerLayout,
   PhotoDrawer,
@@ -44,9 +45,6 @@ import { type DayPost, instagramPostsByDay } from "@/lib/social-post-days";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import { PUBLISH_DATE } from "@/lib/photo-fields";
-
-/** How many weeks the calendar shows, this week first. */
-const WEEKS = 3;
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -104,6 +102,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
   const posts = useInstagramPosts(calendar.photos);
   const notStored = useNotStored();
   const [weekOffset, setWeekOffset] = useState(0);
+  const { weeks, setWeeks } = useCalendarWeeks();
   const [picking, setPicking] = useState<string | null>(null);
   const drawer = usePhotoDrawer();
   // Read the clock once, so the calendar doesn't shift under a drag at midnight.
@@ -114,7 +113,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
   const rowDays = withNotStoredDays(byDay, notStored);
   const anchors = useGridAnchors(calendar.photos, rowDays);
   const { places } = anchors;
-  const days = calendarDays(now, weekOffset, WEEKS);
+  const days = calendarDays(now, weekOffset, weeks);
   const schedule = (photo: SocialPhoto, day: string | null) =>
     update(moveToDay(unsaved, byDay, photo, day));
   /** Moves the photo at path to day, unless a Not Stored post holds that day. */
@@ -157,6 +156,7 @@ function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided
               onOpen={setPicking}
               onDropPhoto={dropPhoto}
               places={places}
+              weeksSelect={<WeeksSelect weeks={weeks} onWeeks={setWeeks} />}
               drawerToggle={<PhotoDrawerToggle open={drawer.open} onToggle={drawer.toggle} />}
             />
             <InstagramPosts postsByDay={posts} today={today} />
@@ -338,6 +338,8 @@ interface CalendarGridProps {
   onDropPhoto: (path: string, day: string) => void;
   /** Where each photo stands in the rows worked out from the Grid Anchor, by file path. */
   places: Map<string, AnchorPlace>;
+  /** The menu that picks how many weeks are shown, before the week buttons. */
+  weeksSelect: ReactNode;
   /** The button that opens and closes the photo drawer, after the week buttons. */
   drawerToggle: ReactNode;
 }
@@ -374,23 +376,13 @@ function CalendarGrid(props: CalendarGridProps) {
           );
         })}
       </div>
-      <p className="text-muted-foreground text-sm">
-        Click an empty day to pick a photo for it, or a photo to change or remove it. Drag a photo
-        to another day to move it there; dropping it on another photo swaps the two.{" "}
-        <strong>Photos</strong> opens a drawer beside the calendar with the picker&apos;s photos and
-        filters, to drag onto days. A day posted to Instagram with a photo that isn&apos;t in the
-        portfolio can be marked <strong>Not Stored</strong> from its picker, so it keeps its place
-        in the feed. A check in a day&apos;s corner marks Instagram posts already scheduled on
-        Instagram, and a clock ones still planned. The Grid Anchor (set in a day&apos;s picker) and
-        the 2 photos before it make one row of the Social Feed, and every other row of 3 is counted
-        from it, outlined dark and light blue by turns; moving the anchor shifts them all.
-      </p>
     </>
   );
 }
 
 /** The days shown, with buttons to page a week at a time. */
-function WeekNav({ days, today, weekOffset, onWeekOffset, drawerToggle }: CalendarGridProps) {
+function WeekNav(props: CalendarGridProps) {
+  const { days, today, weekOffset, onWeekOffset, weeksSelect, drawerToggle } = props;
   const first = parseIsoDate(days[0] ?? today);
   const last = parseIsoDate(days.at(-1) ?? today);
   return (
@@ -398,7 +390,8 @@ function WeekNav({ days, today, weekOffset, onWeekOffset, drawerToggle }: Calend
       <h2 className="text-lg font-medium">
         {dayFormat.format(first)} – {dayFormat.format(last)}
       </h2>
-      <div className="flex items-center gap-1">
+      <div className="flex flex-wrap items-center gap-1">
+        {weeksSelect}
         <Button
           variant="outline"
           size="icon"
