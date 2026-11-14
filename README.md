@@ -255,6 +255,17 @@ bind folders in its own folder; the backend then downloads the photo data from G
 > **Frontend analogy:** Coolify is a self-hosted Vercel dashboard on the Pi: it pulls the repo, runs
 > `docker compose up --build` for you on each deploy, and keeps the environment variables in its UI instead of `.env`.
 
+**Slow builds.** The deployment log shows "Adding build arguments to Docker Compose build command." and then nothing
+until both images are built, because Coolify hides the build's own output. Press **Show Debug Logs** on the deployment
+to see each step as it runs. A first build on a Pi takes a while: installing the packages, building the pipeline's UI
+with Vite and compiling the Go backend. Later builds reuse what hasn't changed: the package install reruns only when
+a `package.json` or `pnpm-lock.yaml` changes, and Go recompiles only the packages a change touches. Leave
+**Disable Build Cache** off, and use **Force deploy (without cache)** only when a build looks stuck on something old
+([build cache](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/applications/builds/overview.mdx)).
+
+> **Frontend analogy:** Docker's layer cache works like a lockfile-keyed `node_modules` cache in CI: as long as the
+> files a step depends on are the same, the step's result is reused instead of run again.
+
 #### Day-to-day commands
 
 ```sh
