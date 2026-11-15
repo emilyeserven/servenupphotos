@@ -5,7 +5,7 @@ import "net/http"
 // registerPublishRoutes adds the Publish routes: the Instagram calendar and its
 // Not Stored posts, combined into NOTSTORED.json, the Photo Book's books,
 // combined into PHOTOBOOKS.json, the Bio page's bio and its self-portraits,
-// combined into BIO.json, and the Dashboard's Needs attention, which
+// combined into ALLBIO.json, and the Dashboard's Needs attention, which
 // reads the same files cut down.
 func registerPublishRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("GET /publish/instagram", handleSocialCalendar(d.store, d.gh))

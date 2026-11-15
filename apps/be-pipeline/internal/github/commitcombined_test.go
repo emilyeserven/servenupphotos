@@ -40,7 +40,7 @@ var emptyLists = map[string]string{
 	dataRoot + "/gear/GEAR.json":                   "[]\n",
 	dataRoot + "/notstored/NOTSTORED.json":         "[]\n",
 	dataRoot + "/photobooks/PHOTOBOOKS.json":       "[]\n",
-	dataRoot + "/bio/BIO.json":                     "[]\n",
+	dataRoot + "/bio/ALLBIO.json":                     "[]\n",
 }
 
 // with is files with more over them.
@@ -100,7 +100,7 @@ func TestCommitCombined(t *testing.T) {
 		dataRoot + "/gear/GEAR.json":                   "[]\n",
 		dataRoot + "/notstored/NOTSTORED.json":         "[]\n",
 		dataRoot + "/photobooks/PHOTOBOOKS.json":       "[]\n",
-		dataRoot + "/bio/BIO.json":                     "[]\n",
+		dataRoot + "/bio/ALLBIO.json":                     "[]\n",
 	}
 	if tree := f.committedTree(); !maps.Equal(tree, want) {
 		t.Errorf("committed %q, want %q", tree, want)
