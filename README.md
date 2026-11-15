@@ -111,7 +111,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets, and Status (`/settings/status`), the services and connections check
 - [Edit in Pipeline Chrome extension](docs/chrome-extension.md) (downloaded from `/settings`): a toolbar button that opens the pipeline's editor for the portfolio page you are on, through `/quick-edit?url=…`, even with the pipeline on plain HTTP
 - [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, colors), and the tag tools (`/tag-tools/<name>`, under Tools in the Tags submenu) for bulk tagging, the whole tag library, pruning and tag descriptions
-- [Quality Check](docs/quality-check.md) (`/update-data/quality-check`): finds photos that aren't the house aspect ratios (16:9 and 5:7) and, with an LLM prompt, ones with license plates or faces to pixelate, and flags them for re-edit with a note
+- [Quality Check](docs/quality-check.md) (`/update-data/quality-check`): finds photos that aren't the house aspect ratios (16:9 and 5:7) and, with an LLM prompt, ones with license plates or faces to pixelate, flagging them for re-edit with a note, and lists photos without a place
 - [Photographer notes](docs/photo-notes.md): private notes on a photo, written on the Photo page or by the Tag library, which the portfolio's build leaves out
 - [Alt text](docs/alt-text.md) (`/alt-text`): a description of each photo for screen readers, written on the Photo page or for many photos at once with an LLM prompt, which the portfolio uses as the images' `alt`
 - [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
