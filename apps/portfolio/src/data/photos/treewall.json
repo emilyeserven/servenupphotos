@@ -267,5 +267,6 @@
     "peakChroma": 0.01,
     "samples": 9900
   },
-  "similarPhotos": [412, 409, 444, 430, 445, 418]
+  "similarPhotos": [412, 409, 444, 430, 445, 418],
+  "compareGroup": "Cypress Silhouettes in Black and White"
 }

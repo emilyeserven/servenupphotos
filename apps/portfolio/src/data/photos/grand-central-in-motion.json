@@ -266,5 +266,6 @@
     "peakChroma": 0.01,
     "samples": 10050
   },
-  "similarPhotos": [118, 148, 71, 116, 243, 51]
+  "similarPhotos": [118, 148, 71, 116, 243, 51],
+  "compareGroup": "Grand Central Concourse Crowds"
 }

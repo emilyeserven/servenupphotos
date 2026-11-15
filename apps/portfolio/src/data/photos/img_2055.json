@@ -268,5 +268,6 @@
     "samples": 9984
   },
   "notes": "Shows bracket fungi; 'bracket-fungi' isn't a tag, since only 2 photos have it.",
-  "similarPhotos": [91, 86, 92, 85, 89, 88]
+  "similarPhotos": [91, 86, 92, 85, 89, 88],
+  "compareGroup": "Layered Bracket Fungi"
 }

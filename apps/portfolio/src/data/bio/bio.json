@@ -1,0 +1,18 @@
+{
+  "id": "bio",
+  "text": "",
+  "photos": [
+    {
+      "photo": "apps/portfolio/src/data/photos/american-copper-self-portrait.json"
+    },
+    {
+      "photo": "apps/portfolio/src/data/photos/img_4893.json"
+    },
+    {
+      "photo": "apps/portfolio/src/data/photos/img_5035.json"
+    },
+    {
+      "photo": "apps/portfolio/src/data/photos/img_1245.json"
+    }
+  ]
+}

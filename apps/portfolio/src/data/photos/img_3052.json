@@ -1,11 +1,11 @@
 {
-  "id": 710,
-  "title": null,
+  "title": "Museum Observation Deck",
   "comment": null,
+  "id": 710,
   "altText": null,
   "notes": null,
   "file": "IMG_3052.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T05:17:48Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": null,
   "aperture": null,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/889b6bcda863-img-3052-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/889b6bcda863-img-3052-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/889b6bcda863-img-3052-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/889b6bcda863-img-3052-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/889b6bcda863-img-3052-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/889b6bcda863-img-3052-thumbnail.webp?crop=652,0,2293",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/889b6bcda863-img-3052-thumbnailpreview.webp?crop=652,0,2293",
     "thumbnailcrop": {
-      "x": 891,
+      "x": 652,
       "y": 0,
       "size": 2293,
       "outputSize": 500
@@ -68,7 +68,7 @@
       "hex": "#898989",
       "lab": {
         "l": 57.01,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {

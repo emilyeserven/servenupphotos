@@ -268,5 +268,6 @@
     "samples": 10050
   },
   "undecided": true,
-  "similarPhotos": [428, 425, 427, 435, 400, 424]
+  "similarPhotos": [428, 425, 427, 435, 400, 424],
+  "compareGroup": "Ocean Beach Parking Lot"
 }

@@ -267,5 +267,6 @@
     "samples": 10050
   },
   "notes": "Shows a lighthouse; 'lighthouse' isn't a tag, since only 1 photo has one.",
-  "similarPhotos": [229, 228, 202, 204, 399, 375]
+  "similarPhotos": [229, 228, 202, 204, 399, 375],
+  "compareGroup": "Harbor Full of Moored Boats"
 }

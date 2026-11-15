@@ -1,11 +1,11 @@
 {
-  "id": 708,
-  "title": null,
+  "title": "Low Clouds in the Concrete Jungle",
   "comment": null,
+  "id": 708,
   "altText": null,
   "notes": null,
   "file": "IMG_2842.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T05:10:54Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 3.5,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/13eff9f6414a-img-2842-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/13eff9f6414a-img-2842-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/13eff9f6414a-img-2842-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/13eff9f6414a-img-2842-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/13eff9f6414a-img-2842-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/13eff9f6414a-img-2842-thumbnail.webp?crop=99,0,3375",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/13eff9f6414a-img-2842-thumbnailpreview.webp?crop=99,0,3375",
     "thumbnailcrop": {
-      "x": 1312,
+      "x": 99,
       "y": 0,
       "size": 3375,
       "outputSize": 500

@@ -280,5 +280,6 @@
       "placement": null
     }
   },
-  "similarPhotos": [345, 343, 347, 346, 330, 339]
+  "similarPhotos": [345, 343, 347, 346, 330, 339],
+  "compareGroup": "Lattice Door in Dark Room"
 }

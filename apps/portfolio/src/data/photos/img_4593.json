@@ -268,5 +268,6 @@
     "samples": 10001
   },
   "notes": "Shows barnacles; 'barnacles' isn't a tag, since only 1 photo has them.",
-  "similarPhotos": [96, 95, 98, 143, 141, 144]
+  "similarPhotos": [96, 95, 98, 143, 141, 144],
+  "compareGroup": "Crabs Among Mossy Rocks"
 }

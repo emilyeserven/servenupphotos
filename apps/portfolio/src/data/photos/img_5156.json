@@ -1,9 +1,9 @@
 {
-  "id": 184,
-  "title": null,
+  "title": "Out of Time?",
   "comment": null,
+  "id": 184,
   "file": "IMG_5156.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T05:18:55Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 4,
@@ -261,5 +261,8 @@
     "peakChroma": 7.58,
     "samples": 10010
   },
-  "similarPhotos": [181, 42, 14, 167, 148, 449]
+  "similarPhotos": [181, 42, 14, 167, 148, 449],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

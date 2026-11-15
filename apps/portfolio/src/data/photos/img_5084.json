@@ -263,5 +263,6 @@
     "samples": 10050
   },
   "notes": "Shows a typewriter; 'typewriter' isn't a tag, since only 1 photo has one.",
-  "similarPhotos": [84, 410, 91, 100, 180, 87]
+  "similarPhotos": [84, 410, 91, 100, 180, 87],
+  "compareGroup": "Vintage Typewriter Close-Ups"
 }
