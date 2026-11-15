@@ -11,8 +11,10 @@ export interface BulkPlacePick {
   pullRequest: { number: number; url: string } | null;
   /** How many photo files there are. */
   photoFiles: number;
-  /** How many photo files have no places. */
+  /** How many photo files have no places, not counting the ones an LLM found no place for. */
   unplaced: number;
+  /** How many photo files without places were left out because an LLM found no place for them. */
+  noPlaceFound: number;
   photos: BulkTagPhoto[];
 }
 
@@ -38,10 +40,13 @@ interface BulkPlacesResult extends PendingSave {
   photos: number;
 }
 
-/** Picks up to `count` related photos without places (1 to 50), leaving out the ones already shown. */
+/**
+ * Picks up to `count` related photos without places (1 to 50), leaving out the ones already shown
+ * and the ones an LLM found no place for (`noPlaceFound`, their paths).
+ */
 export const pickBulkPlacePhotosMutation = mutationOptions({
   mutationKey: ["data", "bulk-places", "pick"],
-  mutationFn: (body: { skip: string[]; count: number }) =>
+  mutationFn: (body: { skip: string[]; count: number; noPlaceFound: string[] }) =>
     post<BulkPlacePick>("/api/data/bulk-places/pick", body),
 });
 

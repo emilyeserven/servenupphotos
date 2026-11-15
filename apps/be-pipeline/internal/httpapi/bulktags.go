@@ -69,8 +69,8 @@ func handleBulkTagsUpTo[T any](store *settings.Store, limit int64, kind, failure
 // without places for Bulk Places, leaving out the photos already shown.
 func handlePickBulkPlacePhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return handleBulkTags(store, "photo pick", "could not pick the photos",
-		func(ctx context.Context, cfg settings.GitHub, req github.BulkTagPickOptions) (any, error) {
-			return gh.PickBulkPlacePhotos(ctx, cfg, req.Skip, req.Count)
+		func(ctx context.Context, cfg settings.GitHub, req github.BulkPlacePickOptions) (any, error) {
+			return gh.PickBulkPlacePhotos(ctx, cfg, req)
 		})
 }
 

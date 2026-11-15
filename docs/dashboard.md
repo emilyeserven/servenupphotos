@@ -35,7 +35,7 @@ now **Settings › Status** (see [Settings](settings.md#status)).
     [Instagram calendar](publish.md).
   - **Photos without a place** (medium), counted as [Bulk Places](update-data.md#bulk-places) picks them, linking there.
     A photo without GPS is counted in the GPS row instead, since that's more serious, and one marked as going without
-    GPS is left out.
+    GPS is left out, as is one an LLM [found no place for](update-data.md#no-place-found).
   - **Photos without tags**, **without a genre** and **that aren't in an album** (low), counted as
     [Bulk tagging](update-data.md#bulk-tagging), Genre Suggestions and
     [Album Suggestions](update-data.md#album-suggestions) pick them, and linking to those pages.

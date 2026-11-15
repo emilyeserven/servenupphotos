@@ -14,7 +14,9 @@ import {
 } from "@/components/bulk-tagging/pick-controls";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { bulkPlacePrompt, parseBulkPlaceAnswer } from "@/lib/bulk-place-prompt";
-import { reviewBulkPlaces } from "@/lib/bulk-places";
+import { noPlacePaths, reviewBulkPlaces } from "@/lib/bulk-places";
+import { NoPlaceFoundNote } from "@/components/bulk-places/no-place-found";
+import { useNoPlaceFoundStore } from "@/stores/no-place-found";
 
 /**
  * Bulk Places: picks up to the chosen number of related photos without places, copies one prompt
@@ -22,7 +24,10 @@ import { reviewBulkPlaces } from "@/lib/bulk-places";
  * into a review of the place each photo gets and the new places to make.
  */
 export function BulkPlacesCard() {
-  const { pick, bar } = usePhotoPick(pickBulkPlacePhotosMutation, defaultBulkTagCount);
+  const noPlaceFound = useNoPlaceFoundStore((state) => state.paths);
+  const { pick, bar } = usePhotoPick(pickBulkPlacePhotosMutation, defaultBulkTagCount, {
+    noPlaceFound,
+  });
   return (
     <Card>
       <CardHeader>
@@ -32,7 +37,8 @@ export function BulkPlacesCard() {
           then the ones that share its city or country, genres or date. Copy one prompt for all of
           them into a chat with an LLM, which finds each photo&apos;s place on Google Maps (or Naver
           Map or Kakao Map in South Korea), paste its JSON answer back, and review the places before
-          they&apos;re saved, waiting for Commit.
+          they&apos;re saved, waiting for Commit. Photos the LLM finds no place for are remembered
+          in this browser and not picked again.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
@@ -56,10 +62,17 @@ function PickedPlaces({ pick }: { pick: BulkPlacePick }) {
   const all = readEntries(places.data?.places);
   const [answer, setAnswer] = useState("");
   const [read, setRead] = useState<ReturnType<typeof readAnswer>>();
+  const remember = useNoPlaceFoundStore((state) => state.add);
+  const review = () => {
+    const next = readAnswer(answer, pick, all);
+    if (next.review) remember(noPlacePaths(next.review));
+    setRead(next);
+  };
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
         {pick.unplaced} of {pick.photoFiles} photos have no places yet.
+        <NoPlaceFoundNote count={pick.noPlaceFound} />
       </p>
       <PickedPhotos photos={pick.photos} />
       <CopyPromptButton
@@ -72,7 +85,7 @@ function PickedPlaces({ pick }: { pick: BulkPlacePick }) {
         onChange={setAnswer}
         pending={!places.data}
         label="Review the places"
-        onReview={() => setRead(readAnswer(answer, pick, all))}
+        onReview={review}
       />
       {read && <ReadAnswer read={read} />}
     </div>

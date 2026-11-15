@@ -20,6 +20,7 @@ import {
   photoProblems,
 } from "@/lib/needs-attention";
 import { type StaleTripLine, staleTripLines } from "@/lib/stale-trip-lines";
+import { useNoPlaceFoundStore } from "@/stores/no-place-found";
 import {
   useChangedPhotoFiles,
   useCombinedData,
@@ -108,9 +109,10 @@ export function NeedsAttentionCard() {
 
 function Problems({ calendar }: { calendar: SocialCalendar }) {
   const changed = useChangedPhotoFiles();
+  const noPlaceFound = useNoPlaceFoundStore((state) => state.paths);
   const problems = useMemo(
-    () => photoProblems(calendar.photos, changed),
-    [calendar.photos, changed],
+    () => photoProblems(calendar.photos, changed, new Set(noPlaceFound)),
+    [calendar.photos, changed, noPlaceFound],
   );
   const scheduledDays = useScheduledInstagramDays(calendar);
   const short = instagramShortBy(scheduledDays);
