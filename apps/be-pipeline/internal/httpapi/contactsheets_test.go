@@ -136,3 +136,27 @@ func TestFetchSheetImageRefusesOtherSchemes(t *testing.T) {
 		t.Error("read a file link")
 	}
 }
+
+func TestDeleteContactSheetsHandler(t *testing.T) {
+	cfg := func() (settings.R2, error) { return settings.R2{Bucket: "photos"}, nil }
+	var asked []string
+	del := func(_ context.Context, _ settings.R2, set string) (storage.DeletedContactSheets, error) {
+		asked = append(asked, set)
+		if set == "bad" {
+			return storage.DeletedContactSheets{}, &storage.ListError{Message: "That isn't a set of contact sheets."}
+		}
+		return storage.DeletedContactSheets{Deleted: 3, Failed: []storage.FailedDelete{}}, nil
+	}
+	h := handleDeleteContactSheets(cfg, del)
+	for body, want := range map[string]int{`{"set":""}`: http.StatusOK, `{"set":"20261115-045000-1a2b"}`: http.StatusOK, `{"set":"bad"}`: http.StatusBadRequest, `nope`: http.StatusBadRequest} {
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/photos/bucket/contact-sheets/delete", strings.NewReader(body))
+		rec := httptest.NewRecorder()
+		h(rec, req)
+		if rec.Code != want {
+			t.Errorf("%s: status %d, want %d (%s)", body, rec.Code, want, rec.Body)
+		}
+	}
+	if len(asked) != 3 {
+		t.Errorf("asked to delete %v, want the three readable requests", asked)
+	}
+}

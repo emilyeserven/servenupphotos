@@ -100,3 +100,70 @@ func TestEnsureContactSheetExpiryRefused(t *testing.T) {
 		t.Errorf("problem = %q, want how to add the rule by hand", msg)
 	}
 }
+
+// fakeSheetsBucket lists keys under the asked prefix and keeps each deleted
+// path, refusing to delete refused.
+func fakeSheetsBucket(t *testing.T, keys []string, refused string, prefixes, deleted *[]string) string {
+	t.Helper()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			prefix := r.URL.Query().Get("prefix")
+			*prefixes = append(*prefixes, prefix)
+			var contents strings.Builder
+			for _, k := range keys {
+				if strings.HasPrefix(k, prefix) {
+					contents.WriteString("<Contents><Key>" + k + "</Key></Contents>")
+				}
+			}
+			w.Header().Set("Content-Type", "application/xml")
+			_, _ = io.WriteString(w, `<ListBucketResult><Name>photos</Name><IsTruncated>false</IsTruncated>`+contents.String()+`</ListBucketResult>`)
+		case http.MethodDelete:
+			if strings.HasSuffix(r.URL.Path, refused) {
+				w.Header().Set("Content-Type", "application/xml")
+				w.WriteHeader(http.StatusForbidden)
+				_, _ = io.WriteString(w, `<Error><Code>AccessDenied</Code><Message>no</Message></Error>`)
+				return
+			}
+			*deleted = append(*deleted, r.URL.Path)
+			w.WriteHeader(http.StatusNoContent)
+		}
+	}))
+	t.Cleanup(srv.Close)
+	return srv.URL
+}
+
+func TestDeleteContactSheets(t *testing.T) {
+	keys := []string{
+		"contact-sheets/20261115-045000-1a2b/sheet-01.jpg",
+		"contact-sheets/20261115-045000-1a2b/sheet-02.jpg",
+		"contact-sheets/20261116-101500-9f9f/sheet-01.jpg",
+	}
+	var prefixes, deleted []string
+	endpoint := fakeSheetsBucket(t, keys, "9f9f/sheet-01.jpg", &prefixes, &deleted)
+
+	got, err := deleteContactSheets(t.Context(), validR2, endpoint, "20261115-045000-1a2b")
+	if err != nil || got.Deleted != 2 || len(got.Failed) != 0 {
+		t.Fatalf("one set: %+v, %v; want 2 deleted", got, err)
+	}
+	if prefixes[0] != "contact-sheets/20261115-045000-1a2b/" {
+		t.Errorf("listed %q, want only the set's folder", prefixes[0])
+	}
+
+	deleted = nil
+	got, err = deleteContactSheets(t.Context(), validR2, endpoint, "")
+	if err != nil || got.Deleted != 2 || len(got.Failed) != 1 || got.Failed[0].Key != keys[2] {
+		t.Errorf("every set: %+v, %v; want 2 deleted and the refused one failed", got, err)
+	}
+	if prefixes[1] != "contact-sheets/" {
+		t.Errorf("listed %q, want the whole contact-sheets/ folder", prefixes[1])
+	}
+}
+
+func TestDeleteContactSheetsRefusesOtherFolders(t *testing.T) {
+	for _, set := range []string{"../photos", "20261115-045000-1a2b/../../photos", "photos"} {
+		if _, err := deleteContactSheets(t.Context(), validR2, "http://unused", set); err == nil {
+			t.Errorf("set %q: deleted, want refused", set)
+		}
+	}
+}
