@@ -1,4 +1,4 @@
-import { type ComparePhoto, compareGroupOf, comparePhotoName } from "@/lib/compare-groups";
+import { type ComparePhoto, compareGroupOf, compareGroups, isWinner } from "@/lib/compare-groups";
 import { isDraft, isUnselected, titleOf } from "@/lib/drafts";
 import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
 import { promptImageUrl } from "@/lib/tag-prompt";
@@ -6,11 +6,11 @@ import { promptImageUrl } from "@/lib/tag-prompt";
 /** Which photos Autogroup asks about: every photo, or only the drafts. */
 export type AutogroupScope = "all" | "drafts";
 
-/** What Autogroup asks about: which photos, and whether photos already in a group are left out. */
+/** What Autogroup asks about: which photos, and whether the LLM may change the groups there are. */
 export interface AutogroupOptions {
   scope: AutogroupScope;
-  /** Leaves out photos already in a compare group, so only ungrouped photos are suggested. */
-  skipGrouped: boolean;
+  /** Sends the compare groups there are, so the LLM can add photos to them, combine them or remove them. */
+  withGroups: boolean;
 }
 
 /** A photo in an Autogroup prompt: the photo, the name the prompt calls it by, and its Small image. */
@@ -47,11 +47,11 @@ function promptImage(photo: ComparePhoto): string {
   return promptImageUrl(images, photo.imageUrl ?? "");
 }
 
-/** Whether the photo can be asked about with these options. */
+/** Whether the photo is asked about on its own: it's in no group, can be shown, and fits the scope. */
 function wanted(photo: ComparePhoto, options: AutogroupOptions): boolean {
   if (isUnselected(photo.data)) return false;
   if (options.scope === "drafts" && !isDraft(photo.data)) return false;
-  return !(options.skipGrouped && compareGroupOf(photo.data));
+  return compareGroupOf(photo.data) === undefined;
 }
 
 /** Oldest first, so photos taken together sit next to each other in the prompt. */
@@ -64,207 +64,139 @@ function byTaken(a: AutogroupPhoto, b: AutogroupPhoto): number {
   return a.key.localeCompare(b.key, undefined, { numeric: true });
 }
 
-/**
- * The photos Autogroup can ask about, oldest first: the drafts or every photo, leaving out
- * unselected photos (their images may be gone), photos without an image, and, when asked, photos
- * already in a group.
- */
-export function autogroupPhotos(
-  photos: ComparePhoto[],
-  options: AutogroupOptions,
-): AutogroupPhoto[] {
+/** The photo as the prompt shows it, with its name, image and when it was taken. */
+function asPromptPhoto(photo: ComparePhoto): AutogroupPhoto {
+  return {
+    photo,
+    key: autogroupKey(photo),
+    imageUrl: promptImage(photo),
+    takenAt: takenAt(photo.data),
+  };
+}
+
+/** The photos as the prompt shows them, oldest first, leaving out ones without an image. */
+function promptPhotos(photos: ComparePhoto[]): AutogroupPhoto[] {
   return photos
-    .filter((photo) => wanted(photo, options))
-    .map((photo) => ({
-      photo,
-      key: autogroupKey(photo),
-      imageUrl: promptImage(photo),
-      takenAt: takenAt(photo.data),
-    }))
+    .map(asPromptPhoto)
     .filter((entry) => entry.imageUrl !== "")
     .toSorted(byTaken);
 }
 
-/** One photo's part of the prompt: its name and image, when it was taken, its title and group. */
+/** A compare group there is already, as the prompt shows it. */
+export interface ExistingGroup {
+  name: string;
+  /** Its photos, oldest first, including any without an image, which the prompt leaves out. */
+  photos: AutogroupPhoto[];
+}
+
+/** What one Autogroup prompt asks about: photos in no group, and the compare groups there are. */
+export interface AutogroupAsk {
+  /** The photos in no group, oldest first. */
+  loose: AutogroupPhoto[];
+  /** The compare groups there are, empty unless the LLM may change them. */
+  groups: ExistingGroup[];
+}
+
+/**
+ * What Autogroup asks about: the drafts or every photo in no group, oldest first, leaving out
+ * unselected photos (their images may be gone) and photos without an image, and, when the LLM may
+ * change them, every compare group with its photos.
+ */
+export function autogroupAsk(photos: ComparePhoto[], options: AutogroupOptions): AutogroupAsk {
+  const loose = promptPhotos(photos.filter((photo) => wanted(photo, options)));
+  if (!options.withGroups) return { loose, groups: [] };
+  const groups = compareGroups(photos).map((group) => ({
+    name: group.name,
+    photos: group.photos.map(asPromptPhoto).toSorted(byTaken),
+  }));
+  return { loose, groups };
+}
+
+/** Every photo in the prompt, loose or in a group. */
+export function askedPhotos(ask: AutogroupAsk): AutogroupPhoto[] {
+  return [...ask.loose, ...ask.groups.flatMap((group) => group.photos)];
+}
+
+/** One photo's part of the prompt: its name and image, when it was taken, its title, and whether it won. */
 function photoSection(entry: AutogroupPhoto): string {
   const lines = [`Photo "${entry.key}": ${entry.imageUrl}`];
   if (entry.takenAt) lines.push(`- Taken: ${entry.takenAt}`);
   const title = titleOf(entry.photo.data);
   if (title) lines.push(`- Title: ${title}`);
-  const group = compareGroupOf(entry.photo.data);
-  if (group) lines.push(`- Already in the group: ${group}`);
+  if (isWinner(entry.photo)) lines.push("- Picked as a winner of its group");
   return lines.join("\n");
 }
 
-/** The groups the prompt's photos are already in, one "- name" line each, or "" for none. */
-function existingGroupLines(photos: AutogroupPhoto[]): string {
-  const names = [
-    ...new Set(photos.map((entry) => compareGroupOf(entry.photo.data)).filter(Boolean)),
-  ];
-  return names.map((name) => `- ${name}`).join("\n");
+/** One group's part of the prompt: its name, then each of its photos with an image. */
+function groupSection(group: ExistingGroup): string {
+  const shown = group.photos.filter((entry) => entry.imageUrl !== "");
+  return `Group "${group.name}" (${shown.length} photos):
+${shown.map(photoSection).join("\n")}`;
 }
 
-/** The rule about groups some photos are already in, when any are. */
-function existingGroupsSection(photos: AutogroupPhoto[]): string {
-  const lines = existingGroupLines(photos);
-  if (!lines) return "";
+/** The groups there are, and what the LLM may do with them, when it may change them. */
+function groupsSection(groups: ExistingGroup[]): string {
+  if (groups.length === 0) return "";
   return `
-Groups some of these photos are in already:
-${lines}
-To add photos to one of these groups, use its name exactly as it's listed, and list the photos already in it too.
-`;
+
+Compare groups I have already (${groups.length}):
+
+${groups.map(groupSection).join("\n\n")}`;
+}
+
+/** The rules about the groups there are, when the prompt sends them. */
+function groupRules(groups: ExistingGroup[]): string {
+  if (groups.length === 0) return "";
+  return `
+- You can change the compare groups I have already:
+  - Add photos to one of them: put it in "groups" with its name exactly as listed, and list only the photos to add.
+  - Combine groups that are too similar to each other: list them in "merge" with the name for the combined group, one of theirs or a new one.
+  - Remove a group whose photos aren't too similar after all: list it in "remove" with why. Its photos just leave the group.
+  - Moving a photo out of one of my groups into another group is fine. Leave my groups as they are when they're fine.`;
+}
+
+/** The example answer, with "merge" and "remove" only when the prompt sends the groups there are. */
+function answerShape(groups: ExistingGroup[]): string {
+  const group = `    { "name": "Lantern Street at Dusk", "photos": ["20161216_092741", "20161216_092745", "20161218_220416"] }`;
+  if (groups.length === 0) return `{\n  "groups": [\n${group}\n  ]\n}`;
+  return `{
+  "groups": [
+${group}
+  ],
+  "merge": [
+    { "groups": ["Harbor Boats", "Boats at the Pier"], "name": "Harbor Boats" }
+  ],
+  "remove": [
+    { "group": "Red Doors", "reason": "The two doors are on different streets and framed differently." }
+  ]
+}`;
 }
 
 /**
  * The prompt to paste into a chat with an LLM, linking each photo's Small image and asking which of
- * them are too similar to all be posted, not only near duplicates, so they can be weighed head-to-head in a compare group, and for the
- * answer as JSON the Autogroup page reads.
+ * them are too similar to all be posted, not only near duplicates, so they can be weighed
+ * head-to-head in a compare group, and, when it sends them, how to change the groups there are,
+ * with the answer as JSON the Autogroup page reads.
  */
-export function autogroupPrompt(photos: AutogroupPhoto[]): string {
-  return `Look at these ${photos.length} photos and group the ones that are too similar to each other to all be worth posting, so I can compare each group side by side and keep only the best.
+export function autogroupPrompt({ loose, groups }: AutogroupAsk): string {
+  const tidy =
+    groups.length > 0 ? ", and tell me how to tidy the compare groups I have already" : "";
+  return `Look at these photos and group the ones that are too similar to each other to all be worth posting, so I can compare each group side by side and keep only the best${tidy}.
 
 Each photo's name is in quotes, followed by a link to a small version of it. Open every link and look at the photos themselves.
 
-${photos.map(photoSection).join("\n\n")}
-${existingGroupsSection(photos)}
+Photos not in a group yet (${loose.length}):
+
+${loose.map(photoSection).join("\n\n") || "None."}${groupsSection(groups)}
+
 Rules:
 - I'm not only looking for duplicates. Group photos that are generally too similar: someone scrolling the portfolio would feel they'd seen it already. That includes near-identical frames, but also the same subject, scene or view shot another time or from another angle, and photos with the same composition, framing or idea, even when they were taken on different days or in different places.
 - Don't group photos that only share a broad theme, a color or a place but look clearly different, such as two street photos of different scenes in the same city.
 - The times they were taken can help, since photos taken close together are often similar, but look at the photos to decide.
 - A group can have any number of photos, 2 or more: put every photo that's too similar to the others in the same group, however many there are. Leave out any photo that isn't too similar to another here.
 - A photo goes in at most one group.
-- Name each group in a few words saying what its photos show, in Title Case, such as "Lantern Street at Dusk".
-- Answer with only this JSON, with nothing before or after it, listing each photo by its name in quotes above:
-{
-  "groups": [
-    { "name": "Lantern Street at Dusk", "photos": ["20161216_092741", "20161216_092745", "20161218_220416"] }
-  ]
-}
-- Answer with { "groups": [] } when no photos belong together.`;
-}
-
-/** A group the LLM suggested, with the photos the page knows by name. */
-export interface AutogroupSuggestion {
-  name: string;
-  photos: AutogroupPhoto[];
-  /** True when a group by this name exists already, so the photos join it. */
-  existing: boolean;
-}
-
-/** The LLM's answer as the page reads it: the groups, and the names it gave that aren't photos here. */
-export interface AutogroupAnswer {
-  groups: AutogroupSuggestion[];
-  unknown: string[];
-}
-
-/** The JSON object in the answer, from its first `{` to its last `}`, so a code fence or a sentence around it is fine. */
-function answerObject(answer: string): unknown {
-  const start = answer.indexOf("{");
-  const end = answer.lastIndexOf("}");
-  if (start === -1 || end <= start) throw new Error("The answer has no JSON object in it.");
-  try {
-    return JSON.parse(answer.slice(start, end + 1));
-  } catch {
-    throw new Error("The answer's JSON couldn't be read. Paste the whole answer, from { to }.");
-  }
-}
-
-/** A group as the answer gives it, before its photos are looked up. */
-interface RawGroup {
-  name: string;
-  photos: string[];
-}
-
-/** The answer's groups that have a name and a list of photo names. */
-function rawGroups(parsed: unknown): RawGroup[] {
-  const groups = (parsed as { groups?: unknown } | null)?.groups;
-  if (!Array.isArray(groups)) throw new Error('The answer\'s JSON has no "groups" list.');
-  return groups
-    .map((group) => group as { name?: unknown; photos?: unknown })
-    .filter((group) => typeof group?.name === "string" && group.name.trim() !== "")
-    .map((group) => ({
-      name: (group.name as string).trim(),
-      photos: Array.isArray(group.photos)
-        ? group.photos.filter((name): name is string => typeof name === "string")
-        : [],
-    }));
-}
-
-/** Looks a photo up by the name the answer gave, ignoring case, quotes and a `.json` ending. */
-function photoFinder(photos: AutogroupPhoto[]): (name: string) => AutogroupPhoto | undefined {
-  const byKey = new Map<string, AutogroupPhoto>();
-  for (const entry of photos) {
-    byKey.set(entry.key.toLowerCase(), entry);
-    byKey.set(entry.photo.file.photoName.toLowerCase(), entry);
-  }
-  return (name) =>
-    byKey.get(
-      name
-        .trim()
-        .replace(/^["']|["']$/g, "")
-        .replace(/\.json$/i, "")
-        .toLowerCase(),
-    );
-}
-
-/** How many photos are in the group named name already, other than the ones suggested for it. */
-function othersInGroup(all: ComparePhoto[], name: string, suggested: AutogroupPhoto[]): number {
-  const paths = new Set(suggested.map((entry) => entry.photo.file.path));
-  return all.filter((photo) => compareGroupOf(photo.data) === name && !paths.has(photo.file.path))
-    .length;
-}
-
-/**
- * The photos named, looked up with find, leaving out ones already in `taken` (and adding the rest
- * to it), and adding names that aren't photos here to `unknown`.
- */
-function groupMembers(
-  names: string[],
-  find: (name: string) => AutogroupPhoto | undefined,
-  taken: Set<string>,
-  unknown: Set<string>,
-): AutogroupPhoto[] {
-  const members: AutogroupPhoto[] = [];
-  for (const name of names) {
-    const entry = find(name);
-    if (!entry) unknown.add(name);
-    else if (!taken.has(entry.key)) {
-      taken.add(entry.key);
-      members.push(entry);
-    }
-  }
-  return members;
-}
-
-/**
- * Reads the LLM's answer into the groups to make, looking each photo up among the prompt's photos.
- * A photo named in more than one group stays in the first; a group left with fewer than 2 photos,
- * counting the ones in it already, is dropped. Throws an error a user can read when the answer
- * isn't the JSON the prompt asks for.
- */
-export function readAutogroupAnswer(
-  answer: string,
-  photos: AutogroupPhoto[],
-  all: ComparePhoto[],
-): AutogroupAnswer {
-  const find = photoFinder(photos);
-  const taken = new Set<string>();
-  const unknown = new Set<string>();
-  const groups: AutogroupSuggestion[] = [];
-  for (const raw of rawGroups(answerObject(answer))) {
-    const members = groupMembers(raw.photos, find, taken, unknown);
-    const others = othersInGroup(all, raw.name, members);
-    if (members.length > 0 && members.length + others >= 2) {
-      groups.push({ name: raw.name, photos: members, existing: others > 0 });
-    }
-  }
-  return { groups, unknown: [...unknown] };
-}
-
-/** The photos of the suggestion that would move out of another group, with that group's name. */
-export function movingPhotos(suggestion: AutogroupSuggestion): { name: string; from: string }[] {
-  return suggestion.photos.flatMap((entry) => {
-    const from = compareGroupOf(entry.photo.data);
-    return from && from !== suggestion.name ? [{ name: comparePhotoName(entry.photo), from }] : [];
-  });
+- Name each new group in a few words saying what its photos show, in Title Case, such as "Lantern Street at Dusk".${groupRules(groups)}
+- Answer with only this JSON, with nothing before or after it, naming each photo and group by its name in quotes above:
+${answerShape(groups)}
+- Leave a list empty when there's nothing for it.`;
 }

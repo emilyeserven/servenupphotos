@@ -1,141 +1,144 @@
 import { Link } from "@tanstack/react-router";
-import { useId, useState } from "react";
-import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
+import { useState } from "react";
+import { MergeRow, RemovalRow, SuggestionRow } from "@/components/compare/autogroup-changes";
 import { Button } from "@/components/ui/button";
 import { count } from "@/components/update-data-shared";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
-import {
-  type AutogroupAnswer,
-  type AutogroupSuggestion,
-  movingPhotos,
-} from "@/lib/compare-autogroup";
-import { comparePhotoName } from "@/lib/compare-groups";
+import { type AutogroupAnswer, changeCount } from "@/lib/compare-autogroup-answer";
+
+/** The key a change is left out by: its kind and name, or its place for a combination. */
+const keys = {
+  group: (name: string) => `group:${name}`,
+  merge: (index: number) => `merge:${index}`,
+  remove: (name: string) => `remove:${name}`,
+};
+
+/** The answer with only the changes not left out. */
+function keptChanges(answer: AutogroupAnswer, skipped: ReadonlySet<string>): AutogroupAnswer {
+  return {
+    ...answer,
+    groups: answer.groups.filter((group) => !skipped.has(keys.group(group.name))),
+    merges: answer.merges.filter((_, index) => !skipped.has(keys.merge(index))),
+    removals: answer.removals.filter((removal) => !skipped.has(keys.remove(removal.group.name))),
+  };
+}
 
 /**
- * The review of the LLM's answer: each suggested group with its photos and a box to leave it out,
- * then a button that puts the photos in their groups, waiting for Commit.
+ * Makes the changes kept, as local edits waiting for Commit: removed groups first, then combined
+ * ones (keeping their winners), then the groups made or added to, so a photo the answer moves
+ * out of a removed group still ends up where it said.
  */
-export function AutogroupReview({ answer }: { answer: AutogroupAnswer }) {
-  const { setGroup } = useCompareEdits();
-  const [skipped, setSkipped] = useState<ReadonlySet<string>>(new Set());
-  const [done, setDone] = useState<{ photos: number; groups: number } | null>(null);
-  const chosen = answer.groups.filter((group) => !skipped.has(group.name));
-  const photoCount = chosen.reduce((sum, group) => sum + group.photos.length, 0);
-  const add = () => {
-    for (const group of chosen) {
+function useApplyChanges() {
+  const { setGroup, joinGroup } = useCompareEdits();
+  return (kept: AutogroupAnswer) => {
+    for (const { group } of kept.removals) {
+      setGroup(
+        group.photos.map((entry) => entry.photo.file),
+        null,
+      );
+    }
+    for (const merge of kept.merges) {
+      const photos = merge.groups.flatMap((group) => group.photos);
+      joinGroup(
+        photos.map((entry) => entry.photo.file),
+        merge.name,
+      );
+    }
+    for (const group of kept.groups) {
       setGroup(
         group.photos.map((entry) => entry.photo.file),
         group.name,
       );
     }
-    setDone({ photos: photoCount, groups: chosen.length });
   };
-  const toggle = (name: string, keep: boolean) => {
-    const next = new Set(skipped);
-    if (keep) next.delete(name);
-    else next.add(name);
-    setSkipped(next);
-  };
+}
+
+/**
+ * The review of the LLM's answer: each group to make or add to, each combination and each removal,
+ * with a box to leave it out, then a button that makes the rest, waiting for Commit.
+ */
+export function AutogroupReview({ answer }: { answer: AutogroupAnswer }) {
+  const apply = useApplyChanges();
+  const [skipped, setSkipped] = useState<ReadonlySet<string>>(new Set());
+  const [done, setDone] = useState<number | null>(null);
+  const kept = keptChanges(answer, skipped);
+  const choice = (key: string) => ({
+    chosen: !skipped.has(key),
+    disabled: done !== null,
+    onChange: (keep: boolean) => {
+      const next = new Set(skipped);
+      if (keep) next.delete(key);
+      else next.add(key);
+      setSkipped(next);
+    },
+  });
+  if (changeCount(answer) === 0) {
+    return (
+      <div className="flex flex-col gap-4 border-t pt-6 text-sm">
+        <UnknownNames answer={answer} />
+        <p className="text-muted-foreground">The answer suggests no changes.</p>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownNames names={answer.unknown} />
-      {answer.groups.length === 0 ? (
-        <p className="text-muted-foreground">The answer puts no photos together.</p>
+      <UnknownNames answer={answer} />
+      <ul className="flex flex-col gap-4">
+        {answer.removals.map((removal) => (
+          <RemovalRow
+            key={removal.group.name}
+            removal={removal}
+            {...choice(keys.remove(removal.group.name))}
+          />
+        ))}
+        {answer.merges.map((merge, index) => (
+          <MergeRow key={merge.name} merge={merge} {...choice(keys.merge(index))} />
+        ))}
+        {answer.groups.map((group) => (
+          <SuggestionRow key={group.name} group={group} {...choice(keys.group(group.name))} />
+        ))}
+      </ul>
+      {done === null ? (
+        <Button
+          type="button"
+          className="self-start"
+          disabled={changeCount(kept) === 0}
+          onClick={() => {
+            apply(kept);
+            setDone(changeCount(kept));
+          }}
+        >
+          Make {count(changeCount(kept), "change")} to compare groups
+        </Button>
       ) : (
-        <ul className="flex flex-col gap-4">
-          {answer.groups.map((group) => (
-            <SuggestionRow
-              key={group.name}
-              group={group}
-              chosen={!skipped.has(group.name)}
-              disabled={done !== null}
-              onChange={(keep) => toggle(group.name, keep)}
-            />
-          ))}
-        </ul>
-      )}
-      {done ? (
-        <DoneLine photos={done.photos} groups={done.groups} />
-      ) : (
-        answer.groups.length > 0 && (
-          <Button type="button" className="self-start" disabled={photoCount === 0} onClick={add}>
-            Add {count(photoCount, "photo")} to {count(chosen.length, "compare group")}
-          </Button>
-        )
+        <DoneLine changes={done} />
       )}
     </div>
   );
 }
 
-/** The names in the answer that aren't photos in the prompt, so they were left out. */
-function UnknownNames({ names }: { names: string[] }) {
-  if (names.length === 0) return null;
+/** The photo and group names in the answer that aren't in the prompt, so they were left out. */
+function UnknownNames({ answer }: { answer: AutogroupAnswer }) {
+  const lines = [
+    answer.unknown.length > 0 && `photos that aren't in the prompt: ${answer.unknown.join(", ")}`,
+    answer.unknownGroups.length > 0 &&
+      `groups that aren't in the prompt: ${answer.unknownGroups.join(", ")}`,
+  ].filter(Boolean);
+  if (lines.length === 0) return null;
   return (
-    <p className="text-amber-700 dark:text-amber-400">
-      Left out {names.length === 1 ? "a name" : `${names.length} names`} that
-      {names.length === 1 ? " isn't a photo" : " aren't photos"} in the prompt: {names.join(", ")}
-    </p>
-  );
-}
-
-interface SuggestionRowProps {
-  group: AutogroupSuggestion;
-  chosen: boolean;
-  disabled: boolean;
-  onChange: (chosen: boolean) => void;
-}
-
-/** One suggested group: a box to keep it, its name, its photos, and the ones it moves from another group. */
-function SuggestionRow({ group, chosen, disabled, onChange }: SuggestionRowProps) {
-  const id = useId();
-  const moving = movingPhotos(group);
-  return (
-    <li className="flex flex-col gap-2 rounded-lg border p-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <input
-          id={id}
-          type="checkbox"
-          className="accent-primary size-4"
-          checked={chosen}
-          disabled={disabled}
-          onChange={(event) => onChange(event.target.checked)}
-        />
-        <label htmlFor={id} className="font-medium">
-          {group.name}
-        </label>
-        <span className="text-muted-foreground">
-          {count(group.photos.length, "photo")}
-          {group.existing && ", joining the group there is"}
-        </span>
-      </div>
-      <ul className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-8">
-        {group.photos.map((entry) => (
-          <li key={entry.key} className="flex min-w-0 flex-col gap-1 text-xs">
-            <PickedThumbnail
-              data={entry.photo.data}
-              alt={comparePhotoName(entry.photo)}
-              className={chosen ? "w-full" : "w-full opacity-40"}
-            />
-            <span className="truncate" title={comparePhotoName(entry.photo)}>
-              {comparePhotoName(entry.photo)}
-            </span>
-          </li>
-        ))}
-      </ul>
-      {moving.map((photo) => (
-        <p key={photo.name} className="text-muted-foreground text-xs">
-          Moves {photo.name} out of “{photo.from}”.
-        </p>
+    <div className="flex flex-col gap-1 text-amber-700 dark:text-amber-400">
+      {lines.map((line) => (
+        <p key={String(line)}>Left out {line}</p>
       ))}
-    </li>
+    </div>
   );
 }
 
-/** What was added, linked to the Compare page. */
-function DoneLine({ photos, groups }: { photos: number; groups: number }) {
+/** What was changed, linked to the Compare page. */
+function DoneLine({ changes }: { changes: number }) {
   return (
     <p>
-      Added {count(photos, "photo")} to {count(groups, "compare group")}, waiting for Commit.{" "}
+      Made {count(changes, "change")} to compare groups, waiting for Commit.{" "}
       <Link to="/compare" className="underline underline-offset-4">
         Open Compare
       </Link>

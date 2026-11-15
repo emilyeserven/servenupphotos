@@ -89,32 +89,53 @@ from the original's (its JSON's `images.key`, else `images.full`, else the image
 ## Autogroup
 
 **Autogroup** (`/compare/autogroup`, under **Compare** in the sidebar) has an LLM find photos that are generally too
-similar to all be posted, not only near duplicates, and puts them in compare groups. It doesn't call an LLM itself: it copies a prompt to paste into a
-chat with one, the way [Genre Suggestions](photographic-genres.md) does, and reads the JSON answer pasted back.
+similar to all be posted, not only near duplicates, and puts them in compare groups. It can also tidy the groups there
+are: add photos to them, combine them, or remove them. It doesn't call an LLM itself: it copies a prompt to paste
+into a chat with one, the way [Genre Suggestions](photographic-genres.md) does, and reads the JSON answer pasted back.
 
-- **All photos** or **Draft photos** chooses which photos the prompt asks about. Draft photos are the untitled ones
-  and the ones set aside as Undecided (`isDraft`). Either way, [unselected](#unselected-photos) photos (their images
-  may be gone) and photos without an image are left out.
-- **Leave out photos already in a group** (on by default) asks only about ungrouped photos. Turned off, each photo in
-  a group says which, and the prompt lists those groups, so the LLM can add photos to one by its name.
-- Every chosen photo goes in one prompt, with no limit, oldest first by the custom date or else the EXIF one, so the
-  LLM can match similar photos taken far apart.
+- **All photos** or **Draft photos** chooses which photos in no group the prompt asks about. Draft photos are the
+  untitled ones and the ones set aside as Undecided (`isDraft`). Either way, [unselected](#unselected-photos) photos
+  (their images may be gone) and photos without an image are left out. Every chosen photo goes in one prompt, with no
+  limit, oldest first by the custom date or else the EXIF one.
+- **Let it change the groups there are** (on by default) also sends every compare group with its photos, each
+  winner marked, so the LLM can add photos to one, combine some, or remove one. Turned off, the prompt asks only for
+  new groups.
 
-**Copy the Autogroup prompt** copies, for each chosen photo, its JSON file's name (such as `20161216_092741`), a
-link to its Small version (500 pixels on the longest edge, else Medium, else the original, like the tag prompt), when
-it was taken and its title. The button next to it shows the whole prompt in a modal, which also opens when the browser
-won't copy, as on a plain HTTP address. The prompt asks for groups of any size, 2 photos or more, that are too similar for someone
+**Copy the Autogroup prompt** copies, for each photo, its JSON file's name (such as `20161216_092741`), a link to its
+Small version (500 pixels on the longest edge, else Medium, else the original, like the tag prompt), when it was taken
+and its title. The button next to it shows the whole prompt in a modal, which also opens when the browser won't copy,
+as on a plain HTTP address. The prompt asks for groups of any size, 2 photos or more, that are too similar for someone
 scrolling the portfolio not to feel they'd seen it already: near-identical frames, but also the same subject or view
 shot another time or from another angle, or the same composition or idea, even on different days. Photos that only
-share a theme, a color or a place aren't grouped. Each photo goes in at most one group, as `{ "groups": [ { "name": "…", "photos": ["…"] } ] }`.
+share a theme, a color or a place aren't grouped. Each photo goes in at most one group. The answer is:
 
-**Review the groups** reads the pasted answer (a code fence or a sentence around the JSON is fine) in the browser.
-Each suggested group shows its photos, whether it joins a group there is already, and any photo it moves out of
-another group, with a box to leave it out. Names that aren't photos in the prompt are listed and skipped, a photo
-named twice stays in its first group, and a group left with fewer than 2 photos, counting the ones in it already, is
-dropped. **Add … to … compare groups** sets each photo's `compareGroup`, the same [local edit](#where-its-kept) the
-Compare dialog makes, waiting for **Commit**. With **Leave out photos already in a group** on, the photos just
-grouped then leave the list, so the next copy asks about the ones left. The rules are in `lib/compare-autogroup.ts`.
+```json
+{
+  "groups": [
+    { "name": "Lantern Street at Dusk", "photos": ["20161216_092741", "20161216_092745"] }
+  ],
+  "merge": [{ "groups": ["Harbor Boats", "Boats at the Pier"], "name": "Harbor Boats" }],
+  "remove": [{ "group": "Red Doors", "reason": "The two doors are on different streets." }]
+}
+```
+
+A `groups` entry with the name of a group there is adds its photos to that group.
+
+**Review the changes** reads the pasted answer (a code fence or a sentence around the JSON is fine) in the browser and
+lists each change with a box to leave it out:
+
+- **Remove “…”**, with the LLM's reason: its photos leave the group, as **Take out** would, winners unpicked.
+- **Combine into “…”**: every photo of the groups goes in the one named (one of theirs or a new one; the first
+  group's when it gives none), keeping its winners.
+- A new group, or photos to **add to the group there is**, with any photo it moves out of another group.
+
+Photo and group names that aren't in the prompt are listed and skipped, a photo named twice stays in its first group,
+a group left with fewer than 2 photos, counting the ones in it already, is dropped, a group is combined at most once,
+and a group being combined isn't also removed. **Make … changes to compare groups** makes the removals, then the
+combinations, then the new groups and additions, so a photo the answer moves out of a removed group still ends up where
+it said. They're the same `compareGroup` [local edits](#where-its-kept) the Compare dialog makes, waiting for
+**Commit**. The rules are in `lib/compare-autogroup.ts` (the prompt) and `lib/compare-autogroup-answer.ts` (reading
+the answer).
 
 > **Frontend analogy:** it's a form whose "server" is a chat window. The page serializes the photos into a prompt,
 > the LLM is the API, and pasting its JSON back is the response, which the page validates like any untrusted `fetch`

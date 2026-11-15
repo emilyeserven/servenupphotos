@@ -111,6 +111,12 @@ export function useCompareEdits() {
   return {
     /** Puts the files in the group named name, or takes them out of theirs with null. */
     setGroup,
+    /** Moves the files to the group named name, keeping which are winners, as combining groups does. */
+    joinGroup: (files: InFlightFileRead[], name: string) =>
+      setField(
+        COMPARE_GROUP,
+        files.map((file) => change(file, name)),
+      ),
     /** Picks the photo as one of its group's winners, or unpicks it; a group can have several. */
     setWinner: (photo: ComparePhoto, winner: boolean) =>
       setField(COMPARE_WINNER, [change(photo.file, winner || null)]),

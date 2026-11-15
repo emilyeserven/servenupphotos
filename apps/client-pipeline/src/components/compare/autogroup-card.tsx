@@ -8,14 +8,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { count } from "@/components/update-data-shared";
 import { useCompareGroups } from "@/hooks/use-compare-groups";
 import {
-  type AutogroupAnswer,
+  type AutogroupAsk,
   type AutogroupOptions,
   type AutogroupPhoto,
   type AutogroupScope,
-  autogroupPhotos,
+  autogroupAsk,
   autogroupPrompt,
-  readAutogroupAnswer,
 } from "@/lib/compare-autogroup";
+import { type AutogroupAnswer, readAutogroupAnswer } from "@/lib/compare-autogroup-answer";
 import type { ComparePhoto } from "@/lib/compare-groups";
 import { cn } from "@/lib/utils";
 
@@ -25,8 +25,8 @@ import { cn } from "@/lib/utils";
  */
 export function AutogroupCard() {
   const compare = useCompareGroups();
-  const [options, setOptions] = useState<AutogroupOptions>({ scope: "all", skipGrouped: true });
-  const photos = useMemo(() => autogroupPhotos(compare.photos, options), [compare.photos, options]);
+  const [options, setOptions] = useState<AutogroupOptions>({ scope: "all", withGroups: true });
+  const ask = useMemo(() => autogroupAsk(compare.photos, options), [compare.photos, options]);
   return (
     <Card>
       <CardHeader>
@@ -34,8 +34,9 @@ export function AutogroupCard() {
         <CardDescription>
           Copy one prompt linking every chosen photo&apos;s Small version into a chat with an LLM,
           which finds the photos that are too similar to all be posted, not only near duplicates, in
-          groups of any size. Paste its JSON answer back, review the groups, and add them to
-          Compare, waiting for Commit like any other compare group.
+          groups of any size, and can add photos to the groups there are, combine them or remove
+          them. Paste its JSON answer back, review the changes, and make the ones you keep, waiting
+          for Commit like any other compare group.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
@@ -45,17 +46,17 @@ export function AutogroupCard() {
             value={options.scope}
             onChange={(scope) => setOptions({ ...options, scope })}
           />
-          <SkipGroupedCheck
-            checked={options.skipGrouped}
-            onChange={(skipGrouped) => setOptions({ ...options, skipGrouped })}
+          <WithGroupsCheck
+            checked={options.withGroups}
+            onChange={(withGroups) => setOptions({ ...options, withGroups })}
           />
         </div>
         {compare.pending ? (
           <Skeleton className="h-40 rounded-xl" />
         ) : (
           <AutogroupPrompt
-            key={`${options.scope}-${options.skipGrouped}`}
-            asked={photos}
+            key={`${options.scope}-${options.withGroups}`}
+            ask={ask}
             all={compare.photos}
           />
         )}
@@ -103,8 +104,8 @@ function ScopeToggle({
   );
 }
 
-/** Leaves out photos already in a compare group. */
-function SkipGroupedCheck({
+/** Sends the compare groups there are, so the LLM can change them. */
+function WithGroupsCheck({
   checked,
   onChange,
 }: {
@@ -121,20 +122,20 @@ function SkipGroupedCheck({
         checked={checked}
         onChange={(event) => onChange(event.target.checked)}
       />
-      <label htmlFor={id}>Leave out photos already in a group</label>
+      <label htmlFor={id}>Let it change the groups there are</label>
     </div>
   );
 }
 
 interface AutogroupPromptProps {
-  /** The photos the prompt asks about, oldest first. */
-  asked: AutogroupPhoto[];
+  /** The photos in no group and the compare groups the prompt asks about. */
+  ask: AutogroupAsk;
   /** Every photo that can be compared, to count the ones in a suggested group already. */
   all: ComparePhoto[];
 }
 
 /** The photos asked about, their prompt, the box to paste the answer into, and the review of it. */
-function AutogroupPrompt({ asked, all }: AutogroupPromptProps) {
+function AutogroupPrompt({ ask, all }: AutogroupPromptProps) {
   const [typed, setTyped] = useState("");
   const [answer, setAnswer] = useState<AutogroupAnswer | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -142,7 +143,7 @@ function AutogroupPrompt({ asked, all }: AutogroupPromptProps) {
   const [reviews, setReviews] = useState(0);
   const review = () => {
     try {
-      setAnswer(readAutogroupAnswer(typed, asked, all));
+      setAnswer(readAutogroupAnswer(typed, ask, all));
       setReviews((n) => n + 1);
       setError(null);
     } catch (problem) {
@@ -153,28 +154,36 @@ function AutogroupPrompt({ asked, all }: AutogroupPromptProps) {
   return (
     <div className="flex flex-col gap-4">
       <CopyPromptButton
-        label={`Copy the Autogroup prompt for ${count(asked.length, "photo")}`}
-        disabled={asked.length === 0}
-        prompt={() => autogroupPrompt(asked)}
+        label={promptLabel(ask)}
+        disabled={ask.loose.length === 0 && ask.groups.length === 0}
+        prompt={() => autogroupPrompt(ask)}
       />
       <PasteAnswer
         value={typed}
         onChange={setTyped}
         pending={false}
-        label="Review the groups"
+        label="Review the changes"
         onReview={review}
       />
       {error && <p className="text-destructive text-sm">{error}</p>}
       {answer && <AutogroupReview key={reviews} answer={answer} />}
-      <PhotoTiles photos={asked} />
+      <PhotoTiles photos={ask.loose} />
     </div>
   );
+}
+
+/** The copy button's words, with how many photos and groups the prompt sends. */
+function promptLabel(ask: AutogroupAsk): string {
+  const groups = ask.groups.length > 0 ? ` and ${count(ask.groups.length, "group")}` : "";
+  return `Copy the Autogroup prompt for ${count(ask.loose.length, "photo")}${groups}`;
 }
 
 /** The photos as small square tiles, each named on hover, or that there are none. */
 function PhotoTiles({ photos }: { photos: AutogroupPhoto[] }) {
   if (photos.length === 0) {
-    return <p className="text-muted-foreground text-sm">No photos to group with these choices.</p>;
+    return (
+      <p className="text-muted-foreground text-sm">No photos outside a group with these choices.</p>
+    );
   }
   return (
     <ul className="grid grid-cols-6 gap-1.5 sm:grid-cols-10 lg:grid-cols-12">
