@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   defaultStyleCount,
+  parsePublishedOnly,
   samplePhotos,
   styleCount,
   stylePhotoSection,
+  styleSheetPhotos,
   stylePrompt,
   takenDay,
 } from "@/lib/style-prompt";
@@ -127,4 +129,48 @@ test("the prompt asks for one Markdown note with front matter for a notes app", 
     today: "2026-11-12",
   });
   assert.match(plain, /in that order\./);
+});
+
+test("the contact sheets name each photo by its title, or else its file", () => {
+  assert.deepEqual(styleSheetPhotos([canal, temple]), [
+    { label: "Amsterdam Canal", url: "https://cdn/canal-small.webp" },
+    { label: "temple", url: "https://cdn/temple.jpg" },
+  ]);
+});
+
+test("with contact sheets, the prompt links them first and gives each photo its tile", () => {
+  const prompt = stylePrompt({
+    photos: [canal, temple],
+    matching: 2,
+    filtered: false,
+    focus: "",
+    today: "2026-11-12",
+    sheets: [{ url: "https://cdn/contact-sheets/x/sheet-01.jpg", first: 1, last: 2 }],
+  });
+  assert.match(prompt, /Start with the contact sheets below/);
+  assert.match(
+    prompt,
+    /- Contact sheet 1 \(tiles 1 to 2\): https:\/\/cdn\/contact-sheets\/x\/sheet-01\.jpg/,
+  );
+  assert.doesNotMatch(prompt, /Open every link/);
+  assert.match(
+    prompt,
+    /2\. Photo "temple" \(tile 2 on contact sheet 1\): https:\/\/cdn\/temple\.jpg/,
+  );
+});
+
+test("published photos only is read from the URL and said in the prompt", () => {
+  assert.equal(parsePublishedOnly({ published: true }), true);
+  assert.equal(parsePublishedOnly({ published: "true" }), true);
+  assert.equal(parsePublishedOnly({ published: false }), undefined);
+  assert.equal(parsePublishedOnly({}), undefined);
+  const prompt = stylePrompt({
+    photos: [canal],
+    matching: 5,
+    filtered: false,
+    focus: "",
+    today: "2026-11-12",
+    publishedOnly: true,
+  });
+  assert.match(prompt, /1 of the 5 published photos in my portfolio/);
 });

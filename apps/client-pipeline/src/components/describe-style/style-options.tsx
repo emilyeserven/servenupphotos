@@ -13,6 +13,9 @@ interface StyleOptionsProps {
   shuffled: boolean;
   onShuffle: () => void;
   onSpread: () => void;
+  /** Whether only photos already on the portfolio are picked from. */
+  publishedOnly: boolean;
+  onPublishedOnly: (checked: boolean) => void;
 }
 
 /** How many photos the style prompt links, and whether they're spread evenly or shuffled. */
@@ -23,6 +26,8 @@ export function StyleOptions({
   shuffled,
   onShuffle,
   onSpread,
+  publishedOnly,
+  onPublishedOnly,
 }: StyleOptionsProps) {
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -50,6 +55,15 @@ export function StyleOptions({
           Spread evenly again
         </Button>
       )}
+      <label className="flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          className="accent-primary size-4"
+          checked={publishedOnly}
+          onChange={(event) => onPublishedOnly(event.target.checked)}
+        />
+        Published photos only
+      </label>
     </div>
   );
 }

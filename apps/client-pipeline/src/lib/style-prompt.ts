@@ -1,7 +1,21 @@
+import type { ContactSheet, ContactSheetPhoto } from "@/api/contact-sheets";
+import type { GridFilters } from "@/components/gallery/grid-filters";
+import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { promptImageUrl } from "@/lib/tag-prompt";
 
 /** How many photos the style prompt links until another number is chosen. */
 export const defaultStyleCount = 30;
+
+/**
+ * The Describe my style page's search params: the portfolio Grid's filters, and `published` when
+ * only photos already on the portfolio are picked from.
+ */
+export type DescribeStyleSearch = GridFilters & { published?: true };
+
+/** Whether the search params ask for published photos only (`published=true`), or undefined when they don't. */
+export function parsePublishedOnly(search: Record<string, unknown>): true | undefined {
+  return search.published === true || search.published === "true" ? true : undefined;
+}
 
 /** A photo the style prompt can link: its file's path and its JSON. */
 export interface StylePhoto {
@@ -62,14 +76,48 @@ function line(label: string, value: string): string[] {
   return value ? [`  - ${label}: ${value}`] : [];
 }
 
-/** One photo's part of the prompt: its link, then what's known of it, one fact per line. */
-export function stylePhotoSection(photo: StylePhoto, place: number): string {
-  const { data } = photo;
+/** The image the style prompt links for a photo: its Small version, else Medium, else the full image. */
+function styleImage(data: Record<string, unknown>): string {
   const images = data.images as Record<string, unknown> | undefined;
   const full = typeof images?.full === "string" ? images.full : "";
+  return promptImageUrl(images, full);
+}
+
+/** The name a photo goes by on the contact sheets: its title, or else its file's name. */
+function sheetLabel(photo: StylePhoto): string {
+  const name =
+    photo.path
+      .split("/")
+      .at(-1)
+      ?.replace(/\.json$/, "") ?? photo.path;
+  return text(photo.data, "title") || name;
+}
+
+/** The style prompt's photos as the contact sheets show them, in the prompt's order. */
+export function styleSheetPhotos(photos: StylePhoto[]): ContactSheetPhoto[] {
+  return photos.map((photo) => ({ label: sheetLabel(photo), url: styleImage(photo.data) }));
+}
+
+/** The first line of a photo's part of the prompt: its number and link, and its tile when there are contact sheets. */
+function sectionHeading(photo: StylePhoto, place: number, sheets?: ContactSheet[]): string {
+  const url = styleImage(photo.data);
+  const tile = tileNote(sheets, place - 1);
+  return tile ? `${place}. Photo "${sheetLabel(photo)}"${tile}: ${url}` : `${place}. ${url}`;
+}
+
+/**
+ * One photo's part of the prompt: its link (and its tile on the contact sheets, when there are
+ * any), then what's known of it, one fact per line.
+ */
+export function stylePhotoSection(
+  photo: StylePhoto,
+  place: number,
+  sheets?: ContactSheet[],
+): string {
+  const { data } = photo;
   const gear = [text(data, "camera"), text(data, "lens")].filter(Boolean).join(" with ");
   return [
-    `${place}. ${promptImageUrl(images, full)}`,
+    sectionHeading(photo, place, sheets),
     ...line("Title", text(data, "title")),
     ...line("Taken", takenDay(data)),
     ...line("Where", where(data)),
@@ -155,11 +203,18 @@ export interface StylePromptInput {
   focus: string;
   /** Today's date as YYYY-MM-DD, for the note's front matter. */
   today: string;
+  /** Whether only photos already on the portfolio were picked from, leaving out ones waiting for Commit. */
+  publishedOnly?: boolean;
+  /** The contact sheets made of the photos, in the same order, which the prompt asks the LLM to start with. */
+  sheets?: ContactSheet[];
 }
 
 /** Where the linked photos came from, such as "30 of the 212 photos that match my filters". */
-function pickedFrom({ photos, matching, filtered }: StylePromptInput): string {
-  const of = filtered ? "photos that match the filters I chose" : "photos in my portfolio";
+function pickedFrom({ photos, matching, filtered, publishedOnly }: StylePromptInput): string {
+  const published = publishedOnly ? "published " : "";
+  const of = filtered
+    ? `${published}photos that match the filters I chose`
+    : `${published}photos in my portfolio`;
   if (photos.length >= matching) return `all ${matching} ${of}`;
   return `${photos.length} of the ${matching} ${of}, spread across them`;
 }
@@ -170,12 +225,20 @@ function pickedFrom({ photos, matching, filtered }: StylePromptInput): string {
  */
 export function stylePrompt(input: StylePromptInput): string {
   const focus = input.focus.trim();
+  const { sheets } = input;
+  const look = lookAtPhotos(
+    sheets,
+    "Open every link and look at the photo itself; the facts listed under each one are only there to help.",
+  );
+  const help = sheets?.length
+    ? "\n\nThe facts listed under each photo are only there to help."
+    : "";
   return `I'm a photographer. Please look at each of my photos at the links below and describe my photography style.
 
 The photos are ${pickedFrom(input)}.
 ${span(input.photos).join("\n")}
 
-Open every link and look at the photo itself; the facts listed under each one are only there to help. Then write about:
+${look}${help} Then write about:
 - My style overall, in a short paragraph, as you'd introduce me to someone who hasn't seen my work.
 - The subjects and moments I'm drawn to.
 - How I compose: framing, perspective, distance, and what I leave out.
@@ -188,5 +251,5 @@ Point to photos by their number when you give an example.${focus ? `\n\nMost of 
 
 ${markdownAnswer(input)}
 
-${input.photos.map((photo, i) => stylePhotoSection(photo, i + 1)).join("\n\n")}`;
+${input.photos.map((photo, i) => stylePhotoSection(photo, i + 1, sheets)).join("\n\n")}`;
 }
