@@ -1,0 +1,272 @@
+{
+  "id": 699,
+  "title": null,
+  "comment": null,
+  "altText": null,
+  "notes": null,
+  "file": "IMG_1842.jpg",
+  "addedDate": null,
+  "camera": "Canon EOS Rebel T6i",
+  "lens": null,
+  "aperture": null,
+  "exposure": "1/2500",
+  "iso": 100,
+  "focalLength": null,
+  "gpsPosition": "40 deg 42' 7.16\" N, 74 deg 0' 58.44\" W",
+  "customGpsPosition": null,
+  "createDate": "2017:09:09 12:25:56",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "United States of America",
+  "state": "New York",
+  "city": "New York City",
+  "width": 6000,
+  "height": 3375,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/3483b884e00d-img-1842.jpg",
+    "key": "photos/3483b884e00d-img-1842.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/3483b884e00d-img-1842-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/3483b884e00d-img-1842-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/3483b884e00d-img-1842-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/3483b884e00d-img-1842-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/3483b884e00d-img-1842-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/3483b884e00d-img-1842-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/3483b884e00d-img-1842-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3483b884e00d-img-1842-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 1312,
+      "y": 0,
+      "size": 3375,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "genres": [],
+  "places": [],
+  "noGps": false,
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "spotlightPlacement": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "pickedSimilar": [],
+  "pickedSimilarNotes": {},
+  "similarPhotos": [],
+  "perceptualHash": "0312222be8622a29",
+  "colors": {
+    "average": {
+      "hex": "#606971",
+      "lab": {
+        "l": 43.85,
+        "a": -1.67,
+        "b": -5.47
+      },
+      "hcl": {
+        "h": 253.05,
+        "c": 5.71,
+        "l": 43.85
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0025
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0301
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.1372
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.0087
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.0034
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0.0027
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.0036
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.326
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.0038
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0.0016
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0.0006
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0.0007
+      }
+    ],
+    "neutrals": {
+      "share": 0.4792,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.029
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0557
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0478
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0496
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0226
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0247
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0163
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0127
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0126
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0159
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0314
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0371
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0336
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0263
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0143
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0048
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0061
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0128
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0193
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0.0066
+        }
+      ]
+    },
+    "lightness": 43.85,
+    "chroma": 23.67,
+    "peakChroma": 45.74,
+    "samples": 10050
+  }
+}
