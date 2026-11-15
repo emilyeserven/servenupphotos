@@ -1,11 +1,11 @@
 {
-  "id": 574,
-  "title": null,
+  "title": "Late Night in Seoul",
   "comment": null,
+  "id": 574,
   "altText": null,
   "notes": null,
   "file": "DSCF1855.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:47:08Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -73,8 +73,8 @@
       "hex": "#1e1e1e",
       "lab": {
         "l": 11.1,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

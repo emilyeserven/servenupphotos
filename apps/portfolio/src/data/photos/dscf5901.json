@@ -1,9 +1,9 @@
 {
-  "id": 447,
-  "title": null,
+  "title": "The Stream from Above",
   "comment": null,
+  "id": 447,
   "file": "DSCF5901.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:45:02Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 9,
@@ -268,5 +268,8 @@
     "samples": 10050
   },
   "similarPhotos": [446, 448, 215, 79, 224, 451],
-  "compareGroup": "Arima Stone Stream Channel"
+  "compareGroup": "Arima Stone Stream Channel",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

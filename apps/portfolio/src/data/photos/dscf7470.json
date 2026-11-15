@@ -1,9 +1,9 @@
 {
-  "id": 315,
-  "title": null,
+  "title": "Forest Buddha",
   "comment": null,
+  "id": 315,
   "file": "DSCF7470.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:44:26Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -267,5 +267,7 @@
     "samples": 9975
   },
   "notes": "Shows a Buddha statue; 'buddha' isn't a tag, since only 2 photos have one.",
-  "similarPhotos": [324, 309, 313, 311, 310, 312]
+  "similarPhotos": [324, 309, 313, 311, 310, 312],
+  "noGps": false,
+  "altText": null
 }

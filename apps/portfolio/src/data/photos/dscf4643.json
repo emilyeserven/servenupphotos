@@ -1,9 +1,9 @@
 {
-  "id": 473,
-  "title": null,
+  "title": "Split Road",
   "comment": null,
+  "id": 473,
   "file": "DSCF4643.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:43:13Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.3,
@@ -268,5 +268,8 @@
     "samples": 9912
   },
   "similarPhotos": [476, 471, 495, 479, 496, 472],
-  "compareGroup": "Boardwalk Through the Marsh"
+  "compareGroup": "Boardwalk Through the Marsh",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

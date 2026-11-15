@@ -1,11 +1,11 @@
 {
-  "id": 725,
-  "title": null,
+  "title": "Black Tops, Blue Jeans",
   "comment": null,
+  "id": 725,
   "altText": null,
   "notes": null,
   "file": "DSCF6203.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:42:14Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/7db5b7962986-dscf6203-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/7db5b7962986-dscf6203-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/7db5b7962986-dscf6203-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/7db5b7962986-dscf6203-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7db5b7962986-dscf6203-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/7db5b7962986-dscf6203-thumbnail.webp?crop=0,1492,3731",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7db5b7962986-dscf6203-thumbnailpreview.webp?crop=0,1492,3731",
     "thumbnailcrop": {
       "x": 0,
-      "y": 746,
+      "y": 1492,
       "size": 3731,
       "outputSize": 500
     }

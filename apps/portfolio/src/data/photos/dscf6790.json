@@ -1,11 +1,11 @@
 {
-  "id": 737,
-  "title": null,
+  "title": "Coogan's Restaurant & Pub",
   "comment": null,
+  "id": 737,
   "altText": null,
   "notes": null,
   "file": "DSCF6790.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:39:35Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/490a7a4904ee-dscf6790-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/490a7a4904ee-dscf6790-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/490a7a4904ee-dscf6790-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/490a7a4904ee-dscf6790-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/490a7a4904ee-dscf6790-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/490a7a4904ee-dscf6790-thumbnail.webp?crop=0,1712,4281",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/490a7a4904ee-dscf6790-thumbnailpreview.webp?crop=0,1712,4281",
     "thumbnailcrop": {
       "x": 0,
-      "y": 856,
+      "y": 1712,
       "size": 4281,
       "outputSize": 500
     }
@@ -68,8 +68,8 @@
       "hex": "#1f1f1f",
       "lab": {
         "l": 11.58,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

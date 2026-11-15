@@ -1,11 +1,11 @@
 {
-  "id": 736,
-  "title": null,
+  "title": "The Black Rose",
   "comment": null,
+  "id": 736,
   "altText": null,
   "notes": null,
   "file": "DSCF6741.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:39:57Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/1c333ac632e0-dscf6741-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/1c333ac632e0-dscf6741-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/1c333ac632e0-dscf6741-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/1c333ac632e0-dscf6741-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1c333ac632e0-dscf6741-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/1c333ac632e0-dscf6741-thumbnail.webp?crop=1771,0,3883",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1c333ac632e0-dscf6741-thumbnailpreview.webp?crop=1771,0,3883",
     "thumbnailcrop": {
-      "x": 1510,
+      "x": 1771,
       "y": 0,
       "size": 3883,
       "outputSize": 500
@@ -68,8 +68,8 @@
       "hex": "#2a2a2a",
       "lab": {
         "l": 17.19,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

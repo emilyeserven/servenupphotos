@@ -1,11 +1,11 @@
 {
-  "id": 578,
-  "title": null,
+  "title": "Rainy Myeongdong Streets I",
   "comment": null,
+  "id": 578,
   "altText": null,
   "notes": "Shows street food at a rainy night market; 'street-food' was removed as a tag, since only 2 photos have it.",
   "file": "DSCF1983.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:51:59Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -28,16 +28,16 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983.jpg",
     "key": "photos/e52d4416b4dd-dscf1983.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-thumbnailpreview.webp",
+    "xlarge": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-xlarge.webp?faces=mwib8or9",
+    "large": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-large.webp?faces=mwib8or9",
+    "medium": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-medium.webp?faces=mwib8or9",
+    "small": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-small.webp?faces=mwib8or9",
+    "xsmall": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-xsmall.webp?faces=mwib8or9",
+    "preview": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-preview.webp?faces=mwib8or9",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-thumbnail.webp?crop=2970,0,4204&faces=mwib8or9",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e52d4416b4dd-dscf1983-thumbnailpreview.webp?crop=2970,0,4204&faces=mwib8or9",
     "thumbnailcrop": {
-      "x": 1635,
+      "x": 2970,
       "y": 0,
       "size": 4204,
       "outputSize": 500
@@ -274,5 +274,16 @@
     "peakChroma": 23.95,
     "samples": 9768
   },
-  "compareGroup": "Rainy Myeongdong Alley"
+  "compareGroup": "Rainy Myeongdong Alley",
+  "faces": [
+    {
+      "x": 1627,
+      "y": 1643,
+      "width": 369,
+      "height": 464,
+      "blocks": 11,
+      "shape": "circle",
+      "edge": "blocks"
+    }
+  ]
 }

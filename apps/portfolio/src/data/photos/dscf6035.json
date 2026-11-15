@@ -1,11 +1,11 @@
 {
-  "id": 721,
-  "title": null,
+  "title": "View from the Ascent",
   "comment": null,
+  "id": 721,
   "altText": null,
   "notes": null,
   "file": "DSCF6035.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:42:52Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 17:47:45",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Porter Square Station",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "porter-square-station"
+    },
+    {
+      "relation": "in",
+      "id": "porter-square"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,
