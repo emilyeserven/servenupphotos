@@ -11,7 +11,7 @@ function AutogroupPage() {
   return (
     <Page
       title="Autogroup"
-      description="Asks an LLM which photos are alternatives of the same shot, then puts them in compare groups."
+      description="Asks an LLM which photos are too similar to all be posted, then puts them in compare groups."
     >
       <AutogroupCard />
     </Page>

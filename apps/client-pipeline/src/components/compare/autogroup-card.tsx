@@ -46,9 +46,10 @@ export function AutogroupCard() {
         <CardTitle>Autogroup</CardTitle>
         <CardDescription>
           Copy a prompt linking each photo&apos;s Small version into a chat with an LLM, which finds
-          the photos that are alternatives of the same shot. Paste its JSON answer back, review the
-          groups, and add them to Compare, waiting for Commit like any other compare group. Photos
-          are taken oldest first, so frames shot together land in the same batch.
+          the photos that are too similar to all be posted, not only near duplicates. Paste its JSON
+          answer back, review the groups, and add them to Compare, waiting for Commit like any other
+          compare group. Photos are taken oldest first, so a bigger batch lets it compare photos
+          from further apart.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
