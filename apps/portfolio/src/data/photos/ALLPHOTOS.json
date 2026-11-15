@@ -23840,6 +23840,296 @@
     "compareGroup": "Tokoji Stone Lantern Rows"
   },
   {
+    "title": "Masterpiece",
+    "comment": null,
+    "id": 583,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF2877.jpg",
+    "addedDate": "2026-11-15T20:07:30Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 22,
+    "exposure": "1/60",
+    "iso": 250,
+    "focalLength": 55.6,
+    "gpsPosition": "37 deg 32' 9.52\" N, 126 deg 59' 59.25\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:05:16 10:52:28",
+    "customCreateDate": null,
+    "placeName": "Hannam-dong",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "South Korea",
+    "state": "Seoul",
+    "city": "Seoul",
+    "width": 7690,
+    "height": 4326,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877.jpg",
+      "key": "photos/e32c018f4e66-dscf2877.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-xlarge.webp?faces=mwi9mr5k",
+      "large": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-large.webp?faces=mwi9mr5k",
+      "medium": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-medium.webp?faces=mwi9mr5k",
+      "small": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-small.webp?faces=mwi9mr5k",
+      "xsmall": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-xsmall.webp?faces=mwi9mr5k",
+      "preview": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-preview.webp?faces=mwi9mr5k",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-thumbnail.webp?faces=mwi9mr5k",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-thumbnailpreview.webp?faces=mwi9mr5k",
+      "thumbnailcrop": {
+        "x": 1682,
+        "y": 0,
+        "size": 4326,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["storefronts", "facade", "signage", "sidewalk", "pedestrians"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "hannam-dong"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "160d557939112c4f",
+    "colors": {
+      "average": {
+        "hex": "#686360",
+        "lab": {
+          "l": 42.38,
+          "a": 1.52,
+          "b": 2.33
+        },
+        "hcl": {
+          "h": 56.87,
+          "c": 2.78,
+          "l": 42.38
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0088
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1086
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0072
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0005
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0012
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0017
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.005
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0479
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0016
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0003
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0003
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0011
+        }
+      ],
+      "neutrals": {
+        "share": 0.8157,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1976
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0599
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0485
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0436
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0293
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0309
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0265
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0279
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0263
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0212
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.025
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0204
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0252
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0196
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0173
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0324
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0482
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0409
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0476
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0276
+          }
+        ]
+      },
+      "lightness": 42.38,
+      "chroma": 9.64,
+      "peakChroma": 21.66,
+      "samples": 9975
+    },
+    "compareGroup": "Masterpiece Storefront",
+    "faces": [
+      {
+        "x": 5407,
+        "y": 2525,
+        "width": 129,
+        "height": 156,
+        "blocks": 10,
+        "shape": "circle",
+        "edge": "blocks",
+        "rotation": 12
+      }
+    ]
+  },
+  {
     "title": "Passing by the Gate",
     "comment": null,
     "id": 210,
@@ -39203,14 +39493,14 @@
     "images": {
       "full": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2.jpg",
       "key": "photos/9ed7de3119a9-dscf5975-2.jpg",
-      "xlarge": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-xlarge.webp",
-      "large": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-large.webp",
-      "medium": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-medium.webp",
-      "small": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-small.webp",
-      "xsmall": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-xsmall.webp",
-      "preview": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-preview.webp",
-      "thumbnail": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-thumbnail.webp?crop=3128,42,4154",
-      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-thumbnailpreview.webp?crop=3128,42,4154",
+      "xlarge": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-xlarge.webp?faces=mwi506jn",
+      "large": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-large.webp?faces=mwi506jn",
+      "medium": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-medium.webp?faces=mwi506jn",
+      "small": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-small.webp?faces=mwi506jn",
+      "xsmall": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-xsmall.webp?faces=mwi506jn",
+      "preview": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-preview.webp?faces=mwi506jn",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-thumbnail.webp?crop=3128,42,4154&faces=mwi506jn",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9ed7de3119a9-dscf5975-2-thumbnailpreview.webp?crop=3128,42,4154&faces=mwi506jn",
       "thumbnailcrop": {
         "x": 3128,
         "y": 42,
@@ -39455,7 +39745,92 @@
       "chroma": 9.44,
       "peakChroma": 17.81,
       "samples": 10050
-    }
+    },
+    "faces": [
+      {
+        "x": 558,
+        "y": 2236,
+        "width": 301,
+        "height": 395,
+        "blocks": 18,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 1689,
+        "y": 2365,
+        "width": 329,
+        "height": 323,
+        "blocks": 18,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 2336,
+        "y": 2443,
+        "width": 299,
+        "height": 314,
+        "blocks": 18,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 2423,
+        "y": 2178,
+        "width": 395,
+        "height": 395,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks",
+        "keep": true
+      },
+      {
+        "x": 4073,
+        "y": 2388,
+        "width": 265,
+        "height": 336,
+        "blocks": 18,
+        "shape": "circle",
+        "edge": "blocks",
+        "rotation": -33
+      },
+      {
+        "x": 5187,
+        "y": 2038,
+        "width": 279,
+        "height": 415,
+        "blocks": 18,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 5400,
+        "y": 2038,
+        "width": 395,
+        "height": 395,
+        "blocks": 8,
+        "keep": true
+      },
+      {
+        "x": 6307,
+        "y": 2298,
+        "width": 294,
+        "height": 315,
+        "blocks": 18,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 6176,
+        "y": 1972,
+        "width": 395,
+        "height": 395,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks",
+        "keep": true
+      }
+    ]
   },
   {
     "title": "Underground Brutalism",
@@ -42015,14 +42390,14 @@
     "images": {
       "full": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045.jpg",
       "key": "photos/263c707b11b8-dscf7045.jpg",
-      "xlarge": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-xlarge.webp",
-      "large": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-large.webp",
-      "medium": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-medium.webp",
-      "small": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-small.webp",
-      "xsmall": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-xsmall.webp",
-      "preview": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-preview.webp",
-      "thumbnail": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-thumbnail.webp?crop=0,901,3139",
-      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-thumbnailpreview.webp?crop=0,901,3139",
+      "xlarge": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-xlarge.webp?faces=mwi54e8d",
+      "large": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-large.webp?faces=mwi54e8d",
+      "medium": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-medium.webp?faces=mwi54e8d",
+      "small": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-small.webp?faces=mwi54e8d",
+      "xsmall": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-xsmall.webp?faces=mwi54e8d",
+      "preview": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-preview.webp?faces=mwi54e8d",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-thumbnail.webp?crop=0,901,3139&faces=mwi54e8d",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-thumbnailpreview.webp?crop=0,901,3139&faces=mwi54e8d",
       "thumbnailcrop": {
         "x": 0,
         "y": 901,
@@ -42263,7 +42638,86 @@
       "chroma": 17.14,
       "peakChroma": 41.06,
       "samples": 9628
-    }
+    },
+    "faces": [
+      {
+        "x": 746,
+        "y": 2304,
+        "width": 91,
+        "height": 91,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks",
+        "keep": true
+      },
+      {
+        "x": 737,
+        "y": 2219,
+        "width": 91,
+        "height": 91,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks",
+        "keep": true
+      },
+      {
+        "x": 746,
+        "y": 2201,
+        "width": 91,
+        "height": 91,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks",
+        "keep": true
+      },
+      {
+        "x": 765,
+        "y": 2160,
+        "width": 91,
+        "height": 91,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks",
+        "keep": true
+      },
+      {
+        "x": 935,
+        "y": 2151,
+        "width": 87,
+        "height": 118,
+        "blocks": 8,
+        "keep": true
+      },
+      {
+        "x": 796,
+        "y": 2111,
+        "width": 138,
+        "height": 91,
+        "blocks": 8,
+        "edge": "blocks",
+        "rotation": -26,
+        "keep": true
+      },
+      {
+        "x": 899,
+        "y": 2100,
+        "width": 91,
+        "height": 91,
+        "blocks": 8,
+        "shape": "circle",
+        "edge": "blocks",
+        "keep": true
+      },
+      {
+        "x": 769,
+        "y": 2137,
+        "width": 222,
+        "height": 264,
+        "blocks": 40,
+        "shape": "circle",
+        "edge": "blocks"
+      }
+    ]
   },
   {
     "title": "Autumn in Beacon Hill",
@@ -42295,14 +42749,14 @@
     "images": {
       "full": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114.jpg",
       "key": "photos/5748ebb18840-dscf7114.jpg",
-      "xlarge": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-xlarge.webp",
-      "large": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-large.webp",
-      "medium": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-medium.webp",
-      "small": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-small.webp",
-      "xsmall": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-xsmall.webp",
-      "preview": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-preview.webp",
-      "thumbnail": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-thumbnail.webp?crop=0,1469,5041",
-      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-thumbnailpreview.webp?crop=0,1469,5041",
+      "xlarge": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-xlarge.webp?faces=mwi57he9",
+      "large": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-large.webp?faces=mwi57he9",
+      "medium": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-medium.webp?faces=mwi57he9",
+      "small": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-small.webp?faces=mwi57he9",
+      "xsmall": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-xsmall.webp?faces=mwi57he9",
+      "preview": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-preview.webp?faces=mwi57he9",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-thumbnail.webp?crop=0,1469,5041&faces=mwi57he9",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5748ebb18840-dscf7114-thumbnailpreview.webp?crop=0,1469,5041&faces=mwi57he9",
       "thumbnailcrop": {
         "x": 0,
         "y": 1469,
@@ -42540,7 +42994,25 @@
       "chroma": 14.95,
       "peakChroma": 36.83,
       "samples": 10030
-    }
+    },
+    "faces": [
+      {
+        "x": 1351,
+        "y": 4514,
+        "width": 212,
+        "height": 267,
+        "blocks": 21,
+        "shape": "circle",
+        "edge": "blocks"
+      },
+      {
+        "x": 4263,
+        "y": 4821,
+        "width": 159,
+        "height": 96,
+        "blocks": 19
+      }
+    ]
   },
   {
     "title": "Namsan Park Overlook",
@@ -82237,277 +82709,6 @@
       "samples": 10050
     },
     "similarPhotos": [436, 372, 430, 374, 412, 414]
-  },
-  {
-    "title": "Masterpiece",
-    "comment": null,
-    "id": 121,
-    "file": "DSCF2877-2.jpg",
-    "addedDate": "2026-10-23T19:01:30Z",
-    "camera": "Fujifilm X-T5",
-    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
-    "aperture": 22,
-    "exposure": "1/60",
-    "iso": 250,
-    "focalLength": 55.6,
-    "gpsPosition": "37 deg 32' 9.52\" N, 126 deg 59' 59.25\" E",
-    "customGpsPosition": null,
-    "createDate": "2026:05:16 10:52:28",
-    "customCreateDate": null,
-    "placeName": "Itaewon",
-    "customCity": null,
-    "customState": null,
-    "customCountry": null,
-    "country": "South Korea",
-    "state": "Seoul",
-    "city": null,
-    "width": 7690,
-    "height": 4326,
-    "images": {
-      "full": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2.jpg",
-      "key": "photos/485896b801a4-dscf2877-2.jpg",
-      "xlarge": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-xlarge.webp",
-      "large": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-large.webp",
-      "medium": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-medium.webp",
-      "small": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-small.webp",
-      "xsmall": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-xsmall.webp",
-      "preview": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-preview.webp",
-      "thumbnail": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-thumbnail.webp?crop=1724,231,4095",
-      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-thumbnailpreview.webp?crop=1724,231,4095",
-      "thumbnailcrop": {
-        "x": 1724,
-        "y": 231,
-        "size": 4095,
-        "outputSize": 500
-      }
-    },
-    "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
-    "socialMediaPublishDate": null,
-    "exifOriginals": {},
-    "manualAperture": false,
-    "customLens": null,
-    "albums": [],
-    "tags": ["storefronts", "signage", "typography", "pedestrians", "sidewalk", "posters"],
-    "genres": [],
-    "places": [
-      {
-        "relation": "",
-        "id": "itaewon"
-      }
-    ],
-    "spotlightZones": [],
-    "spotlightFocus": null,
-    "socialPosts": [],
-    "reEdit": null,
-    "colors": {
-      "average": {
-        "hex": "#807c7b",
-        "lab": {
-          "l": 52.45,
-          "a": 1.15,
-          "b": 1.2
-        },
-        "hcl": {
-          "h": 46.15,
-          "c": 1.66,
-          "l": 52.45
-        }
-      },
-      "buckets": [
-        {
-          "name": "red",
-          "hex": "#ff0000",
-          "share": 0.0222
-        },
-        {
-          "name": "orange",
-          "hex": "#ff8000",
-          "share": 0.0754
-        },
-        {
-          "name": "yellow",
-          "hex": "#ffff00",
-          "share": 0.0015
-        },
-        {
-          "name": "chartreuse",
-          "hex": "#80ff00",
-          "share": 0.0001
-        },
-        {
-          "name": "green",
-          "hex": "#00ff00",
-          "share": 0.0004
-        },
-        {
-          "name": "spring green",
-          "hex": "#00ff80",
-          "share": 0.0013
-        },
-        {
-          "name": "cyan",
-          "hex": "#00ffff",
-          "share": 0.0065
-        },
-        {
-          "name": "azure",
-          "hex": "#0080ff",
-          "share": 0.0617
-        },
-        {
-          "name": "blue",
-          "hex": "#0000ff",
-          "share": 0.0012
-        },
-        {
-          "name": "violet",
-          "hex": "#8000ff",
-          "share": 0.0003
-        },
-        {
-          "name": "magenta",
-          "hex": "#ff00ff",
-          "share": 0.0004
-        },
-        {
-          "name": "rose",
-          "hex": "#ff0080",
-          "share": 0.0012
-        }
-      ],
-      "neutrals": {
-        "share": 0.8279,
-        "histogram": [
-          {
-            "from": 0,
-            "to": 5,
-            "hex": "#090909",
-            "share": 0.1367
-          },
-          {
-            "from": 5,
-            "to": 10,
-            "hex": "#171717",
-            "share": 0.0343
-          },
-          {
-            "from": 10,
-            "to": 15,
-            "hex": "#212121",
-            "share": 0.0342
-          },
-          {
-            "from": 15,
-            "to": 20,
-            "hex": "#2b2b2b",
-            "share": 0.0327
-          },
-          {
-            "from": 20,
-            "to": 25,
-            "hex": "#363636",
-            "share": 0.0315
-          },
-          {
-            "from": 25,
-            "to": 30,
-            "hex": "#414141",
-            "share": 0.0257
-          },
-          {
-            "from": 30,
-            "to": 35,
-            "hex": "#4c4c4c",
-            "share": 0.0222
-          },
-          {
-            "from": 35,
-            "to": 40,
-            "hex": "#585858",
-            "share": 0.0261
-          },
-          {
-            "from": 40,
-            "to": 45,
-            "hex": "#646464",
-            "share": 0.0258
-          },
-          {
-            "from": 45,
-            "to": 50,
-            "hex": "#717171",
-            "share": 0.0203
-          },
-          {
-            "from": 50,
-            "to": 55,
-            "hex": "#7d7d7d",
-            "share": 0.019
-          },
-          {
-            "from": 55,
-            "to": 60,
-            "hex": "#8a8a8a",
-            "share": 0.0196
-          },
-          {
-            "from": 60,
-            "to": 65,
-            "hex": "#979797",
-            "share": 0.0271
-          },
-          {
-            "from": 65,
-            "to": 70,
-            "hex": "#a4a4a4",
-            "share": 0.0372
-          },
-          {
-            "from": 70,
-            "to": 75,
-            "hex": "#b2b2b2",
-            "share": 0.0363
-          },
-          {
-            "from": 75,
-            "to": 80,
-            "hex": "#bfbfbf",
-            "share": 0.0352
-          },
-          {
-            "from": 80,
-            "to": 85,
-            "hex": "#cdcdcd",
-            "share": 0.0373
-          },
-          {
-            "from": 85,
-            "to": 90,
-            "hex": "#dbdbdb",
-            "share": 0.0667
-          },
-          {
-            "from": 90,
-            "to": 95,
-            "hex": "#e9e9e9",
-            "share": 0.0583
-          },
-          {
-            "from": 95,
-            "to": 100,
-            "hex": "#f8f8f8",
-            "share": 0.1019
-          }
-        ]
-      },
-      "lightness": 52.45,
-      "chroma": 8.68,
-      "peakChroma": 22.96,
-      "samples": 9975
-    },
-    "similarPhotos": [11, 441, 453, 319, 219, 250],
-    "compareGroup": "Masterpiece Storefront"
   },
   {
     "title": "Matsue Castle x Suitorou",

@@ -1,11 +1,11 @@
 {
-  "id": 583,
-  "title": null,
+  "title": "Masterpiece",
   "comment": null,
+  "id": 583,
   "altText": null,
   "notes": null,
   "file": "DSCF2877.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:07:30Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 22,
@@ -28,14 +28,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877.jpg",
     "key": "photos/e32c018f4e66-dscf2877.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-thumbnailpreview.webp",
+    "xlarge": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-xlarge.webp?faces=mwi9mr5k",
+    "large": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-large.webp?faces=mwi9mr5k",
+    "medium": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-medium.webp?faces=mwi9mr5k",
+    "small": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-small.webp?faces=mwi9mr5k",
+    "xsmall": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-xsmall.webp?faces=mwi9mr5k",
+    "preview": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-preview.webp?faces=mwi9mr5k",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-thumbnail.webp?faces=mwi9mr5k",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e32c018f4e66-dscf2877-thumbnailpreview.webp?faces=mwi9mr5k",
     "thumbnailcrop": {
       "x": 1682,
       "y": 0,
@@ -274,5 +274,17 @@
     "peakChroma": 21.66,
     "samples": 9975
   },
-  "compareGroup": "Masterpiece Storefront"
+  "compareGroup": "Masterpiece Storefront",
+  "faces": [
+    {
+      "x": 5407,
+      "y": 2525,
+      "width": 129,
+      "height": 156,
+      "blocks": 10,
+      "shape": "circle",
+      "edge": "blocks",
+      "rotation": 12
+    }
+  ]
 }

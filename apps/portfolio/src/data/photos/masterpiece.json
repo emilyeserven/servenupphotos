@@ -1,5 +1,5 @@
 {
-  "title": "Masterpiece",
+  "title": null,
   "comment": null,
   "id": 121,
   "file": "DSCF2877-2.jpg",
@@ -267,5 +267,8 @@
     "samples": 9975
   },
   "similarPhotos": [11, 441, 453, 319, 219, 250],
-  "compareGroup": "Masterpiece Storefront"
+  "compareGroup": "Masterpiece Storefront",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }
