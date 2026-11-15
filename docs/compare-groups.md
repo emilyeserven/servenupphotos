@@ -121,6 +121,10 @@ share a theme, a color or a place aren't grouped. Each photo goes in at most one
 
 A `groups` entry with the name of a group there is adds its photos to that group.
 
+**Make contact sheets**, above the copy button, puts the prompt's photos (the ones in no group, then each group's) on
+numbered sheets of 30 in R2 first, so the prompt links a few sheets for the LLM to look through and keeps each photo's
+own link for a closer look ([Contact sheets](contact-sheets.md)).
+
 **Review the changes** reads the pasted answer (a code fence or a sentence around the JSON is fine) in the browser and
 lists each change with a box to leave it out:
 

@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { askedPhotos, autogroupAsk, autogroupPrompt } from "@/lib/compare-autogroup";
+import {
+  askedPhotos,
+  autogroupAsk,
+  autogroupPrompt,
+  autogroupSheetPhotos,
+} from "@/lib/compare-autogroup";
 import type { ComparePhoto } from "@/lib/compare-groups";
 
 const photo = (name: string, data: Record<string, unknown> = {}): ComparePhoto => ({
@@ -60,6 +65,23 @@ describe("autogroupPrompt", () => {
     assert.match(prompt, /A group can have any number of photos/);
     assert.match(prompt, /"merge": \[/);
     assert.match(prompt, /"remove": \[/);
+  });
+
+  it("links the contact sheets and each photo's tile on them, groups' photos after the others", () => {
+    const ask = autogroupAsk(photos, { scope: "all", withGroups: true });
+    const sheets = [{ url: "https://cdn/contact-sheets/x/sheet-01.jpg", first: 1, last: 5 }];
+    const prompt = autogroupPrompt(ask, sheets);
+    assert.match(prompt, /Start with the contact sheets below/);
+    assert.match(
+      prompt,
+      /- Contact sheet 1 \(tiles 1 to 5\): https:\/\/cdn\/contact-sheets\/x\/sheet-01\.jpg/,
+    );
+    assert.match(prompt, /Photo "a" \(tile 2 on contact sheet 1\): https:\/\/cdn\/a-small\.webp/);
+    assert.match(prompt, /Photo "grouped2" \(tile 5 on contact sheet 1\)/);
+    assert.deepEqual(
+      autogroupSheetPhotos(ask).map((photo) => photo.label),
+      ["draft", "a", "c", "grouped", "grouped2"],
+    );
   });
 
   it("asks only for new groups without the groups there are", () => {

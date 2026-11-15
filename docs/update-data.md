@@ -122,6 +122,9 @@ first photo. With **Pick photos that go together** turned off (`any: true`), it 
 tags by path instead, whatever they share. **Pick other photos** sends the photos already shown as `skip`, so the next pick leaves them out;
 **Start over** picks from every photo again.
 
+**Make contact sheets**, optional, puts the picked photos on numbered sheets in R2 for the prompt to link
+([Contact sheets](contact-sheets.md)).
+
 **Copy the tag prompt** (`lib/bulk-tag-prompt.ts`) copies one prompt for all of them: each photo by its file name
 (without `.json`), with a link to its Small version, what's known of where it was taken, and the tags it already has,
 then the same rules, existing tags and **Already filtered** list as one photo's [tag prompt](albums-and-tags.md#suggest-tags)
@@ -162,6 +165,9 @@ with the same **Photos to pick**, **Pick other photos** and **Start over** (`POS
 `{ skip, count }`, `PickBulkPlacePhotos` in `github/bulkplaces.go`), but only considers photos without places (an empty
 or missing `places`, or only rows without an ID), and ranks them by their city or country, genres and date, as they
 have no places to share.
+
+**Make contact sheets**, optional, puts the picked photos on numbered sheets in R2 for the prompt to link
+([Contact sheets](contact-sheets.md)).
 
 **Copy the place prompt** (`lib/bulk-place-prompt.ts`) copies one prompt for all of them: each photo by its file name,
 with a link to its Small version and what's known of where it was taken (`knownLines` in `lib/location-prompt.ts`),
@@ -278,6 +284,9 @@ at 50 (1 to 50; the backend treats a missing `count` as 50). **Pick photos** (`P
 genres (an empty or missing `genres`) by file name, which for camera files is the order they were taken, as Bulk
 tagging does with **Pick photos that go together** off: a genre is judged one photo at a time. **Pick other photos** leaves out
 the ones already shown; **Start over** picks from the start again.
+
+**Make contact sheets**, optional, puts the picked photos on numbered sheets in R2 for the prompt to link
+([Contact sheets](contact-sheets.md)).
 
 **Copy the genre prompt** (`lib/genre-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a
 link to its Small version, its title and what's known of where it was taken, and its tags, then every genre there is

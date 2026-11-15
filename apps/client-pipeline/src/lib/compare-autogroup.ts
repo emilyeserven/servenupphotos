@@ -1,6 +1,8 @@
 import { type ComparePhoto, compareGroupOf, compareGroups, isWinner } from "@/lib/compare-groups";
 import { isDraft, isUnselected, titleOf } from "@/lib/drafts";
 import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
+import type { ContactSheet, ContactSheetPhoto } from "@/api/contact-sheets";
+import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { promptImageUrl } from "@/lib/tag-prompt";
 
 /** Which photos Autogroup asks about: every photo, or only the drafts. */
@@ -112,14 +114,33 @@ export function autogroupAsk(photos: ComparePhoto[], options: AutogroupOptions):
   return { loose, groups };
 }
 
+/** The photos the prompt links, in its order: the ones in no group, then each group's with an image. */
+function linkedPhotos(ask: AutogroupAsk): AutogroupPhoto[] {
+  return [
+    ...ask.loose,
+    ...ask.groups.flatMap((group) => group.photos.filter((entry) => entry.imageUrl !== "")),
+  ];
+}
+
+/** The photos as the contact sheets show them, in the prompt's order. */
+export function autogroupSheetPhotos(ask: AutogroupAsk): ContactSheetPhoto[] {
+  return linkedPhotos(ask).map((entry) => ({ label: entry.key, url: entry.imageUrl }));
+}
+
 /** Every photo in the prompt, loose or in a group. */
 export function askedPhotos(ask: AutogroupAsk): AutogroupPhoto[] {
   return [...ask.loose, ...ask.groups.flatMap((group) => group.photos)];
 }
 
-/** One photo's part of the prompt: its name and image, when it was taken, its title, and whether it won. */
-function photoSection(entry: AutogroupPhoto): string {
-  const lines = [`Photo "${entry.key}": ${entry.imageUrl}`];
+/** What a photo's line adds after its name to say where it is on the contact sheets, or "". */
+type TileNote = (entry: AutogroupPhoto) => string;
+
+/**
+ * One photo's part of the prompt: its name, its tile on the contact sheets when there are any, its
+ * image, when it was taken, its title, and whether it won.
+ */
+function photoSection(entry: AutogroupPhoto, tile: TileNote): string {
+  const lines = [`Photo "${entry.key}"${tile(entry)}: ${entry.imageUrl}`];
   if (entry.takenAt) lines.push(`- Taken: ${entry.takenAt}`);
   const title = titleOf(entry.photo.data);
   if (title) lines.push(`- Title: ${title}`);
@@ -128,20 +149,20 @@ function photoSection(entry: AutogroupPhoto): string {
 }
 
 /** One group's part of the prompt: its name, then each of its photos with an image. */
-function groupSection(group: ExistingGroup): string {
+function groupSection(group: ExistingGroup, tile: TileNote): string {
   const shown = group.photos.filter((entry) => entry.imageUrl !== "");
   return `Group "${group.name}" (${shown.length} photos):
-${shown.map(photoSection).join("\n")}`;
+${shown.map((entry) => photoSection(entry, tile)).join("\n")}`;
 }
 
 /** The groups there are, and what the LLM may do with them, when it may change them. */
-function groupsSection(groups: ExistingGroup[]): string {
+function groupsSection(groups: ExistingGroup[], tile: TileNote): string {
   if (groups.length === 0) return "";
   return `
 
 Compare groups I have already (${groups.length}):
 
-${groups.map(groupSection).join("\n\n")}`;
+${groups.map((group) => groupSection(group, tile)).join("\n\n")}`;
 }
 
 /** The rules about the groups there are, when the prompt sends them. */
@@ -173,21 +194,25 @@ ${group}
 }
 
 /**
- * The prompt to paste into a chat with an LLM, linking each photo's Small image and asking which of
+ * The prompt to paste into a chat with an LLM, linking each photo's Small image (and the contact
+ * sheets made of them, when there are any) and asking which of
  * them are too similar to all be posted, not only near duplicates, so they can be weighed
  * head-to-head in a compare group, and, when it sends them, how to change the groups there are,
  * with the answer as JSON the Autogroup page reads.
  */
-export function autogroupPrompt({ loose, groups }: AutogroupAsk): string {
+export function autogroupPrompt(ask: AutogroupAsk, sheets?: ContactSheet[]): string {
+  const { loose, groups } = ask;
+  const order = new Map(linkedPhotos(ask).map((entry, index) => [entry.key, index]));
+  const tile: TileNote = (entry) => tileNote(sheets, order.get(entry.key) ?? -1);
   const tidy =
     groups.length > 0 ? ", and tell me how to tidy the compare groups I have already" : "";
   return `Look at these photos and group the ones that are too similar to each other to all be worth posting, so I can compare each group side by side and keep only the best${tidy}.
 
-Each photo's name is in quotes, followed by a link to a small version of it. Open every link and look at the photos themselves.
+Each photo's name is in quotes, followed by a link to a small version of it. ${lookAtPhotos(sheets, "Open every link and look at the photos themselves.")}
 
 Photos not in a group yet (${loose.length}):
 
-${loose.map(photoSection).join("\n\n") || "None."}${groupsSection(groups)}
+${loose.map((entry) => photoSection(entry, tile)).join("\n\n") || "None."}${groupsSection(groups, tile)}
 
 Rules:
 - I'm not only looking for duplicates. Group photos that are generally too similar: someone scrolling the portfolio would feel they'd seen it already. That includes near-identical frames, but also the same subject, scene or view shot another time or from another angle, and photos with the same composition, framing or idea, even when they were taken on different days or in different places.

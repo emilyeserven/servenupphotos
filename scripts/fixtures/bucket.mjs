@@ -24,6 +24,16 @@ export function bucketFixtures() {
   return {
     "GET /api/photos/bucket": { bucket: "servenupphotos", images: bucketImages() },
     "POST /api/photos/bucket/delete": ({ body }) => ({ deleted: body.keys, failed: [] }),
+    // A sheet of 30 for every 30 photos asked for, in the contact-sheets/ folder R2 empties daily.
+    "POST /api/photos/bucket/contact-sheets": ({ body }) => {
+      const total = body?.photos?.length ?? 0;
+      const sheets = Array.from({ length: Math.ceil(total / 30) }, (_, i) => ({
+        url: `${CDN}/contact-sheets/20261115-045000-1a2b3c4d/sheet-${String(i + 1).padStart(2, "0")}.jpg`,
+        first: i * 30 + 1,
+        last: Math.min((i + 1) * 30, total),
+      }));
+      return { sheets, missing: [], expiryProblem: "" };
+    },
     "GET /api/photos/bucket/thumbnail-crop": ({ url }) => {
       const key = url.searchParams.get("key") ?? "";
       const photo = headPhotos.find(({ data }) => data.images?.key === key);

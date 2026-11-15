@@ -15,6 +15,7 @@ import {
   PickBar,
   usePhotoPick,
 } from "@/components/bulk-tagging/pick-controls";
+import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
 import { GenreReview } from "@/components/genre-suggestions/genre-review";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { genrePrompt } from "@/lib/genre-prompt";
@@ -81,11 +82,17 @@ function CopyGenrePromptButton({ pick }: { pick: GenrePick }) {
   const organize = useQuery(organizeQuery);
   const places = useQuery(placesQuery);
   const genres = organize.data?.genres;
+  const contact = usePickedContactSheets(pick.photos);
   return (
-    <CopyPromptButton
-      label={`Copy the genre prompt for ${pick.photos.length} photos`}
-      disabled={!genres}
-      prompt={() => genrePrompt(pick.photos, genres ?? [], readEntries(places.data?.places))}
-    />
+    <>
+      <ContactSheetsButton state={contact} />
+      <CopyPromptButton
+        label={`Copy the genre prompt for ${pick.photos.length} photos`}
+        disabled={!genres || contact.pending}
+        prompt={() =>
+          genrePrompt(pick.photos, genres ?? [], readEntries(places.data?.places), contact.sheets)
+        }
+      />
+    </>
   );
 }

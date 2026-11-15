@@ -2,6 +2,7 @@ import { useId, useMemo, useState } from "react";
 import { AutogroupReview } from "@/components/compare/autogroup-review";
 import { ReadProblems } from "@/components/compare/compare-group-list";
 import { CopyPromptButton, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
+import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +15,7 @@ import {
   type AutogroupScope,
   autogroupAsk,
   autogroupPrompt,
+  autogroupSheetPhotos,
 } from "@/lib/compare-autogroup";
 import { type AutogroupAnswer, readAutogroupAnswer } from "@/lib/compare-autogroup-answer";
 import type { ComparePhoto } from "@/lib/compare-groups";
@@ -134,14 +136,15 @@ interface AutogroupPromptProps {
   all: ComparePhoto[];
 }
 
-/** The photos asked about, their prompt, the box to paste the answer into, and the review of it. */
-function AutogroupPrompt({ ask, all }: AutogroupPromptProps) {
-  const [typed, setTyped] = useState("");
+/**
+ * The pasted answer, read into changes when Review is pressed, or why it couldn't be. Each review
+ * gets a new number, so the changes left out of the last one aren't left out of the next.
+ */
+function useAnswerReview(ask: AutogroupAsk, all: ComparePhoto[]) {
   const [answer, setAnswer] = useState<AutogroupAnswer | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // Each review starts fresh, so groups left out of the last one aren't left out of the next.
   const [reviews, setReviews] = useState(0);
-  const review = () => {
+  const review = (typed: string) => {
     try {
       setAnswer(readAutogroupAnswer(typed, ask, all));
       setReviews((n) => n + 1);
@@ -151,24 +154,44 @@ function AutogroupPrompt({ ask, all }: AutogroupPromptProps) {
       setError(problem instanceof Error ? problem.message : String(problem));
     }
   };
+  return { answer, error, reviews, review };
+}
+
+/** The photos asked about, their prompt, the box to paste the answer into, and the review of it. */
+function AutogroupPrompt({ ask, all }: AutogroupPromptProps) {
+  const [typed, setTyped] = useState("");
+  const { answer, error, reviews, review } = useAnswerReview(ask, all);
   return (
     <div className="flex flex-col gap-4">
-      <CopyPromptButton
-        label={promptLabel(ask)}
-        disabled={ask.loose.length === 0 && ask.groups.length === 0}
-        prompt={() => autogroupPrompt(ask)}
-      />
+      <CopyAutogroupPrompt ask={ask} />
       <PasteAnswer
         value={typed}
         onChange={setTyped}
         pending={false}
         label="Review the changes"
-        onReview={review}
+        onReview={() => review(typed)}
       />
       {error && <p className="text-destructive text-sm">{error}</p>}
       {answer && <AutogroupReview key={reviews} answer={answer} />}
       <PhotoTiles photos={ask.loose} />
     </div>
+  );
+}
+
+/** Makes the contact sheets of the prompt's photos, and copies the prompt, linking them when they're made. */
+function CopyAutogroupPrompt({ ask }: { ask: AutogroupAsk }) {
+  const sheetPhotos = useMemo(() => autogroupSheetPhotos(ask), [ask]);
+  const contact = useContactSheets(sheetPhotos);
+  const empty = ask.loose.length === 0 && ask.groups.length === 0;
+  return (
+    <>
+      <ContactSheetsButton state={contact} />
+      <CopyPromptButton
+        label={promptLabel(ask)}
+        disabled={empty || contact.pending}
+        prompt={() => autogroupPrompt(ask, contact.sheets)}
+      />
+    </>
   );
 }
 
