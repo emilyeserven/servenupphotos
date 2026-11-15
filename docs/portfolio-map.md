@@ -12,6 +12,14 @@ bottom of the map, so it's never cut off at the top of the screen or hidden unde
 (`components/map-cluster.tsx`). Holding ⌘ (or Ctrl on Windows and Linux) while clicking any group opens that grid
 straight away instead of zooming in. Photos without resized versions are a small dot that opens their details instead.
 
+A [Photo Set](photo-sets.md)'s photos are always one marker, however far in or out the map is zoomed: its first photo's
+square pin with a second square stacked behind it, up and to the right, showing its next photo, and its count in a
+small badge (hidden with **Show counts**). Zooming never splits it, and it's never grouped with the photos around
+it, so it can sit beside or partly over a group when zoomed out. It sits in the middle of its photos, and clicking it
+opens its photos' grid, the same popup (or sheet on phones) as a group, titled with the set's name
+(`components/map-set-marker.tsx`, `lib/map-sets.ts`). The filters still apply: a set shows the photos of it they
+leave, and with only one left, that photo is a marker of its own like any other.
+
 A photo's [custom GPS position](places-and-localizations.md#custom-gps-position), written on the Photo page, wins over
 its EXIF one. A photo with neither goes at one of its places' position (see
 [Places](places-and-localizations.md#gps-position)). That spot is only near where it was taken, so its marker's white
@@ -154,7 +162,8 @@ only the kinds of thing the map draws for its photos, whether or not they're in 
 filters and the day filter change it:
 
 - The pins: **Photo** (a square pin with a white edge), **Group of photos** (a round marker with its count, whenever
-  there are at least two photos) and **Photo without an image yet** (a small light-blue dot). A (?) after **Group of
+  there are at least two photos), **Photo Set** (two stacked squares, whenever a set is drawn; its (?) says what one
+  is) and **Photo without an image yet** (a small light-blue dot). A (?) after **Group of
   photos** opens a note on clicking a group: a click zooms in, and ⌘-click (Ctrl-click off Apple devices, read from the
   browser's user agent in `lib/platform.ts`) lists its photos in a grid (`components/map-legend-help.tsx`).
 - Then, under a divider, the trip lines of the photos' days when **Show trip lines** is on: **Walk**, **Bus, subway or

@@ -1,9 +1,10 @@
 import { mutationOptions } from "@tanstack/react-query";
+import { entryId } from "@/api/places";
 import { requestJson } from "@/api/request";
 import type { CombinedData } from "@/api/photos";
 import type { FileChange } from "@/lib/optimistic";
 
-/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets, gear pictures, Not Stored posts, photo books or the bio. */
+/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets, gear pictures, Not Stored posts, photo books, the bio or Photo Sets. */
 type SettingKind =
   | "cameras"
   | "lenses"
@@ -15,7 +16,8 @@ type SettingKind =
   | "gear"
   | "notstored"
   | "photobooks"
-  | "bio";
+  | "bio"
+  | "sets";
 
 /** What saving or removing a setting file did; nothing is saved when it already had that content. */
 interface SettingResult<T> {
@@ -102,4 +104,15 @@ export function settingEntries<T>(
     const entries = fileEntries(data, kind).filter(isEntry);
     return compare ? entries.toSorted(compare) : entries;
   };
+}
+
+/**
+ * The ID a new entry named name gets, such as `korea-2026`, or `fallback` for a name with no
+ * letters, with -2, -3 and so on after it while one of taken has it already.
+ */
+export function uniqueEntryId(name: string, taken: string[], fallback: string): string {
+  const base = entryId(name).slice(0, 90).replace(/-+$/, "") || fallback;
+  let id = base;
+  for (let n = 2; taken.includes(id); n += 1) id = `${base}-${n}`;
+  return id;
 }

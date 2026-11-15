@@ -481,6 +481,21 @@ export const headPhotos = [...basePhotos, added.photo];
 /** The photos the Photo Book can use: those not set aside as Undecided. */
 const decidedPhotos = headPhotos.filter(({ data }) => !data.undecided);
 
+/** A Photo Set on the Photo Sets page, with the first three photos the map can place. */
+added.sets = [
+  {
+    path: `${FOLDER}/sets/sample-set.json`,
+    data: {
+      id: "sample-set",
+      name: "Sample set",
+      photos: decidedPhotos
+        .filter(({ data }) => data.gpsPosition || data.customGpsPosition)
+        .slice(0, 3)
+        .map(({ data }) => data.id),
+    },
+  },
+];
+
 /** A photo book on the Photo Book page, laid out with the first few photos. */
 added.photobooks = [
   {
@@ -606,3 +621,27 @@ export const savedPhoto = (filePath, data) => ({
   pullRequestNumber: PULL_REQUEST.number,
   data: data ?? {},
 });
+
+/**
+ * Saving and removing the setting file folder/id, which was before: `PUT` answers the body as
+ * saved made into the file's data, and `DELETE` answers it removed.
+ */
+export function entryFixtures(folder, id, before, saved) {
+  const filePath = `${FOLDER}/${folder}/${id}.json`;
+  return {
+    [`PUT /api/${folder}/${id}`]: ({ body }) => ({
+      ...pendingSave(),
+      path: filePath,
+      data: saved(body),
+      before,
+      changed: true,
+    }),
+    [`DELETE /api/${folder}/${id}`]: () => ({
+      ...pendingSave(),
+      path: filePath,
+      data: null,
+      before,
+      changed: true,
+    }),
+  };
+}

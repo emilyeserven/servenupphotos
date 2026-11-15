@@ -34,6 +34,7 @@ import { Route as LocalizationsRouteImport } from './routes/localizations'
 import { Route as LocationNamesRouteImport } from './routes/location-names'
 import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
 import { Route as PhotoBookRouteImport } from './routes/photo-book'
+import { Route as PhotoSetsRouteImport } from './routes/photo-sets'
 import { Route as PlacesRouteImport } from './routes/places'
 import { Route as QuickEditRouteImport } from './routes/quick-edit'
 import { Route as ReEditRouteImport } from './routes/re-edit'
@@ -189,6 +190,11 @@ const MetadataGroupsRoute = MetadataGroupsRouteImport.update({
 const PhotoBookRoute = PhotoBookRouteImport.update({
   id: '/photo-book',
   path: '/photo-book',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PhotoSetsRoute = PhotoSetsRouteImport.update({
+  id: '/photo-sets',
+  path: '/photo-sets',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlacesRoute = PlacesRouteImport.update({
@@ -373,6 +379,7 @@ export interface FileRoutesByFullPath {
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/photo-book': typeof PhotoBookRoute
+  '/photo-sets': typeof PhotoSetsRoute
   '/places': typeof PlacesRoute
   '/quick-edit': typeof QuickEditRoute
   '/re-edit': typeof ReEditRoute
@@ -431,6 +438,7 @@ export interface FileRoutesByTo {
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/photo-book': typeof PhotoBookRoute
+  '/photo-sets': typeof PhotoSetsRoute
   '/places': typeof PlacesRoute
   '/quick-edit': typeof QuickEditRoute
   '/re-edit': typeof ReEditRoute
@@ -489,6 +497,7 @@ export interface FileRoutesById {
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/photo-book': typeof PhotoBookRoute
+  '/photo-sets': typeof PhotoSetsRoute
   '/places': typeof PlacesRoute
   '/quick-edit': typeof QuickEditRoute
   '/re-edit': typeof ReEditRoute
@@ -549,6 +558,7 @@ export interface FileRouteTypes {
     | '/location-names'
     | '/metadata-groups'
     | '/photo-book'
+    | '/photo-sets'
     | '/places'
     | '/quick-edit'
     | '/re-edit'
@@ -607,6 +617,7 @@ export interface FileRouteTypes {
     | '/location-names'
     | '/metadata-groups'
     | '/photo-book'
+    | '/photo-sets'
     | '/places'
     | '/quick-edit'
     | '/re-edit'
@@ -664,6 +675,7 @@ export interface FileRouteTypes {
     | '/location-names'
     | '/metadata-groups'
     | '/photo-book'
+    | '/photo-sets'
     | '/places'
     | '/quick-edit'
     | '/re-edit'
@@ -723,6 +735,7 @@ export interface RootRouteChildren {
   LocationNamesRoute: typeof LocationNamesRoute
   MetadataGroupsRoute: typeof MetadataGroupsRoute
   PhotoBookRoute: typeof PhotoBookRoute
+  PhotoSetsRoute: typeof PhotoSetsRoute
   PlacesRoute: typeof PlacesRoute
   QuickEditRoute: typeof QuickEditRoute
   ReEditRoute: typeof ReEditRoute
@@ -929,6 +942,13 @@ declare module '@tanstack/react-router' {
       path: '/photo-book'
       fullPath: '/photo-book'
       preLoaderRoute: typeof PhotoBookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/photo-sets': {
+      id: '/photo-sets'
+      path: '/photo-sets'
+      fullPath: '/photo-sets'
+      preLoaderRoute: typeof PhotoSetsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/places': {
@@ -1191,6 +1211,7 @@ const rootRouteChildren: RootRouteChildren = {
   LocationNamesRoute: LocationNamesRoute,
   MetadataGroupsRoute: MetadataGroupsRoute,
   PhotoBookRoute: PhotoBookRoute,
+  PhotoSetsRoute: PhotoSetsRoute,
   PlacesRoute: PlacesRoute,
   QuickEditRoute: QuickEditRoute,
   ReEditRoute: ReEditRoute,

@@ -1,8 +1,10 @@
 import { LngLatBounds } from "maplibre-gl";
 import { useMemo } from "react";
+import { type PlacedSet, splitSets } from "@/lib/map-sets";
 import { filterPhotos, type PhotoFilters } from "@/lib/photo-filters";
 import { filterByVisuals, type VisualSearch } from "@/lib/visual-filters";
 import { photos, type Photo } from "@/lib/photos";
+import { photoSets } from "@/lib/photo-sets";
 
 /** A photo with a GPS position, which is all the map can show. */
 export type PlacedPhoto = Photo & { latitude: number; longitude: number };
@@ -47,9 +49,15 @@ function geoJsonOf(points: PlacedPhoto[]) {
   };
 }
 
-/** The photos the map shows, their GeoJSON and their bounds. */
+/** A Photo Set the map draws as one marker. */
+export type MapSet = PlacedSet<PlacedPhoto>;
+
+/** The photos the map shows, its Photo Sets, their GeoJSON and their bounds. */
 interface MapPhotos {
   placed: PlacedPhoto[];
+  /** The Photo Sets with at least two photos the filters leave, each always one marker. */
+  sets: MapSet[];
+  /** The photos not in those sets, which MapLibre groups. */
   geoJson: ReturnType<typeof geoJsonOf>;
   bounds: LngLatBounds | null;
 }
@@ -63,9 +71,13 @@ export function useMapPhotos(filters: PhotoFilters & VisualSearch): MapPhotos {
   return useMemo(() => {
     const parsed = JSON.parse(key) as PhotoFilters & VisualSearch;
     const placed = filterByVisuals(filterPhotos(placedPhotos, parsed), parsed);
+    // A set's photos stay out of the grouped source, so MapLibre never splits them apart or groups
+    // them with the photos around them.
+    const { sets, loose } = splitSets(placed, photoSets);
     return {
       placed,
-      geoJson: geoJsonOf(placed),
+      sets,
+      geoJson: geoJsonOf(loose),
       bounds: boundsOf(placed),
     };
   }, [key]);

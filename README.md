@@ -133,6 +133,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Album Layouts and Covers](docs/album-layouts.md) (`/albums/<id>`): rows of photos with Markdown text, up to 5 cover photos, and album JSON export and import
 - [Smart Albums](docs/smart-albums.md) (`/albums/<id>`): albums whose photos come from saved Grid filters, a Trip and dates
 - [Photographic Genres](docs/photographic-genres.md) (`/genres`): kinds of photography such as street or landscape, set on each photo and filterable on the portfolio, kept in `ALLGENRES.json`
+- [Photo Sets](docs/photo-sets.md) (`/photo-sets`, under Organize): photos the portfolio map always shows as one stacked marker, at every zoom, opening their grid when clicked, kept in `SETS.json`
 - [Places and Localizations](docs/places-and-localizations.md) (`/places` and `/localizations`): places a photo was taken at and how it relates to them, and the local script, pronunciation and romanization of countries, cities and places
 - [Metadata Groups](docs/metadata-groups.md) (`/metadata-groups`): named groups of cameras, lenses, focal lengths, apertures, exposures and ISO values, kept in `METAINFO.json`
 - [Camera Overrides](docs/camera-overrides.md) (`/camera-overrides`): per-camera rules that write other values over a photo's EXIF, such as a lens's name for "21.0 mm", applied to new photos and again from Update Data and the Photo page, kept in `CAMERAS.json`

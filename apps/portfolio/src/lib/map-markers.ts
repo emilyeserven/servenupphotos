@@ -9,12 +9,15 @@ import {
   type MarkerOnScreen,
   type ScreenPoint,
 } from "@/lib/map-fan";
-import { type PhotoPoint, type PlacedPhoto, placedById } from "@/lib/map-photos";
+import { type MapSet, type PhotoPoint, type PlacedPhoto, placedById } from "@/lib/map-photos";
 
 /** The ID of the map's source of photos, which MapLibre groups into clusters. */
 export const SOURCE_ID = "photos";
 
-/** A marker on the map: one photo, or a cluster of photos too close together to tell apart. */
+/**
+ * A marker on the map: one photo, a cluster of photos too close together to tell apart, or a Photo
+ * Set, which stays one marker at every zoom.
+ */
 export type MapMarker =
   | {
       kind: "photo";
@@ -30,6 +33,13 @@ export type MapMarker =
       count: number;
       longitude: number;
       latitude: number;
+      /** How far it's moved from its spot, so it doesn't cover the markers near it. */
+      offset?: FanOffset;
+    }
+  | {
+      kind: "set";
+      key: string;
+      set: MapSet;
       /** How far it's moved from its spot, so it doesn't cover the markers near it. */
       offset?: FanOffset;
     };
@@ -78,8 +88,23 @@ function screenPoint(map: MapRef, longitude: number, latitude: number): ScreenPo
   return [x, y];
 }
 
+/** A number made from the text, the same every time, to seed where a set's marker is moved to. */
+function seedOf(text: string): number {
+  let hash = 0;
+  for (const char of text) hash = (hash * 31 + char.charCodeAt(0)) | 0;
+  return Math.abs(hash);
+}
+
 /** A marker's spot on the screen, and the number that seeds where it's moved to. */
 function onScreen(map: MapRef, marker: MapMarker): MarkerOnScreen {
+  if (marker.kind === "set") {
+    const { set } = marker;
+    return {
+      key: marker.key,
+      seed: seedOf(set.id),
+      at: screenPoint(map, set.longitude, set.latitude),
+    };
+  }
   if (marker.kind === "cluster") {
     const at = screenPoint(map, marker.longitude, marker.latitude);
     return { key: marker.key, seed: marker.clusterId, at };
@@ -96,8 +121,9 @@ function placedFirst(a: MapMarker, b: MapMarker): number {
   return weightOf(b) - weightOf(a) || takenOf(a) - takenOf(b);
 }
 
-/** How many photos a marker stands for, with groups always ahead of a photo on its own. */
+/** How many photos a marker stands for, with groups and sets always ahead of a photo on its own. */
 function weightOf(marker: MapMarker): number {
+  if (marker.kind === "set") return 1 + marker.set.photos.length;
   return marker.kind === "cluster" ? 1 + marker.count : 1;
 }
 
@@ -116,13 +142,26 @@ function fanOut(map: MapRef, markers: MapMarker[], pin: number): MapMarker[] {
   return markers.map((marker) => ({ ...marker, offset: offsets.get(marker.key) }));
 }
 
+/** The markers of the Photo Sets whose spot is in view. */
+function setMarkers(map: MapRef, sets: MapSet[]): MapMarker[] {
+  const bounds = map.getBounds();
+  return sets
+    .filter((set) => bounds.contains([set.longitude, set.latitude]))
+    .map((set) => ({ kind: "set", key: `set-${set.id}`, set }));
+}
+
 /**
- * The markers in view, for pins `pin` pixels wide. From FAN_MIN_ZOOM in, small groups (see
- * fanLimit) are split into photos of their own. At every zoom, markers are moved apart just enough
- * that none is more than half covered, and from FAN_MIN_ZOOM in that none overlap.
+ * The markers in view, for pins `pin` pixels wide, with one for each of the Photo Sets in view.
+ * From FAN_MIN_ZOOM in, small groups (see fanLimit) are split into photos of their own; sets never
+ * are. At every zoom, markers are moved apart just enough that none is more than half covered, and
+ * from FAN_MIN_ZOOM in that none overlap.
  */
-export async function markersInView(map: MapRef, pin: number): Promise<MapMarker[]> {
-  const markers = sourceMarkers(map);
+export async function markersInView(
+  map: MapRef,
+  pin: number,
+  sets: MapSet[],
+): Promise<MapMarker[]> {
+  const markers = [...setMarkers(map, sets), ...sourceMarkers(map)];
   if (map.getZoom() < FAN_MIN_ZOOM) return fanOut(map, markers, pin);
   const split = await Promise.all(markers.map((marker) => splitSmall(map, marker, pin)));
   // While zooming, tiles from the old zoom and the new one can both be loaded, so a cluster split

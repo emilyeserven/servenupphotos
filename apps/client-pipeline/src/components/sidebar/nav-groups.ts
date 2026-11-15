@@ -16,6 +16,7 @@ import {
   ImagePlusIcon,
   ImagesIcon,
   LanguagesIcon,
+  LayersIcon,
   LayoutGridIcon,
   LightbulbIcon,
   ListChecksIcon,
@@ -132,6 +133,7 @@ export const navGroups: readonly NavGroup[] = [
           { title: "Localizations", url: "/localizations", icon: LanguagesIcon },
         ],
       },
+      { title: "Photo Sets", url: "/photo-sets", icon: LayersIcon },
     ],
   },
   {

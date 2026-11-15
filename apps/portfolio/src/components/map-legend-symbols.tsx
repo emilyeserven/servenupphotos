@@ -29,6 +29,20 @@ export function PhotoSymbol() {
   );
 }
 
+/** A Photo Set's marker: a photo's pin with a second square stacked behind it. */
+export function SetSymbol() {
+  return (
+    <MarkerTile>
+      <span className="relative size-4">
+        <span className={cn(PIN, "absolute top-[-3px] left-[3px] bg-neutral-400 ring-white")} />
+        <span className={cn(PIN, "absolute inset-0 bg-muted ring-white")}>
+          <Image className="size-2.5 text-muted-foreground" aria-hidden />
+        </span>
+      </span>
+    </MarkerTile>
+  );
+}
+
 /** A group's marker: a round badge of its photos, darkened under its count. */
 export function GroupSymbol() {
   return (
