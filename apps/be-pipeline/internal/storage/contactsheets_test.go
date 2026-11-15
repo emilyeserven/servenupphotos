@@ -82,7 +82,7 @@ func TestEnsureContactSheetExpiryKeepsOtherRules(t *testing.T) {
 
 func TestEnsureContactSheetExpiryWhenSet(t *testing.T) {
 	for name, existing := range map[string]string{
-		"ours": `<LifecycleConfiguration><Rule><ID>delete-contact-sheets</ID><Status>Enabled</Status><Filter><Prefix>contact-sheets/</Prefix></Filter><Expiration><Days>1</Days></Expiration></Rule></LifecycleConfiguration>`,
+		"ours":    `<LifecycleConfiguration><Rule><ID>delete-contact-sheets</ID><Status>Enabled</Status><Filter><Prefix>contact-sheets/</Prefix></Filter><Expiration><Days>1</Days></Expiration></Rule></LifecycleConfiguration>`,
 		"by hand": `<LifecycleConfiguration><Rule><ID>sheets</ID><Status>Enabled</Status><Filter><Prefix>contact-sheets/</Prefix></Filter><Expiration><Days>1</Days></Expiration></Rule></LifecycleConfiguration>`,
 	} {
 		put := ""
