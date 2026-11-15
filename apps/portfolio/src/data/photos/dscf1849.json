@@ -1,11 +1,11 @@
 {
-  "id": 573,
-  "title": null,
+  "title": "Walking Through Itaewon's Alleys",
   "comment": null,
+  "id": 573,
   "altText": null,
   "notes": "Quality Check (aspect ratio): the Small version is 386 × 500 (1:1.30), not the 5:7 crop for a portrait photo.",
   "file": "DSCF1849.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:51:04Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -28,14 +28,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849.jpg",
     "key": "photos/3b8f7b9eda23-dscf1849.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-thumbnailpreview.webp",
+    "xlarge": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-xlarge.webp?faces=mwib7jsm",
+    "large": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-large.webp?faces=mwib7jsm",
+    "medium": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-medium.webp?faces=mwib7jsm",
+    "small": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-small.webp?faces=mwib7jsm",
+    "xsmall": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-xsmall.webp?faces=mwib7jsm",
+    "preview": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-preview.webp?faces=mwib7jsm",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-thumbnail.webp?faces=mwib7jsm",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3b8f7b9eda23-dscf1849-thumbnailpreview.webp?faces=mwib7jsm",
     "thumbnailcrop": {
       "x": 0,
       "y": 644,
@@ -76,8 +76,8 @@
       "hex": "#232323",
       "lab": {
         "l": 13.75,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,
@@ -276,5 +276,16 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 10032
-  }
+  },
+  "faces": [
+    {
+      "x": 3094,
+      "y": 3097,
+      "width": 121,
+      "height": 170,
+      "blocks": 12,
+      "shape": "circle",
+      "edge": "blocks"
+    }
+  ]
 }

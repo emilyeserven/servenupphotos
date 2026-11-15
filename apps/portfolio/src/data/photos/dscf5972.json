@@ -1,9 +1,9 @@
 {
-  "id": 450,
-  "title": null,
+  "title": "Arima Lantern Alley",
   "comment": null,
+  "id": 450,
   "file": "DSCF5972.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:44:40Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 9,
@@ -267,5 +267,8 @@
     "peakChroma": 10.41,
     "samples": 9694
   },
-  "similarPhotos": [304, 377, 449, 351, 437, 303]
+  "similarPhotos": [304, 377, 449, 351, 437, 303],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

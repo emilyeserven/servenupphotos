@@ -1,9 +1,9 @@
 {
-  "id": 451,
-  "title": null,
+  "title": "Arima Wall",
   "comment": null,
+  "id": 451,
   "file": "DSCF6026.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:49:42Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2.8,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/c0d6b784053d-dscf6026-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/c0d6b784053d-dscf6026-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/c0d6b784053d-dscf6026-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/c0d6b784053d-dscf6026-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c0d6b784053d-dscf6026-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/c0d6b784053d-dscf6026-thumbnail.webp?crop=3358,0,4317",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c0d6b784053d-dscf6026-thumbnailpreview.webp?crop=3358,0,4317",
     "thumbnailcrop": {
-      "x": 1679,
+      "x": 3358,
       "y": 0,
       "size": 4317,
       "outputSize": 500
@@ -267,5 +267,8 @@
     "peakChroma": 11.08,
     "samples": 9975
   },
-  "similarPhotos": [448, 330, 390, 447, 337, 338]
+  "similarPhotos": [448, 330, 390, 447, 337, 338],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

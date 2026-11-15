@@ -1,11 +1,11 @@
 {
-  "id": 664,
-  "title": null,
+  "title": "Press to Cross",
   "comment": null,
+  "id": 664,
   "altText": null,
   "notes": null,
   "file": "DSCF7769.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:49:58Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/865f80313928-dscf7769-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/865f80313928-dscf7769-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/865f80313928-dscf7769-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/865f80313928-dscf7769-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/865f80313928-dscf7769-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/865f80313928-dscf7769-thumbnail.webp?crop=0,0,4917",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/865f80313928-dscf7769-thumbnailpreview.webp?crop=0,0,4917",
     "thumbnailcrop": {
       "x": 0,
-      "y": 983,
+      "y": 0,
       "size": 4917,
       "outputSize": 500
     }

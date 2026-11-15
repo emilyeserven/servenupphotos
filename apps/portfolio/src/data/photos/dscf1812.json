@@ -1,11 +1,11 @@
 {
-  "id": 571,
-  "title": null,
+  "title": "Passing by the Shutters",
   "comment": null,
+  "id": 571,
   "altText": null,
   "notes": null,
   "file": "DSCF1812.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:50:55Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.3,
@@ -28,14 +28,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812.jpg",
     "key": "photos/e585291a5e3f-dscf1812.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-thumbnailpreview.webp",
+    "xlarge": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-xlarge.webp?faces=mwib7cqb",
+    "large": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-large.webp?faces=mwib7cqb",
+    "medium": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-medium.webp?faces=mwib7cqb",
+    "small": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-small.webp?faces=mwib7cqb",
+    "xsmall": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-xsmall.webp?faces=mwib7cqb",
+    "preview": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-preview.webp?faces=mwib7cqb",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-thumbnail.webp?faces=mwib7cqb",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e585291a5e3f-dscf1812-thumbnailpreview.webp?faces=mwib7cqb",
     "thumbnailcrop": {
       "x": 1604,
       "y": 0,
@@ -273,5 +273,17 @@
     "chroma": 11.55,
     "peakChroma": 27.69,
     "samples": 9694
-  }
+  },
+  "faces": [
+    {
+      "x": 4884,
+      "y": 1940,
+      "width": 115,
+      "height": 177,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks",
+      "rotation": 67
+    }
+  ]
 }
