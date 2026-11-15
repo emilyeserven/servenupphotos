@@ -19,6 +19,9 @@ is a column on the left on a wide window and wrapping rows above the cards on a 
 - A dot beside a section marks unsaved changes there: a field changed from the saved JSON, or the Square Thumbnail's
   square moved (**Image**). **JSON** has one whenever there's anything to save. Pixelate faces saves on its own, so it
   doesn't mark **Image**.
+- **Details** shows the photo's Small version at the right of Title and Date taken (above them on a phone), so the
+  photo being described stays in view. It comes from the JSON's `images.small`, or else the Small version next to the
+  image in R2, through the backend's offline copy.
 - **Save changes** at the top right saves every section at once, wherever the change was made.
 - Switching sections only hides the others, so anything typed or drawn but not saved, such as face boxes, is still
   there when you come back.
