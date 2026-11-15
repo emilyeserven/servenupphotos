@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { LayoutGridIcon, TriangleAlertIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { LayoutGridIcon } from "lucide-react";
 import { useState } from "react";
 import {
   type ContactSheet,
@@ -95,10 +96,11 @@ function madeText(made: ContactSheets | undefined): string {
   if (!made) {
     return "Optional: puts the photos on numbered sheets of 30 in R2 for the prompt to link, which is quicker and cheaper for the LLM to look through.";
   }
-  return `${count(made.sheets.length, "contact sheet")} ready. The prompt links them now, and R2 deletes them after a day.`;
+  const ready = `${count(made.sheets.length, "contact sheet")} ready. The prompt links them now`;
+  return made.expiryProblem ? `${ready}.` : `${ready}, and R2 deletes them after a day.`;
 }
 
-/** Links to the sheets, the photos that couldn't be read, and why R2 won't delete the sheets by itself. */
+/** Links to the sheets, the photos that couldn't be read, and where to delete them when R2 won't. */
 function MadeSheets({ made }: { made: ContactSheets }) {
   return (
     <>
@@ -120,12 +122,23 @@ function MadeSheets({ made }: { made: ContactSheets }) {
           {made.missing.join(", ")}.
         </p>
       )}
-      {made.expiryProblem && (
-        <p className="flex items-start gap-1.5 text-sm text-amber-700 dark:text-amber-400">
-          <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" />
-          {made.expiryProblem}
-        </p>
-      )}
+      {made.expiryProblem && <KeptNote />}
     </>
+  );
+}
+
+/**
+ * Where to delete the sheets when R2 has no lifecycle rule to do it: the R2 token can't add one,
+ * which is fine, since Explore Bucket deletes them.
+ */
+function KeptNote() {
+  return (
+    <p className="text-muted-foreground text-sm">
+      R2 keeps these until they&apos;re deleted. Clear them in{" "}
+      <Link to="/bucket" hash="contact-sheets" className="text-foreground underline">
+        Explore Bucket → Contact sheets
+      </Link>{" "}
+      when you&apos;re done.
+    </p>
   );
 }

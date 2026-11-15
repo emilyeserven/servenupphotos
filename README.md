@@ -157,7 +157,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Quick Edit](docs/quick-edit.md): pasting a portfolio link to open the pipeline page that edits it
 - [BFF timeouts](docs/bff-timeouts.md) (`/api/timeouts`): how long the BFF waits for each backend path, read from the backend at start-up
 - [Copying prompts](docs/copy-prompts.md): copying an LLM prompt, or showing it in a modal to copy by hand when the browser won't (the pipeline over plain HTTP)
-- [Contact sheets](docs/contact-sheets.md) (`/api/photos/bucket/contact-sheets`): numbered sheets of 30 photos in R2 for the prompts that link many photos, deleted after a day by an R2 lifecycle rule
+- [Contact sheets](docs/contact-sheets.md) (`/api/photos/bucket/contact-sheets`): numbered sheets of 30 photos in R2 for the prompts that link many photos, deleted after a day by an R2 lifecycle rule or by hand on Explore Bucket
 - [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
 
 ## Checks (same as CI)

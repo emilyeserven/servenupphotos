@@ -36,3 +36,19 @@ export const contactSheetsMutation = mutationOptions({
   mutationFn: (body: { photos: ContactSheetPhoto[] }) =>
     post<ContactSheets>("/api/photos/bucket/contact-sheets", body),
 });
+
+/** What deleting contact sheets did: how many went, and the ones that stayed, with why. */
+interface DeletedContactSheets {
+  deleted: number;
+  failed: { key: string; message: string }[];
+}
+
+/**
+ * Deletes one set of contact sheets from R2 by its folder's name, such as
+ * `20261115-045000-1a2b3c4d`, or every set for "".
+ */
+export const deleteContactSheetsMutation = mutationOptions({
+  mutationKey: ["photos", "bucket", "contact-sheets", "delete"],
+  mutationFn: (set: string) =>
+    post<DeletedContactSheets>("/api/photos/bucket/contact-sheets/delete", { set }),
+});

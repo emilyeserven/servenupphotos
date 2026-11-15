@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -142,4 +143,77 @@ func contactSheetRule() types.LifecycleRule {
 		Filter:     &types.LifecycleRuleFilter{Prefix: aws.String(ContactSheetsFolder)},
 		Expiration: &types.LifecycleExpiration{Days: aws.Int32(contactSheetDays)},
 	}
+}
+
+// DeletedContactSheets is what deleting contact sheets did.
+type DeletedContactSheets struct {
+	// Deleted is how many sheets are gone from the bucket now.
+	Deleted int `json:"deleted"`
+	// Failed is the keys still in the bucket, each with why.
+	Failed []FailedDelete `json:"failed"`
+}
+
+// FailedDelete is an object that couldn't be deleted, and why.
+type FailedDelete struct {
+	Key     string `json:"key"`
+	Message string `json:"message"`
+}
+
+// contactSheetSetPattern matches the name of one set of sheets, the folder
+// UploadContactSheets made, such as 20261115-045000-1a2b3c4d.
+var contactSheetSetPattern = regexp.MustCompile(`^[0-9]{8}-[0-9]{6}-[0-9a-f]+$`)
+
+// DeleteContactSheets deletes every object in one set's folder of
+// ContactSheetsFolder, named by set (such as 20261115-045000-1a2b3c4d), or
+// in all of ContactSheetsFolder when set is "". Nothing outside that folder
+// can be deleted. Failures to list are *ListError; objects that couldn't be
+// deleted are in Failed.
+func DeleteContactSheets(ctx context.Context, cfg settings.R2, set string) (DeletedContactSheets, error) {
+	return deleteContactSheets(ctx, cfg, r2Endpoint(cfg), set)
+}
+
+func deleteContactSheets(ctx context.Context, cfg settings.R2, endpoint, set string) (DeletedContactSheets, error) {
+	if msg := validateR2(cfg); msg != "" {
+		return DeletedContactSheets{}, &ListError{Message: msg, NotConfigured: true}
+	}
+	prefix := ContactSheetsFolder
+	if set != "" {
+		if !contactSheetSetPattern.MatchString(set) {
+			return DeletedContactSheets{}, &ListError{Message: "That isn't a set of contact sheets."}
+		}
+		prefix += set + "/"
+	}
+	client := newR2Client(cfg, endpoint)
+	keys, err := listKeys(ctx, client, cfg, prefix)
+	if err != nil {
+		return DeletedContactSheets{}, err
+	}
+	out := DeletedContactSheets{Failed: []FailedDelete{}}
+	for _, key := range keys {
+		if msg := deleteObject(ctx, cfg, endpoint, key); msg != "" {
+			out.Failed = append(out.Failed, FailedDelete{Key: key, Message: msg})
+			continue
+		}
+		out.Deleted++
+	}
+	return out, nil
+}
+
+// listKeys is the key of every object under prefix. Failures are *ListError.
+func listKeys(ctx context.Context, client *s3.Client, cfg settings.R2, prefix string) ([]string, error) {
+	var keys []string
+	paginator := s3.NewListObjectsV2Paginator(client, &s3.ListObjectsV2Input{
+		Bucket: aws.String(strings.TrimSpace(cfg.Bucket)),
+		Prefix: aws.String(prefix),
+	})
+	for paginator.HasMorePages() {
+		page, err := paginator.NextPage(ctx)
+		if err != nil {
+			return nil, &ListError{Message: describeR2Error(err)}
+		}
+		for _, obj := range page.Contents {
+			keys = append(keys, aws.ToString(obj.Key))
+		}
+	}
+	return keys, nil
 }
