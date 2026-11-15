@@ -6,12 +6,6 @@ import { promptImageUrl } from "@/lib/tag-prompt";
 /** Which photos Autogroup asks about: every photo, or only the drafts. */
 export type AutogroupScope = "all" | "drafts";
 
-/** How many photos one Autogroup prompt links until another number is chosen. */
-export const defaultAutogroupBatch = 50;
-
-/** The most photos one Autogroup prompt links, so the prompt stays a size an LLM reads whole. */
-const maxAutogroupBatch = 200;
-
 /** What Autogroup asks about: which photos, and whether photos already in a group are left out. */
 export interface AutogroupOptions {
   scope: AutogroupScope;
@@ -60,7 +54,7 @@ function wanted(photo: ComparePhoto, options: AutogroupOptions): boolean {
   return !(options.skipGrouped && compareGroupOf(photo.data));
 }
 
-/** Oldest first, so frames taken together sit next to each other and land in the same batch. */
+/** Oldest first, so photos taken together sit next to each other in the prompt. */
 function byTaken(a: AutogroupPhoto, b: AutogroupPhoto): number {
   if (a.takenAt !== b.takenAt) {
     if (!a.takenAt) return 1;
@@ -89,22 +83,6 @@ export function autogroupPhotos(
     }))
     .filter((entry) => entry.imageUrl !== "")
     .toSorted(byTaken);
-}
-
-/** The typed batch size as a whole number from 1 to 200, or the default when it isn't a number. */
-export function autogroupBatchSize(typed: string): number {
-  const size = Math.round(Number(typed));
-  if (!Number.isFinite(size) || size < 1) return defaultAutogroupBatch;
-  return Math.min(size, maxAutogroupBatch);
-}
-
-/** The photos split into batches of size, in order, each one prompt. */
-export function autogroupBatches(photos: AutogroupPhoto[], size: number): AutogroupPhoto[][] {
-  const batches: AutogroupPhoto[][] = [];
-  for (let start = 0; start < photos.length; start += size) {
-    batches.push(photos.slice(start, start + size));
-  }
-  return batches;
 }
 
 /** One photo's part of the prompt: its name and image, when it was taken, its title and group. */
@@ -153,13 +131,13 @@ Rules:
 - I'm not only looking for duplicates. Group photos that are generally too similar: someone scrolling the portfolio would feel they'd seen it already. That includes near-identical frames, but also the same subject, scene or view shot another time or from another angle, and photos with the same composition, framing or idea, even when they were taken on different days or in different places.
 - Don't group photos that only share a broad theme, a color or a place but look clearly different, such as two street photos of different scenes in the same city.
 - The times they were taken can help, since photos taken close together are often similar, but look at the photos to decide.
-- Every group needs at least 2 photos. Leave out any photo that isn't too similar to another here.
+- A group can have any number of photos, 2 or more: put every photo that's too similar to the others in the same group, however many there are. Leave out any photo that isn't too similar to another here.
 - A photo goes in at most one group.
 - Name each group in a few words saying what its photos show, in Title Case, such as "Lantern Street at Dusk".
 - Answer with only this JSON, with nothing before or after it, listing each photo by its name in quotes above:
 {
   "groups": [
-    { "name": "Lantern Street at Dusk", "photos": ["20161216_092741", "20161216_092745"] }
+    { "name": "Lantern Street at Dusk", "photos": ["20161216_092741", "20161216_092745", "20161218_220416"] }
   ]
 }
 - Answer with { "groups": [] } when no photos belong together.`;

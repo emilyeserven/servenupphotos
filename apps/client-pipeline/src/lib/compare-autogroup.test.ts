@@ -1,8 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
-  autogroupBatchSize,
-  autogroupBatches,
   autogroupPhotos,
   autogroupPrompt,
   movingPhotos,
@@ -60,36 +58,23 @@ describe("autogroupPhotos", () => {
   });
 });
 
-describe("autogroupBatches", () => {
-  it("splits the photos into batches of the size chosen", () => {
-    const all = autogroupPhotos(photos, { scope: "all", skipGrouped: false });
-    assert.deepEqual(autogroupBatches(all, 3).map(keys), [["draft", "a", "c"], ["grouped"]]);
-  });
-
-  it("reads the typed size, falling back to 50 and stopping at 200", () => {
-    assert.equal(autogroupBatchSize("abc"), 50);
-    assert.equal(autogroupBatchSize("0"), 50);
-    assert.equal(autogroupBatchSize("12"), 12);
-    assert.equal(autogroupBatchSize("900"), 200);
-  });
-});
-
 describe("autogroupPrompt", () => {
   it("links each photo's Small image and names the groups there are", () => {
     const prompt = autogroupPrompt(autogroupPhotos(photos, { scope: "all", skipGrouped: false }));
     assert.match(prompt, /Photo "a": https:\/\/cdn\/a-small\.webp\n- Taken: 2024-05-01 10:00:01/);
     assert.match(prompt, /- Already in the group: Lanterns/);
     assert.match(prompt, /Groups some of these photos are in already:\n- Lanterns/);
+    assert.match(prompt, /A group can have any number of photos/);
   });
 });
 
 describe("readAutogroupAnswer", () => {
-  const batch = autogroupPhotos(photos, { scope: "all", skipGrouped: false });
+  const asked = autogroupPhotos(photos, { scope: "all", skipGrouped: false });
 
   it("reads the groups from JSON in a code fence, looking photos up by name", () => {
     const answer = readAutogroupAnswer(
       '```json\n{ "groups": [ { "name": "Morning", "photos": ["a", "C.json", "nope"] } ] }\n```',
-      batch,
+      asked,
       photos,
     );
     assert.deepEqual(
@@ -102,7 +87,7 @@ describe("readAutogroupAnswer", () => {
   it("keeps a photo in its first group and drops groups left with one photo", () => {
     const answer = readAutogroupAnswer(
       '{ "groups": [ { "name": "One", "photos": ["a", "c"] }, { "name": "Two", "photos": ["c", "draft"] } ] }',
-      batch,
+      asked,
       photos,
     );
     assert.deepEqual(
@@ -114,7 +99,7 @@ describe("readAutogroupAnswer", () => {
   it("adds one photo to a group there is already", () => {
     const answer = readAutogroupAnswer(
       '{ "groups": [ { "name": "Lanterns", "photos": ["a"] } ] }',
-      batch,
+      asked,
       photos,
     );
     assert.equal(answer.groups[0]?.existing, true);
@@ -123,7 +108,7 @@ describe("readAutogroupAnswer", () => {
   it("says which photos move out of another group", () => {
     const answer = readAutogroupAnswer(
       '{ "groups": [ { "name": "New", "photos": ["a", "grouped"] } ] }',
-      batch,
+      asked,
       photos,
     );
     assert.deepEqual(movingPhotos(answer.groups[0]!), [
@@ -132,7 +117,7 @@ describe("readAutogroupAnswer", () => {
   });
 
   it("throws a readable error when the answer isn't the JSON asked for", () => {
-    assert.throws(() => readAutogroupAnswer("no idea", batch, photos), /no JSON object/);
-    assert.throws(() => readAutogroupAnswer('{ "photos": [] }', batch, photos), /"groups" list/);
+    assert.throws(() => readAutogroupAnswer("no idea", asked, photos), /no JSON object/);
+    assert.throws(() => readAutogroupAnswer('{ "photos": [] }', asked, photos), /"groups" list/);
   });
 });
