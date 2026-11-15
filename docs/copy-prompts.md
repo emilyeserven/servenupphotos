@@ -4,6 +4,9 @@ Many pipeline pages copy a prompt for an LLM: the bulk pages (tags, places, albu
 small tags, the tag library, describe my style, Lightroom albums), tag descriptions, localizations, and the sparkle buttons on the
 Photo page's Tags and Place fields. The Instagram caption and an uploaded photo's URL copy the same way.
 
+The prompts that link many photos (Autogroup, Bulk Tagging, Genre Suggestions and Bulk Places) can link
+[contact sheets](contact-sheets.md) of them too.
+
 ## Copy, or show it in a modal
 
 Every copy button sits next to a small **Show the prompt** button (a scroll icon) that opens the whole prompt in a

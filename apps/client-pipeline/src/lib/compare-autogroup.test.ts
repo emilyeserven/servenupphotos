@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   autogroupPhotos,
   autogroupPrompt,
+  autogroupSheetPhotos,
   movingPhotos,
   readAutogroupAnswer,
 } from "@/lib/compare-autogroup";
@@ -65,6 +66,24 @@ describe("autogroupPrompt", () => {
     assert.match(prompt, /- Already in the group: Lanterns/);
     assert.match(prompt, /Groups some of these photos are in already:\n- Lanterns/);
     assert.match(prompt, /A group can have any number of photos/);
+  });
+
+  it("links the contact sheets and each photo's tile on them, keeping its own link", () => {
+    const asked = autogroupPhotos(photos, { scope: "all", skipGrouped: false });
+    const sheets = [
+      { url: "https://cdn/contact-sheets/x/sheet-01.jpg", first: 1, last: asked.length },
+    ];
+    const prompt = autogroupPrompt(asked, sheets);
+    assert.match(prompt, /Start with the contact sheets below/);
+    assert.match(
+      prompt,
+      /- Contact sheet 1 \(tiles 1 to \d+\): https:\/\/cdn\/contact-sheets\/x\/sheet-01\.jpg/,
+    );
+    assert.match(prompt, /Photo "a" \(tile 2 on contact sheet 1\): https:\/\/cdn\/a-small\.webp/);
+    assert.deepEqual(autogroupSheetPhotos(asked)[1], {
+      label: "a",
+      url: "https://cdn/a-small.webp",
+    });
   });
 });
 

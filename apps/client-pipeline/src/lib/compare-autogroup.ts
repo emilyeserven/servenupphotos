@@ -1,6 +1,8 @@
 import { type ComparePhoto, compareGroupOf, comparePhotoName } from "@/lib/compare-groups";
 import { isDraft, isUnselected, titleOf } from "@/lib/drafts";
 import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
+import type { ContactSheet, ContactSheetPhoto } from "@/api/contact-sheets";
+import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { promptImageUrl } from "@/lib/tag-prompt";
 
 /** Which photos Autogroup asks about: every photo, or only the drafts. */
@@ -85,9 +87,17 @@ export function autogroupPhotos(
     .toSorted(byTaken);
 }
 
-/** One photo's part of the prompt: its name and image, when it was taken, its title and group. */
-function photoSection(entry: AutogroupPhoto): string {
-  const lines = [`Photo "${entry.key}": ${entry.imageUrl}`];
+/** The photos as the contact sheets show them, in the prompt's order. */
+export function autogroupSheetPhotos(photos: AutogroupPhoto[]): ContactSheetPhoto[] {
+  return photos.map((entry) => ({ label: entry.key, url: entry.imageUrl }));
+}
+
+/**
+ * One photo's part of the prompt: its name, its tile on the contact sheets when there are any, its
+ * image, when it was taken, its title and group.
+ */
+function photoSection(entry: AutogroupPhoto, index: number, sheets?: ContactSheet[]): string {
+  const lines = [`Photo "${entry.key}"${tileNote(sheets, index)}: ${entry.imageUrl}`];
   if (entry.takenAt) lines.push(`- Taken: ${entry.takenAt}`);
   const title = titleOf(entry.photo.data);
   if (title) lines.push(`- Title: ${title}`);
@@ -116,16 +126,17 @@ To add photos to one of these groups, use its name exactly as it's listed, and l
 }
 
 /**
- * The prompt to paste into a chat with an LLM, linking each photo's Small image and asking which of
- * them are too similar to all be posted, not only near duplicates, so they can be weighed head-to-head in a compare group, and for the
- * answer as JSON the Autogroup page reads.
+ * The prompt to paste into a chat with an LLM, linking each photo's Small image (and the contact
+ * sheets made of them, when there are any) and asking which of them are too similar to all be
+ * posted, not only near duplicates, so they can be weighed head-to-head in a compare group, and for
+ * the answer as JSON the Autogroup page reads.
  */
-export function autogroupPrompt(photos: AutogroupPhoto[]): string {
+export function autogroupPrompt(photos: AutogroupPhoto[], sheets?: ContactSheet[]): string {
   return `Look at these ${photos.length} photos and group the ones that are too similar to each other to all be worth posting, so I can compare each group side by side and keep only the best.
 
-Each photo's name is in quotes, followed by a link to a small version of it. Open every link and look at the photos themselves.
+Each photo's name is in quotes, followed by a link to a small version of it. ${lookAtPhotos(sheets, "Open every link and look at the photos themselves.")}
 
-${photos.map(photoSection).join("\n\n")}
+${photos.map((entry, i) => photoSection(entry, i, sheets)).join("\n\n")}
 ${existingGroupsSection(photos)}
 Rules:
 - I'm not only looking for duplicates. Group photos that are generally too similar: someone scrolling the portfolio would feel they'd seen it already. That includes near-identical frames, but also the same subject, scene or view shot another time or from another angle, and photos with the same composition, framing or idea, even when they were taken on different days or in different places.

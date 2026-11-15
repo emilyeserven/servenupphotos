@@ -2,6 +2,7 @@ import { useId, useMemo, useState } from "react";
 import { AutogroupReview } from "@/components/compare/autogroup-review";
 import { ReadProblems } from "@/components/compare/compare-group-list";
 import { CopyPromptButton, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
+import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +15,7 @@ import {
   type AutogroupScope,
   autogroupPhotos,
   autogroupPrompt,
+  autogroupSheetPhotos,
   readAutogroupAnswer,
 } from "@/lib/compare-autogroup";
 import type { ComparePhoto } from "@/lib/compare-groups";
@@ -140,6 +142,8 @@ function AutogroupPrompt({ asked, all }: AutogroupPromptProps) {
   const [error, setError] = useState<string | null>(null);
   // Each review starts fresh, so groups left out of the last one aren't left out of the next.
   const [reviews, setReviews] = useState(0);
+  const sheetPhotos = useMemo(() => autogroupSheetPhotos(asked), [asked]);
+  const contact = useContactSheets(sheetPhotos);
   const review = () => {
     try {
       setAnswer(readAutogroupAnswer(typed, asked, all));
@@ -152,10 +156,11 @@ function AutogroupPrompt({ asked, all }: AutogroupPromptProps) {
   };
   return (
     <div className="flex flex-col gap-4">
+      <ContactSheetsButton state={contact} />
       <CopyPromptButton
         label={`Copy the Autogroup prompt for ${count(asked.length, "photo")}`}
-        disabled={asked.length === 0}
-        prompt={() => autogroupPrompt(asked)}
+        disabled={asked.length === 0 || contact.pending}
+        prompt={() => autogroupPrompt(asked, contact.sheets)}
       />
       <PasteAnswer
         value={typed}

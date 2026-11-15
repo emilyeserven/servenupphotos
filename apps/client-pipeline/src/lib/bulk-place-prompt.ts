@@ -1,40 +1,50 @@
 import type { BulkTagPhoto } from "@/api/bulk-tags";
+import type { ContactSheet } from "@/api/contact-sheets";
 import type { Place } from "@/api/places";
-import { savedDetails, savedExifPlace } from "@/components/photo-details";
+import { photoBasics, sheetsBlock } from "@/lib/bulk-tag-prompt";
 import {
   type PastedLocation,
   PLACE_NAME_RULES,
   POSITION_RULES,
   describePlace,
   jsonObject,
-  knownLines,
   listed,
   readLocation,
   str,
 } from "@/lib/location-prompt";
-import { promptImageUrl } from "@/lib/tag-prompt";
 
-/** One photo's part of the prompt: its name and link, and what's known of where it was taken. */
-function photoSection(photo: BulkTagPhoto, places: Place[]): string {
-  const { data } = photo;
-  const known = knownLines({ details: savedDetails(data), exif: savedExifPlace(data), places });
-  const url = promptImageUrl(data.images as Record<string, unknown> | undefined, "");
-  return `Photo "${photo.name}": ${url}
+/**
+ * One photo's part of the prompt: its name, its tile on the contact sheets when there are any, its
+ * link, and what's known of where it was taken.
+ */
+function photoSection(
+  photo: BulkTagPhoto,
+  places: Place[],
+  index: number,
+  sheets?: ContactSheet[],
+): string {
+  const { heading, known } = photoBasics(photo, places, index, sheets);
+  return `${heading}
 What's already known about it:
 ${listed(known, "- Nothing yet.")}`;
 }
 
 /**
  * The prompt to paste into a chat with an LLM, asking where each photo was taken, with a link to the
- * place on a map to check it by, and for the answer as JSON that `parseBulkPlaceAnswer` reads.
+ * place on a map to check it by, and for the answer as JSON that `parseBulkPlaceAnswer` reads. With
+ * contact sheets, it links them and asks the LLM to start with them.
  */
-export function bulkPlacePrompt(photos: BulkTagPhoto[], places: Place[]): string {
+export function bulkPlacePrompt(
+  photos: BulkTagPhoto[],
+  places: Place[],
+  sheets?: ContactSheet[],
+): string {
   const existing = places.map((place) => `- ${describePlace(place)}`);
   return `Work out the place where each of these ${photos.length} photos was taken. They were picked to go together, so several may share a place.
 
 It's for a photography portfolio, which shows each photo's place, city and country, and puts it on a map. A place is somewhere more exact than a city, such as a building, temple, park, market, station, bridge or viewpoint.
-
-${photos.map((photo) => photoSection(photo, places)).join("\n\n")}
+${sheetsBlock(sheets)}
+${photos.map((photo, i) => photoSection(photo, places, i, sheets)).join("\n\n")}
 
 Rules:
 - Look each place up on a map to check it's the place and where it is: Google Maps, or for a place in South Korea, Naver Map or Kakao Map, which show much more there than Google Maps does. Put the link to the place on that map in "mapUrl", or "" when you can't link to it.
