@@ -122,6 +122,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums, tags and genres
 - [All Photos](docs/all-photos.md) (`/all-photos`): every photo in the portfolio's order, sorted any way, with drafts and Undecided photos shown among them and a box to jump to each
 - [Compare groups](docs/compare-groups.md) (`/compare`): putting Gallery and in-flight photos in groups to weigh them side by side and pick the ones to post, and Unselected Photos for the rest, with why and what's kept in R2; only in the pipeline
+- [Deleting a photo](docs/delete-photo.md): **Delete photo** on the Photo page, after asking, deletes the photo's JSON and takes it out of albums, Unselected winners, the bio, viewer likes, photo books and trip lines (waiting for Commit), and deletes its images from R2
 - [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, the Re-Edit page listing every marked photo, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
 - [Lower Tier photos](docs/lower-tier.md): marking photos you like but don't want shown unless chosen, on the Photo page or in bulk from the Gallery, which hides them until its Lower Tier filter shows them
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off

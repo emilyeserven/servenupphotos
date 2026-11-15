@@ -91,6 +91,31 @@ export function inflightFixtures() {
       before: added.photo.data,
       image: { key: "originals/DSCF3104.jpg", deleted: true, versions: [] },
     }),
+    "DELETE /api/photos/saved": ({ url }) => {
+      const path = new URL(url).searchParams.get("path") ?? added.photo.path;
+      const key = "photos/7f3a-dscf3104.jpg";
+      return {
+        branch: PULL_REQUEST.branch,
+        pullRequestUrl: PULL_REQUEST.url,
+        pullRequestNumber: PULL_REQUEST.number,
+        changes: [
+          { path, before: added.photo.data, after: null },
+          { path: "apps/portfolio/src/data/albums/korea.json", before: {}, after: {} },
+          { path: "apps/portfolio/src/data/triplines/2025-01-19.json", before: {}, after: {} },
+        ],
+        path,
+        before: added.photo.data,
+        photoName: "DSCF3104.jpg",
+        image: {
+          key,
+          deleted: true,
+          versions: ["xlarge", "large", "small"].map((v) => ({
+            key: key.replace(".jpg", `-${v}.webp`),
+            deleted: true,
+          })),
+        },
+      };
+    },
     "PUT /api/photos/in-flight": ({ body = {} }) => ({
       path: savedPath(body),
       changed: true,

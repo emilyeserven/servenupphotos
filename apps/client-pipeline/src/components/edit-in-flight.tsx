@@ -39,6 +39,7 @@ import { useLocationPrompt } from "@/components/edit-in-flight/location-prompt";
 import { TagPromptButton } from "@/components/edit-in-flight/tag-prompt-button";
 import { PhotoSections } from "@/components/edit-in-flight/photo-sections";
 import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
+import { DeletePhotoCard } from "@/components/edit-in-flight/delete-photo-card";
 import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
 import { type Edit, useEdit, useLensSettings, useSave } from "@/components/edit-in-flight/use-edit";
 import { hasLensChoice, lensChanged, savedLensChoice, withLensChoice } from "@/lib/custom-lens";
@@ -171,6 +172,12 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
               />
               <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
               <LowerTierCard file={editable.file} disabled={pending} />
+              <DeletePhotoCard
+                path={editable.file.path}
+                saved={edit.savedData}
+                fallbackTitle={fallbackTitle}
+                disabled={pending}
+              />
             </>
           ),
           groups: (
