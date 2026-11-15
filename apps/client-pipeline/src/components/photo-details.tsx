@@ -6,6 +6,7 @@ import { type PhotoPlace, savedPlaces } from "@/api/places";
 import { RegionOverrideField } from "@/components/region-override-field";
 import { FieldSection } from "@/components/field-section";
 import { PhotoCustomDate } from "@/components/photo-custom-date";
+import { DetailsPhotoPreview } from "@/components/details-photo-preview";
 import { PhotoCustomGps } from "@/components/photo-custom-gps";
 import { PhotoAltTextField } from "@/components/photo-alt-text-field";
 import { PhotoNotesField } from "@/components/photo-notes-field";
@@ -173,6 +174,8 @@ interface PhotoDetailsCardProps {
   disabled: boolean;
   /** The Place field's location prompt, when the photo has one. */
   locationPrompt?: LocationPrompt;
+  /** The photo's Small version, shown at the right of Title and Date taken when there is one. */
+  imageUrl?: string;
 }
 
 /**
@@ -188,6 +191,7 @@ export function PhotoDetailsCard({
   description,
   disabled,
   locationPrompt,
+  imageUrl,
 }: PhotoDetailsCardProps) {
   const field = (name: "title" | "customCity" | "customState" | "customCountry") => ({
     value: value[name],
@@ -199,20 +203,25 @@ export function PhotoDetailsCard({
       <Card>
         <CardTitleWithHint title="Title and comment" description={description} />
         <CardContent className="flex flex-col gap-6">
-          <TextField
-            id="photo-title"
-            label="Title"
-            placeholder={fallbackTitle}
-            hint={<TitleHint fallbackTitle={fallbackTitle} />}
-            {...field("title")}
-          />
-          <PhotoCustomDate
-            value={value.customCreateDate}
-            exifDate={exifPlace.createDate}
-            fileStem={fallbackTitle}
-            disabled={disabled}
-            onChange={(customCreateDate) => onChange({ ...value, customCreateDate })}
-          />
+          <DetailsPhotoPreview
+            imageUrl={imageUrl}
+            alt={value.altText.trim() || value.title.trim() || fallbackTitle}
+          >
+            <TextField
+              id="photo-title"
+              label="Title"
+              placeholder={fallbackTitle}
+              hint={<TitleHint fallbackTitle={fallbackTitle} />}
+              {...field("title")}
+            />
+            <PhotoCustomDate
+              value={value.customCreateDate}
+              exifDate={exifPlace.createDate}
+              fileStem={fallbackTitle}
+              disabled={disabled}
+              onChange={(customCreateDate) => onChange({ ...value, customCreateDate })}
+            />
+          </DetailsPhotoPreview>
           <CommentField
             value={value.comment}
             disabled={disabled}
