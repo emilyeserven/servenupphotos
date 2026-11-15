@@ -3,7 +3,7 @@
   "title": null,
   "comment": null,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo.",
   "file": "DSCF1482-2.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -63,7 +63,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 5:7",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],

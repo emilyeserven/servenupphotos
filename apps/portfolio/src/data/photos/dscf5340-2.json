@@ -3,7 +3,7 @@
   "title": null,
   "comment": null,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (pixelation): The front plates of the four cars parked in front of the graffiti wall are visible, most clearly on the white Porsche and the dark Audi on the left.",
   "file": "DSCF5340-2.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -63,7 +63,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate license plates",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],

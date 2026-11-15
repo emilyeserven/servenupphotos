@@ -58,7 +58,10 @@
   ],
   "spotlightZones": ["homepage"],
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 5:7",
+    "date": "2026-11-15"
+  },
   "spotlightFocus": {
     "x": 46,
     "y": 28
@@ -281,5 +284,6 @@
       }
     }
   },
-  "similarPhotos": [458, 258, 459, 246, 461, 263]
+  "similarPhotos": [458, 258, 459, 246, 461, 263],
+  "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo."
 }

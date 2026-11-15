@@ -54,7 +54,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate a license plate",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#5a565d",
@@ -261,6 +264,6 @@
     "peakChroma": 35.99,
     "samples": 9900
   },
-  "notes": "Shows motorcycles; 'motorcycles' isn't a tag, since only 2 photos have them.",
+  "notes": "Shows motorcycles; 'motorcycles' isn't a tag, since only 2 photos have them.\n\nQuality Check (pixelation): The rear plate of the white Volvo SUV at the bottom left is readable.",
   "similarPhotos": [250, 304, 219, 453, 120, 121]
 }

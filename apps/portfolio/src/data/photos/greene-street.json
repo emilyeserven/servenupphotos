@@ -63,7 +63,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#4f4947",
@@ -270,6 +273,6 @@
     "peakChroma": 15.16,
     "samples": 9782
   },
-  "notes": "Shows SoHo's cast-iron facades; 'cast-iron-architecture' isn't a tag, since only 1 photo has it.",
+  "notes": "Shows SoHo's cast-iron facades; 'cast-iron-architecture' isn't a tag, since only 1 photo has it.\n\nQuality Check (aspect ratio): the Small version is 500 × 273 (1.83:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [42, 372, 416, 408, 250, 281]
 }

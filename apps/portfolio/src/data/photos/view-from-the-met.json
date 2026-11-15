@@ -60,7 +60,7 @@
   "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": {
-    "reason": "Crop out the left area",
+    "reason": "Crop out the left area; Crop to 16:9",
     "date": "2026-10-23"
   },
   "colors": {
@@ -269,5 +269,6 @@
     "peakChroma": 39.25,
     "samples": 10001
   },
-  "similarPhotos": [34, 31, 41, 246, 158, 73]
+  "similarPhotos": [34, 31, 41, 246, 158, 73],
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 265 (1.89:1), not the 16:9 crop for a landscape photo."
 }

@@ -60,7 +60,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate a license plate",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#54595e",
@@ -268,5 +271,6 @@
     "samples": 9975
   },
   "similarPhotos": [430, 436, 414, 409, 373, 445],
-  "compareGroup": "Seal Rock Row Houses"
+  "compareGroup": "Seal Rock Row Houses",
+  "notes": "Quality Check (pixelation): The front plate of the black minivan parked by the tree on the left is readable."
 }

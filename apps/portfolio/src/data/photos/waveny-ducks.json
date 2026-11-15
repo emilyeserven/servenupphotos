@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#292c1e",
@@ -266,6 +269,6 @@
     "peakChroma": 20.5,
     "samples": 9916
   },
-  "notes": "Shows ducks; 'ducks' isn't a tag, since only 1 photo has them.",
+  "notes": "Shows ducks; 'ducks' isn't a tag, since only 1 photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 275 (1.82:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [487, 481, 160, 485, 484, 488]
 }

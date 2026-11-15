@@ -55,7 +55,7 @@
   "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": {
-    "reason": "fix crop",
+    "reason": "fix crop; Crop to 16:9",
     "date": "2026-10-23"
   },
   "colors": {
@@ -264,6 +264,6 @@
     "peakChroma": 17.22,
     "samples": 10086
   },
-  "notes": "Shows sunglasses; 'sunglasses' isn't a tag, since only 1 photo has them.",
+  "notes": "Shows sunglasses; 'sunglasses' isn't a tag, since only 1 photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [264, 486, 234, 499, 471, 111]
 }

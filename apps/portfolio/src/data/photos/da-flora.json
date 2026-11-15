@@ -60,7 +60,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate a license plate",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#677581",
@@ -267,7 +270,7 @@
     "peakChroma": 26.19,
     "samples": 10050
   },
-  "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.",
+  "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.\n\nQuality Check (pixelation): The front plate of the white Toyota at the bottom left of the intersection is visible.",
   "similarPhotos": [436, 429, 413, 435, 250, 373],
   "noGps": false,
   "altText": null

@@ -3,7 +3,7 @@
   "title": null,
   "comment": null,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (pixelation): The rear plate of the black Jeep parked on the right is visible, and the silver SUV in front of it may show part of its plate too.",
   "file": "DSCF7788.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -58,7 +58,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate license plates",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],

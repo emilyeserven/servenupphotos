@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate 1 face",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#363636",
@@ -267,5 +270,6 @@
     "samples": 9694
   },
   "similarPhotos": [177, 178, 179, 186, 187, 192],
-  "compareGroup": "Waiting in Chelsea Market"
+  "compareGroup": "Waiting in Chelsea Market",
+  "notes": "Quality Check (pixelation): The man in glasses on the bench in the centre is looking down at his phone; his face is in focus and clearly visible."
 }

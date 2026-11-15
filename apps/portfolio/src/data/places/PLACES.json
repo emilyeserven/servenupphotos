@@ -120,6 +120,14 @@
     "exactLocation": true
   },
   {
+    "id": "beacon-hill",
+    "name": "Beacon Hill",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "country": "United States of America"
+  },
+  {
     "id": "bent-pyramid-of-cairo",
     "name": "Bent Pyramid of Cairo",
     "description": "",
@@ -168,6 +176,14 @@
     "country": "United States of America",
     "latitude": 42.353,
     "longitude": -71.0645
+  },
+  {
+    "id": "boston-public-library",
+    "name": "Boston Public Library",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "country": "United States of America"
   },
   {
     "id": "bowery",
@@ -340,6 +356,14 @@
     "country": "United States of America",
     "latitude": 40.76805659301781,
     "longitude": -73.98188756888125
+  },
+  {
+    "id": "commonwealth-avenue-mall",
+    "name": "Commonwealth Avenue Mall",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "country": "United States of America"
   },
   {
     "id": "cook-s-cycle-shop",
@@ -1342,6 +1366,22 @@
     "latitude": 42.351561,
     "longitude": -71.062697,
     "exactLocation": true
+  },
+  {
+    "id": "porter-square-station",
+    "name": "Porter Square Station",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
+  },
+  {
+    "id": "porter-square",
+    "name": "Porter Square",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
   },
   {
     "id": "presidio-tunnel-tops",

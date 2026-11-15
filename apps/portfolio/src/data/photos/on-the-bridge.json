@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#a2787b",
@@ -267,5 +270,6 @@
     "samples": 9825
   },
   "similarPhotos": [75, 237, 117, 129, 305, 13],
-  "compareGroup": "Williamsburg Bridge Walkway"
+  "compareGroup": "Williamsburg Bridge Walkway",
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 287 (1.74:1), not the 16:9 crop for a landscape photo."
 }

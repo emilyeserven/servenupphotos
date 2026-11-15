@@ -60,7 +60,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate a license plate",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#464d56",
@@ -268,7 +271,7 @@
     "samples": 9975
   },
   "undecided": true,
-  "notes": "Shows Halloween skeletons and topiary; 'skeletons' and 'topiary' aren't tags, since only 2 photos have each.",
+  "notes": "Shows Halloween skeletons and topiary; 'skeletons' and 'topiary' aren't tags, since only 2 photos have each.\n\nQuality Check (pixelation): The rear plate of the black SUV parked on the right is visible.",
   "similarPhotos": [436, 494, 408, 414, 400, 373],
   "compareGroup": "Seal Rock Row Houses"
 }

@@ -60,7 +60,7 @@
   "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": {
-    "reason": "fix centering",
+    "reason": "fix centering; Crop to 16:9",
     "date": "2026-10-23"
   },
   "colors": {
@@ -269,5 +269,6 @@
     "peakChroma": 4.52,
     "samples": 9800
   },
-  "similarPhotos": [467, 438, 355, 335, 248, 110]
+  "similarPhotos": [467, 438, 355, 335, 248, 110],
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 249 (2:1), not the 16:9 crop for a landscape photo."
 }

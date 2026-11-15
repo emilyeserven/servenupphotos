@@ -68,7 +68,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate license plates",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#494e52",
@@ -276,5 +279,6 @@
     "samples": 9975
   },
   "similarPhotos": [372, 414, 413, 373, 436, 430],
-  "compareGroup": "Seal Rock Row Houses"
+  "compareGroup": "Seal Rock Row Houses",
+  "notes": "Quality Check (pixelation): The rear plate of the white Volvo SUV on the left and the front plate of the tan sedan on the right are readable."
 }

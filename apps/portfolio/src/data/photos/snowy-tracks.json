@@ -54,7 +54,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#413836",
@@ -261,6 +264,6 @@
     "peakChroma": 24.17,
     "samples": 9750
   },
-  "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them.",
+  "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [106, 7, 22, 24, 116, 242]
 }

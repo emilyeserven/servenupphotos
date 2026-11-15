@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "undecided": true,
   "colors": {
     "average": {
@@ -268,5 +271,6 @@
     "samples": 9576
   },
   "similarPhotos": [95, 98, 97, 83, 141, 142],
-  "compareGroup": "Crabs Among Mossy Rocks"
+  "compareGroup": "Crabs Among Mossy Rocks",
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 268 (1.87:1), not the 16:9 crop for a landscape photo."
 }

@@ -54,7 +54,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9; Pixelate 1 face",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#393536",
@@ -264,5 +267,5 @@
   "similarPhotos": [181, 42, 14, 167, 148, 449],
   "noGps": false,
   "altText": null,
-  "notes": null
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 294 (1.70:1), not the 16:9 crop for a landscape photo.\n\nQuality Check (pixelation): The blonde woman in the red jacket on the left is checking her watch; her face is in focus and visible."
 }

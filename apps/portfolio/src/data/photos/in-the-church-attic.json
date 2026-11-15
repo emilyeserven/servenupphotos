@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#191919",
@@ -266,7 +269,7 @@
     "peakChroma": 0,
     "samples": 9728
   },
-  "notes": "Shows a church attic with Gothic tracery; 'attic' and 'tracery' aren't tags, since only 1–2 photos have them.",
+  "notes": "Shows a church attic with Gothic tracery; 'attic' and 'tracery' aren't tags, since only 1–2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 295 (1.69:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [70, 295, 159, 275, 73, 148],
   "compareGroup": "Church Tower Windows in the Dark"
 }
