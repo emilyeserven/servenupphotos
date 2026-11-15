@@ -20,6 +20,7 @@ import { ImageLightbox } from "@/components/image-lightbox";
 import { PlaceGpsMark } from "@/components/gallery/place-filter";
 import { LikesMark, useLikeCounts } from "@/components/viewer-likes/likes-mark";
 import { Button } from "@/components/ui/button";
+import { useRevealed } from "@/hooks/use-revealed";
 import { squareImages } from "@/lib/offline-thumbnails";
 import { cn } from "@/lib/utils";
 import {
@@ -43,9 +44,13 @@ function noMatch(filter: string): string {
   return filter.trim() ? `“${filter.trim()}”` : "the filters";
 }
 
-/** The photos shown, as Square Thumbnail tiles with their names, albums, tags, genres and Edit buttons. */
+/**
+ * The photos shown, as Square Thumbnail tiles with their names, albums, tags, genres and Edit
+ * buttons, drawn a batch at a time as the page scrolls (`useRevealed`).
+ */
 export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGridProps) {
   const likes = useLikeCounts();
+  const [revealedCount, revealedEnd] = useRevealed(shown.length);
   if (data.files.length === 0) {
     return (
       <p className="text-muted-foreground rounded-xl border border-dashed p-4 text-sm">
@@ -57,19 +62,22 @@ export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGri
     return <p className="text-muted-foreground text-sm">No photos match {noMatch(filter)}.</p>;
   }
   return (
-    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] sm:gap-4">
-      {shown.map((file) => (
-        <li key={file.path}>
-          <PhotoCard
-            file={file}
-            images={data.images}
-            likes={likes}
-            selected={selection ? selection.has(file.path) : null}
-            onToggle={() => onToggle(file.path)}
-          />
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] sm:gap-4">
+        {shown.slice(0, revealedCount).map((file) => (
+          <li key={file.path}>
+            <PhotoCard
+              file={file}
+              images={data.images}
+              likes={likes}
+              selected={selection ? selection.has(file.path) : null}
+              onToggle={() => onToggle(file.path)}
+            />
+          </li>
+        ))}
+      </ul>
+      <div ref={revealedEnd} aria-hidden />
+    </>
   );
 }
 

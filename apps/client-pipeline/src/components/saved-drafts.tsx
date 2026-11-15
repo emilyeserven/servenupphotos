@@ -12,6 +12,7 @@ import { DraftsSkeleton } from "@/components/in-flight-loading";
 import { MissingImageDrafts } from "@/components/missing-image-drafts";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
 import { DraftTile, UndecidedQueue } from "@/components/undecided-photos";
+import { useRevealed } from "@/hooks/use-revealed";
 import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
 import { editedData, undecidedPaths } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
@@ -129,14 +130,16 @@ function undecidedTitle(branch: string, alongside?: boolean): string | undefined
 
 /**
  * The drafts on the base branch that can be edited and aren't Undecided, as tiles in a Drafts
- * panel, open at first and above the Undecided and Can't be edited ones; nothing when there are none.
+ * panel, open at first and above the Undecided and Can't be edited ones, drawn a batch at a time
+ * as the page scrolls; nothing when there are none.
  */
 function DraftList({ files, data }: { files: PublishedFile[]; data: PublishedResponse }) {
+  const [revealedCount, revealedEnd] = useRevealed(files.length);
   if (files.length === 0) return null;
   return (
     <CollapsiblePanel title="Drafts" count={countOf(files.length, "draft")} open>
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-        {files.map((file) => (
+        {files.slice(0, revealedCount).map((file) => (
           <DraftTile
             key={file.path}
             file={file}
@@ -145,6 +148,7 @@ function DraftList({ files, data }: { files: PublishedFile[]; data: PublishedRes
           />
         ))}
       </ul>
+      <div ref={revealedEnd} aria-hidden />
     </CollapsiblePanel>
   );
 }
