@@ -24,6 +24,15 @@ drops the changes it took in.
 > **Frontend analogy:** it's an optimistic update over a client-side cache: like TanStack Query's `onMutate` writing the
 > new value into the cache before the server confirms it, except the "confirmation" is the **Commit** you press by hand.
 
+Finding "the entry equal to the old data" compares entries as JSON with their keys sorted. Every page part that calls
+`useCombinedData` makes the changes again after each save, so turning every entry into JSON for every change froze the
+page for seconds once a few dozen changes were waiting (about 1.3 s for 40 changes over 378 photos, for each part).
+`entryJson` in `lib/combined.ts` keeps each entry's JSON in a `WeakMap` by the object itself, so it's worked out once:
+the same 40 changes now take about 7 ms. It's only safe because the lists' entries are never changed in place.
+
+> **Frontend analogy:** it's `useMemo` per object instead of per component: a `WeakMap` keyed by the entry, which
+> forgets the JSON once the entry is garbage-collected.
+
 ## Local edits
 
 Some changes aren't even kept by the backend: they're kept in the browser until **Commit**. The Instagram calendar's dates and the Site
