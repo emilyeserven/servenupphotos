@@ -1,11 +1,11 @@
 {
-  "id": 590,
-  "title": null,
+  "title": "Boston Chinatown Mural II",
   "comment": null,
+  "id": 590,
   "altText": null,
   "notes": "Quality Check (pixelation): The front plates of the four cars parked in front of the graffiti wall are visible, most clearly on the white Porsche and the dark Audi on the left.",
   "file": "DSCF5340-2.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:30:56Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.2,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-thumbnail.webp?crop=2557,0,4309",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-thumbnailpreview.webp?crop=2557,0,4309",
     "thumbnailcrop": {
-      "x": 1676,
+      "x": 2557,
       "y": 0,
       "size": 4309,
       "outputSize": 500

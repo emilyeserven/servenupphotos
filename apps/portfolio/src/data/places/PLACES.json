@@ -1371,7 +1371,7 @@
     "id": "porter-square-station",
     "name": "Porter Square Station",
     "description": "",
-    "parent": "",
+    "parent": "porter-square",
     "city": "",
     "country": ""
   },
@@ -1380,8 +1380,8 @@
     "name": "Porter Square",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "Boston",
+    "country": "United States of America"
   },
   {
     "id": "presidio-tunnel-tops",

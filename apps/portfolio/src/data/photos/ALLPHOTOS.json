@@ -33865,6 +33865,2511 @@
     "similarPhotos": [216, 283, 442, 454, 342, 212]
   },
   {
+    "title": "Walking to Chinatown",
+    "comment": null,
+    "id": 588,
+    "altText": null,
+    "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo.",
+    "file": "DSCF5256.jpg",
+    "addedDate": "2026-11-15T17:31:03Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.7,
+    "exposure": "1/125",
+    "iso": 800,
+    "focalLength": 43.9,
+    "gpsPosition": "42 deg 21' 9.28\" N, 71 deg 3' 27.87\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 12:54:54",
+    "customCreateDate": null,
+    "placeName": "Rose Kennedy Greenway",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 5152,
+    "height": 7728,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/5e0638f1e2dc-dscf5256.jpg",
+      "key": "photos/5e0638f1e2dc-dscf5256.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/5e0638f1e2dc-dscf5256-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/5e0638f1e2dc-dscf5256-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/5e0638f1e2dc-dscf5256-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/5e0638f1e2dc-dscf5256-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/5e0638f1e2dc-dscf5256-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/5e0638f1e2dc-dscf5256-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/5e0638f1e2dc-dscf5256-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5e0638f1e2dc-dscf5256-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1288,
+        "size": 5152,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "trees", "sidewalk", "pedestrians", "fallen-leaves", "signposts"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "on",
+        "id": "rose-kennedy-greenway"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "Crop to 5:7",
+      "date": "2026-11-15"
+    },
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "7bd5cd59e83afbbb",
+    "colors": {
+      "average": {
+        "hex": "#6f6453",
+        "lab": {
+          "l": 43.07,
+          "a": 1.07,
+          "b": 11.28
+        },
+        "hcl": {
+          "h": 84.6,
+          "c": 11.33,
+          "l": 43.07
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.017
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1209
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.1828
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.037
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0002
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0008
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.025
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0054
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0009
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0015
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.005
+        }
+      ],
+      "neutrals": {
+        "share": 0.6023,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0654
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0606
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0476
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.044
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.016
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0136
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0125
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0165
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0277
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0425
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0522
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0454
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0488
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0418
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.012
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0041
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.005
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0043
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0043
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0379
+          }
+        ]
+      },
+      "lightness": 43.07,
+      "chroma": 16.69,
+      "peakChroma": 44.6,
+      "samples": 9801
+    }
+  },
+  {
+    "title": "Sticker Nook",
+    "comment": null,
+    "id": 589,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5307.jpg",
+    "addedDate": "2026-11-15T17:31:55Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5,
+    "exposure": "1/125",
+    "iso": 3200,
+    "focalLength": 55.6,
+    "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 13:01:06",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 4414,
+    "height": 6180,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307.jpg",
+      "key": "photos/f43d71a36da1-dscf5307.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-thumbnail.webp?crop=0,1766,4414",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-thumbnailpreview.webp?crop=0,1766,4414",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1766,
+        "size": 4414,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["stickers", "graffiti", "street-art", "typography", "walls"],
+    "genres": ["street", "abstract"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "7d7c6ecf59595b39",
+    "colors": {
+      "average": {
+        "hex": "#4a4446",
+        "lab": {
+          "l": 29.38,
+          "a": 3.34,
+          "b": -0.41
+        },
+        "hcl": {
+          "h": 352.96,
+          "c": 3.36,
+          "l": 29.38
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0192
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.001
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0261
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0048
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0003
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0004
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0014
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0014
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0551
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0045
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0153
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0008
+        }
+      ],
+      "neutrals": {
+        "share": 0.8696,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.3477
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0911
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0431
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0356
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0247
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0181
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0168
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0154
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.017
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0191
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0258
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0344
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0522
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0621
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0346
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0059
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0036
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.01
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0124
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 29.38,
+      "chroma": 8.61,
+      "peakChroma": 14.15,
+      "samples": 9828
+    }
+  },
+  {
+    "title": "Flags over Boston Chinatown",
+    "comment": null,
+    "id": 607,
+    "altText": null,
+    "notes": "Quality Check (pixelation): The man in the blue cap pushing a hand truck across the crosswalk, bottom right, faces the camera.",
+    "file": "DSCF5330.jpg",
+    "addedDate": "2026-11-15T17:31:45Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.3,
+    "exposure": "1/125",
+    "iso": 400,
+    "focalLength": 34.5,
+    "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 13:02:54",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 4401,
+    "height": 6162,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330.jpg",
+      "key": "photos/56ef142e2916-dscf5330.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-thumbnail.webp?crop=0,1053,4401",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-thumbnailpreview.webp?crop=0,1053,4401",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1053,
+        "size": 4401,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["chinatown", "flags", "facade", "storefronts", "crosswalk", "pedestrians"],
+    "genres": ["street", "architecture"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "Pixelate 1 face",
+      "date": "2026-11-15"
+    },
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "4d3ccc496d4bab0f",
+    "colors": {
+      "average": {
+        "hex": "#6a5d60",
+        "lab": {
+          "l": 40.86,
+          "a": 5.9,
+          "b": 0.06
+        },
+        "hcl": {
+          "h": 0.55,
+          "c": 5.91,
+          "l": 40.86
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.1025
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0037
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0007
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.001
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0154
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0085
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0008
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0014
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0208
+        }
+      ],
+      "neutrals": {
+        "share": 0.8451,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1006
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0549
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0541
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0593
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0369
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0347
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0292
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0291
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0332
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0365
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0405
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0495
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0566
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0601
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0593
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0607
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0321
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0114
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0052
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0011
+          }
+        ]
+      },
+      "lightness": 40.86,
+      "chroma": 9.35,
+      "peakChroma": 34.17,
+      "samples": 9828
+    }
+  },
+  {
+    "title": "Boston Chinatown Mural II",
+    "comment": null,
+    "id": 590,
+    "altText": null,
+    "notes": "Quality Check (pixelation): The front plates of the four cars parked in front of the graffiti wall are visible, most clearly on the white Porsche and the dark Audi on the left.",
+    "file": "DSCF5340-2.jpg",
+    "addedDate": "2026-11-15T17:30:56Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.2,
+    "exposure": "1/125",
+    "iso": 200,
+    "focalLength": 27.9,
+    "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 13:05:58",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 7661,
+    "height": 4309,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2.jpg",
+      "key": "photos/798537eba432-dscf5340-2.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-thumbnail.webp?crop=2557,0,4309",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/798537eba432-dscf5340-2-thumbnailpreview.webp?crop=2557,0,4309",
+      "thumbnailcrop": {
+        "x": 2557,
+        "y": 0,
+        "size": 4309,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["chinatown", "murals", "street-art", "graffiti", "cars", "walls"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "Pixelate license plates",
+      "date": "2026-11-15"
+    },
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "16459515158d850a",
+    "colors": {
+      "average": {
+        "hex": "#444344",
+        "lab": {
+          "l": 28.61,
+          "a": 0.66,
+          "b": -0.67
+        },
+        "hcl": {
+          "h": 314.32,
+          "c": 0.94,
+          "l": 28.61
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0024
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0273
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0037
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0008
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0004
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0013
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.008
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0213
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.004
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0002
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0001
+        }
+      ],
+      "neutrals": {
+        "share": 0.9305,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.276
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0773
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.07
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0644
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0365
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0267
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0275
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0255
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0324
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0348
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0437
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0593
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0755
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0607
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0169
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0006
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0008
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0021
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 28.61,
+      "chroma": 4.39,
+      "peakChroma": 11.34,
+      "samples": 9975
+    }
+  },
+  {
+    "title": "Boston Chinatown Mural I",
+    "comment": null,
+    "id": 591,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5342.jpg",
+    "addedDate": "2026-11-15T17:30:38Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.3,
+    "exposure": "1/125",
+    "iso": 320,
+    "focalLength": 32.6,
+    "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 13:06:33",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/0abe984c7782-dscf5342.jpg",
+      "key": "photos/0abe984c7782-dscf5342.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/0abe984c7782-dscf5342-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/0abe984c7782-dscf5342-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/0abe984c7782-dscf5342-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/0abe984c7782-dscf5342-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/0abe984c7782-dscf5342-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/0abe984c7782-dscf5342-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/0abe984c7782-dscf5342-thumbnail.webp?crop=1815,0,4347",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0abe984c7782-dscf5342-thumbnailpreview.webp?crop=1815,0,4347",
+      "thumbnailcrop": {
+        "x": 1815,
+        "y": 0,
+        "size": 4347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["buddhism", "chinatown", "murals", "street-art", "faces", "cars"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "292d1d2d25ad352f",
+    "colors": {
+      "average": {
+        "hex": "#3c3d43",
+        "lab": {
+          "l": 25.84,
+          "a": 1.02,
+          "b": -3.59
+        },
+        "hcl": {
+          "h": 285.88,
+          "c": 3.74,
+          "l": 25.84
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0027
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.029
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0127
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0015
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0029
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0017
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.1462
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0082
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.002
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.001
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0028
+        }
+      ],
+      "neutrals": {
+        "share": 0.7885,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0894
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1096
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1396
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1535
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.07
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0458
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.033
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0277
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0195
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0171
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0205
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0198
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0254
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0141
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0015
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0021
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 25.84,
+      "chroma": 8.5,
+      "peakChroma": 18.78,
+      "samples": 10050
+    }
+  },
+  {
+    "title": "ATM - Artistically Taken-over Machine",
+    "comment": null,
+    "id": 592,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5353.jpg",
+    "addedDate": "2026-11-15T17:29:05Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 3.5,
+    "exposure": "1/125",
+    "iso": 1000,
+    "focalLength": 18,
+    "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 13:07:27",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 4537,
+    "height": 6352,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353.jpg",
+      "key": "photos/19eaf6a024f8-dscf5353.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-thumbnail.webp?crop=0,1667,4537",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-thumbnailpreview.webp?crop=0,1667,4537",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1667,
+        "size": 4537,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["chinatown", "street-art", "graffiti", "stickers", "murals", "sidewalk"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "122d6dfd5dcdc462",
+    "colors": {
+      "average": {
+        "hex": "#604548",
+        "lab": {
+          "l": 32.33,
+          "a": 11.89,
+          "b": 2.8
+        },
+        "hcl": {
+          "h": 13.27,
+          "c": 12.22,
+          "l": 32.33
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.1219
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0861
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.003
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0003
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0004
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0011
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0067
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.1077
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0298
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0201
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0791
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0411
+        }
+      ],
+      "neutrals": {
+        "share": 0.5027,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0921
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0736
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0698
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0746
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0195
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.026
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0258
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0231
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0207
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0106
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0052
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0047
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0066
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0068
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0125
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0153
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0106
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.005
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0003
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 32.33,
+      "chroma": 21.06,
+      "peakChroma": 57.46,
+      "samples": 10030
+    }
+  },
+  {
+    "title": "Stickered Pipe",
+    "comment": null,
+    "id": 593,
+    "altText": null,
+    "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo.",
+    "file": "DSCF5360.jpg",
+    "addedDate": "2026-11-15T17:28:06Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4,
+    "exposure": "1/125",
+    "iso": 1250,
+    "focalLength": 21.6,
+    "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 13:11:05",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 5152,
+    "height": 7728,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360.jpg",
+      "key": "photos/58c8d7c1f872-dscf5360.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-thumbnail.webp?crop=0,2398,5152",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-thumbnailpreview.webp?crop=0,2398,5152",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 2398,
+        "size": 5152,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["stickers", "walls", "texture", "rust", "urban-decay"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "Crop to 5:7",
+      "date": "2026-11-15"
+    },
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "393c333f3b594e70",
+    "colors": {
+      "average": {
+        "hex": "#41434d",
+        "lab": {
+          "l": 28.59,
+          "a": 1.58,
+          "b": -6.49
+        },
+        "hcl": {
+          "h": 283.67,
+          "c": 6.68,
+          "l": 28.59
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0177
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0269
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0034
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0006
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0021
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.2696
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0178
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0024
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0006
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.001
+        }
+      ],
+      "neutrals": {
+        "share": 0.6579,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1513
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.082
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0886
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1003
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0579
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.037
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0237
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0156
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0111
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0072
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0078
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0101
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0103
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0043
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0052
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0091
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0095
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.012
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0116
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0033
+          }
+        ]
+      },
+      "lightness": 28.59,
+      "chroma": 10.11,
+      "peakChroma": 15.84,
+      "samples": 9801
+    }
+  },
+  {
+    "title": "PRIVATE PROPERTY NO TRESPASSING",
+    "comment": null,
+    "id": 594,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5365.jpg",
+    "addedDate": "2026-11-15T17:27:41Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 3.5,
+    "exposure": "1/125",
+    "iso": 400,
+    "focalLength": 18.5,
+    "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 13:11:30",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/e8672d1ca057-dscf5365.jpg",
+      "key": "photos/e8672d1ca057-dscf5365.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/e8672d1ca057-dscf5365-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/e8672d1ca057-dscf5365-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/e8672d1ca057-dscf5365-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/e8672d1ca057-dscf5365-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/e8672d1ca057-dscf5365-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/e8672d1ca057-dscf5365-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/e8672d1ca057-dscf5365-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e8672d1ca057-dscf5365-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1690,
+        "y": 0,
+        "size": 4347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["chinatown", "signage", "graffiti", "typography", "fences"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "1b1b2b2b233b333f",
+    "colors": {
+      "average": {
+        "hex": "#4c4243",
+        "lab": {
+          "l": 28.93,
+          "a": 4.71,
+          "b": 0.86
+        },
+        "hcl": {
+          "h": 10.31,
+          "c": 4.79,
+          "l": 28.93
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0823
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0001
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0001
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0041
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0025
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0013
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0028
+        }
+      ],
+      "neutrals": {
+        "share": 0.9069,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.3854
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0773
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0414
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0211
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0038
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0035
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0027
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0049
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0071
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0068
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.007
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0221
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0954
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.1986
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.027
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.003
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 28.93,
+      "chroma": 7.12,
+      "peakChroma": 26.59,
+      "samples": 10050
+    }
+  },
+  {
+    "title": "福 - Luck",
+    "comment": null,
+    "id": 595,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5368.jpg",
+    "addedDate": "2026-11-15T17:30:10Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4,
+    "exposure": "1/125",
+    "iso": 1250,
+    "focalLength": 25.4,
+    "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 13:12:32",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 7483,
+    "height": 4209,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/179d1bbb63a3-dscf5368.jpg",
+      "key": "photos/179d1bbb63a3-dscf5368.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/179d1bbb63a3-dscf5368-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/179d1bbb63a3-dscf5368-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/179d1bbb63a3-dscf5368-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/179d1bbb63a3-dscf5368-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/179d1bbb63a3-dscf5368-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/179d1bbb63a3-dscf5368-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/179d1bbb63a3-dscf5368-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/179d1bbb63a3-dscf5368-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1637,
+        "y": 0,
+        "size": 4209,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["chinatown", "manhole-covers", "fallen-leaves", "texture", "sidewalk"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "1406061716161670",
+    "colors": {
+      "average": {
+        "hex": "#463c3e",
+        "lab": {
+          "l": 26.28,
+          "a": 4.92,
+          "b": 0.29
+        },
+        "hcl": {
+          "h": 3.4,
+          "c": 4.93,
+          "l": 26.28
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0687
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0812
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0051
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0003
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0143
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0017
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0004
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0001
+        }
+      ],
+      "neutrals": {
+        "share": 0.8281,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1484
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1017
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0944
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0891
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0732
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0637
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0571
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0471
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0381
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0268
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0234
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0224
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.022
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0121
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0049
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0026
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0008
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0002
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0001
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 26.28,
+      "chroma": 9.57,
+      "peakChroma": 17.73,
+      "samples": 9768
+    }
+  },
+  {
     "title": "Seoul Street",
     "comment": null,
     "id": 250,
@@ -34145,6 +36650,859 @@
     "similarPhotos": [319, 453, 304, 282, 400, 120]
   },
   {
+    "title": "Gated Alley",
+    "comment": null,
+    "id": 610,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5447.jpg",
+    "addedDate": "2026-11-15T17:29:30Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/125",
+    "iso": 5000,
+    "focalLength": 135,
+    "gpsPosition": "42 deg 21' 7.07\" N, 71 deg 3' 41.78\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 13:28:41",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 5152,
+    "height": 7213,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447.jpg",
+      "key": "photos/8c54caa3c329-dscf5447.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-thumbnail.webp?crop=0,1819,5152",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-thumbnailpreview.webp?crop=0,1819,5152",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1819,
+        "size": 5152,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["brick", "doorways", "ironwork", "rust", "urban-decay"],
+    "genres": ["architecture", "street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "d2d0dce8c8e0ccd4",
+    "colors": {
+      "average": {
+        "hex": "#5a4f52",
+        "lab": {
+          "l": 34.79,
+          "a": 5.21,
+          "b": -0.03
+        },
+        "hcl": {
+          "h": 359.64,
+          "c": 5.21,
+          "l": 34.79
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.1438
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0072
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0133
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0011
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0006
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0002
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0042
+        }
+      ],
+      "neutrals": {
+        "share": 0.8296,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1891
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0811
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0607
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0585
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0529
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0479
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.043
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0403
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0304
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0251
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0194
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0169
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.014
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.019
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0268
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0304
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0288
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0197
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0158
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0098
+          }
+        ]
+      },
+      "lightness": 34.79,
+      "chroma": 7.79,
+      "peakChroma": 18.21,
+      "samples": 10115
+    }
+  },
+  {
+    "title": "Café Darq",
+    "comment": null,
+    "id": 611,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5458.jpg",
+    "addedDate": "2026-11-15T17:27:50Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF35mmF2 R WR",
+    "aperture": 3.2,
+    "exposure": "1/125",
+    "iso": 125,
+    "focalLength": 35,
+    "gpsPosition": "42 deg 21' 5.84\" N, 71 deg 3' 41.52\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 14:17:43",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 7673,
+    "height": 4316,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458.jpg",
+      "key": "photos/e1d291f69a1d-dscf5458.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-xlarge.webp?faces=mwi3xpyj",
+      "large": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-large.webp?faces=mwi3xpyj",
+      "medium": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-medium.webp?faces=mwi3xpyj",
+      "small": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-small.webp?faces=mwi3xpyj",
+      "xsmall": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-xsmall.webp?faces=mwi3xpyj",
+      "preview": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-preview.webp?faces=mwi3xpyj",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-thumbnail.webp?crop=3357,0,4316",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-thumbnailpreview.webp?crop=3357,0,4316",
+      "thumbnailcrop": {
+        "x": 3357,
+        "y": 0,
+        "size": 4316,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["chinatown", "cafe", "umbrellas", "storefronts", "plants", "graffiti", "brick"],
+    "genres": ["street", "architecture"],
+    "places": [
+      {
+        "relation": "near",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "2d336bca4b9f49d9",
+    "colors": {
+      "average": {
+        "hex": "#473c3b",
+        "lab": {
+          "l": 26.35,
+          "a": 4.92,
+          "b": 2.2
+        },
+        "hcl": {
+          "h": 24.1,
+          "c": 5.39,
+          "l": 26.35
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0869
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0515
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0081
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0079
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0062
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0064
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.004
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0123
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0049
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0017
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0011
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0067
+        }
+      ],
+      "neutrals": {
+        "share": 0.8021,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.2882
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0734
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0416
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0516
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0182
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0219
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0308
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.04
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0538
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.039
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0307
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0256
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0232
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0164
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0108
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.025
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0096
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0004
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0009
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.001
+          }
+        ]
+      },
+      "lightness": 26.35,
+      "chroma": 10.72,
+      "peakChroma": 22.56,
+      "samples": 9975
+    },
+    "faces": [
+      {
+        "x": 2443,
+        "y": 3035,
+        "width": 87,
+        "height": 170,
+        "blocks": 15,
+        "shape": "circle",
+        "edge": "blocks",
+        "rotation": -17
+      },
+      {
+        "x": 3982,
+        "y": 3018,
+        "width": 112,
+        "height": 158,
+        "blocks": 15,
+        "shape": "circle",
+        "edge": "blocks",
+        "rotation": -8
+      }
+    ]
+  },
+  {
+    "title": "Active Emergency",
+    "comment": null,
+    "id": 596,
+    "altText": null,
+    "notes": "Shows an emergency vehicle; 'emergency-vehicles' was removed as a tag, since only 1 photo has one.",
+    "file": "DSCF5602.jpg",
+    "addedDate": "2026-11-15T17:26:03Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF35mmF2 R WR",
+    "aperture": 5.6,
+    "exposure": "1/250",
+    "iso": 125,
+    "focalLength": 35,
+    "gpsPosition": "42 deg 21' 5.62\" N, 71 deg 3' 45.71\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 14:26:02",
+    "customCreateDate": null,
+    "placeName": "Paramount Theatre",
+    "customCity": "Boston",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 3699,
+    "height": 5178,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/5ce5e66aa234-dscf5602.jpg",
+      "key": "photos/5ce5e66aa234-dscf5602.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/5ce5e66aa234-dscf5602-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/5ce5e66aa234-dscf5602-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/5ce5e66aa234-dscf5602-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/5ce5e66aa234-dscf5602-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/5ce5e66aa234-dscf5602-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/5ce5e66aa234-dscf5602-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/5ce5e66aa234-dscf5602-thumbnail.webp?crop=0,615,3699",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5ce5e66aa234-dscf5602-thumbnailpreview.webp?crop=0,615,3699",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 615,
+        "size": 3699,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["rain", "reflections", "road", "traffic", "twilight"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "near",
+        "id": "paramount-theatre"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "10048f86ce86c461",
+    "colors": {
+      "average": {
+        "hex": "#1f1a1b",
+        "lab": {
+          "l": 9.82,
+          "a": 2.67,
+          "b": 0.5
+        },
+        "hcl": {
+          "h": 10.64,
+          "c": 2.71,
+          "l": 9.82
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0412
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0092
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0002
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0001
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0017
+        }
+      ],
+      "neutrals": {
+        "share": 0.9476,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.6512
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0889
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0711
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0397
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.017
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0119
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0124
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0168
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0091
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0099
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0051
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0028
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0024
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0015
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0016
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0011
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0005
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0009
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0009
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0028
+          }
+        ]
+      },
+      "lightness": 9.82,
+      "chroma": 3.85,
+      "peakChroma": 7.59,
+      "samples": 10030
+    }
+  },
+  {
     "title": "Busy Night in Myeongdong",
     "comment": null,
     "id": 251,
@@ -34422,6 +37780,561 @@
       "samples": 9900
     },
     "similarPhotos": [307, 205, 327, 120, 250, 353]
+  },
+  {
+    "title": "We ♥︎ Boston",
+    "comment": null,
+    "id": 614,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5705.jpg",
+    "addedDate": "2026-11-15T17:25:37Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF35mmF2 R WR",
+    "aperture": 2,
+    "exposure": "1/250",
+    "iso": 400,
+    "focalLength": 35,
+    "gpsPosition": "42 deg 21' 19.07\" N, 71 deg 3' 48.97\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 14:40:16",
+    "customCreateDate": null,
+    "placeName": "Boston Common",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 7626,
+    "height": 4290,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/31a4f1ea46b1-dscf5705.jpg",
+      "key": "photos/31a4f1ea46b1-dscf5705.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/31a4f1ea46b1-dscf5705-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/31a4f1ea46b1-dscf5705-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/31a4f1ea46b1-dscf5705-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/31a4f1ea46b1-dscf5705-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/31a4f1ea46b1-dscf5705-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/31a4f1ea46b1-dscf5705-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/31a4f1ea46b1-dscf5705-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/31a4f1ea46b1-dscf5705-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1668,
+        "y": 0,
+        "size": 4290,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "park", "trees", "path", "benches", "rain"],
+    "genres": ["landscape", "street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-common"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "a3908e8eae8e0998",
+    "colors": {
+      "average": {
+        "hex": "#2e2a22",
+        "lab": {
+          "l": 17.21,
+          "a": 0.29,
+          "b": 5.81
+        },
+        "hcl": {
+          "h": 87.14,
+          "c": 5.81,
+          "l": 17.21
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0055
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0669
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0756
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0086
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0002
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0155
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0075
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0012
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0014
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0018
+        }
+      ],
+      "neutrals": {
+        "share": 0.8157,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.2923
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.143
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1238
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.118
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0376
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0231
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0167
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0126
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0079
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0072
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0058
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0036
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0064
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0042
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0045
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0042
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0007
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0019
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0013
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0008
+          }
+        ]
+      },
+      "lightness": 17.21,
+      "chroma": 9.38,
+      "peakChroma": 22.55,
+      "samples": 9768
+    }
+  },
+  {
+    "title": "Uncommon Foliage in the Commons",
+    "comment": null,
+    "id": 598,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5746.jpg",
+    "addedDate": "2026-11-15T17:25:19Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF35mmF2 R WR",
+    "aperture": 2,
+    "exposure": "1/250",
+    "iso": 320,
+    "focalLength": 35,
+    "gpsPosition": "42 deg 21' 20.92\" N, 71 deg 3' 47.29\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 14:43:42",
+    "customCreateDate": null,
+    "placeName": "Boston Common",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 5152,
+    "height": 7213,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/52556b37f86a-dscf5746.jpg",
+      "key": "photos/52556b37f86a-dscf5746.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/52556b37f86a-dscf5746-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/52556b37f86a-dscf5746-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/52556b37f86a-dscf5746-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/52556b37f86a-dscf5746-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/52556b37f86a-dscf5746-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/52556b37f86a-dscf5746-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/52556b37f86a-dscf5746-thumbnail.webp?crop=0,1443,5152",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/52556b37f86a-dscf5746-thumbnailpreview.webp?crop=0,1443,5152",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1443,
+        "size": 5152,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "park", "trees", "path", "crowd", "fallen-leaves"],
+    "genres": ["street", "landscape"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-common"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "76561e5e6e6a2b69",
+    "colors": {
+      "average": {
+        "hex": "#48382f",
+        "lab": {
+          "l": 25.12,
+          "a": 5.28,
+          "b": 8.58
+        },
+        "hcl": {
+          "h": 58.4,
+          "c": 10.07,
+          "l": 25.12
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0484
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1975
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0545
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0208
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0049
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0016
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0008
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0167
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0103
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0051
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0032
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0029
+        }
+      ],
+      "neutrals": {
+        "share": 0.6333,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1165
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0721
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0772
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1069
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0607
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.099
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0484
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0193
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0098
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0043
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0035
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0015
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0019
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0017
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0011
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0012
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0009
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0015
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0015
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0045
+          }
+        ]
+      },
+      "lightness": 25.12,
+      "chroma": 16.35,
+      "peakChroma": 34.8,
+      "samples": 10115
+    },
+    "compareGroup": "Tree-Lined Path on Boston Common"
   },
   {
     "title": "Jongmyo Entrance",
@@ -34720,10 +38633,10 @@
     "customGpsPosition": null,
     "createDate": "2026:11:07 17:29:16",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Porter Square Station",
+    "customCity": "Boston",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": "United States of America",
     "state": "Massachusetts",
     "city": "Boston",
@@ -34756,7 +38669,16 @@
     "albums": [],
     "tags": ["subway", "trains", "commuters", "windows", "crowd"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "porter-square-station"
+      },
+      {
+        "relation": "in",
+        "id": "porter-square"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -34978,6 +38900,569 @@
     }
   },
   {
+    "title": "Underground Brutalism",
+    "comment": null,
+    "id": 624,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5992.jpg",
+    "addedDate": "2026-11-15T17:23:33Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF35mmF2 R WR",
+    "aperture": 2,
+    "exposure": "1/500",
+    "iso": 3200,
+    "focalLength": 35,
+    "gpsPosition": "42 deg 21' 22.87\" N, 71 deg 3' 26.91\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 17:45:22",
+    "customCreateDate": null,
+    "placeName": "Porter Square Station",
+    "customCity": "Boston",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 7613,
+    "height": 4282,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992.jpg",
+      "key": "photos/9cd2601da783-dscf5992.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-thumbnail.webp?crop=722,347,3935",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-thumbnailpreview.webp?crop=722,347,3935",
+      "thumbnailcrop": {
+        "x": 722,
+        "y": 347,
+        "size": 3935,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["subway", "train-station", "stairs", "commuters", "crowd"],
+    "genres": ["street", "architecture"],
+    "places": [
+      {
+        "relation": "",
+        "id": "porter-square-station"
+      },
+      {
+        "relation": "in",
+        "id": "porter-square"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "06179d9e8baecbd3",
+    "colors": {
+      "average": {
+        "hex": "#302a25",
+        "lab": {
+          "l": 17.5,
+          "a": 1.81,
+          "b": 4.16
+        },
+        "hcl": {
+          "h": 66.48,
+          "c": 4.53,
+          "l": 17.5
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0053
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.068
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0175
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0017
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0007
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0029
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0019
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0002
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0005
+        }
+      ],
+      "neutrals": {
+        "share": 0.9011,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.4003
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1184
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.089
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0745
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0457
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0331
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0232
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.023
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0143
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0122
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0105
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0105
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0099
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0094
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.005
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0043
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0036
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0035
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0039
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0067
+          }
+        ]
+      },
+      "lightness": 17.5,
+      "chroma": 5.94,
+      "peakChroma": 13.48,
+      "samples": 9768
+    }
+  },
+  {
+    "title": "The Boston T - Red Line",
+    "comment": null,
+    "id": 625,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5993.jpg",
+    "addedDate": "2026-11-15T17:22:31Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF35mmF2 R WR",
+    "aperture": 2,
+    "exposure": "1/500",
+    "iso": 5000,
+    "focalLength": 35,
+    "gpsPosition": "42 deg 21' 22.87\" N, 71 deg 3' 26.91\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:07 17:45:33",
+    "customCreateDate": null,
+    "placeName": "Porter Square Station",
+    "customCity": "Boston",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 3954,
+    "height": 5536,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/974492c7d11d-dscf5993.jpg",
+      "key": "photos/974492c7d11d-dscf5993.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/974492c7d11d-dscf5993-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/974492c7d11d-dscf5993-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/974492c7d11d-dscf5993-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/974492c7d11d-dscf5993-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/974492c7d11d-dscf5993-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/974492c7d11d-dscf5993-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/974492c7d11d-dscf5993-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/974492c7d11d-dscf5993-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 791,
+        "size": 3954,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["subway", "trains", "platform", "train-station"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "",
+        "id": "porter-square-station"
+      },
+      {
+        "relation": "in",
+        "id": "porter-square"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "c39e74f66e369f9f",
+    "colors": {
+      "average": {
+        "hex": "#3d3126",
+        "lab": {
+          "l": 21.2,
+          "a": 3.64,
+          "b": 8.85
+        },
+        "hcl": {
+          "h": 67.68,
+          "c": 9.57,
+          "l": 21.2
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0299
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1319
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0524
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0003
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0005
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0005
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.001
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0017
+        }
+      ],
+      "neutrals": {
+        "share": 0.7817,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.3222
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1394
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0774
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0599
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0459
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0359
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0321
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0216
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0147
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0078
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0057
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0043
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0037
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0032
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0014
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0008
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.001
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0004
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0004
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.004
+          }
+        ]
+      },
+      "lightness": 21.2,
+      "chroma": 11.1,
+      "peakChroma": 37.87,
+      "samples": 10030
+    },
+    "compareGroup": "Red Line Train at the Platform"
+  },
+  {
     "title": "RED LINE INBOUND",
     "comment": null,
     "id": 626,
@@ -34995,10 +39480,10 @@
     "customGpsPosition": null,
     "createDate": "2026:11:07 17:46:06",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Porter Square Station",
+    "customCity": "Boston",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": "United States of America",
     "state": "Massachusetts",
     "city": "Boston",
@@ -35031,7 +39516,16 @@
     "albums": [],
     "tags": ["subway", "trains", "platform", "train-station", "signage"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "porter-square-station"
+      },
+      {
+        "relation": "in",
+        "id": "porter-square"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -35268,10 +39762,10 @@
     "customGpsPosition": null,
     "createDate": "2026:11:07 17:46:45",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Porter Square Station",
+    "customCity": "Boston",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": "United States of America",
     "state": "Massachusetts",
     "city": "Boston",
@@ -35304,7 +39798,16 @@
     "albums": [],
     "tags": ["subway", "machinery", "steel", "texture", "urban-decay"],
     "genres": ["abstract"],
-    "places": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "porter-square-station"
+      },
+      {
+        "relation": "in",
+        "id": "porter-square"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -44056,6 +48559,283 @@
       "samples": 10050
     },
     "similarPhotos": [218, 492, 490, 355, 158, 430]
+  },
+  {
+    "title": "Fall & Fence",
+    "comment": null,
+    "id": 662,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF7759.jpg",
+    "addedDate": "2026-11-15T17:31:23Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.3,
+    "exposure": "1/125",
+    "iso": 640,
+    "focalLength": 62.4,
+    "gpsPosition": "42 deg 21' 16.13\" N, 71 deg 4' 7.36\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:08 13:50:10",
+    "customCreateDate": null,
+    "placeName": "Boston Common",
+    "customCity": "Boston",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 4880,
+    "height": 6832,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759.jpg",
+      "key": "photos/d5e8a04a8f3a-dscf7759.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-thumbnail.webp?crop=0,0,4880",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-thumbnailpreview.webp?crop=0,0,4880",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 0,
+        "size": 4880,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "genres": [],
+    "places": [
+      {
+        "relation": "near",
+        "id": "boston-common"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "feec322e56784006",
+    "colors": {
+      "average": {
+        "hex": "#70554a",
+        "lab": {
+          "l": 38.53,
+          "a": 9.99,
+          "b": 10.63
+        },
+        "hcl": {
+          "h": 46.78,
+          "c": 14.58,
+          "l": 38.53
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.1833
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.2256
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0427
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0399
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0014
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.1263
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0038
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0016
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0023
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0104
+        }
+      ],
+      "neutrals": {
+        "share": 0.3627,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0191
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0402
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0613
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0781
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0219
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0178
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0133
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0166
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0137
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0118
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0095
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.01
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.008
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0061
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0055
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.004
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0059
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0123
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0054
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0025
+          }
+        ]
+      },
+      "lightness": 38.53,
+      "chroma": 22.86,
+      "peakChroma": 43.86,
+      "samples": 10030
+    }
   },
   {
     "title": "CAUTION THE FALL",

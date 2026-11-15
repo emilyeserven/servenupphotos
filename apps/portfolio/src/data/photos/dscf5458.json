@@ -1,11 +1,11 @@
 {
-  "id": 611,
-  "title": null,
+  "title": "Café Darq",
   "comment": null,
+  "id": 611,
   "altText": null,
   "notes": null,
   "file": "DSCF5458.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:27:50Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 3.2,
@@ -28,16 +28,16 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458.jpg",
     "key": "photos/e1d291f69a1d-dscf5458.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-thumbnailpreview.webp",
+    "xlarge": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-xlarge.webp?faces=mwi3xpyj",
+    "large": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-large.webp?faces=mwi3xpyj",
+    "medium": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-medium.webp?faces=mwi3xpyj",
+    "small": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-small.webp?faces=mwi3xpyj",
+    "xsmall": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-xsmall.webp?faces=mwi3xpyj",
+    "preview": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-preview.webp?faces=mwi3xpyj",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-thumbnail.webp?crop=3357,0,4316",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e1d291f69a1d-dscf5458-thumbnailpreview.webp?crop=3357,0,4316",
     "thumbnailcrop": {
-      "x": 1678,
+      "x": 3357,
       "y": 0,
       "size": 4316,
       "outputSize": 500
@@ -54,7 +54,7 @@
   "genres": ["street", "architecture"],
   "places": [
     {
-      "relation": "in",
+      "relation": "near",
       "id": "boston-chinatown"
     }
   ],
@@ -273,5 +273,27 @@
     "chroma": 10.72,
     "peakChroma": 22.56,
     "samples": 9975
-  }
+  },
+  "faces": [
+    {
+      "x": 2443,
+      "y": 3035,
+      "width": 87,
+      "height": 170,
+      "blocks": 15,
+      "shape": "circle",
+      "edge": "blocks",
+      "rotation": -17
+    },
+    {
+      "x": 3982,
+      "y": 3018,
+      "width": 112,
+      "height": 158,
+      "blocks": 15,
+      "shape": "circle",
+      "edge": "blocks",
+      "rotation": -8
+    }
+  ]
 }

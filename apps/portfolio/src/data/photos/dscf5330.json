@@ -1,11 +1,11 @@
 {
-  "id": 607,
-  "title": null,
+  "title": "Flags over Boston Chinatown",
   "comment": null,
+  "id": 607,
   "altText": null,
   "notes": "Quality Check (pixelation): The man in the blue cap pushing a hand truck across the crosswalk, bottom right, faces the camera.",
   "file": "DSCF5330.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:31:45Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.3,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-thumbnail.webp?crop=0,1053,4401",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/56ef142e2916-dscf5330-thumbnailpreview.webp?crop=0,1053,4401",
     "thumbnailcrop": {
       "x": 0,
-      "y": 880,
+      "y": 1053,
       "size": 4401,
       "outputSize": 500
     }
