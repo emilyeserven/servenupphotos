@@ -80,7 +80,12 @@ export const navGroups: readonly NavGroup[] = [
     title: "Pipeline",
     items: [
       { title: "Photos in Flight", url: "/in-flight", icon: PlaneIcon },
-      { title: "Compare", url: "/compare", icon: ScaleIcon },
+      {
+        title: "Compare",
+        url: "/compare",
+        icon: ScaleIcon,
+        children: [{ title: "Autogroup", url: "/compare/autogroup", icon: SparklesIcon }],
+      },
       { title: "Lightroom Albums", url: "/lightroom-albums", icon: FolderTreeIcon },
     ],
   },
