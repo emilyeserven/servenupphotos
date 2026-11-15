@@ -56,7 +56,20 @@ time a page shows them.
 
 ## When R2 can't be reached
 
-Pages look for each photo's image in R2 (`images` in `GET /photos/published` and `GET /photos/in-flight`). When R2
+Pages look for each photo's image in R2 (`images` in `GET /photos/published` and `GET /photos/in-flight`). That
+means listing every object under `photos/`, about ten for each photo, a thousand per request to R2, which takes
+seconds on a Raspberry Pi and grows with every upload. So the backend keeps the last listing in memory and reuses it
+for 10 minutes (`storage/listing.go`), and pages asking at the same moment share one listing. Any upload, copy or
+delete the pipeline sends to R2 drops it at once, so only a change made outside the pipeline (the Cloudflare
+dashboard, or another copy of the pipeline) can take up to 10 minutes to show. Every R2 request also goes through one
+shared HTTP client (`storage/client.go`), which keeps connections to R2 open instead of starting a new TLS handshake
+for each request.
+
+> **Frontend analogy:** it's TanStack Query's `staleTime` on the backend: the listing counts as fresh for 10 minutes,
+> and a save through the pipeline is a mutation that invalidates it. Requests asking at once are deduplicated, like
+> two components using the same query key.
+
+When R2
 can't be searched, they get the images found the last time it could be from `offline/images.json`, with
 `images.offline: true`, and the Gallery and Photos in Flight show an **Offline** notice above their filters. Tiles and
 **Edit** links work as usual for those photos. Saves still wait for [Commit](pending-changes.md), and Commit, uploads

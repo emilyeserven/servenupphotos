@@ -236,6 +236,10 @@ images and resizing full-size photos both take a lot of memory. The images are b
 
 Both services use `restart: unless-stopped`, so with Docker enabled at boot the pipeline comes back up after the Pi restarts.
 
+The BFF gzips its JSON, scripts and styles, and tells browsers to keep the app's hashed files in `assets/` for good
+(`index.html` is checked on every load, so a new deploy still shows). Opening a page from another computer, such as
+over Tailscale, then downloads its code once instead of asking the Pi about it on every page change.
+
 #### With Coolify
 
 [Coolify](https://coolify.io/docs/get-started/installation) supports Raspberry Pi OS 64-bit and needs at least 2 cores
