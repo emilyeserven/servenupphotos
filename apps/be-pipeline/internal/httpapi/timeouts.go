@@ -25,6 +25,7 @@ var relayTimeouts = map[string]time.Duration{
 	"/photos/github":                       publishColorsTimeout + publishHashTimeout + publishTimeout,
 	"/photos/in-flight":                    publishTimeout + findPhotosTimeout,
 	"/photos/groups":                       baseURLTimeout,
+	"/photos/saved":                        publishTimeout + findPhotosTimeout + deleteImagesTimeout,
 	"/photos/published":                    publishTimeout + findPhotosTimeout,
 	"/photos/combined":                     commitCombinedTimeout,
 	"/photos/original":                     originalTimeout,

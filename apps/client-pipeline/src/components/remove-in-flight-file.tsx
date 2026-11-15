@@ -137,7 +137,7 @@ export function RemovedNotice({
 }
 
 /** What happened to the image in R2; nothing when R2 had no image to delete. */
-function ImageOutcome({ image }: { image: RemoveResult["image"] }) {
+export function ImageOutcome({ image }: { image: RemoveResult["image"] }) {
   if (image.deleted) {
     return (
       <p className="text-muted-foreground">
@@ -150,7 +150,7 @@ function ImageOutcome({ image }: { image: RemoveResult["image"] }) {
 }
 
 /** What happened to the image's resized versions: one line when all were deleted, else each problem. */
-function VersionsNotice({ versions }: { versions?: RemoveResult["image"]["versions"] }) {
+export function VersionsNotice({ versions }: { versions?: RemoveResult["image"]["versions"] }) {
   if (!versions?.length) return null;
   const failed = versions.filter((version) => !version.deleted);
   if (failed.length === 0) {
