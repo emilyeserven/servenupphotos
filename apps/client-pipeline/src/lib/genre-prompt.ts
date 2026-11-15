@@ -1,7 +1,8 @@
 import type { BulkTagPhoto } from "@/api/bulk-tags";
 import type { Group } from "@/api/organize";
+import type { ContactSheet } from "@/api/contact-sheets";
 import type { Place } from "@/api/places";
-import { photoWithTags as photoSection } from "@/lib/bulk-tag-prompt";
+import { photoWithTags as photoSection, sheetsBlock } from "@/lib/bulk-tag-prompt";
 
 /** The genres the prompt offers, one "- Name: description" line each. */
 function genreLines(genres: Group[]): string {
@@ -13,14 +14,20 @@ function genreLines(genres: Group[]): string {
 
 /**
  * The prompt to paste into a chat with an LLM, asking for the photographic genres of several
- * photos at once, from the genres there are, and for the answer as JSON the backend reads.
+ * photos at once, from the genres there are, and for the answer as JSON the backend reads. With
+ * contact sheets, it links them and asks the LLM to start with them.
  */
-export function genrePrompt(photos: BulkTagPhoto[], genres: Group[], places: Place[]): string {
+export function genrePrompt(
+  photos: BulkTagPhoto[],
+  genres: Group[],
+  places: Place[],
+  sheets?: ContactSheet[],
+): string {
   return `Suggest the photographic genres of each of these ${photos.length} photos.
 
 The genres are for a photography portfolio, where visitors filter photos by genre: the kind of photography a photo is, such as Street, Landscape, Portrait or Architecture.
-
-${photos.map((photo) => photoSection(photo, places)).join("\n\n")}
+${sheetsBlock(sheets)}
+${photos.map((photo, i) => photoSection(photo, places, i, sheets)).join("\n\n")}
 
 Genres there are already:
 ${genreLines(genres)}

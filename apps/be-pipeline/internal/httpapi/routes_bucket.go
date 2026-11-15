@@ -7,7 +7,7 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
 )
 
-// registerBucketRoutes adds the Explore Bucket and Manage Sizes routes: what's in R2, deleting from it, and remaking versions; finding and reading the faces pixelated on them; and downloading an original.
+// registerBucketRoutes adds the Explore Bucket and Manage Sizes routes: what's in R2, deleting from it, and remaking versions; finding and reading the faces pixelated on them; and downloading an original; and drawing contact sheets for prompts.
 func registerBucketRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("GET /photos/bucket", handleBucketImages(d.store.R2, storage.ListImages))
 	mux.HandleFunc("POST /photos/bucket/exif", handleBucketExif(d.extractor, d.store.R2, storage.GetPhoto, cameraOverrides(d.store, d.gh)))
@@ -17,4 +17,5 @@ func registerBucketRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("GET /photos/bucket/faces", handleSavedFaces(d.store.R2, storage.SavedFaces))
 	mux.HandleFunc("POST /photos/bucket/faces/detect", handleDetectFaces(d.store.R2, storage.GetPhoto, versions.DetectFaces))
 	mux.HandleFunc("GET /photos/original", handleOriginal(d.store.R2, storage.GetPhoto))
+	mux.HandleFunc("POST /photos/bucket/contact-sheets", handleContactSheets(d.store.R2, openSheetImage(d.offline.Thumbnail), storage.UploadContactSheets, storage.EnsureContactSheetExpiry))
 }

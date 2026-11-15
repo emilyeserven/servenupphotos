@@ -12,6 +12,7 @@ import {
   PickBar,
   usePhotoPick,
 } from "@/components/bulk-tagging/pick-controls";
+import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { bulkPlacePrompt, parseBulkPlaceAnswer } from "@/lib/bulk-place-prompt";
 import { noPlacePaths, reviewBulkPlaces } from "@/lib/bulk-places";
@@ -63,6 +64,7 @@ function PickedPlaces({ pick }: { pick: BulkPlacePick }) {
   const [answer, setAnswer] = useState("");
   const [read, setRead] = useState<ReturnType<typeof readAnswer>>();
   const remember = useNoPlaceFoundStore((state) => state.add);
+  const contact = usePickedContactSheets(pick.photos);
   const review = () => {
     const next = readAnswer(answer, pick, all);
     if (next.review) remember(noPlacePaths(next.review));
@@ -75,10 +77,11 @@ function PickedPlaces({ pick }: { pick: BulkPlacePick }) {
         <NoPlaceFoundNote count={pick.noPlaceFound} />
       </p>
       <PickedPhotos photos={pick.photos} />
+      <ContactSheetsButton state={contact} />
       <CopyPromptButton
         label={`Copy the place prompt for ${pick.photos.length} photos`}
-        disabled={!places.data}
-        prompt={() => bulkPlacePrompt(pick.photos, all)}
+        disabled={!places.data || contact.pending}
+        prompt={() => bulkPlacePrompt(pick.photos, all, contact.sheets)}
       />
       <PasteAnswer
         value={answer}

@@ -18,6 +18,7 @@ import {
   PickBar,
   usePhotoPick,
 } from "@/components/bulk-tagging/pick-controls";
+import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
 import { UntaggedCount } from "@/components/bulk-tagging/untagged-count";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { OptionCheckbox } from "@/components/update-data-shared";
@@ -91,19 +92,24 @@ function CopyTagPromptButton({ pick }: { pick: BulkTagPick }) {
   const places = useQuery(placesQuery);
   const combined = useCombinedData();
   const data = organize.data;
+  const contact = usePickedContactSheets(pick.photos);
   return (
-    <CopyPromptButton
-      label={`Copy the tag prompt for ${pick.photos.length} photos`}
-      disabled={!data}
-      prompt={() =>
-        data
-          ? bulkTagPrompt(
-              pick.photos,
-              { ...data, metaGroups: metaGroups(combined.data) },
-              readEntries(places.data?.places),
-            )
-          : ""
-      }
-    />
+    <>
+      <ContactSheetsButton state={contact} />
+      <CopyPromptButton
+        label={`Copy the tag prompt for ${pick.photos.length} photos`}
+        disabled={!data || contact.pending}
+        prompt={() =>
+          data
+            ? bulkTagPrompt(
+                pick.photos,
+                { ...data, metaGroups: metaGroups(combined.data) },
+                readEntries(places.data?.places),
+                contact.sheets,
+              )
+            : ""
+        }
+      />
+    </>
   );
 }

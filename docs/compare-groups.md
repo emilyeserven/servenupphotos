@@ -108,6 +108,10 @@ scrolling the portfolio not to feel they'd seen it already: near-identical frame
 shot another time or from another angle, or the same composition or idea, even on different days. Photos that only
 share a theme, a color or a place aren't grouped. Each photo goes in at most one group, as `{ "groups": [ { "name": "…", "photos": ["…"] } ] }`.
 
+**Make contact sheets**, above the copy button, puts the chosen photos on numbered sheets of 30 in R2 first, so the
+prompt links a few sheets for the LLM to look through and keeps each photo's own link for a closer look
+([Contact sheets](contact-sheets.md)).
+
 **Review the groups** reads the pasted answer (a code fence or a sentence around the JSON is fine) in the browser.
 Each suggested group shows its photos, whether it joins a group there is already, and any photo it moves out of
 another group, with a box to leave it out. Names that aren't photos in the prompt are listed and skipped, a photo

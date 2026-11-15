@@ -1,6 +1,8 @@
 import type { BulkTagPhoto } from "@/api/bulk-tags";
+import type { ContactSheet, ContactSheetPhoto } from "@/api/contact-sheets";
 import type { Place } from "@/api/places";
 import { savedDetails, savedExifPlace } from "@/components/photo-details";
+import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { knownLines } from "@/lib/location-prompt";
 import { TAG_RULES, type TagPromptLists, promptImageUrl, tagListsSection } from "@/lib/tag-prompt";
 
@@ -15,15 +17,40 @@ export function savedTags(data: Record<string, unknown>): string[] {
   return Array.isArray(data.tags) ? data.tags.filter((tag) => typeof tag === "string") : [];
 }
 
+/** The image a prompt links for a picked photo: its Small version, else its Medium one, else its original. */
+function photoImage(photo: BulkTagPhoto): string {
+  const images = photo.data.images as Record<string, unknown> | undefined;
+  return promptImageUrl(images, fullImage(photo.data));
+}
+
+/** The picked photos as the contact sheets show them, in the prompt's order, leaving none out. */
+export function pickedSheetPhotos(photos: BulkTagPhoto[]): ContactSheetPhoto[] {
+  return photos.map((photo) => ({ label: photo.name, url: photoImage(photo) }));
+}
+
 /**
- * The first line of a picked photo's part of a prompt, `Photo "name": link`, and what's known of it
- * and where it was taken, one "- Label: value" line per fact.
+ * The paragraph a prompt about picked photos puts before them asking the LLM to start with the
+ * contact sheets, with a blank line on each side, or a single line break without sheets.
  */
-export function photoBasics(photo: BulkTagPhoto, places: Place[]) {
+export function sheetsBlock(sheets?: ContactSheet[]): string {
+  const look = lookAtPhotos(sheets, "");
+  return look ? `\n${look}\n` : "";
+}
+
+/**
+ * The first line of a picked photo's part of a prompt, `Photo "name": link`, with its tile on the
+ * contact sheets when there are any (`index` is its place in the prompt, from 0), and what's known
+ * of it and where it was taken, one "- Label: value" line per fact.
+ */
+export function photoBasics(
+  photo: BulkTagPhoto,
+  places: Place[],
+  index = 0,
+  sheets?: ContactSheet[],
+) {
   const { data } = photo;
-  const images = data.images as Record<string, unknown> | undefined;
   return {
-    heading: `Photo "${photo.name}": ${promptImageUrl(images, fullImage(data))}`,
+    heading: `Photo "${photo.name}"${tileNote(sheets, index)}: ${photoImage(photo)}`,
     known: knownLines({ details: savedDetails(data), exif: savedExifPlace(data), places }),
   };
 }
@@ -32,8 +59,13 @@ export function photoBasics(photo: BulkTagPhoto, places: Place[]) {
  * One photo's part of a prompt that asks about each photo on its own, such as for its genres: its
  * name and link, its title and where it was taken, and its tags.
  */
-export function photoWithTags(photo: BulkTagPhoto, places: Place[]): string {
-  const { heading, known } = photoBasics(photo, places);
+export function photoWithTags(
+  photo: BulkTagPhoto,
+  places: Place[],
+  index = 0,
+  sheets?: ContactSheet[],
+): string {
+  const { heading, known } = photoBasics(photo, places, index, sheets);
   const tags = savedTags(photo.data);
   if (tags.length > 0) known.push(`- Tags: ${tags.join(", ")}`);
   return `${heading}
@@ -41,8 +73,13 @@ ${known.join("\n") || "- Nothing known yet."}`;
 }
 
 /** One photo's part of the prompt: its name and link, what's known of it, and its tags. */
-function photoSection(photo: BulkTagPhoto, places: Place[]): string {
-  const { heading, known } = photoBasics(photo, places);
+function photoSection(
+  photo: BulkTagPhoto,
+  places: Place[],
+  index: number,
+  sheets?: ContactSheet[],
+): string {
+  const { heading, known } = photoBasics(photo, places, index, sheets);
   const tags = savedTags(photo.data);
   return `${heading}
 What's already known about it:
@@ -59,18 +96,20 @@ function pickedTogether(photos: BulkTagPhoto[]): string {
 
 /**
  * The prompt to paste into a chat with an LLM, asking for tags for several photos at once, with the
- * same rules as one photo's tag prompt, and for the answer as JSON the backend reads.
+ * same rules as one photo's tag prompt, and for the answer as JSON the backend reads. With contact
+ * sheets, it links them and asks the LLM to start with them.
  */
 export function bulkTagPrompt(
   photos: BulkTagPhoto[],
   lists: Omit<TagPromptLists, "known">,
   places: Place[],
+  sheets?: ContactSheet[],
 ): string {
   return `Suggest tags for each of these ${photos.length} photos${pickedTogether(photos)}.
 
 The tags are for a photography portfolio, where each tag gathers the photos that share a subject or an idea.
-
-${photos.map((photo) => photoSection(photo, places)).join("\n\n")}
+${sheetsBlock(sheets)}
+${photos.map((photo, i) => photoSection(photo, places, i, sheets)).join("\n\n")}
 
 Rules:
 ${TAG_RULES}
