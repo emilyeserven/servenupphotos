@@ -34159,7 +34159,7 @@
     "iso": 3200,
     "focalLength": 55.6,
     "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.35126210681028, -71.0598388049808",
     "createDate": "2026:11:07 13:01:06",
     "customCreateDate": null,
     "placeName": "Boston Chinatown",
@@ -34436,7 +34436,7 @@
     "iso": 400,
     "focalLength": 34.5,
     "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.35152379858938, -71.06105974817041",
     "createDate": "2026:11:07 13:02:54",
     "customCreateDate": null,
     "placeName": "Boston Chinatown",
@@ -34716,7 +34716,7 @@
     "iso": 200,
     "focalLength": 27.9,
     "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.35088577209097, -71.06087299783933",
     "createDate": "2026:11:07 13:05:58",
     "customCreateDate": null,
     "placeName": "Boston Chinatown",
@@ -34996,7 +34996,7 @@
     "iso": 320,
     "focalLength": 32.6,
     "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.35090827291627, -71.06108002077997",
     "createDate": "2026:11:07 13:06:33",
     "customCreateDate": null,
     "placeName": "Boston Chinatown",
@@ -35273,7 +35273,7 @@
     "iso": 1000,
     "focalLength": 18,
     "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.350970067916535, -71.06074538937744",
     "createDate": "2026:11:07 13:07:27",
     "customCreateDate": null,
     "placeName": "Boston Chinatown",
@@ -35550,7 +35550,7 @@
     "iso": 1250,
     "focalLength": 21.6,
     "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.35124258057037, -71.06023609278265",
     "createDate": "2026:11:07 13:11:05",
     "customCreateDate": null,
     "placeName": "Boston Chinatown",
@@ -35830,7 +35830,7 @@
     "iso": 400,
     "focalLength": 18.5,
     "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.35124258057037, -71.06023609278265",
     "createDate": "2026:11:07 13:11:30",
     "customCreateDate": null,
     "placeName": "Boston Chinatown",
@@ -36107,7 +36107,7 @@
     "iso": 1250,
     "focalLength": 25.4,
     "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.351135014782706, -71.05996142319108",
     "createDate": "2026:11:07 13:12:32",
     "customCreateDate": null,
     "placeName": "Boston Chinatown",
@@ -36650,6 +36650,564 @@
     "similarPhotos": [319, 453, 304, 282, 400, 120]
   },
   {
+    "title": "Boston Chinatown Utility Box",
+    "comment": null,
+    "id": 608,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5419.jpg",
+    "addedDate": "2026-11-15T17:48:21Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 3.5,
+    "exposure": "1/125",
+    "iso": 400,
+    "focalLength": 18,
+    "gpsPosition": "42 deg 21' 2.45\" N, 71 deg 3' 36.30\" W",
+    "customGpsPosition": "42.35238022685603, -71.06116927946671",
+    "createDate": "2026:11:07 13:25:52",
+    "customCreateDate": null,
+    "placeName": "Boston Chinatown",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 4909,
+    "height": 6872,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/845f7b166c09-dscf5419.jpg",
+      "key": "photos/845f7b166c09-dscf5419.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/845f7b166c09-dscf5419-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/845f7b166c09-dscf5419-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/845f7b166c09-dscf5419-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/845f7b166c09-dscf5419-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/845f7b166c09-dscf5419-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/845f7b166c09-dscf5419-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/845f7b166c09-dscf5419-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/845f7b166c09-dscf5419-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 981,
+        "size": 4909,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["chinatown", "street-art", "gates", "bicycles", "sidewalk"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "1613195d4f15e463",
+    "colors": {
+      "average": {
+        "hex": "#494a52",
+        "lab": {
+          "l": 31.62,
+          "a": 1.5,
+          "b": -4.6
+        },
+        "hcl": {
+          "h": 288.06,
+          "c": 4.84,
+          "l": 31.62
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0101
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0104
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0001
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0052
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0002
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0005
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0009
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.148
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0346
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0009
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0048
+        }
+      ],
+      "neutrals": {
+        "share": 0.7843,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1032
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0384
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0423
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0694
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0966
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.096
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.089
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0812
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0488
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0237
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0155
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.008
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0165
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0316
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0179
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0035
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0008
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0011
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0007
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0001
+          }
+        ]
+      },
+      "lightness": 31.62,
+      "chroma": 8.36,
+      "peakChroma": 22.99,
+      "samples": 9828
+    }
+  },
+  {
+    "title": "\"Porcelain\" Flower Pot",
+    "comment": null,
+    "id": 609,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF5422.jpg",
+    "addedDate": "2026-11-15T17:49:26Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.3,
+    "exposure": "1/125",
+    "iso": 1600,
+    "focalLength": 78.7,
+    "gpsPosition": "42 deg 21' 2.45\" N, 71 deg 3' 36.30\" W",
+    "customGpsPosition": "42.35230822660372, -71.06124354731456",
+    "createDate": "2026:11:07 13:26:23",
+    "customCreateDate": null,
+    "placeName": "Philips Square",
+    "customCity": "Boston",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Boston",
+    "width": 7679,
+    "height": 4319,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/2f07a4165033-dscf5422.jpg",
+      "key": "photos/2f07a4165033-dscf5422.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/2f07a4165033-dscf5422-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/2f07a4165033-dscf5422-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/2f07a4165033-dscf5422-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/2f07a4165033-dscf5422-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/2f07a4165033-dscf5422-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/2f07a4165033-dscf5422-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/2f07a4165033-dscf5422-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/2f07a4165033-dscf5422-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1680,
+        "y": 0,
+        "size": 4319,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["chinatown", "fish", "patterns", "sidewalk"],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "in",
+        "id": "philips-square"
+      },
+      {
+        "relation": "by",
+        "id": "boston-chinatown"
+      }
+    ],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "67f5737363ea5de4",
+    "colors": {
+      "average": {
+        "hex": "#626571",
+        "lab": {
+          "l": 42.96,
+          "a": 1.32,
+          "b": -7.01
+        },
+        "hcl": {
+          "h": 280.67,
+          "c": 7.13,
+          "l": 42.96
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0006
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0021
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0011
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.1393
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0258
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0003
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.8307,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1256
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0963
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0525
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0371
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0139
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0127
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0164
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0159
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0164
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0219
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.036
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.051
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0707
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0858
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0752
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0389
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0259
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0115
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0116
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0151
+          }
+        ]
+      },
+      "lightness": 42.96,
+      "chroma": 8.21,
+      "peakChroma": 18.54,
+      "samples": 9975
+    }
+  },
+  {
     "title": "Gated Alley",
     "comment": null,
     "id": 610,
@@ -36664,7 +37222,7 @@
     "iso": 5000,
     "focalLength": 135,
     "gpsPosition": "42 deg 21' 7.07\" N, 71 deg 3' 41.78\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.35202536029723, -71.06112422404517",
     "createDate": "2026:11:07 13:28:41",
     "customCreateDate": null,
     "placeName": "Boston Chinatown",
