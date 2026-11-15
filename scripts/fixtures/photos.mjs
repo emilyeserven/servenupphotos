@@ -127,7 +127,7 @@ function combinedFiles(
     gear: combinedFile("gear", "GEAR.json", gear, branch),
     notstored: combinedFile("notstored", "NOTSTORED.json", notstored, branch),
     photobooks: combinedFile("photobooks", "PHOTOBOOKS.json", photobooks, branch),
-    bio: combinedFile("bio", "BIO.json", bio, branch),
+    bio: combinedFile("bio", "ALLBIO.json", bio, branch),
   };
 }
 

@@ -64,7 +64,7 @@ var (
 	PhotoBooks = EntryKind{Name: "photo book", Folder: "photobooks", AllFile: "PHOTOBOOKS.json"}
 	// BioKind is the bio the portfolio will show about the photographer,
 	// one file, bio.json.
-	BioKind    = EntryKind{Name: "bio", Folder: "bio", AllFile: "BIO.json"}
+	BioKind    = EntryKind{Name: "bio", Folder: "bio", AllFile: "ALLBIO.json"}
 	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind, PhotoBooks, BioKind}
 )
 
