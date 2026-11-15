@@ -33,12 +33,12 @@ type BulkTagsResult struct {
 	Photos int `json:"photos"`
 }
 
-// ApplyBulkTags makes the new tags in bulk, each parent before the tags under
+// ApplyBulkTags makes the new tags in bulk, for any number of photos, each parent before the tags under
 // it, and adds the tags to each photo, all as one save in the pending changes.
 // Nothing is saved when a tag can't be made or a photo can't be read.
 func (c *Client) ApplyBulkTags(ctx context.Context, gh settings.GitHub, bulk BulkTags) (BulkTagsResult, error) {
-	if len(bulk.Photos) == 0 || len(bulk.Photos) > maxBulkTagPhotos {
-		return BulkTagsResult{}, publishErr(http.StatusBadRequest, "Tag 1 to %d photos at a time.", maxBulkTagPhotos)
+	if len(bulk.Photos) == 0 {
+		return BulkTagsResult{}, publishErr(http.StatusBadRequest, "Pick at least 1 photo to tag.")
 	}
 	adds := make([]photoAdds, 0, len(bulk.Photos))
 	for _, p := range bulk.Photos {
