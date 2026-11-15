@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["birds", "branches", "plants", "forest"],
   "genres": [],
   "places": [],
   "noGps": false,

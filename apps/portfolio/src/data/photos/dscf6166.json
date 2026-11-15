@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["night", "street-lights", "sidewalk", "pedestrians", "cars", "rain", "reflections"],
   "genres": [],
   "places": [],
   "noGps": false,
