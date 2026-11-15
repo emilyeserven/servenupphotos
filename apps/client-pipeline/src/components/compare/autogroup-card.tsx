@@ -4,22 +4,21 @@ import { ReadProblems } from "@/components/compare/compare-group-list";
 import { CopyPromptButton, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
 import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
+import { PhotoScopeToggle } from "@/components/photo-scope-toggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { count } from "@/components/update-data-shared";
 import { useCompareGroups } from "@/hooks/use-compare-groups";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import {
-  type AutogroupAnswer,
   type AutogroupOptions,
   type AutogroupPhoto,
-  type AutogroupScope,
   autogroupPhotos,
   autogroupPrompt,
   autogroupSheetPhotos,
   readAutogroupAnswer,
 } from "@/lib/compare-autogroup";
 import type { ComparePhoto } from "@/lib/compare-groups";
-import { cn } from "@/lib/utils";
 
 /**
  * Autogroup: chooses every photo or only the drafts, copies one prompt linking all their Small
@@ -43,7 +42,8 @@ export function AutogroupCard() {
       <CardContent className="flex flex-col gap-6">
         <ReadProblems problems={compare.problems} />
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-          <ScopeToggle
+          <PhotoScopeToggle
+            label="Which photos to group"
             value={options.scope}
             onChange={(scope) => setOptions({ ...options, scope })}
           />
@@ -63,45 +63,6 @@ export function AutogroupCard() {
         )}
       </CardContent>
     </Card>
-  );
-}
-
-const SCOPES: [AutogroupScope, string][] = [
-  ["all", "All photos"],
-  ["drafts", "Draft photos"],
-];
-
-/** Whether the prompt asks about every photo, or only the drafts. */
-function ScopeToggle({
-  value,
-  onChange,
-}: {
-  value: AutogroupScope;
-  onChange: (scope: AutogroupScope) => void;
-}) {
-  return (
-    <div
-      role="group"
-      aria-label="Which photos to group"
-      className="bg-background flex shrink-0 rounded-md border p-0.5"
-    >
-      {SCOPES.map(([scope, text]) => (
-        <button
-          key={scope}
-          type="button"
-          aria-pressed={value === scope}
-          onClick={() => onChange(scope)}
-          className={cn(
-            "focus-visible:ring-ring rounded px-3 py-1 outline-none focus-visible:ring-2",
-            value === scope
-              ? "bg-primary text-primary-foreground font-medium"
-              : "text-muted-foreground hover:text-foreground",
-          )}
-        >
-          {text}
-        </button>
-      ))}
-    </div>
   );
 }
 
@@ -137,23 +98,12 @@ interface AutogroupPromptProps {
 
 /** The photos asked about, their prompt, the box to paste the answer into, and the review of it. */
 function AutogroupPrompt({ asked, all }: AutogroupPromptProps) {
-  const [typed, setTyped] = useState("");
-  const [answer, setAnswer] = useState<AutogroupAnswer | null>(null);
-  const [error, setError] = useState<string | null>(null);
   // Each review starts fresh, so groups left out of the last one aren't left out of the next.
-  const [reviews, setReviews] = useState(0);
+  const { typed, setTyped, answer, error, reviews, review } = usePastedAnswer((text) =>
+    readAutogroupAnswer(text, asked, all),
+  );
   const sheetPhotos = useMemo(() => autogroupSheetPhotos(asked), [asked]);
   const contact = useContactSheets(sheetPhotos);
-  const review = () => {
-    try {
-      setAnswer(readAutogroupAnswer(typed, asked, all));
-      setReviews((n) => n + 1);
-      setError(null);
-    } catch (problem) {
-      setAnswer(null);
-      setError(problem instanceof Error ? problem.message : String(problem));
-    }
-  };
   return (
     <div className="flex flex-col gap-4">
       <ContactSheetsButton state={contact} />

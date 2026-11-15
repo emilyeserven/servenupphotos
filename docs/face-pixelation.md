@@ -4,6 +4,9 @@ The Photo page (`/exif?edit=<path>`) has a **Pixelate faces** card for a photo a
 blocks of color on every resized version, the Square Thumbnail and its Thumbnail Preview, so the portfolio never shows
 them. The original JPEG in R2 isn't changed (see [What isn't hidden](#what-isnt-hidden)).
 
+The [Quality Check](quality-check.md#license-plates-and-faces) can ask an LLM which photos show faces or license
+plates to hide, and links each one here.
+
 ## Picking the faces
 
 - **Find faces** sends `POST /api/photos/bucket/faces/detect` with the photo's `key`. The backend downloads the

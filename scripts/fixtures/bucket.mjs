@@ -34,6 +34,14 @@ export function bucketFixtures() {
       }));
       return { sheets, missing: [], expiryProblem: "" };
     },
+    // Mostly the house ratios (16:9 and 5:7), with every 4th photo cropped 3:2 and every 9th 4:5.
+    "POST /api/photos/bucket/sizes": ({ body }) => ({
+      images: (body?.urls ?? []).map((url, i) => {
+        if (i % 9 === 4) return { url, width: 512, height: 640 };
+        if (i % 4 === 1) return { url, width: 640, height: 427 };
+        return i % 3 === 2 ? { url, width: 457, height: 640 } : { url, width: 640, height: 360 };
+      }),
+    }),
     "GET /api/photos/bucket/thumbnail-crop": ({ url }) => {
       const key = url.searchParams.get("key") ?? "";
       const photo = headPhotos.find(({ data }) => data.images?.key === key);

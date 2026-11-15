@@ -78,3 +78,9 @@ export const ORIGINAL = "original";
  * unless you choose to show it.
  */
 export const LOWER_TIER = "lowerTier";
+
+/** The photo's mark for editing it again: `{ reason, date }`, or `null` when it isn't marked. */
+export const RE_EDIT = "reEdit";
+
+/** The photographer-only notes: plain text the portfolio never shows, or `null` for none. */
+export const NOTES = "notes";
