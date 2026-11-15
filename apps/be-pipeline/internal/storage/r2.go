@@ -79,6 +79,7 @@ func newR2Client(cfg settings.R2, endpoint string) *s3.Client {
 		Credentials: credentials.NewStaticCredentialsProvider(
 			strings.TrimSpace(cfg.AccessKeyID), cfg.SecretAccessKey, ""),
 		RetryMaxAttempts: 1,
+		HTTPClient:       r2HTTP,
 		// Skip the checksums the SDK adds to uploads by default; R2 doesn't
 		// need them and not every algorithm is supported.
 		RequestChecksumCalculation: aws.RequestChecksumCalculationWhenRequired,
