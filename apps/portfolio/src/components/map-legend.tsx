@@ -1,6 +1,6 @@
 import { ChevronDown, ListTree } from "lucide-react";
 import { useMap } from "@vis.gl/react-maplibre";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { LegendHelp } from "@/components/map-legend-help";
 import {
@@ -13,11 +13,14 @@ import {
   NoImageSymbol,
   PhotoSymbol,
   RideSymbol,
+  SetSymbol,
   WalkSymbol,
 } from "@/components/map-legend-symbols";
 import type { MapDisplay } from "@/lib/map-display";
 import { type LegendItems, legendItems } from "@/lib/map-legend";
 import type { PlacedPhoto } from "@/lib/map-photos";
+import { splitSets } from "@/lib/map-sets";
+import { photoSets } from "@/lib/photo-sets";
 import { useIsDark } from "@/lib/map-theme";
 import { modifierKey } from "@/lib/platform";
 import { type ShownArea, usePlaceArea } from "@/lib/place-areas";
@@ -32,6 +35,7 @@ function pinRows(items: LegendItems): LegendRow[] {
   return [
     [items.photo, <PhotoSymbol key="photo" />, "Photo"],
     [items.group, <GroupSymbol key="group" />, "Group of photos", <GroupHelp key="group-help" />],
+    [items.set, <SetSymbol key="set" />, "Photo Set", <SetHelp key="set-help" />],
     [items.noImage, <NoImageSymbol key="no-image" />, "Photo without an image yet"],
   ];
 }
@@ -46,6 +50,13 @@ function GroupHelp() {
         its photos in a grid instead.
       </p>
     </>
+  );
+}
+
+/** What a Photo Set is, and what clicking one does. */
+function SetHelp() {
+  return (
+    <p>Photos kept together as one marker at every zoom. Click it to see its photos in a grid.</p>
   );
 }
 
@@ -118,7 +129,8 @@ export function MapLegend({
   const dark = useIsDark();
   const trips = useShownTripLines(photos, display.tripLines);
   const placeArea = usePlaceArea(area.id) !== undefined;
-  const items = legendItems(photos, trips, placeArea);
+  const sets = useMemo(() => splitSets(photos, photoSets).sets.length > 0, [photos]);
+  const items = legendItems(photos, trips, placeArea, sets);
   const groups = [shownRows(pinRows(items)), shownRows(lineRows(items, dark))];
   const container = useMap().current?.getContainer();
   if (!container) return null;

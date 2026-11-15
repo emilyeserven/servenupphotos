@@ -124,6 +124,8 @@ type InFlightResult struct {
 	PhotoBooks InFlightGroups `json:"photobooks"`
 	// Bio is the bio file in the pull request.
 	Bio InFlightGroups `json:"bio"`
+	// Sets are the Photo Set files in the pull request.
+	Sets InFlightGroups `json:"sets"`
 }
 
 // addGroups fills r's field for each kind but photos (see groupKinds) with

@@ -1,10 +1,9 @@
 import { GripVerticalIcon, ImageOffIcon, XIcon } from "lucide-react";
 import type { SocialPhoto } from "@/api/publish";
 import { MoveArrows } from "@/components/move-arrows";
+import { TileDropList } from "@/components/tile-drop-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useDragOrder } from "@/hooks/use-drag-order";
-import { useDropTarget } from "@/hooks/use-drop-target";
 import { type BioPhoto, bioPhotoKey, bioPhotoName, bioTileImage } from "@/lib/bio";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import { photoName } from "@/lib/social-schedule";
@@ -34,44 +33,24 @@ interface BioPhotosProps {
  * arrows. A photo dragged here from the drawer is added at the end.
  */
 export function BioPhotos({ photos, byPath, actions }: BioPhotosProps) {
-  const drag = useDragOrder(actions.onMove);
-  const drop = useDropTarget(BIO_PHOTO_DRAG_TYPE, actions.onAdd);
   return (
-    <div
-      {...drop.handlers}
-      className={cn("rounded-lg", drop.over && "ring-ring ring-2 ring-offset-2")}
-    >
-      {photos.length === 0 ? (
-        <p className="text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm">
-          No photos yet. Upload a self-portrait, or drag a photo here from the drawer.
-        </p>
-      ) : (
-        <ol className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(10rem,1fr))]">
-          {photos.map((photo, place) => (
-            <li
-              key={bioPhotoKey(photo)}
-              draggable
-              onDragStart={(event) => drag.start(place, event)}
-              onDragEnter={() => drag.enter(place)}
-              onDragOver={(event) => event.preventDefault()}
-              onDragEnd={drag.end}
-              className={cn(
-                "bg-card flex cursor-grab flex-col gap-1.5 rounded-lg border p-1.5 active:cursor-grabbing",
-                drag.dragging === place && "border-primary opacity-50",
-              )}
-            >
-              <BioTile
-                photo={photo}
-                site={photo.photo === undefined ? undefined : byPath.get(photo.photo)}
-                place={place}
-                last={place === photos.length - 1}
-                actions={actions}
-              />
-            </li>
-          ))}
-        </ol>
+    <TileDropList
+      items={photos}
+      keyOf={bioPhotoKey}
+      onMove={actions.onMove}
+      dragType={BIO_PHOTO_DRAG_TYPE}
+      onAdd={actions.onAdd}
+      empty="No photos yet. Upload a self-portrait, or drag a photo here from the drawer."
+      tile={(photo, place) => (
+        <BioTile
+          photo={photo}
+          site={photo.photo === undefined ? undefined : byPath.get(photo.photo)}
+          place={place}
+          last={place === photos.length - 1}
+          actions={actions}
+        />
       )}
-    </div>
+    />
   );
 }
 

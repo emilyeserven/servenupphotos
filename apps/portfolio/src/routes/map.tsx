@@ -26,7 +26,13 @@ import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { mapViewOf } from "@/components/view-on-map-link";
 import { type ClusterMarkerData, MapMarkerView } from "@/components/map-marker-view";
-import { type PlacedPhoto, boundsOf, placedById, useMapPhotos } from "@/lib/map-photos";
+import {
+  type MapSet,
+  type PlacedPhoto,
+  boundsOf,
+  placedById,
+  useMapPhotos,
+} from "@/lib/map-photos";
 import { clusterRadius, type MapDisplay, PIN_PIXELS, useMapDisplay } from "@/lib/map-display";
 import { fadeTo } from "@/lib/map-fade";
 import { photosInView } from "@/lib/map-grid-link";
@@ -180,11 +186,11 @@ function useMapFilters() {
 }
 
 /**
- * The markers in view and what the map shows, for the day filter to list only the days of the
- * photos in view, with `updateMarkers` to work them out again after the map moves. Markers are
- * spaced for pins `pin` pixels wide, or as wide as `updateMarkers` is told.
+ * The markers in view, the Photo Sets' among them, and what the map shows, for the day filter to
+ * list only the days of the photos in view, with `updateMarkers` to work them out again after the
+ * map moves. Markers are spaced for pins `pin` pixels wide, or as wide as `updateMarkers` is told.
  */
-function useMarkersInView(map: RefObject<MapRef | null>, pin: number) {
+function useMarkersInView(map: RefObject<MapRef | null>, pin: number, sets: MapSet[]) {
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const [view, setView] = useState<LngLatBounds | null>(null);
   // Counts the updates, so a slower one finishing late doesn't replace a newer one's markers.
@@ -193,7 +199,7 @@ function useMarkersInView(map: RefObject<MapRef | null>, pin: number) {
     if (!map.current) return;
     const update = ++latest.current;
     setView(map.current.getBounds());
-    const next = await markersInView(map.current, width);
+    const next = await markersInView(map.current, width, sets);
     if (update === latest.current) setMarkers(next);
   }
   return { markers, view, updateMarkers };
@@ -203,9 +209,9 @@ function useMarkersInView(map: RefObject<MapRef | null>, pin: number) {
  * The markers in view, drawn as the display options say, with `changeDisplay` to change those;
  * changing the pin size spaces the markers for the new size.
  */
-function useMarkersOnDisplay(map: RefObject<MapRef | null>) {
+function useMarkersOnDisplay(map: RefObject<MapRef | null>, sets: MapSet[]) {
   const [display, setDisplay] = useMapDisplay();
-  const inView = useMarkersInView(map, PIN_PIXELS[display.pinSize]);
+  const inView = useMarkersInView(map, PIN_PIXELS[display.pinSize], sets);
   function changeDisplay(change: Partial<MapDisplay>) {
     setDisplay(change);
     if (change.pinSize) void inView.updateMarkers(PIN_PIXELS[change.pinSize]);
@@ -229,13 +235,16 @@ function groupWith(photo: PlacedPhoto, group: PlacedPhoto[]): PlacedPhoto[] {
 function MapView() {
   const isDark = useIsDark();
   const map = useRef<MapRef>(null);
-  const { markers, view, updateMarkers, display, changeDisplay } = useMarkersOnDisplay(map);
+  const { search, mapPhotos } = useMapFilters();
+  const { markers, view, updateMarkers, display, changeDisplay } = useMarkersOnDisplay(
+    map,
+    mapPhotos.sets,
+  );
   // A photo without an image, shown in a popup as the lightbox can't show it.
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
   const phone = useMediaQuery(PHONE_QUERY);
   const { shown, show, close } = useShownPhoto();
-  const { search, mapPhotos } = useMapFilters();
   const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds, search));
   const saveView = useMapViewInUrl(map, search);
   useFitOnFilter(map, mapPhotos.bounds, () => {
@@ -270,13 +279,15 @@ function MapView() {
       map.current.fitBounds(zoom, CLUSTER_FIT);
       return;
     }
-    setCluster({ longitude: marker.longitude, latitude: marker.latitude, photos: clusterPhotos });
-    // Brings the group to the middle: a little low so its popup fits above it, or on phones a
-    // little high so it stays clear of the sheet along the bottom.
-    map.current.easeTo({
-      center: [marker.longitude, marker.latitude],
-      offset: clusterOffset(phone),
-    });
+    showGrid({ longitude: marker.longitude, latitude: marker.latitude, photos: clusterPhotos });
+  }
+
+  // A group's or a Photo Set's photos in a grid. Brings it to the middle: a little low so its popup
+  // fits above it, or on phones a little high so it stays clear of the sheet along the bottom.
+  function showGrid(open: OpenCluster) {
+    setSelected(null);
+    setCluster(open);
+    map.current?.easeTo({ center: [open.longitude, open.latitude], offset: clusterOffset(phone) });
   }
 
   return (
@@ -336,6 +347,10 @@ function MapView() {
               display={display}
               onOpenPhoto={openPhoto}
               onOpenCluster={(open, listPhotos) => void openCluster(open, listPhotos)}
+              // A Photo Set always opens its grid, as zooming in never splits it.
+              onOpenSet={({ longitude, latitude, photos, name }) =>
+                showGrid({ longitude, latitude, photos, title: name })
+              }
             />
           ))}
           {cluster && (

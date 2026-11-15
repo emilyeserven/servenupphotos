@@ -1,5 +1,4 @@
-import { entryId } from "@/api/places";
-import { byName, settingEntries, settingMutations } from "@/api/data-files";
+import { byName, settingEntries, settingMutations, uniqueEntryId } from "@/api/data-files";
 import type { PhotoBook } from "@/lib/photo-book";
 
 function isPhotoBook(value: unknown): value is PhotoBook {
@@ -11,10 +10,7 @@ export const photoBooks = settingEntries("photobooks", isPhotoBook, byName);
 
 /** The ID a new book named name gets, such as `korea-2026`, unless one of taken has it already. */
 export function photoBookId(name: string, taken: string[]): string {
-  const base = entryId(name).slice(0, 90).replace(/-+$/, "") || "book";
-  let id = base;
-  for (let n = 2; taken.includes(id); n += 1) id = `${base}-${n}`;
-  return id;
+  return uniqueEntryId(name, taken, "book");
 }
 
 const bookMutations = settingMutations<PhotoBook>("photobooks");

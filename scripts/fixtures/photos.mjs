@@ -47,6 +47,8 @@ const basePhotoBooks = readFolder("photobooks", "PHOTOBOOKS");
 
 const baseBio = readFolder("bio", "BIO");
 
+const baseSets = readFolder("sets", "SETS");
+
 const headAlbums = [...baseAlbums, added.album];
 
 const headGenres = [...baseGenres, ...added.genres];
@@ -74,6 +76,8 @@ const headNotStored = withAdded(baseNotStored, added.notstored);
 const headPhotoBooks = withAdded(basePhotoBooks, added.photobooks);
 
 const headBio = withAdded(baseBio, added.bio);
+
+const headSets = withAdded(baseSets, added.sets);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -106,6 +110,7 @@ function combinedFiles(
     notstored,
     photobooks,
     bio,
+    sets,
   ],
   branch,
 ) {
@@ -128,6 +133,7 @@ function combinedFiles(
     notstored: combinedFile("notstored", "NOTSTORED.json", notstored, branch),
     photobooks: combinedFile("photobooks", "PHOTOBOOKS.json", photobooks, branch),
     bio: combinedFile("bio", "ALLBIO.json", bio, branch),
+    sets: combinedFile("sets", "SETS.json", sets, branch),
   };
 }
 
@@ -169,6 +175,7 @@ export function photosFixtures() {
           baseNotStored,
           basePhotoBooks,
           baseBio,
+          baseSets,
         ]),
         branch: BASE_BRANCH,
       },
@@ -193,6 +200,7 @@ export function photosFixtures() {
             headNotStored,
             headPhotoBooks,
             headBio,
+            headSets,
           ],
           PULL_REQUEST.branch,
         ),

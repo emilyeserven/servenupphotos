@@ -7,6 +7,8 @@ export interface LegendItems {
   photo: boolean;
   /** Whether a group's marker can be drawn: there are at least two photos. */
   group: boolean;
+  /** Whether a Photo Set's marker is drawn: a photo's pin with another stacked behind it. */
+  set: boolean;
   /** Whether a photo without resized versions yet is drawn, as a small light-blue dot. */
   noImage: boolean;
   /** Whether a day's walk is drawn. */
@@ -81,24 +83,30 @@ function tripItems(trips: TripLinesMap | undefined) {
   };
 }
 
-/** Which kinds of photo pin the map draws; a group whenever there are photos enough to make one. */
-function pinItems(photos: PlacedPhoto[]) {
+/**
+ * Which kinds of photo pin the map draws; a group whenever there are photos enough to make one, and
+ * a Photo Set's marker when `sets` says the map draws one.
+ */
+function pinItems(photos: PlacedPhoto[], sets: boolean) {
   return {
     photo: photos.some((photo) => photo.image !== null),
     group: photos.length > 1,
+    set: sets,
     noImage: photos.some((photo) => photo.image === null),
   };
 }
 
 /**
- * What the key lists: the kinds of pin the map draws for its photos, the kinds of trip line it draws
- * under them, and whether a place's area is shaded. Whether they're in view doesn't matter.
+ * What the key lists: the kinds of pin the map draws for its photos (with a Photo Set's while
+ * `sets`), the kinds of trip line it draws under them, and whether a place's area is shaded.
+ * Whether they're in view doesn't matter.
  */
 export function legendItems(
   photos: PlacedPhoto[],
   trips: TripLinesMap | undefined,
   placeArea: boolean,
+  sets = false,
 ): LegendItems {
   const { fence, ...lines } = tripItems(trips);
-  return { ...pinItems(photos), ...lines, area: fence || placeArea };
+  return { ...pinItems(photos, sets), ...lines, area: fence || placeArea };
 }

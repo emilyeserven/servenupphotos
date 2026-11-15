@@ -8,6 +8,7 @@ import {
   fileUrl,
   headPhotos,
   imagesOf,
+  entryFixtures,
   pendingSave,
 } from "./shared.mjs";
 
@@ -60,30 +61,6 @@ function attentionPhoto(file, i) {
   } = photo.data;
   const peakChroma = colors?.peakChroma;
   return { ...photo, data: peakChroma === undefined ? rest : { ...rest, colors: { peakChroma } } };
-}
-
-/**
- * Saving and removing the setting file folder/id, which was before: `PUT` answers the body as
- * saved made into the file's data, and `DELETE` answers it removed.
- */
-function entryFixtures(folder, id, before, saved) {
-  const path = `${FOLDER}/${folder}/${id}.json`;
-  return {
-    [`PUT /api/${folder}/${id}`]: ({ body }) => ({
-      ...pendingSave(),
-      path,
-      data: saved(body),
-      before,
-      changed: true,
-    }),
-    [`DELETE /api/${folder}/${id}`]: () => ({
-      ...pendingSave(),
-      path,
-      data: null,
-      before,
-      changed: true,
-    }),
-  };
 }
 
 /** The sample answers for the publish routes, keyed "METHOD /api/path". */
