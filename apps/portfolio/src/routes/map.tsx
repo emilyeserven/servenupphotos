@@ -16,6 +16,8 @@ import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&ur
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { FloatingHeader } from "@/components/floating-header";
 import { MapControls } from "@/components/map-controls";
+import { CoordinatesMenu } from "@/components/map-coordinates-menu";
+import { MAP_POPUP } from "@/components/map-popup";
 import {
   ClusterCloseButton,
   ClusterGrid,
@@ -302,7 +304,7 @@ function MapView() {
           onSourceData={(event) => {
             if (event.sourceId === SOURCE_ID && event.isSourceLoaded) void updateMarkers();
           }}
-          // Clicking empty map closes the popups.
+          // Clicking empty map closes the popups (the coordinates menu closes itself).
           onClick={() => {
             setSelected(null);
             setCluster(null);
@@ -362,6 +364,7 @@ function MapView() {
             />
           )}
           {selected && <PhotoPopup photo={selected} onClose={() => setSelected(null)} />}
+          <CoordinatesMenu />
         </Map>
       </div>
       <PhotoLightbox photo={shown} photos={shownGroup} onShow={show} onClose={close} />
@@ -451,16 +454,3 @@ function PhotoPopup({ photo, onClose }: { photo: PlacedPhoto; onClose: () => voi
     </Popup>
   );
 }
-
-// MapLibre styles its popups white, so dark mode recolors the box and its tip under the anchor.
-// Its CSS isn't in a layer, so it beats Tailwind's utilities unless they're important. An outline,
-// which MapLibre doesn't set, sets the box apart from the map.
-const MAP_POPUP = cn(
-  // Above a pin brought to the front.
-  "z-2",
-  "text-neutral-900 dark:text-neutral-100",
-  "[&_.maplibregl-popup-content]:outline [&_.maplibregl-popup-content]:outline-black/20 dark:[&_.maplibregl-popup-content]:outline-white/25",
-  "dark:[&_.maplibregl-popup-content]:bg-neutral-900!",
-  "dark:[&_.maplibregl-popup-tip]:border-t-neutral-900!",
-  "dark:[&_.maplibregl-popup-close-button:hover]:bg-white/10!",
-);

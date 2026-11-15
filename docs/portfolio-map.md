@@ -155,6 +155,24 @@ credits OpenStreetMap's contributors, which covers them.
 > **Frontend analogy:** the map reads a build artifact. The pipeline compiles each day's line into one GeoJSON file at
 > Commit, and the portfolio only renders it, the way a static site renders prebuilt JSON instead of calling an API.
 
+## Copy coordinates
+
+Right-clicking anywhere on the map (a long press on Android) opens a small menu above that spot with its latitude and
+longitude, such as `35.681236, 139.767125`, and a **Copy coordinates** button, instead of the browser's own menu
+(`components/map-coordinates-menu.tsx`). That's latitude first with six decimals (about 10 cm), the way Google Maps
+and most map apps take a pasted position, with the longitude brought back between -180 and 180 when the map has been
+scrolled around the world (`lib/map-coordinates.ts`). The button shows **Copied** for a moment and the menu closes;
+clicking the map closes it too. When the browser won't copy, the menu says so, and the numbers can be selected and
+copied by hand. iOS Safari doesn't send a right-click for a long press, so there it doesn't open.
+
+The pipeline's [Trip](trips.md) map and [trip line](trip-lines.md) map have the same menu
+(`client-pipeline/src/components/map-coordinates.tsx`). The pipeline is often opened over plain HTTP (such as a
+Raspberry Pi over Tailscale), where the browser won't copy, so there the coordinates open in the same copy modal as
+the prompts, ready to copy by hand.
+
+> **Frontend analogy:** like a custom `onContextMenu` handler on any element: the map hands it the click's position
+> already turned into a place on the globe, so the menu only has to show and copy it.
+
 ## Key
 
 A **Key** panel in the map's bottom left corner explains what the map draws (`components/map-legend.tsx`). It lists
