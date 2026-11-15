@@ -6,9 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
@@ -35,7 +32,7 @@ type upload struct {
 // and one with a URL elsewhere is returned as is. Otherwise a photo matches when
 // UploadPhoto would give it the same name stem; when several uploads match,
 // the newest wins. problem says why the bucket couldn't be searched, when it
-// couldn't.
+// couldn't. A recent listing of the bucket is reused (listPhotos).
 func FindPhotos(ctx context.Context, cfg settings.R2, refs []PhotoRef) (found map[PhotoRef]Uploaded, problem string) {
 	return findPhotos(ctx, cfg, r2Endpoint(cfg), refs)
 }
@@ -49,33 +46,14 @@ func findPhotos(ctx context.Context, cfg settings.R2, endpoint string, refs []Ph
 		return nil, msg
 	}
 
-	newest := map[string]upload{}
-	keys := map[string]bool{}
-	paginator := s3.NewListObjectsV2Paginator(newR2Client(cfg, endpoint), &s3.ListObjectsV2Input{
-		Bucket: aws.String(strings.TrimSpace(cfg.Bucket)),
-		Prefix: aws.String("photos/"),
-	})
-	for paginator.HasMorePages() {
-		page, err := paginator.NextPage(ctx)
-		if err != nil {
-			return nil, describeR2Error(err)
-		}
-		for _, obj := range page.Contents {
-			keys[aws.ToString(obj.Key)] = true
-			m := photoKeyPattern.FindStringSubmatch(aws.ToString(obj.Key))
-			if m == nil {
-				continue
-			}
-			modified := aws.ToTime(obj.LastModified)
-			if cur, ok := newest[m[1]]; !ok || modified.After(cur.modified) {
-				newest[m[1]] = upload{key: m[0], modified: modified}
-			}
-		}
+	listing, err := listPhotos(ctx, cfg, endpoint)
+	if err != nil {
+		return nil, describeR2Error(err)
 	}
 
 	found := map[PhotoRef]Uploaded{}
 	for _, ref := range refs {
-		if key, ok := refKey(ref, base, newest); ok && keys[key] {
+		if key, ok := refKey(ref, base, listing.newest); ok && listing.keys[key] {
 			found[ref] = Uploaded{Key: key, URL: base + "/" + key}
 		} else if !ok {
 			found[ref] = Uploaded{URL: ref.URL}
