@@ -1,11 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { MapPinIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { PhotoLink, PhotoName } from "@/components/quality-check/photo-parts";
+import { PhotoRow } from "@/components/quality-check/photo-parts";
 import { Button } from "@/components/ui/button";
 import { count } from "@/components/update-data-shared";
 import type { AutogroupPhoto } from "@/lib/compare-autogroup";
-import { titleOf } from "@/lib/drafts";
 import { type MissingPlace, type MissingPlaceReason, missingPlaces } from "@/lib/missing-places";
 import { useNoPlaceFoundStore } from "@/stores/no-place-found";
 
@@ -85,20 +84,9 @@ function MissingList({ missing }: { missing: MissingPlace[] }) {
 
 /** One photo without a place: its Small version, name, why, and a link to the Photo page. */
 function MissingRow({ item }: { item: MissingPlace }) {
-  const { entry, reason } = item;
-  const title = titleOf(entry.photo.data);
   return (
-    <li className="grid grid-cols-[auto_1fr] items-start gap-3 p-3 text-sm sm:grid-cols-[auto_1fr_auto]">
-      <img
-        src={entry.imageUrl}
-        alt={title ?? entry.key}
-        className="bg-muted h-12 w-auto max-w-20 rounded object-contain"
-      />
-      <div className="flex min-w-0 flex-col gap-1">
-        <PhotoName name={entry.key} title={title} />
-        <p className="text-muted-foreground">{REASON_TEXT[reason]}</p>
-      </div>
-      <PhotoLink entry={entry} label="Open the photo" />
-    </li>
+    <PhotoRow entry={item.entry}>
+      <p className="text-muted-foreground">{REASON_TEXT[item.reason]}</p>
+    </PhotoRow>
   );
 }
