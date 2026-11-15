@@ -11,14 +11,16 @@ left out. Nothing new is needed from the backend.
 > **Frontend analogy:** it's a client-side join of two queries' caches: the base branch's list, with the pull
 > request's copies replacing the rows they share, like spreading a patch object over the original.
 
-## Drafts and Undecided photos
+## Published, Drafts and Undecided photos
 
-Only published photos show at first. **Drafts → Shown** (`?drafts=true`) puts the [drafts](drafts.md) without a
+Only published photos show at first. **Published → Hidden** (`?published=false`) takes them out, so only the drafts
+and Undecided photos you show are left; with both of those hidden too the list is empty. **Drafts → Shown** (`?drafts=true`) puts the [drafts](drafts.md) without a
 title among them, and **Undecided → Shown** (`?undecided=true`) the photos set aside as
 [Undecided](photos-in-flight.md#undecided), each where the sort places it, so you can see where it would go on the
 portfolio. Drafts have a purple **Draft** mark and Undecided photos an amber **Undecided** one, with a dashed border
 and a dimmed image. The counts above the toggles say how many of each there are. With **Keep untitled photos as
-drafts** turned off in Settings, every photo counts as published, as Commit then treats them.
+drafts** turned off in Settings, every photo counts as published, as Commit then treats them, so hiding the
+published photos hides them all.
 
 ## Sort
 
@@ -39,7 +41,7 @@ its count with its header, and starts collapsed below the `lg` breakpoint so it 
 
 `?photo=<path>` names the photo to scroll to and ring, and that photo is shown even when its kind is hidden. The
 **See in All Photos** button (a crosshair icon) beside a draft or Undecided photo elsewhere opens it this way, with
-its kind shown:
+its kind shown (the published photos stay as they were):
 
 - on Photos in Flight, next to a photo's **Draft, not on the portfolio** mark, and on each tile in the **Drafts**,
   **Undecided** and **Can't be edited** panels,

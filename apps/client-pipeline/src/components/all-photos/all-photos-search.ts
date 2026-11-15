@@ -3,6 +3,8 @@ import { parseOrder, parseSort } from "@/components/all-photos/all-photos-sort";
 
 /** The All Photos page's search params. */
 export interface AllPhotosSearch {
+  /** Hides the published photos, which are shown when left out. */
+  published?: false;
   /** Shows the drafts (photos without a title) too. */
   drafts?: true;
   /** Shows the photos set aside as Undecided too. */
@@ -18,6 +20,7 @@ export interface AllPhotosSearch {
 /** The All Photos page's search params from the URL, leaving out anything else. */
 export function parseAllPhotosSearch(search: Record<string, unknown>): AllPhotosSearch {
   return {
+    published: search.published === false ? false : undefined,
     drafts: trueOrLeftOut(search.drafts),
     undecided: trueOrLeftOut(search.undecided),
     photo: textOrLeftOut(search.photo),
