@@ -1,11 +1,11 @@
 {
-  "id": 662,
-  "title": null,
+  "title": "Fall & Fence",
   "comment": null,
+  "id": 662,
   "altText": null,
   "notes": null,
   "file": "DSCF7759.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:31:23Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.3,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:08 13:50:10",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Boston Common",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-thumbnail.webp?crop=0,0,4880",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d5e8a04a8f3a-dscf7759-thumbnailpreview.webp?crop=0,0,4880",
     "thumbnailcrop": {
       "x": 0,
-      "y": 976,
+      "y": 0,
       "size": 4880,
       "outputSize": 500
     }
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "boston-common"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -1,11 +1,11 @@
 {
-  "id": 624,
-  "title": null,
+  "title": "Underground Brutalism",
   "comment": null,
+  "id": 624,
   "altText": null,
   "notes": null,
   "file": "DSCF5992.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:23:33Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 17:45:22",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Porter Square Station",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -34,12 +34,12 @@
     "small": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-thumbnail.webp?crop=722,347,3935",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9cd2601da783-dscf5992-thumbnailpreview.webp?crop=722,347,3935",
     "thumbnailcrop": {
-      "x": 1665,
-      "y": 0,
-      "size": 4282,
+      "x": 722,
+      "y": 347,
+      "size": 3935,
       "outputSize": 500
     }
   },
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": ["subway", "train-station", "stairs", "commuters", "crowd"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "porter-square-station"
+    },
+    {
+      "relation": "in",
+      "id": "porter-square"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

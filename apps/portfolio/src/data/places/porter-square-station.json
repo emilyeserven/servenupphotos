@@ -2,7 +2,7 @@
   "id": "porter-square-station",
   "name": "Porter Square Station",
   "description": "",
-  "parent": "",
+  "parent": "porter-square",
   "city": "",
   "country": ""
 }
