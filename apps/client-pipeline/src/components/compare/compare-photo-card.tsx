@@ -5,6 +5,8 @@ import { useState } from "react";
 import { DraftMark } from "@/components/draft-mark";
 import { FallbackImage } from "@/components/fallback-image";
 import { ImageLightbox } from "@/components/image-lightbox";
+import { LowerTierButton } from "@/components/compare/lower-tier-button";
+import { LowerTierMark } from "@/components/lower-tier";
 import { Button } from "@/components/ui/button";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
 import { type ComparePhoto, comparePhotoName, isWinner } from "@/lib/compare-groups";
@@ -14,7 +16,7 @@ import { readableDate } from "@/lib/photo-date";
 import { cn } from "@/lib/utils";
 import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
 
-/** One photo of a compare group: large, with what it was taken with, and Pick as winner. */
+/** One photo of a compare group: large, with what it was taken with, Pick as winner and Lower Tier. */
 export function ComparePhotoCard({ photo }: { photo: ComparePhoto }) {
   const winner = isWinner(photo);
   return (
@@ -30,6 +32,7 @@ export function ComparePhotoCard({ photo }: { photo: ComparePhoto }) {
         <PhotoDetails data={photo.data} />
         <div className="mt-auto flex flex-wrap gap-2">
           <WinnerButton photo={photo} winner={winner} />
+          <LowerTierButton photo={photo} />
           <EditButton photo={photo} />
           <TakeOut photo={photo} />
         </div>
@@ -112,6 +115,7 @@ function PhotoHeading({ photo, winner }: { photo: ComparePhoto; winner: boolean 
         {photo.fromGallery ? "In the Gallery" : "In flight"}
       </p>
       <DraftMark data={photo.data} />
+      <LowerTierMark file={photo.file} />
     </div>
   );
 }
