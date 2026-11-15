@@ -1,6 +1,6 @@
-import { Link } from "@tanstack/react-router";
-import { CheckIcon, ExternalLinkIcon, RotateCcwIcon } from "lucide-react";
+import { CheckIcon, RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
+import { PhotoLink, PhotoName } from "@/components/quality-check/photo-parts";
 import { Button } from "@/components/ui/button";
 import { count } from "@/components/update-data-shared";
 import type { AutogroupPhoto } from "@/lib/compare-autogroup";
@@ -113,7 +113,7 @@ function FlagRow({ item, ticked, onToggle, linkLabel }: FlagRowProps) {
         onChange={onToggle}
       />
       <FlagDetails item={item} flagged={flagged} />
-      <PhotoLink entry={item.entry} label={linkLabel} />
+      <PhotoLink entry={item.entry} label={linkLabel} section="image" />
     </li>
   );
 }
@@ -141,37 +141,5 @@ function FlagDetails({ item, flagged }: { item: FlagItem; flagged: boolean }) {
         )}
       </div>
     </>
-  );
-}
-
-/** The photo's title and file name, or its file name alone when it has no title. */
-function PhotoName({ name, title }: { name: string; title: string | undefined }) {
-  if (!title) return <p className="font-medium break-words">{name}</p>;
-  return (
-    <p className="font-medium break-words">
-      {title}
-      <span className="text-muted-foreground font-normal"> · {name}</span>
-    </p>
-  );
-}
-
-/** Opens the photo on the Photo page's Image section, where faces are pixelated and images replaced. */
-function PhotoLink({ entry, label }: { entry: AutogroupPhoto; label: string }) {
-  const { photo } = entry;
-  const search = photo.fromGallery
-    ? { edit: photo.file.path, from: "gallery" as const, section: "image" as const }
-    : { edit: photo.file.path, section: "image" as const };
-  return (
-    <Button
-      variant="outline"
-      size="sm"
-      className="col-start-2 justify-self-start sm:col-start-auto"
-      asChild
-    >
-      <Link to="/exif" search={search}>
-        <ExternalLinkIcon />
-        {label}
-      </Link>
-    </Button>
   );
 }

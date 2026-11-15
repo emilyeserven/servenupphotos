@@ -48,12 +48,12 @@ function isText(value: unknown): boolean {
 }
 
 /** Whether the photo is marked as having no GPS position on purpose, such as a studio photo. */
-function isMarkedNoGps(data: PhotoData): boolean {
+export function isMarkedNoGps(data: PhotoData): boolean {
   return data.noGps === true;
 }
 
 /** Whether the photo has its own GPS position: a custom one written on the Photo page, or its EXIF one. */
-function hasOwnGps(data: PhotoData): boolean {
+export function hasOwnGps(data: PhotoData): boolean {
   return isText(data.customGpsPosition) || isText(data.gpsPosition);
 }
 
@@ -68,9 +68,13 @@ function hasNoGps(data: PhotoData): boolean {
  * is left out.
  */
 function hasNoPlaces(data: PhotoData): boolean {
+  return !hasPlace(data) && hasOwnGps(data);
+}
+
+/** Whether one of the photo's place rows has an ID, so it's in a saved place. */
+export function hasPlace(data: PhotoData): boolean {
   const places = Array.isArray(data.places) ? data.places : [];
-  const placeless = !places.some((row) => typeof (row as { id?: unknown } | null)?.id === "string");
-  return placeless && hasOwnGps(data);
+  return places.some((row) => typeof (row as { id?: unknown } | null)?.id === "string");
 }
 
 /** Whether the colors are missing, or were saved before `peakChroma`, as Update Data › Colors reads them. */

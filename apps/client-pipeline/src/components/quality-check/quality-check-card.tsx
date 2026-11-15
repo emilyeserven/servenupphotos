@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { ReadProblems } from "@/components/compare/compare-group-list";
 import { PhotoScopeToggle } from "@/components/photo-scope-toggle";
 import { AspectRatioCheck } from "@/components/quality-check/aspect-ratio-check";
+import { MissingPlacesCheck } from "@/components/quality-check/missing-places-check";
 import { PixelationCheck } from "@/components/quality-check/pixelation-check";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -11,8 +12,9 @@ import { type AutogroupScope, autogroupPhotos } from "@/lib/compare-autogroup";
 
 /**
  * Quality Check: checks every photo, or only the drafts, for what should be fixed before it's
- * posted: crops that aren't the house aspect ratios, and license plates or faces to pixelate. A
- * photo that fails can be flagged for re-edit with a photographer note saying what failed.
+ * posted: crops that aren't the house aspect ratios, license plates or faces to pixelate, and
+ * photos without a place. A crop or pixelation failure can be flagged for re-edit with a
+ * photographer note saying what failed.
  */
 export function QualityCheckCard() {
   const compare = useCompareGroups();
@@ -26,9 +28,10 @@ export function QualityCheckCard() {
       <CardHeader>
         <CardTitle>Quality Check</CardTitle>
         <CardDescription>
-          Checks the chosen photos for crops that aren&apos;t the house aspect ratios and for
-          license plates or faces that need pixelating. Flag the ones that fail for re-edit, with a
-          photographer note saying what failed, waiting for Commit.
+          Checks the chosen photos for crops that aren&apos;t the house aspect ratios, for license
+          plates or faces that need pixelating, and for photos without a place. Crops and pixelation
+          that fail can be flagged for re-edit, with a photographer note saying what failed, waiting
+          for Commit.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
@@ -41,6 +44,8 @@ export function QualityCheckCard() {
             <AspectRatioCheck key={`aspect-${scope}`} photos={photos} />
             <Separator />
             <PixelationCheck key={`pixelation-${scope}`} photos={photos} />
+            <Separator />
+            <MissingPlacesCheck photos={photos} />
           </>
         )}
       </CardContent>

@@ -1,8 +1,8 @@
 # Quality Check
 
 **Update Data → Quality Check** (`/update-data/quality-check`) looks for what should be fixed before a photo is
-posted: a crop that isn't one of the house aspect ratios, and license plates or faces that need pixelating. A photo
-that fails can be flagged for [re-edit](replace-image.md#marking-a-photo-for-re-editing) with a
+posted: a crop that isn't one of the house aspect ratios, license plates or faces that need pixelating, and a photo
+without a place. A photo whose crop or pixelation fails can be flagged for [re-edit](replace-image.md#marking-a-photo-for-re-editing) with a
 [photographer note](photo-notes.md) saying what failed.
 
 At the top, **All photos** or **Draft photos** picks which photos both checks look at: every photo file from the
@@ -68,9 +68,27 @@ prompt are listed as left out, and a photo named twice is flagged once. The answ
 Each flagged photo links to **Pixelate faces**: the Photo page's Image section (`/exif?edit=<path>&section=image`),
 where the [face pixelation](face-pixelation.md) card hides faces and plates alike, since a box can go anywhere.
 
+## Places
+
+The **Places** section lists every chosen photo with no place row that has an ID, the same test Bulk Places and the
+Dashboard's **Photos without a place** use, leaving out [casual photos](trip-lines.md#casual-photos), which only show
+with their place on a Trip page. It needs no button: it's worked out in the browser from the photo data, with local
+edits, so a photo given a place elsewhere drops off at once. Each row says why the photo has none, which says how to
+give it one:
+
+- **Has a GPS position**: [Bulk Places](update-data.md#bulk-places) can find its place. When any photo is like this,
+  **Find places for N photos in Bulk Places** opens it.
+- **Bulk Places' LLM found no place for it**: remembered in this browser ([No place found](update-data.md#no-place-found)),
+  so Bulk Places doesn't pick it again.
+- **No GPS position**, or **Marked as going without GPS**: add a position or a place on the Photo page.
+
+Each row has **Open the photo**, and the list shows 30 until **Show all** is pressed. Nothing is flagged for re-edit
+here, since a missing place is fixed in the data, not in Lightroom. The test is `missingPlaces` in
+`lib/missing-places.ts`.
+
 ## Flagging photos that fail
 
-Both checks list the photos that failed with their Small version uncropped, what failed, the re-edit reason and the
+The aspect ratio and pixelation checks list the photos that failed with their Small version uncropped, what failed, the re-edit reason and the
 note they'll get, and a link to the Photo page. Every row starts ticked; **Flag N photos for re-edit** flags the
 ticked ones as [local edits waiting for Commit](pending-changes.md), as Compare's choices are:
 
