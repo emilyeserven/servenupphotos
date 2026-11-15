@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 22:11:10",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Gyeongnidan-gil",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["observation-towers", "road", "motion-blur", "traffic", "street-lights", "night"],
-  "genres": [],
-  "places": [],
+  "genres": ["cityscape", "street"],
+  "places": [
+    {
+      "relation": "near",
+      "id": "gyeongnidan-gil"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

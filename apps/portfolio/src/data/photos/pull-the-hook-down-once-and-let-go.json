@@ -14,7 +14,7 @@
   "customGpsPosition": "37.78105278989261, -122.50427989181838",
   "createDate": "2026:10:26 03:32:05",
   "customCreateDate": "2026:10:25 11:32:05",
-  "placeName": null,
+  "placeName": "Outer Richmond",
   "customCity": "San Francisco",
   "customState": null,
   "customCountry": "United States of America",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["signage", "typography", "rust", "vintage", "cars"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "outer-richmond"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

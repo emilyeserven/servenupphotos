@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:10:25 13:06:28",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Ocean Beach",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["hiking-trail", "stairs", "fences", "rope", "plants", "houses"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "ocean-beach"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

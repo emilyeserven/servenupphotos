@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hangul", "alley", "signage", "lanterns", "string-lights", "pedestrians"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

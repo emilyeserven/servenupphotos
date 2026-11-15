@@ -1,0 +1,12 @@
+{
+  "id": "hyangwonjeong-pavilion",
+  "name": "Hyangwonjeong Pavilion",
+  "description": "",
+  "parent": "gyeongbokgung-palace",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.581853,
+  "longitude": 126.976583,
+  "exactLocation": true
+}

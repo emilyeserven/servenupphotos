@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:24 18:00:02",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Namsan Tower",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["padlocks", "hearts", "repetition", "patterns"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "namsan-tower"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 12:56:56",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Heungnyemun Gate",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,16 @@
   "albums": [],
   "tags": ["dancheong", "giwa", "palace", "gates", "tourists", "umbrellas", "pedestrians"],
   "genres": ["architecture", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "heungnyemun-gate"
+    },
+    {
+      "relation": "in",
+      "id": "gyeongbokgung-palace"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

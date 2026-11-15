@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 13:21:25",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Tapgol Park",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["apartments", "facade", "windows", "repetition", "brick"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "abstract"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "tapgol-park"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

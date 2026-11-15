@@ -14,7 +14,7 @@
   "customGpsPosition": "41.13764363876098, -73.49678733111443",
   "createDate": "2026:11:01 13:50:33",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Greenlink Trail",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["autumn", "fallen-leaves", "hiking-trail", "footbridges", "forest", "wood", "stones"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "greenlink-trail"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

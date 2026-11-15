@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2017:09:09 17:25:37",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "West 4th Street–Washington Square Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": ["grid-spotlight"],
   "tags": ["subway", "platform", "commuters", "columns", "silhouettes", "railway", "pedestrians"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "west-4th-street-washington-square-station"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:23 14:27:16",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Jongmyo Plaza Park",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["pigeons", "sculpture", "carvings", "stones", "humor", "trees"],
   "genres": ["wildlife", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "jongmyo-plaza-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

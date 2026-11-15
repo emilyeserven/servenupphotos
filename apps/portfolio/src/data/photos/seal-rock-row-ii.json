@@ -14,7 +14,7 @@
   "customGpsPosition": "37.780752255744275, -122.5079592226131",
   "createDate": "2026:10:26 03:38:00",
   "customCreateDate": "2026:10:25 11:38:00",
-  "placeName": null,
+  "placeName": "Outer Richmond",
   "customCity": "San Francisco",
   "customState": null,
   "customCountry": "United States of America",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["houses", "bay-windows", "cars", "power-lines", "repetition", "ocean", "shadows"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "outer-richmond"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

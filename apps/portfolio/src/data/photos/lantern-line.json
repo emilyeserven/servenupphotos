@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:10:25 20:26:10",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "San Francisco Chinatown",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["chinatown", "lanterns", "night", "repetition", "string-lights", "minimalism"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "san-francisco-chinatown"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

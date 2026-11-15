@@ -14,7 +14,7 @@
   "customGpsPosition": "40.750518853544655, -74.00288281892436",
   "createDate": "2017:09:30 09:18:45",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "The High Line",
   "customCity": "New York City",
   "customState": null,
   "customCountry": "United States of America",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["reflections", "glass", "facade", "windows", "balconies", "steel", "patterns"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "the-high-line"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

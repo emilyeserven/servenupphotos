@@ -1,5 +1,17 @@
 [
   {
+    "id": "14th-street-union-square-station",
+    "name": "14th Street–Union Square Station",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "state": "New York",
+    "country": "United States of America",
+    "latitude": 40.734789,
+    "longitude": -73.990736,
+    "exactLocation": true
+  },
+  {
     "id": "72nd-street-subway-station",
     "name": "72nd Street Subway Station",
     "description": "",
@@ -57,6 +69,17 @@
     "exactLocation": true
   },
   {
+    "id": "aquatic-park",
+    "name": "Aquatic Park",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.8068,
+    "longitude": -122.4214
+  },
+  {
     "id": "arima-onsen",
     "name": "Arima Onsen",
     "description": "",
@@ -85,6 +108,18 @@
     "country": "Canada"
   },
   {
+    "id": "barefoot-beach-preserve",
+    "name": "Barefoot Beach Preserve",
+    "description": "",
+    "parent": "",
+    "city": "Bonita Springs",
+    "state": "Florida",
+    "country": "United States",
+    "latitude": 26.297947,
+    "longitude": -81.833189,
+    "exactLocation": true
+  },
+  {
     "id": "bent-pyramid-of-cairo",
     "name": "Bent Pyramid of Cairo",
     "description": "",
@@ -99,6 +134,40 @@
     "parent": "",
     "city": "New York City",
     "country": "United States of America"
+  },
+  {
+    "id": "bosingak-pavilion",
+    "name": "Bosingak Pavilion",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.570064,
+    "longitude": 126.983314,
+    "exactLocation": true
+  },
+  {
+    "id": "boston-chinatown",
+    "name": "Boston Chinatown",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "state": "Massachusetts",
+    "country": "United States of America",
+    "latitude": 42.351272,
+    "longitude": -71.059944
+  },
+  {
+    "id": "boston-common",
+    "name": "Boston Common",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "state": "Massachusetts",
+    "country": "United States of America",
+    "latitude": 42.353,
+    "longitude": -71.0645
   },
   {
     "id": "bowery",
@@ -171,6 +240,18 @@
     "parent": "",
     "city": "Busan",
     "country": "South Korea"
+  },
+  {
+    "id": "cafe-de-la-presse",
+    "name": "Café de la Presse",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.790656,
+    "longitude": -122.40544,
+    "exactLocation": true
   },
   {
     "id": "cathedral-of-st-michael-and-st-gudula",
@@ -269,6 +350,42 @@
     "country": "United States of America"
   },
   {
+    "id": "crissy-field",
+    "name": "Crissy Field",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.804275,
+    "longitude": -122.453405,
+    "exactLocation": true
+  },
+  {
+    "id": "crocker-park",
+    "name": "Crocker Park",
+    "description": "",
+    "parent": "",
+    "city": "Marblehead",
+    "state": "Massachusetts",
+    "country": "United States",
+    "latitude": 42.502736,
+    "longitude": -70.8487,
+    "exactLocation": true
+  },
+  {
+    "id": "da-flora",
+    "name": "Da Flora",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.801224,
+    "longitude": -122.411362,
+    "exactLocation": true
+  },
+  {
     "id": "delray-public-beach",
     "name": "Delray Public Beach",
     "description": "",
@@ -293,6 +410,28 @@
     "parent": "",
     "city": "Osaka-shi",
     "country": "Japan"
+  },
+  {
+    "id": "downtown-crossing-station",
+    "name": "Downtown Crossing Station",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "state": "Massachusetts",
+    "country": "United States of America",
+    "latitude": 42.3555,
+    "longitude": -71.0603
+  },
+  {
+    "id": "dragon-gate",
+    "name": "Dragon Gate",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.7905,
+    "longitude": -122.4057
   },
   {
     "id": "east-broadway-station",
@@ -382,6 +521,18 @@
     "exactLocation": true
   },
   {
+    "id": "gamble-field",
+    "name": "Gamble Field",
+    "description": "",
+    "parent": "",
+    "city": "New Canaan",
+    "state": "Connecticut",
+    "country": "United States of America",
+    "latitude": 41.139469,
+    "longitude": -73.497063,
+    "exactLocation": true
+  },
+  {
     "id": "gamcheon-culture-village",
     "name": "Gamcheon Culture Village",
     "description": "",
@@ -412,6 +563,18 @@
     "parent": "gyeongbokgung-palace",
     "city": "",
     "country": ""
+  },
+  {
+    "id": "ghirardelli-square",
+    "name": "Ghirardelli Square",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.806509,
+    "longitude": -122.42241,
+    "exactLocation": true
   },
   {
     "id": "giza-necropolis",
@@ -459,6 +622,30 @@
     "longitude": -73.9986812321167
   },
   {
+    "id": "greenlink-trail",
+    "name": "Greenlink Trail",
+    "description": "",
+    "parent": "",
+    "city": "New Canaan",
+    "state": "Connecticut",
+    "country": "United States of America",
+    "latitude": 41.137644,
+    "longitude": -73.496787,
+    "exactLocation": true
+  },
+  {
+    "id": "gwanghwamun",
+    "name": "Gwanghwamun",
+    "description": "",
+    "parent": "gyeongbokgung-palace",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.574911,
+    "longitude": 126.977161,
+    "exactLocation": true
+  },
+  {
     "id": "gwangjang-market",
     "name": "Gwangjang Market",
     "description": "",
@@ -483,12 +670,72 @@
     "country": "South Korea"
   },
   {
+    "id": "gyeonghoeru-pavilion",
+    "name": "Gyeonghoeru Pavilion",
+    "description": "",
+    "parent": "gyeongbokgung-palace",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.579642,
+    "longitude": 126.97485,
+    "exactLocation": true
+  },
+  {
+    "id": "gyeongnidan-gil",
+    "name": "Gyeongnidan-gil",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.53855,
+    "longitude": 126.987631,
+    "exactLocation": true
+  },
+  {
+    "id": "haeundae-beach",
+    "name": "Haeundae Beach",
+    "description": "",
+    "parent": "",
+    "city": "Busan",
+    "state": "Busan",
+    "country": "South Korea",
+    "latitude": 35.159336,
+    "longitude": 129.169425,
+    "exactLocation": true
+  },
+  {
     "id": "hagi-castle-town",
     "name": "Hagi Castle Town",
     "description": "",
     "parent": "",
     "city": "Hagi",
     "country": "Japan"
+  },
+  {
+    "id": "hagi-castle",
+    "name": "Hagi Castle",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.416086,
+    "longitude": 131.382847,
+    "exactLocation": true
+  },
+  {
+    "id": "hagi-honjin",
+    "name": "Hagi Honjin",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.414894,
+    "longitude": 131.419147,
+    "exactLocation": true
   },
   {
     "id": "hagi-station",
@@ -500,6 +747,101 @@
     "country": "Japan",
     "latitude": 34.395228,
     "longitude": 131.394733,
+    "exactLocation": true
+  },
+  {
+    "id": "hannam-dong",
+    "name": "Hannam-dong",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.536514,
+    "longitude": 127.001269,
+    "exactLocation": true
+  },
+  {
+    "id": "harlan-place",
+    "name": "Harlan Place",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.790656,
+    "longitude": -122.40544
+  },
+  {
+    "id": "heunginjimun-gate-park",
+    "name": "Heunginjimun Gate Park",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.571842,
+    "longitude": 127.009492,
+    "exactLocation": true
+  },
+  {
+    "id": "heunginjimun",
+    "name": "Heunginjimun",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.570914,
+    "longitude": 127.008928,
+    "exactLocation": true
+  },
+  {
+    "id": "heungnyemun-gate",
+    "name": "Heungnyemun Gate",
+    "description": "",
+    "parent": "gyeongbokgung-palace",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.576689,
+    "longitude": 126.977022,
+    "exactLocation": true
+  },
+  {
+    "id": "himeji-castle",
+    "name": "Himeji Castle",
+    "description": "",
+    "parent": "",
+    "city": "Himeji",
+    "state": "Hyōgo",
+    "country": "Japan",
+    "latitude": 34.838258,
+    "longitude": 134.694203,
+    "exactLocation": true
+  },
+  {
+    "id": "hongdae",
+    "name": "Hongdae",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.557578,
+    "longitude": 126.928458,
+    "exactLocation": true
+  },
+  {
+    "id": "hyangwonjeong-pavilion",
+    "name": "Hyangwonjeong Pavilion",
+    "description": "",
+    "parent": "gyeongbokgung-palace",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.581853,
+    "longitude": 126.976583,
     "exactLocation": true
   },
   {
@@ -543,6 +885,18 @@
     "parent": "",
     "city": "Seoul",
     "country": "South Korea"
+  },
+  {
+    "id": "jongmyo-plaza-park",
+    "name": "Jongmyo Plaza Park",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.571119,
+    "longitude": 126.994997,
+    "exactLocation": true
   },
   {
     "id": "jongmyo-shrine",
@@ -596,6 +950,30 @@
     "country": "Egypt",
     "latitude": 29.471053,
     "longitude": 30.745306,
+    "exactLocation": true
+  },
+  {
+    "id": "lake-rescue",
+    "name": "Lake Rescue",
+    "description": "",
+    "parent": "",
+    "city": "Ludlow",
+    "state": "Vermont",
+    "country": "United States of America",
+    "latitude": 43.449861,
+    "longitude": -72.703336,
+    "exactLocation": true
+  },
+  {
+    "id": "lands-end",
+    "name": "Lands End",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.780667,
+    "longitude": -122.510246,
     "exactLocation": true
   },
   {
@@ -810,6 +1188,17 @@
     "country": "South Korea"
   },
   {
+    "id": "myojin-pond",
+    "name": "Myojin Pond",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.4486,
+    "longitude": 131.4097
+  },
+  {
     "id": "namba",
     "name": "Namba",
     "description": "",
@@ -843,6 +1232,18 @@
     "country": "United States of America",
     "latitude": 41.285,
     "longitude": -70.0955
+  },
+  {
+    "id": "national-folk-museum-of-korea",
+    "name": "National Folk Museum of Korea",
+    "description": "",
+    "parent": "gyeongbokgung-palace",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.581903,
+    "longitude": 126.976661,
+    "exactLocation": true
   },
   {
     "id": "national-museum-of-korea",
@@ -887,6 +1288,30 @@
     "longitude": -73.99337287689791
   },
   {
+    "id": "north-beach",
+    "name": "North Beach",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.800246,
+    "longitude": -122.410911,
+    "exactLocation": true
+  },
+  {
+    "id": "ocean-beach",
+    "name": "Ocean Beach",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.777361,
+    "longitude": -122.5117,
+    "exactLocation": true
+  },
+  {
     "id": "outer-richmond",
     "name": "Outer Richmond",
     "description": "",
@@ -905,6 +1330,29 @@
     "country": "United States of America",
     "latitude": 41.30900335742722,
     "longitude": -73.30154847932147
+  },
+  {
+    "id": "paramount-theatre",
+    "name": "Paramount Theatre",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "state": "Massachusetts",
+    "country": "United States of America",
+    "latitude": 42.351561,
+    "longitude": -71.062697,
+    "exactLocation": true
+  },
+  {
+    "id": "presidio-tunnel-tops",
+    "name": "Presidio Tunnel Tops",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.8029,
+    "longitude": -122.4559
   },
   {
     "id": "qasr-el-sagha",
@@ -964,12 +1412,36 @@
     "country": "Egypt"
   },
   {
+    "id": "robert-gould-shaw-and-54th-regiment-memorial",
+    "name": "Robert Gould Shaw and 54th Regiment Memorial",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "state": "Massachusetts",
+    "country": "United States of America",
+    "latitude": 42.357392,
+    "longitude": -71.064017,
+    "exactLocation": true
+  },
+  {
     "id": "rockefeller-center",
     "name": "Rockefeller Center",
     "description": "",
     "parent": "",
     "city": "New York City",
     "country": "United States of America"
+  },
+  {
+    "id": "rose-kennedy-greenway",
+    "name": "Rose Kennedy Greenway",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "state": "Massachusetts",
+    "country": "United States of America",
+    "latitude": 42.352578,
+    "longitude": -71.057742,
+    "exactLocation": true
   },
   {
     "id": "saladin-citadel",
@@ -990,6 +1462,17 @@
     "longitude": -74.00734805268478
   },
   {
+    "id": "san-francisco-chinatown",
+    "name": "San Francisco Chinatown",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.789764,
+    "longitude": -122.403828
+  },
+  {
     "id": "sannomiya",
     "name": "Sannomiya",
     "description": "",
@@ -1000,6 +1483,29 @@
     "latitude": 34.693353,
     "longitude": 135.191264,
     "exactLocation": true
+  },
+  {
+    "id": "seal-rocks",
+    "name": "Seal Rocks",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.774868,
+    "longitude": -122.511472,
+    "exactLocation": true
+  },
+  {
+    "id": "shoin-shrine",
+    "name": "Shoin Shrine",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.4121,
+    "longitude": 131.4183
   },
   {
     "id": "soho",
@@ -1050,6 +1556,30 @@
     "parent": "",
     "city": "Nantucket",
     "country": "United States of America"
+  },
+  {
+    "id": "tapgol-park",
+    "name": "Tapgol Park",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.570467,
+    "longitude": 126.988325,
+    "exactLocation": true
+  },
+  {
+    "id": "telegraph-hill",
+    "name": "Telegraph Hill",
+    "description": "",
+    "parent": "",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States of America",
+    "latitude": 37.803593,
+    "longitude": -122.407157,
+    "exactLocation": true
   },
   {
     "id": "the-great-pyramid-of-giza",
@@ -1184,6 +1714,18 @@
     "country": "",
     "latitude": 40.7718124785072,
     "longitude": -73.9311989162955
+  },
+  {
+    "id": "west-4th-street-washington-square-station",
+    "name": "West 4th Street–Washington Square Station",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "state": "New York",
+    "country": "United States of America",
+    "latitude": 40.73095,
+    "longitude": -74.001625,
+    "exactLocation": true
   },
   {
     "id": "williamsburg-bridge",

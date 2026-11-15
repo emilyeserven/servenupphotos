@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 17:25:44",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Downtown Crossing Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["subway", "platform", "commuters", "train-station", "shadows"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "downtown-crossing-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

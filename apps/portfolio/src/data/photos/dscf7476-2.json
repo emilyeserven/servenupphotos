@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:24 18:01:21",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Namsan Tower",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["dancheong", "giwa", "pavilion", "beams", "carvings", "patterns", "trees"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "namsan-tower"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

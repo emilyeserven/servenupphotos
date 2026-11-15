@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 14:18:04",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Hyangwonjeong Pavilion",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,16 @@
   "albums": [],
   "tags": ["giwa", "palace", "pond", "islands", "footbridges", "trees", "reflections"],
   "genres": ["architecture", "landscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "across from",
+      "id": "hyangwonjeong-pavilion"
+    },
+    {
+      "relation": "in",
+      "id": "gyeongbokgung-palace"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

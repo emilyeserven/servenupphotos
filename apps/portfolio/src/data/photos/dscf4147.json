@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 19:09:37",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Heunginjimun",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["giwa", "gates", "city-walls", "traffic", "cars", "road", "motion-blur"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "across from",
+      "id": "heunginjimun"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [

@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:10:25 11:59:15",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Ocean Beach",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["coastline", "beach", "road", "apartments", "cars", "city"],
   "genres": ["cityscape", "landscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "overlooking",
+      "id": "ocean-beach"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

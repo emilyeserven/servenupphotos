@@ -14,10 +14,10 @@
   "customGpsPosition": "37.80359267928194, -122.40715738403007",
   "createDate": "2026:10:26 18:15:22",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Telegraph Hill",
+  "customCity": "San Francisco",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -61,7 +61,12 @@
     "manhole-covers"
   ],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "telegraph-hill"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

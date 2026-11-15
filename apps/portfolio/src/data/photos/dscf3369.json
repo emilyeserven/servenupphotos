@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:10:26 18:11:34",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Telegraph Hill",
+  "customCity": "San Francisco",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["city", "rooftops", "houses", "apartments", "hills", "twilight", "palm-trees"],
   "genres": ["cityscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "telegraph-hill"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

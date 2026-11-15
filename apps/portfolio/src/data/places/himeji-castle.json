@@ -1,0 +1,12 @@
+{
+  "id": "himeji-castle",
+  "name": "Himeji Castle",
+  "description": "",
+  "parent": "",
+  "city": "Himeji",
+  "state": "Hyōgo",
+  "country": "Japan",
+  "latitude": 34.838258,
+  "longitude": 134.694203,
+  "exactLocation": true
+}

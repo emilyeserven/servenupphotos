@@ -1,0 +1,12 @@
+{
+  "id": "hongdae",
+  "name": "Hongdae",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.557578,
+  "longitude": 126.928458,
+  "exactLocation": true
+}

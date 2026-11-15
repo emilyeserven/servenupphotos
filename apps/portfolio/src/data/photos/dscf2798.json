@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:10:25 13:13:13",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Ocean Beach",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["volleyball", "beach", "walls", "promenade", "pedestrians", "clouds"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "ocean-beach"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

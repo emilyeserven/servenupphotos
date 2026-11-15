@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:24 23:52:11",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Hongdae",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["graffiti", "street-art", "walls", "urban-decay", "cables"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "hongdae"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

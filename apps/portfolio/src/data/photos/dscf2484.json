@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:10:26 03:36:25",
   "customCreateDate": "2026:10:25 11:36:25",
-  "placeName": null,
+  "placeName": "Outer Richmond",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["festivals", "houses", "bay-windows", "cars", "power-lines"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "outer-richmond"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 14:45:49",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Boston Common",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["church", "park", "trees", "skyscrapers", "street-lights", "autumn"],
   "genres": ["architecture", "cityscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "boston-common"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

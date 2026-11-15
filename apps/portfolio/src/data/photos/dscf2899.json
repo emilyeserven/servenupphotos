@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:16 11:00:45",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Hannam-dong",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["houses", "brick", "road", "power-lines", "gates", "walls"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "hannam-dong"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

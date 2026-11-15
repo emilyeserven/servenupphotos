@@ -1,0 +1,12 @@
+{
+  "id": "lake-rescue",
+  "name": "Lake Rescue",
+  "description": "",
+  "parent": "",
+  "city": "Ludlow",
+  "state": "Vermont",
+  "country": "United States of America",
+  "latitude": 43.449861,
+  "longitude": -72.703336,
+  "exactLocation": true
+}

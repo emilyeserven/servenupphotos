@@ -1,0 +1,12 @@
+{
+  "id": "hagi-honjin",
+  "name": "Hagi Honjin",
+  "description": "",
+  "parent": "",
+  "city": "Hagi",
+  "state": "Yamaguchi",
+  "country": "Japan",
+  "latitude": 34.414894,
+  "longitude": 131.419147,
+  "exactLocation": true
+}

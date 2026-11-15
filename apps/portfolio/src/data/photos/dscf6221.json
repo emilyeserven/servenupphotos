@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:23 15:45:29",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Changuimun Gate",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["city-walls", "giwa", "gates", "arches", "stones", "pedestrians", "trees"],
   "genres": ["architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "changuimun-gate"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

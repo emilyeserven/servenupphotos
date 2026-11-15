@@ -1,0 +1,11 @@
+{
+  "id": "dragon-gate",
+  "name": "Dragon Gate",
+  "description": "",
+  "parent": "",
+  "city": "San Francisco",
+  "state": "California",
+  "country": "United States of America",
+  "latitude": 37.7905,
+  "longitude": -122.4057
+}

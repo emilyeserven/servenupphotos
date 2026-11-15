@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:24 17:22:10",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Namsan Tower",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["daldongne", "city", "apartments", "rooftops", "haze", "aerial-view"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "from",
+      "id": "namsan-tower"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

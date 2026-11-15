@@ -1,0 +1,12 @@
+{
+  "id": "north-beach",
+  "name": "North Beach",
+  "description": "",
+  "parent": "",
+  "city": "San Francisco",
+  "state": "California",
+  "country": "United States of America",
+  "latitude": 37.800246,
+  "longitude": -122.410911,
+  "exactLocation": true
+}

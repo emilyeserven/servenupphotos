@@ -1,0 +1,12 @@
+{
+  "id": "greenlink-trail",
+  "name": "Greenlink Trail",
+  "description": "",
+  "parent": "",
+  "city": "New Canaan",
+  "state": "Connecticut",
+  "country": "United States of America",
+  "latitude": 41.137644,
+  "longitude": -73.496787,
+  "exactLocation": true
+}

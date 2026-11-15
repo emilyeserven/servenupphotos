@@ -1,0 +1,12 @@
+{
+  "id": "gyeonghoeru-pavilion",
+  "name": "Gyeonghoeru Pavilion",
+  "description": "",
+  "parent": "gyeongbokgung-palace",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.579642,
+  "longitude": 126.97485,
+  "exactLocation": true
+}

@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2019:07:13 10:24:35",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Surfside Beach",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["beach", "water-sports", "waves", "ocean"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "surfside-beach"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

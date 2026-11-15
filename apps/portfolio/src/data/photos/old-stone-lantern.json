@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:25 11:38:44",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Shoin Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["toro", "stones", "lichen", "carvings", "pine-trees"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "shoin-shrine"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

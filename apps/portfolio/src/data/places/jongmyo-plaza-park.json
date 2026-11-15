@@ -1,0 +1,12 @@
+{
+  "id": "jongmyo-plaza-park",
+  "name": "Jongmyo Plaza Park",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.571119,
+  "longitude": 126.994997,
+  "exactLocation": true
+}

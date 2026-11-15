@@ -1,0 +1,12 @@
+{
+  "id": "bosingak-pavilion",
+  "name": "Bosingak Pavilion",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.570064,
+  "longitude": 126.983314,
+  "exactLocation": true
+}

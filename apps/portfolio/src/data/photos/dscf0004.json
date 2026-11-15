@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:30 20:18:18",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Sannomiya",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["yokocho", "chochin", "alley", "signage", "pedestrians", "night"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "sannomiya"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

@@ -1,0 +1,12 @@
+{
+  "id": "telegraph-hill",
+  "name": "Telegraph Hill",
+  "description": "",
+  "parent": "",
+  "city": "San Francisco",
+  "state": "California",
+  "country": "United States of America",
+  "latitude": 37.803593,
+  "longitude": -122.407157,
+  "exactLocation": true
+}

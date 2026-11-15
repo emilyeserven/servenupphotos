@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:09:20 17:01:54",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Haeundae Beach",
+  "customCity": "Busan",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["sculpture", "beach", "ocean", "mountains", "sand", "haze", "islands"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "haeundae-beach"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

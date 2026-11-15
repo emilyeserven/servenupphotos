@@ -14,7 +14,7 @@
   "customGpsPosition": "37.773509336730626, -122.51157812845044",
   "createDate": "2026:10:25 13:17:09",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Ocean Beach",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["bay-windows", "houses", "apartments", "trees", "stones", "humor"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "ocean-beach"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

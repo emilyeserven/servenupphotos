@@ -1,0 +1,12 @@
+{
+  "id": "national-folk-museum-of-korea",
+  "name": "National Folk Museum of Korea",
+  "description": "",
+  "parent": "gyeongbokgung-palace",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.581903,
+  "longitude": 126.976661,
+  "exactLocation": true
+}

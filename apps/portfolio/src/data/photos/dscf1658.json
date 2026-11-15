@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 21:24:13",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Gwanghwamun",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["palace", "gates", "walls", "motion-blur", "traffic", "night"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "street"],
+  "places": [
+    {
+      "relation": "across from",
+      "id": "gwanghwamun"
+    },
+    {
+      "relation": "in",
+      "id": "gyeongbokgung-palace"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

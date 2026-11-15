@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 14:49:02",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Robert Gould Shaw and 54th Regiment Memorial",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["monuments", "sculpture", "birds", "carvings", "fallen-leaves", "autumn"],
   "genres": ["architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "robert-gould-shaw-and-54th-regiment-memorial"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

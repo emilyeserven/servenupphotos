@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:10:25 20:31:33",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Dragon Gate",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["chinatown", "gates", "street-lights", "trees", "night"],
   "genres": ["architecture", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "dragon-gate"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

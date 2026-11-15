@@ -5435,7 +5435,7 @@
     "customGpsPosition": null,
     "createDate": "2025:07:04 14:03:57",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Cathedral of St. Michael and St. Gudula",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -5471,7 +5471,12 @@
     "albums": [],
     "tags": ["graffiti", "rust", "steel", "road", "sidewalk", "crosswalk"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "near",
+        "id": "cathedral-of-st-michael-and-st-gudula"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -8963,7 +8968,7 @@
     "customGpsPosition": "37.773509336730626, -122.51157812845044",
     "createDate": "2026:10:25 13:17:09",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Ocean Beach",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -8999,7 +9004,12 @@
     "albums": [],
     "tags": ["bay-windows", "houses", "apartments", "trees", "stones", "humor"],
     "genres": ["street", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "ocean-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -9229,7 +9239,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:25 12:04:37",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Ocean Beach",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -9267,7 +9277,12 @@
     "albums": [],
     "tags": ["beach", "road", "cars", "apartments", "coastline", "promenade", "crosswalk", "sand"],
     "genres": ["street", "landscape"],
-    "places": [],
+    "places": [
+      {
+        "relation": "overlooking",
+        "id": "ocean-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -9497,7 +9512,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:25 11:59:26",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Ocean Beach",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -9533,7 +9548,12 @@
     "albums": [],
     "tags": ["volleyball", "beach", "crowd", "sand", "repetition", "patterns", "shadows", "sports"],
     "genres": ["street", "abstract"],
-    "places": [],
+    "places": [
+      {
+        "relation": "overlooking",
+        "id": "ocean-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -10844,10 +10864,10 @@
     "customGpsPosition": "37.804303751801356, -122.45373212016419",
     "createDate": "2026:10:25 07:47:10",
     "customCreateDate": "2026:10:24 15:47:10",
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Crissy Field",
+    "customCity": "San Francisco",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": null,
     "state": null,
     "city": null,
@@ -10889,7 +10909,12 @@
       "water"
     ],
     "genres": ["landscape", "architecture", "wildlife"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "crissy-field"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -11940,7 +11965,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 11:05:05",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle Town",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -11976,7 +12001,12 @@
     "albums": [],
     "tags": ["koi", "fish", "water", "canal"],
     "genres": ["wildlife", "nature"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "hagi-castle-town"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -13023,7 +13053,7 @@
     "customGpsPosition": "37.773351570312826, -122.51014740153771",
     "createDate": "2026:10:25 13:21:50",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Outer Richmond",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -13068,7 +13098,12 @@
       "trees"
     ],
     "genres": ["street", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "outer-richmond"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -13298,7 +13333,7 @@
     "customGpsPosition": "37.790656104270134, -122.40543981982262",
     "createDate": "2026:10:25 20:32:24",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Café de la Presse",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -13334,7 +13369,12 @@
     "albums": [],
     "tags": ["cafe", "storefronts", "night", "signage", "typography", "windows", "sidewalk"],
     "genres": ["street", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in front of",
+        "id": "cafe-de-la-presse"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -15751,10 +15791,10 @@
     "customGpsPosition": "37.800380515730225, -122.40051199635835",
     "createDate": "2026:10:26 09:42:14",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Telegraph Hill",
+    "customCity": "San Francisco",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": null,
     "state": null,
     "city": null,
@@ -15787,7 +15827,12 @@
     "albums": [],
     "tags": ["observation-towers", "houses", "rooftops", "brick", "trees", "apartments"],
     "genres": ["architecture", "cityscape"],
-    "places": [],
+    "places": [
+      {
+        "relation": "below",
+        "id": "telegraph-hill"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -16017,7 +16062,7 @@
     "customGpsPosition": "37.790656104270134, -122.40543981982262",
     "createDate": "2026:10:25 20:34:01",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Harlan Place",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -16062,7 +16107,12 @@
       "night"
     ],
     "genres": ["street", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "harlan-place"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -17378,10 +17428,10 @@
     "customGpsPosition": "37.80359267928194, -122.40715738403007",
     "createDate": "2026:10:26 18:15:22",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Telegraph Hill",
+    "customCity": "San Francisco",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": null,
     "state": null,
     "city": null,
@@ -17425,7 +17475,12 @@
       "manhole-covers"
     ],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "telegraph-hill"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -17927,10 +17982,10 @@
     "customGpsPosition": "37.801223673490945, -122.41136169420197",
     "createDate": "2026:10:25 06:40:50",
     "customCreateDate": "2026:10:24 14:40:50",
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Da Flora",
+    "customCity": "San Francisco",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": null,
     "state": null,
     "city": null,
@@ -17963,7 +18018,12 @@
     "albums": [],
     "tags": ["bay-windows", "apartments", "power-lines", "storefronts", "pedestrians", "cars"],
     "genres": ["street", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "across from",
+        "id": "da-flora"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -19298,7 +19358,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:23 13:00:54",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Enseiji Temple",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -19334,7 +19394,12 @@
     "albums": [],
     "tags": ["buddhism", "carvings", "faces", "beams", "wood"],
     "genres": ["architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "enseiji-temple"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -19565,7 +19630,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:30 20:18:18",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Sannomiya",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -19601,7 +19666,12 @@
     "albums": [],
     "tags": ["yokocho", "chochin", "alley", "signage", "pedestrians", "night"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "sannomiya"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -19832,7 +19902,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:23 13:01:45",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Enseiji Temple",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -19868,7 +19938,12 @@
     "albums": [],
     "tags": ["omikuji", "prayers", "pine-trees", "branches", "paper"],
     "genres": ["nature", "abstract"],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "enseiji-temple"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -20098,7 +20173,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:23 13:03:32",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Enseiji Temple",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -20134,7 +20209,12 @@
     "albums": [],
     "tags": ["shinto", "torii", "shimenawa", "shide", "shrine", "koshi", "wood"],
     "genres": ["architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "enseiji-temple"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -20364,7 +20444,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:30 20:32:18",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Sannomiya",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -20400,7 +20480,12 @@
     "albums": [],
     "tags": ["subway", "platform", "trains", "commuters", "motion-blur", "signage"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "sannomiya"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -21982,7 +22067,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:24 11:48:49",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -22018,7 +22103,12 @@
     "albums": [],
     "tags": ["shinto", "kanji", "calligraphy", "inscriptions", "stones"],
     "genres": ["abstract", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "hagi-castle"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -22248,7 +22338,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:24 11:49:23",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -22284,7 +22374,12 @@
     "albums": [],
     "tags": ["kanji", "typography", "inscriptions", "wood", "texture", "letters"],
     "genres": ["abstract"],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "hagi-castle"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -22514,7 +22609,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:24 11:57:48",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -22550,7 +22645,12 @@
     "albums": [],
     "tags": ["torii", "shinto", "sando", "trees", "path", "pedestrians"],
     "genres": ["architecture", "street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "hagi-castle"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -22780,7 +22880,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:24 12:03:22",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -22816,7 +22916,12 @@
     "albums": [],
     "tags": ["ishigaki", "castle", "moat", "bridges", "pedestrians", "moss", "water"],
     "genres": ["architecture", "landscape"],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "hagi-castle"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -23589,8 +23694,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 14:16:57",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Gyeongbokgung Palace",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -23634,7 +23739,12 @@
       "pedestrians"
     ],
     "genres": ["architecture", "street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "gyeongbokgung-palace"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -24134,8 +24244,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 14:18:04",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Hyangwonjeong Pavilion",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -24170,7 +24280,16 @@
     "albums": [],
     "tags": ["giwa", "palace", "pond", "islands", "footbridges", "trees", "reflections"],
     "genres": ["architecture", "landscape"],
-    "places": [],
+    "places": [
+      {
+        "relation": "across from",
+        "id": "hyangwonjeong-pavilion"
+      },
+      {
+        "relation": "in",
+        "id": "gyeongbokgung-palace"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -26026,8 +26145,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 15:40:59",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Bukchon Hanok Village",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -26062,7 +26181,12 @@
     "albums": [],
     "tags": ["street-art", "faces", "humor", "hangul", "walls", "sidewalk", "shadows"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "bukchon-hanok-village"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [
@@ -26301,8 +26425,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 15:55:55",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Bukchon Hanok Village",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -26337,7 +26461,12 @@
     "albums": [],
     "tags": ["water", "stones", "moss", "minimalism", "texture"],
     "genres": ["nature", "abstract"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "bukchon-hanok-village"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [
@@ -26972,8 +27101,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 16:44:43",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Bukchon Hanok Village",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -27008,7 +27137,12 @@
     "albums": [],
     "tags": ["palace", "apartments", "rooftops", "city", "mountains", "haze", "hanok", "pagoda"],
     "genres": ["cityscape", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "overlooking",
+        "id": "bukchon-hanok-village"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [
@@ -28077,7 +28211,7 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 18:42:24",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Cheonggyecheon",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -28122,7 +28256,12 @@
       "trees"
     ],
     "genres": ["street", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "cheonggyecheon"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -28622,7 +28761,7 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 18:43:43",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Cheonggyecheon",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -28658,7 +28797,12 @@
     "albums": [],
     "tags": ["stream", "stones", "ivy", "walls", "pedestrians", "path", "trees", "reflections"],
     "genres": ["street", "landscape"],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "cheonggyecheon"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -28887,7 +29031,7 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 18:54:35",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Cheonggyecheon",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -28923,7 +29067,12 @@
     "albums": [],
     "tags": ["stream", "stones", "pedestrians", "bridges", "reflections", "trees", "path"],
     "genres": ["street", "landscape"],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "cheonggyecheon"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [
@@ -29162,7 +29311,7 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 19:06:27",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Cheonggyecheon",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -29198,7 +29347,12 @@
     "albums": [],
     "tags": ["hangul", "apartments", "signage", "cars", "road", "urban-decay"],
     "genres": ["street", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "cheonggyecheon"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [
@@ -29707,8 +29861,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 19:09:37",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Heunginjimun",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -29743,7 +29897,12 @@
     "albums": [],
     "tags": ["giwa", "gates", "city-walls", "traffic", "cars", "road", "motion-blur"],
     "genres": ["street", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "across from",
+        "id": "heunginjimun"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [
@@ -29981,8 +30140,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 19:20:43",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Heunginjimun Gate Park",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -30017,7 +30176,12 @@
     "albums": [],
     "tags": ["city-walls", "office-buildings", "stairs", "facade", "windows", "trees", "crowd"],
     "genres": ["street", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "heunginjimun-gate-park"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [
@@ -30525,8 +30689,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 19:29:01",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Heunginjimun Gate Park",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -30561,7 +30725,12 @@
     "albums": [],
     "tags": ["city-walls", "crowd", "skyline", "skyscrapers", "twilight", "city"],
     "genres": ["cityscape", "street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "heunginjimun-gate-park"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [
@@ -33524,8 +33693,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:18 12:07:03",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Itaewon",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -33560,7 +33729,12 @@
     "albums": [],
     "tags": ["signage", "storefronts", "umbrellas", "pedestrians", "power-lines", "cars", "hangul"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "itaewon"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [
@@ -36052,8 +36226,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:24 16:53:26",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Namsan Tower",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -36088,7 +36262,12 @@
     "albums": [],
     "tags": ["city", "river", "bridges", "apartments", "traffic", "aerial-view"],
     "genres": ["cityscape"],
-    "places": [],
+    "places": [
+      {
+        "relation": "from",
+        "id": "namsan-tower"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -36318,8 +36497,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:24 17:01:52",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Namsan Tower",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -36354,7 +36533,12 @@
     "albums": [],
     "tags": ["rooftops", "houses", "aerial-view", "patterns", "repetition"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "from",
+        "id": "namsan-tower"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -36584,8 +36768,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:24 17:04:11",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Namsan Tower",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -36620,7 +36804,12 @@
     "albums": [],
     "tags": ["observation-towers", "steel", "city", "skyscrapers", "haze", "aerial-view"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "from",
+        "id": "namsan-tower"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -37955,8 +38144,8 @@
     "customGpsPosition": null,
     "createDate": "2026:09:20 16:25:55",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "BUSAN X the SKY",
+    "customCity": "Busan",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -38000,7 +38189,12 @@
       "aerial-view"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "from",
+        "id": "busan-x-the-sky"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -38769,8 +38963,8 @@
     "customGpsPosition": null,
     "createDate": "2026:09:20 17:01:54",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Haeundae Beach",
+    "customCity": "Busan",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -38805,7 +38999,12 @@
     "albums": [],
     "tags": ["sculpture", "beach", "ocean", "mountains", "sand", "haze", "islands"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "haeundae-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -49599,10 +49798,10 @@
     "customGpsPosition": "37.806509135849964, -122.42240979920365",
     "createDate": "2026:10:25 07:08:49",
     "customCreateDate": "2026:10:24 15:08:49",
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Ghirardelli Square",
+    "customCity": "San Francisco",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": null,
     "state": null,
     "city": null,
@@ -49644,7 +49843,12 @@
       "umbrellas"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in front of",
+        "id": "ghirardelli-square"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -51250,8 +51454,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:17 13:58:11",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Gyeonghoeru Pavilion",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -51286,7 +51490,16 @@
     "albums": [],
     "tags": ["giwa", "palace", "pavilion", "pond", "pine-trees", "reflections", "trees"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "across from",
+        "id": "gyeonghoeru-pavilion"
+      },
+      {
+        "relation": "in",
+        "id": "gyeongbokgung-palace"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [
@@ -52340,10 +52553,10 @@
     "customGpsPosition": "37.804275420772505, -122.4534053351354",
     "createDate": "2026:10:25 07:39:08",
     "customCreateDate": "2026:10:24 15:39:08",
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Crissy Field",
+    "customCity": "San Francisco",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": null,
     "state": null,
     "city": null,
@@ -52376,7 +52589,12 @@
     "albums": [],
     "tags": ["road", "cars", "pedestrians", "haze", "trees", "signage"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "near",
+        "id": "crissy-field"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -55052,7 +55270,7 @@
     "customGpsPosition": "40.750518853544655, -74.00288281892436",
     "createDate": "2017:09:30 09:18:45",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "The High Line",
     "customCity": "New York City",
     "customState": null,
     "customCountry": "United States of America",
@@ -55088,7 +55306,12 @@
     "albums": [],
     "tags": ["reflections", "glass", "facade", "windows", "balconies", "steel", "patterns"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "the-high-line"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -58832,7 +59055,7 @@
     "customGpsPosition": null,
     "createDate": "2019:05:26 23:21:03",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Lake Rescue",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -58868,7 +59091,12 @@
     "albums": [],
     "tags": ["night", "clouds", "countryside", "night-sky", "fences", "silhouettes"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "lake-rescue"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -59638,7 +59866,7 @@
     "customGpsPosition": null,
     "createDate": "2019:07:13 10:24:35",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Surfside Beach",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -59674,7 +59902,12 @@
     "albums": [],
     "tags": ["beach", "water-sports", "waves", "ocean"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "surfside-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -59904,7 +60137,7 @@
     "customGpsPosition": null,
     "createDate": "2018:11:18 15:44:12",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Barefoot Beach Preserve",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -59940,7 +60173,12 @@
     "albums": [],
     "tags": ["shells", "beach", "sand", "seaweed"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "barefoot-beach-preserve"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -60169,7 +60407,7 @@
     "customGpsPosition": null,
     "createDate": "2018:11:18 15:52:07",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Barefoot Beach Preserve",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -60205,7 +60443,12 @@
     "albums": [],
     "tags": ["shells", "stones", "beach", "sand"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "barefoot-beach-preserve"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -60435,7 +60678,7 @@
     "customGpsPosition": null,
     "createDate": "2018:11:18 16:10:16",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Barefoot Beach Preserve",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -60471,7 +60714,12 @@
     "albums": [],
     "tags": ["fallen-leaves", "texture", "patterns", "minimalism"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "barefoot-beach-preserve"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -65054,7 +65302,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:25 20:26:10",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "San Francisco Chinatown",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -65090,7 +65338,12 @@
     "albums": [],
     "tags": ["chinatown", "lanterns", "night", "repetition", "string-lights", "minimalism"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "san-francisco-chinatown"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -65320,7 +65573,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:25 20:26:02",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "San Francisco Chinatown",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -65365,7 +65618,12 @@
       "cars"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "san-francisco-chinatown"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -65865,7 +66123,7 @@
     "customGpsPosition": "41.13764363876098, -73.49678733111443",
     "createDate": "2026:11:01 13:50:33",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Greenlink Trail",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -65901,7 +66159,12 @@
     "albums": [],
     "tags": ["autumn", "fallen-leaves", "hiking-trail", "footbridges", "forest", "wood", "stones"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "greenlink-trail"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -66948,10 +67211,10 @@
     "customGpsPosition": "37.800380515730225, -122.40051199635835",
     "createDate": "2026:10:26 13:34:38",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Telegraph Hill",
+    "customCity": "San Francisco",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": null,
     "state": null,
     "city": null,
@@ -66995,7 +67258,12 @@
       "street-lights"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "below",
+        "id": "telegraph-hill"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -68850,7 +69118,7 @@
     "customGpsPosition": "37.775441742830566, -122.51010041302268",
     "createDate": "2026:10:25 12:20:34",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Outer Richmond",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -68895,7 +69163,12 @@
       "shadows"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "overlooking",
+        "id": "outer-richmond"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -69125,7 +69398,7 @@
     "customGpsPosition": "41.13764363876098, -73.49678733111443",
     "createDate": "2026:11:01 13:51:00",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Greenlink Trail",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -69170,7 +69443,12 @@
       "trees"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "greenlink-trail"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -69670,7 +69948,7 @@
     "customGpsPosition": "34.84136017215899, 134.68920328165584",
     "createDate": "2026:09:29 12:46:40",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Himeji Castle",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -69706,7 +69984,12 @@
     "albums": [],
     "tags": ["shrine", "statues", "rope", "stones"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "near",
+        "id": "himeji-castle"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -70208,7 +70491,7 @@
     "customGpsPosition": "37.800246004534735, -122.41091074135733",
     "createDate": "2026:01:24 20:50:04",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "North Beach",
     "customCity": "San Francisco",
     "customState": "California",
     "customCountry": "United States of America",
@@ -70253,7 +70536,12 @@
       "twilight"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "north-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -71032,7 +71320,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:25 15:30:56",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "San Francisco Chinatown",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -71068,7 +71356,12 @@
     "albums": [],
     "tags": ["chinatown", "lanterns", "humor", "signage", "chains", "storefronts", "festivals"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "san-francisco-chinatown"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -73773,7 +74066,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:25 12:18:43",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Ocean Beach",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -73809,7 +74102,12 @@
     "albums": [],
     "tags": ["beach", "ocean", "waves", "cars", "road", "path", "volleyball"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "overlooking",
+        "id": "ocean-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -74310,7 +74608,7 @@
     "customGpsPosition": "37.77486782781847, -122.5114715553275",
     "createDate": "2026:10:25 13:12:10",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Seal Rocks",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -74346,7 +74644,12 @@
     "albums": [],
     "tags": ["rock-formations", "birds", "beach", "ocean", "sand", "humor", "mountains"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "across from",
+        "id": "seal-rocks"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -74576,7 +74879,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 11:38:44",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Shoin Shrine",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -74612,7 +74915,12 @@
     "albums": [],
     "tags": ["toro", "stones", "lichen", "carvings", "pine-trees"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "shoin-shrine"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -78115,10 +78423,10 @@
     "customGpsPosition": "37.804303751801356, -122.45373212016419",
     "createDate": "2026:10:25 07:48:52",
     "customCreateDate": "2026:10:24 15:48:52",
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Crissy Field",
+    "customCity": "San Francisco",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": null,
     "state": null,
     "city": null,
@@ -78151,7 +78459,12 @@
     "albums": [],
     "tags": ["footbridges", "pedestrians", "tourists", "water", "houses", "mountains", "fences"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "crissy-field"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -78934,7 +79247,7 @@
     "customGpsPosition": "37.78105278989261, -122.50427989181838",
     "createDate": "2026:10:26 03:32:05",
     "customCreateDate": "2026:10:25 11:32:05",
-    "placeName": null,
+    "placeName": "Outer Richmond",
     "customCity": "San Francisco",
     "customState": null,
     "customCountry": "United States of America",
@@ -78970,7 +79283,12 @@
     "albums": [],
     "tags": ["signage", "typography", "rust", "vintage", "cars"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "outer-richmond"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -80577,7 +80895,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 10:58:34",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle Town",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -80613,7 +80931,12 @@
     "albums": [],
     "tags": ["koi", "fish", "water", "canal"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "hagi-castle-town"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -81656,7 +81979,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 11:41:18",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Shoin Shrine",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -81692,7 +82015,12 @@
     "albums": [],
     "tags": ["shinto", "senjafuda", "shimenawa", "shide", "shrine", "rope", "wood"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "shoin-shrine"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -81922,7 +82250,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 11:38:30",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Shoin Shrine",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -81958,7 +82286,12 @@
     "albums": [],
     "tags": ["shinto", "shimenawa", "shide", "torii", "kawara", "rope", "pine-trees"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "shoin-shrine"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -83269,7 +83602,7 @@
     "customGpsPosition": "41.139469363447226, -73.4970628568949",
     "createDate": "2026:11:01 14:13:39",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Gamble Field",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -83305,7 +83638,12 @@
     "albums": [],
     "tags": ["sports", "autumn", "fences", "trees", "typography"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "gamble-field"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -83536,7 +83874,7 @@
     "customGpsPosition": "37.780752255744275, -122.5079592226131",
     "createDate": "2026:10:26 03:38:00",
     "customCreateDate": "2026:10:25 11:38:00",
-    "placeName": null,
+    "placeName": "Outer Richmond",
     "customCity": "San Francisco",
     "customState": null,
     "customCountry": "United States of America",
@@ -83572,7 +83910,12 @@
     "albums": [],
     "tags": ["houses", "bay-windows", "cars", "power-lines", "repetition", "ocean", "shadows"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "outer-richmond"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -83802,7 +84145,7 @@
     "customGpsPosition": "37.78102909928621, -122.50615304922768",
     "createDate": "2026:10:26 03:35:20",
     "customCreateDate": "2026:10:25 11:35:20",
-    "placeName": null,
+    "placeName": "Outer Richmond",
     "customCity": "San Francisco",
     "customState": null,
     "customCountry": "United States of America",
@@ -83838,7 +84181,12 @@
     "albums": [],
     "tags": ["houses", "cars", "signposts", "road", "power-lines", "trees", "repetition"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "outer-richmond"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -84338,7 +84686,7 @@
     "customGpsPosition": "37.800246004534735, -122.41091074135733",
     "createDate": "2026:01:24 20:45:31",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "North Beach",
     "customCity": "San Francisco",
     "customState": "California",
     "customCountry": "United States of America",
@@ -84383,7 +84731,12 @@
       "bay-windows"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "north-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -84612,7 +84965,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 11:38:25",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Shoin Shrine",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -84648,7 +85001,12 @@
     "albums": [],
     "tags": ["shinto", "torii", "shimenawa", "toro", "sando", "shrine", "stairs", "pine-trees"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in front of",
+        "id": "shoin-shrine"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -87572,7 +87930,7 @@
     "customGpsPosition": "41.13764363876098, -73.49678733111443",
     "createDate": "2026:11:01 13:51:33",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Greenlink Trail",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -87608,7 +87966,12 @@
     "albums": [],
     "tags": ["autumn", "stream", "reflections", "fallen-leaves", "water", "forest"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "greenlink-trail"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -89198,7 +89561,7 @@
     "customGpsPosition": "37.77524728667587, -122.51099947198733",
     "createDate": "2026:10:25 13:09:41",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Ocean Beach",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -89234,7 +89597,12 @@
     "albums": [],
     "tags": ["road", "cars", "rock-formations", "street-lights", "coastline", "pine-trees"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "ocean-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -90553,7 +90921,7 @@
     "customGpsPosition": "34.44856550416912, 131.40969279524563",
     "createDate": "2026:09:25 12:32:06",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Myojin Pond",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -90589,7 +90957,12 @@
     "albums": [],
     "tags": ["shinto", "torii", "shimenawa", "toro", "shrine", "pond", "reflections", "stairs"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "myojin-pond"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -90819,7 +91192,7 @@
     "customGpsPosition": null,
     "createDate": "2017:09:09 17:25:37",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "West 4th Street–Washington Square Station",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -90855,7 +91228,12 @@
     "albums": ["grid-spotlight"],
     "tags": ["subway", "platform", "commuters", "columns", "silhouettes", "railway", "pedestrians"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "west-4th-street-washington-square-station"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -91373,7 +91751,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 10:35:42",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle Town",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -91409,7 +91787,12 @@
     "albums": [],
     "tags": ["kawara", "rooftops", "repetition", "patterns", "texture"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "hagi-castle-town"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -91910,7 +92293,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:25 13:06:28",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Ocean Beach",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -91946,7 +92329,12 @@
     "albums": [],
     "tags": ["hiking-trail", "stairs", "fences", "rope", "plants", "houses"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "ocean-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -92176,7 +92564,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 11:38:36",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Shoin Shrine",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -92212,7 +92600,12 @@
     "albums": [],
     "tags": ["shinto", "shimenawa", "shide", "shrine", "wood", "pine-trees", "prayers"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in front of",
+        "id": "shoin-shrine"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -93542,7 +93935,7 @@
     "customGpsPosition": "37.78066723727286, -122.51024627679318",
     "createDate": "2026:10:26 03:43:06",
     "customCreateDate": "2026:10:25 11:43:06",
-    "placeName": null,
+    "placeName": "Lands End",
     "customCity": "San Francisco",
     "customState": null,
     "customCountry": "United States of America",
@@ -93578,7 +93971,12 @@
     "albums": [],
     "tags": ["trees", "ocean", "coastline", "clouds", "branches", "cars", "road"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "lands-end"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -95437,7 +95835,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:25 12:02:11",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Ocean Beach",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -95475,7 +95873,12 @@
     "albums": [],
     "tags": ["volleyball", "beach", "crowd", "sand", "cars", "road", "promenade", "repetition"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "overlooking",
+        "id": "ocean-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -98441,10 +98844,10 @@
     "customGpsPosition": "37.800380515730225, -122.40051199635835",
     "createDate": "2026:10:26 13:35:21",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Telegraph Hill",
+    "customCity": "San Francisco",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "United States of America",
     "country": null,
     "state": null,
     "city": null,
@@ -98479,7 +98882,12 @@
     "albums": [],
     "tags": ["cars", "repetition", "humor", "palm-trees", "road", "street-lights", "trees"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "below",
+        "id": "telegraph-hill"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -98709,7 +99117,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:25 12:02:40",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Ocean Beach",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -98747,7 +99155,12 @@
     "albums": [],
     "tags": ["beach", "ocean", "waves", "sand", "coastline", "branches"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "overlooking",
+        "id": "ocean-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -99537,7 +99950,7 @@
     "customGpsPosition": "41.15360736420164, -73.50302263499525",
     "createDate": "2026:11:01 14:31:00",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "New Canaan Nature Center",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -99573,7 +99986,12 @@
     "albums": [],
     "tags": ["autumn", "boardwalk", "marsh", "path", "branches", "tall-grass", "wood"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "new-canaan-nature-center"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -99803,7 +100221,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 11:01:39",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle Town",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -99839,7 +100257,12 @@
     "albums": [],
     "tags": ["koi", "fish", "water", "canal"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "hagi-castle-town"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,

@@ -1,0 +1,12 @@
+{
+  "id": "crocker-park",
+  "name": "Crocker Park",
+  "description": "",
+  "parent": "",
+  "city": "Marblehead",
+  "state": "Massachusetts",
+  "country": "United States",
+  "latitude": 42.502736,
+  "longitude": -70.8487,
+  "exactLocation": true
+}

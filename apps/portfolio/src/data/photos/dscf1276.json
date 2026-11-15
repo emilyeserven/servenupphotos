@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:25 07:12:09",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hagi Honjin",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["city", "mountains", "apartments", "rooftops", "power-lines", "twilight", "haze"],
   "genres": ["cityscape", "landscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "from",
+      "id": "hagi-honjin"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

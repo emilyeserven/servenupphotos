@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 13:24:07",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Tapgol Park",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["yeondeung", "hangul", "lanterns", "alley", "storefronts", "pigeons"],
-  "genres": [],
-  "places": [],
+  "genres": ["street"],
+  "places": [
+    {
+      "relation": "by",
+      "id": "tapgol-park"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

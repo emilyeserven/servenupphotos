@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 15:40:59",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Bukchon Hanok Village",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["street-art", "faces", "humor", "hangul", "walls", "sidewalk", "shadows"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "bukchon-hanok-village"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [

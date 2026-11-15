@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:24 11:57:48",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hagi Castle",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["torii", "shinto", "sando", "trees", "path", "pedestrians"],
   "genres": ["architecture", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "hagi-castle"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 12:54:08",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Rose Kennedy Greenway",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["brick", "facade", "street-lights", "pedestrians", "crosswalk", "trees"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "rose-kennedy-greenway"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

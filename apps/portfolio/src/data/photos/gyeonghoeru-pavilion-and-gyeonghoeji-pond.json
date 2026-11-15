@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 13:58:11",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Gyeonghoeru Pavilion",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,16 @@
   "albums": [],
   "tags": ["giwa", "palace", "pavilion", "pond", "pine-trees", "reflections", "trees"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "across from",
+      "id": "gyeonghoeru-pavilion"
+    },
+    {
+      "relation": "in",
+      "id": "gyeongbokgung-palace"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [

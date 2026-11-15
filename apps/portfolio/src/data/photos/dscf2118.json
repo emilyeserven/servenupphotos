@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:10:25 07:05:54",
   "customCreateDate": "2026:10:24 15:05:54",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Aquatic Park",
+  "customCity": "San Francisco",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -59,7 +59,12 @@
     "pedestrians"
   ],
   "genres": ["landscape", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "aquatic-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

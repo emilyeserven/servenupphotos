@@ -14,10 +14,10 @@
   "customGpsPosition": "37.801223673490945, -122.41136169420197",
   "createDate": "2026:10:25 06:40:50",
   "customCreateDate": "2026:10:24 14:40:50",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Da Flora",
+  "customCity": "San Francisco",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["bay-windows", "apartments", "power-lines", "storefronts", "pedestrians", "cars"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "across from",
+      "id": "da-flora"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

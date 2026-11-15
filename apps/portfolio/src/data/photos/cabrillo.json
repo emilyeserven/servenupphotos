@@ -14,7 +14,7 @@
   "customGpsPosition": "37.773351570312826, -122.51014740153771",
   "createDate": "2026:10:25 13:21:50",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Outer Richmond",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -59,7 +59,12 @@
     "trees"
   ],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "outer-richmond"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

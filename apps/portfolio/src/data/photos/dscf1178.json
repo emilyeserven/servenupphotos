@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 20:37:07",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Jogyesa Temple",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["yeondeung", "hangul", "buddhism", "lanterns", "prayers", "repetition"],
-  "genres": [],
-  "places": [],
+  "genres": ["abstract"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "jogyesa-temple"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

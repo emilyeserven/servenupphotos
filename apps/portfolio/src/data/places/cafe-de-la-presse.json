@@ -1,0 +1,12 @@
+{
+  "id": "cafe-de-la-presse",
+  "name": "Café de la Presse",
+  "description": "",
+  "parent": "",
+  "city": "San Francisco",
+  "state": "California",
+  "country": "United States of America",
+  "latitude": 37.790656,
+  "longitude": -122.40544,
+  "exactLocation": true
+}

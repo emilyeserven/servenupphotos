@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:25 10:35:42",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hagi Castle Town",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["kawara", "rooftops", "repetition", "patterns", "texture"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "hagi-castle-town"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

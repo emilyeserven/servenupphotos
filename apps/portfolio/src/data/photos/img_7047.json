@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2018:11:18 15:16:15",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Barefoot Beach Preserve",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["reptiles", "fallen-leaves", "plants"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "barefoot-beach-preserve"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

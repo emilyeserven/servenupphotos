@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 16:44:43",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Bukchon Hanok Village",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["palace", "apartments", "rooftops", "city", "mountains", "haze", "hanok", "pagoda"],
   "genres": ["cityscape", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "overlooking",
+      "id": "bukchon-hanok-village"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [

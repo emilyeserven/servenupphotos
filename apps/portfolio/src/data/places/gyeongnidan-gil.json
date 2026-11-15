@@ -1,0 +1,12 @@
+{
+  "id": "gyeongnidan-gil",
+  "name": "Gyeongnidan-gil",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.53855,
+  "longitude": 126.987631,
+  "exactLocation": true
+}

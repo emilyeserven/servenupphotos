@@ -1,0 +1,12 @@
+{
+  "id": "da-flora",
+  "name": "Da Flora",
+  "description": "",
+  "parent": "",
+  "city": "San Francisco",
+  "state": "California",
+  "country": "United States of America",
+  "latitude": 37.801224,
+  "longitude": -122.411362,
+  "exactLocation": true
+}

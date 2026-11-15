@@ -1,0 +1,12 @@
+{
+  "id": "ghirardelli-square",
+  "name": "Ghirardelli Square",
+  "description": "",
+  "parent": "",
+  "city": "San Francisco",
+  "state": "California",
+  "country": "United States of America",
+  "latitude": 37.806509,
+  "longitude": -122.42241,
+  "exactLocation": true
+}

@@ -14,7 +14,7 @@
   "customGpsPosition": "37.775441742830566, -122.51010041302268",
   "createDate": "2026:10:25 12:20:34",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Outer Richmond",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -59,7 +59,12 @@
     "shadows"
   ],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "overlooking",
+      "id": "outer-richmond"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

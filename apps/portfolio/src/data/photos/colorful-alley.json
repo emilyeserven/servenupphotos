@@ -14,7 +14,7 @@
   "customGpsPosition": "37.790656104270134, -122.40543981982262",
   "createDate": "2026:10:25 20:34:01",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Harlan Place",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -59,7 +59,12 @@
     "night"
   ],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "harlan-place"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:25 11:38:36",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Shoin Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["shinto", "shimenawa", "shide", "shrine", "wood", "pine-trees", "prayers"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "shoin-shrine"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

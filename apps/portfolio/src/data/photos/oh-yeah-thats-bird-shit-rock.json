@@ -14,7 +14,7 @@
   "customGpsPosition": "37.77486782781847, -122.5114715553275",
   "createDate": "2026:10:25 13:12:10",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Seal Rocks",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["rock-formations", "birds", "beach", "ocean", "sand", "humor", "mountains"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "across from",
+      "id": "seal-rocks"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:23 14:08:20",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Jongmyo Shrine",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["confucianism", "dancheong", "giwa", "shrine", "pedestrians", "forest"],
   "genres": ["architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "jongmyo-shrine"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
