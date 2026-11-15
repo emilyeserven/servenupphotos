@@ -47,6 +47,7 @@ import { Route as UpdateDataRouteImport } from './routes/update-data'
 import { Route as ViewerLikesRouteImport } from './routes/viewer-likes'
 import { Route as AlbumsIndexRouteImport } from './routes/albums.index'
 import { Route as AlbumsIdRouteImport } from './routes/albums.$id'
+import { Route as CompareAutogroupRouteImport } from './routes/compare_.autogroup'
 import { Route as GenresIndexRouteImport } from './routes/genres.index'
 import { Route as GenresIdRouteImport } from './routes/genres.$id'
 import { Route as LightroomAlbumsIndexRouteImport } from './routes/lightroom-albums.index'
@@ -254,6 +255,11 @@ const AlbumsIdRoute = AlbumsIdRouteImport.update({
   path: '/albums/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompareAutogroupRoute = CompareAutogroupRouteImport.update({
+  id: '/compare_/autogroup',
+  path: '/compare/autogroup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GenresIndexRoute = GenresIndexRouteImport.update({
   id: '/genres/',
   path: '/genres/',
@@ -373,6 +379,7 @@ export interface FileRoutesByFullPath {
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
+  '/compare/autogroup': typeof CompareAutogroupRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/settings/status': typeof SettingsStatusRoute
@@ -428,6 +435,7 @@ export interface FileRoutesByTo {
   '/trips': typeof TripsRoute
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
+  '/compare/autogroup': typeof CompareAutogroupRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/settings/status': typeof SettingsStatusRoute
@@ -485,6 +493,7 @@ export interface FileRoutesById {
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
+  '/compare_/autogroup': typeof CompareAutogroupRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/settings_/status': typeof SettingsStatusRoute
@@ -543,6 +552,7 @@ export interface FileRouteTypes {
     | '/update-data'
     | '/viewer-likes'
     | '/albums/$id'
+    | '/compare/autogroup'
     | '/genres/$id'
     | '/lightroom-albums/import'
     | '/settings/status'
@@ -598,6 +608,7 @@ export interface FileRouteTypes {
     | '/trips'
     | '/viewer-likes'
     | '/albums/$id'
+    | '/compare/autogroup'
     | '/genres/$id'
     | '/lightroom-albums/import'
     | '/settings/status'
@@ -654,6 +665,7 @@ export interface FileRouteTypes {
     | '/update-data'
     | '/viewer-likes'
     | '/albums/$id'
+    | '/compare_/autogroup'
     | '/genres/$id'
     | '/lightroom-albums/import'
     | '/settings_/status'
@@ -711,6 +723,7 @@ export interface RootRouteChildren {
   UpdateDataRoute: typeof UpdateDataRouteWithChildren
   ViewerLikesRoute: typeof ViewerLikesRoute
   AlbumsIdRoute: typeof AlbumsIdRoute
+  CompareAutogroupRoute: typeof CompareAutogroupRoute
   GenresIdRoute: typeof GenresIdRoute
   LightroomAlbumsImportRoute: typeof LightroomAlbumsImportRoute
   SettingsStatusRoute: typeof SettingsStatusRoute
@@ -996,6 +1009,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlbumsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compare_/autogroup': {
+      id: '/compare_/autogroup'
+      path: '/compare/autogroup'
+      fullPath: '/compare/autogroup'
+      preLoaderRoute: typeof CompareAutogroupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/genres/': {
       id: '/genres/'
       path: '/genres'
@@ -1163,6 +1183,7 @@ const rootRouteChildren: RootRouteChildren = {
   UpdateDataRoute: UpdateDataRouteWithChildren,
   ViewerLikesRoute: ViewerLikesRoute,
   AlbumsIdRoute: AlbumsIdRoute,
+  CompareAutogroupRoute: CompareAutogroupRoute,
   GenresIdRoute: GenresIdRoute,
   LightroomAlbumsImportRoute: LightroomAlbumsImportRoute,
   SettingsStatusRoute: SettingsStatusRoute,

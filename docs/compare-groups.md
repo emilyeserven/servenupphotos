@@ -83,6 +83,39 @@ from the original's (its JSON's `images.key`, else `images.full`, else the image
 > judge puts ribbons on the best ones, and when the contest ends everyone takes their name tag off. The ones without a
 > ribbon go in a scrapbook with a note saying why, and their big prints can be thrown away to save space.
 
+## Autogroup
+
+**Autogroup** (`/compare/autogroup`, under **Compare** in the sidebar) has an LLM find photos that are alternatives
+of the same shot and puts them in compare groups. It doesn't call an LLM itself: it copies a prompt to paste into a
+chat with one, the way [Genre Suggestions](photographic-genres.md) does, and reads the JSON answer pasted back.
+
+- **All photos** or **Draft photos** chooses which photos the prompt asks about. Draft photos are the untitled ones
+  and the ones set aside as Undecided (`isDraft`). Either way, [unselected](#unselected-photos) photos (their images
+  may be gone) and photos without an image are left out.
+- **Leave out photos already in a group** (on by default) asks only about ungrouped photos. Turned off, each photo in
+  a group says which, and the prompt lists those groups, so the LLM can add photos to one by its name.
+- **Photos per prompt** (50 by default, at most 200) splits the photos into batches, oldest first by the custom date
+  or else the EXIF one, so frames shot together land in the same batch. **Previous batch** and **Next batch** move
+  between them.
+
+**Copy the Autogroup prompt** copies, for each photo of the batch, its JSON file's name (such as `20161216_092741`), a
+link to its Small version (500 pixels on the longest edge, else Medium, else the original, like the tag prompt), when
+it was taken and its title. The button next to it shows the whole prompt in a modal, which also opens when the browser
+won't copy, as on a plain HTTP address. The prompt asks for groups of at least 2 photos of the same scene or subject,
+each photo in at most one, as `{ "groups": [ { "name": "…", "photos": ["…"] } ] }`.
+
+**Review the groups** reads the pasted answer (a code fence or a sentence around the JSON is fine) in the browser.
+Each suggested group shows its photos, whether it joins a group there is already, and any photo it moves out of
+another group, with a box to leave it out. Names that aren't photos in the prompt are listed and skipped, a photo
+named twice stays in its first group, and a group left with fewer than 2 photos, counting the ones in it already, is
+dropped. **Add … to … compare groups** sets each photo's `compareGroup`, the same [local edit](#where-its-kept) the
+Compare dialog makes, waiting for **Commit**. With **Leave out photos already in a group** on, the photos just
+grouped then leave the batch, so the next copy asks about the ones left. The rules are in `lib/compare-autogroup.ts`.
+
+> **Frontend analogy:** it's a form whose "server" is a chat window. The page serializes the batch into a prompt,
+> the LLM is the API, and pasting its JSON back is the response, which the page validates like any untrusted `fetch`
+> body before it touches state.
+
 ## Unselected Photos
 
 The Compare page's **Unselected Photos** (`/compare#unselected`) lists, newest first, the photos that didn't win when

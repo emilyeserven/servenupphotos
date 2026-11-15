@@ -17,6 +17,7 @@ branches that add pages don't clash:
 - **Pipeline**
   - Photos in Flight
   - Compare
+    - Autogroup
   - Lightroom Albums
 - **Organize**
   - Albums
