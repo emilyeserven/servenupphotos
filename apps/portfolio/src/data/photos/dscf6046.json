@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["train-station", "subway", "turnstiles", "kiosk", "signage"],
   "genres": [],
   "places": [],
   "noGps": false,

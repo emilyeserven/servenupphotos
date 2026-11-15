@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["library", "books", "bookshelves", "interior"],
   "genres": [],
   "places": [
     {

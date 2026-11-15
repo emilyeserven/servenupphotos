@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["crowd", "pedestrians", "sidewalk", "trees", "autumn"],
   "genres": [],
   "places": [],
   "noGps": false,
