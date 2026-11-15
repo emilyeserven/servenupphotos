@@ -1,0 +1,272 @@
+{
+  "id": 676,
+  "title": null,
+  "comment": null,
+  "altText": null,
+  "notes": null,
+  "file": "IMG_0991.jpg",
+  "addedDate": null,
+  "camera": "Canon EOS Rebel T6i",
+  "lens": null,
+  "aperture": null,
+  "exposure": "1/4000",
+  "iso": 200,
+  "focalLength": null,
+  "gpsPosition": "41 deg 7' 17.37\" N, 73 deg 29' 22.13\" W",
+  "customGpsPosition": null,
+  "createDate": "2017:09:02 11:32:02",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "United States of America",
+  "state": "Connecticut",
+  "city": "New Canaan",
+  "width": 5879,
+  "height": 3307,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/20935904bd48-img-0991.jpg",
+    "key": "photos/20935904bd48-img-0991.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/20935904bd48-img-0991-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/20935904bd48-img-0991-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/20935904bd48-img-0991-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/20935904bd48-img-0991-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/20935904bd48-img-0991-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/20935904bd48-img-0991-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/20935904bd48-img-0991-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/20935904bd48-img-0991-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 1286,
+      "y": 0,
+      "size": 3307,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "genres": [],
+  "places": [],
+  "noGps": false,
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "spotlightPlacement": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "pickedSimilar": [],
+  "pickedSimilarNotes": {},
+  "similarPhotos": [],
+  "perceptualHash": "4f2f2d2f1f1f1737",
+  "colors": {
+    "average": {
+      "hex": "#4f5843",
+      "lab": {
+        "l": 36.08,
+        "a": -8.17,
+        "b": 11.15
+      },
+      "hcl": {
+        "h": 126.22,
+        "c": 13.82,
+        "l": 36.08
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0001
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0258
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.1075
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.4196
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.1174
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0.0096
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.0002
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.002
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.0297
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0.0023
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0
+      }
+    ],
+    "neutrals": {
+      "share": 0.2858,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.0109
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0293
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0312
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0351
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0118
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0148
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.023
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0246
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0262
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0501
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0192
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0053
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0006
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0004
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0007
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0008
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0012
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0005
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0002
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0
+        }
+      ]
+    },
+    "lightness": 36.08,
+    "chroma": 18.57,
+    "peakChroma": 28.33,
+    "samples": 9694
+  }
+}
