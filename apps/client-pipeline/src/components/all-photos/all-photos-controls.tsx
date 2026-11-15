@@ -22,6 +22,11 @@ const SHOW_CHOICES: ToggleChoices<"shown"> = [
   ["shown", "Shown"],
 ];
 
+const PUBLISHED_CHOICES: ToggleChoices<"hidden"> = [
+  [undefined, "Shown"],
+  ["hidden", "Hidden"],
+];
+
 const SORT_CHOICES: ToggleChoices<AllPhotosSort> = SORT_OPTIONS.map(({ sort, label }) => [
   sort === "taken" ? undefined : sort,
   label,
@@ -33,8 +38,8 @@ function countKind(entries: AllPhotosEntry[], kind: PhotoKind): number {
 }
 
 /**
- * The page's toggles: whether the drafts and the Undecided photos are shown alongside the
- * published ones, each with how many there are, and the sort with which way it runs.
+ * The page's toggles: whether the published photos, the drafts and the Undecided photos are
+ * shown, each with how many there are, and the sort with which way it runs.
  */
 export function AllPhotosControls({
   entries,
@@ -57,6 +62,12 @@ export function AllPhotosControls({
           {countKind(entries, "undecided")} Undecided.
         </p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <FilterToggle
+            label="Published"
+            choices={PUBLISHED_CHOICES}
+            choice={search.published === false ? "hidden" : undefined}
+            onChange={(choice) => void setSearch({ published: choice && false })}
+          />
           <FilterToggle
             label="Drafts"
             choices={SHOW_CHOICES}
