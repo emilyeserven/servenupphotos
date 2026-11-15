@@ -1,0 +1,272 @@
+{
+  "id": 703,
+  "title": null,
+  "comment": null,
+  "altText": null,
+  "notes": null,
+  "file": "IMG_2023-2.jpg",
+  "addedDate": null,
+  "camera": "Canon EOS Rebel T6i",
+  "lens": null,
+  "aperture": null,
+  "exposure": "1/1250",
+  "iso": 100,
+  "focalLength": null,
+  "gpsPosition": "40 deg 43' 51.64\" N, 73 deg 59' 50.26\" W",
+  "customGpsPosition": null,
+  "createDate": "2017:09:09 16:47:17",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "United States of America",
+  "state": "New York",
+  "city": "New York City",
+  "width": 5689,
+  "height": 3200,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/0b2857d00989-img-2023-2.jpg",
+    "key": "photos/0b2857d00989-img-2023-2.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/0b2857d00989-img-2023-2-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/0b2857d00989-img-2023-2-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/0b2857d00989-img-2023-2-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/0b2857d00989-img-2023-2-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/0b2857d00989-img-2023-2-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/0b2857d00989-img-2023-2-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/0b2857d00989-img-2023-2-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0b2857d00989-img-2023-2-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 1244,
+      "y": 0,
+      "size": 3200,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "genres": [],
+  "places": [],
+  "noGps": false,
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "spotlightPlacement": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "pickedSimilar": [],
+  "pickedSimilarNotes": {},
+  "similarPhotos": [],
+  "perceptualHash": "f19991b1a9abab33",
+  "colors": {
+    "average": {
+      "hex": "#646464",
+      "lab": {
+        "l": 42.2,
+        "a": -0,
+        "b": -0.01
+      },
+      "hcl": {
+        "h": 259.96,
+        "c": 0.01,
+        "l": 42.2
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0
+      }
+    ],
+    "neutrals": {
+      "share": 1,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.1436
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0744
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0524
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0414
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0449
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0484
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0273
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0217
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0224
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.024
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0378
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0454
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0744
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.1375
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.1374
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0443
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.015
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0077
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0
+        }
+      ]
+    },
+    "lightness": 42.2,
+    "chroma": 0.01,
+    "peakChroma": 0.01,
+    "samples": 9975
+  }
+}
