@@ -4,5 +4,7 @@
   "description": "",
   "parent": "",
   "city": "Seoul",
-  "country": "South Korea"
+  "country": "South Korea",
+  "latitude": 37.5823919,
+  "longitude": 126.9858648
 }

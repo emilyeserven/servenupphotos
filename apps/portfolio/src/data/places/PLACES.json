@@ -85,7 +85,9 @@
     "description": "",
     "parent": "",
     "city": "Kobe",
-    "country": "Japan"
+    "country": "Japan",
+    "latitude": 34.79786605016979,
+    "longitude": 135.24765671625667
   },
   {
     "id": "astoria",
@@ -239,7 +241,9 @@
     "description": "",
     "parent": "",
     "city": "Seoul",
-    "country": "South Korea"
+    "country": "South Korea",
+    "latitude": 37.5823919,
+    "longitude": 126.9858648
   },
   {
     "id": "busan-tower",
@@ -1209,7 +1213,9 @@
     "description": "",
     "parent": "",
     "city": "Seoul",
-    "country": "South Korea"
+    "country": "South Korea",
+    "latitude": 37.562307,
+    "longitude": 126.985559
   },
   {
     "id": "myojin-pond",

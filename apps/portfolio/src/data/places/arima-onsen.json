@@ -4,5 +4,7 @@
   "description": "",
   "parent": "",
   "city": "Kobe",
-  "country": "Japan"
+  "country": "Japan",
+  "latitude": 34.79786605016979,
+  "longitude": 135.24765671625667
 }
