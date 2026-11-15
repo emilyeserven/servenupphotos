@@ -1,13 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DescribeStylePage } from "@/components/describe-style/describe-style-page";
-import { type GridFilters, parseGridFilters } from "@/components/gallery/grid-filters";
+import { parseGridFilters } from "@/components/gallery/grid-filters";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
+import { type DescribeStyleSearch, parsePublishedOnly } from "@/lib/style-prompt";
 
 export const Route = createFileRoute("/describe-style")({
   component: DescribeStyleRoute,
   staticData: { wide: true },
-  validateSearch: (search: Record<string, unknown>): GridFilters => parseGridFilters(search),
+  validateSearch: (search: Record<string, unknown>): DescribeStyleSearch => ({
+    ...parseGridFilters(search),
+    published: parsePublishedOnly(search),
+  }),
 });
 
 /** A prompt that asks an LLM to describe the photographer's style from links to their photos. */

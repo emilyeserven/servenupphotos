@@ -5,7 +5,8 @@ of the prompt's photos as numbered tiles, labeled with the tile number and the n
 An LLM looks through a handful of sheets instead of opening dozens or hundreds of links one by one.
 
 Pages with **Make contact sheets**: [Autogroup](compare-groups.md#autogroup), [Bulk Tagging](update-data.md#bulk-tagging),
-[Genre Suggestions](update-data.md#genre-suggestions), [Bulk Places](update-data.md#bulk-places) and the
+[Genre Suggestions](update-data.md#genre-suggestions), [Bulk Places](update-data.md#bulk-places),
+[Describe my style](describe-style.md#contact-sheets) and the
 [Quality Check](quality-check.md#license-plates-and-faces)'s pixelation prompt.
 
 ## Using it
