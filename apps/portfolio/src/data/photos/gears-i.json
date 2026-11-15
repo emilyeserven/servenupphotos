@@ -266,5 +266,6 @@
     "peakChroma": 0.01,
     "samples": 10080
   },
-  "similarPhotos": [50, 43, 176, 150, 70, 24]
+  "similarPhotos": [50, 43, 176, 150, 70, 24],
+  "compareGroup": "Church Tower Clock Gears"
 }

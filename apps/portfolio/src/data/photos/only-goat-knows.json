@@ -267,5 +267,6 @@
     "samples": 9728
   },
   "notes": "Shows a goat with hay in a barn; 'goats', 'farm-animals', 'hay' and 'barn' aren't tags, since only this photo has them.",
-  "similarPhotos": [477, 495, 499, 201, 474, 290]
+  "similarPhotos": [477, 495, 499, 201, 474, 290],
+  "compareGroup": "Goats at the Hay Feeder"
 }

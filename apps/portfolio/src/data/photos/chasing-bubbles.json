@@ -22,22 +22,22 @@
   "state": "New York",
   "city": "New York City",
   "width": 6000,
-  "height": 3478,
+  "height": 3375,
   "images": {
-    "full": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848.jpg",
-    "key": "photos/869d64e7316f-img-3848.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-thumbnailpreview.webp",
+    "full": "https://cdn.servenupphotos.net/photos/0a84fd6e6680-img-3848.jpg",
+    "key": "photos/0a84fd6e6680-img-3848.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/0a84fd6e6680-img-3848-xlarge.webp?faces=mwhd6vtr",
+    "large": "https://cdn.servenupphotos.net/photos/0a84fd6e6680-img-3848-large.webp?faces=mwhd6vtr",
+    "medium": "https://cdn.servenupphotos.net/photos/0a84fd6e6680-img-3848-medium.webp?faces=mwhd6vtr",
+    "small": "https://cdn.servenupphotos.net/photos/0a84fd6e6680-img-3848-small.webp?faces=mwhd6vtr",
+    "xsmall": "https://cdn.servenupphotos.net/photos/0a84fd6e6680-img-3848-xsmall.webp?faces=mwhd6vtr",
+    "preview": "https://cdn.servenupphotos.net/photos/0a84fd6e6680-img-3848-preview.webp?faces=mwhd6vtr",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/0a84fd6e6680-img-3848-thumbnail.webp?faces=mwhd6vtr",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0a84fd6e6680-img-3848-thumbnailpreview.webp?faces=mwhd6vtr",
     "thumbnailcrop": {
-      "x": 1261,
+      "x": 1312,
       "y": 0,
-      "size": 3478,
+      "size": 3375,
       "outputSize": 500
     }
   },
@@ -65,7 +65,7 @@
       "hex": "#4f4f4f",
       "lab": {
         "l": 33.67,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {
@@ -267,5 +267,27 @@
     "samples": 9956
   },
   "notes": "Shows soap bubbles; 'bubbles' isn't a tag, since only 2 photos have them.",
-  "similarPhotos": [167, 164, 192, 170, 40, 166]
+  "similarPhotos": [167, 164, 192, 170, 40, 166],
+  "faces": [
+    {
+      "x": 1864,
+      "y": 2048,
+      "width": 175,
+      "height": 326,
+      "blocks": 15,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 4838,
+      "y": 2044,
+      "width": 148,
+      "height": 289,
+      "blocks": 13,
+      "shape": "circle",
+      "edge": "blocks",
+      "rotation": -13
+    }
+  ],
+  "compareGroup": "Giant Bubbles in Central Park"
 }

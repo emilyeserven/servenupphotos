@@ -270,5 +270,6 @@
     "peakChroma": 0.01,
     "samples": 9956
   },
-  "similarPhotos": [7, 74, 6, 383, 151, 116]
+  "similarPhotos": [7, 74, 6, 383, 151, 116],
+  "compareGroup": "Lone Figure on Subway Platform"
 }

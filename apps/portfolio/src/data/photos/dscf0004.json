@@ -268,5 +268,6 @@
     "samples": 9768
   },
   "notes": "Shows vending machines; 'vending-machines' isn't a tag, since only 1 photo has them.",
-  "similarPhotos": [353, 354, 351, 304, 450, 302]
+  "similarPhotos": [353, 354, 351, 304, 450, 302],
+  "compareGroup": "Kobe Night Alley"
 }

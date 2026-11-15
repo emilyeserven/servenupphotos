@@ -269,5 +269,6 @@
   },
   "undecided": true,
   "notes": "Shows a picnic; 'picnic' isn't a tag, since only 2 photos have one.",
-  "similarPhotos": [399, 402, 375, 489, 39, 419]
+  "similarPhotos": [399, 402, 375, 489, 39, 419],
+  "compareGroup": "Golden Gate Bridge Across the Bay"
 }

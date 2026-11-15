@@ -268,5 +268,6 @@
     "samples": 9711
   },
   "notes": "Shows a waterfall; 'waterfall' isn't a tag, since only 1 photo has one.",
-  "similarPhotos": [447, 448, 451, 220, 222, 79]
+  "similarPhotos": [447, 448, 451, 220, 222, 79],
+  "compareGroup": "Arima Stone Stream Channel"
 }
