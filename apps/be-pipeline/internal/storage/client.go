@@ -33,7 +33,7 @@ type trackedClient struct {
 // Do sends req. Anything but a GET or HEAD (PUT, POST, DELETE) can change the
 // bucket, so it's counted once it's answered, even when it failed partway.
 func (c *trackedClient) Do(req *http.Request) (*http.Response, error) {
-	resp, err := c.client.Do(req)
+	resp, err := c.client.Do(req) //nolint:gosec // the S3 client's own request to the R2 endpoint, from an account ID validateR2 checked
 	if req.Method != http.MethodGet && req.Method != http.MethodHead {
 		bucketChanges.Add(1)
 	}
