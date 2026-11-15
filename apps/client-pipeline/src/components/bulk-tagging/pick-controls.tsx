@@ -75,13 +75,24 @@ type PickBarProps = PickButtonsProps & {
   count: string;
   fallback: number;
   setCount: (value: string) => void;
+  /** True when the pick has no limit, so there's no count to choose. */
+  noLimit?: boolean;
 };
 
-/** How many photos to pick, and the buttons that pick them. */
-export function PickBar({ count, fallback, setCount, ...buttons }: PickBarProps) {
+/** How many photos to pick (or that every one is, with no limit), and the buttons that pick them. */
+export function PickBar({ count, fallback, setCount, noLimit, ...buttons }: PickBarProps) {
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <PickCount value={count} fallback={fallback} disabled={buttons.pending} onChange={setCount} />
+      {noLimit ? (
+        <p className="text-sm">Photos to pick: every one</p>
+      ) : (
+        <PickCount
+          value={count}
+          fallback={fallback}
+          disabled={buttons.pending}
+          onChange={setCount}
+        />
+      )}
       <PickButtons {...buttons} />
     </div>
   );

@@ -252,7 +252,7 @@ func (c *Client) PreviewBulkTags(ctx context.Context, gh settings.GitHub, paths 
 	if perr != nil {
 		return BulkTagsPreview{}, perr
 	}
-	photos, perr := picked(scan, paths)
+	photos, perr := pickedUpTo(scan, paths, 0)
 	if perr != nil {
 		return BulkTagsPreview{}, perr
 	}
@@ -271,10 +271,20 @@ func (c *Client) PreviewBulkTags(ctx context.Context, gh settings.GitHub, paths 
 	return preview, nil
 }
 
-// picked is the readable photo files at paths, in that order.
+// picked is the readable photo files at paths, in that order, 1 to
+// maxBulkTagPhotos of them.
 func picked(scan baseURLScan, paths []string) ([]bulkPhoto, *PublishError) {
-	if len(paths) == 0 || len(paths) > maxBulkTagPhotos {
-		return nil, publishErr(http.StatusBadRequest, "Pick 1 to %d photos.", maxBulkTagPhotos)
+	return pickedUpTo(scan, paths, maxBulkTagPhotos)
+}
+
+// pickedUpTo is the readable photo files at paths, in that order, at least one
+// and at most limit of them, or any number when limit is 0.
+func pickedUpTo(scan baseURLScan, paths []string, limit int) ([]bulkPhoto, *PublishError) {
+	if len(paths) == 0 {
+		return nil, publishErr(http.StatusBadRequest, "Pick at least 1 photo.")
+	}
+	if limit > 0 && len(paths) > limit {
+		return nil, publishErr(http.StatusBadRequest, "Pick 1 to %d photos.", limit)
 	}
 	var out []bulkPhoto
 	for _, p := range paths {

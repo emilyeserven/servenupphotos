@@ -82,6 +82,8 @@ interface BulkTagPickOptions {
   count: number;
   /** True picks the first photos without tags by file name, whether or not they go together. */
   any: boolean;
+  /** True picks every photo without tags, whatever `count` says. */
+  all?: boolean;
 }
 
 /** How many photo files there are and how many have no tags, with no photos picked. */
@@ -91,7 +93,7 @@ export const untaggedPhotosQuery = queryOptions({
   retry: false,
 });
 
-/** Picks up to `count` photos (1 to 50) to tag together, leaving out the ones already shown. */
+/** Picks up to `count` photos (1 to 50, or all of them with `all`) to tag together, leaving out the ones already shown. */
 export const pickBulkTagPhotosMutation = mutationOptions({
   mutationKey: ["data", "bulk-tags", "pick"],
   mutationFn: (body: BulkTagPickOptions) => post<BulkTagPick>("/api/data/bulk-tags/pick", body),
