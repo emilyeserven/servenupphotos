@@ -60,7 +60,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "make it vertical, make the lanterns redder",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#312c2d",

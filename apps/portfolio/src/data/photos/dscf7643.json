@@ -1,11 +1,11 @@
 {
-  "id": 654,
-  "title": null,
+  "title": "It's to keep the books in, right?",
   "comment": null,
+  "id": 654,
   "altText": null,
   "notes": null,
   "file": "DSCF7643.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T21:21:33Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.6,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:08 13:14:13",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Boston Public Library",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["windows", "ironwork", "rust", "stones", "texture"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "boston-public-library"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

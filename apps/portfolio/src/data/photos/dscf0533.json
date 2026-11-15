@@ -1,11 +1,11 @@
 {
-  "id": 530,
-  "title": null,
+  "title": "Seoul Streets IV",
   "comment": null,
+  "id": 530,
   "altText": null,
   "notes": null,
   "file": "DSCF0533.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T21:25:05Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 22,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/0e63281610fe-dscf0533-small.webp?faces=mwbncfky",
     "xsmall": "https://cdn.servenupphotos.net/photos/0e63281610fe-dscf0533-xsmall.webp?faces=mwbncfky",
     "preview": "https://cdn.servenupphotos.net/photos/0e63281610fe-dscf0533-preview.webp?faces=mwbncfky",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/0e63281610fe-dscf0533-thumbnail.webp?faces=mwbncfky",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0e63281610fe-dscf0533-thumbnailpreview.webp?faces=mwbncfky",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/0e63281610fe-dscf0533-thumbnail.webp?crop=0,521,3829",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0e63281610fe-dscf0533-thumbnailpreview.webp?crop=0,521,3829",
     "thumbnailcrop": {
       "x": 0,
-      "y": 765,
+      "y": 521,
       "size": 3829,
       "outputSize": 500
     }
