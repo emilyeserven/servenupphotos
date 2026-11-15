@@ -162,6 +162,11 @@ export function bulkTagPick(count = 5, any = false) {
   };
 }
 
+/** The Bulk Tagging pick a request asks for: its `count` and `any`, or 40 photos with `all` (No limit). */
+export function bulkTagPickFor({ count, any, all } = {}) {
+  return bulkTagPick(all ? 40 : count, any);
+}
+
 /** What reading a pasted Bulk Tagging answer finds for the picked photos. */
 export function bulkTagsPreview() {
   const photos = bulkTagPick().photos.map(({ path, name }, i) => ({

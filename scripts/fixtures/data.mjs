@@ -15,6 +15,7 @@ import {
   altTextPick,
   altTextPreview,
   bulkTagPick,
+  bulkTagPickFor,
   bulkTagsPreview,
   colorFiles,
   genrePick,
@@ -79,8 +80,7 @@ export function dataFixtures() {
     "POST /api/data/image-names/preview": () => imageNamesPreview(),
     "POST /api/data/image-names": () => ({ ...pendingSave(), files: 6, fields: 66 }),
     "POST /api/data/bulk-tags/untagged": () => ({ ...bulkTagPick(), photos: [] }),
-    "POST /api/data/bulk-tags/pick": ({ body }) =>
-      bulkTagPick(body?.all ? 40 : body?.count, body?.any),
+    "POST /api/data/bulk-tags/pick": ({ body }) => bulkTagPickFor(body),
     "POST /api/data/bulk-tags/preview": () => bulkTagsPreview(),
     "POST /api/data/bulk-tags": () => ({ ...pendingSave(), newTags: 2, photos: 5 }),
     "POST /api/data/bulk-places/pick": ({ body }) => {
