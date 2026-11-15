@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 18:57:38",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Cheonggyecheon",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["stream", "water", "stones", "reflections", "elderly"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "cheonggyecheon"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

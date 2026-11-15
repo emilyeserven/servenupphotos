@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["observation-towers", "skyscrapers", "road", "traffic", "hills", "trees"],
-  "genres": [],
+  "genres": ["cityscape", "street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

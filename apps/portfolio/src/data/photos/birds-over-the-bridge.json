@@ -14,10 +14,10 @@
   "customGpsPosition": "37.804303751801356, -122.45373212016419",
   "createDate": "2026:10:25 07:47:10",
   "customCreateDate": "2026:10:24 15:47:10",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Crissy Field",
+  "customCity": "San Francisco",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -59,7 +59,12 @@
     "water"
   ],
   "genres": ["landscape", "architecture", "wildlife"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "crissy-field"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

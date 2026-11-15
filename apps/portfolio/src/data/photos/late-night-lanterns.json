@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:10:25 20:26:02",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "San Francisco Chinatown",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -59,7 +59,12 @@
     "cars"
   ],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "san-francisco-chinatown"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

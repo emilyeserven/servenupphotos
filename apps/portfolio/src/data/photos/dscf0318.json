@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hangul", "signage", "pedestrians", "trees", "sidewalk", "storefronts"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

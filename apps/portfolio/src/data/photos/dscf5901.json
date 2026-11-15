@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:28 15:31:17",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Arima Onsen",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["stream", "stones", "water", "promenade", "texture"],
   "genres": ["nature", "abstract"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "arima-onsen"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

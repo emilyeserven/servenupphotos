@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 22:42:52",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Itaewon",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["storefronts", "string-lights", "stairs", "ironwork", "night"],
-  "genres": [],
-  "places": [],
+  "genres": ["street", "architecture"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "itaewon"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

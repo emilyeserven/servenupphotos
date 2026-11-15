@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2019:07:16 11:10:58",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Cook's Cycle Shop",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["bicycles", "sidewalk", "brick", "fences", "wood", "cars", "road"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "cook-s-cycle-shop"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

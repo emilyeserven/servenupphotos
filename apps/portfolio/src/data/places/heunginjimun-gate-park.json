@@ -1,0 +1,12 @@
+{
+  "id": "heunginjimun-gate-park",
+  "name": "Heunginjimun Gate Park",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.571842,
+  "longitude": 127.009492,
+  "exactLocation": true
+}

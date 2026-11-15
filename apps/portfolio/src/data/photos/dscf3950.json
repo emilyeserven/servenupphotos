@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 18:42:24",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Cheonggyecheon",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -59,7 +59,12 @@
     "trees"
   ],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "cheonggyecheon"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

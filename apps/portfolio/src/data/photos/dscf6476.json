@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:12 23:19:07",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Bukchon Hanok Village",
+  "customCity": "Seoul",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "South Korea",
   "country": null,
   "state": null,
   "city": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["giwa", "rooftops", "power-lines", "pagoda", "hills", "city"],
   "genres": ["cityscape", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "overlooking",
+      "id": "bukchon-hanok-village"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 15:26:57",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Jongmyo Shrine",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["doors", "padlocks", "ironwork", "wood", "rust", "texture"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture"],
+  "places": [
+    {
+      "relation": "outside",
+      "id": "jongmyo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

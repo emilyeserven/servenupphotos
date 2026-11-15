@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:10:26 03:57:52",
   "customCreateDate": "2026:10:25 11:57:52",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Ocean Beach",
+  "customCity": "San Francisco",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["trees", "silhouettes", "branches", "coastline", "road", "beach", "city"],
   "genres": ["landscape", "cityscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "overlooking",
+      "id": "ocean-beach"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

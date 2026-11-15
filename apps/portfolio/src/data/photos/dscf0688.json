@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:24 12:03:18",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hagi Castle",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["ishigaki", "castle", "moat", "ruins", "mountains", "clouds", "water"],
   "genres": ["landscape", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "hagi-castle"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

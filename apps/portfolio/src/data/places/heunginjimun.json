@@ -1,0 +1,12 @@
+{
+  "id": "heunginjimun",
+  "name": "Heunginjimun",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.570914,
+  "longitude": 127.008928,
+  "exactLocation": true
+}

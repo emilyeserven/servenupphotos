@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:13 00:10:03",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Bukchon Hanok Village",
+  "customCity": "Seoul",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "South Korea",
   "country": null,
   "state": null,
   "city": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["hanok", "windows", "wood", "brick", "symmetry"],
   "genres": ["architecture", "abstract"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "bukchon-hanok-village"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -14,10 +14,10 @@
   "customGpsPosition": "37.804275420772505, -122.4534053351354",
   "createDate": "2026:10:25 07:39:08",
   "customCreateDate": "2026:10:24 15:39:08",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Crissy Field",
+  "customCity": "San Francisco",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["road", "cars", "pedestrians", "haze", "trees", "signage"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "crissy-field"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

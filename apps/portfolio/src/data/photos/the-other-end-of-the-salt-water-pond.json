@@ -14,7 +14,7 @@
   "customGpsPosition": "34.44856550416912, 131.40969279524563",
   "createDate": "2026:09:25 12:32:06",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Myojin Pond",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["shinto", "torii", "shimenawa", "toro", "shrine", "pond", "reflections", "stairs"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "myojin-pond"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

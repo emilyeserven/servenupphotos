@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:24 13:42:08",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Komfortabel coffee Namsan",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["yeondeung", "buddhism", "lanterns", "repetition", "patterns", "aerial-view", "cars"],
   "genres": ["abstract", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "from",
+      "id": "komfortabel-coffee-namsan"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

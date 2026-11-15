@@ -1,0 +1,12 @@
+{
+  "id": "gwanghwamun",
+  "name": "Gwanghwamun",
+  "description": "",
+  "parent": "gyeongbokgung-palace",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.574911,
+  "longitude": 126.977161,
+  "exactLocation": true
+}

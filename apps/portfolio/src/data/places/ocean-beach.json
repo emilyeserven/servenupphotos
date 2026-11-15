@@ -1,0 +1,12 @@
+{
+  "id": "ocean-beach",
+  "name": "Ocean Beach",
+  "description": "",
+  "parent": "",
+  "city": "San Francisco",
+  "state": "California",
+  "country": "United States of America",
+  "latitude": 37.777361,
+  "longitude": -122.5117,
+  "exactLocation": true
+}

@@ -1,0 +1,12 @@
+{
+  "id": "crissy-field",
+  "name": "Crissy Field",
+  "description": "",
+  "parent": "",
+  "city": "San Francisco",
+  "state": "California",
+  "country": "United States of America",
+  "latitude": 37.804275,
+  "longitude": -122.453405,
+  "exactLocation": true
+}

@@ -1,0 +1,11 @@
+{
+  "id": "boston-common",
+  "name": "Boston Common",
+  "description": "",
+  "parent": "",
+  "city": "Boston",
+  "state": "Massachusetts",
+  "country": "United States of America",
+  "latitude": 42.353,
+  "longitude": -71.0645
+}

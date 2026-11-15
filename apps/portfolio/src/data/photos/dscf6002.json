@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:23 14:10:48",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Jongmyo Shrine",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["dancheong", "windows", "doors", "patterns", "repetition", "wood"],
   "genres": ["abstract", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "jongmyo-shrine"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

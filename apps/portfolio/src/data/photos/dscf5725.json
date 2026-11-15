@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 14:41:58",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Boston Common",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["church", "park", "path", "crowd", "skyscrapers", "rain"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "boston-common"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

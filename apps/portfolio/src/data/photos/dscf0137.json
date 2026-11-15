@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 13:09:32",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Tapgol Park",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["dancheong", "giwa", "gates", "columns", "park"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture"],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "tapgol-park"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

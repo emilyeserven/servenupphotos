@@ -14,7 +14,7 @@
   "customGpsPosition": "41.139469363447226, -73.4970628568949",
   "createDate": "2026:11:01 14:13:39",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Gamble Field",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["sports", "autumn", "fences", "trees", "typography"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "gamble-field"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

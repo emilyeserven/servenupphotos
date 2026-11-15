@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:24 15:22:51",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Namsan Dulle-gil Trail",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["hiking-trail", "stairs", "boardwalk", "forest", "pedestrians", "trees"],
   "genres": ["street", "landscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "namsan-dulle-gil-trail"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

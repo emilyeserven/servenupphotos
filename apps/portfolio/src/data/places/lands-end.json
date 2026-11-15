@@ -1,0 +1,12 @@
+{
+  "id": "lands-end",
+  "name": "Lands End",
+  "description": "",
+  "parent": "",
+  "city": "San Francisco",
+  "state": "California",
+  "country": "United States of America",
+  "latitude": 37.780667,
+  "longitude": -122.510246,
+  "exactLocation": true
+}

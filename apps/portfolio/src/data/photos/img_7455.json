@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2018:11:18 16:04:26",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Barefoot Beach Preserve",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["shells", "sand", "beach", "patterns"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "barefoot-beach-preserve"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

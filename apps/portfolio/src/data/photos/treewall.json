@@ -14,7 +14,7 @@
   "customGpsPosition": "37.78066723727286, -122.51024627679318",
   "createDate": "2026:10:26 03:43:06",
   "customCreateDate": "2026:10:25 11:43:06",
-  "placeName": null,
+  "placeName": "Lands End",
   "customCity": "San Francisco",
   "customState": null,
   "customCountry": "United States of America",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["trees", "ocean", "coastline", "clouds", "branches", "cars", "road"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "lands-end"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

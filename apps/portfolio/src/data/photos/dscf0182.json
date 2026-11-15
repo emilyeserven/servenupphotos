@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 13:14:30",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Tapgol Park",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["giwa", "pavilion", "park", "pine-trees", "pedestrians", "elderly"],
-  "genres": [],
-  "places": [],
+  "genres": ["street", "architecture"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "tapgol-park"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

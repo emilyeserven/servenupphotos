@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 19:06:27",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Cheonggyecheon",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["hangul", "apartments", "signage", "cars", "road", "urban-decay"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "cheonggyecheon"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [

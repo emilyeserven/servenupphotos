@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 19:25:45",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Heunginjimun Gate Park",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["daldongne", "houses", "rooftops", "rock-formations", "apartments"],
   "genres": ["cityscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "heunginjimun-gate-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

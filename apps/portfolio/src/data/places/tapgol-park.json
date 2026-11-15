@@ -1,0 +1,12 @@
+{
+  "id": "tapgol-park",
+  "name": "Tapgol Park",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.570467,
+  "longitude": 126.988325,
+  "exactLocation": true
+}

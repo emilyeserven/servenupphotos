@@ -1,0 +1,12 @@
+{
+  "id": "hannam-dong",
+  "name": "Hannam-dong",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.536514,
+  "longitude": 127.001269,
+  "exactLocation": true
+}

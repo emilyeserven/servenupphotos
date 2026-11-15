@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:28 15:29:40",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Arima Onsen",
+  "customCity": "Kobe",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": null,
   "state": null,
   "city": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["footbridges", "stream", "stairs", "stones", "promenade"],
   "genres": ["street", "landscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "arima-onsen"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 12:45:38",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Bosingak Pavilion",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["dancheong", "giwa", "pavilion", "trees", "stairs"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "bosingak-pavilion"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

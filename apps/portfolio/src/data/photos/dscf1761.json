@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 22:14:40",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Gyeongnidan-gil",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["hangul", "road", "signposts", "street-lights", "storefronts", "night"],
-  "genres": [],
-  "places": [],
+  "genres": ["street"],
+  "places": [
+    {
+      "relation": "on",
+      "id": "gyeongnidan-gil"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

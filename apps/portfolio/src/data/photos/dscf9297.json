@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 11:16:31",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Jogyesa Temple",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["dancheong", "yeondeung", "buddhism", "lanterns", "beams", "columns", "patterns"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "jogyesa-temple"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

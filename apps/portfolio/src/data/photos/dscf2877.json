@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:16 10:52:28",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hannam-dong",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["storefronts", "facade", "signage", "sidewalk", "pedestrians"],
-  "genres": [],
-  "places": [],
+  "genres": ["street"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "hannam-dong"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -14,7 +14,7 @@
   "customGpsPosition": "37.790656104270134, -122.40543981982262",
   "createDate": "2026:10:25 20:32:24",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Café de la Presse",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["cafe", "storefronts", "night", "signage", "typography", "windows", "sidewalk"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "cafe-de-la-presse"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

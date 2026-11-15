@@ -14,7 +14,7 @@
   "customGpsPosition": "37.77524728667587, -122.51099947198733",
   "createDate": "2026:10:25 13:09:41",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Ocean Beach",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["road", "cars", "rock-formations", "street-lights", "coastline", "pine-trees"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "ocean-beach"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

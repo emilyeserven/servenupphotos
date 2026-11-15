@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:18 12:07:03",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Itaewon",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["signage", "storefronts", "umbrellas", "pedestrians", "power-lines", "cars", "hangul"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "itaewon"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [

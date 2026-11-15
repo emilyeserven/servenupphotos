@@ -1,0 +1,12 @@
+{
+  "id": "paramount-theatre",
+  "name": "Paramount Theatre",
+  "description": "",
+  "parent": "",
+  "city": "Boston",
+  "state": "Massachusetts",
+  "country": "United States of America",
+  "latitude": 42.351561,
+  "longitude": -71.062697,
+  "exactLocation": true
+}

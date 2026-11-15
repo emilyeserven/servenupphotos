@@ -14,7 +14,7 @@
   "customGpsPosition": "34.84136017215899, 134.68920328165584",
   "createDate": "2026:09:29 12:46:40",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Himeji Castle",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["shrine", "statues", "rope", "stones"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "himeji-castle"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

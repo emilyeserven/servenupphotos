@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:23 15:37:51",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Changuimun Gate",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["observation-towers", "skyline", "skyscrapers", "mountains", "city", "haze"],
   "genres": ["cityscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "changuimun-gate"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

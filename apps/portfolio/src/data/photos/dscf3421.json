@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 14:16:22",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Gyeongbokgung Palace",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["giwa", "dancheong", "palace", "gates", "walls", "tourists"],
   "genres": ["architecture", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "gyeongbokgung-palace"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

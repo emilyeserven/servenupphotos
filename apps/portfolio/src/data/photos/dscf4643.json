@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 14:38:13",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "New Canaan Nature Center",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["autumn", "boardwalk", "pine-trees", "fallen-leaves", "forest", "hiking-trail"],
   "genres": ["landscape", "nature"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "new-canaan-nature-center"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

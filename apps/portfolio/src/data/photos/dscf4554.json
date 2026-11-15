@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 19:29:01",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Heunginjimun Gate Park",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["city-walls", "crowd", "skyline", "skyscrapers", "twilight", "city"],
   "genres": ["cityscape", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "heunginjimun-gate-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [

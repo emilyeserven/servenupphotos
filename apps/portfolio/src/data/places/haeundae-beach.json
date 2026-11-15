@@ -1,0 +1,12 @@
+{
+  "id": "haeundae-beach",
+  "name": "Haeundae Beach",
+  "description": "",
+  "parent": "",
+  "city": "Busan",
+  "state": "Busan",
+  "country": "South Korea",
+  "latitude": 35.159336,
+  "longitude": 129.169425,
+  "exactLocation": true
+}

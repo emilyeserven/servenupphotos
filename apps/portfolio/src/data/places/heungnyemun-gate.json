@@ -1,0 +1,12 @@
+{
+  "id": "heungnyemun-gate",
+  "name": "Heungnyemun Gate",
+  "description": "",
+  "parent": "gyeongbokgung-palace",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.576689,
+  "longitude": 126.977022,
+  "exactLocation": true
+}

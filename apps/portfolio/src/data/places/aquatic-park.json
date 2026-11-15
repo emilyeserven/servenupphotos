@@ -1,0 +1,11 @@
+{
+  "id": "aquatic-park",
+  "name": "Aquatic Park",
+  "description": "",
+  "parent": "",
+  "city": "San Francisco",
+  "state": "California",
+  "country": "United States of America",
+  "latitude": 37.8068,
+  "longitude": -122.4214
+}

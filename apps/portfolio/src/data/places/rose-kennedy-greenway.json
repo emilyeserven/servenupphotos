@@ -1,0 +1,12 @@
+{
+  "id": "rose-kennedy-greenway",
+  "name": "Rose Kennedy Greenway",
+  "description": "",
+  "parent": "",
+  "city": "Boston",
+  "state": "Massachusetts",
+  "country": "United States of America",
+  "latitude": 42.352578,
+  "longitude": -71.057742,
+  "exactLocation": true
+}

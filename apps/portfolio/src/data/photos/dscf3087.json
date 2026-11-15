@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 13:08:23",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Geunjeongmun Gate",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,16 @@
   "albums": [],
   "tags": ["dancheong", "giwa", "palace", "plaza", "tourists", "stairs"],
   "genres": ["architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "geunjeongmun-gate"
+    },
+    {
+      "relation": "in",
+      "id": "gyeongbokgung-palace"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

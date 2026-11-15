@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2020:09:16 17:41:19",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Crocker Park",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["harbor", "boats", "sailboats", "water", "haze", "repetition"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "crocker-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

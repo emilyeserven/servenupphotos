@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:05:27 21:17:50",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Myeongdong Street",
+  "customCity": "Seoul",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "South Korea",
   "country": null,
   "state": null,
   "city": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["hangul", "rain", "umbrellas", "signage", "pedestrians", "crowd", "night"],
-  "genres": [],
-  "places": [],
+  "genres": ["street"],
+  "places": [
+    {
+      "relation": "on",
+      "id": "myeongdong-street"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2019:05:26 07:44:55",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Lake Rescue",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["reflections", "water", "houses", "fences", "minimalism"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "lake-rescue"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

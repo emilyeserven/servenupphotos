@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 13:06:33",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Boston Chinatown",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["buddhism", "chinatown", "murals", "street-art", "faces", "cars"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "boston-chinatown"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

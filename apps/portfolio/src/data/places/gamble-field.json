@@ -1,0 +1,12 @@
+{
+  "id": "gamble-field",
+  "name": "Gamble Field",
+  "description": "",
+  "parent": "",
+  "city": "New Canaan",
+  "state": "Connecticut",
+  "country": "United States of America",
+  "latitude": 41.139469,
+  "longitude": -73.497063,
+  "exactLocation": true
+}

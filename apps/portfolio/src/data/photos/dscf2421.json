@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:10:25 07:55:14",
   "customCreateDate": "2026:10:24 15:55:14",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Presidio Tunnel Tops",
+  "customCity": "San Francisco",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["bridges", "cables", "sailboats", "park", "tall-grass", "mountains"],
   "genres": ["landscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "presidio-tunnel-tops"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

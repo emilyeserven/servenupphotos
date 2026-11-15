@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2017:05:12 13:14:21",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "14th Street–Union Square Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["street-performers", "subway", "signage", "typography"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "14th-street-union-square-station"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

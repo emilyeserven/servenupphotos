@@ -1,0 +1,12 @@
+{
+  "id": "hagi-castle",
+  "name": "Hagi Castle",
+  "description": "",
+  "parent": "",
+  "city": "Hagi",
+  "state": "Yamaguchi",
+  "country": "Japan",
+  "latitude": 34.416086,
+  "longitude": 131.382847,
+  "exactLocation": true
+}

@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:28 15:37:46",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Arima Onsen",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["alley", "storefronts", "pedestrians", "tourists", "balconies", "power-lines"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "arima-onsen"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

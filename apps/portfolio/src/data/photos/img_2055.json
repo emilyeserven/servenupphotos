@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2018:10:06 15:19:42",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Devil's Den State Park",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["fungi", "texture", "repetition", "forest"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "devil-s-den-state-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

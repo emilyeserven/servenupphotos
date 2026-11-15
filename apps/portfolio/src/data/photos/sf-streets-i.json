@@ -14,7 +14,7 @@
   "customGpsPosition": "37.800246004534735, -122.41091074135733",
   "createDate": "2026:01:24 20:45:31",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "North Beach",
   "customCity": "San Francisco",
   "customState": "California",
   "customCountry": "United States of America",
@@ -59,7 +59,12 @@
     "bay-windows"
   ],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "north-beach"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:09:20 16:25:55",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "BUSAN X the SKY",
+  "customCity": "Busan",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -59,7 +59,12 @@
     "aerial-view"
   ],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "from",
+      "id": "busan-x-the-sky"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
