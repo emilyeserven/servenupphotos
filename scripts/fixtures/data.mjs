@@ -84,7 +84,7 @@ export function dataFixtures() {
     "POST /api/data/bulk-tags": () => ({ ...pendingSave(), newTags: 2, photos: 5 }),
     "POST /api/data/bulk-places/pick": ({ body }) => {
       const { untagged, ...pick } = bulkTagPick(body?.count);
-      return { ...pick, unplaced: untagged };
+      return { ...pick, unplaced: untagged, noPlaceFound: body?.noPlaceFound?.length ?? 0 };
     },
     "POST /api/data/bulk-places": () => ({ ...pendingSave(), newPlaces: 1, photos: 4 }),
     "POST /api/data/prune-tags/preview": () => pruneTagsPreview(),

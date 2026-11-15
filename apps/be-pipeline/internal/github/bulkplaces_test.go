@@ -30,7 +30,7 @@ func TestPickBulkPlacePhotos(t *testing.T) {
 		"c.json": `{"places":[{"relation":"","id":""}],"city":"Seoul","createDate":"2024:04:01 12:00:00"}`,
 		"d.json": `{"city":"Busan"}`,
 	})
-	got, err := c.PickBulkPlacePhotos(t.Context(), baseURLSettings, nil, 0)
+	got, err := c.PickBulkPlacePhotos(t.Context(), baseURLSettings, BulkPlacePickOptions{})
 	if err != nil {
 		t.Fatalf("PickBulkPlacePhotos() error = %v", err)
 	}
@@ -45,6 +45,30 @@ func TestPickBulkPlacePhotos(t *testing.T) {
 	}
 	if got.Unplaced != 3 || got.PhotoFiles != 4 {
 		t.Errorf("PickBulkPlacePhotos() = %+v, want 3 unplaced of 4 photo files", got)
+	}
+}
+
+func TestPickBulkPlacePhotosLeavesOutNoPlaceFound(t *testing.T) {
+	_, c := bulkPlaceRepo(t, map[string]string{
+		"a.json": `{"places":[],"city":"Seoul"}`,
+		"b.json": `{"places":[{"relation":"in","id":"gwangjang-market"}],"city":"Seoul"}`,
+		"c.json": `{"places":[],"city":"Seoul"}`,
+	})
+	// b has a place, so remembering it changes nothing.
+	opts := BulkPlacePickOptions{NoPlaceFound: []string{photosDir + "a.json", photosDir + "b.json"}}
+	got, err := c.PickBulkPlacePhotos(t.Context(), baseURLSettings, opts)
+	if err != nil {
+		t.Fatalf("PickBulkPlacePhotos() error = %v", err)
+	}
+	if len(got.Photos) != 1 || got.Photos[0].Name != "c" {
+		t.Errorf("picked %+v, want only c", got.Photos)
+	}
+	if got.Unplaced != 1 || got.NoPlaceFound != 1 {
+		t.Errorf("PickBulkPlacePhotos() = %+v, want 1 unplaced and 1 with no place found", got)
+	}
+	opts.NoPlaceFound = append(opts.NoPlaceFound, photosDir+"c.json")
+	if _, err := c.PickBulkPlacePhotos(t.Context(), baseURLSettings, opts); err == nil {
+		t.Error("PickBulkPlacePhotos() with every photo remembered: want an error, got none")
 	}
 }
 

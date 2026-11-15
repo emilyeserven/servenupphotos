@@ -219,6 +219,23 @@ would make up a plausible shape.
 > **Frontend analogy:** asking for an icon's name in a library such as Lucide rather than for its SVG path: the name
 > can be checked, and the real path is fetched from the source.
 
+### No place found
+
+When the answer names a photo but gives it no place (an empty `"place"`), **Review the places** remembers it in this
+browser's local storage (`stores/no-place-found.ts`, key `pipeline-no-place-found`, by the photo file's path) and marks
+it **No place found** in the review, with the LLM's reasoning. From then on, each pick sends those paths as
+`noPlaceFound` (`BulkPlacePickOptions`), and the backend neither picks them nor counts them in **N of M photos have
+no places yet**; the line adds “Leaving out N photos an LLM found no place for.” A photo the answer leaves out isn't
+remembered, since the LLM may just have missed it. The Dashboard's **Photos without a place** row leaves them out
+too.
+
+**Pick it again** on a photo's row forgets that one (and **Don't pick it again** remembers it once more), and **Pick
+them again** under the count forgets them all. As it's kept in the browser, another browser or a cleared one picks
+them again; once a photo gets a place some other way, it's no longer without one, so being remembered changes nothing.
+
+> **Frontend analogy:** a "dismissed" list in `localStorage`, like hiding a banner for good, sent along with the
+> query as an exclude filter so the server's counts match what you see.
+
 > **Frontend analogy:** the same dry run and commit as Bulk tagging, with the dry run done client-side: parsing the
 > answer is a pure function of the pasted text and the cached places query, like a `useMemo` over form input.
 

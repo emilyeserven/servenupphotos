@@ -110,6 +110,14 @@ export function reviewBulkPlaces(
   };
 }
 
+/**
+ * The paths of the photos the answer names but gives no place, which Bulk Places remembers so it
+ * doesn't pick them again. A photo the answer leaves out isn't one: it may just have been missed.
+ */
+export function noPlacePaths(review: BulkPlacesReview): string[] {
+  return review.plans.filter((plan) => plan.pasted && !plan.place).map((plan) => plan.photo.path);
+}
+
 /** Whether the plan's photo starts ticked: it has a place the LLM isn't unsure of. */
 export function tickedAtFirst(plan: BulkPlacePlan): boolean {
   return plan.place !== undefined && plan.pasted?.confidence !== "low";

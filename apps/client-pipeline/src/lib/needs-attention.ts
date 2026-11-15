@@ -103,15 +103,20 @@ function currentPhotos(photos: SocialPhoto[], changed: Map<string, unknown>) {
 
 /**
  * The problems at least one photo file has, with how many photos have each, counting the changes
- * not committed yet (changed, by path), as the pages that fix them count them.
+ * not committed yet (changed, by path), as the pages that fix them count them. Photos an LLM found
+ * no place for (noPlaceFound, by path) aren't counted as without a place, as Bulk Places leaves
+ * them out.
  */
 export function photoProblems(
   photos: SocialPhoto[],
   changed: Map<string, unknown>,
+  noPlaceFound: ReadonlySet<string> = new Set(),
 ): ProblemCount[] {
   const current = currentPhotos(photos, changed);
   return Object.entries(TESTS).flatMap(([problem, test]) => {
-    const found = current.filter((photo) => test(photo.data));
+    const found = current.filter(
+      (photo) => test(photo.data) && !(problem === "noPlaces" && noPlaceFound.has(photo.path)),
+    );
     const [first] = found;
     if (!first) return [];
     return [{ problem: problem as PhotoProblem, count: found.length, first: first.path }];

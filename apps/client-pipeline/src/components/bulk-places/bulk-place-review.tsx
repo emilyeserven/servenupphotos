@@ -9,6 +9,7 @@ import {
 } from "@/components/bulk-tagging/review-parts";
 import { count } from "@/components/update-data-shared";
 import { outlineAsks, PlaceOutlines } from "@/components/bulk-places/place-outlines";
+import { NoPlaceFound } from "@/components/bulk-places/no-place-found";
 import {
   type BulkPlacePlan,
   type BulkPlacesReview,
@@ -134,13 +135,10 @@ function PhotoPlaceRow(props: PhotoPlaceRowProps) {
   );
 }
 
-/** Why the photo gets no place. */
+/** Why the photo gets no place: the answer gives it none, which is remembered, or leaves it out. */
 function NoPlace({ plan }: { plan: BulkPlacePlan }) {
-  return (
-    <p className="text-muted-foreground">
-      {plan.pasted ? "The answer gives it no place." : "The answer leaves it out."}
-    </p>
-  );
+  if (plan.pasted) return <NoPlaceFound path={plan.photo.path} reasoning={plan.pasted.reasoning} />;
+  return <p className="text-muted-foreground">The answer leaves it out.</p>;
 }
 
 /** The place's checkbox, where it is, why the LLM thinks so, and links to check it. */

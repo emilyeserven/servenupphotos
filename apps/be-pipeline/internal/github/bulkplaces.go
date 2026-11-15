@@ -19,25 +19,48 @@ type BulkPlacePick struct {
 	Branch      string              `json:"branch"`
 	PullRequest *BaseURLPullRequest `json:"pullRequest"`
 	PhotoFiles  int                 `json:"photoFiles"`
-	// Unplaced is how many photo files have no places.
-	Unplaced int            `json:"unplaced"`
-	Photos   []BulkTagPhoto `json:"photos"`
+	// Unplaced is how many photo files have no places, not counting the
+	// ones an LLM found no place for.
+	Unplaced int `json:"unplaced"`
+	// NoPlaceFound is how many photo files without places were left out
+	// because an LLM found no place for them.
+	NoPlaceFound int            `json:"noPlaceFound"`
+	Photos       []BulkTagPhoto `json:"photos"`
 }
 
-// PickBulkPlacePhotos picks up to count related photos (1 to 50, 5 when
-// unset) without places, leaving out skip's paths, as PickBulkTagPhotos picks
-// photos without tags: the first by path, then the ones that share its city
-// or country, genres and date. It only reads.
-func (c *Client) PickBulkPlacePhotos(ctx context.Context, gh settings.GitHub, skip []string, count int) (BulkPlacePick, error) {
+// BulkPlacePickOptions is what Bulk Places picks by: Bulk tagging's options,
+// and the photos an LLM found no place for.
+type BulkPlacePickOptions struct {
+	BulkTagPickOptions
+	// NoPlaceFound is the paths of the photos an LLM found no place for, as
+	// this browser remembers them, which are never picked or counted.
+	NoPlaceFound []string `json:"noPlaceFound"`
+}
+
+// PickBulkPlacePhotos picks up to opts.Count related photos (1 to 50, 5 when
+// unset) without places, leaving out opts.Skip's paths, as PickBulkTagPhotos
+// picks photos without tags: the first by path, then the ones that share its
+// city or country, genres and date. Photos in opts.NoPlaceFound are neither
+// picked nor counted as without places. It only reads.
+func (c *Client) PickBulkPlacePhotos(ctx context.Context, gh settings.GitHub, opts BulkPlacePickOptions) (BulkPlacePick, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
 		return BulkPlacePick{}, perr
 	}
-	photos, unplaced := photosWhere(scan, skip, func(p bulkPhoto) bool { return len(p.places) == 0 })
+	_, placeless := photosWhere(scan, nil, func(p bulkPhoto) bool { return len(p.places) == 0 })
+	photos, unplaced := photosWhere(scan, opts.Skip, func(p bulkPhoto) bool {
+		return len(p.places) == 0 && !slices.Contains(opts.NoPlaceFound, p.file.path)
+	})
 	if len(photos) == 0 {
 		return BulkPlacePick{}, publishErr(http.StatusNotFound, "There are no more photos without places to pick from. Start over to pick from every one again.")
 	}
-	pick := BulkPlacePick{Branch: scan.branch, PhotoFiles: len(scan.files), Unplaced: unplaced, Photos: pickRelated(photos, bulkTagCount(count), relate)}
+	pick := BulkPlacePick{
+		Branch:       scan.branch,
+		PhotoFiles:   len(scan.files),
+		Unplaced:     unplaced,
+		NoPlaceFound: placeless - unplaced,
+		Photos:       pickRelated(photos, bulkTagCount(opts.Count), relate),
+	}
 	if scan.pr != nil {
 		pick.PullRequest = &BaseURLPullRequest{Number: scan.pr.Number, URL: scan.pr.HTMLURL}
 	}
