@@ -83,7 +83,7 @@ export function shiftDay(day: string, by: number): string {
 }
 
 /** The keys of a key press that say which way to step. */
-interface StepKey {
+export interface StepKey {
   key: string;
   altKey: boolean;
   ctrlKey: boolean;

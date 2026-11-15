@@ -53,7 +53,16 @@ There, the group's photos sit side by side, two or three across, each at its Med
 they line up (the offline copy's Small version when it can't be loaded), opening full size when clicked. Under each
 are its title or file name, whether it's in the Gallery or in flight, the **Draft** mark, and when, with what and how
 it was taken: the date (the custom one, or else the EXIF one), camera, lens (the custom lens, or else the EXIF one),
-settings and size in pixels. Each has:
+settings and size in pixels.
+
+Clicking a photo opens it full size, saying which it is of the group (such as **3 of 4**). There, **←** and **→** (or
+the arrows at the image's sides) move to the previous or next photo, going round from the last to the first, so the
+group can be flicked through at full size. **W** picks or unpicks the photo shown as a winner and **L** marks it Lower
+Tier or takes the mark off, the same as the **Pick as winner** and **Lower Tier** buttons under it. **Esc** closes it
+and puts focus back on the photo last shown. Keys held with Ctrl, Alt or ⌘ are left to the browser. The keys are in
+`lib/compare-keys.ts`.
+
+Each photo has:
 
 - **Pick as winner**, which makes it one of the group's winners, outlined in amber. A group can have several, such as
   two frames that both get posted; clicking **Winner** again unpicks it.

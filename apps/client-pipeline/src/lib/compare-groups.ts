@@ -4,6 +4,7 @@ import type {
   InFlightRead,
   PublishedResponse,
 } from "@/api/photos";
+import { shownImageUrl } from "@/lib/face-json";
 import { editedData } from "@/lib/undecided";
 import type { LocalEdit } from "@/stores/local-edits";
 import { COMPARE_GROUP, COMPARE_WINNER } from "@/lib/photo-fields";
@@ -35,6 +36,17 @@ export function compareGroupOf(data: unknown): string | undefined {
 /** Whether the photo is picked as one of its compare group's winners. */
 export function isWinner(photo: ComparePhoto): boolean {
   return photo.data[COMPARE_WINNER] === true;
+}
+
+/** The image the photo's JSON saves as `images.medium`, or else its image in R2. */
+export function compareMediumUrl(photo: ComparePhoto): string | undefined {
+  const medium = (photo.data.images as Record<string, unknown> | undefined)?.medium;
+  return typeof medium === "string" && medium ? medium : photo.imageUrl;
+}
+
+/** The photo at full size, as the portfolio shows it (pixelated when it has faces blurred), or else at Medium. */
+export function compareFullUrl(photo: ComparePhoto): string | undefined {
+  return shownImageUrl(photo.data, photo.imageUrl) ?? compareMediumUrl(photo);
 }
 
 /** Whether the file can go in a compare group: its JSON was read and it isn't being removed. */
