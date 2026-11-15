@@ -23,15 +23,18 @@ The mark is a [local edit](combined-data-store.md#local-edits): it's kept in the
 - **Gallery:** with **Select** on, the **Lower Tier** card under **Add albums, tags and genres** marks every chosen
   photo (**Mark N photos Lower Tier**) or takes the mark off. The selection stays, so the same photos can be given
   albums and tags too.
+- **Compare:** each photo of an open [compare group](compare-groups.md#the-compare-page) has a **Lower Tier** button
+  beside **Pick as winner**, so a frame that won't be posted but is still worth keeping can be marked while the group's
+  photos are side by side. It stays in the group, and clicking it again takes the mark off.
 
 ## Seeing it
 
 - The Gallery hides Lower Tier photos until its **Lower Tier** filter, beside **Undecided**, is changed from **Hidden**
   to **Shown** (with the rest) or **Only** (`?lowerTier=show` or `?lowerTier=only`). **Clear** resets it with the other
   filters.
-- Gallery tiles and Photos in Flight mark a Lower Tier photo **Lower Tier**, with what it means in the tooltip.
+- Gallery tiles, Photos in Flight and the Compare page's photos mark a Lower Tier photo **Lower Tier**, with what it means in the tooltip.
 
 The code is `lib/lower-tier.ts` (`isLowerTier`, `lowerTierPaths`), `components/lower-tier.tsx` (the card, the mark and
-`useSetLowerTier`), and `components/gallery/lower-tier-filter.tsx` and `bulk-lower-tier.tsx` in the Gallery. The
+`useSetLowerTier`), and `components/gallery/lower-tier-filter.tsx` and `bulk-lower-tier.tsx` in the Gallery, and `components/compare/lower-tier-button.tsx` on the Compare page. The
 Gallery's Undecided and Lower Tier filters share their Hidden, Shown and Only buttons from
 `components/gallery/mark-filter.tsx`.

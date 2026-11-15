@@ -57,6 +57,9 @@ settings and size in pixels. Each has:
 
 - **Pick as winner**, which makes it one of the group's winners, outlined in amber. A group can have several, such as
   two frames that both get posted; clicking **Winner** again unpicks it.
+- **Lower Tier**, which marks it a [Lower Tier](lower-tier.md) photo (or takes the mark off), for a frame that won't
+  be posted but is still worth putting in an album or a trip line. It stays in the group, and is marked **Lower Tier**
+  under its name.
 - **Edit**, which opens it on the Photo page, as the Gallery or Photos in Flight would, to give a winner a title.
 - **Take out**, which leaves it as it was before it joined.
 
