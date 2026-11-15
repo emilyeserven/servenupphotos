@@ -19,6 +19,17 @@ marked, and Update Data's **Missing fields** adds that to older files. The Galle
 pull request merges). The portfolio doesn't use it, but `ALLPHOTOS.json` carries it, so keep the reason to something
 you don't mind being public. Replacing the image takes the mark off.
 
+### The Re-Edit page
+
+**Re-Edit** under **Images** in the sidebar (`/re-edit`) lists every marked photo in one place: the photos from the
+Gallery and Photos in Flight with their [local edits](combined-data-store.md#local-edits), so marks waiting for Commit
+(such as [Quality Check](quality-check.md)'s flags) show at once. Unselected photos and photos without an image are
+left out, as Quality Check leaves them out. Each row has the photo's Small version, its title and file name, the
+reason (or "No reason given"), whether it's in the portfolio or in the pull request, the day it was marked, and
+**Open the photo**, which opens its Image section on the Photo page to [replace the image](#replace-image). The most
+recently marked come first. The page is `components/re-edit-list.tsx`; the list's order is `markedPhotos` in
+`lib/re-edit.ts`.
+
 ## Replace image
 
 The Photo page for a saved photo (**Edit** in Photos in Flight or the Gallery, `/exif?edit=<path>`) has a **Replace

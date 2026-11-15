@@ -26,6 +26,7 @@ import {
   PaletteIcon,
   PlaneIcon,
   RefreshCwIcon,
+  RotateCcwIcon,
   ScaleIcon,
   ScalingIcon,
   ScanTextIcon,
@@ -74,6 +75,7 @@ export const navGroups: readonly NavGroup[] = [
       },
       { title: "Gallery", url: "/gallery", icon: LayoutGridIcon },
       { title: "All Photos", url: "/all-photos", icon: ImagesIcon },
+      { title: "Re-Edit", url: "/re-edit", icon: RotateCcwIcon },
     ],
   },
   {

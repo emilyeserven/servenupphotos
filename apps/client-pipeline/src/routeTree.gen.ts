@@ -36,6 +36,7 @@ import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
 import { Route as PhotoBookRouteImport } from './routes/photo-book'
 import { Route as PlacesRouteImport } from './routes/places'
 import { Route as QuickEditRouteImport } from './routes/quick-edit'
+import { Route as ReEditRouteImport } from './routes/re-edit'
 import { Route as RelatedPhotosRouteImport } from './routes/related-photos'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
@@ -198,6 +199,11 @@ const PlacesRoute = PlacesRouteImport.update({
 const QuickEditRoute = QuickEditRouteImport.update({
   id: '/quick-edit',
   path: '/quick-edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReEditRoute = ReEditRouteImport.update({
+  id: '/re-edit',
+  path: '/re-edit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RelatedPhotosRoute = RelatedPhotosRouteImport.update({
@@ -369,6 +375,7 @@ export interface FileRoutesByFullPath {
   '/photo-book': typeof PhotoBookRoute
   '/places': typeof PlacesRoute
   '/quick-edit': typeof QuickEditRoute
+  '/re-edit': typeof ReEditRoute
   '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
@@ -426,6 +433,7 @@ export interface FileRoutesByTo {
   '/photo-book': typeof PhotoBookRoute
   '/places': typeof PlacesRoute
   '/quick-edit': typeof QuickEditRoute
+  '/re-edit': typeof ReEditRoute
   '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
@@ -483,6 +491,7 @@ export interface FileRoutesById {
   '/photo-book': typeof PhotoBookRoute
   '/places': typeof PlacesRoute
   '/quick-edit': typeof QuickEditRoute
+  '/re-edit': typeof ReEditRoute
   '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
@@ -542,6 +551,7 @@ export interface FileRouteTypes {
     | '/photo-book'
     | '/places'
     | '/quick-edit'
+    | '/re-edit'
     | '/related-photos'
     | '/settings'
     | '/site-spotlight'
@@ -599,6 +609,7 @@ export interface FileRouteTypes {
     | '/photo-book'
     | '/places'
     | '/quick-edit'
+    | '/re-edit'
     | '/related-photos'
     | '/settings'
     | '/site-spotlight'
@@ -655,6 +666,7 @@ export interface FileRouteTypes {
     | '/photo-book'
     | '/places'
     | '/quick-edit'
+    | '/re-edit'
     | '/related-photos'
     | '/settings'
     | '/site-spotlight'
@@ -713,6 +725,7 @@ export interface RootRouteChildren {
   PhotoBookRoute: typeof PhotoBookRoute
   PlacesRoute: typeof PlacesRoute
   QuickEditRoute: typeof QuickEditRoute
+  ReEditRoute: typeof ReEditRoute
   RelatedPhotosRoute: typeof RelatedPhotosRoute
   SettingsRoute: typeof SettingsRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
@@ -930,6 +943,13 @@ declare module '@tanstack/react-router' {
       path: '/quick-edit'
       fullPath: '/quick-edit'
       preLoaderRoute: typeof QuickEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/re-edit': {
+      id: '/re-edit'
+      path: '/re-edit'
+      fullPath: '/re-edit'
+      preLoaderRoute: typeof ReEditRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/related-photos': {
@@ -1173,6 +1193,7 @@ const rootRouteChildren: RootRouteChildren = {
   PhotoBookRoute: PhotoBookRoute,
   PlacesRoute: PlacesRoute,
   QuickEditRoute: QuickEditRoute,
+  ReEditRoute: ReEditRoute,
   RelatedPhotosRoute: RelatedPhotosRoute,
   SettingsRoute: SettingsRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
