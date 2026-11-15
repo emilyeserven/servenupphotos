@@ -1,0 +1,85 @@
+import { useMemo } from "react";
+import { CopyPromptButton, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
+import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
+import { type FlagItem, FlagList } from "@/components/quality-check/flag-list";
+import { count } from "@/components/update-data-shared";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
+import { type AutogroupPhoto, autogroupSheetPhotos } from "@/lib/compare-autogroup";
+import {
+  type PixelationAnswer,
+  pixelationPrompt,
+  readPixelationAnswer,
+} from "@/lib/pixelation-prompt";
+
+/**
+ * The flagged photos as rows of the list to flag, each with the photo as it is now in `photos`, so
+ * a flag made since the review shows.
+ */
+function flagItems(answer: PixelationAnswer, photos: AutogroupPhoto[]): FlagItem[] {
+  const current = new Map(photos.map((entry) => [entry.key, entry]));
+  return answer.flagged.map(({ entry, pixelate, flag }) => ({
+    entry: current.get(entry.key) ?? entry,
+    flag,
+    detail: pixelate.length > 0 ? `Pixelate: ${pixelate.join(", ")}` : "Needs pixelation",
+  }));
+}
+
+/**
+ * The pixelation check: copies one prompt linking every chosen photo (and their contact sheets)
+ * asking an LLM which show readable license plates or recognizable faces, then reads its JSON
+ * answer into a list of photos to flag for re-edit, each linked to the Photo page's face
+ * pixelation.
+ */
+export function PixelationCheck({ photos }: { photos: AutogroupPhoto[] }) {
+  const { typed, setTyped, answer, error, reviews, review } = usePastedAnswer((text) =>
+    readPixelationAnswer(text, photos),
+  );
+  const sheetPhotos = useMemo(() => autogroupSheetPhotos(photos), [photos]);
+  const contact = useContactSheets(sheetPhotos);
+  return (
+    <section className="flex flex-col gap-3">
+      <h3 className="font-medium">License plates and faces</h3>
+      <p className="text-muted-foreground max-w-prose text-sm">
+        Copy one prompt into a chat with an LLM, which looks for readable license plates and faces
+        someone could recognize. Paste its JSON answer back to list the photos it flagged, with what
+        to hide and where.
+      </p>
+      <ContactSheetsButton state={contact} />
+      <CopyPromptButton
+        label={`Copy the pixelation prompt for ${count(photos.length, "photo")}`}
+        disabled={photos.length === 0 || contact.pending}
+        prompt={() => pixelationPrompt(photos, contact.sheets)}
+      />
+      <PasteAnswer
+        value={typed}
+        onChange={setTyped}
+        pending={false}
+        label="Review the flagged photos"
+        onReview={review}
+      />
+      {error && <p className="text-destructive text-sm">{error}</p>}
+      {answer && <AnswerView key={reviews} answer={answer} photos={photos} />}
+    </section>
+  );
+}
+
+/** The photos the answer flagged, and the names in it that aren't photos here. */
+function AnswerView({ answer, photos }: { answer: PixelationAnswer; photos: AutogroupPhoto[] }) {
+  return (
+    <>
+      <p className="text-sm">
+        {answer.flagged.length === 0
+          ? "The answer flagged no photos."
+          : `The answer flagged ${count(answer.flagged.length, "photo")}.`}
+      </p>
+      {answer.flagged.length > 0 && (
+        <FlagList items={flagItems(answer, photos)} linkLabel="Pixelate faces" />
+      )}
+      {answer.unknown.length > 0 && (
+        <p className="text-muted-foreground text-sm">
+          Left out, since they aren&apos;t photos in the prompt: {answer.unknown.join(", ")}.
+        </p>
+      )}
+    </>
+  );
+}

@@ -169,7 +169,7 @@ export interface AutogroupAnswer {
 }
 
 /** The JSON object in the answer, from its first `{` to its last `}`, so a code fence or a sentence around it is fine. */
-function answerObject(answer: string): unknown {
+export function answerObject(answer: string): unknown {
   const start = answer.indexOf("{");
   const end = answer.lastIndexOf("}");
   if (start === -1 || end <= start) throw new Error("The answer has no JSON object in it.");
@@ -202,7 +202,9 @@ function rawGroups(parsed: unknown): RawGroup[] {
 }
 
 /** Looks a photo up by the name the answer gave, ignoring case, quotes and a `.json` ending. */
-function photoFinder(photos: AutogroupPhoto[]): (name: string) => AutogroupPhoto | undefined {
+export function photoFinder(
+  photos: AutogroupPhoto[],
+): (name: string) => AutogroupPhoto | undefined {
   const byKey = new Map<string, AutogroupPhoto>();
   for (const entry of photos) {
     byKey.set(entry.key.toLowerCase(), entry);

@@ -32,6 +32,7 @@ var relayTimeouts = map[string]time.Duration{
 	"/photos/bucket/versions":       uploadTimeout,
 	"/photos/bucket/faces/detect":   detectFacesTimeout,
 	"/photos/bucket/contact-sheets": contactSheetsTimeout,
+	"/photos/bucket/sizes":          imageSizesTimeout,
 	"/data/":                        baseURLTimeout,
 	// Answers from memory while a Missing fields or Colors read runs.
 	"/data/progress/":       0,
