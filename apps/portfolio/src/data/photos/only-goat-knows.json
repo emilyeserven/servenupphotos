@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#6d5944",
@@ -266,7 +269,7 @@
     "peakChroma": 27,
     "samples": 9728
   },
-  "notes": "Shows a goat with hay in a barn; 'goats', 'farm-animals', 'hay' and 'barn' aren't tags, since only this photo has them.",
+  "notes": "Shows a goat with hay in a barn; 'goats', 'farm-animals', 'hay' and 'barn' aren't tags, since only this photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 294 (1.70:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [477, 495, 499, 201, 474, 290],
   "compareGroup": "Goats at the Hay Feeder"
 }

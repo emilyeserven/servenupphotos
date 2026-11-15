@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#796964",
@@ -267,5 +270,6 @@
     "samples": 10087
   },
   "similarPhotos": [47, 57, 189, 36, 100, 30],
-  "compareGroup": "Sticker-Covered Alley Walls"
+  "compareGroup": "Sticker-Covered Alley Walls",
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 292 (1.71:1), not the 16:9 crop for a landscape photo."
 }

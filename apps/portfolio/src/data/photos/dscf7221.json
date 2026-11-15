@@ -3,7 +3,7 @@
   "title": null,
   "comment": null,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (pixelation): The rear plate of the dark blue sedan crossing the intersection, right of centre, is readable.",
   "file": "DSCF7221.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -58,7 +58,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate a license plate",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],

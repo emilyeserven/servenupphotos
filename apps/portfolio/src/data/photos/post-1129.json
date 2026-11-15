@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#4c4a28",
@@ -267,5 +270,6 @@
     "samples": 9652
   },
   "similarPhotos": [82, 114, 264, 469, 313, 486],
-  "compareGroup": "Appalachian Trail Markers"
+  "compareGroup": "Appalachian Trail Markers",
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 298 (1.68:1), not the 16:9 crop for a landscape photo."
 }

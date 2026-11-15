@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#6f6f6f",
@@ -266,6 +269,6 @@
     "peakChroma": 0.01,
     "samples": 10011
   },
-  "notes": "Shows a violinist; 'violin' isn't a tag, since only 1 photo has one.",
+  "notes": "Shows a violinist; 'violin' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 251 (2:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [46, 180, 22, 25, 186, 6]
 }

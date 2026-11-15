@@ -60,7 +60,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate license plates",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#7c7c7c",
@@ -270,5 +273,5 @@
   "similarPhotos": [453, 409, 401, 444, 424, 430],
   "noGps": false,
   "altText": null,
-  "notes": null
+  "notes": "Quality Check (pixelation): The front plates of the white sedan and the dark car beside it, driving toward the camera on the right, are readable."
 }

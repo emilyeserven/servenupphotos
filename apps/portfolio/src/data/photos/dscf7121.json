@@ -1,11 +1,11 @@
 {
-  "id": 635,
-  "title": null,
+  "title": "Beacon Hill Stoop I",
   "comment": null,
+  "id": 635,
   "altText": null,
   "notes": null,
   "file": "DSCF7121.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:14:19Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:08 10:36:22",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Beacon Hill",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/7b133ce4c8e8-dscf7121-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/7b133ce4c8e8-dscf7121-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/7b133ce4c8e8-dscf7121-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/7b133ce4c8e8-dscf7121-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7b133ce4c8e8-dscf7121-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/7b133ce4c8e8-dscf7121-thumbnail.webp?crop=0,1166,4891",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7b133ce4c8e8-dscf7121-thumbnailpreview.webp?crop=0,1166,4891",
     "thumbnailcrop": {
       "x": 0,
-      "y": 978,
+      "y": 1166,
       "size": 4891,
       "outputSize": 500
     }
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "beacon-hill"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

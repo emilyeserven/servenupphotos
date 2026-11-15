@@ -1,11 +1,11 @@
 {
-  "id": 630,
-  "title": null,
+  "title": "Waiting to Cross Cedar St.",
   "comment": null,
+  "id": 630,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (pixelation): The man in the hoodie and jeans standing on the sidewalk on the left faces the camera.",
   "file": "DSCF7045.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:15:41Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.3,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:08 10:28:16",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Beacon Hill",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-thumbnail.webp?crop=0,901,3139",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/263c707b11b8-dscf7045-thumbnailpreview.webp?crop=0,901,3139",
     "thumbnailcrop": {
       "x": 0,
-      "y": 628,
+      "y": 901,
       "size": 3139,
       "outputSize": 500
     }
@@ -52,13 +52,21 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "beacon-hill"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate 1 face",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],

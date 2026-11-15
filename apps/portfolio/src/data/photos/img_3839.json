@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9; Pixelate 2 faces",
+    "date": "2026-11-15"
+  },
   "undecided": true,
   "colors": {
     "average": {
@@ -267,7 +270,7 @@
     "peakChroma": 0.01,
     "samples": 9782
   },
-  "notes": "Shows soap bubbles; 'bubbles' isn't a tag, since only 2 photos have them.",
+  "notes": "Shows soap bubbles; 'bubbles' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 273 (1.83:1), not the 16:9 crop for a landscape photo.\n\nQuality Check (pixelation): The girl with the ponytail holding the bubble wand on the left and the smiling boy just behind her face the camera.",
   "similarPhotos": [165, 192, 40, 168, 167, 170],
   "compareGroup": "Giant Bubbles in Central Park"
 }

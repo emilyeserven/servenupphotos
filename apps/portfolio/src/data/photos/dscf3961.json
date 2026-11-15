@@ -60,7 +60,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 5:7",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#272120",
@@ -268,5 +271,6 @@
     "samples": 9801
   },
   "similarPhotos": [469, 477, 231, 471, 488, 485],
-  "compareGroup": "Trail Markers on Tree Trunks"
+  "compareGroup": "Trail Markers on Tree Trunks",
+  "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo."
 }

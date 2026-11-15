@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#412c1f",
@@ -266,6 +269,6 @@
     "peakChroma": 48.12,
     "samples": 9727
   },
-  "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them.",
+  "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 257 (1.95:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [17, 250, 469, 437, 438, 282]
 }

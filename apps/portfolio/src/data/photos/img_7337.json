@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#8b847c",
@@ -266,6 +269,6 @@
     "peakChroma": 9.15,
     "samples": 10112
   },
-  "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one.",
+  "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 306 (1.63:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [140, 142, 147, 144, 141, 145]
 }

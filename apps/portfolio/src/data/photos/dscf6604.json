@@ -59,7 +59,10 @@
   "spotlightZones": ["homepage"],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 5:7",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#564c49",
@@ -267,5 +270,6 @@
     "samples": 9801
   },
   "similarPhotos": [261, 328, 455, 308, 463, 465],
-  "compareGroup": "Lantern Rows from Above"
+  "compareGroup": "Lantern Rows from Above",
+  "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo."
 }

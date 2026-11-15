@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#2f2f2f",
@@ -266,6 +269,6 @@
     "peakChroma": 0.01,
     "samples": 9648
   },
-  "notes": "Shows a juggler; 'juggling' isn't a tag, since only 1 photo has it.",
+  "notes": "Shows a juggler; 'juggling' isn't a tag, since only 1 photo has it.\n\nQuality Check (aspect ratio): the Small version is 500 × 269 (1.86:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [40, 192, 186, 166, 24, 163]
 }

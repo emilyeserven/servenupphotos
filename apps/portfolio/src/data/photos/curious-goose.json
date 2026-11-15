@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#4d562b",
@@ -266,6 +269,6 @@
     "peakChroma": 38.18,
     "samples": 10087
   },
-  "notes": "Shows a goose; 'geese' isn't a tag, since only 1 photo has one.",
+  "notes": "Shows a goose; 'geese' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 291 (1.72:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [23, 8, 152, 46, 187, 483]
 }

@@ -3,7 +3,7 @@
   "comment": null,
   "id": 687,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 285 (1.75:1), not the 16:9 crop for a landscape photo.",
   "file": "IMG_4744.jpg",
   "addedDate": "2026-11-15T05:18:00Z",
   "camera": "Canon EOS Rebel T6i",
@@ -58,7 +58,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],

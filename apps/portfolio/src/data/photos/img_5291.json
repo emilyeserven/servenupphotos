@@ -54,7 +54,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#777777",
@@ -261,6 +264,6 @@
     "peakChroma": 0.01,
     "samples": 9864
   },
-  "notes": "Shows a banjo player; 'banjos' isn't a tag, since only 1 photo has one.",
+  "notes": "Shows a banjo player; 'banjos' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 263 (1.90:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [186, 208, 192, 193, 164, 173]
 }

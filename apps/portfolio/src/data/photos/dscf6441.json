@@ -3,7 +3,7 @@
   "title": null,
   "comment": null,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (pixelation): The couple walking toward the camera in the street, left of centre, both have their faces visible.\n\nQuality Check (pixelation): The couple walking toward the camera on the left both have their faces visible; the rear plate of the white taxi behind them, right of centre, is readable.",
   "file": "DSCF6441.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -58,7 +58,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate 2 faces; Pixelate 2 faces and a license plate",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],

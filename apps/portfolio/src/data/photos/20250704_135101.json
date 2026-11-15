@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate a license plate",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#747074",
@@ -266,5 +269,6 @@
     "peakChroma": 32.24,
     "samples": 9828
   },
-  "similarPhotos": [297, 436, 453, 11, 282, 407]
+  "similarPhotos": [297, 436, 453, 11, 282, 407],
+  "notes": "Quality Check (pixelation): The front plate of the grey VW SUV parked behind the sticker-covered pole is partly readable on the right of the pole."
 }

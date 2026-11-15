@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate several faces",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#473d3a",
@@ -266,5 +269,6 @@
     "peakChroma": 20.4,
     "samples": 9975
   },
-  "similarPhotos": [305, 304, 307, 302, 169, 219]
+  "similarPhotos": [305, 304, 307, 302, 169, 219],
+  "notes": "Quality Check (pixelation): In the crowd at the front, the man in the cap at the bottom right and the young women near him are facing the camera."
 }

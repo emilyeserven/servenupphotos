@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#6e6963",
@@ -266,6 +269,6 @@
     "peakChroma": 7.18,
     "samples": 10010
   },
-  "notes": "Shows a subway mosaic; 'mosaic' isn't a tag, since only 2 photos have one.",
+  "notes": "Shows a subway mosaic; 'mosaic' isn't a tag, since only 2 photos have one.\n\nQuality Check (aspect ratio): the Small version is 500 × 293 (1.71:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [29, 25, 45, 51, 32, 28]
 }
