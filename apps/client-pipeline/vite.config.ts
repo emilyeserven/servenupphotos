@@ -25,6 +25,8 @@ export default defineConfig({
       "class-variance-authority",
       "date-fns",
       "react-day-picker",
+      "@vis.gl/react-maplibre",
+      "maplibre-gl",
     ],
   },
   server: {
