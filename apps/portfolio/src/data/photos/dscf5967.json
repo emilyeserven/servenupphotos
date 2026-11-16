@@ -1,9 +1,9 @@
 {
-  "id": 449,
-  "title": null,
+  "title": "Arima Side Street",
   "comment": null,
+  "id": 449,
   "file": "DSCF5967.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-16T00:46:25Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 9,
@@ -267,5 +267,8 @@
     "peakChroma": 17.9,
     "samples": 9828
   },
-  "similarPhotos": [304, 450, 306, 351, 250, 319]
+  "similarPhotos": [304, 450, 306, 351, 250, 319],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }
