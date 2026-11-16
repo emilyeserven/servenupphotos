@@ -61,7 +61,7 @@ function CompareImage({ photo, onOpen }: { photo: ComparePhoto; onOpen: () => vo
       type="button"
       title="Show it full size; the arrow keys then move between the group's photos"
       onClick={onOpen}
-      data-compare-photo={photo.file.path}
+      data-lightbox-photo={photo.file.path}
       className="focus-visible:ring-ring bg-muted aspect-[4/3] w-full cursor-zoom-in border-b outline-none focus-visible:ring-2 focus-visible:ring-inset"
     >
       <FallbackImage

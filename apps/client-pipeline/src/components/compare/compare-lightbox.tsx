@@ -1,10 +1,9 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import type { KeyboardEvent } from "react";
 import { LowerTierButton } from "@/components/compare/lower-tier-button";
 import { WinnerButton } from "@/components/compare/winner-button";
 import { ImageLightbox } from "@/components/image-lightbox";
+import { focusLightboxPhoto, LightboxSideArrows } from "@/components/lightbox-side-arrows";
 import { useSetLowerTier } from "@/components/lower-tier";
-import { Button } from "@/components/ui/button";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
 import {
   type ComparePhoto,
@@ -67,10 +66,10 @@ function OpenLightbox({ photos, index, photo, src, onOpenPath }: OpenLightboxPro
       src={src}
       description={`${name} at full size, photo ${place}. The left and right arrow keys move between the group's photos.`}
       toolbar={<span className="text-sm text-white/70">{place}</span>}
-      overlay={photos.length > 1 && <SideArrows onStep={step} />}
+      overlay={photos.length > 1 && <LightboxSideArrows onStep={step} />}
       footer={<LightboxActions photo={photo} />}
       onKeyDown={onKeyDown}
-      onCloseAutoFocus={(event) => focusPhoto(event, photo.file.path)}
+      onCloseAutoFocus={(event) => focusLightboxPhoto(event, photo.file.path)}
     />
   );
 }
@@ -94,46 +93,6 @@ function useCompareKeys(photo: ComparePhoto, step: (by: number) => void) {
     event.preventDefault();
     run[action.kind](action.kind === "step" ? action.step : 0);
   };
-}
-
-/** Moves focus to the image of the photo last shown, instead of the one first clicked. */
-function focusPhoto(event: Event, path: string) {
-  const image = document.querySelector<HTMLElement>(`[data-compare-photo="${CSS.escape(path)}"]`);
-  if (!image) return;
-  event.preventDefault();
-  image.focus();
-}
-
-/** Previous and Next buttons at the image's sides, for a mouse or a touch screen. */
-function SideArrows({ onStep }: { onStep: (by: number) => void }) {
-  const className =
-    "absolute top-1/2 size-12 -translate-y-1/2 rounded-full bg-black/40 text-white hover:bg-black/60 hover:text-white [&_svg]:size-7";
-  return (
-    <>
-      <Button
-        variant="ghost"
-        size="icon"
-        aria-label="Previous photo"
-        aria-keyshortcuts="ArrowLeft"
-        title="Previous photo (←)"
-        className={`${className} left-6`}
-        onClick={() => onStep(-1)}
-      >
-        <ChevronLeftIcon />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        aria-label="Next photo"
-        aria-keyshortcuts="ArrowRight"
-        title="Next photo (→)"
-        className={`${className} right-6`}
-        onClick={() => onStep(1)}
-      >
-        <ChevronRightIcon />
-      </Button>
-    </>
-  );
 }
 
 /** Pick as winner and Lower Tier for the photo shown, with their keys, in the dark theme. */

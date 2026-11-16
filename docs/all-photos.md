@@ -33,6 +33,17 @@ changing the sort resets the order. Photos a sort can't place (no date, no date 
 after the rest, newest first. Color and Vividness use the portfolio's own `sortPhotos`
 (`apps/portfolio/src/lib/color-sort.ts`), so they match the Color page.
 
+## Full size
+
+Clicking a photo's thumbnail opens it full size over the page (the shared `ImageLightbox`, as on
+[Compare groups](compare-groups.md)), as the portfolio shows it, with any faces pixelated. **←** and **→** (or the
+arrows at the image's sides) move to the previous or next photo the page shows, in its sort and going round from the
+last to the first, and **Esc** closes it. It steps through the whole filtered list, so the published, drafts and
+Undecided toggles and `?photo=` decide which photos it visits; a photo with no image in R2 is skipped and its
+thumbnail isn't clickable. The top bar shows the photo's Draft or Undecided mark and its place, such as "12 of 340",
+and **Edit** under the image opens it on the Photo page. Closing puts focus back on the thumbnail of the photo last
+shown.
+
 ## Jumping to a photo
 
 A box floating at the bottom right, **Drafts and Undecided**, lists every draft and Undecided photo in the page's
