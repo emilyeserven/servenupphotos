@@ -53,6 +53,7 @@ import {
   useGridFilters,
 } from "@/components/gallery/grid-filters";
 import { prefixedFilters } from "@/lib/photo-data-filters";
+import { GALLERY_FILTER_KEYS, galleryFilters } from "@/lib/gallery-filters";
 import { type Selection, fileName, photoName } from "@/components/gallery/published-file";
 import { OfflineNotice } from "@/components/offline-notice";
 
@@ -86,7 +87,7 @@ export const Route = createFileRoute("/gallery")({
   component: GalleryPage,
   staticData: { wide: true },
   validateSearch: (search: Record<string, unknown>): GallerySearch => ({
-    ...prefixedFilters(search, HAS_FILTERS),
+    ...prefixedFilters(search, HAS_FILTERS, GALLERY_FILTER_KEYS),
     ...parseGridFilters(search),
     ...parsePlaceSearch(search),
     undecided: parseUndecided(search),
@@ -173,7 +174,7 @@ function PublishedPhotos() {
  * portfolio Grid's.
  */
 function GalleryFilters({ files }: { files: ShownFiles }) {
-  const { shown, total, filters, undecided, lowerTier, sort, place, grid } = files;
+  const { shown, total, filters, defs, undecided, lowerTier, sort, place, grid } = files;
   return (
     <>
       <PhotoFilterBar
@@ -184,6 +185,7 @@ function GalleryFilters({ files }: { files: ShownFiles }) {
         extraChosen={files.extraChosen}
         extraParams={GALLERY_FILTER_PARAMS}
         prefix={HAS_FILTERS}
+        defs={defs}
       >
         <PlaceFilterToggles filter={place} />
         <UndecidedToggle choice={undecided} />
@@ -210,11 +212,12 @@ function otherChosen(marks: unknown[], placeId: unknown, gridCount: number): boo
  * the others leave.
  */
 function useShownFiles(data: PublishedResponse | undefined, filter: string) {
-  const { filters, filter: applyFilters } = usePhotoFilters(HAS_FILTERS);
+  const place = usePlaceFilter();
+  const defs = galleryFilters(place.places);
+  const { filters, filter: applyFilters } = usePhotoFilters(HAS_FILTERS, defs);
   const { choice: undecided, apply: applyUndecided } = useUndecidedFilter();
   const { choice: lowerTier, apply: applyLowerTier } = useLowerTierFilter();
   const sort = useGallerySort();
-  const place = usePlaceFilter();
   const all = data?.files ?? NO_FILES;
   const grid = useGridFilters(
     all,
@@ -222,6 +225,7 @@ function useShownFiles(data: PublishedResponse | undefined, filter: string) {
   );
   return {
     filters,
+    defs,
     undecided,
     lowerTier,
     sort,

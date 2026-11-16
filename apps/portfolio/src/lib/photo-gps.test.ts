@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { gpsText, photoGps, photoPosition } from "@portfolio/lib/photo-gps";
+import { gpsDegreesText, photoGps, photoPosition } from "@portfolio/lib/photo-gps";
 import type { PhotoEntry } from "@portfolio/lib/photos";
 
 /** A photo with only the GPS fields. */
@@ -52,10 +52,13 @@ test("has no position for a photo with no GPS and no known place", () => {
 });
 
 test("writes a position as degrees, minutes and seconds", () => {
-  assert.equal(gpsText({ latitude: 37.52252, longitude: 126.97951 }), "37°31′21″ N, 126°58′46″ E");
-  assert.equal(gpsText({ latitude: -33.85, longitude: -151.2 }), "33°51′0″ S, 151°12′0″ W");
+  assert.equal(
+    gpsDegreesText({ latitude: 37.52252, longitude: 126.97951 }),
+    "37°31′21″ N, 126°58′46″ E",
+  );
+  assert.equal(gpsDegreesText({ latitude: -33.85, longitude: -151.2 }), "33°51′0″ S, 151°12′0″ W");
 });
 
 test("writes no text without both parts", () => {
-  assert.equal(gpsText({ latitude: 1, longitude: null }), null);
+  assert.equal(gpsDegreesText({ latitude: 1, longitude: null }), null);
 });

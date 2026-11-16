@@ -2,9 +2,10 @@
 
 `/gallery` shows the photos already in the portfolio: every photo `.json` on the base branch (`GET /api/photos/published`
 → `GET /photos/published`), newest first, as Square Thumbnail tiles (from the [offline copy](offline-mode.md)) with their title and file name, filterable by
-either and by the same **Title**, **Place**, **GPS position**, **Albums**, **Tags**, **Genres** and **Re-edit mark** filters as
+either and by the same **Title**, **Place**, **Albums**, **Tags**, **Genres** and **Re-edit mark** filters as
 [Photos in Flight](photos-in-flight.md#filters), kept in the URL with a `has` prefix (`?hasTitle=without`,
-`?hasPlace=with`) so they don't clash with the [portfolio Grid's filters](#the-portfolio-grids-filters) below them. [Undecided](photos-in-flight.md#undecided) photos are hidden
+`?hasPlace=with`) so they don't clash with the [portfolio Grid's filters](#the-portfolio-grids-filters) below them. In
+place of Photos in Flight's **GPS position**, the Gallery has [**On the map**](#on-the-map). [Undecided](photos-in-flight.md#undecided) photos are hidden
 until the **Undecided** filter is changed from **Hidden** to **Shown** (with the rest) or **Only** (`?undecided=show` or
 `?undecided=only`), and [Lower Tier](lower-tier.md) photos the same way by the **Lower Tier** filter beside it (`?lowerTier=show` or `?lowerTier=only`); the count under the filters says how many are shown while any are hidden. **Sort** beside it
 switches from **Date taken** (newest first) to **Date added** (`?sort=added`): the photos most recently added to the
@@ -12,6 +13,20 @@ portfolio first, by their [`addedDate`](data-model.md#date-added), then the ones
 linked to Photos in Flight. A photo with no title on the base branch is a [draft](drafts.md), listed here but marked
 **Draft**, since `ALLPHOTOS.json` leaves it out. The list is read from the photos folder rather than `ALLPHOTOS.json`, since editing needs
 each photo's file path, which `ALLPHOTOS.json` entries don't carry.
+
+### On the map
+
+**On the map** (**Any**, **Yes** or **No**, `?hasMap=with` or `?hasMap=without`) keeps the photos the portfolio's map
+shows, or the ones it leaves off. A photo is on the map when it has its own GPS position the portfolio can read (its
+custom one, or else its EXIF one), or when one of its places, or a place that place is in, has one on the Places page.
+So a photo with no GPS position of its own still counts when it inherits one from a place, and a GPS position the
+portfolio can't read doesn't. It's `isOnMap` in `lib/photo-map.ts`, which reads the photo's own position with the
+portfolio's `photoGps` and its places with the live places (including changes waiting for Commit), the same way the
+[place filter's](#a-places-photos) tile marks do. Photo Sets don't change it: the map only draws photos already on it
+as one marker. It goes by position alone: whether Undecided and Lower Tier photos are listed is up to their own filters.
+
+> **Frontend analogy:** it's filtering by a computed value rather than a raw field, like filtering a list by
+> `getComputedStyle(el).display !== "none"` instead of checking the element's own `style` attribute.
 
 ### Drawing tiles as you scroll
 

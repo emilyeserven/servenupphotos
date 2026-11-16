@@ -7,6 +7,7 @@ import {
 } from "@/api/places";
 import type { CombinedData } from "@/api/photos";
 import { type CombinedPhoto, currentPhotos } from "@/lib/group-photos";
+import { photoGpsSource } from "@/lib/photo-map";
 
 /** One country, city or place to localize, with how many photos list it. */
 export interface LocalizationRow {
@@ -102,4 +103,13 @@ export function localizationRows(
 /** The photos the combined lists have, at the pull request's head or else on the base branch; none until they're read. */
 export function shownPhotos(data: CombinedData | undefined): CombinedPhoto[] {
   return (data && currentPhotos(data)?.photos) ?? [];
+}
+
+/**
+ * How many photos list each place, by ID, among the photos that can't go on the map: no EXIF GPS
+ * position, and none from their places. Giving one of those places a GPS position puts them there.
+ */
+export function unmappedPlacePhotos(photos: CombinedPhoto[], places: Place[]): Map<string, number> {
+  const unmapped = photos.filter((photo) => photoGpsSource(photo, places).kind === "none");
+  return placePhotoCounts(unmapped);
 }

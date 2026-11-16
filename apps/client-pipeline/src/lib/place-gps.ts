@@ -1,6 +1,4 @@
-import { type Place, savedPlaces } from "@/api/places";
-import type { CombinedPhoto } from "@/lib/group-photos";
-import { placePhotoCounts } from "@/lib/place-seeds";
+import type { Place } from "@/api/places";
 import { placeChain } from "@/lib/place-chain";
 
 /** A place's GPS position, or neither part when it has none. */
@@ -119,47 +117,4 @@ function hasOwnGps(place: Place): boolean {
 /** The place, or else the nearest place above it, that has a GPS position; undefined when none does. */
 export function gpsSource(place: Place, places: Place[]): Place | undefined {
   return placeChain(place, places).chain.find(hasOwnGps);
-}
-
-/** Whether the photo has its own GPS position: in its EXIF, or a custom one written on the Photo page. */
-function hasOwnPhotoGps(photo: CombinedPhoto): boolean {
-  const custom = typeof photo.customGpsPosition === "string" ? photo.customGpsPosition : "";
-  return Boolean(writtenPosition(custom)) || hasText(photo.gpsPosition);
-}
-
-function hasText(value: unknown): boolean {
-  return typeof value === "string" && value.trim() !== "";
-}
-
-/**
- * Where a photo's spot on the portfolio's map comes from: its own GPS position (EXIF or custom), the
- * position of one of its places (or of a place that place is in), or nowhere, so it isn't on the map.
- */
-export type PhotoGpsSource = { kind: "own" } | { kind: "place"; place: Place } | { kind: "none" };
-
-/** The place whose GPS position the photo goes on the map at: its first place with one, or a place above it. */
-function placeGpsSource(photo: CombinedPhoto, places: Place[]): Place | undefined {
-  const byId = new Map(places.map((place) => [place.id, place]));
-  for (const { id } of savedPlaces(photo.places)) {
-    const place = byId.get(id);
-    const source = place && gpsSource(place, places);
-    if (source) return source;
-  }
-  return undefined;
-}
-
-/** Where the photo's spot on the portfolio's map comes from, the way the portfolio picks it. */
-export function photoGpsSource(photo: CombinedPhoto, places: Place[]): PhotoGpsSource {
-  if (hasOwnPhotoGps(photo)) return { kind: "own" };
-  const place = placeGpsSource(photo, places);
-  return place ? { kind: "place", place } : { kind: "none" };
-}
-
-/**
- * How many photos list each place, by ID, among the photos that can't go on the map: no EXIF GPS
- * position, and none from their places. Giving one of those places a GPS position puts them there.
- */
-export function unmappedPlacePhotos(photos: CombinedPhoto[], places: Place[]): Map<string, number> {
-  const unmapped = photos.filter((photo) => photoGpsSource(photo, places).kind === "none");
-  return placePhotoCounts(unmapped);
 }
