@@ -271,5 +271,6 @@
     "samples": 10050
   },
   "undecided": true,
-  "similarPhotos": [345, 347, 382, 344, 150, 465]
+  "similarPhotos": [345, 347, 382, 344, 150, 465],
+  "compareGroup": "Lattice Door in Dark Room"
 }

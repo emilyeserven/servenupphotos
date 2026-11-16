@@ -1,11 +1,11 @@
 {
-  "id": 627,
-  "title": null,
+  "title": "Peek Behind the Station Walls",
   "comment": null,
+  "id": 627,
   "altText": null,
   "notes": null,
   "file": "DSCF6018.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:18:57Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 17:46:45",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Porter Square Station",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/bd12f8d16339-dscf6018-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/bd12f8d16339-dscf6018-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/bd12f8d16339-dscf6018-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/bd12f8d16339-dscf6018-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bd12f8d16339-dscf6018-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/bd12f8d16339-dscf6018-thumbnail.webp?crop=654,0,3367",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bd12f8d16339-dscf6018-thumbnailpreview.webp?crop=654,0,3367",
     "thumbnailcrop": {
-      "x": 1309,
+      "x": 654,
       "y": 0,
       "size": 3367,
       "outputSize": 500
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": ["subway", "machinery", "steel", "texture", "urban-decay"],
   "genres": ["abstract"],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "porter-square-station"
+    },
+    {
+      "relation": "in",
+      "id": "porter-square"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

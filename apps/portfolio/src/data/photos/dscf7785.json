@@ -3,7 +3,7 @@
   "title": null,
   "comment": null,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (pixelation): The rear plates of the black Jeep and the silver SUV parked along the right side of the street are visible.",
   "file": "DSCF7785.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["pedestrians", "cars", "road", "trees", "skyscrapers", "brick"],
   "genres": [],
   "places": [],
   "noGps": false,
@@ -58,7 +58,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate license plates",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],
@@ -268,5 +271,6 @@
     "chroma": 7.59,
     "peakChroma": 19.33,
     "samples": 9828
-  }
+  },
+  "compareGroup": "Beacon Hill Street in Autumn"
 }

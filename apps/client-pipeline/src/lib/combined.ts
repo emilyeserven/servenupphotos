@@ -34,9 +34,30 @@ export function canonicalJson(value: unknown): string {
   );
 }
 
+/**
+ * Each list entry's canonical JSON, kept while the entry is. The lists' and photo files' data is
+ * never changed in place, so an entry is turned into JSON once rather than on every save and by
+ * every page part that compares it, which took seconds with a few dozen changes waiting for Commit.
+ */
+const entryJsonCache = new WeakMap<object, string>();
+
+/**
+ * A list entry or file's data as canonical JSON, worked out once per object. Only for data that's
+ * never changed in place, such as what the backend sent; use `canonicalJson` for a draft being edited.
+ */
+export function entryJson(value: unknown): string {
+  if (typeof value !== "object" || value === null) return canonicalJson(value);
+  let json = entryJsonCache.get(value);
+  if (json === undefined) {
+    json = canonicalJson(value);
+    entryJsonCache.set(value, json);
+  }
+  return json;
+}
+
 /** The file's entries as canonical JSON; undefined when it couldn't be read. */
 function entrySet(file: CombinedFile): ReadonlySet<string> | undefined {
-  return file.data && new Set(file.data.map(canonicalJson));
+  return file.data && new Set(file.data.map(entryJson));
 }
 
 /**
@@ -45,7 +66,7 @@ function entrySet(file: CombinedFile): ReadonlySet<string> | undefined {
  */
 function inEntries(entries: ReadonlySet<string> | undefined, data: unknown): boolean | null {
   if (!entries || data === undefined) return null;
-  return entries.has(canonicalJson(data));
+  return entries.has(entryJson(data));
 }
 
 /** What to show for a combined file the store hasn't read, or couldn't. */

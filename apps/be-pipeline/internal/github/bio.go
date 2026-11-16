@@ -112,8 +112,7 @@ func validBioPhoto(photo BioPhoto, n int) (BioPhoto, string, *PublishError) {
 	}
 	p := *photo.Portrait
 	p.Image, p.Small, p.Alt = strings.TrimSpace(p.Image), strings.TrimSpace(p.Small), strings.TrimSpace(p.Alt)
-	if !strings.HasPrefix(p.Image, "https://") || !strings.HasPrefix(p.Small, "https://") ||
-		len(p.Image) > maxBioLinkChars || len(p.Small) > maxBioLinkChars {
+	if !isWebLink(p.Image) || !isWebLink(p.Small) || len(p.Image) > maxBioLinkChars || len(p.Small) > maxBioLinkChars {
 		return photo, "", publishErr(http.StatusBadRequest, "Self-portrait %d needs the links of its two versions.", n)
 	}
 	if p.Width <= 0 || p.Height <= 0 {
@@ -123,4 +122,10 @@ func validBioPhoto(photo BioPhoto, n int) (BioPhoto, string, *PublishError) {
 		return photo, "", publishErr(http.StatusBadRequest, "Keep self-portrait %d's alt text to %d characters.", n, maxBioAlt)
 	}
 	return BioPhoto{Portrait: &p}, p.Image, nil
+}
+
+// isWebLink reports a link starting with https:// or http://, as the R2
+// Public URL in Settings may.
+func isWebLink(link string) bool {
+	return strings.HasPrefix(link, "https://") || strings.HasPrefix(link, "http://")
 }

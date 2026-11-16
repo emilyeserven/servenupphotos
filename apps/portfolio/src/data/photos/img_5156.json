@@ -1,9 +1,9 @@
 {
-  "id": 184,
-  "title": null,
+  "title": "Out of Time?",
   "comment": null,
+  "id": 184,
   "file": "IMG_5156.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T05:18:55Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 4,
@@ -54,7 +54,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9; Pixelate 1 face",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#393536",
@@ -261,5 +264,8 @@
     "peakChroma": 7.58,
     "samples": 10010
   },
-  "similarPhotos": [181, 42, 14, 167, 148, 449]
+  "similarPhotos": [181, 42, 14, 167, 148, 449],
+  "noGps": false,
+  "altText": null,
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 294 (1.70:1), not the 16:9 crop for a landscape photo.\n\nQuality Check (pixelation): The blonde woman in the red jacket on the left is checking her watch; her face is in focus and visible."
 }

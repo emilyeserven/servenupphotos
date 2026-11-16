@@ -1,6 +1,8 @@
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
+import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
 import { SavedPrompts } from "@/components/describe-style/saved-prompts";
 import { StyleOptions } from "@/components/describe-style/style-options";
 import { StylePhotos } from "@/components/describe-style/style-photos";
@@ -12,6 +14,7 @@ import {
   defaultStyleCount,
   samplePhotos,
   styleCount,
+  styleSheetPhotos,
   stylePrompt,
   takenDay,
 } from "@/lib/style-prompt";
@@ -35,7 +38,12 @@ function byDateTaken(photos: SocialPhoto[]): SocialPhoto[] {
  * number, and the prompt that asks an LLM to describe the photographer's style from them.
  */
 function DescribeStyle({ photos }: { photos: SocialPhoto[] }) {
-  const sorted = useMemo(() => byDateTaken(photos), [photos]);
+  const publishedOnly = useSearch({ from: "/describe-style" }).published === true;
+  const navigate = useNavigate({ from: "/describe-style" });
+  const sorted = useMemo(
+    () => byDateTaken(publishedOnly ? photos.filter((photo) => photo.inAllPhotos) : photos),
+    [photos, publishedOnly],
+  );
   const grid = useGridFilters(sorted, sorted);
   const [count, setCount] = useState(String(defaultStyleCount));
   const [seed, setSeed] = useState<number>();
@@ -43,7 +51,10 @@ function DescribeStyle({ photos }: { photos: SocialPhoto[] }) {
   // en-CA writes dates as YYYY-MM-DD, in the browser's own time zone.
   const [today] = useState(() => new Date().toLocaleDateString("en-CA"));
   const picked = samplePhotos(grid.shown, styleCount(count), seed);
+  const contact = useContactSheets(styleSheetPhotos(picked));
   const prompt = stylePrompt({
+    publishedOnly,
+    sheets: contact.sheets,
     photos: picked,
     matching: grid.shown.length,
     filtered: grid.count > 0,
@@ -81,6 +92,13 @@ function DescribeStyle({ photos }: { photos: SocialPhoto[] }) {
             shuffled={seed !== undefined}
             onShuffle={() => setSeed(Math.floor(Math.random() * 2 ** 32))}
             onSpread={() => setSeed(undefined)}
+            publishedOnly={publishedOnly}
+            onPublishedOnly={(checked) =>
+              void navigate({
+                search: (prev) => ({ ...prev, published: checked ? true : undefined }),
+                replace: true,
+              })
+            }
           />
           <label className="flex flex-col gap-2 text-sm">
             Anything to focus on (optional)
@@ -90,9 +108,10 @@ function DescribeStyle({ photos }: { photos: SocialPhoto[] }) {
               onChange={(event) => setFocus(event.target.value)}
             />
           </label>
+          <ContactSheetsButton state={contact} />
           <CopyPromptButton
             label={`Copy the style prompt for ${picked.length} photos`}
-            disabled={picked.length === 0}
+            disabled={picked.length === 0 || contact.pending}
             prompt={() => prompt}
           />
           <StylePhotos photos={picked} />

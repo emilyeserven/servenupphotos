@@ -57,7 +57,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate license plates",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#535259",
@@ -265,5 +268,7 @@
     "samples": 9768
   },
   "undecided": true,
-  "similarPhotos": [490, 492, 436, 413, 493, 430]
+  "similarPhotos": [490, 492, 436, 413, 493, 430],
+  "compareGroup": "Steep Street at Dusk",
+  "notes": "Quality Check (pixelation): The rear plate of the white VW sedan at the bottom right is readable, and so is the plate of the dark SUV just left of it."
 }

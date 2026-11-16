@@ -1,11 +1,11 @@
 {
-  "id": 668,
-  "title": null,
+  "title": "Bostonian Street I",
   "comment": null,
+  "id": 668,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (pixelation): The rear plate of the black Jeep parked on the right is visible, and the silver SUV in front of it may show part of its plate too.",
   "file": "DSCF7788.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:43:46Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.3,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/00cbd144d319-dscf7788-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/00cbd144d319-dscf7788-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/00cbd144d319-dscf7788-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/00cbd144d319-dscf7788-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/00cbd144d319-dscf7788-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/00cbd144d319-dscf7788-thumbnail.webp?crop=0,2011,5028",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/00cbd144d319-dscf7788-thumbnailpreview.webp?crop=0,2011,5028",
     "thumbnailcrop": {
       "x": 0,
-      "y": 1005,
+      "y": 2011,
       "size": 5028,
       "outputSize": 500
     }
@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["flags", "bay-windows", "brick", "cars", "trees", "autumn"],
   "genres": [],
   "places": [],
   "noGps": false,
@@ -58,7 +58,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate license plates",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],
@@ -268,5 +271,6 @@
     "chroma": 9.77,
     "peakChroma": 24.37,
     "samples": 9912
-  }
+  },
+  "compareGroup": "Beacon Hill Street in Autumn"
 }

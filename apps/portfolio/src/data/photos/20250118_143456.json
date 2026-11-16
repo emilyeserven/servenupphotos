@@ -267,5 +267,6 @@
     "samples": 9348
   },
   "notes": "Shows mosque carpets; 'carpet' isn't a tag, since only 2 photos have it.",
-  "similarPhotos": [275, 212, 277, 279, 288, 34]
+  "similarPhotos": [275, 212, 277, 279, 288, 34],
+  "compareGroup": "Silhouettes in Mosque Doorway"
 }

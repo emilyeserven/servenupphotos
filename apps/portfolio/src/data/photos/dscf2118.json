@@ -277,5 +277,6 @@
     "samples": 9900
   },
   "undecided": true,
-  "similarPhotos": [405, 375, 402, 403, 40, 483]
+  "similarPhotos": [405, 375, 402, 403, 40, 483],
+  "compareGroup": "Golden Gate Bridge Across the Bay"
 }

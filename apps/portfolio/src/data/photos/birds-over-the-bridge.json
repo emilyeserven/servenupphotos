@@ -279,5 +279,6 @@
   "similarPhotos": [403, 489, 405, 399, 393, 375],
   "noGps": false,
   "altText": null,
-  "notes": null
+  "notes": null,
+  "compareGroup": "Golden Gate Bridge Across the Bay"
 }

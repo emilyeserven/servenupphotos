@@ -5,6 +5,7 @@ import { type ReactNode, useMemo, useState } from "react";
 import { type BucketImage, bucketImagesQuery } from "@/api/photos";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
 import { type PUBLISHED, isSquare, keyStem, parseVersionKey } from "@/api/versions";
+import { ContactSheetsCard } from "@/components/bucket-contact-sheets";
 import { DeleteImageButton } from "@/components/bucket-delete";
 import {
   type BucketFilters,
@@ -27,6 +28,7 @@ import {
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { type PhotoMarks, usePhotoMarks } from "@/hooks/use-photo-marks";
+import { isContactSheetKey } from "@/lib/contact-sheets";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/bucket")({
@@ -42,7 +44,7 @@ function BucketPage() {
     <Page
       wide
       title="Explore Bucket"
-      description="Every image in the R2 bucket, newest first. Click a stack to see its resized copies, generate JSON for a photo that isn't saved yet, or delete an image from R2."
+      description="Every image in the R2 bucket, newest first. Click a stack to see its resized copies, generate JSON for a photo that isn't saved yet, or delete an image from R2. Contact sheets made for prompts have their own section."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -70,7 +72,7 @@ function BucketPage() {
 function BucketCard({ githubIsSetUp }: { githubIsSetUp: boolean }) {
   const bucket = useQuery(bucketImagesQuery);
   const marks = usePhotoMarks(githubIsSetUp, bucket.data);
-  const stacks = useMemo(() => stackImages(bucket.data?.images ?? []), [bucket.data]);
+  const stacks = useMemo(() => stackImages(gridImages(bucket.data)), [bucket.data]);
   const filters = useBucketFilters(marks.checked);
   const shown = stacks.filter((stack) => matchesBucketFilters(filterable(marks, stack), filters));
 
@@ -108,9 +110,15 @@ function BucketCard({ githubIsSetUp }: { githubIsSetUp: boolean }) {
         )}
       </Card>
 
+      <ContactSheetsCard />
       <BucketGrid stacks={shown} marks={marks} />
     </>
   );
+}
+
+/** The images the grid shows: all but the contact sheets, which have their own section. */
+function gridImages(listing?: { images: BucketImage[] }): BucketImage[] {
+  return (listing?.images ?? []).filter((image) => !isContactSheetKey(image.key));
 }
 
 /** The filters in the URL, without Photo data until the photo data has been checked. */

@@ -1,11 +1,11 @@
 {
-  "id": 636,
-  "title": null,
+  "title": "Beacon Hill Stoop II",
   "comment": null,
+  "id": 636,
   "altText": null,
   "notes": null,
   "file": "DSCF7125-2.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:17:18Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:08 10:36:42",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Beacon Hill",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/6422345caa80-dscf7125-2-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/6422345caa80-dscf7125-2-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/6422345caa80-dscf7125-2-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/6422345caa80-dscf7125-2-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6422345caa80-dscf7125-2-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/6422345caa80-dscf7125-2-thumbnail.webp?crop=0,1543,4131",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6422345caa80-dscf7125-2-thumbnailpreview.webp?crop=0,1543,4131",
     "thumbnailcrop": {
       "x": 0,
-      "y": 826,
+      "y": 1543,
       "size": 4131,
       "outputSize": 500
     }
@@ -50,9 +50,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["stoop", "pumpkins", "plants", "stairs", "doors", "autumn"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "beacon-hill"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -268,5 +273,6 @@
     "chroma": 6.27,
     "peakChroma": 15.46,
     "samples": 10115
-  }
+  },
+  "compareGroup": "Doorstep Autumn Decorations"
 }

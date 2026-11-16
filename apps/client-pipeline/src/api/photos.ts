@@ -2,7 +2,7 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { ExifResponse, SanitizedExif } from "@/api/exif";
 import type { NearDuplicates } from "@/api/near-duplicates";
 import type { PhotoPlace } from "@/api/places";
-import { type ScanChange, photoChanges } from "@/api/scan-changes";
+import { type PendingSave, type ScanChange, changesByKind, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/request";
 import type { CombinedKind, GroupKind } from "@/lib/data-kinds";
 
@@ -314,6 +314,33 @@ export const removeInFlightMutation = mutationOptions({
   },
   mutationFn: (path: string) =>
     requestJson<RemoveResult>(`/api/photos/in-flight?${new URLSearchParams({ path })}`, {
+      method: "DELETE",
+    }),
+});
+
+/**
+ * What deleting a photo from the Photo page did: its JSON and every file that pointed at it, saved
+ * as changes waiting for Commit, and what happened to its images in R2.
+ */
+export interface DeletePhotoResult extends PendingSave {
+  path: string;
+  /** The photo file's data before it was deleted. */
+  before: unknown;
+  image: RemoveResult["image"];
+  /** What happened to its unedited original and that original's versions; absent when it had none. */
+  original?: RemoveResult["image"];
+}
+
+/**
+ * Deletes the photo file at a path, new or already in the portfolio: the file and the references to
+ * it (albums, Unselected Photos winners, the bio, viewer likes, photo books and trip lines) wait for
+ * Commit, while its images are deleted from R2 at once.
+ */
+export const deletePhotoMutation = mutationOptions({
+  mutationKey: ["photos", "delete"],
+  meta: { saves: true, changes: (result) => changesByKind(result as DeletePhotoResult) },
+  mutationFn: (path: string) =>
+    requestJson<DeletePhotoResult>(`/api/photos/saved?${new URLSearchParams({ path })}`, {
       method: "DELETE",
     }),
 });

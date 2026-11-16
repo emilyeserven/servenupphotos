@@ -10,6 +10,7 @@ import {
   type LucideIcon,
   PaletteIcon,
   ScissorsIcon,
+  ShieldCheckIcon,
   TagsIcon,
   TextCursorInputIcon,
 } from "lucide-react";
@@ -23,6 +24,7 @@ import { MissingFieldsCard } from "@/components/missing-fields";
 import { PhotoColorsCard } from "@/components/photo-colors-card";
 import { R2ExifCard } from "@/components/r2-exif/r2-exif-card";
 import { PruneTagsCard } from "@/components/prune-tags/prune-tags-card";
+import { QualityCheckCard } from "@/components/quality-check/quality-check-card";
 import { ReapplyOverridesCard } from "@/components/reapply-overrides";
 import { TagDescriptionsCard } from "@/components/tag-descriptions/tag-descriptions-card";
 import { TagLibraryCard } from "@/components/tag-library/tag-library-card";
@@ -89,6 +91,12 @@ export const updateDataSections: readonly UpdateDataSection[] = [
     title: "EXIF in R2",
     icon: FileImageIcon,
     render: (s) => <R2ExifCard canRead={r2IsSetUp(s.r2)} />,
+  },
+  {
+    slug: "quality-check",
+    title: "Quality Check",
+    icon: ShieldCheckIcon,
+    render: () => <QualityCheckCard />,
   },
 ];
 

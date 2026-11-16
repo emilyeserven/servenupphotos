@@ -13,6 +13,7 @@ import { OfflineNotice } from "@/components/offline-notice";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
 import { SavedDrafts } from "@/components/saved-drafts";
 import { UndecidedQueue } from "@/components/undecided-photos";
+import { useRevealed } from "@/hooks/use-revealed";
 import { undecidedPaths } from "@/lib/undecided";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
@@ -70,7 +71,13 @@ export function PhotoFiles({
   );
 }
 
-/** The photos in flight, each with its image and JSON, in a section that collapses. */
+/** How many photos in flight to draw at first, and to add each time the bottom comes near. */
+const CARD_BATCH = 12;
+
+/**
+ * The photos in flight, each with its image and JSON, in a section that collapses, drawn a few at
+ * a time as the page scrolls (`useRevealed`).
+ */
 function InFlightList({
   files,
   ...props
@@ -81,11 +88,13 @@ function InFlightList({
   baseBranch?: string;
   onRemoved: (result: RemoveResult) => void;
 }) {
+  const [revealedCount, revealedEnd] = useRevealed(files.length, CARD_BATCH);
   return (
     <CollapsiblePhotos count={files.length}>
-      {files.map((file) => (
+      {files.slice(0, revealedCount).map((file) => (
         <FileSection key={file.path} file={file} {...props} />
       ))}
+      <div ref={revealedEnd} aria-hidden />
     </CollapsiblePhotos>
   );
 }

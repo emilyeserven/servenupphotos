@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["sidewalk", "brick", "pedestrians", "trees", "fallen-leaves"],
   "genres": [],
   "places": [],
   "noGps": false,
@@ -268,5 +268,6 @@
     "chroma": 9.67,
     "peakChroma": 19.72,
     "samples": 9912
-  }
+  },
+  "compareGroup": "Brick Sidewalk Under Trees"
 }

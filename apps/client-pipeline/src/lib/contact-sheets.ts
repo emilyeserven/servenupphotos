@@ -31,3 +31,46 @@ export function lookAtPhotos(sheets: ContactSheet[] | undefined, withoutSheets: 
   return `Start with the contact sheets below. Each shows up to 30 of these photos as numbered tiles, in the order they're listed here, each labeled with its tile number and the photo's name in quotes. Open every sheet and look at the photos on it. Each photo's own link is a larger version: open it only when you need a closer look, such as to tell two similar photos apart or to read a sign.
 ${lines.join("\n")}`;
 }
+
+/** The folder in R2 that contact sheets are put in. */
+const CONTACT_SHEETS_FOLDER = "contact-sheets/";
+
+/** Whether the key is a contact sheet's, in `contact-sheets/`. */
+export function isContactSheetKey(key: string): boolean {
+  return key.startsWith(CONTACT_SHEETS_FOLDER);
+}
+
+/** One time contact sheets were made: their folder in R2 and the sheets in it. */
+export interface ContactSheetSet<T extends { key: string; size: number; modified: string }> {
+  /** The folder's name, such as `20261115-045000-1a2b3c4d`, which deleting it is asked by. */
+  name: string;
+  /** Its sheets, in order. */
+  sheets: T[];
+  /** Their size together, in bytes. */
+  size: number;
+  /** When its newest sheet was put in R2, as an ISO timestamp. */
+  modified: string;
+}
+
+/** The contact sheets among images, in a set per folder, newest set first. */
+export function contactSheetSets<T extends { key: string; size: number; modified: string }>(
+  images: T[],
+): ContactSheetSet<T>[] {
+  const byName = new Map<string, T[]>();
+  for (const image of images.filter((image) => isContactSheetKey(image.key))) {
+    const name = image.key.slice(CONTACT_SHEETS_FOLDER.length).split("/")[0] ?? "";
+    byName.set(name, [...(byName.get(name) ?? []), image]);
+  }
+  return [...byName]
+    .map(([name, sheets]) => ({
+      name,
+      sheets: sheets.toSorted((a, b) => a.key.localeCompare(b.key)),
+      size: sheets.reduce((sum, sheet) => sum + sheet.size, 0),
+      modified:
+        sheets
+          .map((sheet) => sheet.modified)
+          .toSorted()
+          .at(-1) ?? "",
+    }))
+    .toSorted((a, b) => b.modified.localeCompare(a.modified));
+}

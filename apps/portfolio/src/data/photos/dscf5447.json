@@ -1,11 +1,11 @@
 {
-  "id": 610,
-  "title": null,
+  "title": "Gated Alley",
   "comment": null,
+  "id": 610,
   "altText": null,
   "notes": null,
   "file": "DSCF5447.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:29:30Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -13,7 +13,7 @@
   "iso": 5000,
   "focalLength": 135,
   "gpsPosition": "42 deg 21' 7.07\" N, 71 deg 3' 41.78\" W",
-  "customGpsPosition": null,
+  "customGpsPosition": "42.35202536029723, -71.06112422404517",
   "createDate": "2026:11:07 13:28:41",
   "customCreateDate": null,
   "placeName": "Boston Chinatown",
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-thumbnail.webp?crop=0,1819,5152",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8c54caa3c329-dscf5447-thumbnailpreview.webp?crop=0,1819,5152",
     "thumbnailcrop": {
       "x": 0,
-      "y": 1030,
+      "y": 1819,
       "size": 5152,
       "outputSize": 500
     }

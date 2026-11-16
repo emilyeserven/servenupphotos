@@ -8,6 +8,7 @@ import {
   baseAlbums,
   baseGenres,
   baseTags,
+  entryFixtures,
   group,
   headPhotos,
   pendingSave,
@@ -38,6 +39,10 @@ function withGroupsAdded(data, add) {
 /** The sample answers for the organize routes, keyed "METHOD /api/path". */
 export function organizeFixtures() {
   return {
+    ...entryFixtures("sets", "sample-set", added.sets[0].data, (body) => ({
+      ...body,
+      id: "sample-set",
+    })),
     "PUT /api/organize/albums/japan/parent": () => ({
       ...pendingSave(),
       path: `${FOLDER}/albums/japan.json`,

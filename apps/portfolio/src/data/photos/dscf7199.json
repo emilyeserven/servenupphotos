@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["manhole-covers", "typography", "rust", "fallen-leaves", "texture"],
   "genres": [],
   "places": [],
   "noGps": false,
@@ -268,5 +268,6 @@
     "chroma": 12.99,
     "peakChroma": 22.86,
     "samples": 10050
-  }
+  },
+  "compareGroup": "Utility Cover with Fallen Leaves"
 }

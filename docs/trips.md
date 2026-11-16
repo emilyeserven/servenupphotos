@@ -132,6 +132,7 @@ how many legs it has. Clicking one opens its own page, `/trip-lines/trips/<id>` 
   layers (`@portfolio/lib/trip-line-layers`): a ferry in teal dots, a flight in pink dashes. It fits the days' photos,
   so a long flight home runs off its edge rather than zooming out to the whole world, and it follows what's typed, so
   a leg shows as soon as it's added. A leg is a straight line here; Commit bakes a flight as an arc for the portfolio.
+  Right-clicking it copies that spot's coordinates (see [Copy coordinates](portfolio-map.md#copy-coordinates)).
 - **Name, first day and last day** (left empty, the last day is the first). It says how many photos fall in the days
   typed, and says so before saving when another Trip already covers some of them.
 - **Days and legs** (`components/trips/day-legs.tsx`): every day of the Trip, first to last, each linking to its Route

@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["sidewalk", "brick", "street-lights", "trees", "autumn"],
   "genres": [],
   "places": [],
   "noGps": false,
@@ -268,5 +268,6 @@
     "chroma": 8.33,
     "peakChroma": 18.57,
     "samples": 9828
-  }
+  },
+  "compareGroup": "Brick Sidewalk Under Trees"
 }

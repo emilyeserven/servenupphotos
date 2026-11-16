@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeftIcon } from "lucide-react";
+import { useState } from "react";
 import { type CompareRead, ReadProblems } from "@/components/compare/compare-group-list";
+import { CompareLightbox } from "@/components/compare/compare-lightbox";
 import { ComparePhotoCard } from "@/components/compare/compare-photo-card";
 import { FinishComparing } from "@/components/compare/finish-comparing";
 import { Button } from "@/components/ui/button";
@@ -29,17 +31,20 @@ export function CompareGroupView({ name, compare }: { name: string; compare: Com
   );
 }
 
+/** The group's photos side by side; clicking one shows it full size, where the arrow keys move between them. */
 function GroupPhotos({ group }: { group: CompareGroup }) {
+  const [openPath, setOpenPath] = useState<string | null>(null);
   return (
     <>
       <GroupHeader group={group} />
       <ul className={cn("grid items-start gap-4", columns(group.photos.length))}>
         {group.photos.map((photo) => (
           <li key={photo.file.path} className="h-full">
-            <ComparePhotoCard photo={photo} />
+            <ComparePhotoCard photo={photo} onOpen={() => setOpenPath(photo.file.path)} />
           </li>
         ))}
       </ul>
+      <CompareLightbox photos={group.photos} openPath={openPath} onOpenPath={setOpenPath} />
     </>
   );
 }

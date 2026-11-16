@@ -11,7 +11,7 @@ function isBio(value: unknown): value is Bio {
 
 const bioEntries = settingEntries("bio", isBio);
 
-/** The bio as the next Commit will have it: BIO.json with the changes since, or an empty one. */
+/** The bio as the next Commit will have it: ALLBIO.json with the changes since, or an empty one. */
 export function bioFile(data: CombinedData | undefined): Bio {
   return bioEntries(data)[0] ?? EMPTY_BIO;
 }

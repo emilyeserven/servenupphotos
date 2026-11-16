@@ -163,8 +163,12 @@ func shared(a, b []string) []string {
 type BulkTagPickOptions struct {
 	// Skip is the photos already shown, to leave out.
 	Skip []string `json:"skip"`
-	// Count is how many photos to pick, 1 to 50; 0 picks 5.
+	// Count is how many photos to pick, 1 to 50; 0 picks 5. All overrides it.
 	Count int `json:"count"`
+	// All picks every photo without tags (after Skip), with no limit: all of
+	// them with Any, or else the first one and every photo that shares
+	// something with it.
+	All bool `json:"all"`
 	// Any picks the first untagged photos by path, whether or not they go
 	// together, instead of one photo and the ones most like it.
 	Any bool `json:"any"`
@@ -182,8 +186,8 @@ func (c *Client) CountUntaggedPhotos(ctx context.Context, gh settings.GitHub) (B
 	return pick, nil
 }
 
-// PickBulkTagPhotos picks up to opts.Count photos (1 to 50, 5 when unset) to
-// tag together, from the photo files as the next Commit will have them,
+// PickBulkTagPhotos picks up to opts.Count photos (1 to 50, 5 when unset, no
+// limit with opts.All) to tag together, from the photo files as the next Commit will have them,
 // leaving out opts.Skip's paths.
 // Only photos without tags are picked: the first by path, then the ones most
 // like it (sharing its places, city or country, genres and date), or with
@@ -197,10 +201,14 @@ func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, opts
 	if len(photos) == 0 {
 		return BulkTagPick{}, publishErr(http.StatusNotFound, "There are no more photos without tags to pick from. Start over to pick from every one again.")
 	}
+	count := bulkTagCount(opts.Count)
+	if opts.All {
+		count = len(photos)
+	}
 	if opts.Any {
-		pick.Photos = pickFirst(photos, bulkTagCount(opts.Count))
+		pick.Photos = pickFirst(photos, count)
 	} else {
-		pick.Photos = pickRelated(photos, bulkTagCount(opts.Count), relate)
+		pick.Photos = pickRelated(photos, count, relate)
 	}
 	return pick, nil
 }

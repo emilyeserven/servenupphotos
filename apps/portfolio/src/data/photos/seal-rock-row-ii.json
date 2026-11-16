@@ -60,7 +60,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate a license plate",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#4c5152",
@@ -267,5 +270,7 @@
     "peakChroma": 14.53,
     "samples": 9900
   },
-  "similarPhotos": [430, 436, 372, 408, 412, 373]
+  "similarPhotos": [430, 436, 372, 408, 412, 373],
+  "compareGroup": "Seal Rock Row Houses",
+  "notes": "Quality Check (pixelation): The rear plate of the silver Nissan pickup in the foreground, right of centre, is readable."
 }

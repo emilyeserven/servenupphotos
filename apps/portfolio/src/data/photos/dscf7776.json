@@ -1,11 +1,11 @@
 {
-  "id": 666,
-  "title": null,
+  "title": "Mt. Vernon St.",
   "comment": null,
+  "id": 666,
   "altText": null,
   "notes": null,
   "file": "DSCF7776.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:49:52Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/b44e2f2328b4-dscf7776-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/b44e2f2328b4-dscf7776-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/b44e2f2328b4-dscf7776-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/b44e2f2328b4-dscf7776-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b44e2f2328b4-dscf7776-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/b44e2f2328b4-dscf7776-thumbnail.webp?crop=0,0,4804",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b44e2f2328b4-dscf7776-thumbnailpreview.webp?crop=0,0,4804",
     "thumbnailcrop": {
       "x": 0,
-      "y": 961,
+      "y": 0,
       "size": 4804,
       "outputSize": 500
     }
@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["signposts", "ivy", "fences", "walls", "sidewalk", "autumn"],
   "genres": [],
   "places": [],
   "noGps": false,

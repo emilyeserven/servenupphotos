@@ -1,11 +1,11 @@
 {
-  "id": 581,
-  "title": null,
+  "title": "Rainy Myeongdong Streets IV",
   "comment": null,
+  "id": 581,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (aspect ratio): the Small version is 386 × 500 (1:1.30), not the 5:7 crop for a portrait photo.",
   "file": "DSCF2193.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:49:22Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/7a3a8e8fb32f-dscf2193-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/7a3a8e8fb32f-dscf2193-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/7a3a8e8fb32f-dscf2193-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/7a3a8e8fb32f-dscf2193-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7a3a8e8fb32f-dscf2193-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/7a3a8e8fb32f-dscf2193-thumbnail.webp?crop=0,609,4325",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7a3a8e8fb32f-dscf2193-thumbnailpreview.webp?crop=0,609,4325",
     "thumbnailcrop": {
       "x": 0,
-      "y": 636,
+      "y": 609,
       "size": 4325,
       "outputSize": 500
     }
@@ -63,7 +63,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 5:7",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],
@@ -273,5 +276,6 @@
     "chroma": 8.5,
     "peakChroma": 22.95,
     "samples": 9744
-  }
+  },
+  "compareGroup": "Rainy Myeongdong Alley"
 }

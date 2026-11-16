@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["bees", "insects", "flowers", "garden"],
   "genres": [],
   "places": [],
   "noGps": false,
@@ -268,5 +268,6 @@
     "chroma": 18.57,
     "peakChroma": 28.33,
     "samples": 9694
-  }
+  },
+  "compareGroup": "Bumblebee on Purple Flowers"
 }

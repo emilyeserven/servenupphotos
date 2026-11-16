@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#7d6246",
@@ -266,6 +269,6 @@
     "peakChroma": 44.66,
     "samples": 9728
   },
-  "notes": "Shows a lizard; 'lizards' isn't a tag, since only 1 photo has one.",
+  "notes": "Shows a lizard; 'lizards' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 296 (1.69:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [146, 155, 97, 119, 496, 96]
 }

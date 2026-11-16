@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#a09f9a",
@@ -266,6 +269,6 @@
     "peakChroma": 9.44,
     "samples": 9727
   },
-  "notes": "Shows a topiary planter; 'planter' and 'topiary' aren't tags, since only 2 photos have each.",
+  "notes": "Shows a topiary planter; 'planter' and 'topiary' aren't tags, since only 2 photos have each.\n\nQuality Check (aspect ratio): the Small version is 500 × 257 (1.95:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [55, 153, 233, 336, 63, 284]
 }

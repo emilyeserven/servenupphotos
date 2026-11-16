@@ -56,7 +56,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate a license plate",
+    "date": "2026-11-15"
+  },
   "exifOriginals": {
     "camera": "X-T5",
     "lens": "21.0 mm",
@@ -272,5 +275,6 @@
     "peakChroma": 16.86,
     "samples": 10050
   },
-  "similarPhotos": [132, 304, 282, 250, 11, 219]
+  "similarPhotos": [132, 304, 282, 250, 11, 219],
+  "notes": "Quality Check (pixelation): The rear plate of the black sedan parked on the right side of the street is readable."
 }

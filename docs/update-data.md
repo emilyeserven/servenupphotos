@@ -13,8 +13,9 @@ directly. The list and each subpage's card are in `components/update-data/sectio
 entry there, in both navigations (`SectionsLayout` and `SectionNav` in `components/update-data/` draw the page and its navigation).
 
 Update Data keeps the changes to the photo files as a whole: **Image base URL**, **Image names**, **Missing fields**,
-**Colors**, **Camera overrides**, **Localizations**, [**Times across timezones**](timezone-shift.md) and
-[**EXIF in R2**](r2-exif.md), the one change that writes to the originals in R2 rather than the photo files. The rest
+**Colors**, **Camera overrides**, **Localizations**, [**Times across timezones**](timezone-shift.md),
+[**EXIF in R2**](r2-exif.md), the one change that writes to the originals in R2 rather than the photo files, and
+[**Quality Check**](quality-check.md), which checks crops and asks an LLM about plates and faces, flagging the photos that fail for re-edit. The rest
 moved into the sidebar, next to what they change, working just as described below:
 
 - The four tag changes, **Bulk tagging**, **Tag library**, **Tag pruning** and **Tag descriptions**, are the tag
@@ -108,10 +109,12 @@ city when the state is named like a city, such as Seoul; see
 
 ## Bulk tagging
 
-**Bulk tagging** tags up to 50 photos with one LLM prompt. The card first says how many photo files have no tags yet
+**Bulk tagging** tags up to 50 photos with one LLM prompt, or every photo without tags with **No limit**. The card first says how many photo files have no tags yet
 (`POST /api/data/bulk-tags/untagged`, read again after each save). **Photos to pick** next to the buttons sets how
 many each pick finds (5 at first, 1 to 50; the backend treats a missing `count` as 5 and caps it at 50, and the
-preview and save take at most 50 photos too). **Pick photos** (`POST /api/data/bulk-tags/pick`, `{ skip, count, any }`)
+preview and save take any number of photos). **No limit** (`all: true`) hides the count and picks every photo
+without tags that's left: with **Pick photos that go together**, the first one and every photo that shares something
+with it; without, all of them. A big pick makes a long prompt, so make contact sheets before copying it. **Pick photos** (`POST /api/data/bulk-tags/pick`, `{ skip, count, any }`)
 reads every photo file as the next Commit will have it and only considers photos without tags (an empty or missing
 `tags`), so a photo that already has tags is never picked. It picks the first of those by path, then up to `count` − 1 more
 that share the most with it: each shared [place](places-and-localizations.md) counts 5, the same

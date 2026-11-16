@@ -40,8 +40,10 @@ was taken, ends up in the public bucket. Taking a self-portrait off the bio leav
 
 ## The file
 
-The bio is one file, `bio/bio.json`, and **Commit** combines it into `bio/BIO.json` (a list with the one bio in it),
-as it does the other [changes waiting for Commit](pending-changes.md). Every change on the page is saved
+The bio is one file, `bio/bio.json`, and **Commit** combines it into `bio/ALLBIO.json` (a list with the one bio in it),
+as it does the other [changes waiting for Commit](pending-changes.md). The combined list isn't named `BIO.json`, since the
+pipeline tells a kind's files from its combined list ignoring case, as macOS and Windows do, so `bio.json` would be
+taken for the list and never combined. Every change on the page is saved
 (`PUT /api/bio/bio` → `PUT /bio/{id}`) under a second after the last one, so typing saves once; the note beside
 **Photos** says **Saving…** until it has, and **Saved for Commit** after.
 

@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#5b5440",
@@ -266,5 +269,6 @@
     "peakChroma": 41.86,
     "samples": 9453
   },
-  "similarPhotos": [114, 237, 81, 111, 495, 82]
+  "similarPhotos": [114, 237, 81, 111, 495, 82],
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 252 (2:1), not the 16:9 crop for a landscape photo."
 }

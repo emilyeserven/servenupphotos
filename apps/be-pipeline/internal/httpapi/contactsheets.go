@@ -242,3 +242,50 @@ func fetchSheetImage(ctx context.Context, raw string) (image.Image, error) {
 	}
 	return versions.Decode(io.LimitReader(res.Body, maxSheetImageBytes))
 }
+
+// deleteContactSheetsTimeout bounds deleting contact sheets: every set at
+// once can be a few hundred sheets, one request each.
+const deleteContactSheetsTimeout = 2 * time.Minute
+
+// deleteSheetsFunc deletes one set of sheets, or all of them for "";
+// storage.DeleteContactSheets in production.
+type deleteSheetsFunc func(ctx context.Context, cfg settings.R2, set string) (storage.DeletedContactSheets, error)
+
+// deleteContactSheetsRequest is the body of POST
+// /photos/bucket/contact-sheets/delete.
+type deleteContactSheetsRequest struct {
+	// Set is the folder of one set of sheets, such as
+	// 20261115-045000-1a2b3c4d, or "" for every set.
+	Set string `json:"set"`
+}
+
+// handleDeleteContactSheets deletes one set of contact sheets from R2, or
+// every set, for Explore Bucket, since R2 can't always be set to delete them
+// by itself. It answers 200 with how many went and which didn't.
+func handleDeleteContactSheets(loadR2 func() (settings.R2, error), del deleteSheetsFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req deleteContactSheetsRequest
+		if !decodeEntryUpTo(w, r, &req, "contact sheets", 1<<12) {
+			return
+		}
+		cfg, err := loadR2()
+		if err != nil {
+			slog.Error("read settings failed", "err", err)
+			writeError(w, http.StatusInternalServerError, "could not read settings")
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), deleteContactSheetsTimeout)
+		defer cancel()
+		res, err := del(ctx, cfg, req.Set)
+		var lerr *storage.ListError
+		switch {
+		case errors.As(err, &lerr):
+			writeError(w, http.StatusBadRequest, lerr.Message)
+		case err != nil:
+			slog.Error("delete contact sheets failed", "err", err)
+			writeError(w, http.StatusInternalServerError, "could not delete the contact sheets")
+		default:
+			writeJSON(w, http.StatusOK, res)
+		}
+	}
+}

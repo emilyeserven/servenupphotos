@@ -1,11 +1,11 @@
 {
-  "id": 626,
-  "title": null,
+  "title": "RED LINE INBOUND",
   "comment": null,
+  "id": 626,
   "altText": null,
   "notes": null,
   "file": "DSCF6001.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:18:37Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 17:46:06",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Porter Square Station",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/7acd1e98672f-dscf6001-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/7acd1e98672f-dscf6001-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/7acd1e98672f-dscf6001-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/7acd1e98672f-dscf6001-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7acd1e98672f-dscf6001-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/7acd1e98672f-dscf6001-thumbnail.webp?crop=2482,0,4322",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7acd1e98672f-dscf6001-thumbnailpreview.webp?crop=2482,0,4322",
     "thumbnailcrop": {
-      "x": 1681,
+      "x": 2482,
       "y": 0,
       "size": 4322,
       "outputSize": 500
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": ["subway", "trains", "platform", "train-station", "signage"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "porter-square-station"
+    },
+    {
+      "relation": "in",
+      "id": "porter-square"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -268,5 +277,6 @@
     "chroma": 10.61,
     "peakChroma": 31.64,
     "samples": 9975
-  }
+  },
+  "compareGroup": "Red Line Train at the Platform"
 }

@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import type { PlacedPhoto } from "@/lib/map-photos";
 import { cn } from "@/lib/utils";
 
-/** A cluster that was clicked, with the photos it covers. */
+/** A cluster or Photo Set that was clicked, with the photos it covers. */
 export interface OpenCluster {
   longitude: number;
   latitude: number;
   photos: PlacedPhoto[];
+  /** A Photo Set's name, shown over its photos and their count. */
+  title?: string;
 }
 
 /** The open cluster's grid: its photos, and opening one of them. */
@@ -36,10 +38,22 @@ export function ClusterGrid({
   return (
     <div className={cn("flex flex-col gap-2", className)} onClick={stopAtGrid}>
       <div className="flex items-center justify-between gap-2">
-        <p className="font-medium">{cluster.photos.length} photos</p>
+        <ClusterTitle cluster={cluster} />
         {children}
       </div>
       <ClusterThumbnails photos={cluster.photos} onOpen={onOpen} />
+    </div>
+  );
+}
+
+/** How many photos the grid has, under a Photo Set's name when it's one. */
+function ClusterTitle({ cluster }: { cluster: OpenCluster }) {
+  const count = `${cluster.photos.length} photos`;
+  if (!cluster.title) return <p className="font-medium">{count}</p>;
+  return (
+    <div className="min-w-0">
+      <p className="truncate font-medium">{cluster.title}</p>
+      <p className="text-xs text-neutral-600 dark:text-neutral-400">Photo Set · {count}</p>
     </div>
   );
 }

@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 5:7",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#727aa2",
@@ -266,6 +269,6 @@
     "peakChroma": 35.22,
     "samples": 10050
   },
-  "notes": "Shows ice; 'ice' isn't a tag, since only 2 photos have it.",
+  "notes": "Shows ice; 'ice' isn't a tag, since only 2 photos have it.\n\nQuality Check (aspect ratio): the Small version is 277 × 500 (1:1.81), not the 5:7 crop for a portrait photo.",
   "similarPhotos": [326, 395, 373, 491, 204, 247]
 }

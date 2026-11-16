@@ -1,11 +1,11 @@
 {
-  "id": 593,
-  "title": null,
+  "title": "Stickered Pipe",
   "comment": null,
+  "id": 593,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo.",
   "file": "DSCF5360.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:28:06Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4,
@@ -13,7 +13,7 @@
   "iso": 1250,
   "focalLength": 21.6,
   "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-  "customGpsPosition": null,
+  "customGpsPosition": "42.35124258057037, -71.06023609278265",
   "createDate": "2026:11:07 13:11:05",
   "customCreateDate": null,
   "placeName": "Boston Chinatown",
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-thumbnail.webp?crop=0,2398,5152",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/58c8d7c1f872-dscf5360-thumbnailpreview.webp?crop=0,2398,5152",
     "thumbnailcrop": {
       "x": 0,
-      "y": 1288,
+      "y": 2398,
       "size": 5152,
       "outputSize": 500
     }
@@ -63,7 +63,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 5:7",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],

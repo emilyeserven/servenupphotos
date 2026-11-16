@@ -21,6 +21,12 @@ its `file` is the name kept in the key (`photos/<hash>-dsc0001.jpg` gives `dsc00
 `ALLPHOTOS.json` check as Add Photo, **Add to Batch** asks for the JSON file name and adds it to the photo data pull
 request. When that name is taken, a **Save as `<name>`.json** button saves it under the first free one instead. The button only shows once both checks have run, so it needs the GitHub settings too.
 
+## Contact sheets
+
+The [contact sheets](contact-sheets.md) made for prompts, in `contact-sheets/`, have their own section above the grid,
+which leaves them out. Each set can be deleted, or every set at once
+([Deleting them by hand](contact-sheets.md#deleting-them-by-hand)).
+
 ## Filters
 
 Above the grid, a filter bar narrows the tiles (each original with its stack, or a copy on its own):

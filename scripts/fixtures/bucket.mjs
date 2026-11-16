@@ -19,10 +19,27 @@ function bucketImages() {
     });
 }
 
+/** Two sets of contact sheets made for prompts, newest first. */
+function contactSheetImages() {
+  const sets = [
+    ["20261115-045000-1a2b3c4d", 3, "2026-11-15T04:50:00.000Z"],
+    ["20261114-211500-9f8e7d6c", 1, "2026-11-14T21:15:00.000Z"],
+  ];
+  return sets.flatMap(([name, sheets, modified]) =>
+    Array.from({ length: sheets }, (_, i) => {
+      const key = `contact-sheets/${name}/sheet-${String(i + 1).padStart(2, "0")}.jpg`;
+      return { key, url: `${CDN}/${key}`, size: 210_000, modified };
+    }),
+  );
+}
+
 /** The sample answers for the bucket routes, keyed "METHOD /api/path". */
 export function bucketFixtures() {
   return {
-    "GET /api/photos/bucket": { bucket: "servenupphotos", images: bucketImages() },
+    "GET /api/photos/bucket": {
+      bucket: "servenupphotos",
+      images: [...contactSheetImages(), ...bucketImages()],
+    },
     "POST /api/photos/bucket/delete": ({ body }) => ({ deleted: body.keys, failed: [] }),
     // A sheet of 30 for every 30 photos asked for, in the contact-sheets/ folder R2 empties daily.
     "POST /api/photos/bucket/contact-sheets": ({ body }) => {
@@ -34,6 +51,15 @@ export function bucketFixtures() {
       }));
       return { sheets, missing: [], expiryProblem: "" };
     },
+    "POST /api/photos/bucket/contact-sheets/delete": () => ({ deleted: 3, failed: [] }),
+    // Mostly the house ratios (16:9 and 5:7), with every 4th photo cropped 3:2 and every 9th 4:5.
+    "POST /api/photos/bucket/sizes": ({ body }) => ({
+      images: (body?.urls ?? []).map((url, i) => {
+        if (i % 9 === 4) return { url, width: 512, height: 640 };
+        if (i % 4 === 1) return { url, width: 640, height: 427 };
+        return i % 3 === 2 ? { url, width: 457, height: 640 } : { url, width: 640, height: 360 };
+      }),
+    }),
     "GET /api/photos/bucket/thumbnail-crop": ({ url }) => {
       const key = url.searchParams.get("key") ?? "";
       const photo = headPhotos.find(({ data }) => data.images?.key === key);

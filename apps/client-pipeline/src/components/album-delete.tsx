@@ -1,22 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { Trash2Icon } from "lucide-react";
-import { useState } from "react";
 import { type Group, deleteAlbumMutation, groupLabel, organizeQuery } from "@/api/organize";
 import { photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Spinner } from "@/components/ui/spinner";
+import { ConfirmDeleteCard } from "@/components/confirm-delete-card";
 
 /** Deletes an album, then reads the albums and saved photos again and goes back to the Albums list. */
 function useAlbumDelete() {
@@ -47,57 +33,17 @@ interface AlbumDeleteCardProps {
  * waiting for Commit.
  */
 export function AlbumDeleteCard({ album, albums, photoCount }: AlbumDeleteCardProps) {
-  const [open, setOpen] = useState(false);
   const remove = useAlbumDelete();
-  const change = (next: boolean) => {
-    setOpen(next);
-    remove.reset();
-  };
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Delete album</CardTitle>
-        <CardDescription>
-          Deletes this album as a change waiting for Commit. Its photos stay, in their other albums.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Dialog open={open} onOpenChange={change}>
-          <DialogTrigger asChild>
-            <Button variant="destructive">
-              <Trash2Icon aria-hidden />
-              Delete album
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Delete {groupLabel(album)}?</DialogTitle>
-              <DialogDescription>
-                It waits for Commit like any other change, so GitHub doesn&apos;t change until then.
-              </DialogDescription>
-            </DialogHeader>
-            <DeleteConsequences album={album} albums={albums} photoCount={photoCount} />
-            {remove.isError && <p className="text-destructive text-sm">{remove.error.message}</p>}
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" disabled={remove.isPending}>
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button
-                variant="destructive"
-                disabled={remove.isPending}
-                onClick={() => remove.mutate(album.id)}
-              >
-                {remove.isPending && <Spinner />}
-                Delete album
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </CardContent>
-    </Card>
+    <ConfirmDeleteCard
+      action="Delete album"
+      description="Deletes this album as a change waiting for Commit. Its photos stay, in their other albums."
+      question={`Delete ${groupLabel(album)}?`}
+      note="It waits for Commit like any other change, so GitHub doesn't change until then."
+      remove={{ ...remove, run: () => remove.mutate(album.id) }}
+    >
+      <DeleteConsequences album={album} albums={albums} photoCount={photoCount} />
+    </ConfirmDeleteCard>
   );
 }
 

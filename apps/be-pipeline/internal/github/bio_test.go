@@ -1,8 +1,10 @@
 package github
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
+	"path"
 	"strings"
 	"testing"
 )
@@ -50,5 +52,36 @@ func TestSaveBio(t *testing.T) {
 		if !errors.As(err, &perr) || perr.Status != http.StatusBadRequest {
 			t.Errorf("%s: SaveBio() error = %v, want 400", tt.name, err)
 		}
+	}
+}
+
+// The bio file isn't its combined list: a second save knows the first, and
+// Commit puts the bio in the combined list.
+func TestSaveBioTwiceThenCommit(t *testing.T) {
+	if strings.EqualFold(BioID+".json", BioKind.AllFile) {
+		t.Fatalf("the bio file %s.json has its combined list's name, %s", BioID, BioKind.AllFile)
+	}
+	f, c := newFakeGitHub(t)
+	f.openPull(prBranch, with(emptyLists, map[string]string{}))
+	first := Bio{ID: "bio", Text: "Hi", Photos: []BioPhoto{{Photo: dataRoot + "/photos/a.json"}}}
+	if _, err := c.SaveBio(t.Context(), pullGH, first); err != nil {
+		t.Fatalf("SaveBio() error = %v", err)
+	}
+	second := first
+	second.Photos = append(second.Photos, BioPhoto{Portrait: portrait("http://cdn.example/bio/me.webp")})
+	got, err := c.SaveBio(t.Context(), pullGH, second)
+	if err != nil {
+		t.Fatalf("second SaveBio() error = %v", err)
+	}
+	if !strings.Contains(string(got.Before), "a.json") || strings.Contains(string(got.Before), "me.webp") {
+		t.Errorf("second SaveBio() before = %s, want the first save", got.Before)
+	}
+	if _, err := c.CommitCombined(t.Context(), pullGH, nil); err != nil {
+		t.Fatalf("CommitCombined() error = %v", err)
+	}
+	all, _ := f.file(prBranch, path.Join(dataRoot, BioKind.Folder, BioKind.AllFile))
+	var bios []Bio
+	if err := json.Unmarshal([]byte(all), &bios); err != nil || len(bios) != 1 || len(bios[0].Photos) != 2 {
+		t.Errorf("%s = %s, want the bio with both photos", BioKind.AllFile, all)
 	}
 }

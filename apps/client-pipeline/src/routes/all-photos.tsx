@@ -79,11 +79,12 @@ function AllPhotos() {
   );
 }
 
-/** Whether the entry is shown: published, of a kind the toggles show, or the photo `?photo=` names. */
+/** Whether the entry is shown: of a kind the toggles show, or the photo `?photo=` names. */
 function isShown(entry: AllPhotosEntry, search: AllPhotosSearch): boolean {
   if (entry.path === search.photo) return true;
   if (entry.kind === "draft") return search.drafts === true;
-  return entry.kind === "published" || search.undecided === true;
+  if (entry.kind === "undecided") return search.undecided === true;
+  return search.published !== false;
 }
 
 function useEntries(published: PublishedResponse, inFlight: InFlightRead | undefined) {

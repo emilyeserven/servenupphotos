@@ -4,6 +4,7 @@ import { PlusIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import type { CaptionTemplate } from "@/api/captions";
 import { deletePhotoBookMutation, photoBookId, savePhotoBookMutation } from "@/api/photo-books";
+import { NewEntryForm } from "@/components/new-entry-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { PhotoBook } from "@/lib/photo-book";
@@ -61,45 +62,26 @@ interface NewBookFormProps {
   onMade: (id: string) => void;
 }
 
-/** A name for a new book, saved with one full page to start from. */
+/** A name for a new book, saved with no pages to start from. */
 function NewBookForm({ books, onCancel, onMade }: NewBookFormProps) {
-  const [name, setName] = useState("");
   const save = useMutation(savePhotoBookMutation);
-  const make = () => {
+  const make = (name: string) => {
     const id = photoBookId(
       name,
       books.map((b) => b.id),
     );
-    const book: PhotoBook = { id, name: name.trim(), template: "", pages: [] };
-    save.mutate(book, { onSuccess: () => onMade(id) });
+    save.mutate({ id, name, template: "", pages: [] }, { onSuccess: () => onMade(id) });
   };
   return (
-    <form
-      className="flex flex-wrap items-center gap-2"
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (name.trim()) make();
-      }}
-    >
-      <Input
-        aria-label="New book's name"
-        placeholder="Name the book, such as Korea 2026"
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-        className="w-64"
-        autoFocus
-      />
-      <Button type="submit" disabled={!name.trim() || save.isPending}>
-        <PlusIcon />
-        Make book
-      </Button>
-      {onCancel && (
-        <Button type="button" variant="ghost" onClick={onCancel}>
-          Cancel
-        </Button>
-      )}
-      {save.error && <p className="text-destructive text-sm">{save.error.message}</p>}
-    </form>
+    <NewEntryForm
+      label="New book's name"
+      placeholder="Name the book, such as Korea 2026"
+      submit="Make book"
+      pending={save.isPending}
+      error={save.error}
+      onMake={make}
+      onCancel={onCancel}
+    />
   );
 }
 

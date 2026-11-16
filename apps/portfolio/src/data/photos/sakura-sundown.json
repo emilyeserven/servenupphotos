@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 5:7",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#5b686c",
@@ -266,6 +269,6 @@
     "peakChroma": 24.27,
     "samples": 9605
   },
-  "notes": "Shows spring cherry blossoms; 'spring' isn't a tag, since only 1 photo has it.",
+  "notes": "Shows spring cherry blossoms; 'spring' isn't a tag, since only 1 photo has it.\n\nQuality Check (aspect ratio): the Small version is 375 × 500 (3:4), not the 5:7 crop for a portrait photo.",
   "similarPhotos": [223, 222, 105, 244, 486, 40]
 }

@@ -1,11 +1,11 @@
 {
-  "id": 602,
-  "title": null,
+  "title": "Pipes & Meter",
   "comment": null,
+  "id": 602,
   "altText": null,
   "notes": "Shows pipes; 'pipes' was removed as a tag, since only 1 photo has them.",
   "file": "DSCF6498.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:49:28Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 6.4,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:13 00:01:04",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Bukchon Hanok Village",
+  "customCity": "Seoul",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "South Korea",
   "country": null,
   "state": null,
   "city": null,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/63081d0bc88e-dscf6498-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/63081d0bc88e-dscf6498-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/63081d0bc88e-dscf6498-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/63081d0bc88e-dscf6498-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/63081d0bc88e-dscf6498-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/63081d0bc88e-dscf6498-thumbnail.webp?crop=0,548,4873",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/63081d0bc88e-dscf6498-thumbnailpreview.webp?crop=0,548,4873",
     "thumbnailcrop": {
       "x": 0,
-      "y": 974,
+      "y": 548,
       "size": 4873,
       "outputSize": 500
     }
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["rust", "wood", "ivy", "texture", "cables"],
   "genres": ["abstract", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "bukchon-hanok-village"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

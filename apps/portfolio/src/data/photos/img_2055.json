@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "undecided": true,
   "colors": {
     "average": {
@@ -267,6 +270,7 @@
     "peakChroma": 19.23,
     "samples": 9984
   },
-  "notes": "Shows bracket fungi; 'bracket-fungi' isn't a tag, since only 2 photos have it.",
-  "similarPhotos": [91, 86, 92, 85, 89, 88]
+  "notes": "Shows bracket fungi; 'bracket-fungi' isn't a tag, since only 2 photos have it.\n\nQuality Check (aspect ratio): the Small version is 500 × 303 (1.65:1), not the 16:9 crop for a landscape photo.",
+  "similarPhotos": [91, 86, 92, 85, 89, 88],
+  "compareGroup": "Layered Bracket Fungi"
 }

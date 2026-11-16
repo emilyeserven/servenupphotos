@@ -1,11 +1,11 @@
 {
-  "id": 588,
-  "title": null,
+  "title": "Walking to Chinatown",
   "comment": null,
+  "id": 588,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo.",
   "file": "DSCF5256.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:31:03Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.7,
@@ -63,7 +63,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 5:7",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],

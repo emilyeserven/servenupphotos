@@ -110,7 +110,10 @@ combined into `notstored/NOTSTORED.json`; see [Publish](publish.md#not-stored-da
 Each mockup on the Photo Book page is `photobooks/<id>.json`, combined into `photobooks/PHOTOBOOKS.json`; see
 [Photo Book](photo-book.md).
 
-The bio is one file, `bio/bio.json`, combined into `bio/BIO.json`; see [Bio](bio.md).
+The bio is one file, `bio/bio.json`, combined into `bio/ALLBIO.json`; see [Bio](bio.md).
+
+Each Photo Set is `sets/<id>.json`, with its name and its photos' IDs in order, combined into `sets/SETS.json`; see
+[Photo Sets](photo-sets.md).
 
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
 [Re-editing a photo](replace-image.md).

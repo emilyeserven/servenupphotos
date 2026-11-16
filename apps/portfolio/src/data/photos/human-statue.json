@@ -70,7 +70,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#969696",
@@ -277,6 +280,6 @@
     "peakChroma": 0.01,
     "samples": 9906
   },
-  "notes": "Shows a relief sculpture; 'relief' isn't a tag, since only 1 photo has one.",
+  "notes": "Shows a relief sculpture; 'relief' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 307 (1.63:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [37, 46, 181, 233, 166, 40]
 }

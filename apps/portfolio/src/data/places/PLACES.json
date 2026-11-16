@@ -85,7 +85,9 @@
     "description": "",
     "parent": "",
     "city": "Kobe",
-    "country": "Japan"
+    "country": "Japan",
+    "latitude": 34.79786605016979,
+    "longitude": 135.24765671625667
   },
   {
     "id": "astoria",
@@ -118,6 +120,14 @@
     "latitude": 26.297947,
     "longitude": -81.833189,
     "exactLocation": true
+  },
+  {
+    "id": "beacon-hill",
+    "name": "Beacon Hill",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "country": "United States of America"
   },
   {
     "id": "bent-pyramid-of-cairo",
@@ -168,6 +178,14 @@
     "country": "United States of America",
     "latitude": 42.353,
     "longitude": -71.0645
+  },
+  {
+    "id": "boston-public-library",
+    "name": "Boston Public Library",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "country": "United States of America"
   },
   {
     "id": "bowery",
@@ -223,7 +241,9 @@
     "description": "",
     "parent": "",
     "city": "Seoul",
-    "country": "South Korea"
+    "country": "South Korea",
+    "latitude": 37.5823919,
+    "longitude": 126.9858648
   },
   {
     "id": "busan-tower",
@@ -340,6 +360,14 @@
     "country": "United States of America",
     "latitude": 40.76805659301781,
     "longitude": -73.98188756888125
+  },
+  {
+    "id": "commonwealth-avenue-mall",
+    "name": "Commonwealth Avenue Mall",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "country": "United States of America"
   },
   {
     "id": "cook-s-cycle-shop",
@@ -1185,7 +1213,9 @@
     "description": "",
     "parent": "",
     "city": "Seoul",
-    "country": "South Korea"
+    "country": "South Korea",
+    "latitude": 37.562307,
+    "longitude": 126.985559
   },
   {
     "id": "myojin-pond",
@@ -1342,6 +1372,30 @@
     "latitude": 42.351561,
     "longitude": -71.062697,
     "exactLocation": true
+  },
+  {
+    "id": "philips-square",
+    "name": "Philips Square",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "country": "United States of America"
+  },
+  {
+    "id": "porter-square-station",
+    "name": "Porter Square Station",
+    "description": "",
+    "parent": "porter-square",
+    "city": "",
+    "country": ""
+  },
+  {
+    "id": "porter-square",
+    "name": "Porter Square",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "country": "United States of America"
   },
   {
     "id": "presidio-tunnel-tops",

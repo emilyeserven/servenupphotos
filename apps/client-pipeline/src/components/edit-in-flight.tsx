@@ -39,10 +39,12 @@ import { useLocationPrompt } from "@/components/edit-in-flight/location-prompt";
 import { TagPromptButton } from "@/components/edit-in-flight/tag-prompt-button";
 import { PhotoSections } from "@/components/edit-in-flight/photo-sections";
 import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
+import { DeletePhotoCard } from "@/components/edit-in-flight/delete-photo-card";
 import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
 import { type Edit, useEdit, useLensSettings, useSave } from "@/components/edit-in-flight/use-edit";
 import { hasLensChoice, lensChanged, savedLensChoice, withLensChoice } from "@/lib/custom-lens";
 import { promptImageUrl } from "@/lib/tag-prompt";
+import { detailsSmallImage } from "@/lib/offline-thumbnails";
 import { useTabSubject } from "@/stores/tab-title";
 
 /**
@@ -166,9 +168,16 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
                 description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
                 disabled={pending}
                 locationPrompt={locationPrompt}
+                imageUrl={detailsSmallImage(edit.savedData, editable.image.url)}
               />
               <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
               <LowerTierCard file={editable.file} disabled={pending} />
+              <DeletePhotoCard
+                path={editable.file.path}
+                saved={edit.savedData}
+                fallbackTitle={fallbackTitle}
+                disabled={pending}
+              />
             </>
           ),
           groups: (

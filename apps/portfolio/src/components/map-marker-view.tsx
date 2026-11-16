@@ -1,39 +1,40 @@
 import { Marker, useMap } from "@vis.gl/react-maplibre";
-import { type CSSProperties, type MouseEvent, useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
+import { MARKER_RING, pinStyle, stopAtMarker } from "@/components/map-pin-style";
+import { SetMarker } from "@/components/map-set-marker";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
-import { type GroupPhotos, type MapDisplay, PIN_PIXELS } from "@/lib/map-display";
+import type { GroupPhotos, MapDisplay } from "@/lib/map-display";
 import { type MapMarker, photosInCluster } from "@/lib/map-markers";
-import type { PlacedPhoto } from "@/lib/map-photos";
+import type { MapSet, PlacedPhoto } from "@/lib/map-photos";
 import { modifierKey } from "@/lib/platform";
 import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
-// Clicks on markers and in popups would otherwise reach the map too, which closes the popups.
-function stopAtMarker(event: MouseEvent) {
-  event.stopPropagation();
-}
-
 /** A marker for a group of photos, as the map reads it from its source. */
 export type ClusterMarkerData = Extract<MapMarker, { kind: "cluster" }>;
 
-/** A marker's width and height, in the size the display options pick. */
-function pinStyle(display: MapDisplay): CSSProperties {
-  const size = PIN_PIXELS[display.pinSize];
-  return { width: size, height: size };
-}
-
-/** A marker on the map, a photo's or a group's, drawn as the display options say. */
+/** A marker on the map, a photo's, a group's or a Photo Set's, drawn as the display options say. */
 export function MapMarkerView({
   marker,
   display,
   onOpenPhoto,
   onOpenCluster,
+  onOpenSet,
 }: {
   marker: MapMarker;
   display: MapDisplay;
   onOpenPhoto: (photo: PlacedPhoto) => void;
   onOpenCluster: (marker: ClusterMarkerData, listPhotos: boolean) => void;
+  onOpenSet: (set: MapSet) => void;
 }) {
+  if (marker.kind === "set") {
+    const { set } = marker;
+    return (
+      <Marker longitude={set.longitude} latitude={set.latitude} offset={marker.offset}>
+        <SetMarker set={set} display={display} onOpen={() => onOpenSet(set)} />
+      </Marker>
+    );
+  }
   if (marker.kind === "cluster") {
     return (
       <Marker longitude={marker.longitude} latitude={marker.latitude} offset={marker.offset}>
@@ -53,9 +54,6 @@ export function MapMarkerView({
     </Marker>
   );
 }
-
-const MARKER_RING =
-  "outline-none ring-2 ring-white shadow-md shadow-black/30 transition-transform hover:scale-110 focus-visible:scale-110 focus-visible:ring-sky-500";
 
 /** A photo marker's size and classes: the pin size for a thumbnail, or a small dot without one. */
 function photoMarkerLook(photo: PlacedPhoto, display: MapDisplay) {

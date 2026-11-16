@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate a license plate",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#978778",
@@ -266,6 +269,6 @@
     "peakChroma": 36.91,
     "samples": 9490
   },
-  "notes": "Shows a vintage VW Beetle and van by a domed mud-brick building; 'vintage-cars', 'van', 'domes' and 'mud-brick' aren't tags, since each is on only 1–2 photos.",
+  "notes": "Shows a vintage VW Beetle and van by a domed mud-brick building; 'vintage-cars', 'van', 'domes' and 'mud-brick' aren't tags, since each is on only 1–2 photos.\n\nQuality Check (pixelation): The front plate of the cream VW van, below the left headlight, is readable.",
   "similarPhotos": [366, 368, 367, 369, 362, 201]
 }

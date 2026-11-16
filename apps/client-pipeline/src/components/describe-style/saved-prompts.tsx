@@ -5,6 +5,7 @@ import { parseGridFilters } from "@/components/gallery/grid-filters";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { parsePublishedOnly } from "@/lib/style-prompt";
 import { type SavedStylePrompt, useStylePromptsStore } from "@/stores/style-prompts";
 
 interface SavedPromptsProps {
@@ -26,7 +27,10 @@ export function SavedPrompts({ count, focus, onLoad }: SavedPromptsProps) {
   const { prompts, save, remove } = useStylePromptsStore();
   const [name, setName] = useState("");
   const load = (prompt: SavedStylePrompt) => {
-    void navigate({ to: "/describe-style", search: prompt.filters });
+    void navigate({
+      to: "/describe-style",
+      search: { ...prompt.filters, published: prompt.published ? true : undefined },
+    });
     onLoad(prompt);
     setName(prompt.name);
   };
@@ -34,6 +38,7 @@ export function SavedPrompts({ count, focus, onLoad }: SavedPromptsProps) {
     save({
       name: name.trim(),
       filters: parseGridFilters(search),
+      published: parsePublishedOnly(search) ?? false,
       count,
       focus,
       savedAt: new Date().toISOString(),
@@ -43,9 +48,9 @@ export function SavedPrompts({ count, focus, onLoad }: SavedPromptsProps) {
       <CardHeader>
         <CardTitle>Saved prompts</CardTitle>
         <CardDescription>
-          Saves the filters, the number of photos and the question under a name, in this
-          browser&apos;s local storage, to load again later. Saving under a name already used
-          replaces it.
+          Saves the filters, Published photos only, the number of photos and the question under a
+          name, in this browser&apos;s local storage, to load again later. Saving under a name
+          already used replaces it.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

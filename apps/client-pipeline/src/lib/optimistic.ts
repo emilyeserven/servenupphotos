@@ -9,7 +9,7 @@ import {
   type PublishedResponse,
   publishedPhotosQuery,
 } from "@/api/photos";
-import { canonicalJson } from "@/lib/combined";
+import { entryJson } from "@/lib/combined";
 import {
   type CombinedKind,
   type GroupKind,
@@ -57,8 +57,8 @@ export function cachedFile(queryClient: QueryClient, path: string): unknown {
 /** Where the entry equal to before (ignoring key order) is in list; -1 when it isn't, or unknown. */
 function indexOf(list: unknown[], before: unknown): number {
   if (before === undefined) return -1;
-  const old = canonicalJson(before);
-  return list.findIndex((entry) => canonicalJson(entry) === old);
+  const old = entryJson(before);
+  return list.findIndex((entry) => entryJson(entry) === old);
 }
 
 /** list with change made: its old entry replaced by its new one, or the new one added at the end. */

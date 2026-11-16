@@ -269,5 +269,6 @@
   },
   "undecided": true,
   "notes": "Shows a dog and roadwork; 'dogs' and 'roadwork' aren't tags, since only 2 photos have each.",
-  "similarPhotos": [407, 409, 444, 494, 412, 436]
+  "similarPhotos": [407, 409, 444, 494, 412, 436],
+  "compareGroup": "Outer Richmond Street Downhill"
 }

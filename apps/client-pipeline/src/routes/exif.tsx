@@ -19,7 +19,10 @@ import { useR2Upload } from "@/components/r2-upload/use-r2-upload";
 import type { Crop } from "@/lib/crop";
 import type { LensChoice } from "@/lib/custom-lens";
 import { withImages } from "@/lib/photo-images";
+import { PhotoDeleted } from "@/components/edit-in-flight/photo-deleted";
+import { useDeletedPhotoStore } from "@/stores/deleted-photo";
 import { useTabSubject } from "@/stores/tab-title";
+import { useEffect } from "react";
 
 interface PhotoSearch {
   /**
@@ -53,6 +56,17 @@ function editSearch(search: Record<string, unknown>): PhotoSearch {
 
 function PhotoRoute() {
   const { edit, from, photo } = Route.useSearch();
+  const deleted = useDeletedPhotoStore((state) => state.result);
+  const setDeleted = useDeletedPhotoStore((state) => state.setResult);
+  // A delete is about the photo it deleted: opening another one, or coming back, starts fresh.
+  useEffect(() => setDeleted(null), [edit, photo, setDeleted]);
+  if (deleted) {
+    return (
+      <EditPage>
+        <PhotoDeleted result={deleted} />
+      </EditPage>
+    );
+  }
   if (edit) {
     return (
       <EditPage>

@@ -1,11 +1,11 @@
 {
-  "id": 528,
-  "title": null,
+  "title": "Seoul Streets II",
   "comment": null,
+  "id": 528,
   "altText": null,
   "notes": null,
   "file": "DSCF0370.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T21:24:32Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 16,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/9a0fe8098cba-dscf0370-small.webp?faces=mwbnm42s",
     "xsmall": "https://cdn.servenupphotos.net/photos/9a0fe8098cba-dscf0370-xsmall.webp?faces=mwbnm42s",
     "preview": "https://cdn.servenupphotos.net/photos/9a0fe8098cba-dscf0370-preview.webp?faces=mwbnm42s",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/9a0fe8098cba-dscf0370-thumbnail.webp?faces=mwbnm42s",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9a0fe8098cba-dscf0370-thumbnailpreview.webp?faces=mwbnm42s",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/9a0fe8098cba-dscf0370-thumbnail.webp?crop=0,626,5152",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9a0fe8098cba-dscf0370-thumbnailpreview.webp?crop=0,626,5152",
     "thumbnailcrop": {
       "x": 0,
-      "y": 1030,
+      "y": 626,
       "size": 5152,
       "outputSize": 500
     }
@@ -298,5 +298,6 @@
       "edge": "blocks",
       "rotation": -7
     }
-  ]
+  ],
+  "compareGroup": "Narrow Alleys Lined with Signs"
 }

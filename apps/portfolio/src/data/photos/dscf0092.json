@@ -1,11 +1,11 @@
 {
-  "id": 515,
-  "title": null,
+  "title": "Avenue of Youth II",
   "comment": null,
+  "id": 515,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (pixelation): The rear plate of the black van in the middle of the street, centre left, is readable.",
   "file": "DSCF0092.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T21:25:50Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -58,7 +58,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate a license plate",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],
@@ -268,5 +271,6 @@
     "chroma": 12.62,
     "peakChroma": 31.45,
     "samples": 10050
-  }
+  },
+  "compareGroup": "Sign-Lined Shopping Street"
 }

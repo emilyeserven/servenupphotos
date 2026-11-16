@@ -15,6 +15,13 @@ export interface AutogroupOptions {
   withGroups: boolean;
 }
 
+/** Which photos `autogroupPhotos` lists, as Quality Check and Re-Edit pick them too. */
+export interface AutogroupPhotoOptions {
+  scope: AutogroupScope;
+  /** Leaves out photos already in a compare group. */
+  skipGrouped: boolean;
+}
+
 /** A photo in an Autogroup prompt: the photo, the name the prompt calls it by, and its Small image. */
 export interface AutogroupPhoto {
   photo: ComparePhoto;
@@ -49,11 +56,11 @@ function promptImage(photo: ComparePhoto): string {
   return promptImageUrl(images, photo.imageUrl ?? "");
 }
 
-/** Whether the photo is asked about on its own: it's in no group, can be shown, and fits the scope. */
-function wanted(photo: ComparePhoto, options: AutogroupOptions): boolean {
+/** Whether the photo is listed with these options: it isn't unselected and fits the scope. */
+function wanted(photo: ComparePhoto, options: AutogroupPhotoOptions): boolean {
   if (isUnselected(photo.data)) return false;
   if (options.scope === "drafts" && !isDraft(photo.data)) return false;
-  return compareGroupOf(photo.data) === undefined;
+  return !(options.skipGrouped && compareGroupOf(photo.data));
 }
 
 /** Oldest first, so photos taken together sit next to each other in the prompt. */
@@ -84,6 +91,18 @@ function promptPhotos(photos: ComparePhoto[]): AutogroupPhoto[] {
     .toSorted(byTaken);
 }
 
+/**
+ * The photos a prompt can ask about, oldest first: the drafts or every photo, leaving out
+ * unselected photos (their images may be gone), photos without an image, and, when asked, photos
+ * already in a group.
+ */
+export function autogroupPhotos(
+  photos: ComparePhoto[],
+  options: AutogroupPhotoOptions,
+): AutogroupPhoto[] {
+  return promptPhotos(photos.filter((photo) => wanted(photo, options)));
+}
+
 /** A compare group there is already, as the prompt shows it. */
 export interface ExistingGroup {
   name: string;
@@ -105,7 +124,7 @@ export interface AutogroupAsk {
  * change them, every compare group with its photos.
  */
 export function autogroupAsk(photos: ComparePhoto[], options: AutogroupOptions): AutogroupAsk {
-  const loose = promptPhotos(photos.filter((photo) => wanted(photo, options)));
+  const loose = autogroupPhotos(photos, { scope: options.scope, skipGrouped: true });
   if (!options.withGroups) return { loose, groups: [] };
   const groups = compareGroups(photos).map((group) => ({
     name: group.name,
@@ -115,16 +134,16 @@ export function autogroupAsk(photos: ComparePhoto[], options: AutogroupOptions):
 }
 
 /** The photos the prompt links, in its order: the ones in no group, then each group's with an image. */
-function linkedPhotos(ask: AutogroupAsk): AutogroupPhoto[] {
+export function linkedPhotos(ask: AutogroupAsk): AutogroupPhoto[] {
   return [
     ...ask.loose,
     ...ask.groups.flatMap((group) => group.photos.filter((entry) => entry.imageUrl !== "")),
   ];
 }
 
-/** The photos as the contact sheets show them, in the prompt's order. */
-export function autogroupSheetPhotos(ask: AutogroupAsk): ContactSheetPhoto[] {
-  return linkedPhotos(ask).map((entry) => ({ label: entry.key, url: entry.imageUrl }));
+/** The photos as the contact sheets show them, in the order given. */
+export function autogroupSheetPhotos(photos: AutogroupPhoto[]): ContactSheetPhoto[] {
+  return photos.map((entry) => ({ label: entry.key, url: entry.imageUrl }));
 }
 
 /** Every photo in the prompt, loose or in a group. */
@@ -224,4 +243,37 @@ Rules:
 - Answer with only this JSON, with nothing before or after it, naming each photo and group by its name in quotes above:
 ${answerShape(groups)}
 - Leave a list empty when there's nothing for it.`;
+}
+
+/** The JSON object in the answer, from its first `{` to its last `}`, so a code fence or a sentence around it is fine. */
+export function answerObject(answer: string): unknown {
+  const start = answer.indexOf("{");
+  const end = answer.lastIndexOf("}");
+  if (start === -1 || end <= start) throw new Error("The answer has no JSON object in it.");
+  try {
+    return JSON.parse(answer.slice(start, end + 1));
+  } catch {
+    throw new Error("The answer's JSON couldn't be read. Paste the whole answer, from { to }.");
+  }
+}
+
+/** A name as the answer gave it, for looking up: no quotes, `.json` ending or case. */
+export function lookupName(name: string): string {
+  return name
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .replace(/\.json$/i, "")
+    .toLowerCase();
+}
+
+/** Looks a photo up by the name the answer gave, its JSON file's name or its original file's name. */
+export function photoFinder(
+  photos: AutogroupPhoto[],
+): (name: string) => AutogroupPhoto | undefined {
+  const byKey = new Map<string, AutogroupPhoto>();
+  for (const entry of photos) {
+    byKey.set(entry.key.toLowerCase(), entry);
+    byKey.set(entry.photo.file.photoName.toLowerCase(), entry);
+  }
+  return (name) => byKey.get(lookupName(name));
 }

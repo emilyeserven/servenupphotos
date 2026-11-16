@@ -268,5 +268,6 @@
     "samples": 10115
   },
   "notes": "Shows a tengu mask; 'tengu' and 'masks' aren't tags, since only 2 photos have them.",
-  "similarPhotos": [384, 385, 464, 309, 349, 465]
+  "similarPhotos": [384, 385, 464, 309, 349, 465],
+  "compareGroup": "Tengu Mask at the Shrine"
 }

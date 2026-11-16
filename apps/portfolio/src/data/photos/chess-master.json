@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#3e3e3e",
@@ -266,6 +269,6 @@
     "peakChroma": 0.01,
     "samples": 9864
   },
-  "notes": "Shows a chess game; 'chess' and 'board-games' aren't tags, since only 1 photo has them.",
+  "notes": "Shows a chess game; 'chess' and 'board-games' aren't tags, since only 1 photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 263 (1.90:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [40, 159, 186, 163, 167, 187]
 }

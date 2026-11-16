@@ -12,6 +12,14 @@ bottom of the map, so it's never cut off at the top of the screen or hidden unde
 (`components/map-cluster.tsx`). Holding ⌘ (or Ctrl on Windows and Linux) while clicking any group opens that grid
 straight away instead of zooming in. Photos without resized versions are a small dot that opens their details instead.
 
+A [Photo Set](photo-sets.md)'s photos are always one marker, however far in or out the map is zoomed: its first photo's
+square pin with a second square stacked behind it, up and to the right, showing its next photo, and its count in a
+small badge (hidden with **Show counts**). Zooming never splits it, and it's never grouped with the photos around
+it, so it can sit beside or partly over a group when zoomed out. It sits in the middle of its photos, and clicking it
+opens its photos' grid, the same popup (or sheet on phones) as a group, titled with the set's name
+(`components/map-set-marker.tsx`, `lib/map-sets.ts`). The filters still apply: a set shows the photos of it they
+leave, and with only one left, that photo is a marker of its own like any other.
+
 A photo's [custom GPS position](places-and-localizations.md#custom-gps-position), written on the Photo page, wins over
 its EXIF one. A photo with neither goes at one of its places' position (see
 [Places](places-and-localizations.md#gps-position)). That spot is only near where it was taken, so its marker's white
@@ -147,6 +155,24 @@ credits OpenStreetMap's contributors, which covers them.
 > **Frontend analogy:** the map reads a build artifact. The pipeline compiles each day's line into one GeoJSON file at
 > Commit, and the portfolio only renders it, the way a static site renders prebuilt JSON instead of calling an API.
 
+## Copy coordinates
+
+Right-clicking anywhere on the map (a long press on Android) opens a small menu above that spot with its latitude and
+longitude, such as `35.681236, 139.767125`, and a **Copy coordinates** button, instead of the browser's own menu
+(`components/map-coordinates-menu.tsx`). That's latitude first with six decimals (about 10 cm), the way Google Maps
+and most map apps take a pasted position, with the longitude brought back between -180 and 180 when the map has been
+scrolled around the world (`lib/map-coordinates.ts`). The button shows **Copied** for a moment and the menu closes;
+clicking the map closes it too. When the browser won't copy, the menu says so, and the numbers can be selected and
+copied by hand. iOS Safari doesn't send a right-click for a long press, so there it doesn't open.
+
+The pipeline's [Trip](trips.md) map and [trip line](trip-lines.md) map have the same menu
+(`client-pipeline/src/components/map-coordinates.tsx`). The pipeline is often opened over plain HTTP (such as a
+Raspberry Pi over Tailscale), where the browser won't copy, so there the coordinates open in the same copy modal as
+the prompts, ready to copy by hand.
+
+> **Frontend analogy:** like a custom `onContextMenu` handler on any element: the map hands it the click's position
+> already turned into a place on the globe, so the menu only has to show and copy it.
+
 ## Key
 
 A **Key** panel in the map's bottom left corner explains what the map draws (`components/map-legend.tsx`). It lists
@@ -154,7 +180,8 @@ only the kinds of thing the map draws for its photos, whether or not they're in 
 filters and the day filter change it:
 
 - The pins: **Photo** (a square pin with a white edge), **Group of photos** (a round marker with its count, whenever
-  there are at least two photos) and **Photo without an image yet** (a small light-blue dot). A (?) after **Group of
+  there are at least two photos), **Photo Set** (two stacked squares, whenever a set is drawn; its (?) says what one
+  is) and **Photo without an image yet** (a small light-blue dot). A (?) after **Group of
   photos** opens a note on clicking a group: a click zooms in, and ⌘-click (Ctrl-click off Apple devices, read from the
   browser's user agent in `lib/platform.ts`) lists its photos in a grid (`components/map-legend-help.tsx`).
 - Then, under a divider, the trip lines of the photos' days when **Show trip lines** is on: **Walk**, **Bus, subway or

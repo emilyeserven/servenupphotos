@@ -1,23 +1,30 @@
-import { shownImageUrl } from "@/lib/face-json";
 import { Link } from "@tanstack/react-router";
 import { ImageOffIcon, PencilIcon, TrophyIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { DraftMark } from "@/components/draft-mark";
 import { FallbackImage } from "@/components/fallback-image";
-import { ImageLightbox } from "@/components/image-lightbox";
 import { LowerTierButton } from "@/components/compare/lower-tier-button";
+import { WinnerButton } from "@/components/compare/winner-button";
 import { LowerTierMark } from "@/components/lower-tier";
 import { Button } from "@/components/ui/button";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
-import { type ComparePhoto, comparePhotoName, isWinner } from "@/lib/compare-groups";
+import {
+  type ComparePhoto,
+  compareMediumUrl,
+  comparePhotoName,
+  isWinner,
+} from "@/lib/compare-groups";
 import { offlineSmallUrl } from "@/lib/offline-thumbnails";
 import { SETTING_FORMATS } from "@portfolio/lib/photo-settings";
 import { readableDate } from "@/lib/photo-date";
 import { cn } from "@/lib/utils";
 import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
 
-/** One photo of a compare group: large, with what it was taken with, Pick as winner and Lower Tier. */
-export function ComparePhotoCard({ photo }: { photo: ComparePhoto }) {
+/**
+ * One photo of a compare group: large, with what it was taken with, Pick as winner and Lower Tier.
+ * Clicking the image calls onOpen, to show it full size.
+ */
+export function ComparePhotoCard({ photo, onOpen }: { photo: ComparePhoto; onOpen: () => void }) {
   const winner = isWinner(photo);
   return (
     <article
@@ -26,12 +33,12 @@ export function ComparePhotoCard({ photo }: { photo: ComparePhoto }) {
         winner && "border-amber-500 ring-2 ring-amber-500",
       )}
     >
-      <CompareImage photo={photo} />
+      <CompareImage photo={photo} onOpen={onOpen} />
       <div className="flex flex-1 flex-col gap-3 p-4">
         <PhotoHeading photo={photo} winner={winner} />
         <PhotoDetails data={photo.data} />
         <div className="mt-auto flex flex-wrap gap-2">
-          <WinnerButton photo={photo} winner={winner} />
+          <WinnerButton photo={photo} />
           <LowerTierButton photo={photo} />
           <EditButton photo={photo} />
           <TakeOut photo={photo} />
@@ -41,47 +48,31 @@ export function ComparePhotoCard({ photo }: { photo: ComparePhoto }) {
   );
 }
 
-/** The image the photo's JSON saves as `images.medium`, or else its image in R2. */
-function mediumUrl(photo: ComparePhoto): string | undefined {
-  const medium = (photo.data.images as Record<string, unknown> | undefined)?.medium;
-  return typeof medium === "string" && medium ? medium : photo.imageUrl;
-}
-
 /**
  * The photo at its Medium size, fitted into the same box for every photo of the group so they line
- * up, opening full size; the offline copy's Small version when it can't be loaded.
+ * up, calling onOpen when clicked; the offline copy's Small version when it can't be loaded.
  */
-function CompareImage({ photo }: { photo: ComparePhoto }) {
-  const [open, setOpen] = useState(false);
+function CompareImage({ photo, onOpen }: { photo: ComparePhoto; onOpen: () => void }) {
   const [failed, setFailed] = useState(false);
-  const src = mediumUrl(photo);
-  const name = comparePhotoName(photo);
+  const src = compareMediumUrl(photo);
   if (!src || failed) return <NoImage />;
   return (
-    <>
-      <button
-        type="button"
-        title="Show it full size"
-        onClick={() => setOpen(true)}
-        className="focus-visible:ring-ring bg-muted aspect-[4/3] w-full cursor-zoom-in border-b outline-none focus-visible:ring-2 focus-visible:ring-inset"
-      >
-        <FallbackImage
-          src={src}
-          fallback={offlineSmallUrl(src)}
-          alt={name}
-          loading="lazy"
-          onError={() => setFailed(true)}
-          className="size-full object-contain"
-        />
-      </button>
-      <ImageLightbox
-        open={open}
-        onClose={() => setOpen(false)}
-        title={name}
-        src={shownImageUrl(photo.data, photo.imageUrl) ?? src}
-        description={`${name} at full size.`}
+    <button
+      type="button"
+      title="Show it full size; the arrow keys then move between the group's photos"
+      onClick={onOpen}
+      data-compare-photo={photo.file.path}
+      className="focus-visible:ring-ring bg-muted aspect-[4/3] w-full cursor-zoom-in border-b outline-none focus-visible:ring-2 focus-visible:ring-inset"
+    >
+      <FallbackImage
+        src={src}
+        fallback={offlineSmallUrl(src)}
+        alt={comparePhotoName(photo)}
+        loading="lazy"
+        onError={() => setFailed(true)}
+        className="size-full object-contain"
       />
-    </>
+    </button>
   );
 }
 
@@ -169,23 +160,6 @@ function PhotoDetails({ data }: { data: Record<string, unknown> }) {
         </div>
       ))}
     </dl>
-  );
-}
-
-/** Picks the photo as one of the group's winners, or unpicks it when it is one. */
-function WinnerButton({ photo, winner }: { photo: ComparePhoto; winner: boolean }) {
-  const { setWinner } = useCompareEdits();
-  return (
-    <Button
-      size="sm"
-      variant={winner ? "default" : "outline"}
-      aria-pressed={winner}
-      title={winner ? "Unpick it" : "Pick it to post; a group can have several winners"}
-      onClick={() => setWinner(photo, !winner)}
-    >
-      <TrophyIcon />
-      {winner ? "Winner" : "Pick as winner"}
-    </Button>
   );
 }
 

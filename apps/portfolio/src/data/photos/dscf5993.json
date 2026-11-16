@@ -1,11 +1,11 @@
 {
-  "id": 625,
-  "title": null,
+  "title": "The Boston T - Red Line",
   "comment": null,
+  "id": 625,
   "altText": null,
   "notes": null,
   "file": "DSCF5993.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:22:31Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 17:45:33",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Porter Square Station",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": ["subway", "trains", "platform", "train-station"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "porter-square-station"
+    },
+    {
+      "relation": "in",
+      "id": "porter-square"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -268,5 +277,6 @@
     "chroma": 11.1,
     "peakChroma": 37.87,
     "samples": 10030
-  }
+  },
+  "compareGroup": "Red Line Train at the Platform"
 }

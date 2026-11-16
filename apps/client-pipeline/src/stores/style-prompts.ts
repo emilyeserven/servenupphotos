@@ -12,6 +12,8 @@ export interface SavedStylePrompt {
   count: string;
   /** The Anything to focus on question; "" for none. */
   focus: string;
+  /** Whether only published photos were picked from; missing on prompts saved before it could be chosen. */
+  published?: boolean;
   /** When it was saved, as an ISO time. */
   savedAt: string;
 }

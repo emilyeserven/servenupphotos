@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#5f5f5f",
@@ -266,6 +269,6 @@
     "peakChroma": 0.01,
     "samples": 9825
   },
-  "notes": "Shows the 9/11 Memorial with a rose; 'memorial' and 'remembrance' aren't tags, since only 1 photo has them.",
+  "notes": "Shows the 9/11 Memorial with a rose; 'memorial' and 'remembrance' aren't tags, since only 1 photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 287 (1.74:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [165, 23, 167, 163, 6, 42]
 }

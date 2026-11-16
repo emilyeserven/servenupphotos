@@ -2,6 +2,7 @@ package github
 
 import (
 	"encoding/json"
+	"fmt"
 	"slices"
 	"strings"
 	"testing"
@@ -75,6 +76,12 @@ func TestPickBulkTagPhotos(t *testing.T) {
 	}
 	if want := []string{"a", "c", "e", "g"}; err != nil || !slices.Equal(names, want) {
 		t.Errorf("PickBulkTagPhotos(any) = %v, %v; want %v", names, err, want)
+	}
+
+	// All ignores Count and picks every untagged photo.
+	got, err = c.PickBulkTagPhotos(t.Context(), baseURLSettings, BulkTagPickOptions{Any: true, All: true, Count: 1})
+	if err != nil || len(got.Photos) != 4 {
+		t.Errorf("PickBulkTagPhotos(any, all) = %+v, %v; want all 4 untagged photos", got.Photos, err)
 	}
 
 	count, err := c.CountUntaggedPhotos(t.Context(), baseURLSettings)
@@ -177,7 +184,7 @@ func TestApplyBulkTagsErrors(t *testing.T) {
 		bulk BulkTags
 		want string
 	}{
-		{"no photos", BulkTags{}, "Tag 1 to 5"},
+		{"no photos", BulkTags{}, "at least 1 photo"},
 		{"not a tag", BulkTags{Photos: []BulkTagsPhoto{{Path: a, Tags: []string{"nope"}}}}, "isn't one of the tags"},
 		{"taken name", BulkTags{NewTags: []NewGroup{{ID: "street"}}, Photos: []BulkTagsPhoto{{Path: a, Tags: []string{"street"}}}}, "already has the ID"},
 		{"missing parent", BulkTags{NewTags: []NewGroup{{ID: "x", Parent: "y"}}, Photos: []BulkTagsPhoto{{Path: a, Tags: []string{"x"}}}}, "to be the parent"},
@@ -212,5 +219,24 @@ func TestBulkTagCount(t *testing.T) {
 		if got := bulkTagCount(count); got != want {
 			t.Errorf("bulkTagCount(%d) = %d, want %d", count, got, want)
 		}
+	}
+}
+
+func TestPickedUpTo(t *testing.T) {
+	var scan baseURLScan
+	var paths []string
+	for i := range maxBulkTagPhotos + 10 {
+		p := fmt.Sprintf("%sp%03d.json", photosDir, i)
+		scan.files = append(scan.files, photoFile{path: p, content: []byte(`{"tags":[]}`)})
+		paths = append(paths, p)
+	}
+	if got, err := pickedUpTo(scan, paths, 0); err != nil || len(got) != len(paths) {
+		t.Errorf("pickedUpTo(no limit) = %d photos, %v; want %d", len(got), err, len(paths))
+	}
+	if _, err := picked(scan, paths); err == nil {
+		t.Errorf("picked(%d paths) error = nil, want the %d limit", len(paths), maxBulkTagPhotos)
+	}
+	if _, err := pickedUpTo(scan, nil, 0); err == nil {
+		t.Error("pickedUpTo(no paths) error = nil, want one")
 	}
 }

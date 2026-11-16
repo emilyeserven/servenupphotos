@@ -16,7 +16,7 @@ function BioRoute() {
     <Page
       wide
       title="Bio"
-      description="The bio the portfolio will show about you, written in Markdown, with its photos in the order it shows them: self-portraits that are only on the bio, and any of the portfolio's own photos. It's one JSON file, combined into BIO.json."
+      description="The bio the portfolio will show about you, written in Markdown, with its photos in the order it shows them: self-portraits that are only on the bio, and any of the portfolio's own photos. It's one JSON file, combined into ALLBIO.json."
     >
       <GitHubGate>{() => <BioEditorPage />}</GitHubGate>
     </Page>

@@ -1,11 +1,11 @@
 {
-  "id": 643,
-  "title": null,
+  "title": "Another Day in Boston",
   "comment": null,
+  "id": 643,
   "altText": null,
   "notes": null,
   "file": "DSCF7311.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:12:22Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -16,10 +16,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:08 10:54:33",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Boston Common",
+  "customCity": "Boston",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Massachusetts",
   "city": "Boston",
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/bc4bd82f7fd0-dscf7311-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/bc4bd82f7fd0-dscf7311-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/bc4bd82f7fd0-dscf7311-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/bc4bd82f7fd0-dscf7311-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bc4bd82f7fd0-dscf7311-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/bc4bd82f7fd0-dscf7311-thumbnail.webp?crop=0,1358,4693",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bc4bd82f7fd0-dscf7311-thumbnailpreview.webp?crop=0,1358,4693",
     "thumbnailcrop": {
       "x": 0,
-      "y": 938,
+      "y": 1358,
       "size": 4693,
       "outputSize": 500
     }
@@ -50,9 +50,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["crosswalk", "pedestrians", "dogs", "traffic", "skyscrapers", "autumn"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "boston-common"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

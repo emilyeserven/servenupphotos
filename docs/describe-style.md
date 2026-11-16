@@ -14,10 +14,21 @@ search works here too. To ask about one trip, pick its dates in the **When** pic
 cities in **Places**; for a year, its date range; for a camera, lens or genre, those pickers. The card's title says how
 many photos the prompt links out of how many the filters leave.
 
+### Published photos only
+
+**Published photos only**, next to **Shuffle**, leaves out every photo that isn't on the portfolio yet: drafts, and photos that were
+added or given a title but are still waiting for Commit or for the photo data pull request to merge. It keeps the
+photos that are entries of `ALLPHOTOS.json` on the base branch (`inAllPhotos`), the ones the live portfolio shows. It's
+kept in the URL as `published=true`, so the Grid's filters and their counts work out of those photos only, and the
+prompt says "published photos" when it's on.
+
+> **Frontend analogy:** like a CMS preview toggle in reverse: instead of showing drafts next to live posts, it shows
+> only what the production build would.
+
 ## Saved prompts
 
-**Saved prompts**, at the top, saves the page as it is under a name: the filters in the URL, **Photos to link** and
-**Anything to focus on**. **Load** puts them back (the photos are spread evenly again), and the bin deletes one.
+**Saved prompts**, at the top, saves the page as it is under a name: the filters in the URL, **Published photos only**,
+**Photos to link** and **Anything to focus on**. **Load** puts them back (the photos are spread evenly again), and the bin deletes one.
 Saving under a name already used replaces that one. They're kept in this browser's local storage
 (`stores/style-prompts.ts`, a Zustand store persisted under `pipeline-style-prompts`), not on GitHub, so they don't
 wait for Commit and another browser doesn't see them. The prompt's photos aren't saved, only how they're picked, so a
@@ -37,6 +48,17 @@ enough to see the composition and the edit.
 
 > **Frontend analogy:** it's like a `srcset` picking the smallest image that still looks right, except the "screen" is
 > the LLM's context window, where every pixel costs tokens.
+
+## Contact sheets
+
+**Make contact sheets**, above the copy button, puts the picked photos on numbered sheets of 30 in R2, as on the bulk
+pages (see [Contact sheets](contact-sheets.md)). Each tile is labeled with the photo's title, or its file name for an
+untitled one, and its tile number matches the photo's number in the prompt. Once they're made, the prompt lists the
+sheets and asks the LLM to look through them first, and each photo's line becomes
+`3. Photo "Amsterdam Canal" (tile 3 on contact sheet 1): https://…-small.webp`. Changing the filters, the number,
+**Shuffle** or **Published photos only** picks other photos and drops the sheets, so make them again. It's optional:
+without sheets the prompt is the same as before. For more than a few dozen photos it's worth it, since a chat may not
+open hundreds of links one by one.
 
 ## The prompt
 

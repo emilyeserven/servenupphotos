@@ -111,6 +111,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets, and Status (`/settings/status`), the services and connections check
 - [Edit in Pipeline Chrome extension](docs/chrome-extension.md) (downloaded from `/settings`): a toolbar button that opens the pipeline's editor for the portfolio page you are on, through `/quick-edit?url=…`, even with the pipeline on plain HTTP
 - [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, colors), and the tag tools (`/tag-tools/<name>`, under Tools in the Tags submenu) for bulk tagging, the whole tag library, pruning and tag descriptions
+- [Quality Check](docs/quality-check.md) (`/update-data/quality-check`): finds photos that aren't the house aspect ratios (16:9 and 5:7) and, with an LLM prompt, ones with license plates or faces to pixelate, flagging them for re-edit with a note, and lists photos without a place
 - [Photographer notes](docs/photo-notes.md): private notes on a photo, written on the Photo page or by the Tag library, which the portfolio's build leaves out
 - [Alt text](docs/alt-text.md) (`/alt-text`): a description of each photo for screen readers, written on the Photo page or for many photos at once with an LLM prompt, which the portfolio uses as the images' `alt`
 - [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
@@ -121,7 +122,8 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums, tags and genres
 - [All Photos](docs/all-photos.md) (`/all-photos`): every photo in the portfolio's order, sorted any way, with drafts and Undecided photos shown among them and a box to jump to each
 - [Compare groups](docs/compare-groups.md) (`/compare`): putting Gallery and in-flight photos in groups to weigh them side by side and pick the ones to post, and Unselected Photos for the rest, with why and what's kept in R2; only in the pipeline
-- [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
+- [Deleting a photo](docs/delete-photo.md): **Delete photo** on the Photo page, after asking, deletes the photo's JSON and takes it out of albums, Unselected winners, the bio, viewer likes, photo books and trip lines (waiting for Commit), and deletes its images from R2
+- [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, the Re-Edit page listing every marked photo, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
 - [Lower Tier photos](docs/lower-tier.md): marking photos you like but don't want shown unless chosen, on the Photo page or in bulk from the Gallery, which hides them until its Lower Tier filter shows them
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
 - [Offline mode](docs/offline-mode.md): the Gallery, Undecided queue and drafts without the internet, from Square Thumbnails kept on disk and fetched from R2 when the pipeline starts; in-flight work kept in the browser, and exported or imported as JSON
@@ -132,12 +134,13 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Album Layouts and Covers](docs/album-layouts.md) (`/albums/<id>`): rows of photos with Markdown text, up to 5 cover photos, and album JSON export and import
 - [Smart Albums](docs/smart-albums.md) (`/albums/<id>`): albums whose photos come from saved Grid filters, a Trip and dates
 - [Photographic Genres](docs/photographic-genres.md) (`/genres`): kinds of photography such as street or landscape, set on each photo and filterable on the portfolio, kept in `ALLGENRES.json`
+- [Photo Sets](docs/photo-sets.md) (`/photo-sets`, under Organize): photos the portfolio map always shows as one stacked marker, at every zoom, opening their grid when clicked, kept in `SETS.json`
 - [Places and Localizations](docs/places-and-localizations.md) (`/places` and `/localizations`): places a photo was taken at and how it relates to them, and the local script, pronunciation and romanization of countries, cities and places
 - [Metadata Groups](docs/metadata-groups.md) (`/metadata-groups`): named groups of cameras, lenses, focal lengths, apertures, exposures and ISO values, kept in `METAINFO.json`
 - [Camera Overrides](docs/camera-overrides.md) (`/camera-overrides`): per-camera rules that write other values over a photo's EXIF, such as a lens's name for "21.0 mm", applied to new photos and again from Update Data and the Photo page, kept in `CAMERAS.json`
 - [Custom Lenses](docs/custom-lenses.md) (Metadata Groups → Lenses): lenses the EXIF doesn't name well, such as manual ones, picked for a photo on the Photo page, with a Manual/unknown aperture option, kept in `LENSES.json`
 - [Photo Book](docs/photo-book.md) (`/photo-book`): rough mockups of a photo book's pages, with photos dragged from a drawer and captions filled in from a caption template, kept in `PHOTOBOOKS.json`
-- [Bio](docs/bio.md) (`/bio`): the bio the portfolio will show, in Markdown, with self-portraits only it shows and portfolio photos, in order, kept in `BIO.json`
+- [Bio](docs/bio.md) (`/bio`): the bio the portfolio will show, in Markdown, with self-portraits only it shows and portfolio photos, in order, kept in `ALLBIO.json`
 - [Caption Templates](docs/caption-templates.md) (`/caption-templates`): social media captions with placeholders for a photo's fields, filled in by **Generate** on the Photo page's posts, kept in `CAPTIONS.json`
 - [Trips](docs/trips.md) (the Trip Lines page's Trips tab, a page per Trip): names for runs of days, such as "Japan", shown beside those days on the portfolio Timeline, with the ferries and flights between days drawn on the map and a Trip page for their stories, kept in `TIMELINE.json`
 - [Trip Lines](docs/trip-lines.md) (`/trip-lines`): the route of a day, walking from photo to photo and hopping by train, subway, bus or car, kept in `TRIPLINES.json` and baked into `TRIPLINES.geo.json` for the portfolio map
@@ -156,7 +159,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Quick Edit](docs/quick-edit.md): pasting a portfolio link to open the pipeline page that edits it
 - [BFF timeouts](docs/bff-timeouts.md) (`/api/timeouts`): how long the BFF waits for each backend path, read from the backend at start-up
 - [Copying prompts](docs/copy-prompts.md): copying an LLM prompt, or showing it in a modal to copy by hand when the browser won't (the pipeline over plain HTTP)
-- [Contact sheets](docs/contact-sheets.md) (`/api/photos/bucket/contact-sheets`): numbered sheets of 30 photos in R2 for the prompts that link many photos, deleted after a day by an R2 lifecycle rule
+- [Contact sheets](docs/contact-sheets.md) (`/api/photos/bucket/contact-sheets`): numbered sheets of 30 photos in R2 for the prompts that link many photos, deleted after a day by an R2 lifecycle rule or by hand on Explore Bucket
 - [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
 
 ## Checks (same as CI)
@@ -235,6 +238,10 @@ images and resizing full-size photos both take a lot of memory. The images are b
 3. Open `http://<pi-hostname>.local:8080` (e.g. `http://raspberrypi.local:8080`) from any device on the same network.
 
 Both services use `restart: unless-stopped`, so with Docker enabled at boot the pipeline comes back up after the Pi restarts.
+
+The BFF gzips its JSON, scripts and styles, and tells browsers to keep the app's hashed files in `assets/` for good
+(`index.html` is checked on every load, so a new deploy still shows). Opening a page from another computer, such as
+over Tailscale, then downloads its code once instead of asking the Pi about it on every page change.
 
 #### With Coolify
 

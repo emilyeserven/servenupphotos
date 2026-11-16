@@ -1,11 +1,11 @@
 {
-  "id": 592,
-  "title": null,
+  "title": "ATM - Artistically Taken-over Machine",
   "comment": null,
+  "id": 592,
   "altText": null,
   "notes": null,
   "file": "DSCF5353.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:29:05Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -13,7 +13,7 @@
   "iso": 1000,
   "focalLength": 18,
   "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-  "customGpsPosition": null,
+  "customGpsPosition": "42.350970067916535, -71.06074538937744",
   "createDate": "2026:11:07 13:07:27",
   "customCreateDate": null,
   "placeName": "Boston Chinatown",
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-thumbnail.webp?crop=0,1667,4537",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/19eaf6a024f8-dscf5353-thumbnailpreview.webp?crop=0,1667,4537",
     "thumbnailcrop": {
       "x": 0,
-      "y": 907,
+      "y": 1667,
       "size": 4537,
       "outputSize": 500
     }

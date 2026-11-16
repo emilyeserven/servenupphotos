@@ -88,3 +88,11 @@ export function offlineXSmallUrl(data: unknown): string | undefined {
 export function offlineSmallImage(data: unknown): string | undefined {
   return offlineUrl(savedImageUrl(data, "small") ?? savedImageUrl(data, "thumbnail"));
 }
+
+/**
+ * A photo's Small version from the offline copy, for the Photo page's Details: the one its JSON saves,
+ * or else the one next to its image at imageUrl in R2; undefined when neither can be found.
+ */
+export function detailsSmallImage(data: unknown, imageUrl: string): string | undefined {
+  return offlineSmallImage(data) ?? offlineSmallUrl(imageUrl);
+}

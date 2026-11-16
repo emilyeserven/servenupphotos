@@ -6,10 +6,11 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 )
 
-// registerInFlightRoutes adds the routes for the photo data pull request's photos (Photos in Flight) and the photos already in the portfolio (Gallery).
+// registerInFlightRoutes adds the routes for the photo data pull request's photos (Photos in Flight) and the photos already in the portfolio (Gallery), and deleting a photo from the Photo page.
 func registerInFlightRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("GET /photos/in-flight", handlePhotosInFlight(d.store, d.gh, d.findPhotos))
 	mux.HandleFunc("DELETE /photos/in-flight", handleRemoveInFlight(d.store, d.gh, storage.FindPhotos, storage.DeletePhoto))
+	mux.HandleFunc("DELETE /photos/saved", handleDeletePhoto(d.store, d.gh, storage.FindPhotos, storage.DeletePhoto))
 	mux.HandleFunc("PUT /photos/in-flight", handleUpdateInFlight(d.store, d.gh))
 	mux.HandleFunc("GET /photos/published", handlePublishedPhotos(d.store, d.gh, d.findPhotos))
 }

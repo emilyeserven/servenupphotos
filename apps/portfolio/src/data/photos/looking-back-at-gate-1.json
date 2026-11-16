@@ -1,5 +1,5 @@
 {
-  "title": "Looking Back at Gate 1",
+  "title": "The First Gate",
   "comment": null,
   "id": 333,
   "file": "DSCF2424.jpg",
@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 5:7",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#595b5c",
@@ -266,5 +269,8 @@
     "peakChroma": 9.53,
     "samples": 9882
   },
-  "similarPhotos": [505, 392, 506, 510, 507, 348]
+  "similarPhotos": [505, 392, 506, 510, 507, 348],
+  "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo.",
+  "noGps": false,
+  "altText": null
 }

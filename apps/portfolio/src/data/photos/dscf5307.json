@@ -1,11 +1,11 @@
 {
-  "id": 589,
-  "title": null,
+  "title": "Sticker Nook",
   "comment": null,
+  "id": 589,
   "altText": null,
   "notes": null,
   "file": "DSCF5307.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T17:31:55Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -13,7 +13,7 @@
   "iso": 3200,
   "focalLength": 55.6,
   "gpsPosition": "42 deg 21' 4.58\" N, 71 deg 3' 35.80\" W",
-  "customGpsPosition": null,
+  "customGpsPosition": "42.35126210681028, -71.0598388049808",
   "createDate": "2026:11:07 13:01:06",
   "customCreateDate": null,
   "placeName": "Boston Chinatown",
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-thumbnail.webp?crop=0,1766,4414",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f43d71a36da1-dscf5307-thumbnailpreview.webp?crop=0,1766,4414",
     "thumbnailcrop": {
       "x": 0,
-      "y": 883,
+      "y": 1766,
       "size": 4414,
       "outputSize": 500
     }

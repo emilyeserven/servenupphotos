@@ -1,11 +1,11 @@
 {
-  "id": 560,
-  "title": null,
+  "title": "Temple Hall Open",
   "comment": null,
+  "id": 560,
   "altText": null,
   "notes": null,
   "file": "DSCF1445.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T21:24:15Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.2,
@@ -28,14 +28,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445.jpg",
     "key": "photos/1c3bbc32beee-dscf1445.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-thumbnailpreview.webp",
+    "xlarge": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-xlarge.webp?faces=mwicdx0t",
+    "large": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-large.webp?faces=mwicdx0t",
+    "medium": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-medium.webp?faces=mwicdx0t",
+    "small": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-small.webp?faces=mwicdx0t",
+    "xsmall": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-xsmall.webp?faces=mwicdx0t",
+    "preview": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-preview.webp?faces=mwicdx0t",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-thumbnail.webp?faces=mwicdx0t",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1c3bbc32beee-dscf1445-thumbnailpreview.webp?faces=mwicdx0t",
     "thumbnailcrop": {
       "x": 1443,
       "y": 0,
@@ -273,5 +273,69 @@
     "chroma": 17.14,
     "peakChroma": 46.22,
     "samples": 9900
-  }
+  },
+  "compareGroup": "Main Hall Under Lanterns at Night",
+  "faces": [
+    {
+      "x": 4595,
+      "y": 3588,
+      "width": 106,
+      "height": 123,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 6180,
+      "y": 2561,
+      "width": 81,
+      "height": 102,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 6101,
+      "y": 2525,
+      "width": 66,
+      "height": 99,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 6557,
+      "y": 2509,
+      "width": 40,
+      "height": 94,
+      "blocks": 8
+    },
+    {
+      "x": 6493,
+      "y": 3290,
+      "width": 88,
+      "height": 127,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 5767,
+      "y": 3174,
+      "width": 44,
+      "height": 133,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 5349,
+      "y": 3142,
+      "width": 76,
+      "height": 124,
+      "blocks": 8,
+      "shape": "circle",
+      "edge": "blocks"
+    }
+  ]
 }

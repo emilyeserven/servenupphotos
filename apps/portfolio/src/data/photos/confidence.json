@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#794540",
@@ -266,6 +269,6 @@
     "peakChroma": 63.84,
     "samples": 9856
   },
-  "notes": "Shows hanfu at a Lunar New Year parade; 'hanfu' isn't a tag, since only 1 photo has it.",
+  "notes": "Shows hanfu at a Lunar New Year parade; 'hanfu' isn't a tag, since only 1 photo has it.\n\nQuality Check (aspect ratio): the Small version is 500 × 298 (1.68:1), not the 16:9 crop for a landscape photo.",
   "similarPhotos": [437, 306, 303, 307, 305, 132]
 }

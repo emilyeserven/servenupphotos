@@ -3,7 +3,7 @@
   "title": null,
   "comment": null,
   "altText": null,
-  "notes": null,
+  "notes": "Quality Check (pixelation): The older man in the hat and light jacket walking past the lanterns on the left shows his face.",
   "file": "DSCF9243.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -63,7 +63,10 @@
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Pixelate 1 face",
+    "date": "2026-11-15"
+  },
   "pickedSimilar": [],
   "pickedSimilarNotes": {},
   "similarPhotos": [],
@@ -292,5 +295,6 @@
       "blocks": 8,
       "keep": true
     }
-  ]
+  ],
+  "compareGroup": "Rows of Colorful Lotus Lanterns"
 }

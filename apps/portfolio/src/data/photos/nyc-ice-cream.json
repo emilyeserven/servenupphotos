@@ -21,23 +21,23 @@
   "country": "United States of America",
   "state": "New York",
   "city": "New York City",
-  "width": 5854,
-  "height": 3336,
+  "width": 5788,
+  "height": 3256,
   "images": {
-    "full": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446.jpg",
-    "key": "photos/7493c7f893a1-img-3446.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-thumbnail.webp?crop=1948,0,3336",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-thumbnailpreview.webp?crop=1948,0,3336",
+    "full": "https://cdn.servenupphotos.net/photos/af601c10cca1-img-3446.jpg",
+    "key": "photos/af601c10cca1-img-3446.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/af601c10cca1-img-3446-xlarge.webp?faces=mwhd9tn9",
+    "large": "https://cdn.servenupphotos.net/photos/af601c10cca1-img-3446-large.webp?faces=mwhd9tn9",
+    "medium": "https://cdn.servenupphotos.net/photos/af601c10cca1-img-3446-medium.webp?faces=mwhd9tn9",
+    "small": "https://cdn.servenupphotos.net/photos/af601c10cca1-img-3446-small.webp?faces=mwhd9tn9",
+    "xsmall": "https://cdn.servenupphotos.net/photos/af601c10cca1-img-3446-xsmall.webp?faces=mwhd9tn9",
+    "preview": "https://cdn.servenupphotos.net/photos/af601c10cca1-img-3446-preview.webp?faces=mwhd9tn9",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/af601c10cca1-img-3446-thumbnail.webp?faces=mwhd9tn9",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/af601c10cca1-img-3446-thumbnailpreview.webp?faces=mwhd9tn9",
     "thumbnailcrop": {
-      "x": 1948,
+      "x": 2013,
       "y": 0,
-      "size": 3336,
+      "size": 3256,
       "outputSize": 500
     }
   },
@@ -59,16 +59,13 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": {
-    "reason": "Need to rotate a bit, probably",
-    "date": "2026-10-23"
-  },
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#505050",
       "lab": {
         "l": 33.87,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {
@@ -270,5 +267,25 @@
     "samples": 9825
   },
   "notes": "Shows an ice cream van; 'ice-cream' and 'van' aren't tags, since only 2 photos have each.",
-  "similarPhotos": [169, 11, 46, 203, 436, 441]
+  "similarPhotos": [169, 11, 46, 203, 436, 441],
+  "faces": [
+    {
+      "x": 0,
+      "y": 1734,
+      "width": 89,
+      "height": 156,
+      "blocks": 12,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 255,
+      "y": 1631,
+      "width": 108,
+      "height": 172,
+      "blocks": 12,
+      "shape": "circle",
+      "edge": "blocks"
+    }
+  ]
 }

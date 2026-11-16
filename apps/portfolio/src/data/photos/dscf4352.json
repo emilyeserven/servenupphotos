@@ -267,5 +267,6 @@
     "samples": 10050
   },
   "undecided": true,
-  "similarPhotos": [246, 102, 222, 223, 41, 259]
+  "similarPhotos": [246, 102, 222, 223, 41, 259],
+  "compareGroup": "Skyline from the City Wall"
 }

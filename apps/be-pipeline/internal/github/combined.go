@@ -40,8 +40,10 @@ type CombinedFiles struct {
 	NotStored InFlightAllPhotos `json:"notstored"`
 	// PhotoBooks is PHOTOBOOKS.json, the Photo Book page's mockups.
 	PhotoBooks InFlightAllPhotos `json:"photobooks"`
-	// Bio is BIO.json, the Bio page's bio and its photos.
+	// Bio is ALLBIO.json, the Bio page's bio and its photos.
 	Bio InFlightAllPhotos `json:"bio"`
+	// Sets is SETS.json, the Photo Sets the map keeps as one marker each.
+	Sets InFlightAllPhotos `json:"sets"`
 }
 
 // CombinedBase is CombinedFiles on the base branch: what the portfolio has.

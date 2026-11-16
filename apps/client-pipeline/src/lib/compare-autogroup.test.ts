@@ -5,6 +5,7 @@ import {
   autogroupAsk,
   autogroupPrompt,
   autogroupSheetPhotos,
+  linkedPhotos,
 } from "@/lib/compare-autogroup";
 import type { ComparePhoto } from "@/lib/compare-groups";
 
@@ -79,7 +80,7 @@ describe("autogroupPrompt", () => {
     assert.match(prompt, /Photo "a" \(tile 2 on contact sheet 1\): https:\/\/cdn\/a-small\.webp/);
     assert.match(prompt, /Photo "grouped2" \(tile 5 on contact sheet 1\)/);
     assert.deepEqual(
-      autogroupSheetPhotos(ask).map((photo) => photo.label),
+      autogroupSheetPhotos(linkedPhotos(ask)).map((photo) => photo.label),
       ["draft", "a", "c", "grouped", "grouped2"],
     );
   });

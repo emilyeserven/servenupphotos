@@ -59,7 +59,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#8f6569",
@@ -266,7 +269,7 @@
     "peakChroma": 55.55,
     "samples": 10050
   },
-  "notes": null,
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 278 (1.80:1), not the 16:9 crop for a landscape photo.",
   "spotlightZoneFocus": {
     "grid-header": {
       "focus": {
@@ -276,5 +279,6 @@
       "placement": null
     }
   },
-  "similarPhotos": [59, 237, 223, 117, 71, 129]
+  "similarPhotos": [59, 237, 223, 117, 71, 129],
+  "compareGroup": "Williamsburg Bridge Walkway"
 }

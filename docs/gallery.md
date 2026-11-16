@@ -13,6 +13,18 @@ linked to Photos in Flight. A photo with no title on the base branch is a [draft
 **Draft**, since `ALLPHOTOS.json` leaves it out. The list is read from the photos folder rather than `ALLPHOTOS.json`, since editing needs
 each photo's file path, which `ALLPHOTOS.json` entries don't carry.
 
+### Drawing tiles as you scroll
+
+The Gallery draws its tiles 96 at a time: the first batch shows at once, and the next is added whenever the end of
+the drawn tiles comes within 1,500px of the screen (`useRevealed` in `hooks/use-revealed.ts`). Filters, the count and
+**Select all** still work on every photo; only the tiles below the screen wait. Drawing all ~1,300 tiles at once took
+a second or two of the browser's time on each visit, which froze spinners and made the page hiccup as it opened, and
+it got slower with each photo added. The [drafts](drafts.md) list and [Photos in Flight](photos-in-flight.md) (12
+photos at a time, since each one is a large card) do the same.
+
+> **Frontend analogy:** it's infinite scroll over data that's already loaded: an `IntersectionObserver` on an empty
+> element after the last tile bumps how many of the array get rendered.
+
 ### The portfolio Grid's filters
 
 Under those, **Show filters** opens the same filters as the portfolio's [Grid and Table](portfolio-filters.md):

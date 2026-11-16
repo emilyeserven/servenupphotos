@@ -64,8 +64,11 @@ var (
 	PhotoBooks = EntryKind{Name: "photo book", Folder: "photobooks", AllFile: "PHOTOBOOKS.json"}
 	// BioKind is the bio the portfolio will show about the photographer,
 	// one file, bio.json.
-	BioKind    = EntryKind{Name: "bio", Folder: "bio", AllFile: "BIO.json"}
-	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind, PhotoBooks, BioKind}
+	BioKind = EntryKind{Name: "bio", Folder: "bio", AllFile: "ALLBIO.json"}
+	// PhotoSets are photos the portfolio's map always shows as one marker,
+	// one file per set.
+	PhotoSets  = EntryKind{Name: "Photo Set", Folder: "sets", AllFile: "SETS.json"}
+	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind, PhotoBooks, BioKind, PhotoSets}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as

@@ -63,7 +63,10 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Crop to 16:9",
+    "date": "2026-11-15"
+  },
   "colors": {
     "average": {
       "hex": "#555555",
@@ -270,5 +273,7 @@
     "peakChroma": 0.01,
     "samples": 9956
   },
-  "similarPhotos": [7, 74, 6, 383, 151, 116]
+  "similarPhotos": [7, 74, 6, 383, 151, 116],
+  "compareGroup": "Lone Figure on Subway Platform",
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo."
 }

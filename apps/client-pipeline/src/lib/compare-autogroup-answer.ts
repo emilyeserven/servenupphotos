@@ -2,7 +2,10 @@ import {
   type AutogroupAsk,
   type AutogroupPhoto,
   type ExistingGroup,
+  answerObject as jsonObject,
   askedPhotos,
+  lookupName,
+  photoFinder,
 } from "@/lib/compare-autogroup";
 import { type ComparePhoto, compareGroupOf, comparePhotoName } from "@/lib/compare-groups";
 
@@ -39,18 +42,9 @@ export interface AutogroupAnswer {
   unknownGroups: string[];
 }
 
-/** The JSON object in the answer, from its first `{` to its last `}`, so a code fence or a sentence around it is fine. */
+/** The answer's JSON object, which has to have at least one of the lists the prompt asks for. */
 function answerObject(answer: string): Record<string, unknown> {
-  const start = answer.indexOf("{");
-  const end = answer.lastIndexOf("}");
-  if (start === -1 || end <= start) throw new Error("The answer has no JSON object in it.");
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(answer.slice(start, end + 1));
-  } catch {
-    throw new Error("The answer's JSON couldn't be read. Paste the whole answer, from { to }.");
-  }
-  const lists = parsed as Record<string, unknown> | null;
+  const lists = jsonObject(answer) as Record<string, unknown> | null;
   if (!["groups", "merge", "remove"].some((key) => Array.isArray(lists?.[key]))) {
     throw new Error('The answer\'s JSON has no "groups", "merge" or "remove" list.');
   }
@@ -73,25 +67,6 @@ function text(value: unknown): string {
 /** The value's text items, or none when it isn't a list. */
 function texts(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
-}
-
-/** A name as the answer gave it, for looking up: no quotes, `.json` ending or case. */
-function lookupName(name: string): string {
-  return name
-    .trim()
-    .replace(/^["']|["']$/g, "")
-    .replace(/\.json$/i, "")
-    .toLowerCase();
-}
-
-/** Looks a photo up by the name the answer gave, its JSON file's name or its original file's name. */
-function photoFinder(photos: AutogroupPhoto[]): (name: string) => AutogroupPhoto | undefined {
-  const byKey = new Map<string, AutogroupPhoto>();
-  for (const entry of photos) {
-    byKey.set(entry.key.toLowerCase(), entry);
-    byKey.set(entry.photo.file.photoName.toLowerCase(), entry);
-  }
-  return (name) => byKey.get(lookupName(name));
 }
 
 /** Looks a group there is up by the name the answer gave, ignoring case and quotes. */

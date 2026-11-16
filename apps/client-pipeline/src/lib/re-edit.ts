@@ -51,3 +51,29 @@ export function withReEdit<T extends object>(data: T, draft: ReEditDraft): T {
   const date = savedReEdit(data)?.date || today();
   return { ...data, reEdit: { reason: draft.reason.trim(), date } };
 }
+
+/** A photo marked for re-editing, with its mark, as the Re-edit page lists it. */
+export interface MarkedPhoto<T> {
+  /** The photo as the list was given it. */
+  entry: T;
+  /** Its saved re-edit mark. */
+  reEdit: ReEdit;
+}
+
+/**
+ * The photos marked for re-editing, most recently marked first (undated marks last, then by key),
+ * reading each one's data with `dataOf`.
+ */
+export function markedPhotos<T extends { key: string }>(
+  entries: readonly T[],
+  dataOf: (entry: T) => unknown,
+): MarkedPhoto<T>[] {
+  return entries
+    .map((entry) => ({ entry, reEdit: savedReEdit(dataOf(entry)) }))
+    .filter((item): item is MarkedPhoto<T> => item.reEdit !== null)
+    .toSorted(
+      (a, b) =>
+        b.reEdit.date.localeCompare(a.reEdit.date) ||
+        a.entry.key.localeCompare(b.entry.key, undefined, { numeric: true }),
+    );
+}

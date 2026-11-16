@@ -1,9 +1,9 @@
 {
-  "id": 446,
-  "title": null,
+  "title": "From the Bridge in Arima",
   "comment": null,
+  "id": 446,
   "file": "DSCF5888.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-15T20:45:25Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 9,
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/cd9855d9d5b4-dscf5888-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/cd9855d9d5b4-dscf5888-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/cd9855d9d5b4-dscf5888-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/cd9855d9d5b4-dscf5888-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/cd9855d9d5b4-dscf5888-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/cd9855d9d5b4-dscf5888-thumbnail.webp?crop=0,0,4395",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/cd9855d9d5b4-dscf5888-thumbnailpreview.webp?crop=0,0,4395",
     "thumbnailcrop": {
       "x": 0,
-      "y": 879,
+      "y": 0,
       "size": 4395,
       "outputSize": 500
     }
@@ -268,5 +268,8 @@
     "samples": 9711
   },
   "notes": "Shows a waterfall; 'waterfall' isn't a tag, since only 1 photo has one.",
-  "similarPhotos": [447, 448, 451, 220, 222, 79]
+  "similarPhotos": [447, 448, 451, 220, 222, 79],
+  "compareGroup": "Arima Stone Stream Channel",
+  "noGps": false,
+  "altText": null
 }

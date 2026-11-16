@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["lily-pads", "pond", "water", "plants"],
   "genres": [],
   "places": [],
   "noGps": false,
@@ -268,5 +268,6 @@
     "chroma": 16.58,
     "peakChroma": 35.75,
     "samples": 9694
-  }
+  },
+  "compareGroup": "Lily Pads on Dark Water"
 }

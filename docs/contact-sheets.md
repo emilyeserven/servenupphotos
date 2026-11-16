@@ -5,7 +5,9 @@ of the prompt's photos as numbered tiles, labeled with the tile number and the n
 An LLM looks through a handful of sheets instead of opening dozens or hundreds of links one by one.
 
 Pages with **Make contact sheets**: [Autogroup](compare-groups.md#autogroup), [Bulk Tagging](update-data.md#bulk-tagging),
-[Genre Suggestions](update-data.md#genre-suggestions) and [Bulk Places](update-data.md#bulk-places).
+[Genre Suggestions](update-data.md#genre-suggestions), [Bulk Places](update-data.md#bulk-places),
+[Describe my style](describe-style.md#contact-sheets) and the
+[Quality Check](quality-check.md#license-plates-and-faces)'s pixelation prompt.
 
 ## Using it
 
@@ -60,7 +62,9 @@ The first time sheets are made, the pipeline adds the rule itself through the S3
 until the backend restarts.
 
 Changing a bucket's settings needs an R2 API token with **Admin Read & Write**. With an **Object Read & Write**
-token the sheets are still made, and a warning under the button says the rule couldn't be added. Add it by hand once:
+token the sheets are still made, and a note under the button says R2 keeps them until they're deleted, with a link
+to [delete them on Explore Bucket](#deleting-them-by-hand). To have R2 delete them on its own instead, add the rule
+by hand once:
 
 1. In the Cloudflare dashboard, open **R2** → the bucket → **Settings** → **Object lifecycle rules** → **Add rule**.
 2. Name it (say, "Delete contact sheets"), choose **Prefix** and enter `contact-sheets/`.
@@ -70,3 +74,17 @@ The pipeline then finds that rule and stops warning.
 
 > **Frontend analogy:** a lifecycle rule is a `Cache-Control: max-age` that actually deletes the file. Like a
 > preview deploy, the sheet's link is public just long enough for the LLM to look, then it's gone.
+
+## Deleting them by hand
+
+[Explore Bucket](explore-bucket.md) has a **Contact sheets** section, above the grid, whenever `contact-sheets/` has
+anything in it. It lists each set (one press of **Make contact sheets**), newest first, with when it was made, its
+sheets as small links, and their size. **Delete** removes one set, and **Delete all**, pressed twice, removes every
+set. The grid leaves contact sheets out, so they don't mix with photos.
+
+`POST /api/photos/bucket/contact-sheets/delete` takes `{ set }`, a set's folder name such as
+`20261115-045000-1a2b3c4d`, or `""` for every set. `storage.DeleteContactSheets` lists that folder and deletes each
+object in it, and answers `{ deleted, failed: [{ key, message }] }`. Only folders inside `contact-sheets/` can be
+named, so nothing else in the bucket can be deleted this way.
+
+A prompt that links a deleted sheet can't show it anymore, so delete a set once its prompt has been answered.

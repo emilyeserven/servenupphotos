@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["brownstone", "rowhouses", "trees", "cars"],
   "genres": [],
   "places": [],
   "noGps": false,
@@ -268,5 +268,6 @@
     "chroma": 11.9,
     "peakChroma": 25.04,
     "samples": 9975
-  }
+  },
+  "compareGroup": "Brownstones Behind Trees"
 }
