@@ -13,6 +13,7 @@ import { setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import type { TripFence, TripPoint, TripSegment, TripVisit } from "@/api/trip-lines";
+import { PipelineCoordinatesMenu } from "@/components/map-coordinates";
 import { FenceAreas } from "@/components/trip-lines/fence-areas";
 import { lineFeatures, pointsBounds } from "@/components/trip-lines/route-geometry";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
@@ -195,6 +196,7 @@ export function RouteMap({
             </span>
           </Marker>
         ))}
+        <PipelineCoordinatesMenu />
       </Map>
     </div>
   );

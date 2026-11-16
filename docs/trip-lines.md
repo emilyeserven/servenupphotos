@@ -186,7 +186,8 @@ from before days had pages, `/trip-lines?day=2026-09-29&group=…`, opens that d
 
 The Route page edits the day: its photos in the order they were taken, with what happened between each two, and
 a map of the line drawn through them (photos as numbered dots; walks solid, hops dashed). Pointing at a photo
-highlights its dot.
+highlights its dot. Right-clicking the map copies that spot's coordinates (see
+[Copy coordinates](portfolio-map.md#copy-coordinates)).
 
 - The line switch above the strip picks the day's kind of line: **No line**, **Automatic** or **By hand**. Picking one
   changes nothing saved until the save bar saves it. **Automatic** on a day without it shows a preview, drawn fainter,

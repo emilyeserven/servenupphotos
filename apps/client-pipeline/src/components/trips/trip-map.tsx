@@ -13,6 +13,7 @@ import { setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import type { Trip } from "@/api/trips";
+import { PipelineCoordinatesMenu } from "@/components/map-coordinates";
 import { dayTitle } from "@/components/trip-lines/day-title";
 import { type TripMapDays, tripMapData, tripMapPoints } from "@/lib/trip-map";
 
@@ -83,6 +84,7 @@ export function TripMap({ trip, ...days }: TripMapDays & { trip: Trip }) {
             </span>
           </Marker>
         ))}
+        <PipelineCoordinatesMenu />
       </Map>
     </div>
   );
