@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /out/api ./cmd/api
 
 # exiftool is a Perl program, so the runtime needs a distro that ships it (go-exiftool shells out to it).
-FROM alpine:3.22
+FROM alpine:3.24
 RUN apk add --no-cache exiftool
 COPY --from=build /out/api /api
 # Settings (including write-only secrets) live on the volume mounted here; nobody must own it to write.
