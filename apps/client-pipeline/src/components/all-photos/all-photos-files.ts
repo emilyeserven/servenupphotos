@@ -4,6 +4,7 @@ import type { Photo } from "@portfolio/lib/photos";
 import type { InFlightFileRead, InFlightRead, PublishedResponse } from "@/api/photos";
 import { photoName } from "@/components/gallery/published-file";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { shownImageUrl } from "@/lib/face-json";
 import { isSetAside, isUnselected, titleOf } from "@/lib/drafts";
 import { readEntries } from "@/lib/smart-album-photos";
 import { editedData } from "@/lib/undecided";
@@ -112,4 +113,9 @@ function withPhotos(entries: Omit<AllPhotosEntry, "photo">[]): AllPhotosEntry[] 
   const { photos, ids } = readEntries(entries.map(({ data }) => data as CombinedPhoto));
   const byId = new Map(photos.map((photo) => [photo.id, photo]));
   return entries.map((entry, index) => ({ ...entry, photo: byId.get(ids[index] ?? 0) }));
+}
+
+/** The photo's full-size image as the portfolio shows it (with any faces pixelated), or undefined without one in R2. */
+export function fullImageUrl(entry: AllPhotosEntry): string | undefined {
+  return shownImageUrl(entry.data, entry.imageUrl);
 }

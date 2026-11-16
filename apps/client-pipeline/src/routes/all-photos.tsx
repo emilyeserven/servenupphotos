@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   type InFlightRead,
   photosInFlightQuery,
@@ -11,6 +11,7 @@ import { settingsQuery } from "@/api/settings";
 import { AllPhotosControls, useSetSearch } from "@/components/all-photos/all-photos-controls";
 import { type AllPhotosEntry, allPhotosEntries } from "@/components/all-photos/all-photos-files";
 import { AllPhotosGrid, scrollToTile } from "@/components/all-photos/all-photos-grid";
+import { AllPhotosLightbox } from "@/components/all-photos/all-photos-lightbox";
 import {
   type AllPhotosSearch,
   parseAllPhotosSearch,
@@ -109,6 +110,8 @@ function AllPhotosList({
   const order = search.order ?? defaultOrder(sort);
   const entries = useEntries(published, inFlight);
   const sorted = useMemo(() => sortEntries(entries, sort, order), [entries, sort, order]);
+  const shown = sorted.filter((entry) => isShown(entry, search));
+  const [openPath, setOpenPath] = useState<string | null>(null);
   // Scrolls to the photo a link from another page names, once the photos are listed.
   useEffect(() => {
     if (search.photo) scrollToTile(search.photo);
@@ -122,10 +125,8 @@ function AllPhotosList({
     <>
       <OfflineNotice images={published.images} />
       <AllPhotosControls entries={entries} search={search} sort={sort} order={order} />
-      <AllPhotosGrid
-        entries={sorted.filter((entry) => isShown(entry, search))}
-        highlight={search.photo}
-      />
+      <AllPhotosGrid entries={shown} highlight={search.photo} onOpen={setOpenPath} />
+      <AllPhotosLightbox entries={shown} openPath={openPath} onOpenPath={setOpenPath} />
       <JumpBox
         entries={sorted.filter((entry) => entry.kind !== "published")}
         current={search.photo}

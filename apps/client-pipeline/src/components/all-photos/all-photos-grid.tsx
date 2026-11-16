@@ -1,7 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { ImageIcon, PencilIcon } from "lucide-react";
-import type { AllPhotosEntry, PhotoKind } from "@/components/all-photos/all-photos-files";
+import type { ReactNode } from "react";
+import {
+  type AllPhotosEntry,
+  fullImageUrl,
+  type PhotoKind,
+} from "@/components/all-photos/all-photos-files";
 import { Button } from "@/components/ui/button";
 import { squareImages } from "@/lib/offline-thumbnails";
 import { cn } from "@/lib/utils";
@@ -25,13 +30,18 @@ export const KIND_MARKS: Record<
   undecided: { label: "Undecided", className: "bg-amber-500 text-black" },
 };
 
-/** The photos as Square Thumbnail tiles, in the page's sort, with the one `highlight` names ringed. */
+/**
+ * The photos as Square Thumbnail tiles, in the page's sort, with the one `highlight` names ringed.
+ * Clicking a photo's thumbnail calls onOpen with its path, to show it full size.
+ */
 export function AllPhotosGrid({
   entries,
   highlight,
+  onOpen,
 }: {
   entries: AllPhotosEntry[];
   highlight?: string;
+  onOpen: (path: string) => void;
 }) {
   if (entries.length === 0) {
     return <p className="text-muted-foreground text-sm">No photos to show.</p>;
@@ -40,7 +50,7 @@ export function AllPhotosGrid({
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))]">
       {entries.map((entry) => (
         <li key={entry.path} id={tileId(entry.path)} className="scroll-mt-24">
-          <PhotoTile entry={entry} highlighted={entry.path === highlight} />
+          <PhotoTile entry={entry} highlighted={entry.path === highlight} onOpen={onOpen} />
         </li>
       ))}
     </ul>
@@ -48,7 +58,15 @@ export function AllPhotosGrid({
 }
 
 /** One photo: its Square Thumbnail with a Draft or Undecided mark, its name and date, and Edit. */
-function PhotoTile({ entry, highlighted }: { entry: AllPhotosEntry; highlighted: boolean }) {
+function PhotoTile({
+  entry,
+  highlighted,
+  onOpen,
+}: {
+  entry: AllPhotosEntry;
+  highlighted: boolean;
+  onOpen: (path: string) => void;
+}) {
   return (
     <article
       className={cn(
@@ -57,10 +75,10 @@ function PhotoTile({ entry, highlighted }: { entry: AllPhotosEntry; highlighted:
         highlighted && "ring-primary ring-offset-background ring-4 ring-offset-2",
       )}
     >
-      <span className="bg-muted relative flex aspect-square items-center justify-center">
+      <Thumbnail entry={entry} onOpen={onOpen}>
         <TileImage entry={entry} />
         <KindBadge kind={entry.kind} />
-      </span>
+      </Thumbnail>
       <div className="flex flex-1 flex-col gap-1 p-2.5">
         <h2 className="truncate text-sm font-medium" title={entry.name}>
           {entry.name}
@@ -71,6 +89,38 @@ function PhotoTile({ entry, highlighted }: { entry: AllPhotosEntry; highlighted:
         </div>
       </div>
     </article>
+  );
+}
+
+/**
+ * The tile's square image box: a button that opens the photo full size, or a plain box when the
+ * photo has no image in R2 to open.
+ */
+function Thumbnail({
+  entry,
+  onOpen,
+  children,
+}: {
+  entry: AllPhotosEntry;
+  onOpen: (path: string) => void;
+  children: ReactNode;
+}) {
+  const className = "bg-muted relative flex aspect-square items-center justify-center";
+  if (!fullImageUrl(entry)) return <span className={className}>{children}</span>;
+  return (
+    <button
+      type="button"
+      title="Show it full size; the arrow keys then move between the photos"
+      aria-label={`Show ${entry.name} full size`}
+      onClick={() => onOpen(entry.path)}
+      data-lightbox-photo={entry.path}
+      className={cn(
+        className,
+        "focus-visible:ring-ring cursor-zoom-in outline-none focus-visible:ring-2 focus-visible:ring-inset",
+      )}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -111,7 +161,7 @@ function KindBadge({ kind, className }: { kind: PhotoKind; className?: string })
 }
 
 /** Opens the photo on the Photo page, as the Gallery does for one only on the base branch. */
-function EditButton({ entry }: { entry: AllPhotosEntry }) {
+export function EditButton({ entry }: { entry: AllPhotosEntry }) {
   if (!entry.imageUrl) return <p className="text-muted-foreground text-xs">No image in R2</p>;
   const search = entry.onBase
     ? { edit: entry.path, from: "gallery" as const }
