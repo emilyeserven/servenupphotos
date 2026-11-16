@@ -54,7 +54,8 @@ album or camera that's only in GitHub shows up once the clone has it.
 A package that a shared portfolio file imports (React, `date-fns`, `lucide-react`, …) has to be in client-pipeline's
 `package.json` **and** in `resolve.dedupe` in its `vite.config.ts`. The Docker build installs only the pipeline's
 packages, so without `dedupe` Vite looks for the package next to the portfolio's file, finds no `node_modules` there,
-and the build fails with "failed to resolve import".
+and the build fails with "failed to resolve import". CI's **Docker (pipeline image)** check builds that image, so it catches
+a missing entry before it reaches the Raspberry Pi.
 
 ### A place's photos
 

@@ -73,6 +73,20 @@ jobs:
       - name: tests
         run: pnpm test
 
+  # Builds the pipeline's Docker image the way Coolify does on the Raspberry Pi. That image installs only
+  # the pipeline's packages, so a portfolio file the pipeline imports can fail to find a package here
+  # even when the build above passes (see docs/gallery.md). Stops after the build stage, which is the
+  # part that can break.
+  docker:
+    name: Docker (pipeline image)
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.typescript == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: docker build
+        run: docker build --file apps/bff-pipeline/Dockerfile --target build .
+
   go:
     name: Go (be-pipeline)
     needs: changes
