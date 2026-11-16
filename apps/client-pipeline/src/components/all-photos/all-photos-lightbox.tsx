@@ -26,21 +26,30 @@ export function AllPhotosLightbox({ entries, openPath, onOpenPath }: AllPhotosLi
   const entry = openable[index];
   const src = entry && fullImageUrl(entry);
   if (!entry || !src) return null;
-  const step = (by: number) => {
-    const next = steppedPath(
-      openable.map((each) => each.path),
-      entry.path,
-      by,
-    );
-    onOpenPath(next);
-  };
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const by = arrowStep(event);
-    if (by === 0) return;
-    event.preventDefault();
-    step(by);
-  };
-  const place = `${index + 1} of ${openable.length}`;
+  return (
+    <OpenLightbox
+      paths={openable.map((each) => each.path)}
+      index={index}
+      entry={entry}
+      src={src}
+      onOpenPath={onOpenPath}
+    />
+  );
+}
+
+interface OpenLightboxProps {
+  /** The paths of the photos it steps through, in the page's sort. */
+  paths: string[];
+  /** The place in paths of the photo shown, 0 first. */
+  index: number;
+  entry: AllPhotosEntry;
+  src: string;
+  onOpenPath: (path: string | null) => void;
+}
+
+function OpenLightbox({ paths, index, entry, src, onOpenPath }: OpenLightboxProps) {
+  const step = (by: number) => onOpenPath(steppedPath(paths, entry.path, by));
+  const place = `${index + 1} of ${paths.length}`;
   return (
     <ImageLightbox
       open
@@ -49,12 +58,20 @@ export function AllPhotosLightbox({ entries, openPath, onOpenPath }: AllPhotosLi
       src={src}
       description={`${entry.name} at full size, photo ${place}. The left and right arrow keys move between the photos.`}
       toolbar={<Toolbar entry={entry} place={place} />}
-      overlay={openable.length > 1 && <LightboxSideArrows onStep={step} />}
+      overlay={paths.length > 1 && <LightboxSideArrows onStep={step} />}
       footer={<Footer entry={entry} />}
-      onKeyDown={onKeyDown}
+      onKeyDown={(event) => stepByKey(event, step)}
       onCloseAutoFocus={(event) => focusLightboxPhoto(event, entry.path)}
     />
   );
+}
+
+/** Calls step with -1 for ← and 1 for →, keeping the key from scrolling the page; other keys do nothing. */
+function stepByKey(event: KeyboardEvent<HTMLDivElement>, step: (by: number) => void) {
+  const by = arrowStep(event);
+  if (by === 0) return;
+  event.preventDefault();
+  step(by);
 }
 
 /** The photo's Draft or Undecided mark, if it has one, and its place among the photos. */
