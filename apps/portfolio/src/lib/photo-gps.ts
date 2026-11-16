@@ -66,7 +66,7 @@ function ownPosition({ latitude, longitude }: Place): Position | undefined {
 }
 
 /** The photo's own GPS position: the custom one written on the Photo page, or else its EXIF one. */
-export function photoGps(photo: PhotoEntry): Position {
+export function photoGps(photo: Pick<PhotoEntry, "customGpsPosition" | "gpsPosition">): Position {
   const written = parseGpsPosition(photo.customGpsPosition ?? null);
   return written.latitude === null ? parseGpsPosition(photo.gpsPosition) : written;
 }
@@ -96,7 +96,7 @@ function dmsText(degrees: number, hemispheres: "NS" | "EW"): string {
 }
 
 /** The GPS position as a photographer writes it, such as 37°31′21″ N, 126°58′46″ E. */
-export function gpsText({ latitude, longitude }: Position): string | null {
+export function gpsDegreesText({ latitude, longitude }: Position): string | null {
   if (latitude === null || longitude === null) return null;
   return `${dmsText(latitude, "NS")}, ${dmsText(longitude, "EW")}`;
 }

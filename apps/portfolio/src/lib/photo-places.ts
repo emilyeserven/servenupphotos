@@ -10,7 +10,7 @@ import {
   SCRIPT_DISPLAYS,
   type ScriptDisplay,
 } from "@portfolio/lib/localize";
-import { gpsText, photoGps } from "@portfolio/lib/photo-gps";
+import { gpsDegreesText, photoGps } from "@portfolio/lib/photo-gps";
 import type { Photo, PhotoEntry } from "@portfolio/lib/photos";
 
 /** Where the photo was taken, written each way the menu's Script Display can choose. */
@@ -171,7 +171,7 @@ export function photoLocation(photo: PhotoEntry): LocalizedLocation | null {
     place: placeText(photo),
     ...cityAndState(photo),
     country: localizedField("country", custom(photo.customCountry, photo.country)),
-    gps: gpsText(photoGps(photo)),
+    gps: gpsDegreesText(photoGps(photo)),
   };
   if (!hasLocation(parts)) return null;
   return Object.fromEntries(

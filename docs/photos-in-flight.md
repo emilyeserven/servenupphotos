@@ -43,7 +43,7 @@ list and the Undecided queue (the [drafts on the base branch](#drafts-on-the-bas
 [local edits](combined-data-store.md#local-edits) made. With any chosen, it says how many photos are shown, with
 **Clear filters**. A photo whose JSON couldn't be read is hidden while a filter is chosen. They're kept in the URL
 (such as `?title=without&place=with`), so a reload or a shared link keeps them. Album, tag and other files below the
-photos aren't filtered. The [Gallery](gallery.md) has the same filters.
+photos aren't filtered. The [Gallery](gallery.md) has the same filters, with **On the map** in place of **GPS position**.
 
 The bar's **Sort** sets the order of the photos in flight: **Untitled first** (the default: untitled photos, then the
 rest, each in the pull request's order), **Date taken** (newest first, as the Gallery's), **Date added** (when it went

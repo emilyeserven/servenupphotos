@@ -5,7 +5,7 @@ import type { PublishedFile } from "@/api/photos";
 import { type Place, placesQuery, readEntries, savedPlaces } from "@/api/places";
 import { FilterToggle, type ToggleChoices } from "@/components/photo-filter-bar";
 import type { CombinedPhoto } from "@/lib/group-photos";
-import { type PhotoGpsSource, photoGpsSource } from "@/lib/place-gps";
+import { type PhotoGpsSource, photoGpsSource } from "@/lib/photo-map";
 import { editedData } from "@/lib/undecided";
 import { cn } from "@/lib/utils";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";

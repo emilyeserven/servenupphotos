@@ -7,6 +7,7 @@ import { editedData } from "@/lib/undecided";
 import {
   type FilterChoice,
   type FilterKey,
+  type PhotoFilter,
   type PhotoFilters,
   PHOTO_FILTERS,
   filterCount,
@@ -27,18 +28,19 @@ interface FilteredFile {
 /**
  * The filters chosen on the page (Photos in Flight or the Gallery), kept in the URL so a reload
  * keeps them, and the files that pass them with the local edits made. A prefix reads a second
- * filter bar's, such as "draft" for the drafts on Photos in Flight.
+ * filter bar's, such as "draft" for the drafts on Photos in Flight; `defs` swaps in another set of
+ * filters, such as the Gallery's with On the map.
  */
-export function usePhotoFilters(prefix?: string) {
+export function usePhotoFilters(prefix?: string, defs: PhotoFilter[] = PHOTO_FILTERS) {
   const filters = useSearch({
     strict: false,
-    select: (search: Record<string, unknown>) => parseFilters(search, prefix),
+    select: (search: Record<string, unknown>) => parseFilters(search, prefix, defs),
   });
   const edits = useLocalEditsStore((s) => s.edits);
   return {
     filters,
     filter: <T extends FilteredFile>(files: T[]): T[] =>
-      files.filter((file) => matchesFilters(editedData(file, edits), filters)),
+      files.filter((file) => matchesFilters(editedData(file, edits), filters, defs)),
   };
 }
 
@@ -46,7 +48,11 @@ export function usePhotoFilters(prefix?: string) {
  * Sets one filter, or clears it with undefined, or with null clears every filter under the prefix
  * and the page's own (`extraParams`).
  */
-function useSetFilter(prefix?: string, extraParams: readonly string[] = []) {
+function useSetFilter(
+  prefix: string | undefined,
+  extraParams: readonly string[],
+  defs: PhotoFilter[],
+) {
   const navigate = useNavigate();
   return (key: FilterKey | null, choice?: FilterChoice) =>
     void navigate({
@@ -55,14 +61,18 @@ function useSetFilter(prefix?: string, extraParams: readonly string[] = []) {
       search: (prev: Record<string, unknown>) =>
         key
           ? { ...prev, [filterParam(key, prefix)]: choice }
-          : withoutFilters(prev, filterParams(prefix, extraParams)),
+          : withoutFilters(prev, filterParams(prefix, extraParams, defs)),
       replace: true,
     });
 }
 
 /** The search params a filter bar keeps filters in: each photo filter's, and the page's own. */
-function filterParams(prefix: string | undefined, extraParams: readonly string[]): string[] {
-  return [...PHOTO_FILTERS.map(({ key }) => filterParam(key, prefix)), ...extraParams];
+function filterParams(
+  prefix: string | undefined,
+  extraParams: readonly string[],
+  defs: PhotoFilter[],
+): string[] {
+  return [...defs.map(({ key }) => filterParam(key, prefix)), ...extraParams];
 }
 
 /** The search params with the ones named cleared. */
@@ -81,8 +91,9 @@ export function PhotoFilterBar({
   children,
   hiding,
   extraChosen,
-  extraParams,
+  extraParams = [],
   prefix,
+  defs = PHOTO_FILTERS,
 }: {
   filters: PhotoFilters;
   shown: number;
@@ -97,18 +108,21 @@ export function PhotoFilterBar({
   extraParams?: readonly string[];
   /** The prefix its filters are kept under in the URL, as given to `usePhotoFilters`. */
   prefix?: string;
+  /** The filters it shows, as given to `usePhotoFilters`; Photos in Flight's when left out. */
+  defs?: PhotoFilter[];
 }) {
-  const setFilter = useSetFilter(prefix, extraParams);
+  const setFilter = useSetFilter(prefix, extraParams, defs);
   if (total === 0) return null;
   return (
     <Card className="py-4">
       <CardContent className="flex flex-col gap-3 px-4 text-sm">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <FilterIcon className="text-muted-foreground size-4" aria-hidden />
-          {PHOTO_FILTERS.map(({ key, label }) => (
+          {defs.map(({ key, label, choiceText }) => (
             <FilterToggle
               key={key}
               label={label}
+              choices={choiceText && choicesOf(choiceText)}
               choice={filters[key]}
               onChange={(choice) => setFilter(key, choice)}
             />
@@ -183,6 +197,15 @@ const CHOICES: ToggleChoices<FilterChoice> = [
   ["with", "With"],
   ["without", "Without"],
 ];
+
+/** A filter's Any, With and Without buttons with the With and Without ones' text swapped. */
+function choicesOf(text: Record<FilterChoice, string>): ToggleChoices<FilterChoice> {
+  return [
+    [undefined, "Any"],
+    ["with", text.with],
+    ["without", text.without],
+  ];
+}
 
 /** One filter's buttons (Any, With and Without unless `choices` says), after its label. */
 export function FilterToggle<T extends string = FilterChoice>({
