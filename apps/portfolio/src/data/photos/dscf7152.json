@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["city", "mountains", "haze", "clouds", "rooftops"],
   "genres": [],
   "places": [],
   "noGps": false,

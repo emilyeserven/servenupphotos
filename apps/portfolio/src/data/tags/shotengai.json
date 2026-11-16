@@ -1,0 +1,6 @@
+{
+  "id": "shotengai",
+  "name": "shotengai",
+  "description": "a Japanese shopping street, often under a covered arcade",
+  "parent": "covered-street"
+}
