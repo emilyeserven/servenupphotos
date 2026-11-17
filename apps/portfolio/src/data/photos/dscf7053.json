@@ -1,11 +1,11 @@
 {
-  "id": 919,
-  "title": null,
+  "title": "Train to Busan IV",
   "comment": null,
+  "id": 919,
   "altText": null,
   "notes": null,
   "file": "DSCF7053.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-17T01:53:30Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 8,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/21130d3c9768-dscf7053-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/21130d3c9768-dscf7053-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/21130d3c9768-dscf7053-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/21130d3c9768-dscf7053-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/21130d3c9768-dscf7053-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/21130d3c9768-dscf7053-thumbnail.webp?crop=0,1822,4555",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/21130d3c9768-dscf7053-thumbnailpreview.webp?crop=0,1822,4555",
     "thumbnailcrop": {
       "x": 0,
-      "y": 911,
+      "y": 1822,
       "size": 4555,
       "outputSize": 500
     }
