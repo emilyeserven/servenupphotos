@@ -6,7 +6,8 @@ import { LegEndField } from "@/components/trips/leg-end";
 import { LegRoute } from "@/components/trips/leg-route";
 import { Button } from "@/components/ui/button";
 import type { TripDay } from "@/lib/trip-days";
-import { dayPhotos, distanceKm, endPhoto, endPosition, endSpot, withLegEnd } from "@/lib/trip-legs";
+import { distanceKm } from "@portfolio/lib/distance";
+import { dayPhotos, endPhoto, endPosition, endSpot, withLegEnd } from "@/lib/trip-legs";
 
 /** The ways a leg can be travelled, as the menu lists them. */
 const LEG_MODES: { mode: LegMode; label: string }[] = [

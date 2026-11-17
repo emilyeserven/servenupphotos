@@ -49,17 +49,6 @@ export function endPosition(end: TripLegEnd, photo: TripPhoto | undefined): Posi
   return end.spot ?? end.station ?? photo;
 }
 
-/** How far apart two spots are along the Earth's surface, in km (the haversine formula). */
-export function distanceKm(a: Position, b: Position): number {
-  const rad = Math.PI / 180;
-  const dLat = (b.latitude - a.latitude) * rad;
-  const dLng = (b.longitude - a.longitude) * rad;
-  const h =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(a.latitude * rad) * Math.cos(b.latitude * rad) * Math.sin(dLng / 2) ** 2;
-  return 2 * 6371 * Math.asin(Math.sqrt(h));
-}
-
 /** "latitude, longitude" as a position, such as "33.6064, 130.4017"; undefined when it isn't one. */
 export function parsePosition(text: string): Position | undefined {
   const parts = text.split(",").map((p) => Number(p.trim()));

@@ -12,6 +12,9 @@ import { SiteHomeLink } from "@/components/site-home-link";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { TILE_SHAPES, type ViewChoice, ViewSwitcher } from "@/components/view-switcher";
 import { photos, type Photo } from "@/lib/photos";
+import type { Point } from "@/lib/distance";
+import { DEFAULT_NEAR, nearPoint, parseNear } from "@/lib/distance-sort";
+import { DistanceFromControl } from "@/components/distance-from-control";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import {
   type ColorFilters,
@@ -60,6 +63,11 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
    * newest first, which the button shows as plain "Sort".
    */
   sort?: GridSort;
+  /**
+   * Where **Distance** measures from: a spot ("41.0534,-73.5387") or a Places value
+   * ("city:Stamford"). Left out for Stamford, CT, and kept only while sorting by Distance.
+   */
+  near?: string;
 }
 
 /**
@@ -100,21 +108,26 @@ function viewOf(view: unknown): GridSearch {
 }
 
 /** The sorts the URL can ask for by date, besides newest first, which have no order of their own. */
-const DATE_SORTS: readonly string[] = ["newest", "oldest", "added", "time"];
+const DATE_SORTS: readonly string[] = ["newest", "oldest", "added", "time", "distance"];
 
 /** The sorts the URL can ask for, including newest first once it's picked from **Sort**. */
 const URL_SORTS: readonly string[] = ["newest", ...DATE_SORTS, "color", "vivid"];
 
 /**
- * The sort from the URL, with its order: for a color sort its order and secondary sort, and for
- * Recently Added and Time of Day the order when it's the way round from their default.
+ * The sort from the URL, with its order: for a color sort its order and secondary sort, for
+ * Recently Added, Time of Day and Distance the order when it's the way round from their default,
+ * and for Distance where it measures from.
  */
 function sortOf(search: Record<string, unknown>): GridSearch {
   if (!URL_SORTS.includes(search.sort as string)) return {};
   const sort = search.sort as GridSort;
   return isColorSort(sort)
     ? { sort, ...parseColorOrder(sort, search) }
-    : { sort, ...parseDateOrder(sort, search.order) };
+    : {
+        sort,
+        ...parseDateOrder(sort, search.order),
+        ...(sort === "distance" ? parseNear(search.near) : {}),
+      };
 }
 
 /** Whether the sort is by color or vividness, rather than by a date. */
@@ -146,7 +159,12 @@ function colorSpec(search: GridSearch): GridColorSpec {
     measure = "average",
     color,
   } = search;
-  return { order, secondary, secondaryOrder, measure, color };
+  return { order, secondary, secondaryOrder, measure, color, near: distanceFrom(search) };
+}
+
+/** Where Distance measures from; Stamford, CT, unused, for the other sorts. */
+function distanceFrom(search: GridSearch): Point {
+  return search.sort === "distance" ? nearPoint(search.near, photos) : DEFAULT_NEAR;
 }
 
 /** The photos the text search, the filters and the camera filters leave, before the colors. */
@@ -256,14 +274,15 @@ function GridBody({
 }
 
 /**
- * The tiles' **Sort**, the color sorts' **Then by**, and their **Display Options**, at the right of
- * the search row; the table has none of them.
+ * The tiles' **Sort**, the color sorts' **Then by**, Distance's **From**, and their **Display
+ * Options**, at the right of the search row; the table has none of them.
  */
 function TileControls({ search, mode }: { search: GridSearch; mode: TileMode }) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
       <GridSortControl sort={search.sort} order={colorSpec(search).order} />
       <ColorOrder sort={search.sort} search={search} />
+      {search.sort === "distance" && <DistanceFromControl near={search.near} />}
       <GridViewOptions
         view={mode}
         size={mode === "natural" ? naturalSize(search.size) : squareSize(search.size)}
