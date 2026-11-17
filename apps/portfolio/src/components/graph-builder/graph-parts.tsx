@@ -60,7 +60,7 @@ export function GraphTooltip({
 
 /** An unsplit value's share of the photos, when that's what the graph measures. */
 function Share({ datum, measure }: { datum: Record<string, number>; measure: Measure }) {
-  if (measure !== "percent") return null;
+  if (measure === "count") return null;
   return <div className="tabular-nums">{formatValue(datum.value ?? 0, measure)} of the photos</div>;
 }
 

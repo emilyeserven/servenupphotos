@@ -3,7 +3,7 @@ import { hovered, shortLabel, TOOLTIP_CLASS } from "@/components/graph-builder/g
 import { useGraphPick } from "@/components/graph-builder/graph-pick-context";
 import type { GraphPick } from "@/lib/graph-pick";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import type { ScatterData, ScatterPoint } from "@/lib/graph-data";
+import { formatValue, type Measure, type ScatterData, type ScatterPoint } from "@/lib/graph-data";
 
 /** The places of an axis's values, 0 up, for its ticks. */
 function places(labels: string[]): number[] {
@@ -50,10 +50,13 @@ export function ScatterGraph({
   data,
   xName,
   yName,
+  measure,
 }: {
   data: ScatterData;
   xName: string;
   yName: string;
+  /** What a dot's size shows: its photos, or its share of its x value's or y value's photos. */
+  measure: Measure;
 }) {
   const slanted = data.xLabels.length > 6;
   const { pick, onPick } = useGraphPick();
@@ -94,8 +97,8 @@ export function ScatterGraph({
           width={104}
           reversed
         />
-        <ZAxis type="number" dataKey="count" range={[40, 900]} />
-        <ChartTooltip cursor={false} content={<ScatterTooltip data={data} />} />
+        <ZAxis type="number" dataKey="value" range={[40, 900]} />
+        <ChartTooltip cursor={false} content={<ScatterTooltip data={data} measure={measure} />} />
         <Scatter
           data={data.points}
           fill="var(--series-1)"
@@ -114,12 +117,14 @@ export function ScatterGraph({
   );
 }
 
-/** A dot's tooltip: its x and y values, and how many photos have both. */
+/** A dot's tooltip: its x and y values, how many photos have both, and its share when the dots show shares. */
 function ScatterTooltip({
   data,
+  measure,
   ...props
 }: {
   data: ScatterData;
+  measure: Measure;
   active?: boolean;
   payload?: ReadonlyArray<{ payload?: unknown }>;
 }) {
@@ -133,6 +138,12 @@ function ScatterTooltip({
       <div className="text-muted-foreground tabular-nums">
         {point.count.toLocaleString()} photos
       </div>
+      {measure !== "count" && (
+        <div className="tabular-nums">
+          {formatValue(point.value, measure)} of{" "}
+          {measure === "series" ? data.yLabels[point.y] : data.xLabels[point.x]}&apos;s
+        </div>
+      )}
     </div>
   );
 }

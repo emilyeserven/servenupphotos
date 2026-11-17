@@ -1,5 +1,6 @@
 import { graphTypeName } from "@portfolio/components/graph-builder/graph-type-picker";
 import { statById } from "@portfolio/lib/graph-data";
+import { measureName } from "@portfolio/lib/graph-measure";
 import { orderName } from "@portfolio/lib/graph-order";
 import type { PresetGraph } from "@portfolio/lib/graph-presets";
 import type { GraphKey } from "@/components/graph-presets/preset-graph";
@@ -21,7 +22,7 @@ function rangePart(name: string, key: Exclude<GraphKey, "hideZeros">): SettingTe
 const SETTING_TEXT: Record<GraphKey, SettingText> = {
   type: ["Type", (g) => graphTypeName(g.type)],
   x: ["X axis or slices", (g) => statById(g.x).label],
-  measure: ["Measure", (g) => (g.measure === "percent" ? "Share of photos (%)" : "Photos")],
+  measure: ["Measure", (g) => measureName(g)],
   y: ["Y axis stat", (g) => statById(g.y).label],
   split: ["Split by", (g) => (g.split === "" ? "None" : statById(g.split).label)],
   stacked: ["Split bar parts", (g) => (g.stacked ? "Stacked" : "Side by side")],

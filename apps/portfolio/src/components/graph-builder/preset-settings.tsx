@@ -2,6 +2,7 @@ import { graphTypeName } from "@portfolio/components/graph-builder/graph-type-pi
 import { type GraphConfig, hasYStat, SPLIT_TYPES, statById } from "@portfolio/lib/graph-data";
 import { orderName } from "@portfolio/lib/graph-order";
 import { evenText } from "@portfolio/lib/even-buckets";
+import { measureName } from "@portfolio/lib/graph-measure";
 
 /** One line of a preset's settings: its name and what it's set to, such as X axis: Aperture. */
 type SettingLine = [string, string];
@@ -9,7 +10,13 @@ type SettingLine = [string, string];
 /** What the y axis shows: a second stat, or what's measured. */
 function yText(config: GraphConfig): string {
   if (hasYStat(config.type)) return statById(config.y).label;
-  return config.measure === "percent" ? "Share of photos (%)" : "Photos";
+  return measureName(config);
+}
+
+/** A scatterplot's or heatmap's values when they're shares, such as Values: Share within Year (%). */
+function valuesLines(config: GraphConfig): SettingLine[] {
+  if (!hasYStat(config.type) || config.measure === "count") return [];
+  return [["Values", measureName(config)]];
 }
 
 /** What splits the graph, and how a split bar's parts sit; none when nothing does. */
@@ -59,6 +66,7 @@ function settingLines(config: GraphConfig): SettingLine[] {
     [config.type === "pie" ? "Slices" : "X axis", statById(config.x).label],
     [config.type === "pie" ? "Size" : "Y axis", yText(config)],
     ...splitLines(config),
+    ...valuesLines(config),
     ["Order", orderName(config.x, "X axis", config.sort)],
     ["Show", config.limit === 0 ? "All" : `First ${config.limit}`],
     ...rangeLines(config),
