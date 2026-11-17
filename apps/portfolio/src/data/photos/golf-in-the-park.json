@@ -1,0 +1,277 @@
+{
+  "title": "Golf in the Park",
+  "comment": null,
+  "id": 961,
+  "altText": null,
+  "notes": null,
+  "file": "DSCF3999.jpg",
+  "addedDate": "2026-11-17T16:38:08Z",
+  "camera": "Fujifilm X-T5",
+  "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+  "aperture": 5,
+  "exposure": "1/250",
+  "iso": 125,
+  "focalLength": 23.3,
+  "gpsPosition": null,
+  "customGpsPosition": null,
+  "createDate": "2026:11:01 11:11:10",
+  "customCreateDate": null,
+  "placeName": "Waveny Park",
+  "customCity": "New Canaan",
+  "customState": null,
+  "customCountry": "United States of America",
+  "country": null,
+  "state": null,
+  "city": null,
+  "width": 6777,
+  "height": 3812,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/d997bac839fb-dscf3999.jpg",
+    "key": "photos/d997bac839fb-dscf3999.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/d997bac839fb-dscf3999-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/d997bac839fb-dscf3999-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/d997bac839fb-dscf3999-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/d997bac839fb-dscf3999-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/d997bac839fb-dscf3999-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/d997bac839fb-dscf3999-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/d997bac839fb-dscf3999-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d997bac839fb-dscf3999-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 1482,
+      "y": 0,
+      "size": 3812,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "genres": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "waveny-park"
+    }
+  ],
+  "noGps": false,
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "spotlightPlacement": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "pickedSimilar": [],
+  "pickedSimilarNotes": {},
+  "similarPhotos": [],
+  "perceptualHash": "f5fffffbf17deecf",
+  "colors": {
+    "average": {
+      "hex": "#576563",
+      "lab": {
+        "l": 41.62,
+        "a": -6.01,
+        "b": -0.66
+      },
+      "hcl": {
+        "h": 186.28,
+        "c": 6.05,
+        "l": 41.62
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.003
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0837
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.2516
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.0427
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.0004
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.0003
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.3548
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.0015
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0.0005
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0.0002
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0.0007
+      }
+    ],
+    "neutrals": {
+      "share": 0.2606,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.1208
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0579
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0341
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.025
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0053
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0045
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0043
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0027
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0018
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0008
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0006
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0002
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0005
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0005
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0002
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0001
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0001
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0003
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0.0008
+        }
+      ]
+    },
+    "lightness": 41.62,
+    "chroma": 28.27,
+    "peakChroma": 45.56,
+    "samples": 9975
+  }
+}
