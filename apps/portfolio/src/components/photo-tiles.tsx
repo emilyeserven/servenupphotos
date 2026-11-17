@@ -44,6 +44,7 @@ export function GridTiles({
   showInfo,
   onOpen,
   rows,
+  ordered = false,
 }: {
   photos: ImagePhoto[];
   mode: TileMode;
@@ -56,6 +57,8 @@ export function GridTiles({
    * every photo.
    */
   rows?: NaturalRow<ImagePhoto>[];
+  /** Whether Natural rows keep the photos strictly in their order, mixing wide and vertical photos. */
+  ordered?: boolean;
 }) {
   const sizes = tileSizesOf(mode, size);
   const tile = (photo: ImagePhoto) => (
@@ -67,6 +70,7 @@ export function GridTiles({
         photos={photos}
         rows={rows}
         sizes={sizes.rows}
+        ordered={ordered}
         showInfo={showInfo}
         renderTile={tile}
       />
@@ -94,17 +98,27 @@ function NaturalTiles({
   photos,
   rows,
   sizes,
+  ordered,
   showInfo,
   renderTile,
 }: {
   photos: ImagePhoto[];
   rows: NaturalRow<ImagePhoto>[] | undefined;
   sizes: RowSizes;
+  ordered: boolean;
   showInfo: boolean;
   renderTile: (photo: ImagePhoto) => ReactNode;
 }) {
   if (rows) return <NaturalRows rows={rows} showInfo={showInfo} renderTile={renderTile} />;
-  return <NaturalGrid photos={photos} showInfo={showInfo} sizes={sizes} renderTile={renderTile} />;
+  return (
+    <NaturalGrid
+      photos={photos}
+      showInfo={showInfo}
+      sizes={sizes}
+      ordered={ordered}
+      renderTile={renderTile}
+    />
+  );
 }
 
 /**
