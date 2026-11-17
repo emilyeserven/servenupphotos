@@ -19,7 +19,7 @@ interface TileOptions {
  * each shows its title, place and comment (`?info=true`), both kept in the URL so a link keeps
  * them. Natural tiles also come in X-Large. When `ordered` is given (the Grid's Natural tiles),
  * **Keep the order** sets whether the rows keep the photos strictly in the sort's order
- * (`?ordered=true`).
+ * (on by default; `?ordered=false` when it's off).
  */
 export function GridViewOptions({
   view,
@@ -38,7 +38,7 @@ export function GridViewOptions({
   align?: "start" | "end";
 }) {
   const navigate = useNavigate();
-  const current: TileOptions = { size, info, ordered: ordered ?? false };
+  const current: TileOptions = { size, info, ordered: ordered ?? true };
   const change = (patch: Partial<TileOptions>) => {
     const next = { ...current, ...patch };
     void navigate({
@@ -47,7 +47,7 @@ export function GridViewOptions({
         ...prev,
         size: next.size && sizeParam(view, next.size),
         info: next.info || undefined,
-        ordered: next.ordered || undefined,
+        ordered: next.ordered ? undefined : (false as const),
       }),
       replace: true,
     });
@@ -55,7 +55,7 @@ export function GridViewOptions({
   return (
     <ViewOptionsButton
       align={align}
-      onReset={() => change({ size: undefined, info: false, ordered: false })}
+      onReset={() => change({ size: undefined, info: false, ordered: true })}
       choices={
         <OptionChoices
           label="Size"
