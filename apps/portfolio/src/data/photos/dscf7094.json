@@ -1,11 +1,11 @@
 {
-  "id": 922,
-  "title": null,
+  "title": "Train to Busan VII",
   "comment": null,
+  "id": 922,
   "altText": null,
   "notes": null,
   "file": "DSCF7094.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-17T01:54:08Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 7.1,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/b7e9ebd0c158-dscf7094-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/b7e9ebd0c158-dscf7094-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/b7e9ebd0c158-dscf7094-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/b7e9ebd0c158-dscf7094-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b7e9ebd0c158-dscf7094-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/b7e9ebd0c158-dscf7094-thumbnail.webp?crop=0,0,4470",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b7e9ebd0c158-dscf7094-thumbnailpreview.webp?crop=0,0,4470",
     "thumbnailcrop": {
       "x": 0,
-      "y": 894,
+      "y": 0,
       "size": 4470,
       "outputSize": 500
     }
