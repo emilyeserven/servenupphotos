@@ -39,6 +39,7 @@ export function MapMarkerView({
     return (
       <Marker longitude={marker.longitude} latitude={marker.latitude} offset={marker.offset}>
         <ClusterMarker
+          source={marker.source}
           clusterId={marker.clusterId}
           count={marker.count}
           display={display}
@@ -132,19 +133,19 @@ function clusterLook(clusterPhotos: PlacedPhoto[], order: GroupPhotos): ClusterL
 }
 
 /** How a cluster's marker looks, once its photos have been read from the map. */
-function useClusterLook(clusterId: number, order: GroupPhotos): ClusterLook {
+function useClusterLook(source: string, clusterId: number, order: GroupPhotos): ClusterLook {
   const { current: map } = useMap();
   const [look, setLook] = useState<ClusterLook>({ previews: [], approximate: false });
   useEffect(() => {
     if (!map) return;
     let current = true;
-    void photosInCluster(map, clusterId).then((clusterPhotos) => {
+    void photosInCluster(map, { source, clusterId }).then((clusterPhotos) => {
       if (current) setLook(clusterLook(clusterPhotos, order));
     });
     return () => {
       current = false;
     };
-  }, [map, clusterId, order]);
+  }, [map, source, clusterId, order]);
   return look;
 }
 
@@ -154,17 +155,20 @@ function useClusterLook(clusterId: number, order: GroupPhotos): ClusterLook {
  * darkened so the count stays readable; the count then sits in a dark badge of its own.
  */
 function ClusterMarker({
+  source,
   clusterId,
   count,
   display,
   onOpen,
 }: {
+  /** The ID of the map source that grouped it. */
+  source: string;
   clusterId: number;
   count: number;
   display: MapDisplay;
   onOpen: (listPhotos: boolean) => void;
 }) {
-  const { previews, approximate } = useClusterLook(clusterId, display.groupPhotos);
+  const { previews, approximate } = useClusterLook(source, clusterId, display.groupPhotos);
   const { turn } = useTurn(previews.length, CLUSTER_PREVIEW_MS);
   return (
     <button
