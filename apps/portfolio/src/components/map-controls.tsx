@@ -8,6 +8,7 @@ import { MapPlacePicker } from "@/components/map-place-picker";
 import { PlaceAreaLayer } from "@/components/place-area-layer";
 import { TripLinesLayer } from "@/components/trip-lines-layer";
 import { MoreFilterControls } from "@/components/photo-filters";
+import { NearestInGridButton } from "@/components/nearest-in-grid-button";
 import { ViewInGridButton } from "@/components/view-in-grid-button";
 import type { MapDisplay } from "@/lib/map-display";
 import { gridFiltersFor } from "@/lib/map-grid-link";
@@ -20,7 +21,7 @@ import { useShownArea } from "@/lib/place-areas";
 /**
  * The map's controls under its title: **Places**, which moves the map to a place and shades its
  * area while it's pointed at and once it's picked, when it has one (see place-areas.ts), the zoom-out button, the display options, then
- * **More filters** (Groups, When and Visuals), **View in grid**, **Browse** and **Copy link**. The map's
+ * **More filters** (Groups, When and Visuals), **View in grid**, **Nearest here**, **Browse** and **Copy link**. The map's
  * key, in its bottom left corner, is drawn from here too, as it explains the shaded place area.
  */
 export function MapControls({
@@ -75,6 +76,7 @@ export function MapControls({
         own={visualsOwnFilters(filterPhotos(placedPhotos, filters), visuals)}
       >
         <ViewInGridButton filters={gridLink(gridFiltersFor(drawn, view, filters), visuals)} />
+        <NearestInGridButton filters={{ ...filters, ...visuals }} view={view} />
         <BrowseInViewButton photos={browsable} onOpen={onBrowse} />
         <CopyMapLinkButton drawn={drawn} view={view} />
       </MoreFilterControls>
