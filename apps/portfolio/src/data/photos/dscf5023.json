@@ -1,11 +1,11 @@
 {
-  "id": 902,
-  "title": null,
+  "title": "Suitorou Bamboo Lanterns I",
   "comment": null,
+  "id": 902,
   "altText": null,
   "notes": null,
   "file": "DSCF5023.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-17T19:03:43Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -13,7 +13,7 @@
   "iso": 2500,
   "focalLength": 35,
   "gpsPosition": "35 deg 28' 25.25\" N, 133 deg 3' 9.82\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "35.47413613381658, 133.05185177073267",
   "createDate": "2026:09:27 18:30:20",
   "customCreateDate": null,
   "placeName": null,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-thumbnail.webp?crop=0,1091,3956",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-thumbnailpreview.webp?crop=0,1091,3956",
     "thumbnailcrop": {
       "x": 0,
-      "y": 791,
+      "y": 1091,
       "size": 3956,
       "outputSize": 500
     }

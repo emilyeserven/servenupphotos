@@ -1,11 +1,11 @@
 {
-  "id": 836,
-  "title": null,
+  "title": "Ikuta Shrine Lantern",
   "comment": null,
+  "id": 836,
   "altText": null,
   "notes": null,
   "file": "DSCF8334.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-17T19:12:43Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -13,7 +13,7 @@
   "iso": 500,
   "focalLength": 83.3,
   "gpsPosition": "34 deg 41' 31.19\" N, 135 deg 11' 30.35\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.69472257469714, 135.19078303642627",
   "createDate": "2026:09:30 11:45:32",
   "customCreateDate": null,
   "placeName": null,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/f3e5abc9ee7f-dscf8334-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/f3e5abc9ee7f-dscf8334-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/f3e5abc9ee7f-dscf8334-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/f3e5abc9ee7f-dscf8334-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f3e5abc9ee7f-dscf8334-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/f3e5abc9ee7f-dscf8334-thumbnail.webp?crop=0,613,4663",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f3e5abc9ee7f-dscf8334-thumbnailpreview.webp?crop=0,613,4663",
     "thumbnailcrop": {
       "x": 0,
-      "y": 932,
+      "y": 613,
       "size": 4663,
       "outputSize": 500
     }

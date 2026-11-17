@@ -1,11 +1,11 @@
 {
-  "id": 830,
-  "title": null,
+  "title": "Commuting by the Castle",
   "comment": null,
+  "id": 830,
   "altText": null,
   "notes": null,
   "file": "DSCF7930.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-17T18:51:12Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 8,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/3bc84335f420-dscf7930-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/3bc84335f420-dscf7930-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/3bc84335f420-dscf7930-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/3bc84335f420-dscf7930-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3bc84335f420-dscf7930-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/3bc84335f420-dscf7930-thumbnail.webp?crop=1822,0,3284",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3bc84335f420-dscf7930-thumbnailpreview.webp?crop=1822,0,3284",
     "thumbnailcrop": {
-      "x": 1277,
+      "x": 1822,
       "y": 0,
       "size": 3284,
       "outputSize": 500
