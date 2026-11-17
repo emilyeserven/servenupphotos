@@ -71,7 +71,8 @@ The square is a 500px image, so at Large it can look a little soft on high-densi
 
 Each photo at its own aspect ratio (`?view=natural`), in justified rows (`components/natural-grid.tsx`,
 `lib/natural-rows.ts`): a row's tiles are all the same height, and a full row's tiles grow together to fill its width.
-Vertical photos (narrower than 0.9 of their height) are gathered into rows of their own, which start taller so each
+With **Keep the order** off (see [below](#keep-the-order); it's on by default), vertical photos (narrower than 0.9
+of their height) are gathered into rows of their own, which start taller so each
 vertical photo covers about the same area of the page as a 3:2 wide photo: a 2:3 photo's row starts 1.5 times as tall
 as a row of wide photos (the row's height is the wide height times √(1.5 ÷ the photo's width over height)). Matching
 area rather than width keeps a vertical photo from coming out several times bigger than the wide photos around it. Each row starts with the next photo in
@@ -97,16 +98,17 @@ all reach that is centered rather than stretched.
 
 ### Keep the order
 
-Gathering vertical photos into rows of their own moves photos a little out of the sort. **Keep the order**, under
-**Rows** in the Natural view's **Display Options** (`?ordered=true`, remembered with the Grid's other settings), lays
-the photos out strictly in the sort instead (`lib/ordered-rows.ts`): read left to right and top to bottom, they come in
+Gathering vertical photos into rows of their own moves photos a little out of the sort, so the Natural view keeps
+the order by default: **Keep the order**, under **Rows** in its **Display Options**, starts on, and unticking it
+(`?ordered=false`, remembered with the Grid's other settings) goes back to the rows described above. With it on, the
+Natural view lays the photos out strictly in the sort (`lib/ordered-rows.ts`): read left to right and top to bottom, they come in
 exactly the sort's order, and the photo viewer steps through them in the order they show. Wide and vertical photos
 share rows. Each row aims for a quarter over the average of the heights its photos would start at above (about how much
 the rows above grow to fill the width, so photos come out about as big at each **Size**; a row with vertical photos
 aims taller, keeping them about as big as wide ones), and fills the width exactly. Where the rows break is
 worked out for all of them at once, picking the breaks that keep every row closest to its aim (half as tall counts as
 far off as twice as tall), so one awkward photo doesn't leave a squashed or towering row. The last row keeps its aimed
-height rather than stretching, and no row is taller than 90% of the window. **Reset to defaults** turns it off.
+height rather than stretching, and no row is taller than 90% of the window. **Reset to defaults** turns it back on.
 
 > **Frontend analogy:** it's how a word processor justifies a paragraph (the Knuth–Plass line breaking TeX uses):
 > instead of filling each line greedily and stretching whatever's left, it tries every place each line could break

@@ -46,10 +46,10 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
   /** Set when each tile shows its title, place and comment under it. Left out for the default, hidden. */
   info?: true;
   /**
-   * Set when Natural tiles keep the photos strictly in the sort's order, mixing wide and vertical
-   * photos in rows. Left out for the default, which gathers vertical photos into rows of their own.
+   * Set to false when Natural tiles gather vertical photos into rows of their own. Left out for the
+   * default, which keeps the photos strictly in the sort's order, mixing wide and vertical photos in rows.
    */
-  ordered?: true;
+  ordered?: false;
   /**
    * How big the tiles or the Table's thumbnails are. Left out for the size each view starts at:
    * Medium for Square tiles, Large for Natural tiles and Small for the Table.
@@ -88,7 +88,7 @@ function gridViewOptions(search: Record<string, unknown>): GridSearch {
     ...viewOf(search.view),
     ...parseTableSearch(search),
     ...infoOf(search),
-    ...(search.ordered === true ? { ordered: true as const } : {}),
+    ...(search.ordered === false ? { ordered: false as const } : {}),
     ...parseGridSize(search.size),
     ...sortOf(search),
   };
@@ -247,7 +247,7 @@ function GridBody({
         mode={mode}
         size={search.size}
         showInfo={search.info === true}
-        ordered={search.ordered === true}
+        ordered={search.ordered !== false}
         onOpen={show}
       />
       <PhotoLightbox photo={shown} photos={tiles} onShow={show} onClose={close} />
@@ -268,7 +268,7 @@ function TileControls({ search, mode }: { search: GridSearch; mode: TileMode }) 
         view={mode}
         size={mode === "natural" ? naturalSize(search.size) : squareSize(search.size)}
         info={search.info === true}
-        ordered={mode === "natural" ? search.ordered === true : undefined}
+        ordered={mode === "natural" ? search.ordered !== false : undefined}
         align="end"
       />
     </div>
