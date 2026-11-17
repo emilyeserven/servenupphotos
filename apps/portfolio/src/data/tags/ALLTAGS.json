@@ -40,6 +40,11 @@
     "description": "platforms projecting from building facades, enclosed by railings, often repeating across apartment blocks"
   },
   {
+    "id": "bamboo",
+    "name": "bamboo",
+    "description": ""
+  },
+  {
     "id": "bark",
     "name": "bark",
     "description": ""
@@ -47,6 +52,11 @@
   {
     "id": "barn",
     "name": "barn",
+    "description": ""
+  },
+  {
+    "id": "barrels",
+    "name": "barrels",
     "description": ""
   },
   {
@@ -68,6 +78,11 @@
   {
     "id": "bees",
     "name": "bees",
+    "description": ""
+  },
+  {
+    "id": "bells",
+    "name": "bells",
     "description": ""
   },
   {
@@ -131,6 +146,11 @@
     "id": "buddhism",
     "name": "buddhism",
     "description": "Buddhist temples, statues, lanterns, offerings and rituals"
+  },
+  {
+    "id": "cable-car",
+    "name": "cable-car",
+    "description": ""
   },
   {
     "id": "cables",
@@ -379,6 +399,16 @@
     "description": ""
   },
   {
+    "id": "dragons",
+    "name": "dragons",
+    "description": ""
+  },
+  {
+    "id": "drums",
+    "name": "drums",
+    "description": ""
+  },
+  {
     "id": "elderly",
     "name": "elderly",
     "description": "older people going about their day"
@@ -388,6 +418,11 @@
     "name": "ema",
     "description": "small wooden plaques on which visitors to Japanese shrines write prayers or wishes",
     "parent": "plaques"
+  },
+  {
+    "id": "escalators",
+    "name": "escalators",
+    "description": ""
   },
   {
     "id": "facade",
@@ -698,9 +733,21 @@
     "parent": "rooftops"
   },
   {
+    "id": "kazaridaru",
+    "name": "kazaridaru",
+    "description": "decorative sake barrels donated as offerings and stacked at Shinto shrines",
+    "parent": "barrels"
+  },
+  {
     "id": "kiosk",
     "name": "kiosk",
     "description": ""
+  },
+  {
+    "id": "kitsune",
+    "name": "kitsune",
+    "description": "a fox, the messenger of the kami Inari, often seen as statues at Inari shrines",
+    "parent": "statues"
   },
   {
     "id": "koi",
@@ -767,9 +814,20 @@
     "description": ""
   },
   {
+    "id": "lotus",
+    "name": "lotus",
+    "description": ""
+  },
+  {
     "id": "machinery",
     "name": "machinery",
     "description": "machines and their moving parts"
+  },
+  {
+    "id": "machiya",
+    "name": "machiya",
+    "description": "a traditional Japanese wooden townhouse, often with a shop at the front",
+    "parent": "houses"
   },
   {
     "id": "manhole-covers",
@@ -1183,6 +1241,12 @@
     "description": "seaweed washed up or clinging to rocks"
   },
   {
+    "id": "seigaiha",
+    "name": "seigaiha",
+    "description": "a traditional Japanese pattern of overlapping concentric arcs that look like waves",
+    "parent": "patterns"
+  },
+  {
     "id": "senjafuda",
     "name": "senjafuda",
     "description": "name slips pasted by pilgrims on Japanese temple and shrine buildings",
@@ -1353,6 +1417,11 @@
     "description": "art made in public spaces, such as murals, paste-ups, stencils and stickers"
   },
   {
+    "id": "street-food",
+    "name": "street-food",
+    "description": ""
+  },
+  {
     "id": "street-lights",
     "name": "street-lights",
     "description": "lamps on poles lighting streets, paths and parks",
@@ -1480,6 +1549,12 @@
     "parent": "plants"
   },
   {
+    "id": "tsuri-doro",
+    "name": "tsuri-doro",
+    "description": "a hanging lantern at a Japanese shrine or temple, usually metal",
+    "parent": "lanterns"
+  },
+  {
     "id": "turnstiles",
     "name": "turnstiles",
     "description": ""
@@ -1558,6 +1633,11 @@
     "description": "water of all kinds, still or moving"
   },
   {
+    "id": "waterfall",
+    "name": "waterfall",
+    "description": ""
+  },
+  {
     "id": "waves",
     "name": "waves",
     "description": "waves breaking on shores and rocks"
@@ -1581,6 +1661,12 @@
     "id": "wood",
     "name": "wood",
     "description": "wooden structures, surfaces and objects"
+  },
+  {
+    "id": "yatai",
+    "name": "yatai",
+    "description": "a small mobile Japanese food stall, common at festivals",
+    "parent": "kiosk"
   },
   {
     "id": "yeondeung",

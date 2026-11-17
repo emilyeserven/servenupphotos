@@ -1,0 +1,272 @@
+{
+  "id": 914,
+  "title": null,
+  "comment": null,
+  "altText": null,
+  "notes": null,
+  "file": "DSCF5726.jpg",
+  "addedDate": null,
+  "camera": "Fujifilm X-T5",
+  "lens": "XF35mmF2 R WR",
+  "aperture": 2,
+  "exposure": "1/125",
+  "iso": 1000,
+  "focalLength": 35,
+  "gpsPosition": "35 deg 28' 21.17\" N, 133 deg 3' 15.15\" E",
+  "customGpsPosition": null,
+  "createDate": "2026:09:27 20:31:05",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "Japan",
+  "state": "Shimane",
+  "city": "Matsue",
+  "width": 7633,
+  "height": 4294,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/47d01512a0b4-dscf5726.jpg",
+    "key": "photos/47d01512a0b4-dscf5726.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/47d01512a0b4-dscf5726-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/47d01512a0b4-dscf5726-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/47d01512a0b4-dscf5726-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/47d01512a0b4-dscf5726-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/47d01512a0b4-dscf5726-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/47d01512a0b4-dscf5726-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/47d01512a0b4-dscf5726-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/47d01512a0b4-dscf5726-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 1669,
+      "y": 0,
+      "size": 4294,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "genres": [],
+  "places": [],
+  "noGps": false,
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "spotlightPlacement": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "pickedSimilar": [],
+  "pickedSimilarNotes": {},
+  "similarPhotos": [],
+  "perceptualHash": "31a9a39313ab2921",
+  "colors": {
+    "average": {
+      "hex": "#130e0c",
+      "lab": {
+        "l": 4.21,
+        "a": 1.59,
+        "b": 1.23
+      },
+      "hcl": {
+        "h": 37.71,
+        "c": 2.01,
+        "l": 4.21
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0104
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0285
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.0003
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0.0003
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.0002
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.0061
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.001
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0.0005
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0.0001
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0.0014
+      }
+    ],
+    "neutrals": {
+      "share": 0.9512,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.8774
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0298
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0147
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0127
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0033
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0028
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0019
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0011
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0006
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0003
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0007
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0005
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0002
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0001
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0002
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0003
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0003
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0005
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0.0036
+        }
+      ]
+    },
+    "lightness": 4.21,
+    "chroma": 2.76,
+    "peakChroma": 7.53,
+    "samples": 9900
+  }
+}
