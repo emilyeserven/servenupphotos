@@ -52,7 +52,7 @@ const BOOLEAN_KEYS = new Set(["stacked", "hideZeros"]);
 /** The values the settings with set choices can take; a link with any other is ignored. */
 const CHOICES: Partial<Record<keyof GraphConfig, readonly string[]>> = {
   type: ["bar", "line", "pie", "scatter", "heatmap", "photos"] satisfies GraphType[],
-  measure: ["count", "percent"] satisfies Measure[],
+  measure: ["count", "percent", "series"] satisfies Measure[],
   sort: ["group", "count", "reverse"] satisfies SortOrder[],
 };
 

@@ -1,4 +1,5 @@
 import { formatValue, type GraphConfig, statById } from "@/lib/graph-data";
+import { shownMeasure } from "@/lib/graph-measure";
 import type { GraphPick, PickedPhotos } from "@/lib/graph-pick";
 
 /** A count of photos as words, such as "1 photo" or "12 photos". */
@@ -16,7 +17,9 @@ interface AxisLine {
 /** What the y axis says for the pick: a dot's y value, or else how many photos (or what share) it has. */
 function yLine(config: GraphConfig, pick: GraphPick, picked: PickedPhotos, total: number) {
   if (pick.y !== undefined) return { stat: statById(config.y).label, value: pick.y };
-  if (config.measure === "count") return { stat: "Photos", value: picked.total.toLocaleString() };
+  if (shownMeasure(config) !== "percent") {
+    return { stat: "Photos", value: picked.total.toLocaleString() };
+  }
   const share = formatValue(total > 0 ? (picked.total / total) * 100 : 0, "percent");
   return { stat: "Share of photos", value: `${share} (${photoCount(picked.total)})` };
 }

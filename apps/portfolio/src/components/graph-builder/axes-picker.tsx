@@ -5,20 +5,20 @@ import {
   type GraphPickerSection,
 } from "@portfolio/components/graph-builder/graph-picker";
 import { StatChoices } from "@portfolio/components/graph-builder/stat-choices";
-import { type GraphConfig, hasYStat, type Measure, statById } from "@portfolio/lib/graph-data";
+import { type GraphConfig, hasYStat, statById } from "@portfolio/lib/graph-data";
+import {
+  measureChange,
+  measureChoices,
+  measureName,
+  shownMeasure,
+} from "@portfolio/lib/graph-measure";
 import { orderChoices, orderName } from "@portfolio/lib/graph-order";
 
 /** A change to some of the graph's settings. */
 type ConfigChange = (change: Partial<GraphConfig>) => void;
 
 /** One section of the Axes picker. */
-type AxesSection = "x" | "y" | "order";
-
-/** What a bar, line or pie graph can measure, with their names. */
-export const MEASURES: [Measure, string][] = [
-  ["count", "Photos"],
-  ["percent", "Share of photos (%)"],
-];
+type AxesSection = "x" | "y" | "values" | "order";
 
 /** The x axis's name: a pie's slices, or the x axis. */
 export function xName(config: GraphConfig): string {
@@ -28,7 +28,7 @@ export function xName(config: GraphConfig): string {
 /** What the y axis shows: a second stat, or what's measured. */
 function yText(config: GraphConfig): string {
   if (hasYStat(config.type)) return statById(config.y).label;
-  return MEASURES.find(([measure]) => measure === config.measure)?.[1] ?? "";
+  return measureName(config);
 }
 
 /** The picker's sections, each with what it's set to. */
@@ -36,6 +36,7 @@ function sectionsOf(config: GraphConfig): GraphPickerSection<AxesSection>[] {
   return [
     ["x", xName(config), statById(config.x).label],
     ...ySections(config),
+    ...valuesSections(config),
     ["order", "Order", orderName(config.x, xName(config), config.sort)],
   ];
 }
@@ -44,6 +45,12 @@ function sectionsOf(config: GraphConfig): GraphPickerSection<AxesSection>[] {
 function ySections(config: GraphConfig): GraphPickerSection<AxesSection>[] {
   if (config.type === "photos") return [];
   return [["y", config.type === "pie" ? "Size" : "Y axis", yText(config)]];
+}
+
+/** A scatterplot's or heatmap's **Values**: photos, or a share within each x or y value. */
+function valuesSections(config: GraphConfig): GraphPickerSection<AxesSection>[] {
+  if (!hasYStat(config.type)) return [];
+  return [["values", "Values", measureName(config)]];
 }
 
 /**
@@ -71,6 +78,7 @@ function AxesChoices({
 }) {
   if (section === "x") return <StatChoices value={config.x} onPick={(x) => onChange({ x })} />;
   if (section === "order") return <OrderChoices config={config} onChange={onChange} />;
+  if (section === "values") return <MeasureChoices config={config} onChange={onChange} />;
   return <YChoices config={config} onChange={onChange} />;
 }
 
@@ -79,12 +87,18 @@ function YChoices({ config, onChange }: { config: GraphConfig; onChange: ConfigC
   if (hasYStat(config.type)) {
     return <StatChoices value={config.y} leaveOut={[config.x]} onPick={(y) => onChange({ y })} />;
   }
-  return MEASURES.map(([measure, label]) => (
+  return <MeasureChoices config={config} onChange={onChange} />;
+}
+
+/** What the graph's values can be: photos, or a share of them (see `measureChoices`). */
+function MeasureChoices({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
+  const shown = shownMeasure(config);
+  return measureChoices(config).map(([measure, label]) => (
     <ChoiceRow
       key={measure}
       label={label}
-      on={config.measure === measure}
-      onClick={() => onChange({ measure })}
+      on={shown === measure}
+      onClick={() => onChange(measureChange(config, measure))}
     />
   ));
 }

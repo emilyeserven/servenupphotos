@@ -46,7 +46,7 @@ export function GraphTable({
     "Photos",
     ...(graph.series.length > 1 ? graph.series.map((s) => s.label) : []),
   ];
-  const share = measure === "percent" && graph.series.length === 1;
+  const share = measure !== "count" && graph.series.length === 1;
   const rows = graph.data.map((datum) => [
     datum.label,
     datum.photos.toLocaleString(),
@@ -58,20 +58,28 @@ export function GraphTable({
   return <Table head={share ? [...head, "Share"] : head} rows={rows} />;
 }
 
-/** A scatterplot's dots as a table: each pair of values with how many photos have both. */
+/**
+ * A scatterplot's or heatmap's dots as a table: each pair of values with how many photos have both,
+ * and their share when the graph shows shares, such as "Share within Year".
+ */
 export function ScatterTable({
   data,
   xName,
   yName,
+  measure,
 }: {
   data: ScatterData;
   xName: string;
   yName: string;
+  measure: Measure;
 }) {
+  const share = measure !== "count";
   const rows = data.points.map((point) => [
     data.xLabels[point.x],
     data.yLabels[point.y],
     point.count.toLocaleString(),
+    ...(share ? [formatValue(point.value, measure)] : []),
   ]);
-  return <Table head={[xName, yName, "Photos"]} rows={rows} />;
+  const shareHead = `Share within ${measure === "series" ? yName : xName}`;
+  return <Table head={[xName, yName, "Photos", ...(share ? [shareHead] : [])]} rows={rows} />;
 }

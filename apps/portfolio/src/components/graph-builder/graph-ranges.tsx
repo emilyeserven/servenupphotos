@@ -75,7 +75,7 @@ function numberOf(value: string): number | null {
 
 /** The highest a bar or line graph's y axis needs to reach: 100 for shares, else the most photos an x value has. */
 function yTop(config: GraphConfig, rows: StatRow[]): number {
-  if (config.measure === "percent") return 100;
+  if (config.measure !== "count") return 100;
   return Math.max(1, ...rows.map((row) => row.count));
 }
 
@@ -105,7 +105,7 @@ export function YEnds({ config, rows, list, onChange }: YEndsProps) {
 
 /** From and To dropdowns of round numbers for a bar or line graph's y axis. */
 function NumberEnds({ config, rows, onChange }: Omit<YEndsProps, "list">) {
-  const suffix = config.measure === "percent" ? "%" : "";
+  const suffix = config.measure === "count" ? "" : "%";
   const options = roundSteps(yTop(config, rows)).map((n) => ({
     value: String(n),
     label: `${n.toLocaleString()}${suffix}`,

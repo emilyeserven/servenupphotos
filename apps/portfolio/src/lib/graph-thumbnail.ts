@@ -167,9 +167,9 @@ export function pieShapes(graph: GraphData, colorOf: ColorOf): ThumbShape[] {
   });
 }
 
-/** How many photos the busiest pair has, at least 1. */
+/** The busiest pair's value (its photos, or its share when the graph shows shares), at least 0.1. */
 function mostOf(data: ScatterData): number {
-  return Math.max(1, ...data.points.map((point) => point.count));
+  return Math.max(0.1, ...data.points.map((point) => point.value));
 }
 
 /**
@@ -180,7 +180,7 @@ export function heatmapShapes(data: ScatterData, fill: string, empty: string): T
   const nx = data.xLabels.length;
   const ny = data.yLabels.length;
   if (nx === 0 || ny === 0) return [];
-  const counts = new Map(data.points.map((p) => [`${p.x}:${p.y}`, p.count]));
+  const counts = new Map(data.points.map((p) => [`${p.x}:${p.y}`, p.value]));
   const most = mostOf(data);
   const w = INNER_W / nx;
   const h = INNER_H / ny;
@@ -212,7 +212,7 @@ export function scatterShapes(data: ScatterData, fill: string): ThumbShape[] {
     kind: "circle",
     cx: round(PAD + (p.x + 0.5) * w),
     cy: round(BOTTOM - (p.y + 0.5) * h),
-    r: round(Math.max(0.8, biggest * Math.sqrt(p.count / most))),
+    r: round(Math.max(0.8, biggest * Math.sqrt(p.value / most))),
     fill,
   }));
 }
