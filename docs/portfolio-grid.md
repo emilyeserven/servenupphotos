@@ -18,13 +18,14 @@ newest first. Once one is picked, the button shows an arrow for which way it run
 name opens the menu again, and clicking the arrow turns the sort around. **Clear sort** at the bottom of the menu goes
 back to plain "Sort".
 
-| Sort        | Default way                          | Turned around                  | URL                            |
-| ----------- | ------------------------------------ | ------------------------------ | ------------------------------ |
-| Date taken  | Newest first (↓)                     | Oldest first (↑)               | `?sort=newest`, `?sort=oldest` |
-| Date added  | Most recently added first (↓)        | Least recently added first (↑) | `?sort=added`, `&order=asc`    |
-| Time of day | Earliest in the day first (↑)        | Latest in the day first (↓)    | `?sort=time`, `&order=desc`    |
-| Color       | Red around the color wheel first (↑) | The other way (↓)              | `?sort=color`, `&order=desc`   |
-| Vividness   | Least vivid first (↑)                | Most vivid first (↓)           | `?sort=vivid`, `&order=desc`   |
+| Sort        | Default way                          | Turned around                  | URL                             |
+| ----------- | ------------------------------------ | ------------------------------ | ------------------------------- |
+| Date taken  | Newest first (↓)                     | Oldest first (↑)               | `?sort=newest`, `?sort=oldest`  |
+| Date added  | Most recently added first (↓)        | Least recently added first (↑) | `?sort=added`, `&order=asc`     |
+| Time of day | Earliest in the day first (↑)        | Latest in the day first (↓)    | `?sort=time`, `&order=desc`     |
+| Distance    | Nearest first (↑)                    | Farthest first (↓)             | `?sort=distance`, `&order=desc` |
+| Color       | Red around the color wheel first (↑) | The other way (↓)              | `?sort=color`, `&order=desc`    |
+| Vividness   | Least vivid first (↑)                | Most vivid first (↓)           | `?sort=vivid`, `&order=desc`    |
 
 With no `?sort=` the photos are newest first, the same as **Date taken** ↓, but the button says "Sort". The color
 sorts' **Then by** sits beside **Sort** (see [Portfolio Color](portfolio-color.md#on-the-grid-page)).
@@ -54,6 +55,28 @@ viewer's. Photos taken in the same minute go newest first. Turned around, night 
 
 > **Frontend analogy:** like sorting `Date`s by `getHours() * 60 + getMinutes()` instead of `getTime()`: the date
 > part is dropped, so a 7 AM photo from 2019 sits next to a 7 AM photo from last week.
+
+**Distance** (`?sort=distance`, `lib/distance-sort.ts`) puts the photos nearest a spot first, measured along the
+Earth's surface to where the [Map](portfolio-map.md) puts each photo: its custom or EXIF GPS position, or else the
+position of one of its places, the same rule as the pipeline Gallery's **On the map** filter. Photos at the same
+distance go newest first, and photos the map can't place come after the rest, newest first. Turned around, the
+farthest come first, and photos the map can't place still come last.
+
+While sorting by Distance, **From** sits beside **Sort** (`components/distance-from-control.tsx`) and says where it
+measures from:
+
+- **Stamford, CT**, the default, when the URL has no `?near=`.
+- A country, region, city or place picked from the same columns as the Places filter, such as `&near=city:Stamford`.
+  A place with its own GPS position set on the Places page measures from that; otherwise it measures from the middle
+  of the photos taken there.
+- **Use my location** (the crosshair beside **From**), which asks the browser where the viewer is, such as
+  `&near=41.0534,-73.5387`. The browser asks the viewer's permission first; if it's refused or unavailable, the button
+  turns red and its tooltip says so.
+
+**×** goes back to Stamford, CT. Picking another sort clears `?near=`.
+
+> **Frontend analogy:** like `photos.toSorted((a, b) => dist(here, a) - dist(here, b))`, where `dist` is the
+> haversine formula, the distance between two latitude/longitude pairs on a sphere rather than a flat map.
 
 ## Square
 
