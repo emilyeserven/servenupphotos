@@ -6,6 +6,7 @@ export interface TileOptions {
   info: boolean;
   ordered: boolean;
   bands: boolean;
+  distances: boolean;
 }
 
 /** The URL's display options for the tiles, leaving out each default. */
@@ -15,5 +16,6 @@ export function optionsSearch(view: Exclude<SizedView, "table">, next: TileOptio
     info: next.info || undefined,
     ordered: next.ordered ? undefined : (false as const),
     bands: next.bands || undefined,
+    distances: next.distances || undefined,
   };
 }

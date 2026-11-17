@@ -13,7 +13,7 @@ import { ViewPlaceholder } from "@/components/view-placeholder";
 import { TILE_SHAPES, type ViewChoice, ViewSwitcher } from "@/components/view-switcher";
 import { photos, type Photo } from "@/lib/photos";
 import type { Point } from "@/lib/distance";
-import { DEFAULT_NEAR, nearPoint, parseNear } from "@/lib/distance-sort";
+import { DEFAULT_NEAR, nearPoint, parseNear, photoDistanceText } from "@/lib/distance-sort";
 import { DistanceFromControl } from "@/components/distance-from-control";
 import { DistanceBandTiles } from "@/components/distance-band-tiles";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
@@ -71,6 +71,8 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
   near?: string;
   /** Set when the tiles are grouped by distance; kept only while sorting by Distance. */
   bands?: true;
+  /** Set when each tile shows its distance; kept only while sorting by Distance. */
+  distances?: true;
 }
 
 /**
@@ -133,9 +135,13 @@ function sortOf(search: Record<string, unknown>): GridSearch {
       };
 }
 
-/** Distance's spot, and whether its tiles are grouped by distance, from the URL. */
+/** Distance's spot, and whether its tiles are grouped and show their distances, from the URL. */
 function distanceOptions(search: Record<string, unknown>): GridSearch {
-  return { ...parseNear(search.near), ...(search.bands === true ? { bands: true as const } : {}) };
+  return {
+    ...parseNear(search.near),
+    ...(search.bands === true ? { bands: true as const } : {}),
+    ...(search.distances === true ? { distances: true as const } : {}),
+  };
 }
 
 /** Whether the sort is by color or vividness, rather than by a date. */
@@ -272,6 +278,7 @@ function GridBody({
     showInfo: search.info === true,
     ordered: search.ordered !== false,
     onOpen: show,
+    badge: distanceBadge(search),
   };
   return (
     <>
@@ -283,6 +290,18 @@ function GridBody({
       <PhotoLightbox photo={shown} photos={tiles} onShow={show} onClose={close} />
     </>
   );
+}
+
+/** Each tile's distance in words, while sorting by Distance with **Show distance** on. */
+function distanceBadge(search: GridSearch): ((photo: Photo) => string | undefined) | undefined {
+  if (search.sort !== "distance" || !search.distances) return undefined;
+  const from = distanceFrom(search);
+  return (photo) => photoDistanceText(photo, from);
+}
+
+/** Distance's display options from the URL, for **Display Options**. */
+function distanceDisplay(search: GridSearch) {
+  return { bands: search.bands === true, distances: search.distances === true };
 }
 
 /**
@@ -311,7 +330,7 @@ function viewOptionsOf(search: GridSearch, mode: TileMode) {
     size: natural ? naturalSize(search.size) : squareSize(search.size),
     info: search.info === true,
     ordered: natural ? search.ordered !== false : undefined,
-    bands: search.sort === "distance" ? search.bands === true : undefined,
+    distance: search.sort === "distance" ? distanceDisplay(search) : undefined,
   };
 }
 
