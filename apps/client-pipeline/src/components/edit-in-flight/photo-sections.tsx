@@ -36,7 +36,7 @@ interface SectionInfo {
 }
 
 const SECTIONS: Record<PhotoSection, SectionInfo> = {
-  details: { label: "Details", icon: FileTextIcon, fields: ["details", "reEdit"] },
+  details: { label: "Details", icon: FileTextIcon, fields: ["details", "reEdit", "lowerTier"] },
   groups: { label: "Albums & tags", icon: TagsIcon, fields: ["groups"] },
   image: { label: "Image", icon: ImageIcon, fields: [] },
   original: { label: "Original", icon: SquareSplitHorizontalIcon, fields: [] },

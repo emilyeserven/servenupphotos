@@ -34,6 +34,24 @@ export function useSetLowerTier() {
     );
 }
 
+/**
+ * The photo file at path's fields waiting for Commit, with any Lower Tier mark set in the Gallery
+ * or on the Compare page, for the Photo page to start from (`withLocalLowerTier`).
+ */
+export function useLocalFields(path: string): Record<string, unknown> | undefined {
+  return useLocalEditsStore((s) => s.edits[path]?.fields);
+}
+
+/**
+ * Drops the Lower Tier mark waiting for Commit on the file at path, once the Photo page saved its
+ * JSON (data) with the mark in it.
+ */
+export function useDropLocalLowerTier() {
+  const setField = useLocalEditsStore((s) => s.setField);
+  return (path: string, data: Record<string, unknown>) =>
+    setField(LOWER_TIER, [{ path, before: data, value: data[LOWER_TIER] ?? null }]);
+}
+
 /** Whether the photo is Lower Tier with its local edits made. */
 function useIsLowerTier(file: MarkedFile): boolean {
   const edits = useLocalEditsStore((s) => s.edits);
@@ -58,25 +76,23 @@ export function LowerTierMark({ file, className }: { file: MarkedFile; className
 }
 
 interface LowerTierCardProps {
-  file: MarkedFile;
-  /** Saving is under way, so changing it now would wait for the save. */
+  value: boolean;
+  onChange: (value: boolean) => void;
+  /** Saving is under way, so changing it now would not change the file. */
   disabled: boolean;
 }
 
 /**
- * The Photo page's Lower Tier switch. It's kept as a change waiting for Commit as soon as it's
- * flipped, like the Undecided mark, so Save changes doesn't need pressing.
+ * The Photo page's Lower Tier switch. Like Re-edit above it, Save changes writes it into the JSON,
+ * so the JSON section shows it and Save changes lights up as soon as it's flipped.
  */
-export function LowerTierCard({ file, disabled }: LowerTierCardProps) {
-  const lowerTier = useIsLowerTier(file);
-  const setLowerTier = useSetLowerTier();
+export function LowerTierCard({ value, onChange, disabled }: LowerTierCardProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Lower Tier</CardTitle>
         <CardDescription>
-          The change waits for Commit as soon as you flip it, which writes the JSON&apos;s{" "}
-          <code>lowerTier</code>.
+          Saving changes writes it into the JSON&apos;s <code>lowerTier</code>.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -88,8 +104,8 @@ export function LowerTierCard({ file, disabled }: LowerTierCardProps) {
               label: "Lower Tier photo",
               help: `${LOWER_TIER_HELP} The Gallery hides it until its Lower Tier filter shows it.`,
             }}
-            value={lowerTier}
-            onChange={(on) => setLowerTier([file], on)}
+            value={value}
+            onChange={onChange}
           />
         </fieldset>
       </CardContent>

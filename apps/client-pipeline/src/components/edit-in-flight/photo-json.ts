@@ -33,6 +33,7 @@ import {
 } from "@/components/related-photos/picks";
 import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
 import { jsonFileName } from "@/lib/file-name";
+import { isLowerTier, withLowerTier } from "@/lib/lower-tier";
 import { UNDECIDED } from "@/lib/photo-fields";
 
 /**
@@ -200,13 +201,15 @@ function placesChanged(data: PhotoJson, details: PhotoDetails): boolean {
 
 /**
  * What the Photo page edits besides the crop: the details, albums and tags, social media posts, the
- * re-edit mark, the hand-picked related photos, and the fields the camera overrides change once they're applied (null until they are).
+ * re-edit mark, the Lower Tier mark, the hand-picked related photos, and the fields the camera overrides change once they're applied (null until they are).
  */
 export interface EditedFields {
   details: PhotoDetails;
   groups: PhotoGroups;
   socialPosts: SocialPostDraft[];
   reEdit: ReEditDraft;
+  /** Whether the photo is marked Lower Tier, saved as its `lowerTier`. */
+  lowerTier: boolean;
   /** The photos picked by hand for its More like this drawer, in order, with their notes. */
   pickedSimilar: Pick[];
   overrides: Record<string, unknown> | null;
@@ -220,6 +223,7 @@ export function changedFields(data: PhotoJson, fields: EditedFields): (keyof Edi
     groups: () => !sameGroups(savedGroups(data), fields.groups),
     socialPosts: () => socialPostsChanged(data, fields.socialPosts),
     reEdit: () => reEditChanged(data, fields.reEdit),
+    lowerTier: () => fields.lowerTier !== isLowerTier(data),
     pickedSimilar: () => picksChanged(savedPicks(data), fields.pickedSimilar),
   };
   return (Object.keys(checks) as (keyof EditedFields)[]).filter((name) => checks[name]());
@@ -266,14 +270,14 @@ export function photoFile(saved: PhotoJson): string {
  */
 export function saveRequest(
   saved: PhotoJson,
-  { details, groups, socialPosts, reEdit, pickedSimilar, overrides }: EditedFields,
+  { details, groups, socialPosts, reEdit, lowerTier, pickedSimilar, overrides }: EditedFields,
   crop: Crop | null,
   baseline: Crop | null,
   remakeSquares: boolean,
 ): SaveRequest {
   const grouped = withGroups(withDetails(saved, details), groups);
   const edited = withPickedSimilar(
-    withReEdit(withSocialPosts(grouped, socialPosts), reEdit),
+    withLowerTier(withReEdit(withSocialPosts(grouped, socialPosts), reEdit), lowerTier),
     pickedSimilar,
   );
   const data = withNamed(saved, details.title, { ...edited, ...overrides });

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { isLowerTier, lowerTierPaths } from "@/lib/lower-tier";
+import { isLowerTier, lowerTierPaths, withLocalLowerTier, withLowerTier } from "@/lib/lower-tier";
 import type { LocalEdit } from "@/stores/local-edits";
 
 test("counts a photo as Lower Tier only when its lowerTier is true", () => {
@@ -33,4 +33,21 @@ test("finds Lower Tier photos with the local edits made, skipping files that cou
     },
   };
   assert.deepEqual([...lowerTierPaths(files, edits)].sort(), ["photos/a.json", "photos/b.json"]);
+});
+
+test("saves the mark as true, and taking it off sets null only on a file that had the field", () => {
+  assert.deepEqual(withLowerTier({ id: 1 }, true), { id: 1, lowerTier: true });
+  assert.deepEqual(withLowerTier({ id: 1, lowerTier: true }, false), { id: 1, lowerTier: null });
+  assert.deepEqual(withLowerTier({ id: 1, lowerTier: null }, false), { id: 1, lowerTier: null });
+  assert.deepEqual(withLowerTier({ id: 1 }, false), { id: 1 });
+});
+
+test("starts the Photo page from a Lower Tier mark waiting for Commit", () => {
+  assert.deepEqual(withLocalLowerTier({ id: 1 }, { lowerTier: true }), { id: 1, lowerTier: true });
+  assert.deepEqual(withLocalLowerTier({ id: 1, lowerTier: true }, { lowerTier: null }), {
+    id: 1,
+    lowerTier: null,
+  });
+  assert.deepEqual(withLocalLowerTier({ id: 1 }, { undecided: true }), { id: 1 });
+  assert.deepEqual(withLocalLowerTier({ id: 1 }, undefined), { id: 1 });
 });

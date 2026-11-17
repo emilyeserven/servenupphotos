@@ -11,8 +11,9 @@ sets it to `null`, so the field is never `false`. Like `undecided`, it isn't one
 (`newPhotoJSON`), so **Update Data → Missing fields** doesn't add it. Commit doesn't leave Lower Tier photos out of
 `ALLPHOTOS.json`, since albums and trip lines can still use them.
 
-The mark is a [local edit](combined-data-store.md#local-edits): it's kept in the browser as a change waiting for
-**Commit** the moment it's set, with no **Save changes** to press, and Commit writes it into the photo file.
+In the Gallery and on the Compare page the mark is a [local edit](combined-data-store.md#local-edits): it's kept in
+the browser as a change waiting for **Commit** the moment it's set, with no **Save changes** to press, and Commit
+writes it into the photo file. On the Photo page it's saved like **Re-edit** instead (see below).
 
 > **Frontend analogy:** it's an optimistic update kept in a persisted Zustand store, which a later "Save all" request
 > sends to the server.
@@ -20,6 +21,10 @@ The mark is a [local edit](combined-data-store.md#local-edits): it's kept in the
 ## Setting it
 
 - **Photo page:** the **Lower Tier** card under **Re-edit** in the Details section has a **Lower Tier photo** switch.
+  Flipping it is an unsaved change like the photo's other fields: **Save changes** lights up, the Details and JSON
+  sections are marked, and the JSON section shows the `lowerTier` the save writes. The switch starts from a mark set in
+  the Gallery or on the Compare page that's still waiting for Commit, and saving drops that local edit, since the
+  saved file has the mark now.
 - **Gallery:** with **Select** on, the **Lower Tier** card under **Add albums, tags and genres** marks every chosen
   photo (**Mark N photos Lower Tier**) or takes the mark off. The selection stays, so the same photos can be given
   albums and tags too.
@@ -35,6 +40,6 @@ The mark is a [local edit](combined-data-store.md#local-edits): it's kept in the
 - Gallery tiles, Photos in Flight and the Compare page's photos mark a Lower Tier photo **Lower Tier**, with what it means in the tooltip.
 
 The code is `lib/lower-tier.ts` (`isLowerTier`, `lowerTierPaths`), `components/lower-tier.tsx` (the card, the mark and
-`useSetLowerTier`), and `components/gallery/lower-tier-filter.tsx` and `bulk-lower-tier.tsx` in the Gallery, and `components/compare/lower-tier-button.tsx` on the Compare page. The
+`useSetLowerTier`), `withLowerTier` and `withLocalLowerTier` in `lib/lower-tier.ts` for the Photo page's save (`components/edit-in-flight/use-edit.ts`), and `components/gallery/lower-tier-filter.tsx` and `bulk-lower-tier.tsx` in the Gallery, and `components/compare/lower-tier-button.tsx` on the Compare page. The
 Gallery's Undecided and Lower Tier filters share their Hidden, Shown and Only buttons from
 `components/gallery/mark-filter.tsx`.
