@@ -95,6 +95,23 @@ all reach that is centered rather than stretched.
 > **Frontend analogy:** like a CSS `flex-wrap` gallery, but the line breaks are worked out in JavaScript from the
 > measured width (a `ResizeObserver`), so each line can hold only one kind of photo and have its own height.
 
+### Keep the order
+
+Gathering vertical photos into rows of their own moves photos a little out of the sort. **Keep the order**, under
+**Rows** in the Natural view's **Display Options** (`?ordered=true`, remembered with the Grid's other settings), lays
+the photos out strictly in the sort instead (`lib/ordered-rows.ts`): read left to right and top to bottom, they come in
+exactly the sort's order, and the photo viewer steps through them in the order they show. Wide and vertical photos
+share rows. Each row aims for a quarter over the average of the heights its photos would start at above (about how much
+the rows above grow to fill the width, so photos come out about as big at each **Size**; a row with vertical photos
+aims taller, keeping them about as big as wide ones), and fills the width exactly. Where the rows break is
+worked out for all of them at once, picking the breaks that keep every row closest to its aim (half as tall counts as
+far off as twice as tall), so one awkward photo doesn't leave a squashed or towering row. The last row keeps its aimed
+height rather than stretching, and no row is taller than 90% of the window. **Reset to defaults** turns it off.
+
+> **Frontend analogy:** it's how a word processor justifies a paragraph (the Knuth–Plass line breaking TeX uses):
+> instead of filling each line greedily and stretching whatever's left, it tries every place each line could break
+> and keeps the set of breaks with the least total stretching, using dynamic programming so it stays fast.
+
 ## Table
 
 The **Table** (`?view=table`, `components/photo-table.tsx`) lists every photo as a row, including photos without resized

@@ -13,7 +13,7 @@ export interface NaturalRow<T> {
 }
 
 /** The gap between tiles, in pixels, matching the list's `gap-3`. */
-const GAP_PX = 12;
+export const GAP_PX = 12;
 
 /** How big the rows start out, before their tiles grow to fill them. */
 export interface RowSizes {

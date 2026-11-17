@@ -6,6 +6,7 @@ import {
   type RowSizes,
   type Shaped,
 } from "@/lib/natural-rows";
+import { orderedRows } from "@/lib/ordered-rows";
 import type { PhotoImage } from "@/lib/photos";
 import { useSize } from "@/lib/use-size";
 import { cn } from "@/lib/utils";
@@ -19,7 +20,8 @@ const MAX_HEIGHT_SHARE = 0.9;
 /**
  * The Grid's **Natural** view: each photo at its own aspect ratio, in justified rows, with
  * vertical photos gathered into taller rows of their own so they show about as big as wide ones
- * (`lib/natural-rows.ts`).
+ * (`lib/natural-rows.ts`), or, with **Keep the order**, every photo in its place in the sort with
+ * wide and vertical photos sharing rows (`lib/ordered-rows.ts`).
  * A full row's tiles grow together to fill its width, so they only get taller; the last rows keep
  * their starting size.
  */
@@ -27,17 +29,23 @@ export function NaturalGrid<T extends { id: number; image: PhotoImage }>({
   photos,
   showInfo,
   sizes,
+  ordered = false,
   renderTile,
 }: {
   photos: T[];
   /** How big the rows start out, from the Grid's **Size** option. */
   sizes: RowSizes;
+  /** Whether the rows keep the photos strictly in their order, mixing wide and vertical photos. */
+  ordered?: boolean;
   /** Whether tiles show their captions, which puts rows further apart. */
   showInfo: boolean;
   renderTile: (photo: T) => ReactNode;
 }) {
   const [ref, width] = useMeasuredWidth();
-  const rows = useMemo(() => layoutNaturalRows(photos, width, sizes), [photos, width, sizes]);
+  const rows = useMemo(
+    () => layoutNaturalRows(photos, width, sizes, ordered),
+    [photos, width, sizes, ordered],
+  );
   return <NaturalRows ref={ref} rows={rows} showInfo={showInfo} renderTile={renderTile} />;
 }
 
@@ -49,14 +57,17 @@ export function useMeasuredWidth() {
 
 /**
  * The photos in justified rows across width pixels at the starting sizes, with no tile taller
- * than 90% of the window (`lib/natural-rows.ts`).
+ * than 90% of the window: vertical photos gathered into rows of their own (`lib/natural-rows.ts`),
+ * or, when ordered, every photo strictly in its order (`lib/ordered-rows.ts`).
  */
 export function layoutNaturalRows<T extends Shaped>(
   photos: T[],
   width: number,
   sizes: RowSizes,
+  ordered = false,
 ): NaturalRow<T>[] {
-  return naturalRows(photos, width, window.innerHeight * MAX_HEIGHT_SHARE, sizes);
+  const layout = ordered ? orderedRows : naturalRows;
+  return layout(photos, width, window.innerHeight * MAX_HEIGHT_SHARE, sizes);
 }
 
 /** Natural rows already laid out, each tile as tall as its row and the full rows filling their width. */
