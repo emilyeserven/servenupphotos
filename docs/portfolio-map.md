@@ -56,7 +56,7 @@ photo viewer while on the map) fades the map out, moves it there and fades it ba
 out and back in (`fadeTo` in `lib/map-fade.ts`). Zooming into a group of photos still animates, as it's a short move.
 
 Over the top left corner, beside the title on wider screens and under it on phones, in one row
-(`components/map-controls.tsx`). On phones, **More filters**, **View in grid** and **Browse** are just their icons, so the row
+(`components/map-controls.tsx`). On phones, **More filters**, **View in grid**, **Nearest here** and **Browse** are just their icons, so the row
 fits without covering the map:
 
 - **Places** comes first, with the icon button beside it that zooms back out to every photo. It opens the same columns as
@@ -115,6 +115,11 @@ fits without covering the map:
   the photos one by one instead (`?ids=[…]`, see [Chosen photos](portfolio-filters.md#chosen-photos)). A place filter
   also shows that place's photos with no GPS position, which the map can't show. It can't be pressed while no photos
   are in view.
+- **Nearest here** (`components/nearest-in-grid-button.tsx`) opens the Grid sorted by
+  [Distance](portfolio-grid.md) from the middle of the map's view, such as
+  `/grid?sort=distance&near=35.6762,139.6503`. Unlike **View in grid** it doesn't narrow to the photos in view: it keeps
+  the map's filters and shows every photo they leave, nearest first. Move the map so the spot you want is in the
+  middle, then press it.
 - **Browse** opens the photo viewer on the newest photo in view, and its arrows, keys and swipes step through every
   photo in view, newest first. Opening a photo's own marker steps through them the same way, starting on that photo;
   a group's grid still steps through just that group's photos. It can't be pressed while no photos are in view.
