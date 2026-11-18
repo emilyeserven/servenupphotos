@@ -1,11 +1,9 @@
-import { Combine, Plus, Split, TrainFront, X } from "lucide-react";
-import { useState } from "react";
+import { Combine, Split } from "lucide-react";
 import type { Spot } from "@/api/transit";
-import type { TripPoint } from "@/api/trip-lines";
 import type { TripLeg, TripLegRide } from "@/api/trips";
 import { RouteSourcePicker } from "@/components/trip-lines/route-source-picker";
+import { AddChange, ChangeStop } from "@/components/trips/leg-change";
 import { LineFinder } from "@/components/trips/line-finder";
-import { StationSearch } from "@/components/trips/station-search";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,6 +12,7 @@ import {
   rideEnds,
   ridesOf,
   withChange,
+  withChangeStation,
   withoutChange,
   withRideLine,
   withCombined,
@@ -51,7 +50,11 @@ export function LegRides({ leg, ends, onChange }: LegRidesProps) {
             ends={stretches[i]!}
             onLine={(line, path) => update(withRideLine(rides, i, line, path))}
           />
-          <ChangeStop change={ride.change} onRemove={() => update(withoutChange(rides, i))} />
+          <ChangeStop
+            change={ride.change}
+            onChange={(station) => update(withChangeStation(rides, i, station))}
+            onRemove={() => update(withoutChange(rides, i))}
+          />
         </div>
       ))}
       <AddChange
@@ -62,53 +65,6 @@ export function LegRides({ leg, ends, onChange }: LegRidesProps) {
       <CombineRoute leg={leg} rides={rides} onChange={onChange} />
       <RouteName leg={leg} onChange={onChange} />
     </div>
-  );
-}
-
-/** The station it changed lines at after a ride, with a way to take the change out. */
-function ChangeStop({ change, onRemove }: { change?: TripPoint; onRemove: () => void }) {
-  if (!change) return null;
-  return (
-    <div className="flex items-center gap-2 text-sm">
-      <TrainFront className="text-muted-foreground size-3.5" aria-hidden />
-      <span className="text-muted-foreground">Changed at</span>
-      <span className="min-w-0 flex-1 truncate">{change.label}</span>
-      <Button variant="ghost" size="sm" onClick={onRemove}>
-        <X aria-hidden />
-        No change here
-      </Button>
-    </div>
-  );
-}
-
-interface AddChangeProps {
-  mode: string;
-  /** Where to look for the station: halfway along the last ride. */
-  near: Spot;
-  onAdd: (station: TripPoint) => void;
-}
-
-/** Adds a station it changed lines at, on the way of the last ride, found by name. */
-function AddChange({ mode, near, onAdd }: AddChangeProps) {
-  const [adding, setAdding] = useState(false);
-  if (!adding) {
-    return (
-      <Button variant="ghost" size="sm" className="self-start" onClick={() => setAdding(true)}>
-        <Plus aria-hidden />
-        Changed lines on the way
-      </Button>
-    );
-  }
-  return (
-    <StationSearch
-      title="Changed at"
-      mode={mode}
-      near={near}
-      onPick={(station) => {
-        onAdd(station);
-        setAdding(false);
-      }}
-    />
   );
 }
 

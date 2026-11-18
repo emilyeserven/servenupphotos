@@ -80,5 +80,5 @@ function ClearButton({ line, onClear }: { line?: TripTransitLine; onClear: () =>
 /** What the look-up found, said when it found none. */
 function routeNote(finding: boolean, lines: TransitLine[] | undefined): string {
   if (!finding || lines === undefined || lines.length > 0) return "";
-  return "No line of this kind found within 500 m of both ends. Try setting each end to its station, the other source, or Changed lines on the way if it changed trains.";
+  return "No line of this kind found within 500 m of both ends. If it changed trains, add the station with Changed lines on the way below. Otherwise try setting each end to its station, or the other source.";
 }
