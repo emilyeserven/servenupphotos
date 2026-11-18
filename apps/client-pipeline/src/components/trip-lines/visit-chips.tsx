@@ -78,13 +78,13 @@ function ChipButtons({ onMove, onOff }: Pick<VisitChipProps, "onMove" | "onOff">
   );
 }
 
-/** Moves the visit a photo earlier (-1) or later (1); nothing when it can't move. */
+/** Moves the visit one spot earlier (-1) or later (1) on the route; nothing when it can't move. */
 function MoveButton({ by, onMove }: { by: -1 | 1; onMove?: (by: -1 | 1) => void }) {
   if (!onMove) return null;
   const earlier = by < 0;
   return (
     <ChipButton
-      title={earlier ? "Move a photo earlier" : "Move a photo later"}
+      title={earlier ? "Move earlier" : "Move later"}
       icon={earlier ? ChevronLeft : ChevronRight}
       onClick={() => onMove(by)}
     />

@@ -98,14 +98,47 @@ export function firstStops(visits: TripVisit[] | undefined): TripVisit[] {
 type StopPlace = Pick<TripVisit, "after" | "first">;
 
 /**
- * The draft with the visit put on the route one photo earlier (-1) or later (1) among ids, the day's
- * photos in order: from after the first photo to before it, and back, and on to after the last
- * photo, where the line ends at it; unchanged when it's off the route or would go before the first
- * photo's stops or past the last photo.
+ * The draft with the visit moved one spot earlier (-1) or later (1) on the route among ids, the day's
+ * photos in order: first past the next stop at the same place, such as two stops after one photo,
+ * then on to the place one photo away, from after the first photo to before it, and back, and on to
+ * after the last photo, where the line ends at it. It lands at the near end of the stops already
+ * there. Unchanged when it's off the route or would go before the first photo's stops or past the
+ * last photo.
  */
 export function movedVisit(draft: GapDraft, visit: TripVisit, ids: number[], by: -1 | 1): GapDraft {
+  const visits = draft.visits ?? [];
+  const at = visits.indexOf(visit);
+  const sibling = siblingIndex(visits, at, by);
+  if (sibling !== undefined) return { ...draft, visits: swapped(visits, at, sibling) };
   const to = neighbourPlace(ids, visit, by);
-  return to === undefined ? draft : withPlace(draft, visit, to);
+  return to === undefined ? draft : withPlace(draft, visit, to, by);
+}
+
+/** The index of the nearest stop at the same place as visits[at] in direction by; none when none. */
+function siblingIndex(visits: TripVisit[], at: number, by: -1 | 1): number | undefined {
+  const here = visits[at];
+  if (!here || !onRoute(here)) return undefined;
+  for (let i = at + by; i >= 0 && i < visits.length; i += by) {
+    if (samePlace(visits[i]!, here)) return i;
+  }
+  return undefined;
+}
+
+/** Whether a trip stop is on the route. */
+function onRoute({ after, first }: TripVisit): boolean {
+  return first === true || after !== undefined;
+}
+
+/** Whether two trip stops are at the same place on the route. */
+function samePlace(a: StopPlace, b: StopPlace): boolean {
+  return (a.first ?? false) === (b.first ?? false) && a.after === b.after;
+}
+
+/** The list with the items at i and j swapped. */
+function swapped<T>(list: T[], i: number, j: number): T[] {
+  const next = [...list];
+  [next[i], next[j]] = [next[j]!, next[i]!];
+  return next;
 }
 
 /** The place `by` photos from the visit's among ids, when there is one there; none otherwise. */
@@ -121,14 +154,21 @@ function neighbourPlace(
   return to === undefined ? undefined : { after: to };
 }
 
-/** The draft with the visit at place, its old place dropped. */
-function withPlace(draft: GapDraft, visit: TripVisit, place: StopPlace): GapDraft {
-  const visits = (draft.visits ?? []).map((v) => {
-    if (v !== visit) return v;
-    const { after: _after, first: _first, ...rest } = v;
-    return { ...rest, ...place };
-  });
-  return { ...draft, visits };
+/**
+ * The draft with the visit at place, its old place dropped. Coming from a later place (by -1) it goes
+ * after the stops already there, and from an earlier one (by 1) before them, so it lands next to
+ * where it was; without by it keeps its order in the list.
+ */
+function withPlace(draft: GapDraft, visit: TripVisit, place: StopPlace, by?: -1 | 1): GapDraft {
+  const { after: _after, first: _first, ...rest } = visit;
+  const moved = { ...rest, ...place };
+  const others = (draft.visits ?? []).filter((v) => v !== visit);
+  if (by === undefined) {
+    return { ...draft, visits: (draft.visits ?? []).map((v) => (v === visit ? moved : v)) };
+  }
+  const there = others.flatMap((v, i) => (samePlace(v, place) ? [i] : []));
+  const at = there.length === 0 ? others.length : by < 0 ? there.at(-1)! + 1 : there[0]!;
+  return { ...draft, visits: [...others.slice(0, at), moved, ...others.slice(at)] };
 }
 
 /**
