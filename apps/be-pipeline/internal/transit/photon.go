@@ -33,8 +33,10 @@ var photonTags = map[string][]string{
 }
 
 // bboxDeg is how far, in degrees, Photon looks either side of the spot given:
-// about 30 km, as Overpass does.
-const bboxDeg = 0.3
+// about 100 km, so a station a long ride from the day's photos, such as 松江
+// from Izumo, is found. Photon still ranks the nearer of two of one name first,
+// and a search there costs no more than a 30 km one, unlike on Overpass.
+const bboxDeg = 1.0
 
 // photonAnswer is the part of Photon's GeoJSON answer a station is read from.
 type photonAnswer struct {
@@ -72,7 +74,7 @@ func photonURL() string {
 }
 
 // PhotonStations are mode's stations or stops named like name within about
-// 30 km of near ([longitude, latitude]), in the order Photon ranks them (best
+// 100 km of near ([longitude, latitude]), in the order Photon ranks them (best
 // match, then nearest), each name once, with English names where mapped.
 func (c *Client) PhotonStations(ctx context.Context, mode, name string, near [2]float64) ([]Station, error) {
 	tags, ok := photonTags[mode]
@@ -118,7 +120,7 @@ func placeName(name string) string {
 }
 
 // photonQuery is the query string for a Photon search for name near near,
-// kept to tags and a box about 30 km around it.
+// kept to tags and a box about 100 km around it.
 func photonQuery(tags []string, name string, near [2]float64) url.Values {
 	q := url.Values{
 		"q":     {name},

@@ -15,7 +15,7 @@ interface VisitChipsProps {
 export function VisitChips({ visits, onMove, onOff }: VisitChipsProps) {
   if (visits.length === 0) return null;
   return (
-    <span className="flex flex-col gap-0.5" aria-label="Trip stops here">
+    <span className="flex items-center gap-0.5" aria-label="Trip stops here">
       {visits.map((v, i) => (
         <VisitChip
           key={i}
@@ -28,9 +28,9 @@ export function VisitChips({ visits, onMove, onOff }: VisitChipsProps) {
   );
 }
 
-/** The buttons beside a visit, shown while it's pointed at. */
-const HOVER_BUTTON =
-  "hover:bg-muted rounded-sm opacity-0 group-hover/visit:opacity-100 focus-visible:opacity-100";
+/** The buttons over a visit, shown while it's pointed at or one of them has focus. */
+const HOVER_BUTTONS =
+  "bg-background absolute top-full left-1/2 mt-0.5 z-10 hidden -translate-x-1/2 items-center rounded-sm border shadow-sm group-focus-within/visit:flex group-hover/visit:flex";
 
 interface VisitChipProps {
   visit: TripVisit;
@@ -38,17 +38,15 @@ interface VisitChipProps {
   onOff?: () => void;
 }
 
-/** One trip stop: its icon, named on hover, between arrows that move it and a cross that takes it off. */
+/**
+ * One trip stop: its icon, named on hover, with arrows that move it and a cross that takes it off
+ * shown above it while it's pointed at, so stops side by side sit close together.
+ */
 function VisitChip({ visit, onMove, onOff }: VisitChipProps) {
   const Icon = VISIT_ICONS[visit.kind];
   const name = nameOf(visit);
   return (
-    <span className="group/visit flex items-center">
-      <ChipButton
-        title="Move a photo earlier"
-        icon={ChevronLeft}
-        onClick={onMove && (() => onMove(-1))}
-      />
+    <span className="group/visit relative flex items-center">
       <Tooltip>
         <TooltipTrigger asChild>
           <span
@@ -61,13 +59,33 @@ function VisitChip({ visit, onMove, onOff }: VisitChipProps) {
         </TooltipTrigger>
         <TooltipContent>{name}</TooltipContent>
       </Tooltip>
-      <ChipButton
-        title="Move a photo later"
-        icon={ChevronRight}
-        onClick={onMove && (() => onMove(1))}
-      />
+      <ChipButtons onMove={onMove} onOff={onOff} />
+    </span>
+  );
+}
+
+/** The arrows that move a visit and the cross that takes it off; nothing when it can't be changed. */
+function ChipButtons({ onMove, onOff }: Pick<VisitChipProps, "onMove" | "onOff">) {
+  if (!onMove && !onOff) return null;
+  return (
+    <span className={HOVER_BUTTONS}>
+      <MoveButton by={-1} onMove={onMove} />
+      <MoveButton by={1} onMove={onMove} />
       <ChipButton title="Take off the route" icon={X} onClick={onOff} />
     </span>
+  );
+}
+
+/** Moves the visit a photo earlier (-1) or later (1); nothing when it can't move. */
+function MoveButton({ by, onMove }: { by: -1 | 1; onMove?: (by: -1 | 1) => void }) {
+  if (!onMove) return null;
+  const earlier = by < 0;
+  return (
+    <ChipButton
+      title={earlier ? "Move a photo earlier" : "Move a photo later"}
+      icon={earlier ? ChevronLeft : ChevronRight}
+      onClick={() => onMove(by)}
+    />
   );
 }
 
@@ -86,7 +104,7 @@ interface ChipButtonProps {
 function ChipButton({ title, icon: Icon, onClick }: ChipButtonProps) {
   if (!onClick) return null;
   return (
-    <button type="button" title={title} className={HOVER_BUTTON} onClick={onClick}>
+    <button type="button" title={title} className="hover:bg-muted p-0.5" onClick={onClick}>
       <Icon className="size-3" aria-hidden />
       <span className="sr-only">{title}</span>
     </button>

@@ -157,8 +157,8 @@ leg is in a straight line.
 ### Stations and routes
 
 A **Train**, **Bus** or **Ferry** leg can leave from and arrive at a station. With **A station or spot with no photo**
-picked, **Find a station** looks up the stations (or stops, or ferry terminals) within 30 km of that end's day (its
-spot once it has one, or else its photo) whose names, in any language, have any of the words typed. The ones with the
+picked, **Find a station** looks up the stations (or stops, or ferry terminals) near that end's day (its
+spot once it has one, or else its photo; within about 100 km on Photon, 30 km on Overpass) whose names, in any language, have any of the words typed. The ones with the
 most of the words come first, then the nearest, each with its English name beside it, such as "博多 (Hakata)". So
 "Shimonoseki Kokusai Terminal" puts a terminal whose names have "Kokusai" and "Terminal" before one that only has
 "Shimonoseki". Picking one fills in the label and position
@@ -169,7 +169,8 @@ The menu beside the search box picks the service it asks, and the choice is kept
 
 - **Photon** (the default): [photon.komoot.io](https://photon.komoot.io), a search-as-you-type service over
   OpenStreetMap's data. It answers in about a second and ranks by how well the name matches, then how near it is,
-  within a box about 30 km around the end, with English names where they're mapped. It can only filter by a station's
+  within a box about 100 km around the end (wide enough for a station a long ride away, such as Matsue from Izumo),
+  with English names where they're mapped. It can only filter by a station's
   main tag ([`osm_tag`](https://github.com/komoot/photon#filter-results-by-tags-and-keys)), so a **Train** search
   there also finds subway stations. OpenStreetMap names a station without the word "Station" (Shimonoseki Station is
   just "Shimonoseki"), so when a search finds nothing, it's tried once more without words like "station", "terminal",
@@ -220,7 +221,7 @@ The look-up only finds a line that passes both ends, so a leg that changed train
 (OpenStreetMap's San'in Line routes end at Nagato-shi), finds none, and says to add the change. The **Japan rail
 map** source instead finds a route that changes lines on its own, such as "山陽線 → 山陰線" (see
 [Looking lines up on Transitland or a rail map](trip-lines.md#looking-lines-up-on-transitland-or-a-rail-map)). **Changed lines on the way**, the outlined button under the rides, finds the station it
-changed at by name, looked for within 30 km of halfway along the last ride, and splits that ride there. A station the search can't find, such as Masuda (farther than 30 km), can be typed instead: **Type the station instead** adds a change halfway, whose label and `latitude, longitude` are then typed in. Every change's label and position stay editable under **Changed at**; renaming one keeps the rides' lines, and moving one drops the lines on either side of it, to be looked up again. Each ride then
+changed at by name, looked for near halfway along the last ride, and splits that ride there. A station the search can't find, such as one farther than the search looks (100 km on Photon, 30 km on Overpass), can be typed instead: **Type the station instead** adds a change halfway, whose label and `latitude, longitude` are then typed in. Every change's label and position stay editable under **Changed at**; renaming one keeps the rides' lines, and moving one drops the lines on either side of it, to be looked up again. Each ride then
 gets its own **Look up route** between its ends, and **No change here** joins two rides back together (both are picked
 again). The leg keeps them in `rides`, each with the `change` station at its end (none on the last), its `line` and
 its `path`. The rides stay separate lines: the Trip's map and Commit draw each along its own track, in its line's color

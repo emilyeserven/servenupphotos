@@ -236,7 +236,7 @@ café, bar, shop, museum, sight, station or other. It's only for adding them: **
 is clicked; **Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km
 of the day's photos, named after it; and **Add at this coordinate** adds one at a latitude and longitude typed or
 pasted in, such as `34.6672, 135.5013` from Google Maps (degrees and minutes work too); and **Add a station** finds a
-train, subway, bus or ferry station by name within 30 km of the day's first photo (the [station search](trips.md) a
+train, subway, bus or ferry station by name near the day's first photo (within about 100 km on Photon) (the [station search](trips.md) a
 Trip's legs use) and adds it as a **Station** stop, such as one changed trains at. Each row says where the stop
 is on the route, and its **Where on the route** menu sets it: not on the route, before photo 1, or after any photo (the
 photo strip on Route sets the same). Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
