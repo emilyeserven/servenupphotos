@@ -22,14 +22,14 @@ func TestPath(t *testing.T) {
 	if len(got) != 3 {
 		t.Errorf("Path() = %v, want 3 points", got)
 	}
-	want := "/routed-foot/route/v1/driving/135.500000,34.660000;135.502000,34.663000?overview=full&geometries=geojson&continue_straight=false"
+	want := "/routed-foot/route/v1/driving/135.500000,34.660000;135.502000,34.663000?overview=full&geometries=geojson&steps=true&continue_straight=false"
 	if asked != want {
 		t.Errorf("asked %s, want %s", asked, want)
 	}
 	if _, err := c.Path(t.Context(), "car", [][2]float64{{135.5, 34.66}, {135.502, 34.663}}); err != nil {
 		t.Fatalf("car: Path() error = %v", err)
 	}
-	want = "/routed-car/route/v1/driving/135.500000,34.660000;135.502000,34.663000?overview=full&geometries=geojson&continue_straight=true"
+	want = "/routed-car/route/v1/driving/135.500000,34.660000;135.502000,34.663000?overview=full&geometries=geojson&steps=true&continue_straight=true"
 	if asked != want {
 		t.Errorf("car: asked %s, want %s", asked, want)
 	}
