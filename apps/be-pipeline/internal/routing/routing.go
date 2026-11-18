@@ -32,8 +32,23 @@ const maxPoints = 100
 // such as a train, which is drawn straight.
 var ErrNoProfile = errors.New("no street routing for this way of travelling")
 
+// profile is how the server routes one way of travelling.
+type profile struct {
+	// server is the FOSSGIS server's path for it, such as "routed-foot".
+	server string
+	// uTurns says whether the way can turn back at a via spot. Someone walking
+	// can, so a via spot just off their way is a there-and-back; a car can't,
+	// so OSRM sends it on round the block. OSRM's default (continue_straight)
+	// depends on how the server was set up, so each request says which.
+	uTurns bool
+}
+
 // profiles are the server's profile for each way of travelling it routes.
-var profiles = map[string]string{"walk": "routed-foot", "bus": "routed-car", "car": "routed-car"}
+var profiles = map[string]profile{
+	"walk": {server: "routed-foot", uTurns: true},
+	"bus":  {server: "routed-car"},
+	"car":  {server: "routed-car"},
+}
 
 // Client asks an OSRM server for paths, at most one request per gap.
 type Client struct {
@@ -62,7 +77,7 @@ func Routes(mode string) bool {
 // Path is the path along streets through points, each [longitude, latitude],
 // in order, travelled by mode ("walk", "bus" or "car").
 func (c *Client) Path(ctx context.Context, mode string, points [][2]float64) ([][2]float64, error) {
-	profile, ok := profiles[mode]
+	p, ok := profiles[mode]
 	if !ok {
 		return nil, ErrNoProfile
 	}
@@ -72,7 +87,15 @@ func (c *Client) Path(ctx context.Context, mode string, points [][2]float64) ([]
 	if err := c.Gate.Wait(ctx); err != nil {
 		return nil, err
 	}
-	return c.fetch(ctx, c.BaseURL+"/"+profile+"/route/v1/driving/"+coordinates(points)+"?overview=full&geometries=geojson")
+	return c.fetch(ctx, c.BaseURL+"/"+p.server+"/route/v1/driving/"+coordinates(points)+"?"+query(p))
+}
+
+// query is the route request's options for p: the whole path as GeoJSON,
+// and whether it may turn back at a via spot. The "driving" in the path
+// before it is OSRM's placeholder, which the server ignores; the profile is
+// picked by p.server.
+func query(p profile) string {
+	return "overview=full&geometries=geojson&continue_straight=" + strconv.FormatBool(!p.uTurns)
 }
 
 // coordinates writes points as OSRM's path does: "lng,lat;lng,lat".
