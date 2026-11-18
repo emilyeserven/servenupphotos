@@ -1,12 +1,18 @@
-import type { HopAsk, Spot, TransitStop } from "@/api/transit";
+import type { HopAsk, Spot, Track, TransitStop } from "@/api/transit";
 import type { TripPoint, TripTransitLine } from "@/api/trip-lines";
+import type { TripLegRide } from "@/api/trips";
+import { lineOf } from "@/lib/transit-line";
 
-/** A hop's ride: the line, its track, and the stations it got on and off at. */
+/**
+ * A hop's ride: the line, its track, the stations it got on and off at, and the lines it rode in
+ * turn when its route changed lines.
+ */
 export interface Ride {
   line: TripTransitLine;
   path: Spot[];
   board?: TripPoint;
   alight?: TripPoint;
+  rides?: TripLegRide[];
 }
 
 /** Where a hop got on and off its line: a station, null at the photo, or left out for the nearest. */
@@ -65,4 +71,17 @@ export function rideSpots(ask: HopAsk, { board, alight }: Ridden): [Spot, Spot] 
 /** Whether the lines found are all one line (its directions, say), so it can be picked alone. */
 export function oneLine(lines: { name: string; ref?: string }[] = []): boolean {
   return new Set(lines.map((l) => `${l.ref}|${l.name}`)).size === 1;
+}
+
+/**
+ * The lines a track's route rode in turn, each with its stretch of track and the station it changed
+ * at, as a hop keeps them; none when it rode one line.
+ */
+export function ridesOf(track: Track): TripLegRide[] | undefined {
+  if (!track.rides || track.rides.length < 2) return undefined;
+  return track.rides.map(({ line, path, change }) => ({
+    line: lineOf(line),
+    path,
+    ...(change && { change: stopPoint(change) }),
+  }));
 }

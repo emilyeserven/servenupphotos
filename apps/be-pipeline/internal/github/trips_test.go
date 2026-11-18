@@ -198,7 +198,7 @@ func TestSeparateRides(t *testing.T) {
 	if !ok || len(got) != 2 {
 		t.Fatalf("features = %+v", got)
 	}
-	first, second := got[0].(tripLineFeature).Properties, got[1].(tripLineFeature).Properties
+	first, second := got[0].Properties, got[1].Properties
 	if first.Line != "San'in Line" || first.Start != "Shimonoseki" || first.End != "Nagato-shi" || second.Start != "Nagato-shi" || second.End != "Higashi-Hagi" || second.Line != "Mine Line" {
 		t.Errorf("rides = %+v, %+v", first, second)
 	}

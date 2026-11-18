@@ -86,6 +86,29 @@ func (f *fakeFinder) OSMRailStops(_ context.Context, _ int64) ([]transit.Stop, e
 	return []transit.Stop{{Name: "Seoul", Latitude: 37.55, Longitude: 126.97}}, f.err
 }
 
+func (f *fakeFinder) RailRides(_ context.Context, source string, _ int64, from, to [2]float64) ([]transit.RouteRide, error) {
+	if source != transit.SourceMLIT {
+		return nil, f.err
+	}
+	return []transit.RouteRide{
+		{Line: transit.Line{ID: 31, Name: "北松江線"}, Path: [][2]float64{from, {2, 2}}, Change: &transit.Stop{Name: "川跡"}},
+		{Line: transit.Line{ID: 30, Name: "大社線"}, Path: [][2]float64{{2, 2}, to}},
+	}, f.err
+}
+
+func TestTrackRides(t *testing.T) {
+	rec := httptest.NewRecorder()
+	transitMux(&fakeFinder{}).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines/7969/track?from=0,0&to=3,3&source=mlit", nil))
+	if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), `"name":"川跡"`) || !strings.Contains(rec.Body.String(), "大社線") {
+		t.Errorf("mlit: %d %s", rec.Code, rec.Body)
+	}
+	rec = httptest.NewRecorder()
+	transitMux(&fakeFinder{}).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines/7/track?from=0,0&to=3,3", nil))
+	if strings.Contains(rec.Body.String(), "rides") {
+		t.Errorf("overpass: %s", rec.Body)
+	}
+}
+
 func TestOSMRailSource(t *testing.T) {
 	f := &fakeFinder{}
 	for url, body := range map[string]string{

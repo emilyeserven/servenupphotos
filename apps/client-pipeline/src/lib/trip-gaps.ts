@@ -7,6 +7,7 @@ import type {
   TripVia,
   TripVisit,
 } from "@/api/trip-lines";
+import type { TripLegRide } from "@/api/trips";
 import { walkPathsOf, walkViasOf, withStationWalks } from "@/lib/station-walks";
 import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
 
@@ -76,6 +77,8 @@ export interface HopLine {
   board?: TripPoint;
   /** The station it got off at, when not at the next photo. */
   alight?: TripPoint;
+  /** The lines it rode in turn, when its route changed lines. */
+  rides?: TripLegRide[];
 }
 
 /** One run of photos walked through, with the spots before, between and after them. */
@@ -211,8 +214,8 @@ function stopEnd(draft: Pick<GapDraft, "visits">, last: number | undefined): Tri
 }
 
 /** A hop's line and stations as its segment lists them, leaving out the stations it doesn't have. */
-function rideFields({ line, board, alight }: Omit<HopLine, "mode">): Omit<HopLine, "mode"> {
-  return { line, ...(board && { board }), ...(alight && { alight }) };
+function rideFields({ line, board, alight, rides }: Omit<HopLine, "mode">): Omit<HopLine, "mode"> {
+  return { line, ...(board && { board }), ...(alight && { alight }), ...(rides && { rides }) };
 }
 
 /** The hop from photo a to b, with its via spots, and its line when one was picked for its mode. */

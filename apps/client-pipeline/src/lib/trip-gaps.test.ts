@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import type { TripVisit } from "@/api/trip-lines";
+import type { TripTransitLine, TripVisit } from "@/api/trip-lines";
+import type { TripLegRide } from "@/api/trips";
 import {
   changedItem,
   draftOf,
@@ -186,4 +187,30 @@ test("the way from the trip stop before the first photo can be a bus, kept throu
   );
   assert.equal(draftOf([1, 2], segments).startGap, "bus");
   assert.equal(withGap(draft, -1, "walk").startGap, undefined);
+});
+
+test("keeps the lines a hop rode in turn through a save", () => {
+  const rides: TripLegRide[] = [
+    {
+      line: { id: 31, name: "北松江線", source: "mlit" },
+      path: [
+        [132.76, 35.36],
+        [132.77, 35.39],
+      ] as [number, number][],
+      change: { latitude: 35.39, longitude: 132.77, label: "川跡" },
+    },
+    {
+      line: { id: 30, name: "大社線", source: "mlit" },
+      path: [
+        [132.77, 35.39],
+        [132.69, 35.39],
+      ] as [number, number][],
+    },
+  ];
+  const line: TripTransitLine = { id: 7969, name: "北松江線 → 大社線", source: "mlit" };
+  const photos = [1, 2];
+  const draft: GapDraft = { gaps: ["train"], lines: { "1": { mode: "train", line, rides } } };
+  const hop = segmentsOf(photos, draft).find((s) => s.mode === "train");
+  assert.deepEqual(hop?.rides, rides);
+  assert.deepEqual(draftOf(photos, segmentsOf(photos, draft)).lines?.["1"]?.rides, rides);
 });
