@@ -195,3 +195,15 @@ func TestMLITDownloadFails(t *testing.T) {
 		t.Errorf("err = %v", err)
 	}
 }
+
+func TestMLITDirBesideSettings(t *testing.T) {
+	t.Setenv("MLIT_RAIL_DIR", "")
+	t.Setenv("SETTINGS_FILE", "/data/settings.json")
+	if got := mlitDir(); got != filepath.Join("/data", "mlit-n02-24") {
+		t.Errorf("dir = %s", got)
+	}
+	t.Setenv("SETTINGS_FILE", "")
+	if got := mlitDir(); got != filepath.Join("data", "mlit-n02-24") {
+		t.Errorf("dir = %s", got)
+	}
+}

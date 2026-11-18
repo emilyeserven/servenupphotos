@@ -21,7 +21,7 @@ import (
 // passenger railway's track, split into sections, each with its line's name
 // and operator, such as 山陰線 run by 西日本旅客鉄道, and its stations. The
 // pipeline downloads it once, the first time it's asked, into MLIT_RAIL_DIR or
-// else the user's cache folder, and reads it from there afterwards.
+// else beside the settings file, and reads it from there afterwards.
 
 // DefaultMLITURL is the zip of MLIT's 2024 railway data.
 const DefaultMLITURL = "https://nlftp.mlit.go.jp/ksj/gml/data/N02/N02-24/N02-24_GML.zip"
@@ -55,16 +55,15 @@ func (e *MLITError) Unwrap() error { return e.Err }
 // errMLITDownloading is the first look-up not waiting for the whole download.
 var errMLITDownloading = errors.New("it's still downloading (once, tens of megabytes); try again in a minute")
 
-// mlitDir is MLIT_RAIL_DIR, or else a folder in the user's cache folder.
+// mlitDir is MLIT_RAIL_DIR, or else a folder beside the settings file
+// (SETTINGS_FILE, or else data/settings.json): the /data volume in Docker,
+// where the backend has no home folder and the download survives restarts.
 func mlitDir() string {
 	if dir := strings.TrimSpace(os.Getenv("MLIT_RAIL_DIR")); dir != "" {
 		return dir
 	}
-	cache, err := os.UserCacheDir()
-	if err != nil {
-		cache = os.TempDir()
-	}
-	return filepath.Join(cache, "servenupphotos", "mlit-n02-24")
+	settings := cmp.Or(strings.TrimSpace(os.Getenv("SETTINGS_FILE")), filepath.Join("data", "settings.json"))
+	return filepath.Join(filepath.Dir(settings), "mlit-n02-24")
 }
 
 // mlitURL is MLIT_RAIL_URL, or else DefaultMLITURL.
