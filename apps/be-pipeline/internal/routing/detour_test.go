@@ -54,7 +54,7 @@ var (
 func TestWalkTakesTheRoadOnlyWhereItDetours(t *testing.T) {
 	cars := 0
 	cl := detourServer(t, [][][2]float64{sideTrip, grounds}, [][][2]float64{alongRoad, roundTheGrounds}, &cars)
-	got, err := cl.Path(t.Context(), "walk", spots)
+	got, err := cl.Path(t.Context(), "walk", spots, nil)
 	if err != nil {
 		t.Fatalf("Path() error = %v", err)
 	}
@@ -67,7 +67,7 @@ func TestWalkTakesTheRoadOnlyWhereItDetours(t *testing.T) {
 func TestWalkKeepsAFootPathWithoutADetour(t *testing.T) {
 	cars := 0
 	cl := detourServer(t, [][][2]float64{alongRoad, grounds}, [][][2]float64{alongRoad, roundTheGrounds}, &cars)
-	got, err := cl.Path(t.Context(), "walk", spots)
+	got, err := cl.Path(t.Context(), "walk", spots, nil)
 	if err != nil {
 		t.Fatalf("Path() error = %v", err)
 	}
@@ -79,7 +79,7 @@ func TestWalkKeepsAFootPathWithoutADetour(t *testing.T) {
 func TestWalkKeepsItsDetourWhenTheRoadIsNoShorter(t *testing.T) {
 	cars := 0
 	cl := detourServer(t, [][][2]float64{sideTrip}, [][][2]float64{sideTrip}, &cars)
-	got, err := cl.Path(t.Context(), "walk", alongRoad)
+	got, err := cl.Path(t.Context(), "walk", alongRoad, nil)
 	if err != nil {
 		t.Fatalf("Path() error = %v", err)
 	}
@@ -91,10 +91,32 @@ func TestWalkKeepsItsDetourWhenTheRoadIsNoShorter(t *testing.T) {
 func TestCarIsNeverAskedAsAWalk(t *testing.T) {
 	cars := 0
 	cl := detourServer(t, [][][2]float64{sideTrip}, [][][2]float64{sideTrip}, &cars)
-	if _, err := cl.Path(t.Context(), "car", alongRoad); err != nil {
+	if _, err := cl.Path(t.Context(), "car", alongRoad, nil); err != nil {
 		t.Fatalf("Path() error = %v", err)
 	}
 	if cars != 0 {
 		t.Errorf("asked the road server for a walk %d times, want none", cars)
+	}
+}
+
+func TestWalkGoesByRoadOrFootWhereItsViaSpotsSay(t *testing.T) {
+	cars := 0
+	// By road: the stretch through the grounds takes the road though it's longer.
+	cl := detourServer(t, [][][2]float64{alongRoad, grounds}, [][][2]float64{alongRoad, roundTheGrounds}, &cars)
+	got, err := cl.Path(t.Context(), "walk", spots, []string{"", ByRoad})
+	if err != nil {
+		t.Fatalf("Path() error = %v", err)
+	}
+	if len(got) != 5 {
+		t.Errorf("by road: Path() = %v, want a, b then round the grounds", got)
+	}
+	// On foot: the side trip stays though the road is shorter.
+	cl = detourServer(t, [][][2]float64{sideTrip, grounds}, [][][2]float64{alongRoad, roundTheGrounds}, &cars)
+	got, err = cl.Path(t.Context(), "walk", spots, []string{ByFoot, ""})
+	if err != nil {
+		t.Fatalf("Path() error = %v", err)
+	}
+	if len(got) != len(sideTrip)+1 || cars != 1 {
+		t.Errorf("on foot: Path() = %v after %d road requests, want the foot path after none more", got, cars)
 	}
 }

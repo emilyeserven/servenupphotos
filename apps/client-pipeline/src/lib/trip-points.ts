@@ -148,7 +148,7 @@ export function movedVia(
   point: TripPoint | null,
 ): GapDraft {
   const list = (draft.via?.[key] ?? []).flatMap((v, i) =>
-    i !== index ? [v] : point ? [point] : [],
+    i !== index ? [v] : point ? [{ ...point, ...(v.by && { by: v.by }) }] : [],
   );
   return { ...draft, via: { ...draft.via, [key]: list } };
 }

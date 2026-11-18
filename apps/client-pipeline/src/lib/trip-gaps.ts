@@ -6,6 +6,7 @@ import type {
   TripTransitLine,
   TripVia,
   TripVisit,
+  ViaBy,
 } from "@/api/trip-lines";
 import type { TripLegRide } from "@/api/trips";
 import { walkPathsOf, walkViasOf, withStationWalks } from "@/lib/station-walks";
@@ -19,6 +20,11 @@ export type Gap = "walk" | "break" | Exclude<TripMode, "walk">;
 
 /** Where a via spot goes: after the day's start spot ("start"), or after a photo, by its ID. */
 export type ViaKey = string;
+
+/** A via spot as the editor holds it: where it is, and how a walk goes to and from it. */
+export interface DraftVia extends TripPoint {
+  by?: ViaBy;
+}
 
 /** How the day can get from its start to the first photo: any gap but a break or a wander. */
 export type StartGap = Exclude<Gap, "break" | "wander">;
@@ -39,7 +45,7 @@ export interface GapDraft {
   /** A spot with no photo the day ends at. */
   end?: TripPoint;
   /** The via spots after the start spot and after each photo, in order. */
-  via?: Record<ViaKey, TripPoint[]>;
+  via?: Record<ViaKey, DraftVia[]>;
   /** Each segment's path along streets, by segmentKey, kept while the segment is unchanged. */
   paths?: Record<string, Path>;
   /**
@@ -95,10 +101,11 @@ interface Run {
  */
 function viaOf(draft: GapDraft, key: ViaKey): TripVia[] {
   const after = key === "start" ? {} : { after: Number(key) };
-  const own = (draft.via?.[key] ?? []).map(({ latitude, longitude }) => ({
+  const own = (draft.via?.[key] ?? []).map(({ latitude, longitude, by }) => ({
     ...after,
     latitude,
     longitude,
+    ...(by && { by }),
   }));
   return [...own, ...visitVia(draft, key)];
 }
@@ -259,7 +266,7 @@ function shapingVia(s: TripSegment): TripVia[] {
  * spots of a hop with a line, so adding one doesn't drop the line's track.
  */
 export function segmentKey(s: TripSegment): string {
-  const via = shapingVia(s).map((v) => [v.after ?? null, v.latitude, v.longitude]);
+  const via = shapingVia(s).map((v) => [v.after ?? null, v.latitude, v.longitude, v.by ?? null]);
   const ride = [s.line?.id ?? null, at(s.board), at(s.alight)];
   return JSON.stringify([
     s.mode,
@@ -329,12 +336,12 @@ function dayEnds(segments: TripSegment[]): Pick<GapDraft, "start" | "end"> {
 }
 
 /** The segments' via spots, by what they come after. */
-function viaByKey(segments: TripSegment[]): Record<ViaKey, TripPoint[]> {
-  const out: Record<ViaKey, TripPoint[]> = {};
+function viaByKey(segments: TripSegment[]): Record<ViaKey, DraftVia[]> {
+  const out: Record<ViaKey, DraftVia[]> = {};
   const own = segments.flatMap((s) => s.via ?? []).filter((v) => v.visit === undefined);
-  for (const { after, latitude, longitude } of own) {
+  for (const { after, latitude, longitude, by } of own) {
     const key = after === undefined ? "start" : String(after);
-    out[key] = [...(out[key] ?? []), { latitude, longitude }];
+    out[key] = [...(out[key] ?? []), { latitude, longitude, ...(by && { by }) }];
   }
   return out;
 }

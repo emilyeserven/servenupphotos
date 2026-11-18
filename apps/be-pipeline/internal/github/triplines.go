@@ -100,7 +100,18 @@ type TripVia struct {
 	// Visit is the place visited (its index in the day's visits) this spot
 	// stands for, so the line passes through it; nil for a spot of its own.
 	Visit *int `json:"visit,omitempty"`
+	// By is how a walk goes to and from this spot when snapped to streets:
+	// ViaByRoad along the road (as a car would, turning back allowed),
+	// ViaByFoot along walkways only, or empty to let the snap choose (see
+	// the routing package's detour check).
+	By string `json:"by,omitempty"`
 }
+
+// How a walk goes to and from a via spot (TripVia.By).
+const (
+	ViaByRoad = "road"
+	ViaByFoot = "foot"
+)
 
 // TripLine is a trip line file: the route of one day, which the portfolio's
 // map draws.
