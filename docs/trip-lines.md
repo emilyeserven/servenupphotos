@@ -242,6 +242,19 @@ is on the route, and its **Where on the route** menu sets it: not on the route, 
 photo strip on Route sets the same). Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
 Map or any other map, which opens from the row. The map shows each as a round pin with its kind's icon.
 
+A place visited twice, such as a station gone back to by car, gets **Visited again** on its row: a copy (the same name,
+kind, spot, note and link, but not the first visit's casual photos) off the route, whose **Where on the route** then
+puts it elsewhere.
+
+A stop on the route also has **Got here by**: how it was reached from the point before it, such as **Walked** between
+two stations in the middle of a train ride, or **Car or taxi** back to a station in the middle of a walk. Left at
+**The route's way**, it's travelled as the gap it's in. Otherwise the stop is saved with `"mode"` and the route is cut
+there: the stretch into the stop is its own segment in that mode (from the photo or stop before it, with no photo of
+its own when between two stops), and the line goes on from the stop the gap's way. The photo strip shows the way as a
+small icon before the stop's chip. The gaps read back from a cut line are the same, since the stretch from a gap's last
+stop to its photo keeps the gap's way (`lib/stop-ways.ts`). A hop cut this way has no line to pick under
+[Lines ridden](#lines-ridden), since no one segment runs from one photo to the next.
+
 ### Casual photos
 
 A stop can have **casual photos**: snapshots taken there, such as the food at a restaurant, that show only with the

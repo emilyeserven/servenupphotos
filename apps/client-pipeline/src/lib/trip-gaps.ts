@@ -10,6 +10,7 @@ import type {
 } from "@/api/trip-lines";
 import type { TripLegRide } from "@/api/trips";
 import { walkPathsOf, walkViasOf, withStationWalks } from "@/lib/station-walks";
+import { cutAtStopWays, cutGap } from "@/lib/stop-ways";
 import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
 
 /**
@@ -308,8 +309,11 @@ function withAreaEnds(segment: TripSegment, draft: GapDraft): TripSegment {
 
 /** The segments the gaps make between photos, taken one after the other. */
 export function segmentsOf(photos: number[], draft: GapDraft): TripSegment[] {
-  const plain = splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
-    withAreaEnds(segment, draft),
+  const plain = cutAtStopWays(
+    splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
+      withAreaEnds(segment, draft),
+    ),
+    draft.visits,
   );
   return withNames(
     plain.map((segment) => withStationWalks(withPath(segment, draft), draft)),
@@ -327,7 +331,7 @@ function joins(segment: TripSegment, a: number, b: number): boolean {
 /** The gap between photos a and b in the saved segments: their segment's mode, or a break. */
 function gapIn(segments: TripSegment[], a: number, b: number): Gap {
   const segment = segments.find((s) => joins(s, a, b));
-  return segment ? (segment.mode as Gap) : "break";
+  return (segment?.mode ?? cutGap(segments, a, b) ?? "break") as Gap;
 }
 
 /** The day's spots with no photo: the first segment's start and the last one's end. */
@@ -391,7 +395,8 @@ export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
 }
 
 /** How the saved line got from its start to the first photo, when it wasn't walked. */
-function startGapOf([first]: TripSegment[]): Pick<GapDraft, "startGap"> {
+function startGapOf(segments: TripSegment[]): Pick<GapDraft, "startGap"> {
+  const first = segments.find((s) => s.photos.length > 0);
   if (!first?.start || first.mode === "walk" || first.mode === "wander") return {};
   return { startGap: first.mode };
 }

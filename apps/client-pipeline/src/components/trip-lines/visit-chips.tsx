@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, type LucideIcon, X } from "lucide-react";
 import type { TripVisit } from "@/api/trip-lines";
+import { StopWayIcon } from "@/components/trip-lines/stop-way";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -46,7 +47,8 @@ function VisitChip({ visit, onMove, onOff }: VisitChipProps) {
   const Icon = VISIT_ICONS[visit.kind];
   const name = nameOf(visit);
   return (
-    <span className="group/visit relative flex items-center">
+    <span className="group/visit relative flex items-center gap-0.5">
+      <StopWayIcon visit={visit} />
       <Tooltip>
         <TooltipTrigger asChild>
           <span

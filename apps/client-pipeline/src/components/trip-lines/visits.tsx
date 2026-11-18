@@ -4,6 +4,7 @@ import type { Place } from "@/api/places";
 import type { TripPoint, TripVisit, VisitKind } from "@/api/trip-lines";
 import { CasualPhotos, useClearCasual } from "@/components/trip-lines/casual-photos";
 import { StationStopAdder } from "@/components/trip-lines/station-stop-adder";
+import { StopWaySelect } from "@/components/trip-lines/stop-way";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -163,6 +164,7 @@ function VisitRow({ visit, day, onChange, onAgain }: VisitRowProps) {
       />
       <LinkField link={visit.link} onLink={(link) => set({ link })} />
       <RouteSpot photos={day.photos} visit={visit} onChange={onChange} />
+      <StopWaySelect visit={visit} onChange={onChange} />
       <Button
         variant="ghost"
         size="icon"
