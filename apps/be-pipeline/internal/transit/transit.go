@@ -102,6 +102,8 @@ type Client struct {
 	Cache *memo.Cache[[]element]
 	// TLCache keeps Transitland's answers, by path; nil keeps none.
 	TLCache *memo.Cache[[]byte]
+	// Rail is Japan's rail map, loaded the first time it's asked.
+	Rail railMap
 }
 
 // New is a client for OVERPASS_URL's servers, or else DefaultURLs.

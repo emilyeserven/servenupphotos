@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -57,6 +58,44 @@ func (f *fakeFinder) TransitlandTrack(_ context.Context, _ int64, from, to [2]fl
 
 func (f *fakeFinder) TransitlandStops(_ context.Context, _ int64) ([]transit.Stop, error) {
 	return []transit.Stop{{Name: "Shimonoseki", Latitude: 33.95, Longitude: 130.92}}, f.err
+}
+
+func (f *fakeFinder) MLITLines(_ context.Context, mode string, from, _ [2]float64) ([]transit.Line, error) {
+	f.mode, f.from = mode, from
+	return []transit.Line{{ID: 255, Name: "山陰線", Kind: "train", Source: transit.SourceMLIT}}, f.err
+}
+
+func (f *fakeFinder) MLITTrack(_ context.Context, _ int64, from, to [2]float64) ([][2]float64, error) {
+	return [][2]float64{from, {2, 2}, to}, f.err
+}
+
+func (f *fakeFinder) MLITStops(_ context.Context, _ int64) ([]transit.Stop, error) {
+	return []transit.Stop{{Name: "東萩", Latitude: 34.42, Longitude: 131.41}}, f.err
+}
+
+func TestMLITSource(t *testing.T) {
+	f := &fakeFinder{}
+	cases := []struct {
+		url  string
+		body string
+	}{
+		{"/transit/lines?mode=train&from=131.41,34.42&to=133.06,35.46&source=mlit", "山陰線"},
+		{"/transit/lines/255/stops?source=mlit", "東萩"},
+		{"/transit/lines/255/track?from=0,0&to=3,3&source=mlit", "[2,2]"},
+	}
+	for _, c := range cases {
+		rec := httptest.NewRecorder()
+		transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, c.url, nil))
+		if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), c.body) {
+			t.Errorf("%s: %d %s", c.url, rec.Code, rec.Body)
+		}
+	}
+	f.err = &transit.MLITError{Err: errors.New("it's still downloading")}
+	rec := httptest.NewRecorder()
+	transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=train&from=0,1&to=1,1&source=mlit", nil))
+	if rec.Code != http.StatusServiceUnavailable || !strings.Contains(rec.Body.String(), "still downloading") {
+		t.Errorf("not ready: %d %s", rec.Code, rec.Body)
+	}
 }
 
 func TestTransitlandSource(t *testing.T) {

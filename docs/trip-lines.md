@@ -478,7 +478,7 @@ hop is drawn along the line's track between them, solid in the line's color, wit
 it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
 route** keeps the line, the stations and the track.
 
-### Looking lines up on Transitland
+### Looking lines up on Transitland or Japan's rail map
 
 The menu beside **Find lines** (and beside a Trip leg's **Look up route**) picks where lines are looked up, and the
 choice is kept in the browser for every look-up:
@@ -488,16 +488,33 @@ choice is kept in the browser for every look-up:
 - **Transitland** ([transit.land](https://www.transit.land)): the timetables transit agencies publish as GTFS, with
   each route's shape and stops. A route is listed when it has a stop within 500 m of both ends
   (`GET /routes?lat=…&lon=…&radius=500&route_types=…`, once per end, each route once when Transitland lists two copies of a feed), its track is cut from its shape the same way as
-  an OpenStreetMap line's, and its stops are put in order along its shape. It covers railways well (in Japan too),
-  ferries less so. It needs a free API key as `TRANSITLAND_API_KEY` in the repo's `.env` (see `.env.example`), sent
+  an OpenStreetMap line's, and its stops are put in order along its shape. It covers only what agencies publish:
+  many railways, but not JR West's lines in Japan, for example, and few ferries. It needs a free API key as `TRANSITLAND_API_KEY` in the repo's `.env` (see `.env.example`), sent
   as the `apikey` header; without one the look-up says so. Answers are kept for a day, and the backend logs each
   request (`be-pipeline/internal/transit/transitland.go`; `TRANSITLAND_URL` replaces the server).
+- **Japan rail map**: MLIT's railway data, [国土数値情報「鉄道データ（N02）」](https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N02-2024.html)
+  (2024): the track of every passenger railway in Japan, by line and operator (such as 山陰線, 西日本旅客鉄道), and
+  its stations, with no train or subway kinds told apart and names in Japanese only. The backend downloads its zip
+  once, the first time it's asked (`N02-24_GML.zip`, tens of megabytes; a look-up that can't wait for it says to try
+  again in a minute), keeps its two UTF-8 GeoJSON files in `MLIT_RAIL_DIR` or else the user's cache folder
+  (`servenupphotos/mlit-n02-24`), and reads them into one network: each point of a line's track joined to the next,
+  lines that meet joined where they share a point, and stations of one name within 500 m joined, so a ride can
+  change there. The look-up lists first the shortest route from near one end to near the other (each change of line
+  counting 20 km more, so it stays on one line where it can), named by the lines it rides, such as
+  "山陽線 → 山陰線" for Shimonoseki to Higashi-Hagi, and then every line passing within 500 m of both ends. A
+  route's ID holds its lines (12 bits each, up to 5), so its track is the shortest way along those lines alone, and
+  its stops are their stations in order along them. `MLIT_RAIL_URL` replaces the download
+  (`be-pipeline/internal/transit/mlit.go`, `mlit_graph.go`, `mlit_data.go`). The data is MLIT's, under its
+  [terms of use](https://nlftp.mlit.go.jp/ksj/other/yakkan.html).
 
-A line picked from Transitland is saved with `"source": "transitland"`, so its stops and track are fetched from there
-again; one from OpenStreetMap has no `source`. The `?source=transitland` query below asks Transitland.
+A line picked from Transitland is saved with `"source": "transitland"`, and one from Japan's rail map with
+`"source": "mlit"`, so its stops and track are fetched from there again; one from OpenStreetMap has no `source`. The
+`?source=transitland` and `?source=mlit` queries below ask those.
 
-> **Frontend analogy:** it's the same component with two data providers behind it, like a `fetcher` prop that
-> switches between two REST APIs returning the same shape.
+> **Frontend analogy:** it's the same component with three data providers behind it, like a `fetcher` prop that
+> switches between REST APIs returning the same shape. Japan's rail map is the one that's a static file: like
+> bundling a big JSON once and searching it in memory instead of calling an API, with the route search being a
+> shortest-path over a graph of points, the way a maps app finds directions.
 
 - `GET /api/transit/lines?mode=subway&from=<lng,lat>&to=<lng,lat>` answers the lines found. `mode` is `train`,
   `subway`, `bus` or `ferry`.

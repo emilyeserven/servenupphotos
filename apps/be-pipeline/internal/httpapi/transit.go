@@ -23,34 +23,50 @@ type transitFinder interface {
 	TransitlandLines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
 	TransitlandTrack(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
 	TransitlandStops(ctx context.Context, id int64) ([]transit.Stop, error)
+	MLITLines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
+	MLITTrack(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
+	MLITStops(ctx context.Context, id int64) ([]transit.Stop, error)
 }
 
-// fromTransitland reports whether the request asks Transitland
-// (?source=transitland) rather than OpenStreetMap.
-func fromTransitland(r *http.Request) bool {
-	return r.URL.Query().Get("source") == transit.SourceTransitland
+// lineSource is where the request asks for lines: ?source=transitland,
+// ?source=mlit for Japan's rail map, or else OpenStreetMap ("").
+func lineSource(r *http.Request) string {
+	switch src := r.URL.Query().Get("source"); src {
+	case transit.SourceTransitland, transit.SourceMLIT:
+		return src
+	}
+	return ""
 }
 
 // linesSource is the lines look-up the request asks for.
 func linesSource(finder transitFinder, r *http.Request) func(context.Context, string, [2]float64, [2]float64) ([]transit.Line, error) {
-	if fromTransitland(r) {
+	switch lineSource(r) {
+	case transit.SourceTransitland:
 		return finder.TransitlandLines
+	case transit.SourceMLIT:
+		return finder.MLITLines
 	}
 	return finder.Lines
 }
 
 // trackSource is the track look-up the request asks for.
 func trackSource(finder transitFinder, r *http.Request) func(context.Context, int64, [2]float64, [2]float64) ([][2]float64, error) {
-	if fromTransitland(r) {
+	switch lineSource(r) {
+	case transit.SourceTransitland:
 		return finder.TransitlandTrack
+	case transit.SourceMLIT:
+		return finder.MLITTrack
 	}
 	return finder.Track
 }
 
 // stopsSource is the stops look-up the request asks for.
 func stopsSource(finder transitFinder, r *http.Request) func(context.Context, int64) ([]transit.Stop, error) {
-	if fromTransitland(r) {
+	switch lineSource(r) {
+	case transit.SourceTransitland:
 		return finder.TransitlandStops
+	case transit.SourceMLIT:
+		return finder.MLITStops
 	}
 	return finder.Stops
 }
@@ -157,7 +173,7 @@ func handleTransitStops(finder transitFinder) http.HandlerFunc {
 func lineID(w http.ResponseWriter, r *http.Request) (int64, bool) {
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil || id <= 0 {
-		writeError(w, http.StatusBadRequest, "Give the line's OpenStreetMap or Transitland ID.")
+		writeError(w, http.StatusBadRequest, "Give the line's OpenStreetMap, Transitland or rail map ID.")
 		return 0, false
 	}
 	return id, true
@@ -246,14 +262,16 @@ func parseSpot(s string) ([2]float64, bool) {
 	return [2]float64{x, y}, true
 }
 
-// writeTransitlandError answers a Transitland failure, when err is one, and
-// reports whether it did.
+// writeTransitlandError answers a Transitland or rail map failure, when err
+// is one, and reports whether it did.
 func writeTransitlandError(w http.ResponseWriter, err error) bool {
 	switch {
 	case errors.Is(err, transit.ErrNoTransitlandKey):
 		writeError(w, http.StatusServiceUnavailable, "Transitland needs an API key: get a free one at transit.land, add TRANSITLAND_API_KEY=<key> to the repo's .env, and restart the backend. Or look it up on OpenStreetMap instead.")
 	case errors.As(err, new(*transit.TransitlandError)):
 		writeError(w, http.StatusBadGateway, err.Error()+". Try again, or look it up on OpenStreetMap instead.")
+	case errors.As(err, new(*transit.MLITError)):
+		writeError(w, http.StatusServiceUnavailable, err.Error()+".")
 	default:
 		return false
 	}

@@ -61,11 +61,14 @@ export interface StationWalk {
 }
 
 /**
- * The bus, subway or train line a hop rode: an OpenStreetMap or Transitland route, with its name and
- * color.
+ * The bus, subway or train line a hop rode: an OpenStreetMap or Transitland route, or a route along
+ * Japan's rail map, with its name and color.
  */
 export interface TripTransitLine {
-  /** The route's ID: its OpenStreetMap relation, or its Transitland route when `source` says so. */
+  /**
+   * The route's ID: its OpenStreetMap relation, or its Transitland route or route along Japan's rail
+   * map when `source` says so.
+   */
   id: number;
   /** Its name, such as "Midosuji Line". */
   name: string;
@@ -73,8 +76,11 @@ export interface TripTransitLine {
   ref?: string;
   /** Its color, such as "#e5171f", which the map draws it in. */
   colour?: string;
-  /** Where it was found: left out for OpenStreetMap, "transitland" for Transitland. */
-  source?: "transitland";
+  /**
+   * Where it was found: left out for OpenStreetMap, "transitland" for Transitland, "mlit" for Japan's
+   * rail map.
+   */
+  source?: "transitland" | "mlit";
 }
 
 /** A spot a segment's line goes through to shape it, such as a bridge crossed between two photos. */
