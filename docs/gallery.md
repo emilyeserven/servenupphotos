@@ -1,18 +1,77 @@
 # Gallery
 
-`/gallery` shows the photos already in the portfolio: every photo `.json` on the base branch (`GET /api/photos/published`
-→ `GET /photos/published`), newest first, as Square Thumbnail tiles (from the [offline copy](offline-mode.md)) with their title and file name, filterable by
-either and by the same **Title**, **Place**, **Albums**, **Tags**, **Genres** and **Re-edit mark** filters as
-[Photos in Flight](photos-in-flight.md#filters), kept in the URL with a `has` prefix (`?hasTitle=without`,
+`/gallery` shows every photo in the portfolio as the next Commit will save it: the base branch's photo files
+(`GET /api/photos/published` → `GET /photos/published`) with the photo data pull request's files and the
+[changes waiting for Commit](pending-changes.md) over them (`GET /api/photos/in-flight`), and the
+[local edits](combined-data-store.md#local-edits) made too. A photo the pull request removes is left out, and one
+it adds is listed. The base branch's photos are drawn as soon as they're read, and the pull request's are laid over
+them once that read finishes too. The list is read from the photos folder rather than `ALLPHOTOS.json`, since
+editing needs each photo's file path, which `ALLPHOTOS.json` entries don't carry. **All Photos** used to be a page of
+its own; it's this page now, and an old `/all-photos` link opens the Gallery with the same Show group, photo and sort.
+
+> **Frontend analogy:** it's a client-side join of two queries' caches: the base branch's list, with the pull
+> request's copies replacing the rows they share, like spreading a patch object over the original.
+
+The photos show as Square Thumbnail tiles (from the [offline copy](offline-mode.md)) with their title and file name,
+filterable by either and by the same **Title**, **Place**, **Albums**, **Tags**, **Genres** and **Re-edit mark**
+filters as [Photos in Flight](photos-in-flight.md#filters), kept in the URL with a `has` prefix (`?hasTitle=without`,
 `?hasPlace=with`) so they don't clash with the [portfolio Grid's filters](#the-portfolio-grids-filters) below them. In
-place of Photos in Flight's **GPS position**, the Gallery has [**On the map**](#on-the-map). [Undecided](photos-in-flight.md#undecided) photos are hidden
-until the **Undecided** filter is changed from **Hidden** to **Shown** (with the rest) or **Only** (`?undecided=show` or
-`?undecided=only`), and [Lower Tier](lower-tier.md) photos the same way by the **Lower Tier** filter beside it (`?lowerTier=show` or `?lowerTier=only`); the count under the filters says how many are shown while any are hidden. **Sort** beside it
-switches from **Date taken** (newest first) to **Date added** (`?sort=added`): the photos most recently added to the
-portfolio first, by their [`addedDate`](data-model.md#date-added), then the ones without one by when they were taken. **Time of day** (`?sort=time`) orders them by the time of day they were taken, from just after midnight to just before, by the clock where they were taken (the custom date, or else the EXIF date), with photos that have no date at the end. Photos the open **Add photo data** pull request changes are marked "Changes in flight" (or "Removed in flight"),
-linked to Photos in Flight. A photo with no title on the base branch is a [draft](drafts.md), listed here but marked
-**Draft**, since `ALLPHOTOS.json` leaves it out. The list is read from the photos folder rather than `ALLPHOTOS.json`, since editing needs
-each photo's file path, which `ALLPHOTOS.json` entries don't carry.
+place of Photos in Flight's **GPS position**, the Gallery has [**On the map**](#on-the-map). Filters, sorts and counts
+go by each photo as it'll be saved, so a photo you've given a title or an album shows with it straight away. Photos
+the pull request (or a change waiting for Commit) adds or changes are marked "New in flight" or "Changes in flight",
+linked to Photos in Flight, and the count under the title says how many there are.
+
+### Which photos show
+
+**Show** picks which kinds of photo are listed, any number at once, each with how many there are:
+
+- **Published** (on at first; `?published=false` turns it off): the photos on the portfolio.
+- **Drafts** (`?drafts=true`): [drafts](drafts.md), photos without a title, which `ALLPHOTOS.json` leaves out.
+- **Undecided** (`?undecided=true`): photos set aside as [Undecided](photos-in-flight.md#undecided).
+- **Lower Tier** (`?lowerTier=true`): [Lower Tier](lower-tier.md) photos.
+
+Each photo is in one of them: an Undecided photo is Undecided whatever else it is, then an untitled one is a draft,
+then a Lower Tier one is Lower Tier. So turning **Published** off and **Lower Tier** on lists only the Lower Tier
+photos. A kind with no photos is left out of **Show** unless it's on. Drafts, Undecided and Lower Tier tiles have a
+dashed border, a dimmed image and a **Draft** (purple), **Undecided** (amber) or **Lower Tier** (slate) badge on the
+image's corner, and each sits where the sort places it, so you can see where it would go on the portfolio. With
+**Keep untitled photos as drafts** turned off in Settings, no photo is a draft or Undecided, as Commit then treats
+them. Links made before the pages merged still work: `?undecided=show` turns Undecided on, and `?undecided=only` or
+`?lowerTier=only` turns that kind on and Published off. **Clear filters** resets **Show** too.
+
+### Sort
+
+**Sort** orders the photos by **Date taken** (the default), **Date added** (the [`addedDate`](data-model.md#date-added)),
+**Time of day** (by the clock where they were taken), **Color** (around the color wheel, then the shades) or
+**Vividness** (average), and **Order** runs it either way: oldest or newest first, earliest or latest, red to white
+or white to red, least or most vivid first. They're kept in the URL as `?sort=` (left out for date taken) and
+`?order=asc|desc` (left out for each sort's usual way: newest first, earliest first, red first, most vivid first);
+changing the sort resets the order. Photos a sort can't place (no date, no date added, or no colors saved yet) come
+after the rest, newest first. Color and Vividness use the portfolio's own `sortPhotos`
+(`apps/portfolio/src/lib/color-sort.ts`), so they match the Color page.
+
+### Full size
+
+Clicking a photo's thumbnail opens it full size over the page (the shared `ImageLightbox`), as the portfolio shows
+it, with any faces pixelated. **←** and **→** (or the arrows at the image's sides) move to the previous or next photo
+the Gallery shows, in its sort and going round from the last to the first, and **Esc** closes it. It steps through
+everything the filters and **Show** leave, including tiles below the screen that aren't drawn yet; a photo with no
+image in R2 is skipped. The top bar shows the photo's Draft, Undecided or Lower Tier mark and its place, such as
+"12 of 340", and **Edit** under the image opens it on the Photo page. Closing puts focus back on the thumbnail of the
+photo last shown. While **Select** is on, clicking a thumbnail chooses the photo instead.
+
+### Jumping to a photo
+
+A box floating at the bottom right, **Drafts and Undecided**, lists every draft and Undecided photo in the Gallery's
+sort, whether they're shown or not. Picking one turns its kind on in **Show**, scrolls to it and rings it. The box
+starts collapsed to its count with its header, so it doesn't cover the filters or the photos, and opens when clicked.
+
+`?photo=<path>` names the photo to scroll to and ring, and that photo is shown even when its kind is hidden (the
+tiles are drawn at least as far as it). The **See in Gallery** button (a crosshair icon) beside a draft or Undecided
+photo elsewhere opens it this way, with its kind shown:
+
+- on Photos in Flight, next to a photo's **Draft, not on the portfolio** mark, and on each tile in the **Drafts**,
+  **Undecided** and **Can't be edited** panels.
 
 ### On the map
 
@@ -86,13 +145,14 @@ goes on the portfolio's map (`?placeGps=`):
 
 While a place is chosen, each tile says which: a green **Own GPS position**, a blue **GPS from Mill River Park**
 (with "(exact location)" when that place is marked as one), or an amber **Not on the map**. **Clear filters** clears
-the place too. The count can be lower than the Places page's, since the Gallery lists only the photos already on the
-base branch and hides Undecided ones until shown.
+the place too. The count can be lower than the Places page's, since the Gallery hides drafts, Undecided and Lower Tier photos
+until **Show** includes them.
 
 > **Frontend analogy:** the tile marks are like DevTools' computed styles showing whether a value is set on the
 > element itself or inherited from a parent: `customGpsPosition ?? gpsPosition ?? place.gps`.
 
-Each photo with its image in R2 has an **Edit** button that opens it on the Photo page (`/exif?edit=<path>&from=gallery`),
+Each photo with its image in R2 has an **Edit** button that opens it on the Photo page: the base branch's copy
+(`/exif?edit=<path>&from=gallery`) when the photo is only there, or else the pull request's (`/exif?edit=<path>`),
 the same editor Photos in Flight uses, and each tile lists the photo's album, tag and genre names. Saving keeps the JSON as a
 [change waiting for Commit](pending-changes.md), which Commit sends to the open pull request (the branch must already
 have the file; update it from the base branch if it was made before the photo merged), or to a new one when none is
@@ -110,3 +170,7 @@ filtered ones, and an **Add albums, tags and genres** card with an album, a tag 
 (`POST /api/photos/groups` with `paths`, `albums`, `tags` and `genres`) adds them to each chosen photo's `albums`, `tags` and `genres`
 after the ones it has, changing nothing else in the files, as [changes waiting for Commit](pending-changes.md), the
 way Update Data saves. It warns when a chosen photo is already in another album. Under it, a **Lower Tier** card marks the chosen photos [Lower Tier](lower-tier.md) or takes the mark off.
+
+The code is in `apps/client-pipeline/src/routes/gallery.tsx` and `components/gallery/`: `gallery-files.ts` builds the
+list, `lib/gallery-show.ts` reads **Show** and the old links, `photo-sort.ts` sorts, `gallery-lightbox.tsx` is the
+viewer and `jump-box.tsx` the box. `routes/all-photos.tsx` only sends old links on to the Gallery.

@@ -2,7 +2,7 @@ import { LOWER_TIER } from "@/lib/photo-fields";
 import { editedData } from "@/lib/undecided";
 import type { LocalEdit } from "@/stores/local-edits";
 
-/** A photo file as the Lower Tier filter reads it. */
+/** A photo file as the Lower Tier mark reads it. */
 interface PhotoFile {
   path: string;
   data?: unknown;

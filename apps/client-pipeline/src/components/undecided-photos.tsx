@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { CircleHelpIcon, ImageIcon, PencilIcon, Undo2Icon } from "lucide-react";
 import type { InFlightFileRead, InFlightImages } from "@/api/photos";
-import { SeeInAllPhotos } from "@/components/all-photos/see-in-all-photos";
+import { SeeInGallery } from "@/components/gallery/see-in-gallery";
 import { CompareButton } from "@/components/compare/compare-button";
 import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
 import { Button } from "@/components/ui/button";
@@ -112,7 +112,7 @@ interface DraftTileProps {
 
 /**
  * A draft as a tile: its Square Thumbnail, file name, Edit, Move back when it's in
- * the Undecided queue or Undecided when it isn't, Compare, and a link to its place on All Photos.
+ * the Undecided queue or Undecided when it isn't, Compare, and a link to its place on the Gallery.
  */
 export function DraftTile({ file, imageUrl, undecided, fromGallery }: DraftTileProps) {
   const name = file.path.split("/").pop() ?? file.path;
@@ -128,7 +128,7 @@ export function DraftTile({ file, imageUrl, undecided, fromGallery }: DraftTileP
         {imageUrl && <TileEdit path={file.path} fromGallery={fromGallery} />}
         {undecided ? <MoveBack file={file} /> : <MoveToUndecided file={file} />}
         <CompareButton file={file} />
-        <SeeInAllPhotos path={file.path} undecided={undecided} />
+        <SeeInGallery path={file.path} undecided={undecided} />
       </span>
     </li>
   );

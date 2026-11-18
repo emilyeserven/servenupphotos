@@ -68,7 +68,7 @@ export function usePlaceFilter() {
     ...search,
     place: places.find((place) => place.id === search.placeId),
     places,
-    apply: (files: PublishedFile[]): PublishedFile[] =>
+    apply: <T extends PublishedFile>(files: T[]): T[] =>
       search.placeId
         ? files.filter((file) => passes(editedPhoto(file, edits), search, places))
         : files,

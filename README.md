@@ -119,12 +119,11 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails
 - [Photo page sections](docs/photo-page.md) (`/exif?edit=…`): the Photo page's cards for a saved photo grouped into Details, Albums & tags, Image, Camera & lens, Posts & related and JSON, with a subnavigation and dots for unsaved changes
 - [Photos in Flight](docs/photos-in-flight.md) (`/in-flight`): the open pull request's photos, removing and editing them
-- [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums, tags and genres
-- [All Photos](docs/all-photos.md) (`/all-photos`): every photo in the portfolio's order, sorted any way, with drafts and Undecided photos shown among them and a box to jump to each
+- [Gallery](docs/gallery.md) (`/gallery`): every photo as the next Commit will save it, sorted any way, with drafts, Undecided and Lower Tier photos shown among them on request, a full-size viewer, a box to jump to each draft, editing and adding albums, tags and genres
 - [Compare groups](docs/compare-groups.md) (`/compare`): putting Gallery and in-flight photos in groups to weigh them side by side and pick the ones to post, and Unselected Photos for the rest, with why and what's kept in R2; only in the pipeline
 - [Deleting a photo](docs/delete-photo.md): **Delete photo** on the Photo page, after asking, deletes the photo's JSON and takes it out of albums, Unselected winners, the bio, viewer likes, photo books and trip lines (waiting for Commit), and deletes its images from R2
 - [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, the Re-Edit page listing every marked photo, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
-- [Lower Tier photos](docs/lower-tier.md): marking photos you like but don't want shown unless chosen, on the Photo page or in bulk from the Gallery, which hides them until its Lower Tier filter shows them
+- [Lower Tier photos](docs/lower-tier.md): marking photos you like but don't want shown unless chosen, on the Photo page or in bulk from the Gallery, which hides them until its Show → Lower Tier is on
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
 - [Offline mode](docs/offline-mode.md): the Gallery, Undecided queue and drafts without the internet, from Square Thumbnails kept on disk and fetched from R2 when the pipeline starts; in-flight work kept in the browser, and exported or imported as JSON
 - [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
