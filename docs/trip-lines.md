@@ -500,7 +500,9 @@ choice is kept in the browser for every look-up:
   `/data` volume in Docker, so it survives restarts), and reads them into one network: each point of a line's track joined to the next,
   lines that meet joined where they share a point, and stations of one name within 500 m joined, so a ride can
   change there. The look-up lists first the shortest route from near one end to near the other (each change of line
-  counting 20 km more, so it stays on one line where it can), named by the lines it rides, such as
+  counting 20 km more, so it stays on one line where it can). It may start and end on any track within 1 km of each
+  end, each meter walked to it counting as 3 m of track, so an end between two railways starts on the one that goes
+  there, such as 一畑電車 at 電鉄出雲市 beside JR's 出雲市. The route is named by the lines it rides, such as
   "山陽線 → 山陰線" for Shimonoseki to Higashi-Hagi, and then every line passing within 500 m of both ends. A
   route's ID holds its lines (12 bits each, up to 5), so its track is the shortest way along those lines alone, and
   its stops are their stations in order along them. `MLIT_RAIL_URL` replaces the download
