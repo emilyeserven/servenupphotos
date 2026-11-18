@@ -75,6 +75,12 @@ measures from:
 
 **×** goes back to Stamford, CT. Picking another sort clears `?near=`.
 
+While sorting by Distance, **Display Options** also has **Group by distance** (`&bands=true`,
+`components/distance-band-tiles.tsx`, `lib/distance-bands.ts`). It splits the tiles into groups that are each ten times
+farther than the last: Under 1 km, 1 to 10 km, 10 to 100 km, 100 to 1,000 km, and 1,000 km and farther. Each group
+has its name and photo count as a heading. The groups follow the sort's order, so farthest first puts 1,000 km and
+farther at the top, and photos the map can't place always come last under **No location**. It's off by default.
+
 > **Frontend analogy:** like `photos.toSorted((a, b) => dist(here, a) - dist(here, b))`, where `dist` is the
 > haversine formula, the distance between two latitude/longitude pairs on a sphere rather than a flat map.
 

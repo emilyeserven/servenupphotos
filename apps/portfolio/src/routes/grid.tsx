@@ -15,6 +15,7 @@ import { photos, type Photo } from "@/lib/photos";
 import type { Point } from "@/lib/distance";
 import { DEFAULT_NEAR, nearPoint, parseNear } from "@/lib/distance-sort";
 import { DistanceFromControl } from "@/components/distance-from-control";
+import { DistanceBandTiles } from "@/components/distance-band-tiles";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import {
   type ColorFilters,
@@ -68,6 +69,8 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
    * ("city:Stamford"). Left out for Stamford, CT, and kept only while sorting by Distance.
    */
   near?: string;
+  /** Set when the tiles are grouped by distance; kept only while sorting by Distance. */
+  bands?: true;
 }
 
 /**
@@ -126,8 +129,13 @@ function sortOf(search: Record<string, unknown>): GridSearch {
     : {
         sort,
         ...parseDateOrder(sort, search.order),
-        ...(sort === "distance" ? parseNear(search.near) : {}),
+        ...(sort === "distance" ? distanceOptions(search) : {}),
       };
+}
+
+/** Distance's spot, and whether its tiles are grouped by distance, from the URL. */
+function distanceOptions(search: Record<string, unknown>): GridSearch {
+  return { ...parseNear(search.near), ...(search.bands === true ? { bands: true as const } : {}) };
 }
 
 /** Whether the sort is by color or vividness, rather than by a date. */
@@ -258,16 +266,20 @@ function GridBody({
     );
   }
   const tiles = photos.filter(hasImage);
+  const tileProps = {
+    mode,
+    size: search.size,
+    showInfo: search.info === true,
+    ordered: search.ordered !== false,
+    onOpen: show,
+  };
   return (
     <>
-      <GridTiles
-        photos={tiles}
-        mode={mode}
-        size={search.size}
-        showInfo={search.info === true}
-        ordered={search.ordered !== false}
-        onOpen={show}
-      />
+      {search.sort === "distance" && search.bands ? (
+        <DistanceBandTiles photos={tiles} from={distanceFrom(search)} {...tileProps} />
+      ) : (
+        <GridTiles photos={tiles} {...tileProps} />
+      )}
       <PhotoLightbox photo={shown} photos={tiles} onShow={show} onClose={close} />
     </>
   );
@@ -283,15 +295,24 @@ function TileControls({ search, mode }: { search: GridSearch; mode: TileMode }) 
       <GridSortControl sort={search.sort} order={colorSpec(search).order} />
       <ColorOrder sort={search.sort} search={search} />
       {search.sort === "distance" && <DistanceFromControl near={search.near} />}
-      <GridViewOptions
-        view={mode}
-        size={mode === "natural" ? naturalSize(search.size) : squareSize(search.size)}
-        info={search.info === true}
-        ordered={mode === "natural" ? search.ordered !== false : undefined}
-        align="end"
-      />
+      <GridViewOptions {...viewOptionsOf(search, mode)} align="end" />
     </div>
   );
+}
+
+/**
+ * The tiles' display options from the URL: Natural's **Keep the order** and Distance's **Group by
+ * distance** only where they apply.
+ */
+function viewOptionsOf(search: GridSearch, mode: TileMode) {
+  const natural = mode === "natural";
+  return {
+    view: mode,
+    size: natural ? naturalSize(search.size) : squareSize(search.size),
+    info: search.info === true,
+    ordered: natural ? search.ordered !== false : undefined,
+    bands: search.sort === "distance" ? search.bands === true : undefined,
+  };
 }
 
 /** The color or vividness sort's secondary sort, shown while the Grid is sorted by one. */
