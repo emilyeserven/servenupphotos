@@ -26,13 +26,17 @@ type transitFinder interface {
 	MLITLines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
 	MLITTrack(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
 	MLITStops(ctx context.Context, id int64) ([]transit.Stop, error)
+	OSMRailLines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
+	OSMRailTrack(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
+	OSMRailStops(ctx context.Context, id int64) ([]transit.Stop, error)
 }
 
 // lineSource is where the request asks for lines: ?source=transitland,
-// ?source=mlit for Japan's rail map, or else OpenStreetMap ("").
+// ?source=mlit for Japan's rail map, ?source=osmrail for a country's
+// OpenStreetMap rail map, or else OpenStreetMap's Overpass servers ("").
 func lineSource(r *http.Request) string {
 	switch src := r.URL.Query().Get("source"); src {
-	case transit.SourceTransitland, transit.SourceMLIT:
+	case transit.SourceTransitland, transit.SourceMLIT, transit.SourceOSMRail:
 		return src
 	}
 	return ""
@@ -45,6 +49,8 @@ func linesSource(finder transitFinder, r *http.Request) func(context.Context, st
 		return finder.TransitlandLines
 	case transit.SourceMLIT:
 		return finder.MLITLines
+	case transit.SourceOSMRail:
+		return finder.OSMRailLines
 	}
 	return finder.Lines
 }
@@ -56,6 +62,8 @@ func trackSource(finder transitFinder, r *http.Request) func(context.Context, in
 		return finder.TransitlandTrack
 	case transit.SourceMLIT:
 		return finder.MLITTrack
+	case transit.SourceOSMRail:
+		return finder.OSMRailTrack
 	}
 	return finder.Track
 }
@@ -67,6 +75,8 @@ func stopsSource(finder transitFinder, r *http.Request) func(context.Context, in
 		return finder.TransitlandStops
 	case transit.SourceMLIT:
 		return finder.MLITStops
+	case transit.SourceOSMRail:
+		return finder.OSMRailStops
 	}
 	return finder.Stops
 }
@@ -270,7 +280,7 @@ func writeTransitlandError(w http.ResponseWriter, err error) bool {
 		writeError(w, http.StatusServiceUnavailable, "Transitland needs an API key: get a free one at transit.land, add TRANSITLAND_API_KEY=<key> to the repo's .env, and restart the backend. Or look it up on OpenStreetMap instead.")
 	case errors.As(err, new(*transit.TransitlandError)):
 		writeError(w, http.StatusBadGateway, err.Error()+". Try again, or look it up on OpenStreetMap instead.")
-	case errors.As(err, new(*transit.MLITError)):
+	case errors.As(err, new(*transit.RailMapError)):
 		writeError(w, http.StatusServiceUnavailable, err.Error()+".")
 	default:
 		return false

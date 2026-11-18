@@ -73,6 +73,34 @@ func (f *fakeFinder) MLITStops(_ context.Context, _ int64) ([]transit.Stop, erro
 	return []transit.Stop{{Name: "東萩", Latitude: 34.42, Longitude: 131.41}}, f.err
 }
 
+func (f *fakeFinder) OSMRailLines(_ context.Context, mode string, from, _ [2]float64) ([]transit.Line, error) {
+	f.mode, f.from = mode, from
+	return []transit.Line{{ID: 1 << 48, Name: "Gyeongbu HSR", Kind: "train", Source: transit.SourceOSMRail}}, f.err
+}
+
+func (f *fakeFinder) OSMRailTrack(_ context.Context, _ int64, from, to [2]float64) ([][2]float64, error) {
+	return [][2]float64{from, {4, 4}, to}, f.err
+}
+
+func (f *fakeFinder) OSMRailStops(_ context.Context, _ int64) ([]transit.Stop, error) {
+	return []transit.Stop{{Name: "Seoul", Latitude: 37.55, Longitude: 126.97}}, f.err
+}
+
+func TestOSMRailSource(t *testing.T) {
+	f := &fakeFinder{}
+	for url, body := range map[string]string{
+		"/transit/lines?mode=train&from=126.97,37.55&to=129.04,35.12&source=osmrail": "Gyeongbu HSR",
+		"/transit/lines/281474976710656/stops?source=osmrail":                        "Seoul",
+		"/transit/lines/281474976710656/track?from=0,0&to=5,5&source=osmrail":        "[4,4]",
+	} {
+		rec := httptest.NewRecorder()
+		transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, url, nil))
+		if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), body) {
+			t.Errorf("%s: %d %s", url, rec.Code, rec.Body)
+		}
+	}
+}
+
 func TestMLITSource(t *testing.T) {
 	f := &fakeFinder{}
 	cases := []struct {
@@ -90,7 +118,7 @@ func TestMLITSource(t *testing.T) {
 			t.Errorf("%s: %d %s", c.url, rec.Code, rec.Body)
 		}
 	}
-	f.err = &transit.MLITError{Err: errors.New("it's still downloading")}
+	f.err = &transit.RailMapError{Map: "Japan's rail map", Err: errors.New("it's still downloading")}
 	rec := httptest.NewRecorder()
 	transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=train&from=0,1&to=1,1&source=mlit", nil))
 	if rec.Code != http.StatusServiceUnavailable || !strings.Contains(rec.Body.String(), "still downloading") {

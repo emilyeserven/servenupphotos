@@ -21,9 +21,10 @@ export interface TransitLine extends TripTransitLine {
 /**
  * Where lines and their tracks are looked up: OpenStreetMap through its Overpass servers,
  * Transitland, which gathers the timetables transit agencies publish (it needs an API key), or
- * Japan's rail map ("mlit", MLIT's railway data), which finds routes that change lines too.
+ * Japan's rail map ("mlit", MLIT's railway data), or a country's OpenStreetMap rail map ("osmrail",
+ * downloaded once from Geofabrik); both rail maps find routes that change lines too.
  */
-export type RouteSource = "overpass" | "transitland" | "mlit";
+export type RouteSource = "overpass" | "transitland" | "mlit" | "osmrail";
 
 /** What a hop's look-ups ask about: how it was travelled, and its first and last spots. */
 export interface HopAsk {
@@ -33,11 +34,11 @@ export interface HopAsk {
 }
 
 /**
- * The query string that asks Transitland or Japan's rail map for a line from there, or nothing for
- * OpenStreetMap.
+ * The query string that asks Transitland or a rail map for a line from there, or nothing for
+ * OpenStreetMap's Overpass servers.
  */
 function sourceParam(source: RouteSource | undefined): string {
-  return source === "transitland" || source === "mlit" ? `&source=${source}` : "";
+  return source && source !== "overpass" ? `&source=${source}` : "";
 }
 
 /** The look-up's spots as the query string writes them. */
