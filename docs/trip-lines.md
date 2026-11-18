@@ -447,6 +447,7 @@ A line drawn by hand is straight from point to point. To make it follow the stre
 
    > **Frontend analogy:** it's like a fetch with a fallback endpoint, tried only when the first answer fails a sanity
    > check, rather than racing both on every call.
+
 3. **Save route** saves the paths with the line. Snapping alone saves nothing.
 
 `POST /api/triplines/<day>/route` → `POST /triplines/{day}/route` takes the line, checks it as saving would, and answers
