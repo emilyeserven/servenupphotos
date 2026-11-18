@@ -217,7 +217,7 @@ line.
 ### Changing lines on the way
 
 The look-up only finds a line that passes both ends, so a leg that changed trains, such as Shimonoseki to Higashi-Hagi
-(OpenStreetMap's San'in Line routes end at Nagato-shi), finds none. **Changed lines on the way** finds the station it
+(OpenStreetMap's San'in Line routes end at Nagato-shi), finds none, and says to add the change. **Changed lines on the way**, the outlined button under the rides, finds the station it
 changed at by name, looked for within 30 km of halfway along the last ride, and splits that ride there. Each ride then
 gets its own **Look up route** between its ends, and **No change here** joins two rides back together (both are picked
 again). The leg keeps them in `rides`, each with the `change` station at its end (none on the last), its `line` and

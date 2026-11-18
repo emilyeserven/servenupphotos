@@ -93,7 +93,7 @@ function AddChange({ mode, near, onAdd }: AddChangeProps) {
   const [adding, setAdding] = useState(false);
   if (!adding) {
     return (
-      <Button variant="ghost" size="sm" className="self-start" onClick={() => setAdding(true)}>
+      <Button variant="outline" size="sm" className="self-start" onClick={() => setAdding(true)}>
         <Plus aria-hidden />
         Changed lines on the way
       </Button>
