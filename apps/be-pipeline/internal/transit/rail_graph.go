@@ -223,16 +223,16 @@ func (n *railNet) linesNear(p [2]float64, m float64) map[int]bool {
 	return out
 }
 
-// nearestOn is the node within railRouteM of p on one of allowed's lines (any
-// line when allowed is nil) nearest p; -1 when there's none.
-func (n *railNet) nearestOn(p [2]float64, allowed map[int]bool) int {
-	var on []int
+// ends are the nodes within railRouteM of p on one of allowed's lines (any
+// line when allowed is nil), each with what walking to it from p counts as.
+func (n *railNet) ends(p [2]float64, allowed map[int]bool) map[int]float64 {
+	out := map[int]float64{}
 	for _, node := range n.near(p, railRouteM) {
 		if slices.ContainsFunc(n.edges[node], func(e railEdge) bool { return e.line != changeEdge && allows(allowed, e.line) }) {
-			on = append(on, node)
+			out[node] = walkFactor * meters(n.points[node], p)
 		}
 	}
-	return n.nearestOf(on, p)
+	return out
 }
 
 // allows reports whether line is one of allowed, or any line when allowed is
@@ -253,38 +253,70 @@ type railStep struct {
 	prev railState
 }
 
-// route is the shortest way along allowed's lines (any when nil) from node a
-// to node b, each change of line counting changePenaltyM more: its nodes and
-// the line of each edge between them. Nil when they aren't joined.
-func (n *railNet) route(a, b int, allowed map[int]bool) (nodes, lines []int) {
-	start := railState{a, changeEdge}
-	best := map[railState]railStep{start: {0, start}}
-	limit := detourLimit*meters(n.points[a], n.points[b]) + 4*changePenaltyM
-	q := &railQueue{{start, 0}}
-	for q.Len() > 0 {
-		it := heap.Pop(q).(railItem) //nolint:forcetypeassert // the queue only holds railItems
-		if it.dist > best[it.state].dist {
+// route is the shortest way along allowed's lines (any when nil) from near
+// from to near to, each change of line counting changePenaltyM more: its nodes
+// and the line of each edge between them. It may start and end on any track
+// within railRouteM of each end, so an end between two railways, such as
+// 電鉄出雲市 beside JR's 出雲市, starts on whichever one goes there. Nil when
+// there's no such way.
+func (n *railNet) route(from, to [2]float64, allowed map[int]bool) (nodes, lines []int) {
+	goals := n.ends(to, allowed)
+	s := railSearch{
+		best:  map[railState]railStep{},
+		queue: &railQueue{},
+		limit: detourLimit*meters(from, to) + 4*changePenaltyM + 2*walkFactor*railRouteM,
+	}
+	for node, walk := range n.ends(from, allowed) {
+		start := railState{node, changeEdge}
+		s.reach(start, start, walk)
+	}
+	for s.queue.Len() > 0 {
+		it := heap.Pop(s.queue).(railItem) //nolint:forcetypeassert // the queue only holds railItems
+		if it.dist > s.best[it.state].dist {
 			continue
 		}
-		if it.state.node == b {
-			return n.walkBack(best, it.state, start)
+		if it.state == arrived {
+			return n.walkBack(s.best, s.best[arrived].prev)
+		}
+		if walk, ok := goals[it.state.node]; ok {
+			s.reach(arrived, it.state, it.dist+walk)
 		}
 		for _, e := range n.edges[it.state.node] {
-			if !allows(allowed, e.line) {
-				continue
-			}
-			next := railState{e.to, e.line}
-			d := it.dist + e.meters + n.changeCost(it.state.line, e.line)
-			if d > limit {
-				continue
-			}
-			if old, ok := best[next]; !ok || d < old.dist {
-				best[next] = railStep{d, it.state}
-				heap.Push(q, railItem{next, d})
+			if allows(allowed, e.line) {
+				s.reach(railState{e.to, e.line}, it.state, it.dist+e.meters+n.changeCost(it.state.line, e.line))
 			}
 		}
 	}
 	return nil, nil
+}
+
+// arrived is the state of a route that has walked from its last node to its
+// end.
+var arrived = railState{-1, changeEdge}
+
+// walkFactor is how many meters of track each meter walked between an end and
+// the track counts as, so a route rides as near each end as it can.
+const walkFactor = 3
+
+// railSearch is a route's search: the shortest way found to each state, the
+// states waiting to be gone on from, and how far it may go.
+type railSearch struct {
+	best  map[railState]railStep
+	queue *railQueue
+	limit float64
+}
+
+// reach keeps next as reached from prev at dist when that's within the limit
+// and shorter than any way found to it before.
+func (s *railSearch) reach(next, prev railState, dist float64) {
+	if dist > s.limit {
+		return
+	}
+	if old, ok := s.best[next]; ok && old.dist <= dist {
+		return
+	}
+	s.best[next] = railStep{dist, prev}
+	heap.Push(s.queue, railItem{next, dist})
 }
 
 // changeCost is the extra cost of going on along line after arriving on prev:
@@ -303,13 +335,15 @@ func (n *railNet) unnamed(line int) bool {
 	return line == changeEdge || n.lines[line].name == ""
 }
 
-// walkBack is the route from start to end, its nodes and the line of each edge.
-func (n *railNet) walkBack(best map[railState]railStep, end, start railState) (nodes, lines []int) {
-	for s := end; s != start; s = best[s].prev {
+// walkBack is the route ending at end, back to the state it started at: its
+// nodes and the line of each edge.
+func (n *railNet) walkBack(best map[railState]railStep, end railState) (nodes, lines []int) {
+	s := end
+	for ; best[s].prev != s; s = best[s].prev {
 		nodes = append(nodes, s.node)
 		lines = append(lines, s.line)
 	}
-	nodes = append(nodes, start.node)
+	nodes = append(nodes, s.node)
 	slices.Reverse(nodes)
 	slices.Reverse(lines)
 	return nodes, lines

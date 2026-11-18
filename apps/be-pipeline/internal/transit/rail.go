@@ -123,20 +123,17 @@ func railLines(net *railNet, from, to [2]float64) []Line {
 	return lines[:min(len(lines), maxLines)]
 }
 
-// railTrack is route id's track on net from the point on its lines nearest
-// from to the point nearest to, with from and to added at its ends, as Track
-// is.
+// railTrack is route id's track on net, the route along its lines from near
+// from to near to, with from and to added at its ends, as Track is. Two ends
+// nearest one point of track, such as two stations side by side, get a track
+// through that point.
 func railTrack(net *railNet, id int64, from, to [2]float64) ([][2]float64, error) {
 	allowed, err := net.routeLines(id)
 	if err != nil {
 		return nil, ErrNoTrack
 	}
-	a, b := net.nearestOn(from, allowed), net.nearestOn(to, allowed)
-	if a < 0 || b < 0 {
-		return nil, ErrNoTrack
-	}
-	nodes, _ := net.route(a, b, allowed)
-	if len(nodes) < 2 {
+	nodes, _ := net.route(from, to, allowed)
+	if len(nodes) == 0 {
 		return nil, ErrNoTrack
 	}
 	path := make([][2]float64, 0, len(nodes)+2)
@@ -161,11 +158,7 @@ func railStops(net *railNet, id int64) ([]Stop, error) {
 // named by the lines it rides; false when there's none, or it rides more than
 // maxRouteLines lines.
 func (n *railNet) routeLine(from, to [2]float64) (Line, bool) {
-	a, b := n.nearestOn(from, nil), n.nearestOn(to, nil)
-	if a < 0 || b < 0 {
-		return Line{}, false
-	}
-	_, edgeLines := n.route(a, b, nil)
+	_, edgeLines := n.route(from, to, nil)
 	ridden := n.ridden(edgeLines)
 	if len(ridden) == 0 || len(ridden) > n.maxLines() {
 		return Line{}, false
