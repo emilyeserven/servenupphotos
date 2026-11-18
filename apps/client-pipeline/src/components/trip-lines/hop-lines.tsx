@@ -81,7 +81,7 @@ function HopRow({ hop, ends, onRide }: HopRowProps) {
         <span className="text-muted-foreground">
           {hopTitle(ends)} by {gapInfo(hop.mode as Gap).label.toLowerCase()}:
         </span>
-        <HopLineBadge hop={hop} />
+        <LineBadge line={hop.line} />
         <RouteSourcePicker />
         <HopButtons
           hop={hop}
