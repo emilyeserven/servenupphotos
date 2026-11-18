@@ -87,27 +87,31 @@ func (c *Client) Path(ctx context.Context, mode string, points [][2]float64) ([]
 	if len(points) < 2 || len(points) > maxPoints {
 		return nil, fmt.Errorf("can route through 2 to %d spots, not %d", maxPoints, len(points))
 	}
-	path, err := c.ask(ctx, p, points)
-	if err != nil || p.byRoad == nil || !detoured(path, points) {
-		return path, err
+	r, err := c.ask(ctx, p, points)
+	if err != nil {
+		return nil, err
 	}
-	return c.shorterByRoad(ctx, *p.byRoad, path, points), nil
+	if p.byRoad == nil {
+		return r.path, nil
+	}
+	return c.roadWhereShorter(ctx, *p.byRoad, r, points), nil
 }
 
-// ask waits its turn, then asks the server for p's path through points.
-func (c *Client) ask(ctx context.Context, p profile, points [][2]float64) ([][2]float64, error) {
+// ask waits its turn, then asks the server for p's route through points.
+func (c *Client) ask(ctx context.Context, p profile, points [][2]float64) (route, error) {
 	if err := c.Gate.Wait(ctx); err != nil {
-		return nil, err
+		return route{}, err
 	}
 	return c.fetch(ctx, c.BaseURL+"/"+p.server+"/route/v1/driving/"+coordinates(points)+"?"+query(p))
 }
 
 // query is the route request's options for p: the whole path as GeoJSON,
-// and whether it may turn back at a via spot. The "driving" in the path
+// each stretch's own path (steps, read by roadWhereShorter), and whether it
+// may turn back at a via spot. The "driving" in the path
 // before it is OSRM's placeholder, which the server ignores; the profile is
 // picked by p.server.
 func query(p profile) string {
-	return "overview=full&geometries=geojson&continue_straight=" + strconv.FormatBool(!p.uTurns)
+	return "overview=full&geometries=geojson&steps=true&continue_straight=" + strconv.FormatBool(!p.uTurns)
 }
 
 // coordinates writes points as OSRM's path does: "lng,lat;lng,lat".
@@ -124,30 +128,52 @@ type answer struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
 	Routes  []struct {
-		Geometry struct {
-			Coordinates [][2]float64 `json:"coordinates"`
-		} `json:"geometry"`
+		Geometry geometry `json:"geometry"`
+		Legs     []struct {
+			Steps []struct {
+				Geometry geometry `json:"geometry"`
+			} `json:"steps"`
+		} `json:"legs"`
 	} `json:"routes"`
 }
 
-// fetch asks for url and reads the first route's path.
-func (c *Client) fetch(ctx context.Context, url string) ([][2]float64, error) {
+// geometry is a GeoJSON line in OSRM's answer.
+type geometry struct {
+	Coordinates [][2]float64 `json:"coordinates"`
+}
+
+// route is a path the server found: the whole of it, and its stretch from
+// each spot to the next (its legs), when the server gave them.
+type route struct {
+	path [][2]float64
+	legs [][][2]float64
+}
+
+// fetch asks for url and reads the first route.
+func (c *Client) fetch(ctx context.Context, url string) (route, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		return nil, err
+		return route{}, err
 	}
 	req.Header.Set("User-Agent", "servenupphotos-pipeline")
 	res, err := c.HTTP.Do(req)
 	if err != nil {
-		return nil, err
+		return route{}, err
 	}
 	defer res.Body.Close() //nolint:errcheck // read-only body
 	var a answer
 	if err := json.NewDecoder(res.Body).Decode(&a); err != nil {
-		return nil, fmt.Errorf("the routing server answered %s", res.Status)
+		return route{}, fmt.Errorf("the routing server answered %s", res.Status)
 	}
 	if a.Code != "Ok" || len(a.Routes) == 0 || len(a.Routes[0].Geometry.Coordinates) < 2 {
-		return nil, fmt.Errorf("the routing server found no route (%s %s)", a.Code, a.Message)
+		return route{}, fmt.Errorf("the routing server found no route (%s %s)", a.Code, a.Message)
 	}
-	return a.Routes[0].Geometry.Coordinates, nil
+	r := a.Routes[0]
+	legs := make([][][2]float64, len(r.Legs))
+	for i, leg := range r.Legs {
+		for _, step := range leg.Steps {
+			legs[i] = joined(legs[i], step.Geometry.Coordinates)
+		}
+	}
+	return route{path: r.Geometry.Coordinates, legs: legs}, nil
 }

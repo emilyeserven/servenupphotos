@@ -441,9 +441,11 @@ A line drawn by hand is straight from point to point. To make it follow the stre
    each request says which with OSRM's `continue_straight` rather than leaving it to the server's default.
    Some roads are mapped as closed to people on foot (often a national route with no pavement mapped, or with its
    pavements mapped as separate paths that don't join it), so the foot profile reaches a via point on one by the
-   nearest side street and back. When a walk's path is more than 1.6 times the straight line through its spots, the
-   road path (with turning back allowed) is asked for too, and drawn instead when it's at least 15% shorter
-   (`routing/detour.go`). That costs one more request, so only for walks that detour.
+   nearest side street and back. Each stretch of a walk, from one spot (photo or via point) to the next, is
+   checked on its own: one more than 1.6 times (and 150 m more than) the straight line between its spots is asked for
+   by road too (with turning back allowed), and the road's stretch is drawn in its place when it's at least 15%
+   shorter (`routing/detour.go`). Every other stretch keeps the foot path, so a walk through grounds no car enters,
+   such as a shrine's, stays on its paths. That costs one more request, only for walks with a stretch that detours.
 
    > **Frontend analogy:** it's like a fetch with a fallback endpoint, tried only when the first answer fails a sanity
    > check, rather than racing both on every call.
