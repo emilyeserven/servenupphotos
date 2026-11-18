@@ -29,6 +29,7 @@ type transitFinder interface {
 	OSMRailLines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
 	OSMRailTrack(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
 	OSMRailStops(ctx context.Context, id int64) ([]transit.Stop, error)
+	RailRides(ctx context.Context, source string, id int64, from, to [2]float64) ([]transit.RouteRide, error)
 }
 
 // lineSource is where the request asks for lines: ?source=transitland,
@@ -89,6 +90,10 @@ const transitTimeout = 100 * time.Second
 type trackAnswer struct {
 	// Path is the track, each point [longitude, latitude].
 	Path [][2]float64 `json:"path"`
+	// Rides are the lines a rail map's route rides one after another, each
+	// with its stretch of the track and the station it changed at; none for
+	// a route of one line, or from another source.
+	Rides []transit.RouteRide `json:"rides,omitempty"`
 }
 
 // handleTransitLines answers the lines of ?mode= ("train", "subway", "bus"
@@ -203,19 +208,23 @@ func handleTransitTrack(finder transitFinder) http.HandlerFunc {
 		ctx, cancel := context.WithTimeout(r.Context(), transitTimeout)
 		defer cancel()
 		path, err := trackSource(finder, r)(ctx, id, from, to)
-		writeTrack(w, path, err)
+		var rides []transit.RouteRide
+		if err == nil {
+			rides, err = finder.RailRides(ctx, lineSource(r), id, from, to)
+		}
+		writeTrack(w, trackAnswer{Path: path, Rides: rides}, err)
 	}
 }
 
-// writeTrack answers path, or the error that kept it from being found.
-func writeTrack(w http.ResponseWriter, path [][2]float64, err error) {
+// writeTrack answers the track, or the error that kept it from being found.
+func writeTrack(w http.ResponseWriter, track trackAnswer, err error) {
 	switch {
 	case errors.Is(err, transit.ErrNoTrack):
 		writeError(w, http.StatusUnprocessableEntity, "That line's mapped track doesn't join those two spots. Try another line or direction.")
 	case err != nil:
 		writeOverpassError(w, "get the line's track", err)
 	default:
-		writeJSON(w, http.StatusOK, trackAnswer{Path: path})
+		writeJSON(w, http.StatusOK, track)
 	}
 }
 

@@ -2,6 +2,7 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
 import { requestJson } from "@/api/request";
+import type { TripLegRide } from "@/api/trips";
 
 /**
  * How a stretch of a day was travelled. A walk is drawn through every photo in it; the others are
@@ -42,6 +43,11 @@ export interface TripSegment {
   path?: [number, number][];
   /** The bus, subway or train line a hop rode, picked from the ones OpenStreetMap maps. */
   line?: TripTransitLine;
+  /**
+   * The lines a hop rode one after another when its route changed lines, such as 北松江線 to 川跡
+   * and then 大社線, each with its stretch of `path`; left out for one line.
+   */
+  rides?: TripLegRide[];
   /** The station or stop a hop with a line got on at, with its name as the label. */
   board?: TripPoint;
   /** The station or stop it got off at, which can be a walk away from the next photo. */

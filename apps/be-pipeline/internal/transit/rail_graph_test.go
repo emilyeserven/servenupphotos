@@ -44,3 +44,56 @@ func TestTrackBetweenTwoSpotsAtOnePoint(t *testing.T) {
 		t.Errorf("track %v, want from, the terminus and to", track)
 	}
 }
+
+// changeNet is a made-up pair of lines meeting at 川跡: 北松江線 runs north
+// from 電鉄出雲市 to it, and 大社線 runs west from it to 出雲大社前.
+func changeNet() *railNet {
+	kita := osmLine{name: "北松江線", operator: "一畑電車", kind: 12}
+	taisha := osmLine{name: "大社線", operator: "一畑電車", kind: 12}
+	dentetsu, kawato, taishaMae := [2]float64{0.02, 0}, [2]float64{0.02, 0.04}, [2]float64{-0.06, 0.04}
+	n := newRailNet([]mlitFeature{
+		railFeatureOf(kita, "", [][2]float64{dentetsu, {0.02, 0.02}, kawato}),
+		railFeatureOf(taisha, "", [][2]float64{kawato, {-0.02, 0.04}, taishaMae}),
+	}, []mlitFeature{
+		railFeatureOf(kita, "電鉄出雲市", [][2]float64{dentetsu, dentetsu}),
+		railFeatureOf(kita, "川跡", [][2]float64{kawato, kawato}),
+		railFeatureOf(taisha, "川跡", [][2]float64{kawato, kawato}),
+		railFeatureOf(taisha, "出雲大社前", [][2]float64{taishaMae, taishaMae}),
+	})
+	n.lineBits = mlitLineBits
+	return n
+}
+
+func TestRailRidesSplitsAtTheChange(t *testing.T) {
+	n := changeNet()
+	from, to := [2]float64{0.0202, 0}, [2]float64{-0.06, 0.0402}
+	line, ok := n.routeLine(from, to)
+	if !ok || line.Name != "北松江線 → 大社線" {
+		t.Fatalf("got %+v, %v", line, ok)
+	}
+	rides, err := railRides(n, line.ID, from, to)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(rides) != 2 || rides[0].Line.Name != "北松江線" || rides[1].Line.Name != "大社線" {
+		t.Fatalf("rides %+v", rides)
+	}
+	if c := rides[0].Change; c == nil || c.Name != "川跡" || rides[1].Change != nil {
+		t.Errorf("changes %+v, %+v; want 川跡 and none", rides[0].Change, rides[1].Change)
+	}
+	first, second := rides[0].Path, rides[1].Path
+	if first[0] != from || second[len(second)-1] != to || first[len(first)-1] != second[0] {
+		t.Errorf("paths %v and %v should run from from, meet at the change and end at to", first, second)
+	}
+	if stops, err := railStops(n, rides[1].Line.ID); err != nil || len(stops) != 2 {
+		t.Errorf("大社線's own stops %v, %v", stops, err)
+	}
+}
+
+func TestRailRidesOneLine(t *testing.T) {
+	n := changeNet()
+	id := n.lineOf([]int{0}).ID
+	if rides, err := railRides(n, id, [2]float64{0.02, 0}, [2]float64{0.02, 0.04}); err != nil || rides != nil {
+		t.Errorf("got %v, %v; want none for one line", rides, err)
+	}
+}

@@ -72,6 +72,10 @@ type TripSegment struct {
 	// Line is the bus, subway or train line a hop rode, picked from the ones
 	// OpenStreetMap maps; nil when not picked.
 	Line *TripTransitLine `json:"line,omitempty"`
+	// Rides are the lines a hop with a Line rode one after another when its
+	// route changed lines, such as 北松江線 to 川跡 and then 大社線, each drawn
+	// along its stretch of Path in its own color. None for one line.
+	Rides []TripLegRide `json:"rides,omitempty"`
 	// Board and Alight are the station or stop a hop with a Line got on and
 	// off at, when away from its photos, such as a station a 10-minute walk
 	// from the next photo: the line rides between them, with a walk from

@@ -122,13 +122,25 @@ export function transitStationsQuery({ mode, name, near, source }: StationAsk) {
   });
 }
 
+/** One line of a rail map route that changed lines, with its stretch of the track. */
+export interface TrackRide {
+  /** The line alone, whose stops are its own. */
+  line: TransitLine;
+  path: Spot[];
+  /** The station it changed lines at, at the end of this ride; left out on the last. */
+  change?: TransitStop;
+}
+
+/** A line's track between two spots, and the lines a rail map route rode in turn. */
+export interface Track {
+  path: Spot[];
+  /** Each line ridden in order, from a rail map route that changed lines; left out for one line. */
+  rides?: TrackRide[];
+}
+
 /** The line's track between two spots, each point [longitude, latitude], from where it was found. */
-export function fetchTrack(
-  { id, source }: TripTransitLine,
-  from: Spot,
-  to: Spot,
-): Promise<{ path: Spot[] }> {
-  return transitJson<{ path: Spot[] }>(
+export function fetchTrack({ id, source }: TripTransitLine, from: Spot, to: Spot): Promise<Track> {
+  return transitJson<Track>(
     `/api/transit/lines/${id}/track?${spotParams({ from, to })}${sourceParam(source)}`,
   );
 }

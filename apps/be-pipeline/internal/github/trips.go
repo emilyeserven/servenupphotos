@@ -271,17 +271,22 @@ func validLegLine(leg *TripLeg, n int) *PublishError {
 
 // validRide checks the nth leg's ride, rounding its path.
 func validRide(ride *TripLegRide, n int) *PublishError {
-	if perr := validTripPoint(ride.Change, n); perr != nil {
-		return asLegError(perr)
-	}
-	if perr := validLine(ride.Line, n); perr != nil {
-		return asLegError(perr)
-	}
-	ride.Path = roundPath(ride.Path)
-	if perr := validPath(ride.Path, n); perr != nil {
+	if perr := checkRide(ride, n); perr != nil {
 		return asLegError(perr)
 	}
 	return nil
+}
+
+// checkRide checks the nth segment's ride, rounding its path.
+func checkRide(ride *TripLegRide, n int) *PublishError {
+	if perr := validTripPoint(ride.Change, n); perr != nil {
+		return perr
+	}
+	if perr := validLine(ride.Line, n); perr != nil {
+		return perr
+	}
+	ride.Path = roundPath(ride.Path)
+	return validPath(ride.Path, n)
 }
 
 // asLegError is a segment's error as the same leg's: "Leg 2: …".

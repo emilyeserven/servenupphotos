@@ -539,6 +539,15 @@ A line picked from Transitland is saved with `"source": "transitland"`, one from
 fetched from there again; one from the Overpass servers has no `source`. The `?source=transitland`, `?source=mlit`
 and `?source=osmrail` queries below ask those.
 
+A rail map route that changes lines, such as "北松江線 → 大社線" from 電鉄出雲市 to 出雲大社前, is ridden as each
+of its lines in turn. Its track answer also lists `rides`: each line alone (its own ID, so its stops are its own),
+its stretch of the track, and the station it changed at, the one on either line nearest where the tracks part
+within 1 km (川跡 here; unnamed when none is). The hop saves them as `rides` beside its `line`, the same shape as a
+Trip leg's (`TripLegRide`). **Lines ridden** shows them in order, "北松江線 → change at 川跡 → 大社線", the Route
+map draws each along its stretch in its own color, and Commit bakes each as its own line on the portfolio map, from
+the station changed at before it to the one after (`be-pipeline/internal/transit/rail_rides.go`,
+`github/triplines_transit.go`). A route of one line, or one from Transitland or the Overpass servers, has none.
+
 > **Frontend analogy:** it's the same component with four data providers behind it, like a `fetcher` prop that
 > switches between REST APIs returning the same shape. The rail maps are the ones that are static files: like
 > bundling a big JSON once and searching it in memory instead of calling an API, with the route search being a
@@ -550,7 +559,8 @@ and `?source=osmrail` queries below ask those.
   `latitude` and `longitude` (its `stop` members, or else its platforms).
 - `GET /api/transit/lines/<id>/track?from=…&to=…` answers `{ "path": [...] }`. It's the shortest way along the line's
   mapped ways between the points on it nearest each photo, so it works whichever way the ways were drawn. It fails
-  with 422 when the line's track doesn't join the two spots.
+  with 422 when the line's track doesn't join the two spots. A rail map route that changes lines also answers
+  `"rides"`, each line in turn with its stretch of track and the station it changed at (see above).
 
 Both ask the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) at `overpass-api.de`, which asks for
 light use, so `be-pipeline/internal/transit` spaces its requests a second apart, through the same throttle as the

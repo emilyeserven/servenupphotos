@@ -4,7 +4,8 @@ import type { TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { HopEndsPicker } from "@/components/trip-lines/hop-ends";
 import { HopStations } from "@/components/trip-lines/hop-stations";
-import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
+import { HopLineBadge } from "@/components/trip-lines/hop-line-badge";
+import { LineChoices } from "@/components/trip-lines/line-choices";
 import { LookupKind } from "@/components/trip-lines/lookup-kind";
 import { RouteSourcePicker } from "@/components/trip-lines/route-source-picker";
 import { gapInfo } from "@/components/trip-lines/modes";
@@ -80,7 +81,7 @@ function HopRow({ hop, ends, onRide }: HopRowProps) {
         <span className="text-muted-foreground">
           {hopTitle(ends)} by {gapInfo(hop.mode as Gap).label.toLowerCase()}:
         </span>
-        <LineBadge line={hop.line} />
+        <HopLineBadge hop={hop} />
         <RouteSourcePicker />
         <HopButtons
           hop={hop}

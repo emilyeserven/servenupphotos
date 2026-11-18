@@ -1,6 +1,7 @@
 package github
 
 import (
+	"slices"
 	"strings"
 	"testing"
 )
@@ -88,5 +89,34 @@ func TestNamedSegments(t *testing.T) {
 	f, _ := segmentFeature(TripLine{Day: "2026-09-23"}, line.Segments[0], spots)
 	if f.Properties.Name == "" {
 		t.Errorf("feature name = %q", f.Properties.Name)
+	}
+}
+
+func TestBakeHopRides(t *testing.T) {
+	spots := map[int]tripSpot{1: {ID: 1, Latitude: 35.36, Longitude: 132.76}, 2: {ID: 2, Latitude: 35.39, Longitude: 132.69}}
+	first := [][2]float64{{132.76, 35.36}, {132.77, 35.39}}
+	second := [][2]float64{{132.77, 35.39}, {132.69, 35.39}}
+	seg := TripSegment{
+		Mode: ModeTrain, Photos: []int{1, 2}, Path: append(slices.Clone(first), second[1]),
+		Line: &TripTransitLine{ID: 7969, Name: "北松江線 → 大社線", Source: "mlit"},
+		Rides: []TripLegRide{
+			{Line: &TripTransitLine{ID: 31, Name: "北松江線", Source: "mlit"}, Path: first, Change: &TripPoint{Latitude: 35.39, Longitude: 132.77, Label: "川跡"}},
+			{Line: &TripTransitLine{ID: 30, Name: "大社線", Source: "mlit"}, Path: second},
+		},
+	}
+	if perr := trimLine(&seg, 1); perr != nil {
+		t.Fatal(perr)
+	}
+	fs := segmentFeatures(TripLine{Day: "2026-11-01"}, seg, spots)
+	if len(fs) != 2 || fs[0].Properties.Line != "北松江線" || fs[0].Properties.End != "川跡" || fs[1].Properties.Line != "大社線" || fs[1].Properties.Start != "川跡" {
+		t.Fatalf("features = %+v", fs)
+	}
+	moved := map[int]tripSpot{1: spots[1], 2: {ID: 2, Latitude: 35.5, Longitude: 132.5}}
+	if fs := segmentFeatures(TripLine{Day: "2026-11-01"}, seg, moved); len(fs) != 1 {
+		t.Errorf("a hop whose photo moved drew %d rides; want one straight line", len(fs))
+	}
+	seg.Line = nil
+	if _ = trimLine(&seg, 1); seg.Rides != nil {
+		t.Error("a hop with no line kept its rides")
 	}
 }
