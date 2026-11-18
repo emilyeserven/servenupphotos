@@ -439,6 +439,15 @@ A line drawn by hand is straight from point to point. To make it follow the stre
    or from a station. Train and subway hops without a line stay dashed straight lines. A walk may turn back at a via
    point (a via point just off the way is a there-and-back), while a bus or car can't and goes on round the block, so
    each request says which with OSRM's `continue_straight` rather than leaving it to the server's default.
+   Some roads are mapped as closed to people on foot (often a national route with no pavement mapped, or with its
+   pavements mapped as separate paths that don't join it), so the foot profile reaches a via point on one by the
+   nearest side street and back. When a walk's path is more than 1.6 times the straight line through its spots, the
+   road path (with turning back allowed) is asked for too, and drawn instead when it's at least 15% shorter
+   (`routing/detour.go`). That costs one more request, so only for walks that detour.
+
+   > **Frontend analogy:** it's like a fetch with a fallback endpoint, tried only when the first answer fails a sanity
+   > check, rather than racing both on every call.
+
 3. **Save route** saves the paths with the line. Snapping alone saves nothing.
 
 `POST /api/triplines/<day>/route` → `POST /triplines/{day}/route` takes the line, checks it as saving would, and answers

@@ -41,11 +41,14 @@ type profile struct {
 	// so OSRM sends it on round the block. OSRM's default (continue_straight)
 	// depends on how the server was set up, so each request says which.
 	uTurns bool
+	// byRoad is the profile asked as well when this one's path is a long
+	// detour (see detoured): a walk along a road the foot profile won't use.
+	byRoad *profile
 }
 
 // profiles are the server's profile for each way of travelling it routes.
 var profiles = map[string]profile{
-	"walk": {server: "routed-foot", uTurns: true},
+	"walk": {server: "routed-foot", uTurns: true, byRoad: &profile{server: "routed-car", uTurns: true}},
 	"bus":  {server: "routed-car"},
 	"car":  {server: "routed-car"},
 }
@@ -84,6 +87,15 @@ func (c *Client) Path(ctx context.Context, mode string, points [][2]float64) ([]
 	if len(points) < 2 || len(points) > maxPoints {
 		return nil, fmt.Errorf("can route through 2 to %d spots, not %d", maxPoints, len(points))
 	}
+	path, err := c.ask(ctx, p, points)
+	if err != nil || p.byRoad == nil || !detoured(path, points) {
+		return path, err
+	}
+	return c.shorterByRoad(ctx, *p.byRoad, path, points), nil
+}
+
+// ask waits its turn, then asks the server for p's path through points.
+func (c *Client) ask(ctx context.Context, p profile, points [][2]float64) ([][2]float64, error) {
 	if err := c.Gate.Wait(ctx); err != nil {
 		return nil, err
 	}
