@@ -30,8 +30,7 @@ export function BulkLowerTier({ files, selection }: BulkLowerTierProps) {
       <CardHeader>
         <CardTitle>Lower Tier</CardTitle>
         <CardDescription>
-          {LOWER_TIER_HELP} The Gallery hides Lower Tier photos until its Lower Tier filter shows
-          them.
+          {LOWER_TIER_HELP} The Gallery hides Lower Tier photos until Show → Lower Tier is on.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 text-sm">

@@ -1,9 +1,7 @@
-import { shownImageUrl } from "@/lib/face-json";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { GitPullRequestArrowIcon, ImageOffIcon, PencilIcon } from "lucide-react";
-import { useState } from "react";
-import { type InFlightImages, type PublishedFile, type PublishedResponse } from "@/api/photos";
+import { GitPullRequestArrowIcon } from "lucide-react";
+import type { InFlightImages } from "@/api/photos";
 import {
   type GroupKind,
   type OrganizeResponse,
@@ -16,27 +14,35 @@ import { UnselectedMark } from "@/components/compare/unselected-mark";
 import { DraftMark } from "@/components/draft-mark";
 import { ReEditMark } from "@/components/re-edit-card";
 import { LowerTierMark } from "@/components/lower-tier";
-import { ImageLightbox } from "@/components/image-lightbox";
 import { PlaceGpsMark } from "@/components/gallery/place-filter";
 import { LikesMark, useLikeCounts } from "@/components/viewer-likes/likes-mark";
-import { Button } from "@/components/ui/button";
 import { useRevealed } from "@/hooks/use-revealed";
-import { squareImages } from "@/lib/offline-thumbnails";
 import { cn } from "@/lib/utils";
+import type { GalleryFile } from "@/components/gallery/gallery-files";
+import { EditButton, tileId } from "@/components/gallery/kind-mark";
+import { SquareTile } from "@/components/gallery/square-tile";
 import {
   type Selection,
   fileData,
   fileName,
-  photoName,
   selectProblem,
 } from "@/components/gallery/published-file";
 
 interface PhotoGridProps {
-  data: PublishedResponse;
-  shown: PublishedFile[];
+  /** The base branch the photos were read from, for when there are none. */
+  branch: string;
+  /** How many photos there are, shown or not. */
+  total: number;
+  /** The images found in R2, for whether R2 could be checked. */
+  images: InFlightImages;
+  shown: GalleryFile[];
   filter: string;
   selection: Selection;
   onToggle: (path: string) => void;
+  /** The path of the photo `?photo=` names, ringed. */
+  highlight?: string;
+  /** Opens the photo full size in the Gallery's viewer. */
+  onOpen: (path: string) => void;
 }
 
 /** What the photos were filtered by, when none match: the search text, or else the filters. */
@@ -48,13 +54,16 @@ function noMatch(filter: string): string {
  * The photos shown, as Square Thumbnail tiles with their names, albums, tags, genres and Edit
  * buttons, drawn a batch at a time as the page scrolls (`useRevealed`).
  */
-export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGridProps) {
+export function PhotoGrid(props: PhotoGridProps) {
+  const { shown, filter, selection, onToggle } = props;
   const likes = useLikeCounts();
-  const [revealedCount, revealedEnd] = useRevealed(shown.length);
-  if (data.files.length === 0) {
+  const [revealed, revealedEnd] = useRevealed(shown.length);
+  // Draws at least up to the photo `?photo=` names, so it can be scrolled to.
+  const revealedCount = Math.max(revealed, shown.findIndex((f) => f.path === props.highlight) + 1);
+  if (props.total === 0) {
     return (
       <p className="text-muted-foreground rounded-xl border border-dashed p-4 text-sm">
-        No photo JSON on {data.branch} yet. Photos show here once their pull request merges.
+        No photo JSON on {props.branch} yet. Photos show here once they're saved.
       </p>
     );
   }
@@ -65,13 +74,15 @@ export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGri
     <>
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] sm:gap-4">
         {shown.slice(0, revealedCount).map((file) => (
-          <li key={file.path}>
+          <li key={file.path} id={tileId(file.path)} className="scroll-mt-24">
             <PhotoCard
               file={file}
-              images={data.images}
+              images={props.images}
               likes={likes}
               selected={selection ? selection.has(file.path) : null}
               onToggle={() => onToggle(file.path)}
+              highlighted={file.path === props.highlight}
+              onOpen={() => props.onOpen(file.path)}
             />
           </li>
         ))}
@@ -82,32 +93,29 @@ export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGri
 }
 
 interface PhotoCardProps {
-  file: PublishedFile;
+  file: GalleryFile;
   images: InFlightImages;
   /** How many people liked each photo on the User Likes page, by photo ID. */
   likes: Map<number, number>;
   /** Whether the photo is chosen; null when photos aren't being chosen. */
   selected: boolean | null;
   onToggle: () => void;
+  /** Whether it's the photo `?photo=` names. */
+  highlighted: boolean;
+  onOpen: () => void;
 }
 
-function PhotoCard({ file, images, likes, selected, onToggle }: PhotoCardProps) {
-  const image = images.byPath[file.path];
-  const name = photoName(file);
-  const problem = editProblem(file, images);
+function PhotoCard(props: PhotoCardProps) {
+  const { file, images, likes, selected, onToggle } = props;
+  const name = file.name;
   return (
-    <article
-      className={cn(
-        "bg-card relative flex h-full flex-col overflow-hidden rounded-xl border",
-        selected && "border-primary ring-primary ring-2",
-      )}
-    >
+    <article className={cardClass(file, selected, props.highlighted)}>
       <SelectBox file={file} name={name} selected={selected} onToggle={onToggle} />
       <SquareTile
         file={file}
         name={name}
-        imageUrl={image?.url}
         onSelect={selectHandler(file, selected, onToggle)}
+        onOpen={props.onOpen}
       />
       <div className="flex flex-1 flex-col gap-2 p-3">
         <div className="min-w-0">
@@ -115,10 +123,10 @@ function PhotoCard({ file, images, likes, selected, onToggle }: PhotoCardProps) 
             <h2 className="truncate text-sm font-medium" title={name}>
               {name}
             </h2>
-            <LikesMark data={fileData(file)} counts={likes} />
+            <LikesMark data={editedObject(file)} counts={likes} />
           </div>
           <a
-            href={file.fileUrl}
+            href={file.fileUrl || undefined}
             target="_blank"
             rel="noreferrer"
             className="text-muted-foreground block truncate font-mono text-xs underline-offset-4 hover:underline"
@@ -130,30 +138,46 @@ function PhotoCard({ file, images, likes, selected, onToggle }: PhotoCardProps) 
         <PlaceGpsMark file={file} />
         <InFlightMark status={file.inFlight} />
         <UnselectedMark file={file}>
-          <DraftMark data={file.data} path={file.path} />
+          <DraftMark data={file.edited} />
         </UnselectedMark>
-        <ReEditMark data={file.data} />
+        <ReEditMark data={file.edited} />
         <LowerTierMark file={file} />
-        <div className="mt-auto flex flex-wrap items-center gap-2">
-          {problem ? (
-            <p className="text-muted-foreground text-xs">{problem}</p>
-          ) : (
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/exif" search={{ edit: file.path, from: "gallery" }}>
-                <PencilIcon />
-                Edit
-              </Link>
-            </Button>
-          )}
-          <CompareButton file={file} />
-        </div>
+        <CardActions file={file} images={images} />
       </div>
     </article>
   );
 }
 
+/**
+ * The tile's border: dashed for a photo that isn't published, ringed when it's chosen, and ringed
+ * wider when it's the photo `?photo=` names.
+ */
+function cardClass(file: GalleryFile, selected: boolean | null, highlighted: boolean): string {
+  return cn(
+    "bg-card relative flex h-full flex-col overflow-hidden rounded-xl border transition-shadow",
+    file.kind !== "published" && "border-dashed",
+    selected && "border-primary ring-primary ring-2",
+    highlighted && "ring-primary ring-offset-background ring-4 ring-offset-2",
+  );
+}
+
+/** Edit, or why the photo can't be edited, and Compare. */
+function CardActions({ file, images }: { file: GalleryFile; images: InFlightImages }) {
+  const problem = editProblem(file, images);
+  return (
+    <div className="mt-auto flex flex-wrap items-center gap-2">
+      {problem ? (
+        <p className="text-muted-foreground text-xs">{problem}</p>
+      ) : (
+        <EditButton file={file} />
+      )}
+      <CompareButton file={file} />
+    </div>
+  );
+}
+
 /** While choosing photos, what clicking the tile does instead of opening the photo. */
-function selectHandler(file: PublishedFile, selected: boolean | null, onToggle: () => void) {
+function selectHandler(file: GalleryFile, selected: boolean | null, onToggle: () => void) {
   return selected !== null && !selectProblem(file) ? onToggle : undefined;
 }
 
@@ -167,7 +191,7 @@ function SelectBox({
   selected,
   onToggle,
 }: {
-  file: PublishedFile;
+  file: GalleryFile;
   name: string;
   selected: boolean | null;
   onToggle: () => void;
@@ -191,10 +215,10 @@ function SelectBox({
   );
 }
 
-/** The names of the albums, tags and genres the photo's JSON lists, as the base branch has it. */
-function GroupNames({ file }: { file: PublishedFile }) {
+/** The names of the albums, tags and genres the photo's JSON lists, as the next Commit will save it. */
+function GroupNames({ file }: { file: GalleryFile }) {
   const organize = useQuery(organizeQuery);
-  const { albums, tags, genres } = savedGroups(fileData(file));
+  const { albums, tags, genres } = savedGroups(editedObject(file));
   return (
     <div className="text-muted-foreground flex flex-col gap-0.5 text-xs empty:hidden">
       <GroupLine
@@ -225,20 +249,21 @@ function GroupLine({ label, names }: { label: string; names: string[] }) {
 }
 
 /** Why the photo can't be opened on the Photo page, or undefined when it can. */
-function editProblem(file: PublishedFile, images: InFlightImages): string | undefined {
+function editProblem(file: GalleryFile, images: InFlightImages): string | undefined {
   if (file.error) return file.error;
   if (file.inFlight === "removed") return "Removed in the pull request.";
   return imageProblem(file, images);
 }
 
 /** Why the photo has no image in R2 to edit from, or undefined when it has one. */
-function imageProblem(file: PublishedFile, images: InFlightImages): string | undefined {
-  if (images.byPath[file.path]) return undefined;
+function imageProblem(file: GalleryFile, images: InFlightImages): string | undefined {
+  if (file.r2Url) return undefined;
   return images.checked ? "No image in R2 to edit from." : "Couldn't check R2 for its image.";
 }
 
 const IN_FLIGHT_LABELS: Record<string, string> = {
   removed: "Removed in flight",
+  added: "New in flight",
 };
 
 /** A note, linked to Photos in Flight, when the pull request changes the photo. */
@@ -258,92 +283,7 @@ function InFlightMark({ status }: { status?: string }) {
   );
 }
 
-/** The photo's Square Thumbnail, over its blurred Thumbnail Preview, opening the photo full size. */
-function SquareTile({
-  file,
-  name,
-  imageUrl,
-  onSelect,
-}: {
-  file: PublishedFile;
-  name: string;
-  imageUrl?: string;
-  /** Called instead of opening the photo, while photos are being chosen. */
-  onSelect?: () => void;
-}) {
-  const [failed, setFailed] = useState(false);
-  const [open, setOpen] = useState(false);
-  const urls = tileUrls(file, imageUrl);
-  if (!urls || failed) return <MissingTile />;
-  const { className, ...button } = tileButton(onSelect, () => setOpen(true));
-  return (
-    <>
-      <button
-        type="button"
-        {...button}
-        className={cn(
-          "focus-visible:ring-ring bg-muted relative aspect-square w-full overflow-hidden border-b outline-none focus-visible:ring-2 focus-visible:ring-inset",
-          className,
-        )}
-      >
-        {urls.preview && (
-          <img
-            src={urls.preview}
-            alt=""
-            aria-hidden
-            loading="lazy"
-            // Photos uploaded before Thumbnail Previews don't have one, so it hides itself.
-            onError={(e) => (e.currentTarget.hidden = true)}
-            className="absolute inset-0 size-full scale-110 object-cover blur-md"
-          />
-        )}
-        <img
-          src={urls.square}
-          alt={name}
-          loading="lazy"
-          onError={() => setFailed(true)}
-          className="relative size-full object-cover"
-        />
-      </button>
-      <ImageLightbox
-        open={open}
-        onClose={() => setOpen(false)}
-        title={name}
-        src={urls.full}
-        description={`${name} at full size.`}
-      />
-    </>
-  );
-}
-
-/** What the tile does when clicked: chooses the photo while choosing them, or else opens it. */
-function tileButton(onSelect: (() => void) | undefined, onOpen: () => void) {
-  if (!onSelect)
-    return { title: "Show it full size", onClick: onOpen, className: "cursor-zoom-in" };
-  // The checkbox over the corner is the control keyboards and screen readers use while choosing.
-  return {
-    title: "Choose or unchoose it",
-    onClick: onSelect,
-    tabIndex: -1,
-    className: "cursor-pointer",
-  };
-}
-
-function MissingTile() {
-  return (
-    <div className="bg-muted/40 text-muted-foreground flex aspect-square w-full flex-col items-center justify-center gap-1 border-b text-xs">
-      <ImageOffIcon className="size-6" aria-hidden />
-      No image
-    </div>
-  );
-}
-
-/**
- * The tile's Square Thumbnail and Thumbnail Preview from the offline copy, as saved in the photo's
- * JSON or else next to its image in R2, and the image itself; undefined without an image in R2.
- */
-function tileUrls(file: PublishedFile, imageUrl?: string) {
-  if (!imageUrl) return undefined;
-  const square = squareImages(fileData(file), imageUrl);
-  return square && { ...square, full: shownImageUrl(fileData(file), imageUrl) };
+/** The photo's JSON with its local edits made, as an object, or undefined when it couldn't be read as one. */
+function editedObject(file: GalleryFile): Record<string, unknown> | undefined {
+  return fileData({ ...file, data: file.edited });
 }

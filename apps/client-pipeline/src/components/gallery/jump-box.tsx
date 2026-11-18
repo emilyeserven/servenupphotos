@@ -1,20 +1,15 @@
 import { ChevronDownIcon, LocateFixedIcon } from "lucide-react";
 import { useState } from "react";
-import type { AllPhotosEntry } from "@/components/all-photos/all-photos-files";
-import { KIND_MARKS } from "@/components/all-photos/all-photos-grid";
+import type { GalleryFile } from "@/components/gallery/gallery-files";
+import { KIND_MARKS } from "@/components/gallery/kind-mark";
 import { countOf } from "@/components/collapsible-panel";
 import { tileImageUrl } from "@/lib/offline-thumbnails";
 import { cn } from "@/lib/utils";
 
-/** Whether the jump box starts open: on wide screens, where it doesn't cover the photos. */
-function startsOpen(): boolean {
-  return typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
-}
-
 /**
  * A box floating at the bottom right listing every draft and Undecided photo, in the page's sort,
- * whether they're shown or not. Picking one shows its kind and scrolls to it. It collapses to its
- * count; nothing when there are none.
+ * whether they're shown or not. Picking one turns its Show group on and scrolls to it. It starts
+ * collapsed to its count, so it doesn't cover the filters; nothing when there are none.
  */
 export function JumpBox({
   entries,
@@ -22,12 +17,12 @@ export function JumpBox({
   onJump,
 }: {
   /** The drafts and Undecided photos. */
-  entries: AllPhotosEntry[];
+  entries: GalleryFile[];
   /** The photo last jumped to, marked in the list. */
   current?: string;
-  onJump: (entry: AllPhotosEntry) => void;
+  onJump: (entry: GalleryFile) => void;
 }) {
-  const [open, setOpen] = useState(startsOpen);
+  const [open, setOpen] = useState(false);
   if (entries.length === 0) return null;
   return (
     <aside
@@ -67,7 +62,7 @@ function JumpRow({
   current,
   onClick,
 }: {
-  entry: AllPhotosEntry;
+  entry: GalleryFile;
   current: boolean;
   onClick: () => void;
 }) {
@@ -80,7 +75,7 @@ function JumpRow({
         aria-current={current}
         className="hover:bg-muted aria-[current=true]:bg-muted flex w-full items-center gap-2 rounded-md p-1 text-left text-sm aria-[current=true]:font-medium"
       >
-        <RowThumbnail data={entry.data} />
+        <RowThumbnail data={entry.edited} />
         <span className="min-w-0 flex-1 truncate" title={entry.name}>
           {entry.name}
         </span>
@@ -93,7 +88,7 @@ function JumpRow({
 }
 
 /** The Draft or Undecided mark for the row. */
-function markOf(entry: AllPhotosEntry) {
+function markOf(entry: GalleryFile) {
   return entry.kind === "undecided" ? KIND_MARKS.undecided : KIND_MARKS.draft;
 }
 

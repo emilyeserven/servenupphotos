@@ -86,7 +86,7 @@ export function LowerTierCard({ file, disabled }: LowerTierCardProps) {
             config={{
               name: LOWER_TIER,
               label: "Lower Tier photo",
-              help: `${LOWER_TIER_HELP} The Gallery hides it until its Lower Tier filter shows it.`,
+              help: `${LOWER_TIER_HELP} The Gallery hides it until Show → Lower Tier is on.`,
             }}
             value={lowerTier}
             onChange={(on) => setLowerTier([file], on)}

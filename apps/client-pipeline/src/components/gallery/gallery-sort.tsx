@@ -18,7 +18,7 @@ const SORT_CHOICES: ToggleChoices<GallerySort> = [
 ];
 
 /** The Gallery's `?sort=` search param, or undefined (date taken) for anything else. */
-export function parseGallerySort(search: Record<string, unknown>): GallerySort | undefined {
+function parseGallerySort(search: Record<string, unknown>): GallerySort | undefined {
   return SORT_CHOICES.find(([sort]) => sort !== undefined && sort === search.sort)?.[0];
 }
 
