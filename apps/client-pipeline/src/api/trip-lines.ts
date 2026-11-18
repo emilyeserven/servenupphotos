@@ -78,9 +78,9 @@ export interface TripTransitLine {
   colour?: string;
   /**
    * Where it was found: left out for OpenStreetMap, "transitland" for Transitland, "mlit" for Japan's
-   * rail map.
+   * rail map, "osmrail" for a country's OpenStreetMap rail map.
    */
-  source?: "transitland" | "mlit";
+  source?: "transitland" | "mlit" | "osmrail";
 }
 
 /** A spot a segment's line goes through to shape it, such as a bridge crossed between two photos. */

@@ -135,7 +135,7 @@ func TestMLITTrackBadID(t *testing.T) {
 }
 
 func TestRouteID(t *testing.T) {
-	n := &railNet{lines: make([]railLine, 600)}
+	n := &railNet{lines: make([]railLine, 600), lineBits: mlitLineBits}
 	got, err := n.routeLines(routeID([]int{0, 599, 7}))
 	if err != nil || len(got) != 3 || !got[0] || !got[599] || !got[7] {
 		t.Errorf("lines = %v, %v", got, err)
@@ -190,7 +190,7 @@ func TestMLITDownloadFails(t *testing.T) {
 	t.Setenv("MLIT_RAIL_URL", srv.URL)
 	c := &Client{HTTP: srv.Client()}
 	_, err := c.MLITLines(context.Background(), "train", railNagato, railHagi)
-	var mlitErr *MLITError
+	var mlitErr *RailMapError
 	if !errors.As(err, &mlitErr) || !strings.Contains(err.Error(), "404") {
 		t.Errorf("err = %v", err)
 	}

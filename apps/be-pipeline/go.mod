@@ -14,10 +14,12 @@ require (
 	github.com/gen2brain/avif v0.6.0
 	github.com/gen2brain/webp v0.6.4
 	github.com/lucasb-eyer/go-colorful v1.4.1
+	github.com/paulmach/osm v0.9.0
 	golang.org/x/image v0.47.0
 )
 
 require (
+	github.com/DataDog/czlib v0.0.0-20240814115052-86a9592b3985 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.10 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.10 // indirect
@@ -27,7 +29,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.10 // indirect
 	github.com/ebitengine/purego v0.10.1 // indirect
+	github.com/paulmach/orb v0.12.0 // indirect
+	github.com/paulmach/protoscan v0.2.1 // indirect
 	github.com/tetratelabs/wazero v1.12.0 // indirect
+	go.mongodb.org/mongo-driver v1.17.4 // indirect
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
+	google.golang.org/protobuf v1.36.10 // indirect
 )

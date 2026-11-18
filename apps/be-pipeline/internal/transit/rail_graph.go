@@ -22,6 +22,13 @@ type railNet struct {
 	cells map[[2]int32][]int
 	// stations are the named stations, each on its line.
 	stations []railStation
+	// source is the Line.Source of its lines, such as "mlit".
+	source string
+	// idBase is the part of its routes' IDs that names the network, such as
+	// the OpenStreetMap extract it was read from; 0 for Japan's rail map.
+	idBase int64
+	// lineBits is how many of its routes' IDs' bits hold their lines.
+	lineBits int
 }
 
 // railLine is one line of one operator, such as 山陰線 of 西日本旅客鉄道.
@@ -216,11 +223,11 @@ func (n *railNet) linesNear(p [2]float64, m float64) map[int]bool {
 	return out
 }
 
-// nearestOn is the node within mlitRouteM of p on one of allowed's lines (any
+// nearestOn is the node within railRouteM of p on one of allowed's lines (any
 // line when allowed is nil) nearest p; -1 when there's none.
 func (n *railNet) nearestOn(p [2]float64, allowed map[int]bool) int {
 	var on []int
-	for _, node := range n.near(p, mlitRouteM) {
+	for _, node := range n.near(p, railRouteM) {
 		if slices.ContainsFunc(n.edges[node], func(e railEdge) bool { return e.line != changeEdge && allows(allowed, e.line) }) {
 			on = append(on, node)
 		}
@@ -267,7 +274,7 @@ func (n *railNet) route(a, b int, allowed map[int]bool) (nodes, lines []int) {
 				continue
 			}
 			next := railState{e.to, e.line}
-			d := it.dist + e.meters + changeCost(it.state.line, e.line)
+			d := it.dist + e.meters + n.changeCost(it.state.line, e.line)
 			if d > limit {
 				continue
 			}
@@ -281,12 +288,19 @@ func (n *railNet) route(a, b int, allowed map[int]bool) (nodes, lines []int) {
 }
 
 // changeCost is the extra cost of going on along line after arriving on prev:
-// changePenaltyM when it's another line, and nothing at the start.
-func changeCost(prev, line int) float64 {
-	if prev == changeEdge || line == changeEdge || prev == line {
+// changePenaltyM when it's another line, and nothing at the start or onto or
+// off unnamed track, which only joins lines.
+func (n *railNet) changeCost(prev, line int) float64 {
+	if prev == line || n.unnamed(prev) || n.unnamed(line) {
 		return 0
 	}
 	return changePenaltyM
+}
+
+// unnamed reports whether line is no named line: a change between stations,
+// or track OpenStreetMap gives no name, such as a connecting curve.
+func (n *railNet) unnamed(line int) bool {
+	return line == changeEdge || n.lines[line].name == ""
 }
 
 // walkBack is the route from start to end, its nodes and the line of each edge.

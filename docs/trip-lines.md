@@ -478,7 +478,7 @@ hop is drawn along the line's track between them, solid in the line's color, wit
 it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
 route** keeps the line, the stations and the track.
 
-### Looking lines up on Transitland or Japan's rail map
+### Looking lines up on Transitland or a rail map
 
 The menu beside **Find lines** (and beside a Trip leg's **Look up route**) picks where lines are looked up, and the
 choice is kept in the browser for every look-up:
@@ -504,15 +504,30 @@ choice is kept in the browser for every look-up:
   "山陽線 → 山陰線" for Shimonoseki to Higashi-Hagi, and then every line passing within 500 m of both ends. A
   route's ID holds its lines (12 bits each, up to 5), so its track is the shortest way along those lines alone, and
   its stops are their stations in order along them. `MLIT_RAIL_URL` replaces the download
-  (`be-pipeline/internal/transit/mlit.go`, `mlit_graph.go`, `mlit_data.go`). The data is MLIT's, under its
-  [terms of use](https://nlftp.mlit.go.jp/ksj/other/yakkan.html).
+  (`be-pipeline/internal/transit/mlit.go`, `mlit_data.go`, and `rail.go` and `rail_graph.go`, which both rail maps
+  share). The data is MLIT's, under its [terms of use](https://nlftp.mlit.go.jp/ksj/other/yakkan.html).
+- **Rail map (OpenStreetMap)**: any other country's railways, from OpenStreetMap's extracts on
+  [Geofabrik](https://download.geofabrik.de), looked up the same way as Japan's rail map, for when the Overpass
+  servers are too slow. The backend downloads Geofabrik's [index](https://download.geofabrik.de/technical.html) of
+  its extracts once (`index-v1.json`), picks the smallest one whose outline holds both ends, such as South Korea for
+  Seoul to Busan (never a whole continent; a leg crossing a border finds none), and downloads that extract once
+  (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract twice (its railway ways, then their
+  points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
+  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/<extract>` beside the
+  settings file, then deletes the extract. A line is the ways of one name, shown by the English name most of its
+  ways have; unnamed track only joins lines, so a route never lists it. A station belongs to each line within 300 m
+  of it. A route's ID holds up to 4 lines and, above them, its extract's place in the index, so its track and stops
+  are looked up on the same extract (`be-pipeline/internal/transit/osmrail.go`, `osmrail_index.go`,
+  `osmrail_pbf.go`). The data is © OpenStreetMap contributors, under the
+  [ODbL](https://www.openstreetmap.org/copyright).
 
-A line picked from Transitland is saved with `"source": "transitland"`, and one from Japan's rail map with
-`"source": "mlit"`, so its stops and track are fetched from there again; one from OpenStreetMap has no `source`. The
-`?source=transitland` and `?source=mlit` queries below ask those.
+A line picked from Transitland is saved with `"source": "transitland"`, one from Japan's rail map with
+`"source": "mlit"`, and one from an OpenStreetMap rail map with `"source": "osmrail"`, so its stops and track are
+fetched from there again; one from the Overpass servers has no `source`. The `?source=transitland`, `?source=mlit`
+and `?source=osmrail` queries below ask those.
 
-> **Frontend analogy:** it's the same component with three data providers behind it, like a `fetcher` prop that
-> switches between REST APIs returning the same shape. Japan's rail map is the one that's a static file: like
+> **Frontend analogy:** it's the same component with four data providers behind it, like a `fetcher` prop that
+> switches between REST APIs returning the same shape. The rail maps are the ones that are static files: like
 > bundling a big JSON once and searching it in memory instead of calling an API, with the route search being a
 > shortest-path over a graph of points, the way a maps app finds directions.
 

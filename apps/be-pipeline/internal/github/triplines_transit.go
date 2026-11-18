@@ -23,7 +23,8 @@ type TripTransitLine struct {
 	Colour string `json:"colour,omitempty"`
 	// Source is where the line was found: "" for OpenStreetMap, whose route
 	// relation ID is its ID, "transitland" for a Transitland route, or "mlit"
-	// for a route along Japan's rail map (see transit.MLITLines).
+	// for a route along Japan's rail map (see transit.MLITLines), or "osmrail"
+	// for one along a country's OpenStreetMap rail map (transit.OSMRailLines).
 	Source string `json:"source,omitempty"`
 }
 
@@ -68,7 +69,7 @@ func validLine(l *TripTransitLine, n int) *PublishError {
 	if l.Name == "" || utf8.RuneCountInString(l.Name) > maxEntryTextLength || utf8.RuneCountInString(l.Ref) > 32 {
 		return publishErr(http.StatusBadRequest, "Segment %d: its line needs a name of up to %d characters and a number of up to 32.", n, maxEntryTextLength)
 	}
-	if l.Source != "" && l.Source != "transitland" && l.Source != "mlit" {
+	if l.Source != "" && l.Source != "transitland" && l.Source != "mlit" && l.Source != "osmrail" {
 		l.Source = ""
 	}
 	if l.Colour != "" && !colourPattern.MatchString(l.Colour) {

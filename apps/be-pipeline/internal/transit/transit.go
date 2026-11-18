@@ -20,6 +20,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/memo"
@@ -102,8 +103,11 @@ type Client struct {
 	Cache *memo.Cache[[]element]
 	// TLCache keeps Transitland's answers, by path; nil keeps none.
 	TLCache *memo.Cache[[]byte]
-	// Rail is Japan's rail map, loaded the first time it's asked.
-	Rail railMap
+	// Rails are the rail maps, each loaded the first time it's asked.
+	Rails railNets
+	// osmIndex is Geofabrik's index of OpenStreetMap extracts, once read.
+	osmIndex   []osmRegion
+	osmIndexMu sync.Mutex
 }
 
 // New is a client for OVERPASS_URL's servers, or else DefaultURLs.

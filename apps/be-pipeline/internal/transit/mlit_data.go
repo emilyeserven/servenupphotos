@@ -5,7 +5,6 @@ import (
 	"cmp"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -36,24 +35,6 @@ const (
 // mlitDownloadTimeout is how long downloading the zip may take: it's tens of
 // megabytes, downloaded once.
 const mlitDownloadTimeout = 10 * time.Minute
-
-// MLITError is Japan's rail map not being there to look in: its download
-// failed or is still running, or its files couldn't be read.
-type MLITError struct {
-	// Err is what went wrong.
-	Err error
-}
-
-// Error says that the rail map isn't ready and why.
-func (e *MLITError) Error() string {
-	return "Japan's rail map isn't ready: " + e.Err.Error()
-}
-
-// Unwrap is what went wrong.
-func (e *MLITError) Unwrap() error { return e.Err }
-
-// errMLITDownloading is the first look-up not waiting for the whole download.
-var errMLITDownloading = errors.New("it's still downloading (once, tens of megabytes); try again in a minute")
 
 // mlitDir is MLIT_RAIL_DIR, or else a folder beside the settings file
 // (SETTINGS_FILE, or else data/settings.json): the /data volume in Docker,
@@ -148,18 +129,18 @@ func downloadMLIT(ctx context.Context, client *http.Client, url, dir string) err
 // fetchTo gets url into w, failing on any status but 200 OK, and says how many
 // bytes it got.
 func fetchTo(ctx context.Context, client *http.Client, url string, w io.Writer) (int64, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil) //nolint:gosec // a download address from a setting or Geofabrik's index
 	if err != nil {
 		return 0, err
 	}
 	req.Header.Set("User-Agent", "servenupphotos-pipeline")
-	res, err := client.Do(req)
+	res, err := client.Do(req) //nolint:gosec // a download address from a setting or Geofabrik's index
 	if err != nil {
 		return 0, err
 	}
 	defer res.Body.Close() //nolint:errcheck // read-only body
 	if res.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf("MLIT answered %s", res.Status)
+		return 0, fmt.Errorf("the server answered %s", res.Status)
 	}
 	return io.Copy(w, res.Body)
 }
