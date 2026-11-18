@@ -496,8 +496,8 @@ choice is kept in the browser for every look-up:
   (2024): the track of every passenger railway in Japan, by line and operator (such as 山陰線, 西日本旅客鉄道), and
   its stations, with no train or subway kinds told apart and names in Japanese only. The backend downloads its zip
   once, the first time it's asked (`N02-24_GML.zip`, tens of megabytes; a look-up that can't wait for it says to try
-  again in a minute), keeps its two UTF-8 GeoJSON files in `MLIT_RAIL_DIR` or else the user's cache folder
-  (`servenupphotos/mlit-n02-24`), and reads them into one network: each point of a line's track joined to the next,
+  again in a minute), keeps its two UTF-8 GeoJSON files in `MLIT_RAIL_DIR` or else in `mlit-n02-24` beside the settings file (the
+  `/data` volume in Docker, so it survives restarts), and reads them into one network: each point of a line's track joined to the next,
   lines that meet joined where they share a point, and stations of one name within 500 m joined, so a ride can
   change there. The look-up lists first the shortest route from near one end to near the other (each change of line
   counting 20 km more, so it stays on one line where it can), named by the lines it rides, such as
