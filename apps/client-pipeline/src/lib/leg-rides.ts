@@ -118,3 +118,21 @@ function uncombined(leg: TripLeg): TripLegRide[] {
 function hasTrack(ride: TripLegRide): ride is TripLegRide & { path: Path } {
   return (ride.path?.length ?? 0) >= 2;
 }
+
+/**
+ * The rides with the station changed at after ride i moved or renamed. Moving it drops the tracks of
+ * the rides on either side, which ran to the old spot, so they're looked up again; renaming keeps them.
+ */
+export function withChangeStation(
+  rides: TripLegRide[],
+  i: number,
+  station: TripPoint,
+): TripLegRide[] {
+  const old = rides[i]?.change;
+  const moved = old?.latitude !== station.latitude || old?.longitude !== station.longitude;
+  return rides.map((r, j) => {
+    if (j === i) return moved ? { change: station } : { ...r, change: station };
+    if (j === i + 1 && moved) return r.change ? { change: r.change } : {};
+    return r;
+  });
+}

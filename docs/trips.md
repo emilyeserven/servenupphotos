@@ -218,7 +218,7 @@ line.
 
 The look-up only finds a line that passes both ends, so a leg that changed trains, such as Shimonoseki to Higashi-Hagi
 (OpenStreetMap's San'in Line routes end at Nagato-shi), finds none, and says to add the change. **Changed lines on the way**, the outlined button under the rides, finds the station it
-changed at by name, looked for within 30 km of halfway along the last ride, and splits that ride there. Each ride then
+changed at by name, looked for within 30 km of halfway along the last ride, and splits that ride there. A station the search can't find, such as Masuda (farther than 30 km), can be typed instead: **Type the station instead** adds a change halfway, whose label and `latitude, longitude` are then typed in. Every change's label and position stay editable under **Changed at**; renaming one keeps the rides' lines, and moving one drops the lines on either side of it, to be looked up again. Each ride then
 gets its own **Look up route** between its ends, and **No change here** joins two rides back together (both are picked
 again). The leg keeps them in `rides`, each with the `change` station at its end (none on the last), its `line` and
 its `path`. The rides stay separate lines: the Trip's map and Commit draw each along its own track, in its line's color
