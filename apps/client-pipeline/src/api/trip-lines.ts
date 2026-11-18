@@ -177,6 +177,11 @@ export interface TripVisit {
   /** The ID of the photo it comes after on the route; none leaves it off the route, as a pin only. */
   after?: number;
   /**
+   * How it was reached from the point before it on the route, such as a walk between two stations
+   * in the middle of a train ride; left out, the way the route was travelled there.
+   */
+  mode?: Exclude<TripMode, "wander">;
+  /**
    * On the route before the day's first photo: after the start spot when there is one, or else the
    * line starts there. It wins over `after`.
    */

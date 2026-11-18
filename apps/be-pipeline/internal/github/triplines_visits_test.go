@@ -92,3 +92,12 @@ func TestValidVisitsFirstWinsOverAfter(t *testing.T) {
 		t.Errorf("a stop before the first photo kept After %d", *visits[0].After)
 	}
 }
+
+func TestValidVisitMode(t *testing.T) {
+	for mode, ok := range map[string]bool{"": true, ModeWalk: true, ModeCar: true, ModeWander: false, "boat": false} {
+		v := TripVisit{Name: "Matsue", Kind: "station", Mode: mode}
+		if perr := validVisit(&v, 1); (perr == nil) != ok {
+			t.Errorf("mode %q: %v, want ok %v", mode, perr, ok)
+		}
+	}
+}

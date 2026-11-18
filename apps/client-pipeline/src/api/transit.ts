@@ -109,7 +109,7 @@ export interface StationAsk {
 }
 
 /**
- * The stations or stops of the kind whose name has the name typed, within 30 km of the spot, from
+ * The stations or stops of the kind whose name has the name typed, near the spot (within about 100 km on Photon, 30 km on Overpass), from
  * OpenStreetMap's data through the source picked.
  */
 export function transitStationsQuery({ mode, name, near, source }: StationAsk) {

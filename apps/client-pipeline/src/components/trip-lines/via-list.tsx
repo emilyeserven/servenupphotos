@@ -229,7 +229,7 @@ export function stripVias(
 export function ViaChips({ vias = [] }: { vias?: StripVia[] }) {
   if (vias.length === 0) return null;
   return (
-    <span className="flex flex-col items-center gap-0.5" aria-label="Via points here">
+    <span className="flex items-center gap-0.5" aria-label="Via points here">
       {vias.map(({ n, label }) => (
         <span key={n} title={label} aria-label={label}>
           <ViaNumber n={n} />

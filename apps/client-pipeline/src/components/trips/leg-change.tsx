@@ -49,7 +49,7 @@ interface AddChangeProps {
 
 /**
  * Adds a station it changed lines at, on the way of the last ride: found by name, or typed by hand
- * for one the search can't find, such as one more than 30 km from halfway.
+ * for one the search can't find, such as one too far from halfway.
  */
 export function AddChange({ mode, near, onAdd }: AddChangeProps) {
   const [adding, setAdding] = useState(false);

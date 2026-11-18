@@ -1,9 +1,10 @@
-import { ExternalLink, MapPinPlus, Trash2 } from "lucide-react";
+import { CopyPlus, ExternalLink, MapPinPlus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { Place } from "@/api/places";
 import type { TripPoint, TripVisit, VisitKind } from "@/api/trip-lines";
 import { CasualPhotos, useClearCasual } from "@/components/trip-lines/casual-photos";
 import { StationStopAdder } from "@/components/trip-lines/station-stop-adder";
+import { StopWaySelect } from "@/components/trip-lines/stop-way";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ import { writtenPosition } from "@/lib/place-gps";
 import type { TripDay } from "@/lib/trip-days";
 import type { GapDraft } from "@/lib/trip-gaps";
 import {
+  againVisit,
   changedVisit,
   newVisit,
   placesNear,
@@ -47,6 +49,7 @@ export function Visits({ day, draft, onChange, picking, onPicking }: VisitsProps
           visit={visit}
           day={day}
           onChange={(v) => onChange(changedVisit(draft, i, v))}
+          onAgain={() => onChange(withVisit(draft, againVisit(visit)))}
         />
       ))}
       <div className="flex flex-wrap items-center gap-2">
@@ -118,10 +121,15 @@ interface VisitRowProps {
   day: TripDay;
   /** Changes the visit, or removes it with null. */
   onChange: (visit: TripVisit | null) => void;
+  /** Adds the same place again, to put somewhere else on the route. */
+  onAgain: () => void;
 }
 
-/** One trip stop: its kind, name, note, map link, where it is on the route, and removing it. */
-function VisitRow({ visit, day, onChange }: VisitRowProps) {
+/**
+ * One trip stop: its kind, name, note, map link, where it is on the route, adding it again for a
+ * second visit, and removing it.
+ */
+function VisitRow({ visit, day, onChange, onAgain }: VisitRowProps) {
   const set = (fields: Partial<TripVisit>) => onChange({ ...visit, ...fields });
   const clearCasual = useClearCasual(day.day);
   const Icon = VISIT_ICONS[visit.kind];
@@ -156,6 +164,17 @@ function VisitRow({ visit, day, onChange }: VisitRowProps) {
       />
       <LinkField link={visit.link} onLink={(link) => set({ link })} />
       <RouteSpot photos={day.photos} visit={visit} onChange={onChange} />
+      <StopWaySelect visit={visit} onChange={onChange} />
+      <Button
+        variant="ghost"
+        size="icon"
+        className="size-8"
+        title="Visited again: add it once more, to put elsewhere on the route"
+        onClick={onAgain}
+      >
+        <CopyPlus className="size-4" aria-hidden />
+        <span className="sr-only">Visited again</span>
+      </Button>
       <Button
         variant="ghost"
         size="icon"

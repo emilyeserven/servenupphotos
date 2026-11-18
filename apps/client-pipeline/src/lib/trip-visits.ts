@@ -35,6 +35,20 @@ export function withVisit(draft: GapDraft, visit: TripVisit): GapDraft {
   return withItem(draft, "visits", visit);
 }
 
+/**
+ * The same place visited again, such as a station gone back to by car: a copy of the visit off the
+ * route, so its Where on the route menu can put it somewhere else, without the casual photos taken
+ * on the first visit.
+ */
+export function againVisit({
+  after: _after,
+  first: _first,
+  photos: _photos,
+  ...place
+}: TripVisit): TripVisit {
+  return place;
+}
+
 /** The draft with visit i changed, or removed for null. */
 export function changedVisit(draft: GapDraft, i: number, visit: TripVisit | null): GapDraft {
   return changedItem(draft, "visits", i, visit);
