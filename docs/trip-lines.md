@@ -436,7 +436,9 @@ A line drawn by hand is straight from point to point. To make it follow the stre
 2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
    servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
    walk, bus or car segment's points and via points, walking on foot and buses and cars by road, and for every walk to
-   or from a station. Train and subway hops without a line stay dashed straight lines.
+   or from a station. Train and subway hops without a line stay dashed straight lines. A walk may turn back at a via
+   point (a via point just off the way is a there-and-back), while a bus or car can't and goes on round the block, so
+   each request says which with OSRM's `continue_straight` rather than leaving it to the server's default.
 3. **Save route** saves the paths with the line. Snapping alone saves nothing.
 
 `POST /api/triplines/<day>/route` → `POST /triplines/{day}/route` takes the line, checks it as saving would, and answers
