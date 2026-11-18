@@ -8,21 +8,30 @@ test("leaves every default out of the URL", () => {
     info: false,
     ordered: true,
     bands: false,
+    distances: false,
   });
   assert.deepEqual(search, {
     size: undefined,
     info: undefined,
     ordered: undefined,
     bands: undefined,
+    distances: undefined,
   });
 });
 
-test("keeps info, unordered rows and distance groups when they're set", () => {
+test("keeps info, unordered rows and distance groups and distances when they're set", () => {
   const search = optionsSearch("natural", {
     size: undefined,
     info: true,
     ordered: false,
     bands: true,
+    distances: true,
   });
-  assert.deepEqual(search, { size: undefined, info: true, ordered: false, bands: true });
+  assert.deepEqual(search, {
+    size: undefined,
+    info: true,
+    ordered: false,
+    bands: true,
+    distances: true,
+  });
 });

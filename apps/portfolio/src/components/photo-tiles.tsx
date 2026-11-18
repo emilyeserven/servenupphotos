@@ -45,6 +45,7 @@ export function GridTiles({
   onOpen,
   rows,
   ordered = false,
+  badge,
 }: {
   photos: ImagePhoto[];
   mode: TileMode;
@@ -59,10 +60,18 @@ export function GridTiles({
   rows?: NaturalRow<ImagePhoto>[];
   /** Whether Natural rows keep the photos strictly in their order, mixing wide and vertical photos. */
   ordered?: boolean;
+  /** A few words over each tile's bottom left corner, such as its distance; left out for none. */
+  badge?: (photo: ImagePhoto) => string | undefined;
 }) {
   const sizes = tileSizesOf(mode, size);
   const tile = (photo: ImagePhoto) => (
-    <PhotoTile photo={photo} sizes={sizes} showInfo={showInfo} onOpen={() => onOpen(photo)} />
+    <PhotoTile
+      photo={photo}
+      sizes={sizes}
+      showInfo={showInfo}
+      badge={badge?.(photo)}
+      onOpen={() => onOpen(photo)}
+    />
   );
   if (mode === "natural") {
     return (
@@ -177,11 +186,13 @@ function PhotoTile({
   photo,
   sizes,
   showInfo,
+  badge,
   onOpen,
 }: {
   photo: ImagePhoto;
   sizes: TileSizes;
   showInfo: boolean;
+  badge?: string;
   onOpen: () => void;
 }) {
   const { mode } = sizes;
@@ -200,9 +211,20 @@ function PhotoTile({
         {/* Keyed by mode so switching starts each image's fallbacks over. */}
         <TilePlaceholder key={`placeholder-${mode}`} image={photo.image} mode={mode} />
         <TileImage key={`image-${mode}`} image={photo.image} sizes={sizes} alt={photo.alt} />
+        <TileBadge text={badge} />
       </button>
       {showInfo && <TileCaption photo={photo} />}
     </figure>
+  );
+}
+
+/** A few words over the tile's bottom left corner, such as its distance; nothing without them. */
+function TileBadge({ text }: { text?: string }) {
+  if (!text) return null;
+  return (
+    <span className="absolute bottom-2 left-2 rounded bg-background/85 px-1.5 py-0.5 text-xs font-medium text-foreground shadow-xs backdrop-blur-sm">
+      {text}
+    </span>
   );
 }
 

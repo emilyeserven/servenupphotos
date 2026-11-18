@@ -118,3 +118,15 @@ export function nearLabel(near: string | undefined, options: LocationOption[]): 
   if (point) return `${point.latitude.toFixed(2)}, ${point.longitude.toFixed(2)}`;
   return findOption(options, near)?.label.english ?? near.slice(near.indexOf(":") + 1);
 }
+
+/** A distance in words: meters under 1 km ("350 m"), one decimal under 10 km ("4.2 km"), else whole km ("1,234 km"). */
+export function distanceText(km: number): string {
+  if (km < 1) return `${Math.round(km * 1000)} m`;
+  if (km < 10) return `${km.toFixed(1)} km`;
+  return `${Math.round(km).toLocaleString("en-US")} km`;
+}
+
+/** How far from `from` the map places the photo, in words, or undefined when it can't place it. */
+export function photoDistanceText(photo: Photo, from: Point): string | undefined {
+  return hasPosition(photo) ? distanceText(distanceKm(from, photo)) : undefined;
+}

@@ -4,7 +4,9 @@ import { distanceKm } from "@portfolio/lib/distance";
 import {
   byDistance,
   DEFAULT_NEAR,
+  distanceText,
   nearLabel,
+  photoDistanceText,
   nearPoint,
   parseNear,
   parsePoint,
@@ -82,4 +84,15 @@ test("names Stamford, a spot, or the chosen place", () => {
   assert.equal(nearLabel("41.0534,-73.5387", tree), "41.05, -73.54");
   assert.equal(nearLabel("city:Stamford", tree), "Stamford");
   assert.equal(nearLabel("place:gone", tree), "gone");
+});
+
+test("writes a distance in meters, then km to one place, then whole km", () => {
+  assert.equal(distanceText(0.3504), "350 m");
+  assert.equal(distanceText(4.24), "4.2 km");
+  assert.equal(distanceText(1234.4), "1,234 km");
+});
+
+test("has no distance for a photo the map can't place", () => {
+  assert.equal(photoDistanceText(NO_GPS, DEFAULT_NEAR), undefined);
+  assert.equal(photoDistanceText(GREENWICH, DEFAULT_NEAR), "8.1 km");
 });
