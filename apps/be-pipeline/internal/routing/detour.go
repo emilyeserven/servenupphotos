@@ -26,13 +26,15 @@ const minDetourKm = 0.15
 // byRoadGain is how much shorter the road's stretch must be to be drawn.
 const byRoadGain = 0.85
 
-// roadWhereShorter is walked's path with each stretch that detours (see
-// detourRatio) replaced by p's, when that's clearly shorter. It asks the
-// server once more, only when some stretch detours, and keeps walked's path
-// when that request fails or its stretches don't line up.
-func (c *Client) roadWhereShorter(ctx context.Context, p profile, walked route, points [][2]float64) [][2]float64 {
-	detours := detouredLegs(walked.legs, points)
-	if len(detours) == 0 {
+// roadWhereShorter is walked's path with p's stretch in place of each one by
+// says goes ByRoad, and of each one by leaves to choose that detours (see
+// detourRatio) when p's is clearly shorter. A stretch by says goes ByFoot
+// keeps walked's. It asks the server once more, only when some stretch may
+// take the road, and keeps walked's path when that request fails or its
+// stretches don't line up.
+func (c *Client) roadWhereShorter(ctx context.Context, p profile, walked route, points [][2]float64, by []string) [][2]float64 {
+	tries := roadTries(walked.legs, points, by)
+	if len(tries) == 0 {
 		return walked.path
 	}
 	road, err := c.ask(ctx, p, points)
@@ -41,8 +43,8 @@ func (c *Client) roadWhereShorter(ctx context.Context, p profile, walked route, 
 	}
 	legs := walked.legs
 	changed := false
-	for _, i := range detours {
-		if len(road.legs[i]) >= 2 && lengthKm(road.legs[i]) <= byRoadGain*lengthKm(legs[i]) {
+	for i, forced := range tries {
+		if len(road.legs[i]) >= 2 && (forced || lengthKm(road.legs[i]) <= byRoadGain*lengthKm(legs[i])) {
 			legs[i] = road.legs[i]
 			changed = true
 		}
@@ -57,24 +59,45 @@ func (c *Client) roadWhereShorter(ctx context.Context, p profile, walked route, 
 	return out
 }
 
-// detouredLegs are the indexes of the legs, each the stretch from points[i]
-// to points[i+1], that detour; none when the legs don't match the points.
-func detouredLegs(legs [][][2]float64, points [][2]float64) []int {
+// roadTries are the legs, each the stretch from points[i] to points[i+1],
+// that may take the road, by index: true for one by says goes ByRoad, false
+// for one left to choose that detours. None when the legs don't match the
+// points.
+func roadTries(legs [][][2]float64, points [][2]float64, by []string) map[int]bool {
 	if len(legs) != len(points)-1 {
 		return nil
 	}
-	var out []int
+	out := map[int]bool{}
 	for i, leg := range legs {
 		if len(leg) < 2 {
 			return nil
 		}
-		straight := distanceKm(points[i], points[i+1])
-		walked := lengthKm(leg)
-		if walked > detourRatio*straight && walked-straight > minDetourKm {
-			out = append(out, i)
+		switch stretchBy(by, i) {
+		case ByRoad:
+			out[i] = true
+		case "":
+			if detours(leg, points[i], points[i+1]) {
+				out[i] = false
+			}
 		}
 	}
 	return out
+}
+
+// stretchBy is how by says stretch i goes; empty when it doesn't.
+func stretchBy(by []string, i int) string {
+	if i < len(by) {
+		return by[i]
+	}
+	return ""
+}
+
+// detours reports whether leg, from a to b, is more than detourRatio times
+// (and minDetourKm more than) the straight line between them.
+func detours(leg [][2]float64, a, b [2]float64) bool {
+	straight := distanceKm(a, b)
+	walked := lengthKm(leg)
+	return walked > detourRatio*straight && walked-straight > minDetourKm
 }
 
 // joined is line with more after it, leaving out more's first point when

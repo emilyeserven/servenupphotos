@@ -24,6 +24,14 @@ function segmentKeys(segment: TripSegment): ViaKey[] {
   return [...(segment.start ? ["start"] : []), ...photos.map(String)];
 }
 
+/**
+ * The via lists of the walks (not a hop's walks to and from its stations), whose via points can say
+ * whether the walk goes by road or on foot.
+ */
+export function walkViaKeys(segments: TripSegment[]): Set<ViaKey> {
+  return new Set(segments.filter((s) => s.mode === "walk").flatMap(segmentKeys));
+}
+
 /** The via lists of a hop with a line from photo a: its walks to and from its stations. */
 function stationKeys(segment: TripSegment, a: number): ViaKey[] {
   return [

@@ -15,7 +15,7 @@ func TestPath(t *testing.T) {
 	}))
 	defer srv.Close()
 	c := &Client{BaseURL: srv.URL, HTTP: srv.Client()}
-	got, err := c.Path(t.Context(), "walk", [][2]float64{{135.5, 34.66}, {135.502, 34.663}})
+	got, err := c.Path(t.Context(), "walk", [][2]float64{{135.5, 34.66}, {135.502, 34.663}}, nil)
 	if err != nil {
 		t.Fatalf("Path() error = %v", err)
 	}
@@ -26,14 +26,14 @@ func TestPath(t *testing.T) {
 	if asked != want {
 		t.Errorf("asked %s, want %s", asked, want)
 	}
-	if _, err := c.Path(t.Context(), "car", [][2]float64{{135.5, 34.66}, {135.502, 34.663}}); err != nil {
+	if _, err := c.Path(t.Context(), "car", [][2]float64{{135.5, 34.66}, {135.502, 34.663}}, nil); err != nil {
 		t.Fatalf("car: Path() error = %v", err)
 	}
 	want = "/routed-car/route/v1/driving/135.500000,34.660000;135.502000,34.663000?overview=full&geometries=geojson&steps=true&continue_straight=true"
 	if asked != want {
 		t.Errorf("car: asked %s, want %s", asked, want)
 	}
-	if _, err := c.Path(t.Context(), "train", [][2]float64{{0, 0}, {1, 1}}); !errors.Is(err, ErrNoProfile) {
+	if _, err := c.Path(t.Context(), "train", [][2]float64{{0, 0}, {1, 1}}, nil); !errors.Is(err, ErrNoProfile) {
 		t.Errorf("train: Path() error = %v, want ErrNoProfile", err)
 	}
 }
@@ -45,7 +45,7 @@ func TestPathNoRoute(t *testing.T) {
 	}))
 	defer srv.Close()
 	c := &Client{BaseURL: srv.URL, HTTP: srv.Client()}
-	if _, err := c.Path(t.Context(), "car", [][2]float64{{0, 0}, {1, 1}}); err == nil {
+	if _, err := c.Path(t.Context(), "car", [][2]float64{{0, 0}, {1, 1}}, nil); err == nil {
 		t.Error("Path() found a route the server didn't")
 	}
 }

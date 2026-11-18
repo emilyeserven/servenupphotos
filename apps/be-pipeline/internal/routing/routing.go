@@ -22,6 +22,13 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/throttle"
 )
 
+// How a walk's stretch goes, as Path's by says: along the road, as a car
+// would (turning back allowed), or along walkways only.
+const (
+	ByRoad = "road"
+	ByFoot = "foot"
+)
+
 // DefaultURL is the FOSSGIS routing servers' address.
 const DefaultURL = "https://routing.openstreetmap.de"
 
@@ -78,8 +85,10 @@ func Routes(mode string) bool {
 }
 
 // Path is the path along streets through points, each [longitude, latitude],
-// in order, travelled by mode ("walk", "bus" or "car").
-func (c *Client) Path(ctx context.Context, mode string, points [][2]float64) ([][2]float64, error) {
+// in order, travelled by mode ("walk", "bus" or "car"). For a walk, by says
+// how each stretch from one point to the next goes: ByRoad, ByFoot, or empty
+// (or by nil) to let the detour check choose (see roadWhereShorter).
+func (c *Client) Path(ctx context.Context, mode string, points [][2]float64, by []string) ([][2]float64, error) {
 	p, ok := profiles[mode]
 	if !ok {
 		return nil, ErrNoProfile
@@ -94,7 +103,7 @@ func (c *Client) Path(ctx context.Context, mode string, points [][2]float64) ([]
 	if p.byRoad == nil {
 		return r.path, nil
 	}
-	return c.roadWhereShorter(ctx, *p.byRoad, r, points), nil
+	return c.roadWhereShorter(ctx, *p.byRoad, r, points, by), nil
 }
 
 // ask waits its turn, then asks the server for p's route through points.

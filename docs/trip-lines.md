@@ -44,7 +44,8 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - One photo can end a segment and start the next (304 and 305 above), so the line doesn't break at a station.
 - **`start`** and **`end`** are spots with no photo, such as the hotel, with an optional `label`.
 - **`via`** lists spots with no photo the line bends through, each with the photo it comes `after` (none for right
-  after `start`), and `visit` when it stands for a [trip stop](#trip-stops) on the route. See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
+  after `start`), `visit` when it stands for a [trip stop](#trip-stops) on the route, and on a walk `by`: `road` or
+  `foot` for how the walk goes to and from it when snapped (left out, the snap chooses). See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
 - **`path`** is a walk, bus or car segment's line along the streets, as `[longitude, latitude]` pairs, from **Snap to
   streets**, or a hop's track along its `line`. A train, subway or transit hop keeps one only with a line.
 - **`line`** is the bus, subway or train line a hop rode, picked under [Lines ridden](#lines-ridden):
@@ -427,8 +428,15 @@ A line drawn by hand is straight from point to point. To make it follow the stre
    line nearest it. A hop with a line picked follows the line's track, so a via point never goes on the ride itself, but
    it can go on the walk from the photo to the station it got on at, or from the stop it got off at to the next photo.
    Drag a via point to move it, or click it to remove it. **Done adding via points** stops adding. The map numbers via
-   points v1, v2, … in the order the route goes through them, and the list under the tools says where each is ("After
-   photo 2", "Walk from Broderick St & Francisco St to photo 3"). Its arrows move one a place earlier or later: past
+   points v1, v2, … in the order the route goes through them, and the list under the tools groups them under the
+   stretch they're on ("After photo 2", "Walk from Broderick St & Francisco St to photo 3"). When a stretch's via
+   points aren't in the order a walk would pass them, **Put in order** sorts each stretch's, nearest first from where
+   it starts (`lib/via-tidy.ts`); none moves to another stretch. On a walk, each via point has a menu, **Auto**,
+   **Road** or **Walkway**, and a stretch with more than one has the same menu by its name to set them all (it says
+   **Mixed** when they differ). Road makes the stretches to and from that via point take the road path, even through
+   grounds; Walkway keeps the foot path, even when it detours; Auto lets the snap's detour check below choose. Two
+   ends that disagree leave the stretch between them on Auto. Changing it drops the walk's path, so it's snapped
+   again. Its arrows move one a place earlier or later: past
    the next via point, or past the photo or station at the end of its stretch into the next one, so a lone via point
    after photo 3 moves up onto the walk from the bus stop to photo 3. Its × removes it. The photo strip on **Route** shows the
    same numbered squares between the two photos each via point is between, before that stretch's trip stops; pointing

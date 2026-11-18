@@ -181,7 +181,7 @@ func TestRouteTripLine(t *testing.T) {
 	f, c := newMainRepo(t, with(emptyLists, tripPhotos))
 	var asked [][][2]float64
 	var modes []string
-	route := func(_ context.Context, mode string, points [][2]float64) ([][2]float64, error) {
+	route := func(_ context.Context, mode string, points [][2]float64, _ []string) ([][2]float64, error) {
 		modes = append(modes, mode)
 		asked = append(asked, points)
 		if mode == ModeCar {

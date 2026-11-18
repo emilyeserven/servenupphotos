@@ -97,7 +97,15 @@ export interface TripVia {
   longitude: number;
   /** The place visited (its index in the day's visits) this spot stands for; none for its own. */
   visit?: number;
+  /** How a walk goes to and from it when snapped to streets; left out, Snap to streets chooses. */
+  by?: ViaBy;
 }
+
+/**
+ * How a walk goes to and from a via spot when snapped to streets: along the road, as a car would
+ * (for a road OpenStreetMap closes to people on foot), or along walkways only.
+ */
+export type ViaBy = "road" | "foot";
 
 /**
  * A trip line file: the route of one day, which the portfolio's map draws. Commit combines them
