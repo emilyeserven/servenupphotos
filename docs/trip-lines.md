@@ -291,8 +291,8 @@ The photo strip on **Route** puts these places on the route too: the plus under 
 the route yet, and picking one puts it between those two photos (with a link to the Trip Stops page to add more). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
-two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
-route, and a cross that takes it off the route again. Moving one earlier from after the
+two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one spot earlier or later on the
+route: first past the next stop between the same two photos, such as two stops before the first photo, then on one photo, landing next to the stops already there. A cross takes it off the route again. Moving one earlier from after the
 first photo, or picking it from the strip's **Start**, puts it before the first photo, as `"first": true` with no `after`, such as lunch before the first photo
 was taken: the line goes from the start spot through it to the first photo (as a via spot after the start spot), or,
 with no start spot, starts at it. The way from there to the first photo shows before photo 1 in the strip and can be
