@@ -24,6 +24,7 @@ func TestTripLineVisits(t *testing.T) {
 		{Name: "X", Kind: "cafe", Latitude: 91},
 		{Name: "X", Kind: "cafe", Link: "javascript:alert(1)"},
 		{Name: "X", Kind: "cafe", Note: strings.Repeat("n", maxNoteLength+1)},
+		{Name: "X", Kind: "cafe", StopNames: StopNames{LocalScript: strings.Repeat("一", maxEntryTextLength+1)}},
 	}
 	for i, v := range bad {
 		line.Visits = []TripVisit{v}
@@ -99,5 +100,16 @@ func TestValidVisitMode(t *testing.T) {
 		if perr := validVisit(&v, 1); (perr == nil) != ok {
 			t.Errorf("mode %q: %v, want ok %v", mode, perr, ok)
 		}
+	}
+}
+
+func TestValidVisitStopNames(t *testing.T) {
+	v := TripVisit{Name: "Ichiran", Kind: "restaurant", StopNames: StopNames{Romanization: " Ichiran ", Pronunciation: "いちらん ", LocalScript: " 一蘭"}}
+	if perr := validVisit(&v, 1); perr != nil {
+		t.Fatalf("validVisit: %v", perr.Message)
+	}
+	want := StopNames{Romanization: "Ichiran", Pronunciation: "いちらん", LocalScript: "一蘭"}
+	if v.StopNames != want {
+		t.Errorf("StopNames = %+v, want %+v", v.StopNames, want)
 	}
 }

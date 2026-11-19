@@ -42,6 +42,34 @@ type TripVisit struct {
 	// in order: marked casual (see isCasual), they show only with the place
 	// on its day's Trip page. None when there are none.
 	Photos []int `json:"photos,omitempty"`
+	// StopNames are its name in Latin letters, as said locally and in its
+	// own script, such as 一蘭 道頓堀店 for a ramen shop in Osaka.
+	StopNames
+}
+
+// StopNames are a trip stop's localized names, the same three a saved
+// place's localization has: each "" when not written. On a stop picked from
+// a saved place, the place's localization fills any left empty.
+type StopNames struct {
+	// Romanization is the name in Latin letters, such as "Ichiran Dōtonbori-ten".
+	Romanization string `json:"romanization,omitempty"`
+	// Pronunciation is how the local script is read, such as furigana:
+	// "いちらん どうとんぼりてん".
+	Pronunciation string `json:"pronunciation,omitempty"`
+	// LocalScript is the name in its own script, such as "一蘭 道頓堀店".
+	LocalScript string `json:"localScript,omitempty"`
+}
+
+// validStopNames trims the nth stop's localized names in place, and fails
+// when one is too long.
+func validStopNames(names *StopNames, n int) *PublishError {
+	for _, s := range []*string{&names.Romanization, &names.Pronunciation, &names.LocalScript} {
+		*s = strings.TrimSpace(*s)
+		if utf8.RuneCountInString(*s) > maxEntryTextLength {
+			return publishErr(http.StatusBadRequest, "Trip stop %d: keep each of its localized names to %d characters.", n, maxEntryTextLength)
+		}
+	}
+	return nil
 }
 
 // visitKinds are the sorts of place a visit can be.
@@ -100,7 +128,7 @@ func validViaVisits(segments []TripSegment, n int) *PublishError {
 }
 
 // validVisit checks the nth visit: a name, a kind, a spot on the globe, and a
-// note and web link that aren't too long.
+// note, localized names and web link that aren't too long.
 func validVisit(v *TripVisit, n int) *PublishError {
 	v.Name, v.Note, v.Link, v.Place = strings.TrimSpace(v.Name), strings.TrimSpace(v.Note), strings.TrimSpace(v.Link), strings.TrimSpace(v.Place)
 	if v.Name == "" || utf8.RuneCountInString(v.Name) > maxEntryTextLength {
@@ -119,6 +147,9 @@ func validVisit(v *TripVisit, n int) *PublishError {
 		return publishErr(http.StatusBadRequest, "Trip stop %d: say how it was reached (walk, train, subway, bus, car or transit), or leave it out.", n)
 	}
 	if perr := validVisitPhotos(v.Photos, n); perr != nil {
+		return perr
+	}
+	if perr := validStopNames(&v.StopNames, n); perr != nil {
 		return perr
 	}
 	return validLink(v.Link, n)

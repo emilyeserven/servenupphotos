@@ -263,6 +263,19 @@ small icon before the stop's chip. The gaps read back from a cut line are the sa
 stop to its photo keeps the gap's way (`lib/stop-ways.ts`). A train, subway, bus or transit hop is also cut at every
 trip stop on it, even one reached the route's way, so each stretch is its own row under [Lines ridden](#lines-ridden).
 
+### Localized names
+
+A stop can have **localized names**, the same three a [saved place's localization](places-and-localizations.md) has:
+its **Romanization** (Ichiran Dōtonbori-ten), **Local pronunciation** (いちらん どうとんぼりてん) and **Local script**
+(一蘭 道頓堀店). The translate button at the end of its row opens them under it, already open when any is written. On a
+stop added from a saved place, each one left empty shows the place's localization faintly, and the portfolio uses
+the place's for it, so a saved place's names needn't be typed again. They're saved on the stop as `"romanization"`,
+`"pronunciation"` and `"localScript"`, trimmed, each up to 200 characters, and left out when empty. **Visited again**
+copies them. The day's [Trip page](trip-pages.md#trip-stops) shows them.
+
+> **Frontend analogy:** like `placeholder` versus `value` on an input: the saved place's localization is the
+> placeholder, and anything typed on the stop is the value that wins.
+
 ### Casual photos
 
 A stop can have **casual photos**: snapshots taken there, such as the food at a restaurant, that show only with the
@@ -290,6 +303,7 @@ They're saved with the line as `visits`:
   "note": "Ramen before the river walk",
   "link": "https://maps.app.goo.gl/…",
   "place": "ichiran-dotonbori",
+  "localScript": "一蘭 道頓堀店",
   "after": 305,
   "photos": [311, 312]
 }
