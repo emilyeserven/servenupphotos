@@ -44,11 +44,17 @@ function fitZoom(spanX: number, spanY: number, roomX: number, roomY: number): nu
   return Math.min(zoom, MAX_ZOOM);
 }
 
-/** The CARTO raster tile at z, x, y in the light or dark style, spread over its four hosts. */
-function tileUrl(z: number, x: number, y: number, dark: boolean): string {
+/** How the tiles are fetched: the light or dark style, and CARTO's API key. */
+export interface TileStyle {
+  dark: boolean;
+  key: string;
+}
+
+/** The CARTO raster tile at z, x, y in the style, with the API key, spread over its four hosts. */
+function tileUrl(z: number, x: number, y: number, { dark, key }: TileStyle): string {
   const host = "abcd"[(x + y) % 4];
   const style = dark ? "dark_all" : "light_all";
-  return `https://${host}.basemaps.cartocdn.com/${style}/${z}/${x}/${y}.png`;
+  return `https://${host}.basemaps.cartocdn.com/${style}/${z}/${x}/${y}.png?key=${encodeURIComponent(key)}`;
 }
 
 /** The tiles at zoom z covering the box whose top left is (left, top) in world pixels at zoom fit. */
@@ -56,7 +62,7 @@ function coveringTiles(
   [left, top]: BoxPoint,
   [width, height]: BoxPoint,
   fit: number,
-  dark: boolean,
+  style: TileStyle,
 ): PlacedTile[] {
   const z = Math.max(0, Math.min(MAX_ZOOM, Math.ceil(fit)));
   const size = TILE * 2 ** (fit - z);
@@ -67,7 +73,7 @@ function coveringTiles(
       if (ty < 0 || ty >= count) continue;
       const wrapped = ((tx % count) + count) % count;
       tiles.push({
-        url: tileUrl(z, wrapped, ty, dark),
+        url: tileUrl(z, wrapped, ty, style),
         x: tx * size - left,
         y: ty * size - top,
         size,
@@ -79,12 +85,13 @@ function coveringTiles(
 
 /**
  * The box of width by height (with pad on each side) that fits the points, as a map does: north up
- * and the same scale both ways in Web Mercator, with the basemap tiles under it.
+ * and the same scale both ways in Web Mercator, with the basemap tiles under it; none without an API
+ * key, since CARTO's tiles carry an "API key required" watermark without one.
  */
 export function previewBox(
   points: [number, number][],
   [width, height, pad]: [number, number, number],
-  dark: boolean,
+  style: TileStyle,
 ): PreviewBox {
   const world = points.map(([lng, lat]) => mercator(lng, lat));
   const xs = world.map(([x]) => x);
@@ -103,5 +110,6 @@ export function previewBox(
     const [x, y] = mercator(lng, lat);
     return [x * scale - left, y * scale - top];
   };
-  return { at, tiles: coveringTiles([left, top], [width, height], fit, dark) };
+  const tiles = style.key ? coveringTiles([left, top], [width, height], fit, style) : [];
+  return { at, tiles };
 }

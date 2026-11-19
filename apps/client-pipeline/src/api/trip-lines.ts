@@ -218,6 +218,19 @@ export function tripLines(data: CombinedData): Map<string, TripLine> {
   );
 }
 
+/** What the pages need to draw CARTO's basemap tiles themselves. */
+interface Basemap {
+  /** CARTO_KEY from the repo's .env, which CARTO's raster tiles need; "" when it isn't set. */
+  cartoKey: string;
+}
+
+/** The CARTO API key for basemap tiles, read once: it only changes when the backend restarts. */
+export const basemapQuery = queryOptions({
+  queryKey: ["basemap"],
+  queryFn: () => requestJson<Basemap>("/api/basemap"),
+  staleTime: Number.POSITIVE_INFINITY,
+});
+
 /** The automatic line of a day, as the next Commit would draw it from the photos then. */
 export function autoTripLineQuery(day: string) {
   return queryOptions({

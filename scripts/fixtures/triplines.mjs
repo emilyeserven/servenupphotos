@@ -88,6 +88,7 @@ export function triplinesFixtures() {
       ],
     },
     "POST /api/triplines/2026-10-01/route": snapped,
+    "GET /api/basemap": { cartoKey: "sample-key" },
     "GET /api/areas": [
       {
         name: "Upper East Side",
