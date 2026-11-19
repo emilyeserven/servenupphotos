@@ -132,7 +132,9 @@ or on a hop or drive, stays a pin.
 `/trip-lines` lists the days with two or more photos at two or more different exact spots, newest first, as cards. Each
 card has how many photos and spots the day has, whether its line is **Marked**, **Out of date**, **Automatic**,
 **Planned** or **None** (with a filter by each), and a small drawing of the line from its file, by hand or automatic: the line in
-the map's colors and the photos as dots, drawn as SVG over the map's basemap so the card shows where the day was. The
+the map's colors and the photos as white dots, drawn as SVG over the map's basemap so the card shows where the day was. A
+day with photos but no line yet still shows its photos' dots on the basemap, with the reason there's no line (such as
+**No line yet**) in the drawing's corner, so you can see where it was before drawing one. The
 basemap is a few of CARTO's raster tiles (light or dark, like the map) laid in a Web Mercator box around the line
 (`lib/preview-tiles.ts`) and loaded lazily, rather than a whole map per card, so a long list stays quick; it zooms in
 no closer than zoom 16, and the list ends with the maps' credit to OpenStreetMap and CARTO. CARTO's raster tiles need an API key (without one they carry an "API key required" watermark):
