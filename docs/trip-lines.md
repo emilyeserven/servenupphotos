@@ -302,8 +302,10 @@ or picking it from the strip's **End**, puts it after the last photo, such as
 dinner after the last photo was taken: the line ends there. With an end spot, the line goes from the last photo
 through it to the end spot (as a via spot after the last photo); with none, the last segment's `end` is the place,
 named after it, and when the day ends with more than one such place, the line goes through the others to the last one
-added. The strip shows the walk and the place's icon after the last photo, and loading the line again
-keeps that `end` as the place rather than an end spot of its own. A place not on the route is a pin only, and a place
+added. The strip shows the way there and the place's icon after the last photo, and loading the line again
+keeps that `end` as the place rather than an end spot of its own. That way can be changed like any gap, such as a
+drive back to the station: the line is then a hop from the last photo to the end, saved as the last segment with that
+mode, only the last photo and an `end` (the draft's `endGap`). A place not on the route is a pin only, and a place
 put after a break in the middle of the day has no line to sit on, so it stays a pin too. The editor works the via spot out from `after` each
 time, so moving or removing the place keeps the line in step; the backend checks that `after` is one of the day's
 photos with an exact spot (not necessarily on a drawn segment, so a stop can follow a photo on an automatic line or at

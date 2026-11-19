@@ -1,10 +1,11 @@
 import { Flag, MapPin } from "lucide-react";
 import type { TripPoint, TripVisit } from "@/api/trip-lines";
 import { type EndKey, SpotLabel } from "@/components/trip-lines/end-spots";
-import { gapInfo } from "@/components/trip-lines/modes";
+import { END_GAPS, GapPicker } from "@/components/trip-lines/gap-picker";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { Button } from "@/components/ui/button";
+import { END_GAP, type Gap } from "@/lib/trip-gaps";
 import { endName } from "@/lib/trip-line-view";
 import { cn } from "@/lib/utils";
 
@@ -144,33 +145,24 @@ interface StripEndProps extends Omit<EndChipProps, "which" | "stops"> {
   onMove?: (visit: TripVisit, by: -1 | 1) => void;
   /** Takes a trip stop off the route; left out, they can't be taken off. */
   onOff?: (visit: TripVisit) => void;
+  /** How the day got from its last photo to where it ends. */
+  gap: Gap;
+  /** Changes that way; left out, it can't be changed. */
+  onGap?: (index: number, gap: Gap) => void;
 }
 
 /**
- * What comes after the day's last photo in the photo strip: the walk to the trip stops the route
- * ends at, such as dinner after the last photo, or to the end spot, then the End chip.
+ * What comes after the day's last photo in the photo strip: the way to the trip stops the route
+ * ends at, such as a walk to dinner or a drive back to the station, or to the end spot, which can be
+ * changed like any gap, then the End chip.
  */
-export function StripEnd({ stops, onMove, onOff, ...chip }: StripEndProps) {
-  const walks = stops.length > 0 || chip.ends.end !== undefined;
+export function StripEnd({ stops, onMove, onOff, gap, onGap, ...chip }: StripEndProps) {
+  const goes = stops.length > 0 || chip.ends.end !== undefined;
   return (
     <li className="flex shrink-0 items-center gap-1">
-      {walks && <WalkToEnd />}
+      {goes && <GapPicker gap={gap} index={END_GAP} onGap={onGap} choices={END_GAPS} />}
       <VisitChips visits={stops} onMove={onMove} onOff={onOff} />
       <EndChip which="end" stops={stops} {...chip} />
     </li>
-  );
-}
-
-/** The walk from the last photo on to where the day ends. */
-function WalkToEnd() {
-  const { icon: Icon, label } = gapInfo("walk");
-  return (
-    <span
-      title={label}
-      className="bg-muted flex h-9 w-9 items-center justify-center rounded-md border"
-    >
-      <Icon className="size-4" aria-hidden />
-      <span className="sr-only">{label} to the end of the route</span>
-    </span>
   );
 }
