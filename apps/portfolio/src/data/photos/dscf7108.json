@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["apartments", "mountains", "city", "skyline"],
   "genres": [],
   "places": [],
   "noGps": false,
