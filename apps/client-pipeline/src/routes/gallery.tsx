@@ -1,44 +1,34 @@
-import { type UseQueryResult, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { CheckIcon, ListChecksIcon, SearchIcon } from "lucide-react";
-import { useState } from "react";
-import { type PublishedFile, type PublishedResponse, publishedPhotosQuery } from "@/api/photos";
+import { useEffect, useMemo, useState } from "react";
+import {
+  type InFlightRead,
+  photosInFlightQuery,
+  publishedPhotosQuery,
+  type PublishedResponse,
+} from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
 import { Page } from "@/components/page";
-import { QueryResult } from "@/components/query-result";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
+import { Card, CardContent } from "@/components/ui/card";
 import { BulkGroupsCard } from "@/components/gallery/bulk-groups-card";
-import { PhotoGrid } from "@/components/gallery/photo-grid";
-import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
-import {
-  type GallerySort,
-  GallerySortToggle,
-  parseGallerySort,
-  sortGallery,
-  useGallerySort,
-} from "@/components/gallery/gallery-sort";
-import {
-  UndecidedToggle,
-  parseUndecided,
-  useUndecidedFilter,
-} from "@/components/gallery/undecided-filter";
-import {
-  LowerTierToggle,
-  parseLowerTier,
-  useLowerTierFilter,
-} from "@/components/gallery/lower-tier-filter";
 import { BulkLowerTier } from "@/components/gallery/bulk-lower-tier";
-import type { MarkChoice } from "@/components/gallery/mark-filter";
+import { type GalleryFile, galleryFiles, mergedImages } from "@/components/gallery/gallery-files";
+import { type GalleryRead, GalleryHeader } from "@/components/gallery/gallery-header";
+import { GalleryLightbox } from "@/components/gallery/gallery-lightbox";
+import {
+  type ShowSearch,
+  SHOW_PARAMS,
+  applyShow,
+  parseShowSearch,
+  showChanged,
+} from "@/lib/gallery-show";
+import { JumpBox } from "@/components/gallery/jump-box";
+import { scrollToTile } from "@/components/gallery/kind-mark";
+import { PhotoGrid } from "@/components/gallery/photo-grid";
+import { defaultOrder, sortEntries } from "@/components/gallery/photo-sort";
+import { ShowToggles, SortToggles, useSetShowSearch } from "@/components/gallery/show-and-sort";
+import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
+import { QueryResult } from "@/components/query-result";
 import {
   type PlaceSearch,
   PlaceFilterToggles,
@@ -54,8 +44,9 @@ import {
 } from "@/components/gallery/grid-filters";
 import { prefixedFilters } from "@/lib/photo-data-filters";
 import { GALLERY_FILTER_KEYS, galleryFilters } from "@/lib/gallery-filters";
-import { type Selection, fileName, photoName } from "@/components/gallery/published-file";
-import { OfflineNotice } from "@/components/offline-notice";
+import { useUntitledDrafts } from "@/lib/drafts";
+import { type Selection, fileName } from "@/components/gallery/published-file";
+import { useLocalEditsStore } from "@/stores/local-edits";
 
 /**
  * The prefix of the Gallery's With and Without filters in the URL, such as `?hasTitle=without`, so
@@ -64,24 +55,9 @@ import { OfflineNotice } from "@/components/offline-notice";
 const HAS_FILTERS = "has";
 
 /** The search params of the Gallery's own filters besides the With and Without ones. */
-const GALLERY_FILTER_PARAMS = [
-  "undecided",
-  "lowerTier",
-  "placeId",
-  "placeGps",
-  ...GRID_FILTER_PARAMS,
-];
+const GALLERY_FILTER_PARAMS = [...SHOW_PARAMS, "placeId", "placeGps", ...GRID_FILTER_PARAMS];
 
-type GallerySearch = GalleryOwnSearch & GridFilters;
-
-interface GalleryOwnSearch extends PlaceSearch {
-  /** Whether Undecided photos are shown too, or only they are; hidden when left out. */
-  undecided?: MarkChoice;
-  /** Whether Lower Tier photos are shown too, or only they are; hidden when left out. */
-  lowerTier?: MarkChoice;
-  /** Sorts by when each photo was added to the portfolio; by when it was taken when left out. */
-  sort?: GallerySort;
-}
+type GallerySearch = PlaceSearch & ShowSearch & GridFilters;
 
 export const Route = createFileRoute("/gallery")({
   component: GalleryPage,
@@ -90,9 +66,7 @@ export const Route = createFileRoute("/gallery")({
     ...prefixedFilters(search, HAS_FILTERS, GALLERY_FILTER_KEYS),
     ...parseGridFilters(search),
     ...parsePlaceSearch(search),
-    undecided: parseUndecided(search),
-    lowerTier: parseLowerTier(search),
-    sort: parseGallerySort(search),
+    ...parseShowSearch(search),
   }),
 });
 
@@ -102,139 +76,219 @@ function GalleryPage() {
     <Page
       wide
       title="Gallery"
-      description="Photos already in the portfolio. Editing one saves the change to the “Add photo data” pull request, where it waits in Photos in Flight until it merges."
+      description="Every photo in the portfolio, as the next Commit will save it. Show the drafts, Undecided and Lower Tier photos to see where each would go among the published ones. Editing one saves the change to the “Add photo data” pull request."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
-        {(data) =>
-          data.github.repo && data.github.token.set ? (
-            <PublishedPhotos />
-          ) : (
-            <Card>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Not set up: add the GitHub repository and token in{" "}
-                  <Link to="/settings" className="text-foreground underline underline-offset-4">
-                    Settings
-                  </Link>
-                  .
-                </p>
-              </CardContent>
-            </Card>
-          )
-        }
+        {(data) => (data.github.repo && data.github.token.set ? <Gallery /> : <NotSetUp />)}
       </QueryResult>
     </Page>
   );
 }
 
-function PublishedPhotos() {
+/** Says the GitHub repository and token are needed first. */
+function NotSetUp() {
+  return (
+    <Card>
+      <CardContent>
+        <p className="text-muted-foreground">
+          Not set up: add the GitHub repository and token in{" "}
+          <Link to="/settings" className="text-foreground underline underline-offset-4">
+            Settings
+          </Link>
+          .
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
+const NO_FILES: GalleryFile[] = [];
+
+/**
+ * Every photo: the base branch's, drawn as soon as they're read, with the pull request's and the
+ * local edits laid over them once those are read too.
+ */
+function useGalleryFiles(published?: PublishedResponse, inFlight?: InFlightRead) {
+  const edits = useLocalEditsStore((s) => s.edits);
+  const keepDrafts = useUntitledDrafts();
+  return useMemo(
+    () => (published ? galleryFiles(published, inFlight, edits, keepDrafts) : NO_FILES),
+    [published, inFlight, edits, keepDrafts],
+  );
+}
+
+/** The base branch's and the pull request's reads, refreshed together. */
+function useGalleryReads() {
   const published = useQuery(publishedPhotosQuery);
+  const inFlight = useQuery(photosInFlightQuery);
+  const read: GalleryRead | undefined = published.data && {
+    published: published.data,
+    images: mergedImages(published.data, inFlight.data),
+  };
+  return {
+    published,
+    inFlight: inFlight.data,
+    read,
+    fetching: published.isFetching || inFlight.isFetching,
+    refresh: () => void Promise.all([published.refetch(), inFlight.refetch()]),
+  };
+}
+
+function Gallery() {
+  const reads = useGalleryReads();
+  const all = useGalleryFiles(reads.published.data, reads.inFlight);
   const [filter, setFilter] = useState("");
   const selection = useSelection();
-  const files = useShownFiles(published.data, filter);
-  const { shown } = files;
+  const files = useShownFiles(all, filter);
+  const [openPath, setOpenPath] = useState<string | null>(null);
   return (
     <>
       <GalleryHeader
-        published={published}
+        read={reads.read}
+        files={all}
+        fetching={reads.fetching}
+        onRefresh={reads.refresh}
         filter={filter}
         onFilterChange={setFilter}
         selecting={selection.selected !== null}
         onSelectingChange={selection.toggleSelecting}
       />
-      <GalleryFilters files={files} />
-      {selection.selected && published.data && (
-        <>
-          <BulkGroupsCard
-            files={published.data.files}
-            shown={shown}
-            selection={selection.selected}
-            onSelectionChange={selection.setSelected}
-          />
-          <BulkLowerTier files={published.data.files} selection={selection.selected} />
-        </>
-      )}
-      <QueryResult query={published} pendingLabel="Reading the portfolio's photos…">
+      <GalleryFilters all={all} files={files} />
+      <BulkCards all={all} shown={files.shown} selection={selection} />
+      <QueryResult query={reads.published} pendingLabel="Reading the portfolio's photos…">
         {(data) => (
           <PhotoGrid
-            data={data}
-            shown={shown}
+            branch={data.branch}
+            total={all.length}
+            images={reads.read?.images ?? data.images}
+            shown={files.shown}
             filter={filter}
             selection={selection.selected}
             onToggle={selection.toggle}
+            highlight={files.search.photo}
+            onOpen={setOpenPath}
           />
         )}
       </QueryResult>
+      <GalleryLightbox files={files.shown} openPath={openPath} onOpenPath={setOpenPath} />
+      <Jump all={files.sorted} current={files.search.photo} />
+    </>
+  );
+}
+
+/** While choosing photos, the cards that add albums, tags and genres to them or mark them Lower Tier. */
+function BulkCards({
+  all,
+  shown,
+  selection,
+}: {
+  all: GalleryFile[];
+  shown: GalleryFile[];
+  selection: ReturnType<typeof useSelection>;
+}) {
+  if (!selection.selected || all.length === 0) return null;
+  return (
+    <>
+      <BulkGroupsCard
+        files={all}
+        shown={shown}
+        selection={selection.selected}
+        onSelectionChange={selection.setSelected}
+      />
+      <BulkLowerTier files={all} selection={selection.selected} />
     </>
   );
 }
 
 /**
- * The Gallery's filters: its With and Without ones with its place, Undecided, Lower Tier and sort, then the
+ * The jump box for the drafts and Undecided photos, and scrolling to the photo `?photo=` names
+ * once it's drawn.
+ */
+function Jump({ all, current }: { all: GalleryFile[]; current?: string }) {
+  const setSearch = useSetShowSearch();
+  useEffect(() => {
+    if (current) scrollToTile(current);
+  }, [current]);
+  const jump = (file: GalleryFile) => {
+    const kind =
+      file.kind === "undecided" ? { undecided: true as const } : { drafts: true as const };
+    void setSearch({ photo: file.path, ...kind }).then(() => scrollToTile(file.path));
+  };
+  return (
+    <JumpBox
+      entries={all.filter((file) => file.kind === "draft" || file.kind === "undecided")}
+      current={current}
+      onJump={jump}
+    />
+  );
+}
+
+/**
+ * The Gallery's filters: its With and Without ones with its place, Show group and sort, then the
  * portfolio Grid's.
  */
-function GalleryFilters({ files }: { files: ShownFiles }) {
-  const { shown, total, filters, defs, undecided, lowerTier, sort, place, grid } = files;
+function GalleryFilters({ all, files }: { all: GalleryFile[]; files: ShownFiles }) {
+  const { shown, filters, defs, place, grid, search } = files;
   return (
     <>
       <PhotoFilterBar
         filters={filters}
         shown={shown.length}
-        total={total}
-        hiding={shown.length < total}
+        total={all.length}
+        hiding={shown.length < all.length}
         extraChosen={files.extraChosen}
         extraParams={GALLERY_FILTER_PARAMS}
         prefix={HAS_FILTERS}
         defs={defs}
       >
         <PlaceFilterToggles filter={place} />
-        <UndecidedToggle choice={undecided} />
-        <LowerTierToggle choice={lowerTier} />
-        <GallerySortToggle sort={sort} />
+        <ShowToggles files={all} search={search} />
+        <SortToggles sort={files.sort} order={files.order} />
       </PhotoFilterBar>
       <GridFilterBar photos={grid.photos} />
     </>
   );
 }
 
-const NO_FILES: PublishedFile[] = [];
-
 type ShownFiles = ReturnType<typeof useShownFiles>;
 
-/** Whether one of the Gallery's filters besides the With and Without ones is set. */
-function otherChosen(marks: unknown[], placeId: unknown, gridCount: number): boolean {
-  return marks.some((mark) => mark !== undefined) || placeId !== undefined || gridCount > 0;
-}
-
 /**
- * The photos that match the search text, the filters, the place chosen and the portfolio Grid's
- * filters, in the URL's sort, out of how many there are. The Grid filters' counts are out of what
- * the others leave.
+ * The photos in the URL's sort, and the ones of them that match the search text, the filters, the
+ * Show group, the place chosen and the portfolio Grid's filters. The Grid filters' counts are out
+ * of what the others leave.
  */
-function useShownFiles(data: PublishedResponse | undefined, filter: string) {
+function useShownFiles(all: GalleryFile[], filter: string) {
+  const search = Route.useSearch();
   const place = usePlaceFilter();
   const defs = galleryFilters(place.places);
   const { filters, filter: applyFilters } = usePhotoFilters(HAS_FILTERS, defs);
-  const { choice: undecided, apply: applyUndecided } = useUndecidedFilter();
-  const { choice: lowerTier, apply: applyLowerTier } = useLowerTierFilter();
-  const sort = useGallerySort();
-  const all = data?.files ?? NO_FILES;
-  const grid = useGridFilters(
-    all,
-    place.apply(applyLowerTier(applyUndecided(applyFilters(shownFiles(all, filter, sort))))),
-  );
+  const { sort, order } = sortOf(search);
+  const sorted = useMemo(() => sortEntries(all, sort, order), [all, sort, order]);
+  const matching = sorted.filter((file) => matches(file, filter));
+  const grid = useGridFilters(all, place.apply(applyShow(applyFilters(matching), search)));
   return {
+    search,
     filters,
     defs,
-    undecided,
-    lowerTier,
     sort,
+    order,
     place,
     grid,
-    extraChosen: otherChosen([undecided, lowerTier], place.placeId, grid.count),
+    sorted,
+    extraChosen: otherChosen(search, grid.count),
     shown: grid.shown,
-    total: all.length,
   };
+}
+
+/** The Gallery's sort and which way it runs, from the URL or else their defaults. */
+function sortOf(search: ShowSearch) {
+  const sort = search.sort ?? "taken";
+  return { sort, order: search.order ?? defaultOrder(sort) };
+}
+
+/** Whether one of the Gallery's filters besides the With and Without ones is set. */
+function otherChosen(search: GallerySearch, gridCount: number): boolean {
+  return showChanged(search) || search.placeId !== undefined || gridCount > 0;
 }
 
 /** The photos chosen to add albums and tags to, and turning choosing them on and off. */
@@ -255,145 +309,11 @@ function toggled(selection: ReadonlySet<string>, path: string): ReadonlySet<stri
   return next;
 }
 
-interface GalleryHeaderProps {
-  published: UseQueryResult<PublishedResponse>;
-  filter: string;
-  onFilterChange: (filter: string) => void;
-  selecting: boolean;
-  onSelectingChange: () => void;
-}
-
-function GalleryHeader({
-  published,
-  filter,
-  onFilterChange,
-  selecting,
-  onSelectingChange,
-}: GalleryHeaderProps) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Portfolio photos</CardTitle>
-        <CardDescription>
-          {published.data
-            ? `${published.data.repo}, JSON in ${published.data.folder} on ${published.data.branch}`
-            : "Reading the photo JSON on the base branch."}
-        </CardDescription>
-        <CardAction className="flex gap-2">
-          <SelectButton on={selecting} disabled={!published.data} onClick={onSelectingChange} />
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={published.isFetching}
-            onClick={() => void published.refetch()}
-          >
-            {published.isFetching && <Spinner />}
-            Refresh
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3 text-sm">
-        {published.data && <Summary data={published.data} />}
-        <label className="relative block max-w-sm">
-          <span className="sr-only">Filter photos</span>
-          <SearchIcon
-            className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
-            aria-hidden
-          />
-          <Input
-            type="search"
-            placeholder="Filter by title or file name"
-            value={filter}
-            onChange={(e) => onFilterChange(e.target.value)}
-            className="pl-9"
-          />
-        </label>
-      </CardContent>
-    </Card>
-  );
-}
-
-/** Turns choosing photos to add albums and tags to on, or off when it's on. */
-function SelectButton({
-  on,
-  disabled,
-  onClick,
-}: {
-  on: boolean;
-  disabled: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <Button
-      variant={on ? "default" : "outline"}
-      size="sm"
-      aria-pressed={on}
-      disabled={disabled}
-      onClick={onClick}
-    >
-      {on ? <CheckIcon /> : <ListChecksIcon />}
-      {on ? "Done" : "Select"}
-    </Button>
-  );
-}
-
-/** The photos to show, in sort, that match filter. */
-function shownFiles(
-  files: PublishedFile[],
-  filter: string,
-  sort: GallerySort | undefined,
-): PublishedFile[] {
-  return sortGallery(files, sort).filter((file) => matches(file, filter));
-}
-
-/**
- * How many photos there are, and how many of them have changes waiting in the pull request, under
- * the offline notice when R2 couldn't be reached.
- */
-function Summary({ data }: { data: PublishedResponse }) {
-  const count = data.files.length;
-  return (
-    <>
-      <OfflineNotice images={data.images} />
-      <p className="text-muted-foreground">
-        {count === 1 ? "1 photo" : `${count} photos`}
-        <InFlightCount data={data} />
-        {r2Problem(data.images)}
-      </p>
-    </>
-  );
-}
-
-/** Why R2 couldn't be checked, after the count; nothing when it was, or the offline notice says so. */
-function r2Problem(images: PublishedResponse["images"]): string {
-  if (images.checked || images.offline) return "";
-  return `. ${images.message ?? "Couldn't check R2."}`;
-}
-
-/** How many of the photos the pull request changes, linked to it, when it changes any. */
-function InFlightCount({ data }: { data: PublishedResponse }) {
-  const inFlight = data.files.filter((file) => file.inFlight).length;
-  if (!data.pullRequest || inFlight === 0) return null;
-  return (
-    <>
-      ; {inFlight} with changes in{" "}
-      <a
-        href={data.pullRequest.url}
-        target="_blank"
-        rel="noreferrer"
-        className="text-foreground underline underline-offset-4"
-      >
-        #{data.pullRequest.number}
-      </a>
-    </>
-  );
-}
-
 /** Whether the photo's title or file names contain filter, ignoring case. */
-function matches(file: PublishedFile, filter: string): boolean {
+function matches(file: GalleryFile, filter: string): boolean {
   const query = filter.trim().toLowerCase();
   if (!query) return true;
-  return [photoName(file), file.photoName, fileName(file.path)].some((text) =>
+  return [file.name, file.photoName, fileName(file.path)].some((text) =>
     text.toLowerCase().includes(query),
   );
 }

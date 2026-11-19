@@ -72,6 +72,10 @@ type TripSegment struct {
 	// Line is the bus, subway or train line a hop rode, picked from the ones
 	// OpenStreetMap maps; nil when not picked.
 	Line *TripTransitLine `json:"line,omitempty"`
+	// Rides are the lines a hop with a Line rode one after another when its
+	// route changed lines, such as 北松江線 to 川跡 and then 大社線, each drawn
+	// along its stretch of Path in its own color. None for one line.
+	Rides []TripLegRide `json:"rides,omitempty"`
 	// Board and Alight are the station or stop a hop with a Line got on and
 	// off at, when away from its photos, such as a station a 10-minute walk
 	// from the next photo: the line rides between them, with a walk from
@@ -96,7 +100,18 @@ type TripVia struct {
 	// Visit is the place visited (its index in the day's visits) this spot
 	// stands for, so the line passes through it; nil for a spot of its own.
 	Visit *int `json:"visit,omitempty"`
+	// By is how a walk goes to and from this spot when snapped to streets:
+	// ViaByRoad along the road (as a car would, turning back allowed),
+	// ViaByFoot along walkways only, or empty to let the snap choose (see
+	// the routing package's detour check).
+	By string `json:"by,omitempty"`
 }
+
+// How a walk goes to and from a via spot (TripVia.By).
+const (
+	ViaByRoad = "road"
+	ViaByFoot = "foot"
+)
 
 // TripLine is a trip line file: the route of one day, which the portfolio's
 // map draws.

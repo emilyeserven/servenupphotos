@@ -29,6 +29,7 @@ import {
   statById,
 } from "@/lib/graph-data";
 import { Button } from "@/components/ui/button";
+import { shownMeasure } from "@/lib/graph-measure";
 import { type GraphPick, samePick } from "@/lib/graph-pick";
 import { photoDots } from "@/lib/graph-photo-dots";
 import type { Photo } from "@/lib/photos";
@@ -237,9 +238,10 @@ function GraphBody({ list, config, view }: { list: Photo[]; config: GraphConfig;
 function ScatterBody({ list, config, view }: { list: Photo[]; config: GraphConfig; view: View }) {
   const data = useMemo(() => scatterData(list, config), [list, config]);
   const names = { xName: statById(config.x).label, yName: statById(config.y).label };
-  if (view === "table") return <ScatterTable data={data} {...names} />;
-  if (config.type === "heatmap") return <HeatmapGraph data={data} {...names} />;
-  return <ScatterGraph data={data} {...names} />;
+  const props = { data, ...names, measure: config.measure };
+  if (view === "table") return <ScatterTable {...props} />;
+  if (config.type === "heatmap") return <HeatmapGraph {...props} />;
+  return <ScatterGraph {...props} />;
 }
 
 /** A photo dot graph of the photos kept, or its photo counts as a table. */
@@ -258,10 +260,11 @@ function PhotoDotsChart({ list, config }: { list: Photo[]; config: GraphConfig }
 /** A bar, line or pie graph of the photos kept, or its numbers as a table. */
 function SeriesBody({ list, config, view }: { list: Photo[]; config: GraphConfig; view: View }) {
   const graph = useMemo(() => graphData(list, config), [list, config]);
+  const measure = shownMeasure(config);
   if (view === "table") {
-    return <GraphTable graph={graph} measure={config.measure} xName={statById(config.x).label} />;
+    return <GraphTable graph={graph} measure={measure} xName={statById(config.x).label} />;
   }
-  return DRAW[config.type as SeriesType](graph, config);
+  return DRAW[config.type as SeriesType](graph, { ...config, measure });
 }
 
 /** The graph types drawn from series: every one but the scatterplot, the heatmap and the photo dot graph. */

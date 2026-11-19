@@ -127,15 +127,20 @@ function nameOf(s: TripSegment, byPhoto: Map<number, string>, names: Record<stri
   return keys.size === 1 ? (names[[...keys][0] ?? ""] ?? "").trim() : "";
 }
 
-/** The segments with the name of the group each is in, where it has one. */
+/**
+ * The segments with the name of the group each is in, where it has one; a stretch between two trip
+ * stops, with no photo, is in the group of the segment before it.
+ */
 export function withNames(
   segments: TripSegment[],
   photos: number[],
   draft: GapDraft,
 ): TripSegment[] {
   const byPhoto = groupOfPhoto(photos, draft.groups);
+  let last = "";
   return segments.map((s) => {
-    const name = nameOf(s, byPhoto, draft.names ?? {});
+    const name = s.photos.length > 0 ? nameOf(s, byPhoto, draft.names ?? {}) : last;
+    last = name;
     return name ? { ...s, name } : s;
   });
 }

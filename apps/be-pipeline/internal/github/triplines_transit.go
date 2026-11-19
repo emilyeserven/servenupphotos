@@ -22,7 +22,9 @@ type TripTransitLine struct {
 	// in; "" for the usual hop color.
 	Colour string `json:"colour,omitempty"`
 	// Source is where the line was found: "" for OpenStreetMap, whose route
-	// relation ID is its ID, or "transitland" for a Transitland route.
+	// relation ID is its ID, "transitland" for a Transitland route, or "mlit"
+	// for a route along Japan's rail map (see transit.MLITLines), or "osmrail"
+	// for one along a country's OpenStreetMap rail map (transit.OSMRailLines).
 	Source string `json:"source,omitempty"`
 }
 
@@ -41,7 +43,12 @@ func trimLine(seg *TripSegment, n int) *PublishError {
 		seg.Line = nil
 	}
 	if seg.Line == nil {
-		seg.Board, seg.Alight = nil, nil
+		seg.Board, seg.Alight, seg.Rides = nil, nil, nil
+	}
+	for i := range seg.Rides {
+		if perr := checkRide(&seg.Rides[i], n); perr != nil {
+			return perr
+		}
 	}
 	if !streetModes[seg.Mode] && seg.Line == nil {
 		seg.Path = nil
@@ -67,7 +74,7 @@ func validLine(l *TripTransitLine, n int) *PublishError {
 	if l.Name == "" || utf8.RuneCountInString(l.Name) > maxEntryTextLength || utf8.RuneCountInString(l.Ref) > 32 {
 		return publishErr(http.StatusBadRequest, "Segment %d: its line needs a name of up to %d characters and a number of up to 32.", n, maxEntryTextLength)
 	}
-	if l.Source != "" && l.Source != "transitland" {
+	if l.Source != "" && l.Source != "transitland" && l.Source != "mlit" && l.Source != "osmrail" {
 		l.Source = ""
 	}
 	if l.Colour != "" && !colourPattern.MatchString(l.Colour) {
@@ -100,7 +107,7 @@ func segmentFeatures(line TripLine, seg TripSegment, spots map[int]tripSpot) []t
 	coords, photos := segmentPoints(seg, spots)
 	first, last := photos[:min(1, len(photos))], photos[max(0, len(photos)-1):]
 	out := stationWalk(line, seg.Name, seg.Board, func(st [2]float64) [][2]float64 { return walkPoints(seg.BoardWalk, coords[0], st) }, first)
-	out = append(out, f)
+	out = append(out, rideFeatures(f, hopRides(seg, f))...)
 	return append(out, stationWalk(line, seg.Name, seg.Alight, func(st [2]float64) [][2]float64 { return walkPoints(seg.AlightWalk, st, coords[len(coords)-1]) }, last)...)
 }
 
@@ -128,4 +135,19 @@ func rideEnds(seg TripSegment, coords [][2]float64) [][2]float64 {
 		out[len(out)-1] = [2]float64{seg.Alight.Longitude, seg.Alight.Latitude}
 	}
 	return out
+}
+
+// hopRides are the rides of a hop that changed lines, each drawn as its own
+// line; none when it rode one line, a ride has no line or track, or the hop is
+// drawn f, not along its track, since its photos moved.
+func hopRides(seg TripSegment, f tripLineFeature) []TripLegRide {
+	if len(seg.Rides) < 2 || !slices.Equal(f.Geometry.Coordinates, seg.Path) {
+		return nil
+	}
+	for _, r := range seg.Rides {
+		if r.Line == nil || len(r.Path) < 2 {
+			return nil
+		}
+	}
+	return seg.Rides
 }

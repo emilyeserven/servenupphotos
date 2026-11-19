@@ -9,7 +9,7 @@ import {
   publishedPhotosQuery,
 } from "@/api/photos";
 import type { TripVisit } from "@/api/trip-lines";
-import { allPhotosEntries } from "@/components/all-photos/all-photos-files";
+import { galleryFiles, isListable } from "@/components/gallery/gallery-files";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useLocalEditsStore } from "@/stores/local-edits";
@@ -51,13 +51,13 @@ function useDayFiles(day: string): DayFile[] | undefined {
   return useMemo(() => {
     if (!published.data || inFlight.isPending) return undefined;
     const raw = rawData(published.data, inFlight.data);
-    return allPhotosEntries(published.data, inFlight.data, edits, true)
-      .filter((e) => dayOf(e.data) === day)
+    return galleryFiles(published.data, inFlight.data, edits, true)
+      .filter((e) => isListable(e) && dayOf(e.edited) === day)
       .map((e) => ({
-        id: (e.data as { id: number }).id,
+        id: (e.edited as { id: number }).id,
         path: e.path,
         name: e.name,
-        imageUrl: shownImageUrl(e.data, e.imageUrl),
+        imageUrl: shownImageUrl(e.edited, e.r2Url),
         before: raw.get(e.path) ?? {},
       }));
   }, [published.data, inFlight.data, inFlight.isPending, edits, day]);

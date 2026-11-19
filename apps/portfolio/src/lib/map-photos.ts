@@ -1,5 +1,6 @@
 import { LngLatBounds } from "maplibre-gl";
 import { useMemo } from "react";
+import { byCountrySource } from "@/lib/map-country-groups";
 import { type PlacedSet, splitSets } from "@/lib/map-sets";
 import { filterPhotos, type PhotoFilters } from "@/lib/photo-filters";
 import { filterByVisuals, type VisualSearch } from "@/lib/visual-filters";
@@ -49,16 +50,24 @@ function geoJsonOf(points: PlacedPhoto[]) {
   };
 }
 
+/** One country's photos as the map's source of them, under the source's ID. */
+export interface CountrySource {
+  id: string;
+  geoJson: ReturnType<typeof geoJsonOf>;
+}
+
 /** A Photo Set the map draws as one marker. */
 export type MapSet = PlacedSet<PlacedPhoto>;
 
 /** The photos the map shows, its Photo Sets, their GeoJSON and their bounds. */
-interface MapPhotos {
+export interface MapPhotos {
   placed: PlacedPhoto[];
   /** The Photo Sets with at least two photos the filters leave, each always one marker. */
   sets: MapSet[];
   /** The photos not in those sets, which MapLibre groups. */
   geoJson: ReturnType<typeof geoJsonOf>;
+  /** The same photos split by country, which MapLibre groups each on their own when zoomed out. */
+  countries: CountrySource[];
   bounds: LngLatBounds | null;
 }
 
@@ -78,6 +87,10 @@ export function useMapPhotos(filters: PhotoFilters & VisualSearch): MapPhotos {
       placed,
       sets,
       geoJson: geoJsonOf(loose),
+      countries: [...byCountrySource(loose)].map(([id, points]) => ({
+        id,
+        geoJson: geoJsonOf(points),
+      })),
       bounds: boundsOf(placed),
     };
   }, [key]);

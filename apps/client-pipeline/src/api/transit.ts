@@ -19,10 +19,12 @@ export interface TransitLine extends TripTransitLine {
 }
 
 /**
- * Where lines and their tracks are looked up: OpenStreetMap through its Overpass servers, or
- * Transitland, which gathers the timetables transit agencies publish (it needs an API key).
+ * Where lines and their tracks are looked up: OpenStreetMap through its Overpass servers,
+ * Transitland, which gathers the timetables transit agencies publish (it needs an API key), or
+ * Japan's rail map ("mlit", MLIT's railway data), or a country's OpenStreetMap rail map ("osmrail",
+ * downloaded once from Geofabrik); both rail maps find routes that change lines too.
  */
-export type RouteSource = "overpass" | "transitland";
+export type RouteSource = "overpass" | "transitland" | "mlit" | "osmrail";
 
 /** What a hop's look-ups ask about: how it was travelled, and its first and last spots. */
 export interface HopAsk {
@@ -31,9 +33,12 @@ export interface HopAsk {
   to: Spot;
 }
 
-/** The query string that asks Transitland for a line from there, or nothing for OpenStreetMap. */
+/**
+ * The query string that asks Transitland or a rail map for a line from there, or nothing for
+ * OpenStreetMap's Overpass servers.
+ */
 function sourceParam(source: RouteSource | undefined): string {
-  return source === "transitland" ? "&source=transitland" : "";
+  return source && source !== "overpass" ? `&source=${source}` : "";
 }
 
 /** The look-up's spots as the query string writes them. */
@@ -43,7 +48,8 @@ function spotParams({ from, to }: Pick<HopAsk, "from" | "to">): string {
 
 /**
  * The lines of the hop's kind whose track passes near both its spots, from OpenStreetMap through
- * the Overpass API (which the backend asks at most once a second) or from Transitland.
+ * the Overpass API (which the backend asks at most once a second), from Transitland, or from Japan's
+ * rail map.
  */
 export function transitLinesQuery(ask: HopAsk, source: RouteSource) {
   const mode = encodeURIComponent(ask.mode);
@@ -103,7 +109,7 @@ export interface StationAsk {
 }
 
 /**
- * The stations or stops of the kind whose name has the name typed, within 30 km of the spot, from
+ * The stations or stops of the kind whose name has the name typed, near the spot (within about 100 km on Photon, 30 km on Overpass), from
  * OpenStreetMap's data through the source picked.
  */
 export function transitStationsQuery({ mode, name, near, source }: StationAsk) {
@@ -116,13 +122,25 @@ export function transitStationsQuery({ mode, name, near, source }: StationAsk) {
   });
 }
 
+/** One line of a rail map route that changed lines, with its stretch of the track. */
+export interface TrackRide {
+  /** The line alone, whose stops are its own. */
+  line: TransitLine;
+  path: Spot[];
+  /** The station it changed lines at, at the end of this ride; left out on the last. */
+  change?: TransitStop;
+}
+
+/** A line's track between two spots, and the lines a rail map route rode in turn. */
+export interface Track {
+  path: Spot[];
+  /** Each line ridden in order, from a rail map route that changed lines; left out for one line. */
+  rides?: TrackRide[];
+}
+
 /** The line's track between two spots, each point [longitude, latitude], from where it was found. */
-export function fetchTrack(
-  { id, source }: TripTransitLine,
-  from: Spot,
-  to: Spot,
-): Promise<{ path: Spot[] }> {
-  return transitJson<{ path: Spot[] }>(
+export function fetchTrack({ id, source }: TripTransitLine, from: Spot, to: Spot): Promise<Track> {
+  return transitJson<Track>(
     `/api/transit/lines/${id}/track?${spotParams({ from, to })}${sourceParam(source)}`,
   );
 }

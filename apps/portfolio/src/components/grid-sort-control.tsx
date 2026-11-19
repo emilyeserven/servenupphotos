@@ -8,22 +8,27 @@ import { defaultOrder, type GridSort } from "@/lib/grid-sort";
 import { cn } from "@/lib/utils";
 
 /** What the **Sort** menu sorts by; newest and oldest first are both "taken", either way round. */
-type Criterion = "taken" | "added" | "time" | "color" | "vivid";
+type Criterion = "taken" | "added" | "time" | "distance" | "color" | "vivid";
 
 /** Each criterion's name in the menu and on the button, in the menu's order. */
 const CRITERIA: readonly (readonly [Criterion, string])[] = [
   ["taken", "Date taken"],
   ["added", "Date added"],
   ["time", "Time of day"],
+  ["distance", "Distance"],
   ["color", "Color"],
   ["vivid", "Vividness"],
 ];
 
 /** What each way round means for the sorts that aren't by color, for the arrow's tooltip. */
-const DATE_ORDER_TITLES: Record<"taken" | "added" | "time", Record<ColorOrder, string>> = {
+const DATE_ORDER_TITLES: Record<
+  "taken" | "added" | "time" | "distance",
+  Record<ColorOrder, string>
+> = {
   taken: { asc: "Oldest first", desc: "Newest first" },
   added: { asc: "Least recently added first", desc: "Most recently added first" },
   time: { asc: "Earliest in the day first", desc: "Latest in the day first" },
+  distance: { asc: "Nearest first", desc: "Farthest first" },
 };
 
 /** Every criterion's ascending and descending meaning. */
@@ -45,11 +50,17 @@ function criterionLabel(sort: GridSort): string {
 
 /**
  * The URL change for sorting by a criterion its default way round, which also clears the color
- * sorts' secondary sort; undefined clears the sort back to the Grid's default, newest first.
+ * sorts' secondary sort and Distance's spot; undefined clears the sort back to the Grid's default, newest first.
  */
 function pickSearch(criterion: Criterion | undefined) {
   const sort = criterion === "taken" ? "newest" : criterion;
-  return { sort, order: undefined, secondary: undefined, secondaryOrder: undefined };
+  return {
+    sort,
+    order: undefined,
+    secondary: undefined,
+    secondaryOrder: undefined,
+    near: undefined,
+  };
 }
 
 /**

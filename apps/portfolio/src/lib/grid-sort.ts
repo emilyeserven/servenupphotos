@@ -1,15 +1,17 @@
 import { startOfDay } from "date-fns";
 import { type ColorOrder, type ColorSort, sortPhotos, type VividMeasure } from "@/lib/color-sort";
+import type { Point } from "@/lib/distance";
+import { byDistance } from "@/lib/distance-sort";
 import type { ColorName } from "@/lib/photo-colors";
 import type { Photo } from "@/lib/photos";
 import { minuteOfDay } from "@/lib/time-of-day";
 
 /**
  * What the Grid is sorted by: when each photo was taken, either way, when it was added to the
- * portfolio, most recent first, the time of day it was taken, earliest first, or its color or
- * vividness.
+ * portfolio, most recent first, the time of day it was taken, earliest first, how far from a spot
+ * it was taken, nearest first, or its color or vividness.
  */
-export type GridSort = "newest" | "oldest" | "added" | "time" | ColorSort;
+export type GridSort = "newest" | "oldest" | "added" | "time" | "distance" | ColorSort;
 
 /** The Grid's sorts that aren't by color or vividness. */
 type DateSort = Exclude<GridSort, ColorSort>;
@@ -21,6 +23,8 @@ export interface GridColorSpec {
   secondaryOrder: ColorOrder;
   measure: VividMeasure;
   color?: ColorName;
+  /** Where **Distance** measures from. */
+  near: Point;
 }
 
 /** A photo whose colors are saved, with how vivid they are, which is all the color sorts can place. */
@@ -39,12 +43,15 @@ export function defaultOrder(sort: GridSort): ColorOrder {
   return sort === "newest" || sort === "added" ? "desc" : "asc";
 }
 
-/** The date sorts that `?order=` can turn around; newest and oldest first are each other's way round. */
-const ORDERED_DATE_SORTS: readonly GridSort[] = ["added", "time"];
+/**
+ * The sorts besides color that `?order=` can turn around; newest and oldest first are each other's
+ * way round.
+ */
+const ORDERED_DATE_SORTS: readonly GridSort[] = ["added", "time", "distance"];
 
 /**
- * The `?order=` to keep for a date sort: only for Recently Added and Time of Day, and only when it's
- * the way round from their default.
+ * The `?order=` to keep for a sort that isn't by color: only for Recently Added, Time of Day and
+ * Distance, and only when it's the way round from their default.
  */
 export function parseDateOrder(sort: GridSort, order: unknown): { order?: ColorOrder } {
   if (!ORDERED_DATE_SORTS.includes(sort)) return {};
@@ -84,14 +91,17 @@ function byTimeOfDay<T extends Photo>(newestFirst: T[], order: ColorOrder): T[] 
   return newestFirst.toSorted((a, b) => sign * (minuteOfDay(a) - minuteOfDay(b)));
 }
 
-/** Each sort that isn't by color or vividness, given the photos newest first and which way it runs. */
-const DATE_SORTS: Record<DateSort, <T extends Photo>(newestFirst: T[], order: ColorOrder) => T[]> =
-  {
-    newest: (newestFirst) => newestFirst,
-    oldest: (newestFirst) => newestFirst.toReversed(),
-    added: byAdded,
-    time: byTimeOfDay,
-  };
+/** Each sort that isn't by color or vividness, given the photos newest first and how it runs. */
+const DATE_SORTS: Record<
+  DateSort,
+  <T extends Photo>(newestFirst: T[], spec: GridColorSpec) => T[]
+> = {
+  newest: (newestFirst) => newestFirst,
+  oldest: (newestFirst) => newestFirst.toReversed(),
+  added: (newestFirst, spec) => byAdded(newestFirst, spec.order),
+  time: (newestFirst, spec) => byTimeOfDay(newestFirst, spec.order),
+  distance: (newestFirst, spec) => byDistance(newestFirst, spec.order, spec.near),
+};
 
 /** Whether the sort is by color or vividness. */
 function isColorSort(sort: GridSort): sort is ColorSort {
@@ -100,7 +110,7 @@ function isColorSort(sort: GridSort): sort is ColorSort {
 
 /**
  * The photos, given newest first, in the Grid's sort: newest or oldest first, by when they were
- * added or the time of day, either way as spec's order says, or by color or vividness as spec asks, with photos whose colors
+ * added, the time of day or the distance from spec's spot, either way as spec's order says, or by color or vividness as spec asks, with photos whose colors
  * aren't saved yet after the rest, newest first.
  */
 export function sortGrid<T extends Photo>(
@@ -108,7 +118,7 @@ export function sortGrid<T extends Photo>(
   sort: GridSort,
   spec: GridColorSpec,
 ): T[] {
-  if (!isColorSort(sort)) return DATE_SORTS[sort](newestFirst, spec.order);
+  if (!isColorSort(sort)) return DATE_SORTS[sort](newestFirst, spec);
   const colored = sortPhotos(newestFirst.filter(isColored), { ...spec, sort });
   return [...colored, ...newestFirst.filter((photo) => !isColored(photo))];
 }

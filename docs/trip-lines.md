@@ -44,7 +44,8 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - One photo can end a segment and start the next (304 and 305 above), so the line doesn't break at a station.
 - **`start`** and **`end`** are spots with no photo, such as the hotel, with an optional `label`.
 - **`via`** lists spots with no photo the line bends through, each with the photo it comes `after` (none for right
-  after `start`), and `visit` when it stands for a [trip stop](#trip-stops) on the route. See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
+  after `start`), `visit` when it stands for a [trip stop](#trip-stops) on the route, and on a walk `by`: `road` or
+  `foot` for how the walk goes to and from it when snapped (left out, the snap chooses). See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
 - **`path`** is a walk, bus or car segment's line along the streets, as `[longitude, latitude]` pairs, from **Snap to
   streets**, or a hop's track along its `line`. A train, subway or transit hop keeps one only with a line.
 - **`line`** is the bus, subway or train line a hop rode, picked under [Lines ridden](#lines-ridden):
@@ -235,11 +236,24 @@ café, bar, shop, museum, sight, station or other. It's only for adding them: **
 is clicked; **Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km
 of the day's photos, named after it; and **Add at this coordinate** adds one at a latitude and longitude typed or
 pasted in, such as `34.6672, 135.5013` from Google Maps (degrees and minutes work too); and **Add a station** finds a
-train, subway, bus or ferry station by name within 30 km of the day's first photo (the [station search](trips.md) a
+train, subway, bus or ferry station by name near the day's first photo (within about 100 km on Photon) (the [station search](trips.md) a
 Trip's legs use) and adds it as a **Station** stop, such as one changed trains at. Each row says where the stop
 is on the route, and its **Where on the route** menu sets it: not on the route, before photo 1, or after any photo (the
 photo strip on Route sets the same). Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
 Map or any other map, which opens from the row. The map shows each as a round pin with its kind's icon.
+
+A place visited twice, such as a station gone back to by car, gets **Visited again** on its row: a copy (the same name,
+kind, spot, note and link, but not the first visit's casual photos) off the route, whose **Where on the route** then
+puts it elsewhere.
+
+A stop on the route also has **Got here by**: how it was reached from the point before it, such as **Walked** between
+two stations in the middle of a train ride, or **Car or taxi** back to a station in the middle of a walk. Left at
+**The route's way**, it's travelled as the gap it's in. Otherwise the stop is saved with `"mode"` and the route is cut
+there: the stretch into the stop is its own segment in that mode (from the photo or stop before it, with no photo of
+its own when between two stops), and the line goes on from the stop the gap's way. The photo strip shows the way as a
+small icon before the stop's chip. The gaps read back from a cut line are the same, since the stretch from a gap's last
+stop to its photo keeps the gap's way (`lib/stop-ways.ts`). A train, subway, bus or transit hop is also cut at every
+trip stop on it, even one reached the route's way, so each stretch is its own row under [Lines ridden](#lines-ridden).
 
 ### Casual photos
 
@@ -277,8 +291,8 @@ The photo strip on **Route** puts these places on the route too: the plus under 
 the route yet, and picking one puts it between those two photos (with a link to the Trip Stops page to add more). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
-two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
-route, and a cross that takes it off the route again. Moving one earlier from after the
+two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one spot earlier or later on the
+route: first past the next stop between the same two photos, such as two stops before the first photo, then on one photo, landing next to the stops already there. A cross takes it off the route again. Moving one earlier from after the
 first photo, or picking it from the strip's **Start**, puts it before the first photo, as `"first": true` with no `after`, such as lunch before the first photo
 was taken: the line goes from the start spot through it to the first photo (as a via spot after the start spot), or,
 with no start spot, starts at it. The way from there to the first photo shows before photo 1 in the strip and can be
@@ -427,8 +441,15 @@ A line drawn by hand is straight from point to point. To make it follow the stre
    line nearest it. A hop with a line picked follows the line's track, so a via point never goes on the ride itself, but
    it can go on the walk from the photo to the station it got on at, or from the stop it got off at to the next photo.
    Drag a via point to move it, or click it to remove it. **Done adding via points** stops adding. The map numbers via
-   points v1, v2, … in the order the route goes through them, and the list under the tools says where each is ("After
-   photo 2", "Walk from Broderick St & Francisco St to photo 3"). Its arrows move one a place earlier or later: past
+   points v1, v2, … in the order the route goes through them, and the list under the tools groups them under the
+   stretch they're on ("After photo 2", "Walk from Broderick St & Francisco St to photo 3"). When a stretch's via
+   points aren't in the order a walk would pass them, **Put in order** sorts each stretch's, nearest first from where
+   it starts (`lib/via-tidy.ts`); none moves to another stretch. On a walk, each via point has a menu, **Auto**,
+   **Road** or **Walkway**, and a stretch with more than one has the same menu by its name to set them all (it says
+   **Mixed** when they differ). Road makes the stretches to and from that via point take the road path, even through
+   grounds; Walkway keeps the foot path, even when it detours; Auto lets the snap's detour check below choose. Two
+   ends that disagree leave the stretch between them on Auto. Changing it drops the walk's path, so it's snapped
+   again. Its arrows move one a place earlier or later: past
    the next via point, or past the photo or station at the end of its stretch into the next one, so a lone via point
    after photo 3 moves up onto the walk from the bus stop to photo 3. Its × removes it. The photo strip on **Route** shows the
    same numbered squares between the two photos each via point is between, before that stretch's trip stops; pointing
@@ -436,7 +457,20 @@ A line drawn by hand is straight from point to point. To make it follow the stre
 2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
    servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
    walk, bus or car segment's points and via points, walking on foot and buses and cars by road, and for every walk to
-   or from a station. Train and subway hops without a line stay dashed straight lines.
+   or from a station. Train and subway hops without a line stay dashed straight lines. A walk may turn back at a via
+   point (a via point just off the way is a there-and-back), while a bus or car can't and goes on round the block, so
+   each request says which with OSRM's `continue_straight` rather than leaving it to the server's default.
+   Some roads are mapped as closed to people on foot (often a national route with no pavement mapped, or with its
+   pavements mapped as separate paths that don't join it), so the foot profile reaches a via point on one by the
+   nearest side street and back. Each stretch of a walk, from one spot (photo or via point) to the next, is
+   checked on its own: one more than 1.6 times (and 150 m more than) the straight line between its spots is asked for
+   by road too (with turning back allowed), and the road's stretch is drawn in its place when it's at least 15%
+   shorter (`routing/detour.go`). Every other stretch keeps the foot path, so a walk through grounds no car enters,
+   such as a shrine's, stays on its paths. That costs one more request, only for walks with a stretch that detours.
+
+   > **Frontend analogy:** it's like a fetch with a fallback endpoint, tried only when the first answer fails a sanity
+   > check, rather than racing both on every call.
+
 3. **Save route** saves the paths with the line. Snapping alone saves nothing.
 
 `POST /api/triplines/<day>/route` → `POST /triplines/{day}/route` takes the line, checks it as saving would, and answers
@@ -455,8 +489,13 @@ one run locally.
 
 ## Lines ridden
 
-Under the map, **Lines ridden** lists each train, subway, bus or transit hop of a line drawn by hand. A hop with no line
-yet looks up its lines at once: the ones of its kind that pass within 500 m of both of its photos. A transit hop of
+Under the map, **Lines ridden** lists each train, subway, bus or transit hop of a line drawn by hand, one row for each
+stretch of it between photos, trip stops and the day's start: a ride from photo 1 changed at Dentetsu-Izumoshi (a trip
+stop on it) is two rows, "Photo 1 → Dentetsu-Izumoshi" and "Dentetsu-Izumoshi → Photo 2", each with its own line. The
+draft keeps each stretch's line by a leg key (`lib/hop-legs.ts`): the ID of the photo the hop starts from for its first
+stretch, as before hops were cut, and that ID with the stretch's number after it, such as `12+1`, for each one after a
+trip stop. Walks to and from the stations of a stretch that starts at a trip stop can't take via spots. A hop with no line
+yet looks up its lines at once: the ones of its kind that pass within 500 m of both of its ends. A transit hop of
 unknown kind first asks **Look for a** **Train**, **Subway**, **Bus** or **Ferry** line, and looks nothing up until one
 is picked, since looking for every kind at once is slow on OpenStreetMap's servers (the backend turns down
 `mode=transit` with a 400). Picking another kind looks again; the hop stays a transit hop. Each is a [route relation](https://wiki.openstreetmap.org/wiki/Relation:route),
@@ -478,7 +517,7 @@ hop is drawn along the line's track between them, solid in the line's color, wit
 it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
 route** keeps the line, the stations and the track.
 
-### Looking lines up on Transitland
+### Looking lines up on Transitland or a rail map
 
 The menu beside **Find lines** (and beside a Trip leg's **Look up route**) picks where lines are looked up, and the
 choice is kept in the browser for every look-up:
@@ -488,16 +527,59 @@ choice is kept in the browser for every look-up:
 - **Transitland** ([transit.land](https://www.transit.land)): the timetables transit agencies publish as GTFS, with
   each route's shape and stops. A route is listed when it has a stop within 500 m of both ends
   (`GET /routes?lat=…&lon=…&radius=500&route_types=…`, once per end, each route once when Transitland lists two copies of a feed), its track is cut from its shape the same way as
-  an OpenStreetMap line's, and its stops are put in order along its shape. It covers railways well (in Japan too),
-  ferries less so. It needs a free API key as `TRANSITLAND_API_KEY` in the repo's `.env` (see `.env.example`), sent
+  an OpenStreetMap line's, and its stops are put in order along its shape. It covers only what agencies publish:
+  many railways, but not JR West's lines in Japan, for example, and few ferries. It needs a free API key as `TRANSITLAND_API_KEY` in the repo's `.env` (see `.env.example`), sent
   as the `apikey` header; without one the look-up says so. Answers are kept for a day, and the backend logs each
   request (`be-pipeline/internal/transit/transitland.go`; `TRANSITLAND_URL` replaces the server).
+- **Japan rail map**: MLIT's railway data, [国土数値情報「鉄道データ（N02）」](https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N02-2024.html)
+  (2024): the track of every passenger railway in Japan, by line and operator (such as 山陰線, 西日本旅客鉄道), and
+  its stations, with no train or subway kinds told apart and names in Japanese only. The backend downloads its zip
+  once, the first time it's asked (`N02-24_GML.zip`, tens of megabytes; a look-up that can't wait for it says to try
+  again in a minute), keeps its two UTF-8 GeoJSON files in `MLIT_RAIL_DIR` or else in `mlit-n02-24` beside the settings file (the
+  `/data` volume in Docker, so it survives restarts), and reads them into one network: each point of a line's track joined to the next,
+  lines that meet joined where they share a point, and stations of one name within 500 m joined, so a ride can
+  change there. The look-up lists first the shortest route from near one end to near the other (each change of line
+  counting 20 km more, so it stays on one line where it can). It may start and end on any track within 1 km of each
+  end, each meter walked to it counting as 3 m of track, so an end between two railways starts on the one that goes
+  there, such as 一畑電車 at 電鉄出雲市 beside JR's 出雲市. The route is named by the lines it rides, such as
+  "山陽線 → 山陰線" for Shimonoseki to Higashi-Hagi, and then every line passing within 500 m of both ends. A
+  route's ID holds its lines (12 bits each, up to 5), so its track is the shortest way along those lines alone, and
+  its stops are their stations in order along them. `MLIT_RAIL_URL` replaces the download
+  (`be-pipeline/internal/transit/mlit.go`, `mlit_data.go`, and `rail.go` and `rail_graph.go`, which both rail maps
+  share). The data is MLIT's, under its [terms of use](https://nlftp.mlit.go.jp/ksj/other/yakkan.html).
+- **Rail map (OpenStreetMap)**: any other country's railways, from OpenStreetMap's extracts on
+  [Geofabrik](https://download.geofabrik.de), looked up the same way as Japan's rail map, for when the Overpass
+  servers are too slow. The backend downloads Geofabrik's [index](https://download.geofabrik.de/technical.html) of
+  its extracts once (`index-v1.json`), picks the smallest one whose outline holds both ends, such as South Korea for
+  Seoul to Busan (never a whole continent; a leg crossing a border finds none), and downloads that extract once
+  (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract twice (its railway ways, then their
+  points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
+  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/<extract>` beside the
+  settings file, then deletes the extract. A line is the ways of one name, shown by the English name most of its
+  ways have; unnamed track only joins lines, so a route never lists it. A station belongs to each line within 300 m
+  of it. A route's ID holds up to 4 lines and, above them, its extract's place in the index, so its track and stops
+  are looked up on the same extract (`be-pipeline/internal/transit/osmrail.go`, `osmrail_index.go`,
+  `osmrail_pbf.go`). The data is © OpenStreetMap contributors, under the
+  [ODbL](https://www.openstreetmap.org/copyright).
 
-A line picked from Transitland is saved with `"source": "transitland"`, so its stops and track are fetched from there
-again; one from OpenStreetMap has no `source`. The `?source=transitland` query below asks Transitland.
+A line picked from Transitland is saved with `"source": "transitland"`, one from Japan's rail map with
+`"source": "mlit"`, and one from an OpenStreetMap rail map with `"source": "osmrail"`, so its stops and track are
+fetched from there again; one from the Overpass servers has no `source`. The `?source=transitland`, `?source=mlit`
+and `?source=osmrail` queries below ask those.
 
-> **Frontend analogy:** it's the same component with two data providers behind it, like a `fetcher` prop that
-> switches between two REST APIs returning the same shape.
+A rail map route that changes lines, such as "北松江線 → 大社線" from 電鉄出雲市 to 出雲大社前, is ridden as each
+of its lines in turn. Its track answer also lists `rides`: each line alone (its own ID, so its stops are its own),
+its stretch of the track, and the station it changed at, the one on either line nearest where the tracks part
+within 1 km (川跡 here; unnamed when none is). The hop saves them as `rides` beside its `line`, the same shape as a
+Trip leg's (`TripLegRide`). **Lines ridden** shows them in order, "北松江線 → change at 川跡 → 大社線", the Route
+map draws each along its stretch in its own color, and Commit bakes each as its own line on the portfolio map, from
+the station changed at before it to the one after (`be-pipeline/internal/transit/rail_rides.go`,
+`github/triplines_transit.go`). A route of one line, or one from Transitland or the Overpass servers, has none.
+
+> **Frontend analogy:** it's the same component with four data providers behind it, like a `fetcher` prop that
+> switches between REST APIs returning the same shape. The rail maps are the ones that are static files: like
+> bundling a big JSON once and searching it in memory instead of calling an API, with the route search being a
+> shortest-path over a graph of points, the way a maps app finds directions.
 
 - `GET /api/transit/lines?mode=subway&from=<lng,lat>&to=<lng,lat>` answers the lines found. `mode` is `train`,
   `subway`, `bus` or `ferry`.
@@ -505,7 +587,8 @@ again; one from OpenStreetMap has no `source`. The `?source=transitland` query b
   `latitude` and `longitude` (its `stop` members, or else its platforms).
 - `GET /api/transit/lines/<id>/track?from=…&to=…` answers `{ "path": [...] }`. It's the shortest way along the line's
   mapped ways between the points on it nearest each photo, so it works whichever way the ways were drawn. It fails
-  with 422 when the line's track doesn't join the two spots.
+  with 422 when the line's track doesn't join the two spots. A rail map route that changes lines also answers
+  `"rides"`, each line in turn with its stretch of track and the station it changed at (see above).
 
 Both ask the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) at `overpass-api.de`, which asks for
 light use, so `be-pipeline/internal/transit` spaces its requests a second apart, through the same throttle as the

@@ -18,7 +18,9 @@ func bakeTrips(trips []Trip, spots map[int]tripSpot) []any {
 	for _, trip := range trips {
 		for _, leg := range trip.Legs {
 			if f, ok := legFeature(trip, leg, spots); ok {
-				out = append(out, rideFeatures(f, separateRides(leg))...)
+				for _, ride := range rideFeatures(f, separateRides(leg)) {
+					out = append(out, ride)
+				}
 				out = append(out, stationWalks(trip, leg, spots)...)
 			}
 		}
@@ -128,14 +130,14 @@ func separateRides(leg TripLeg) []TripLegRide {
 	return leg.Rides
 }
 
-// rideFeatures are the leg's line f, or with rides, one line for each ride
-// along its track in its line's color, from the station changed at before it
-// to the one after.
-func rideFeatures(f tripLineFeature, rides []TripLegRide) []any {
+// rideFeatures are the leg's or hop's line f, or with rides, one line for each
+// ride along its track in its line's color, from the station changed at before
+// it to the one after.
+func rideFeatures(f tripLineFeature, rides []TripLegRide) []tripLineFeature {
 	if len(rides) == 0 {
-		return []any{f}
+		return []tripLineFeature{f}
 	}
-	out := make([]any, 0, len(rides))
+	out := make([]tripLineFeature, 0, len(rides))
 	start := f.Properties.Start
 	for _, r := range rides {
 		ride := f

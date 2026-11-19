@@ -11,7 +11,14 @@ import {
 import type { TripPoint, TripSegment, TripTransitLine } from "@/api/trip-lines";
 import { lineOf } from "@/lib/transit-line";
 import { useRouteSourceStore } from "@/stores/route-source";
-import { oneLine, type Ride, rideSpots, type Stations, stationsFor } from "@/lib/transit-ride";
+import {
+  oneLine,
+  type Ride,
+  ridesOf,
+  rideSpots,
+  type Stations,
+  stationsFor,
+} from "@/lib/transit-ride";
 
 /**
  * The ride on line between the stations chosen (the stops nearest near's spots where none was),
@@ -25,8 +32,9 @@ async function rideOn(
 ): Promise<Ride> {
   const stops = await client.fetchQuery(transitStopsQuery(line));
   const stations = stationsFor(stops, near, chosen);
-  const { path } = await fetchTrack(line, ...rideSpots(ask, stations));
-  return { line, path, ...stations };
+  const track = await fetchTrack(line, ...rideSpots(ask, stations));
+  const rides = ridesOf(track);
+  return { line, path: track.path, ...stations, ...(rides && { rides }) };
 }
 
 /**

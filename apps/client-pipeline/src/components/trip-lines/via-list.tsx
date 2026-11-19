@@ -1,8 +1,8 @@
-import { ArrowDown, ArrowUp, X } from "lucide-react";
+import { ArrowDown, ArrowUp, ListOrdered, X } from "lucide-react";
 import type { TripSegment } from "@/api/trip-lines";
 import { Button } from "@/components/ui/button";
 import type { TripDay } from "@/lib/trip-days";
-import type { GapDraft } from "@/lib/trip-gaps";
+import type { GapDraft, ViaKey } from "@/lib/trip-gaps";
 import { movedVia } from "@/lib/trip-points";
 import { type WalkEnd, walkOfKey } from "@/lib/station-walks";
 import {
@@ -11,7 +11,10 @@ import {
   type PlacedVia,
   photoAfter,
   viasInRouteOrder,
+  walkViaKeys,
 } from "@/lib/via-order";
+import { sharedBy, viaInWalkingOrder, viaOutOfOrder, withViaBy } from "@/lib/via-tidy";
+import { ViaBySelect } from "@/components/trip-lines/via-by-select";
 
 interface ViaListProps {
   day: TripDay;
@@ -20,52 +23,179 @@ interface ViaListProps {
   onChange: (draft: GapDraft) => void;
 }
 
+/** The via points of one stretch (the list after one key), with their numbers on the map. */
+interface Stretch {
+  key: ViaKey;
+  vias: { via: PlacedVia; n: number }[];
+}
+
+/** The via points in route order, numbered from 1, in runs that share a stretch. */
+function stretches(ordered: PlacedVia[]): Stretch[] {
+  const out: Stretch[] = [];
+  ordered.forEach((via, i) => {
+    const last = out.at(-1);
+    if (last?.key === via.key) last.vias.push({ via, n: i + 1 });
+    else out.push({ key: via.key, vias: [{ via, n: i + 1 }] });
+  });
+  return out;
+}
+
 /**
- * The via points in the order the route goes through them, numbered as on the map, each moved one
- * place earlier or later, or removed. Moving one past a photo or station makes the route bend
- * through it on the other side of it, such as on the walk from a bus stop to the next photo.
+ * The via points in the order the route goes through them, numbered as on the map, under the
+ * stretch they're on. **Put in order** sorts each stretch's into the order a walk passes them. On a
+ * walk, each via point (or a whole stretch's at once) says whether the walk goes to it by road or
+ * walkway. Each moves one place earlier or later, or is removed; moving one past a photo or station
+ * makes the route bend through it on the other side of it.
  */
 export function ViaList({ day, draft, segments, onChange }: ViaListProps) {
   const ordered = viasInRouteOrder(draft, segments);
   if (ordered.length === 0) return null;
-  const move = (via: PlacedVia, step: -1 | 1) => onChange(movedInRoute(draft, segments, via, step));
+  const walks = walkViaKeys(segments);
   return (
-    <ol className="flex flex-col gap-1 text-sm" aria-label="Via points">
-      {ordered.map((via, i) => (
-        <li key={`${via.key}-${via.index}`} className="flex items-center gap-2">
-          <ViaNumber n={i + 1} />
-          <span className="text-muted-foreground min-w-0 flex-1 truncate">
-            {whereOnRoute(via, day, segments)}
-          </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={`Move via point ${i + 1} earlier`}
-            disabled={!canMove(draft, segments, via, -1)}
-            onClick={() => move(via, -1)}
-          >
-            <ArrowUp aria-hidden />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={`Move via point ${i + 1} later`}
-            disabled={!canMove(draft, segments, via, 1)}
-            onClick={() => move(via, 1)}
-          >
-            <ArrowDown aria-hidden />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={`Remove via point ${i + 1}`}
-            onClick={() => onChange(movedVia(draft, via.key, via.index, null))}
-          >
-            <X aria-hidden />
-          </Button>
-        </li>
-      ))}
-    </ol>
+    <div className="flex flex-col gap-2 text-sm">
+      {viaOutOfOrder(draft, day.photos, segments) && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="self-start"
+          onClick={() => onChange(viaInWalkingOrder(draft, day.photos, segments))}
+        >
+          <ListOrdered aria-hidden /> Put in order
+        </Button>
+      )}
+      <ol className="flex flex-col gap-2" aria-label="Via points">
+        {stretches(ordered).map((stretch) => (
+          <StretchVias
+            key={stretch.key}
+            stretch={stretch}
+            title={whereOnRoute(stretch.key, day, segments)}
+            onWalk={walks.has(stretch.key)}
+            draft={draft}
+            segments={segments}
+            onChange={onChange}
+          />
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+interface StretchViasProps {
+  stretch: Stretch;
+  title: string;
+  /** Whether the stretch is on a walk, so its via points say road or walkway. */
+  onWalk: boolean;
+  draft: GapDraft;
+  segments: TripSegment[];
+  onChange: (draft: GapDraft) => void;
+}
+
+/** One stretch's via points under its name, with a menu setting road or walkway for all of them. */
+function StretchVias({ stretch, title, onWalk, draft, segments, onChange }: StretchViasProps) {
+  const { key, vias } = stretch;
+  return (
+    <li className="flex flex-col gap-1">
+      <StretchTitle
+        title={title}
+        setsAll={onWalk && vias.length > 1}
+        draft={draft}
+        viaKey={key}
+        onChange={onChange}
+      />
+      <ol className="flex flex-col gap-1">
+        {vias.map(({ via, n }) => (
+          <ViaRow
+            key={`${via.key}-${via.index}`}
+            via={via}
+            n={n}
+            onWalk={onWalk}
+            draft={draft}
+            segments={segments}
+            onChange={onChange}
+          />
+        ))}
+      </ol>
+    </li>
+  );
+}
+
+interface StretchTitleProps {
+  title: string;
+  /** Whether it has a menu setting road or walkway for every via point of the stretch. */
+  setsAll: boolean;
+  draft: GapDraft;
+  viaKey: ViaKey;
+  onChange: (draft: GapDraft) => void;
+}
+
+/** A stretch's name, and on a walk with more than one via point, road or walkway for all of them. */
+function StretchTitle({ title, setsAll, draft, viaKey, onChange }: StretchTitleProps) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="min-w-0 flex-1 truncate text-xs font-medium">{title}</span>
+      {setsAll && (
+        <ViaBySelect
+          label={`${title}: every via point goes by`}
+          value={sharedBy(draft.via?.[viaKey] ?? [])}
+          onChange={(by) => onChange(withViaBy(draft, viaKey, by))}
+        />
+      )}
+    </div>
+  );
+}
+
+interface ViaRowProps {
+  via: PlacedVia;
+  /** Its number on the map. */
+  n: number;
+  /** Whether it's on a walk, so it says road or walkway. */
+  onWalk: boolean;
+  draft: GapDraft;
+  segments: TripSegment[];
+  onChange: (draft: GapDraft) => void;
+}
+
+/** One via point: its number, road or walkway on a walk, moving it earlier or later, and removing it. */
+function ViaRow({ via, n, onWalk, draft, segments, onChange }: ViaRowProps) {
+  const move = (step: -1 | 1) => onChange(movedInRoute(draft, segments, via, step));
+  return (
+    <li className="flex items-center gap-2">
+      <ViaNumber n={n} />
+      <span className="flex-1" />
+      {onWalk && (
+        <ViaBySelect
+          label={`Via point ${n} goes by`}
+          value={draft.via?.[via.key]?.[via.index]?.by ?? ""}
+          onChange={(by) => onChange(withViaBy(draft, via.key, by, via.index))}
+        />
+      )}
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label={`Move via point ${n} earlier`}
+        disabled={!canMove(draft, segments, via, -1)}
+        onClick={() => move(-1)}
+      >
+        <ArrowUp aria-hidden />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label={`Move via point ${n} later`}
+        disabled={!canMove(draft, segments, via, 1)}
+        onClick={() => move(1)}
+      >
+        <ArrowDown aria-hidden />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label={`Remove via point ${n}`}
+        onClick={() => onChange(movedVia(draft, via.key, via.index, null))}
+      >
+        <X aria-hidden />
+      </Button>
+    </li>
   );
 }
 
@@ -89,7 +219,7 @@ export function stripVias(
   viasInRouteOrder(draft, segments).forEach((via, i) => {
     const next = photoAfter(via.key, ids, segments);
     if (next === undefined) return;
-    const label = `Via point ${i + 1}: ${whereOnRoute(via, day, segments)}`;
+    const label = `Via point ${i + 1}: ${whereOnRoute(via.key, day, segments)}`;
     out.set(next, [...(out.get(next) ?? []), { n: i + 1, label }]);
   });
   return out;
@@ -99,7 +229,7 @@ export function stripVias(
 export function ViaChips({ vias = [] }: { vias?: StripVia[] }) {
   if (vias.length === 0) return null;
   return (
-    <span className="flex flex-col items-center gap-0.5" aria-label="Via points here">
+    <span className="flex items-center gap-0.5" aria-label="Via points here">
       {vias.map(({ n, label }) => (
         <span key={n} title={label} aria-label={label}>
           <ViaNumber n={n} />
@@ -136,7 +266,7 @@ function walkName(day: TripDay, segments: TripSegment[], end: WalkEnd, a: number
  * Where the via point is on the route: on the walk to or from a station of a hop with a line, after
  * the start spot, or after a photo.
  */
-function whereOnRoute({ key }: PlacedVia, day: TripDay, segments: TripSegment[]): string {
+function whereOnRoute(key: ViaKey, day: TripDay, segments: TripSegment[]): string {
   const walk = walkOfKey(key);
   if (walk) return walkName(day, segments, walk.end, walk.a);
   return key === "start" ? "After the start spot" : `After ${photoName(day, Number(key))}`;

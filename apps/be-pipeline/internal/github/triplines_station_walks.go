@@ -99,7 +99,7 @@ func routedWalk(ctx context.Context, w *StationWalk, from, to [2]float64, route 
 	if route == nil {
 		return w, unrouted + 1
 	}
-	path, err := route(ctx, ModeWalk, points)
+	path, err := route(ctx, ModeWalk, points, nil)
 	if err != nil || len(path) < 2 || len(path) > maxPathPoints {
 		return w, unrouted + 1
 	}

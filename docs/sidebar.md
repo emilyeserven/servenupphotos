@@ -13,7 +13,6 @@ branches that add pages don't clash:
   - Photo
     - Alt Text
   - Gallery
-  - All Photos
 - **Pipeline**
   - Photos in Flight
   - Compare

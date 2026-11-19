@@ -6,8 +6,12 @@ import type {
   TripTransitLine,
   TripVia,
   TripVisit,
+  ViaBy,
 } from "@/api/trip-lines";
+import type { TripLegRide } from "@/api/trips";
 import { walkPathsOf, walkViasOf, withStationWalks } from "@/lib/station-walks";
+import { legLinesOf, withLegLines } from "@/lib/hop-legs";
+import { cutAtStopWays, cutGap } from "@/lib/stop-ways";
 import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
 
 /**
@@ -18,6 +22,11 @@ export type Gap = "walk" | "break" | Exclude<TripMode, "walk">;
 
 /** Where a via spot goes: after the day's start spot ("start"), or after a photo, by its ID. */
 export type ViaKey = string;
+
+/** A via spot as the editor holds it: where it is, and how a walk goes to and from it. */
+export interface DraftVia extends TripPoint {
+  by?: ViaBy;
+}
 
 /** How the day can get from its start to the first photo: any gap but a break or a wander. */
 export type StartGap = Exclude<Gap, "break" | "wander">;
@@ -38,12 +47,13 @@ export interface GapDraft {
   /** A spot with no photo the day ends at. */
   end?: TripPoint;
   /** The via spots after the start spot and after each photo, in order. */
-  via?: Record<ViaKey, TripPoint[]>;
+  via?: Record<ViaKey, DraftVia[]>;
   /** Each segment's path along streets, by segmentKey, kept while the segment is unchanged. */
   paths?: Record<string, Path>;
   /**
-   * The line each hop rode, by the ID of the photo it starts from, with the hop's mode then: a hop
-   * changed to another mode leaves it out.
+   * The line each hop rode, by its leg key (`lib/hop-legs.ts`): the ID of the photo it starts from,
+   * with a leg's number for each stretch after a trip stop on it. Kept with the hop's mode then: a
+   * hop changed to another mode leaves it out.
    */
   lines?: Record<string, HopLine>;
   /**
@@ -76,6 +86,8 @@ export interface HopLine {
   board?: TripPoint;
   /** The station it got off at, when not at the next photo. */
   alight?: TripPoint;
+  /** The lines it rode in turn, when its route changed lines. */
+  rides?: TripLegRide[];
 }
 
 /** One run of photos walked through, with the spots before, between and after them. */
@@ -92,10 +104,11 @@ interface Run {
  */
 function viaOf(draft: GapDraft, key: ViaKey): TripVia[] {
   const after = key === "start" ? {} : { after: Number(key) };
-  const own = (draft.via?.[key] ?? []).map(({ latitude, longitude }) => ({
+  const own = (draft.via?.[key] ?? []).map(({ latitude, longitude, by }) => ({
     ...after,
     latitude,
     longitude,
+    ...(by && { by }),
   }));
   return [...own, ...visitVia(draft, key)];
 }
@@ -210,16 +223,9 @@ function stopEnd(draft: Pick<GapDraft, "visits">, last: number | undefined): Tri
   return stop && { latitude: stop.latitude, longitude: stop.longitude, label: stop.name };
 }
 
-/** A hop's line and stations as its segment lists them, leaving out the stations it doesn't have. */
-function rideFields({ line, board, alight }: Omit<HopLine, "mode">): Omit<HopLine, "mode"> {
-  return { line, ...(board && { board }), ...(alight && { alight }) };
-}
-
-/** The hop from photo a to b, with its via spots, and its line when one was picked for its mode. */
+/** The hop from photo a to b, with its via spots; its line is put on once it's cut into legs. */
 function hopSegment(draft: GapDraft, gap: Exclude<Gap, "walk" | "break">, a: number, b: number) {
-  const picked = draft.lines?.[String(a)];
-  const line = picked?.mode === gap ? rideFields(picked) : {};
-  return { mode: gap, photos: [a, b], ...withPoints({ via: viaOf(draft, String(a)) }), ...line };
+  return { mode: gap, photos: [a, b], ...withPoints({ via: viaOf(draft, String(a)) }) };
 }
 
 /** The segments the gaps make between photos, taken one after the other, without their paths. */
@@ -256,7 +262,7 @@ function shapingVia(s: TripSegment): TripVia[] {
  * spots of a hop with a line, so adding one doesn't drop the line's track.
  */
 export function segmentKey(s: TripSegment): string {
-  const via = shapingVia(s).map((v) => [v.after ?? null, v.latitude, v.longitude]);
+  const via = shapingVia(s).map((v) => [v.after ?? null, v.latitude, v.longitude, v.by ?? null]);
   const ride = [s.line?.id ?? null, at(s.board), at(s.alight)];
   return JSON.stringify([
     s.mode,
@@ -298,8 +304,14 @@ function withAreaEnds(segment: TripSegment, draft: GapDraft): TripSegment {
 
 /** The segments the gaps make between photos, taken one after the other. */
 export function segmentsOf(photos: number[], draft: GapDraft): TripSegment[] {
-  const plain = splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
-    withAreaEnds(segment, draft),
+  const plain = withLegLines(
+    cutAtStopWays(
+      splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
+        withAreaEnds(segment, draft),
+      ),
+      draft.visits,
+    ),
+    draft.lines,
   );
   return withNames(
     plain.map((segment) => withStationWalks(withPath(segment, draft), draft)),
@@ -317,7 +329,7 @@ function joins(segment: TripSegment, a: number, b: number): boolean {
 /** The gap between photos a and b in the saved segments: their segment's mode, or a break. */
 function gapIn(segments: TripSegment[], a: number, b: number): Gap {
   const segment = segments.find((s) => joins(s, a, b));
-  return segment ? (segment.mode as Gap) : "break";
+  return (segment?.mode ?? cutGap(segments, a, b) ?? "break") as Gap;
 }
 
 /** The day's spots with no photo: the first segment's start and the last one's end. */
@@ -326,12 +338,12 @@ function dayEnds(segments: TripSegment[]): Pick<GapDraft, "start" | "end"> {
 }
 
 /** The segments' via spots, by what they come after. */
-function viaByKey(segments: TripSegment[]): Record<ViaKey, TripPoint[]> {
-  const out: Record<ViaKey, TripPoint[]> = {};
+function viaByKey(segments: TripSegment[]): Record<ViaKey, DraftVia[]> {
+  const out: Record<ViaKey, DraftVia[]> = {};
   const own = segments.flatMap((s) => s.via ?? []).filter((v) => v.visit === undefined);
-  for (const { after, latitude, longitude } of own) {
+  for (const { after, latitude, longitude, by } of own) {
     const key = after === undefined ? "start" : String(after);
-    out[key] = [...(out[key] ?? []), { latitude, longitude }];
+    out[key] = [...(out[key] ?? []), { latitude, longitude, ...(by && { by }) }];
   }
   return out;
 }
@@ -341,17 +353,6 @@ export function pathsOf(segments: TripSegment[]): Record<string, Path> {
   const routed = segments.filter((s) => s.path && s.path.length >= 2);
   const own = Object.fromEntries(routed.map((s) => [segmentKey(s), s.path as Path]));
   return { ...own, ...walkPathsOf(segments) };
-}
-
-/** The lines the segments' hops rode, by the photo each hop starts from. */
-function linesOf(segments: TripSegment[]): Record<string, HopLine> {
-  const ridden = segments.filter((s) => s.line && s.photos.length > 0);
-  return Object.fromEntries(
-    ridden.map((s) => [
-      String(s.photos[0]),
-      { mode: s.mode as Gap, ...rideFields({ ...s, line: s.line! }) },
-    ]),
-  );
 }
 
 /** The exits and entrances of the areas wandered that the segments run between. */
@@ -366,7 +367,7 @@ function areaEndsOf(segments: TripSegment[]): Pick<GapDraft, "exits" | "entrance
 /** A saved trip line's segments as gaps between the photos, taken one after the other. */
 export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
   const gaps = photos.slice(1).map((b, i) => gapIn(segments, photos[i] as number, b));
-  const lines = linesOf(segments);
+  const lines = legLinesOf(segments);
   const via = { ...viaByKey(segments), ...walkViasOf(segments) };
   return {
     gaps,
@@ -381,7 +382,8 @@ export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
 }
 
 /** How the saved line got from its start to the first photo, when it wasn't walked. */
-function startGapOf([first]: TripSegment[]): Pick<GapDraft, "startGap"> {
+function startGapOf(segments: TripSegment[]): Pick<GapDraft, "startGap"> {
+  const first = segments.find((s) => s.photos.length > 0);
   if (!first?.start || first.mode === "walk" || first.mode === "wander") return {};
   return { startGap: first.mode };
 }

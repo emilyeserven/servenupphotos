@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -57,6 +58,95 @@ func (f *fakeFinder) TransitlandTrack(_ context.Context, _ int64, from, to [2]fl
 
 func (f *fakeFinder) TransitlandStops(_ context.Context, _ int64) ([]transit.Stop, error) {
 	return []transit.Stop{{Name: "Shimonoseki", Latitude: 33.95, Longitude: 130.92}}, f.err
+}
+
+func (f *fakeFinder) MLITLines(_ context.Context, mode string, from, _ [2]float64) ([]transit.Line, error) {
+	f.mode, f.from = mode, from
+	return []transit.Line{{ID: 255, Name: "山陰線", Kind: "train", Source: transit.SourceMLIT}}, f.err
+}
+
+func (f *fakeFinder) MLITTrack(_ context.Context, _ int64, from, to [2]float64) ([][2]float64, error) {
+	return [][2]float64{from, {2, 2}, to}, f.err
+}
+
+func (f *fakeFinder) MLITStops(_ context.Context, _ int64) ([]transit.Stop, error) {
+	return []transit.Stop{{Name: "東萩", Latitude: 34.42, Longitude: 131.41}}, f.err
+}
+
+func (f *fakeFinder) OSMRailLines(_ context.Context, mode string, from, _ [2]float64) ([]transit.Line, error) {
+	f.mode, f.from = mode, from
+	return []transit.Line{{ID: 1 << 48, Name: "Gyeongbu HSR", Kind: "train", Source: transit.SourceOSMRail}}, f.err
+}
+
+func (f *fakeFinder) OSMRailTrack(_ context.Context, _ int64, from, to [2]float64) ([][2]float64, error) {
+	return [][2]float64{from, {4, 4}, to}, f.err
+}
+
+func (f *fakeFinder) OSMRailStops(_ context.Context, _ int64) ([]transit.Stop, error) {
+	return []transit.Stop{{Name: "Seoul", Latitude: 37.55, Longitude: 126.97}}, f.err
+}
+
+func (f *fakeFinder) RailRides(_ context.Context, source string, _ int64, from, to [2]float64) ([]transit.RouteRide, error) {
+	if source != transit.SourceMLIT {
+		return nil, f.err
+	}
+	return []transit.RouteRide{
+		{Line: transit.Line{ID: 31, Name: "北松江線"}, Path: [][2]float64{from, {2, 2}}, Change: &transit.Stop{Name: "川跡"}},
+		{Line: transit.Line{ID: 30, Name: "大社線"}, Path: [][2]float64{{2, 2}, to}},
+	}, f.err
+}
+
+func TestTrackRides(t *testing.T) {
+	rec := httptest.NewRecorder()
+	transitMux(&fakeFinder{}).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines/7969/track?from=0,0&to=3,3&source=mlit", nil))
+	if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), `"name":"川跡"`) || !strings.Contains(rec.Body.String(), "大社線") {
+		t.Errorf("mlit: %d %s", rec.Code, rec.Body)
+	}
+	rec = httptest.NewRecorder()
+	transitMux(&fakeFinder{}).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines/7/track?from=0,0&to=3,3", nil))
+	if strings.Contains(rec.Body.String(), "rides") {
+		t.Errorf("overpass: %s", rec.Body)
+	}
+}
+
+func TestOSMRailSource(t *testing.T) {
+	f := &fakeFinder{}
+	for url, body := range map[string]string{
+		"/transit/lines?mode=train&from=126.97,37.55&to=129.04,35.12&source=osmrail": "Gyeongbu HSR",
+		"/transit/lines/281474976710656/stops?source=osmrail":                        "Seoul",
+		"/transit/lines/281474976710656/track?from=0,0&to=5,5&source=osmrail":        "[4,4]",
+	} {
+		rec := httptest.NewRecorder()
+		transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, url, nil))
+		if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), body) {
+			t.Errorf("%s: %d %s", url, rec.Code, rec.Body)
+		}
+	}
+}
+
+func TestMLITSource(t *testing.T) {
+	f := &fakeFinder{}
+	cases := []struct {
+		url  string
+		body string
+	}{
+		{"/transit/lines?mode=train&from=131.41,34.42&to=133.06,35.46&source=mlit", "山陰線"},
+		{"/transit/lines/255/stops?source=mlit", "東萩"},
+		{"/transit/lines/255/track?from=0,0&to=3,3&source=mlit", "[2,2]"},
+	}
+	for _, c := range cases {
+		rec := httptest.NewRecorder()
+		transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, c.url, nil))
+		if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), c.body) {
+			t.Errorf("%s: %d %s", c.url, rec.Code, rec.Body)
+		}
+	}
+	f.err = &transit.RailMapError{Map: "Japan's rail map", Err: errors.New("it's still downloading")}
+	rec := httptest.NewRecorder()
+	transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=train&from=0,1&to=1,1&source=mlit", nil))
+	if rec.Code != http.StatusServiceUnavailable || !strings.Contains(rec.Body.String(), "still downloading") {
+		t.Errorf("not ready: %d %s", rec.Code, rec.Body)
+	}
 }
 
 func TestTransitlandSource(t *testing.T) {

@@ -34,12 +34,12 @@ writes it into the photo file. On the Photo page it's saved like **Re-edit** ins
 
 ## Seeing it
 
-- The Gallery hides Lower Tier photos until its **Lower Tier** filter, beside **Undecided**, is changed from **Hidden**
-  to **Shown** (with the rest) or **Only** (`?lowerTier=show` or `?lowerTier=only`). **Clear** resets it with the other
-  filters.
+- The Gallery hides Lower Tier photos until **Show → Lower Tier** is on (`?lowerTier=true`); turning **Published** off
+  too leaves only them. **Clear filters** resets it with the other filters. A Lower Tier photo that's also a draft or
+  Undecided is shown with those instead (see [Gallery](gallery.md#which-photos-show)).
 - Gallery tiles, Photos in Flight and the Compare page's photos mark a Lower Tier photo **Lower Tier**, with what it means in the tooltip.
 
 The code is `lib/lower-tier.ts` (`isLowerTier`, `lowerTierPaths`), `components/lower-tier.tsx` (the card, the mark and
-`useSetLowerTier`), `withLowerTier` and `withLocalLowerTier` in `lib/lower-tier.ts` for the Photo page's save (`components/edit-in-flight/use-edit.ts`), and `components/gallery/lower-tier-filter.tsx` and `bulk-lower-tier.tsx` in the Gallery, and `components/compare/lower-tier-button.tsx` on the Compare page. The
-Gallery's Undecided and Lower Tier filters share their Hidden, Shown and Only buttons from
-`components/gallery/mark-filter.tsx`.
+`useSetLowerTier`), `withLowerTier` and `withLocalLowerTier` in `lib/lower-tier.ts` for the Photo page's save
+(`components/edit-in-flight/use-edit.ts`), `lib/gallery-show.ts` and `components/gallery/bulk-lower-tier.tsx` in the
+Gallery, and `components/compare/lower-tier-button.tsx` on the Compare page.

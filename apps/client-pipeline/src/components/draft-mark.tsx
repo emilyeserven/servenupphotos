@@ -1,6 +1,6 @@
 import { FilePenLineIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { SeeInAllPhotos } from "@/components/all-photos/see-in-all-photos";
+import { SeeInGallery } from "@/components/gallery/see-in-gallery";
 import { isDraft, isSetAside, useUntitledDrafts } from "@/lib/drafts";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,7 @@ const DRAFT_HELP =
 /**
  * "Draft" when the photo's JSON has no title or is Undecided, and untitled photos are kept as drafts (see Settings);
  * otherwise `children`, such as whether it's in ALLPHOTOS.json, or nothing. With `path`, a draft's
- * mark is followed by a link to its place on All Photos.
+ * mark is followed by a link to its place on the Gallery.
  */
 export function DraftMark({
   data,
@@ -20,7 +20,7 @@ export function DraftMark({
   children,
 }: {
   data: unknown;
-  /** The photo JSON file's path, for the link to it on All Photos. */
+  /** The photo JSON file's path, for the link to it on the Gallery. */
   path?: string;
   className?: string;
   children?: ReactNode;
@@ -31,7 +31,7 @@ export function DraftMark({
   return (
     <span className="flex items-center gap-1">
       <Mark className={className} />
-      <SeeInAllPhotos path={path} undecided={isSetAside(data)} />
+      <SeeInGallery path={path} undecided={isSetAside(data)} />
     </span>
   );
 }

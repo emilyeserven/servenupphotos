@@ -9,8 +9,10 @@ import (
 )
 
 // RouteFunc finds the path along streets through points, each [longitude,
-// latitude], travelled by mode ("walk", "bus" or "car").
-type RouteFunc func(ctx context.Context, mode string, points [][2]float64) ([][2]float64, error)
+// latitude], travelled by mode ("walk", "bus" or "car"). by, when not nil,
+// says how a walk goes along each stretch from one point to the next
+// (ViaByRoad, ViaByFoot or empty to choose), one per stretch.
+type RouteFunc func(ctx context.Context, mode string, points [][2]float64, by []string) ([][2]float64, error)
 
 // streetModes are the modes whose segments follow streets; a train or subway
 // is drawn straight.
@@ -50,7 +52,7 @@ func routeSegment(ctx context.Context, seg *TripSegment, spots map[int]tripSpot,
 		return false
 	}
 	points, _ := segmentPoints(*seg, spots)
-	path, err := route(ctx, seg.Mode, points)
+	path, err := route(ctx, seg.Mode, points, stretchesBy(*seg, spots))
 	if err != nil || len(path) < 2 || len(path) > maxPathPoints {
 		return false
 	}
@@ -110,6 +112,58 @@ func viaAfter(via []TripVia, after *int) [][2]float64 {
 	return out
 }
 
+// stretchesBy is how a walk goes along each stretch between seg's points (see
+// segmentPoints), one per stretch: by road or on foot when a via spot at
+// either end of it says so, or empty to let the snap choose. Two ends that
+// disagree leave it empty.
+func stretchesBy(seg TripSegment, spots map[int]tripSpot) []string {
+	by := byOf(seg.Via, nil, seg.Start != nil)
+	for i, id := range seg.Photos {
+		if _, ok := spots[id]; ok {
+			by = append(by, "")
+		}
+		by = append(by, byOf(seg.Via, &seg.Photos[i], false)...)
+	}
+	if seg.End != nil {
+		by = append(by, "")
+	}
+	if len(by) < 2 {
+		return nil
+	}
+	out := make([]string, len(by)-1)
+	for i := range out {
+		out[i] = eitherBy(by[i], by[i+1])
+	}
+	return out
+}
+
+// byOf is the start spot's By (empty) when withStart, then the By of each via
+// spot after the photo after, in order.
+func byOf(via []TripVia, after *int, withStart bool) []string {
+	var out []string
+	if withStart {
+		out = append(out, "")
+	}
+	for _, v := range via {
+		if sameAfter(v.After, after) {
+			out = append(out, v.By)
+		}
+	}
+	return out
+}
+
+// eitherBy is the way a stretch between spots that say a and b goes: the one
+// that says, or empty when neither does or they disagree.
+func eitherBy(a, b string) string {
+	switch {
+	case a == "" || a == b:
+		return b
+	case b == "":
+		return a
+	}
+	return ""
+}
+
 // sameAfter reports whether a and b name the same photo, or are both nil.
 func sameAfter(a, b *int) bool {
 	if a == nil || b == nil {
@@ -133,6 +187,9 @@ func validVia(seg TripSegment, n int) *PublishError {
 		}
 		if !viaAnchored(seg, v.After) {
 			return publishErr(http.StatusBadRequest, "Segment %d: a via spot comes after a photo or start spot it doesn't have.", n)
+		}
+		if v.By != "" && v.By != ViaByRoad && v.By != ViaByFoot {
+			return publishErr(http.StatusBadRequest, "Segment %d: a via spot goes by %q; use road, foot or leave it out.", n, v.By)
 		}
 	}
 	return nil

@@ -1,11 +1,11 @@
 {
-  "id": 819,
-  "title": null,
+  "title": "Road Back to the City",
   "comment": null,
+  "id": 819,
   "altText": null,
   "notes": null,
   "file": "DSCF3139.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-17T19:06:13Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -13,7 +13,7 @@
   "iso": 160,
   "focalLength": 18,
   "gpsPosition": "35 deg 24' 5.05\" N, 132 deg 41' 7.45\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "35.398572392911575, 132.6860662902445",
   "createDate": "2026:09:26 12:08:23",
   "customCreateDate": null,
   "placeName": null,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/ab811a2cc8cf-dscf3139-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/ab811a2cc8cf-dscf3139-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/ab811a2cc8cf-dscf3139-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/ab811a2cc8cf-dscf3139-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ab811a2cc8cf-dscf3139-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/ab811a2cc8cf-dscf3139-thumbnail.webp?crop=0,1164,3386",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ab811a2cc8cf-dscf3139-thumbnailpreview.webp?crop=0,1164,3386",
     "thumbnailcrop": {
       "x": 0,
-      "y": 677,
+      "y": 1164,
       "size": 3386,
       "outputSize": 500
     }

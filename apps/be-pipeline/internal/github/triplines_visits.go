@@ -33,6 +33,11 @@ type TripVisit struct {
 	// lunch before the first photo was taken: after the start spot when the
 	// day has one, or else the line starts there. It wins over After.
 	First bool `json:"first,omitempty"`
+	// Mode is how the place was reached from the point before it on the
+	// route, such as ModeWalk between two stations in the middle of a train
+	// ride: the pipeline cuts the route's segments there, each stretch in its
+	// own mode. "" is the way the route was travelled there.
+	Mode string `json:"mode,omitempty"`
 	// Photos are the IDs of the casual photos taken there, such as the food,
 	// in order: marked casual (see isCasual), they show only with the place
 	// on its day's Trip page. None when there are none.
@@ -109,6 +114,9 @@ func validVisit(v *TripVisit, n int) *PublishError {
 	}
 	if utf8.RuneCountInString(v.Note) > maxNoteLength {
 		return publishErr(http.StatusBadRequest, "Trip stop %d: keep its note to %d characters.", n, maxNoteLength)
+	}
+	if v.Mode != "" && (v.Mode == ModeWander || !slices.Contains(tripModes, v.Mode)) {
+		return publishErr(http.StatusBadRequest, "Trip stop %d: say how it was reached (walk, train, subway, bus, car or transit), or leave it out.", n)
 	}
 	if perr := validVisitPhotos(v.Photos, n); perr != nil {
 		return perr

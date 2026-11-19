@@ -9,10 +9,8 @@ import {
   type MarkerOnScreen,
   type ScreenPoint,
 } from "@/lib/map-fan";
+import { groupingSources } from "@/lib/map-country-groups";
 import { type MapSet, type PhotoPoint, type PlacedPhoto, placedById } from "@/lib/map-photos";
-
-/** The ID of the map's source of photos, which MapLibre groups into clusters. */
-export const SOURCE_ID = "photos";
 
 /**
  * A marker on the map: one photo, a cluster of photos too close together to tell apart, or a Photo
@@ -29,6 +27,8 @@ export type MapMarker =
   | {
       kind: "cluster";
       key: string;
+      /** The ID of the map source that grouped it, which its cluster ID belongs to. */
+      source: string;
       clusterId: number;
       count: number;
       longitude: number;
@@ -44,8 +44,8 @@ export type MapMarker =
       offset?: FanOffset;
     };
 
-/** The marker for one of the source's features, or null for a photo it doesn't know. */
-function markerOf(feature: GeoJSONFeature): MapMarker | null {
+/** The marker for one of a source's features, or null for a photo it doesn't know. */
+function markerOf(feature: GeoJSONFeature, source: string): MapMarker | null {
   const properties = feature.properties ?? {};
   if (typeof properties.cluster_id !== "number") {
     const photo = placedById.get(properties.id);
@@ -54,7 +54,8 @@ function markerOf(feature: GeoJSONFeature): MapMarker | null {
   const [longitude, latitude] = (feature.geometry as PhotoPoint).coordinates;
   return {
     kind: "cluster",
-    key: `cluster-${properties.cluster_id}`,
+    key: `cluster-${source}-${properties.cluster_id}`,
+    source,
     clusterId: properties.cluster_id,
     count: properties.point_count,
     longitude,
@@ -67,9 +68,16 @@ function once(markers: MapMarker[]): MapMarker[] {
   return [...new globalThis.Map(markers.map((marker) => [marker.key, marker])).values()];
 }
 
-/** The markers for the clusters and photos in view, once each. */
-function sourceMarkers(map: MapRef): MapMarker[] {
-  return once(map.querySourceFeatures(SOURCE_ID).flatMap((feature) => markerOf(feature) ?? []));
+/**
+ * The markers for the clusters and photos in view, once each, from the sources that group them at
+ * this zoom (see groupingSources), given the IDs of the countries' sources.
+ */
+function sourceMarkers(map: MapRef, countrySources: string[]): MapMarker[] {
+  return once(
+    groupingSources(map.getZoom(), countrySources).flatMap((source) =>
+      map.querySourceFeatures(source).flatMap((feature) => markerOf(feature, source) ?? []),
+    ),
+  );
 }
 
 function photoMarker(photo: PlacedPhoto): MapMarker {
@@ -79,7 +87,7 @@ function photoMarker(photo: PlacedPhoto): MapMarker {
 /** A small cluster's photos as markers of their own, or a bigger cluster's marker as it is. */
 async function splitSmall(map: MapRef, marker: MapMarker, pin: number): Promise<MapMarker[]> {
   if (marker.kind !== "cluster" || marker.count > fanLimit(map.getZoom(), pin)) return [marker];
-  return (await photosInCluster(map, marker.clusterId)).map(photoMarker);
+  return (await photosInCluster(map, marker)).map(photoMarker);
 }
 
 /** Where a spot on the map is on the screen. */
@@ -152,6 +160,8 @@ function setMarkers(map: MapRef, sets: MapSet[]): MapMarker[] {
 
 /**
  * The markers in view, for pins `pin` pixels wide, with one for each of the Photo Sets in view.
+ * Zoomed out below COUNTRY_MAX_ZOOM, groups come from the countries' sources (`countrySources`, their
+ * IDs), so none mixes photos from two countries.
  * From FAN_MIN_ZOOM in, small groups (see fanLimit) are split into photos of their own; sets never
  * are. At every zoom, markers are moved apart just enough that none is more than half covered, and
  * from FAN_MIN_ZOOM in that none overlap.
@@ -160,8 +170,9 @@ export async function markersInView(
   map: MapRef,
   pin: number,
   sets: MapSet[],
+  countrySources: string[],
 ): Promise<MapMarker[]> {
-  const markers = [...setMarkers(map, sets), ...sourceMarkers(map)];
+  const markers = [...setMarkers(map, sets), ...sourceMarkers(map, countrySources)];
   if (map.getZoom() < FAN_MIN_ZOOM) return fanOut(map, markers, pin);
   const split = await Promise.all(markers.map((marker) => splitSmall(map, marker, pin)));
   // While zooming, tiles from the old zoom and the new one can both be loaded, so a cluster split
@@ -169,9 +180,12 @@ export async function markersInView(
   return fanOut(map, once(split.flat()), pin);
 }
 
-/** The photos in a cluster, oldest first. */
-export async function photosInCluster(map: MapRef, clusterId: number): Promise<PlacedPhoto[]> {
-  const source = map.getSource<GeoJSONSource>(SOURCE_ID);
+/** The photos in a cluster, from the source that grouped it, oldest first. */
+export async function photosInCluster(
+  map: MapRef,
+  { source: sourceId, clusterId }: { source: string; clusterId: number },
+): Promise<PlacedPhoto[]> {
+  const source = map.getSource<GeoJSONSource>(sourceId);
   if (!source) return [];
   const leaves = await source.getClusterLeaves(clusterId, Infinity, 0);
   return leaves

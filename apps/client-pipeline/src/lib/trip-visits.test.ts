@@ -2,7 +2,14 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { TripVisit } from "@/api/trip-lines";
 import type { GapDraft } from "@/lib/trip-gaps";
-import { firstStops, firstVisit, movedVisit, offRoute, visitsAfter } from "@/lib/trip-visits";
+import {
+  againVisit,
+  firstStops,
+  firstVisit,
+  movedVisit,
+  offRoute,
+  visitsAfter,
+} from "@/lib/trip-visits";
 
 const lunch: TripVisit = { name: "Lunch", kind: "restaurant", latitude: 1, longitude: 1, after: 1 };
 const ids = [1, 2, 3];
@@ -40,3 +47,51 @@ test("a trip stop off the route can be put before the first photo", () => {
 function omitAfter({ after: _after, ...rest }: TripVisit): TripVisit {
   return rest;
 }
+
+test("visits a place again as a copy off the route, without the first visit's photos", () => {
+  const station = {
+    name: "Matsue",
+    kind: "station" as const,
+    latitude: 35.464,
+    longitude: 133.0639,
+    note: "Changed trains",
+    after: 12,
+    photos: [40],
+  };
+  assert.deepEqual(againVisit(station), {
+    name: "Matsue",
+    kind: "station",
+    latitude: 35.464,
+    longitude: 133.0639,
+    note: "Changed trains",
+  });
+});
+
+test("a trip stop moves past another at the same place before moving on a photo", () => {
+  const a = { ...omitAfter(lunch), name: "A", first: true };
+  const b = { ...omitAfter(lunch), name: "B", first: true };
+  const draft: GapDraft = { gaps: [], visits: [a, b] };
+  const swappedDraft = movedVisit(draft, b, ids, -1);
+  assert.deepEqual(swappedDraft.visits, [b, a]);
+  assert.equal(movedVisit(swappedDraft, b, ids, -1), swappedDraft);
+});
+
+test("a trip stop moved a photo lands next to the stops already there", () => {
+  const a = { ...lunch, name: "A" };
+  const b = { ...lunch, name: "B" };
+  const c = { ...lunch, name: "C", after: 2 };
+  const back = movedVisit({ gaps: [], visits: [a, b, c] }, c, ids, -1);
+  assert.deepEqual(
+    back.visits?.map((v) => v.name),
+    ["A", "B", "C"],
+  );
+  const on = movedVisit({ gaps: [], visits: [c, a, b] }, b, ids, 1);
+  assert.deepEqual(
+    on.visits?.map((v) => [v.name, v.after]),
+    [
+      ["B", 2],
+      ["C", 2],
+      ["A", 1],
+    ],
+  );
+});

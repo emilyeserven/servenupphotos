@@ -18,13 +18,14 @@ newest first. Once one is picked, the button shows an arrow for which way it run
 name opens the menu again, and clicking the arrow turns the sort around. **Clear sort** at the bottom of the menu goes
 back to plain "Sort".
 
-| Sort        | Default way                          | Turned around                  | URL                            |
-| ----------- | ------------------------------------ | ------------------------------ | ------------------------------ |
-| Date taken  | Newest first (↓)                     | Oldest first (↑)               | `?sort=newest`, `?sort=oldest` |
-| Date added  | Most recently added first (↓)        | Least recently added first (↑) | `?sort=added`, `&order=asc`    |
-| Time of day | Earliest in the day first (↑)        | Latest in the day first (↓)    | `?sort=time`, `&order=desc`    |
-| Color       | Red around the color wheel first (↑) | The other way (↓)              | `?sort=color`, `&order=desc`   |
-| Vividness   | Least vivid first (↑)                | Most vivid first (↓)           | `?sort=vivid`, `&order=desc`   |
+| Sort        | Default way                          | Turned around                  | URL                             |
+| ----------- | ------------------------------------ | ------------------------------ | ------------------------------- |
+| Date taken  | Newest first (↓)                     | Oldest first (↑)               | `?sort=newest`, `?sort=oldest`  |
+| Date added  | Most recently added first (↓)        | Least recently added first (↑) | `?sort=added`, `&order=asc`     |
+| Time of day | Earliest in the day first (↑)        | Latest in the day first (↓)    | `?sort=time`, `&order=desc`     |
+| Distance    | Nearest first (↑)                    | Farthest first (↓)             | `?sort=distance`, `&order=desc` |
+| Color       | Red around the color wheel first (↑) | The other way (↓)              | `?sort=color`, `&order=desc`    |
+| Vividness   | Least vivid first (↑)                | Most vivid first (↓)           | `?sort=vivid`, `&order=desc`    |
 
 With no `?sort=` the photos are newest first, the same as **Date taken** ↓, but the button says "Sort". The color
 sorts' **Then by** sits beside **Sort** (see [Portfolio Color](portfolio-color.md#on-the-grid-page)).
@@ -55,6 +56,38 @@ viewer's. Photos taken in the same minute go newest first. Turned around, night 
 > **Frontend analogy:** like sorting `Date`s by `getHours() * 60 + getMinutes()` instead of `getTime()`: the date
 > part is dropped, so a 7 AM photo from 2019 sits next to a 7 AM photo from last week.
 
+**Distance** (`?sort=distance`, `lib/distance-sort.ts`) puts the photos nearest a spot first, measured along the
+Earth's surface to where the [Map](portfolio-map.md) puts each photo: its custom or EXIF GPS position, or else the
+position of one of its places, the same rule as the pipeline Gallery's **On the map** filter. Photos at the same
+distance go newest first, and photos the map can't place come after the rest, newest first. Turned around, the
+farthest come first, and photos the map can't place still come last.
+
+While sorting by Distance, **From** sits beside **Sort** (`components/distance-from-control.tsx`) and says where it
+measures from:
+
+- **Stamford, CT**, the default, when the URL has no `?near=`.
+- A country, region, city or place picked from the same columns as the Places filter, such as `&near=city:Stamford`.
+  A place with its own GPS position set on the Places page measures from that; otherwise it measures from the middle
+  of the photos taken there.
+- **Use my location** (the crosshair beside **From**), which asks the browser where the viewer is, such as
+  `&near=41.0534,-73.5387`. The browser asks the viewer's permission first; if it's refused or unavailable, the button
+  turns red and its tooltip says so.
+
+**×** goes back to Stamford, CT. Picking another sort clears `?near=`.
+
+While sorting by Distance, **Display Options** also has **Group by distance** (`&bands=true`,
+`components/distance-band-tiles.tsx`, `lib/distance-bands.ts`). It splits the tiles into groups that are each ten times
+farther than the last: Under 1 km, 1 to 10 km, 10 to 100 km, 100 to 1,000 km, and 1,000 km and farther. Each group
+has its name and photo count as a heading. The groups follow the sort's order, so farthest first puts 1,000 km and
+farther at the top, and photos the map can't place always come last under **No location**. It's off by default.
+
+**Show distance** (`&distances=true`), next to it, puts each photo's distance from the spot over its tile's bottom
+left corner: meters under 1 km ("350 m"), one decimal under 10 km ("4.2 km"), and whole km after that ("1,234 km").
+Photos the map can't place have none. It's off by default too.
+
+> **Frontend analogy:** like `photos.toSorted((a, b) => dist(here, a) - dist(here, b))`, where `dist` is the
+> haversine formula, the distance between two latitude/longitude pairs on a sphere rather than a flat map.
+
 ## Square
 
 Each photo as the square picked on the pipeline's Photo page, in a grid whose columns grow as the window widens:
@@ -71,7 +104,8 @@ The square is a 500px image, so at Large it can look a little soft on high-densi
 
 Each photo at its own aspect ratio (`?view=natural`), in justified rows (`components/natural-grid.tsx`,
 `lib/natural-rows.ts`): a row's tiles are all the same height, and a full row's tiles grow together to fill its width.
-Vertical photos (narrower than 0.9 of their height) are gathered into rows of their own, which start taller so each
+With **Keep the order** off (see [below](#keep-the-order); it's on by default), vertical photos (narrower than 0.9
+of their height) are gathered into rows of their own, which start taller so each
 vertical photo covers about the same area of the page as a 3:2 wide photo: a 2:3 photo's row starts 1.5 times as tall
 as a row of wide photos (the row's height is the wide height times √(1.5 ÷ the photo's width over height)). Matching
 area rather than width keeps a vertical photo from coming out several times bigger than the wide photos around it. Each row starts with the next photo in
@@ -97,16 +131,17 @@ all reach that is centered rather than stretched.
 
 ### Keep the order
 
-Gathering vertical photos into rows of their own moves photos a little out of the sort. **Keep the order**, under
-**Rows** in the Natural view's **Display Options** (`?ordered=true`, remembered with the Grid's other settings), lays
-the photos out strictly in the sort instead (`lib/ordered-rows.ts`): read left to right and top to bottom, they come in
+Gathering vertical photos into rows of their own moves photos a little out of the sort, so the Natural view keeps
+the order by default: **Keep the order**, under **Rows** in its **Display Options**, starts on, and unticking it
+(`?ordered=false`, remembered with the Grid's other settings) goes back to the rows described above. With it on, the
+Natural view lays the photos out strictly in the sort (`lib/ordered-rows.ts`): read left to right and top to bottom, they come in
 exactly the sort's order, and the photo viewer steps through them in the order they show. Wide and vertical photos
 share rows. Each row aims for a quarter over the average of the heights its photos would start at above (about how much
 the rows above grow to fill the width, so photos come out about as big at each **Size**; a row with vertical photos
 aims taller, keeping them about as big as wide ones), and fills the width exactly. Where the rows break is
 worked out for all of them at once, picking the breaks that keep every row closest to its aim (half as tall counts as
 far off as twice as tall), so one awkward photo doesn't leave a squashed or towering row. The last row keeps its aimed
-height rather than stretching, and no row is taller than 90% of the window. **Reset to defaults** turns it off.
+height rather than stretching, and no row is taller than 90% of the window. **Reset to defaults** turns it back on.
 
 > **Frontend analogy:** it's how a word processor justifies a paragraph (the Knuth–Plass line breaking TeX uses):
 > instead of filling each line greedily and stretching whatever's left, it tries every place each line could break

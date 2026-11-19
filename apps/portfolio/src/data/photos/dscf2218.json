@@ -1,11 +1,11 @@
 {
-  "id": 953,
-  "title": null,
+  "title": "Ichibata Electric Railway Train I",
   "comment": null,
+  "id": 953,
   "altText": null,
   "notes": null,
   "file": "DSCF2218.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-17T19:10:09Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 7.1,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/d2af08a2e0a2-dscf2218-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/d2af08a2e0a2-dscf2218-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/d2af08a2e0a2-dscf2218-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/d2af08a2e0a2-dscf2218-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d2af08a2e0a2-dscf2218-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/d2af08a2e0a2-dscf2218-thumbnail.webp?crop=1916,0,4160",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d2af08a2e0a2-dscf2218-thumbnailpreview.webp?crop=1916,0,4160",
     "thumbnailcrop": {
-      "x": 1618,
+      "x": 1916,
       "y": 0,
       "size": 4160,
       "outputSize": 500

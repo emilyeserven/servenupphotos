@@ -1,4 +1,5 @@
 import type { StationWalk, TripPoint, TripSegment } from "@/api/trip-lines";
+import type { TripLegRide } from "@/api/trips";
 import type { TripPhoto } from "@/lib/trip-days";
 import { type LngLat, linePoints } from "@/lib/trip-points";
 import { walkLine } from "@/lib/station-walks";
@@ -64,9 +65,30 @@ export function lineFeatures(
     const coordinates = segmentCoordinates(segment, byId);
     if (coordinates.length < 2) return [];
     const props = lineProps(segment, focus);
-    return [feature(props, coordinates), ...stationWalks(segment, byId, props.faded)];
+    return [...rideLines(segment, props, coordinates), ...stationWalks(segment, byId, props.faded)];
   });
   return { type: "FeatureCollection", features };
+}
+
+/**
+ * The hop along its track, or each line it rode in turn along its stretch, in that line's color,
+ * when its route changed lines.
+ */
+function rideLines(segment: TripSegment, props: LineProps, coordinates: LngLat[]): LineFeature[] {
+  const rides = props.onLine ? drawnRides(segment.rides) : [];
+  if (rides.length === 0) return [feature(props, coordinates)];
+  return rides.map((r) => feature({ ...props, colour: rideColour(r, props) }, r.path as LngLat[]));
+}
+
+/** The rides to draw apart: two or more, each with its track; none otherwise. */
+function drawnRides(rides: TripLegRide[] = []): TripLegRide[] {
+  const tracked = rides.filter((r) => (r.path?.length ?? 0) >= 2);
+  return rides.length >= 2 && tracked.length === rides.length ? rides : [];
+}
+
+/** The ride's line's color, or else the hop's. */
+function rideColour(ride: TripLegRide, props: LineProps): string {
+  return ride.line?.colour || props.colour;
 }
 
 /** A GeoJSON line. */
@@ -74,14 +96,15 @@ function feature(properties: LineProps, coordinates: LngLat[]): LineFeature {
   return { type: "Feature", properties, geometry: { type: "LineString", coordinates } };
 }
 
-/** The walks from a hop's first photo to the station it got on at, and from where it got off. */
+/** The walks from a hop's first point to the station it got on at, and from where it got off to its last. */
 function stationWalks(
   segment: TripSegment,
   byId: Map<number, TripPhoto>,
   faded: boolean,
 ): LineFeature[] {
   if (!lineProps(segment).onLine) return [];
-  const [a, b] = segment.photos.map((id) => byId.get(id));
+  const a = segment.start ?? byId.get(segment.photos[0]!);
+  const b = segment.end ?? byId.get(segment.photos.at(-1)!);
   return [
     ...walkBetween(a, segment.board, segment.boardWalk, faded),
     ...walkBetween(segment.alight, b, segment.alightWalk, faded),

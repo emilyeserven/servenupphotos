@@ -1,13 +1,5 @@
 import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
-import {
-  Layer,
-  Map,
-  NavigationControl,
-  Popup,
-  Source,
-  type LayerProps,
-  type MapRef,
-} from "@vis.gl/react-maplibre";
+import { Map, NavigationControl, Popup, type MapRef } from "@vis.gl/react-maplibre";
 import { format } from "date-fns";
 import { MapPin } from "lucide-react";
 import { type LngLatBounds, setWorkerUrl } from "maplibre-gl";
@@ -28,8 +20,10 @@ import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { mapViewOf } from "@/components/view-on-map-link";
 import { type ClusterMarkerData, MapMarkerView } from "@/components/map-marker-view";
+import { MapPhotoSources } from "@/components/map-photo-sources";
+import { isPhotoSource } from "@/lib/map-country-groups";
 import {
-  type MapSet,
+  type MapPhotos,
   type PlacedPhoto,
   boundsOf,
   placedById,
@@ -38,7 +32,7 @@ import {
 import { clusterRadius, type MapDisplay, PIN_PIXELS, useMapDisplay } from "@/lib/map-display";
 import { fadeTo } from "@/lib/map-fade";
 import { photosInView } from "@/lib/map-grid-link";
-import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
+import { type MapMarker, markersInView, photosInCluster } from "@/lib/map-markers";
 import { MAP_STYLES, useIsDark } from "@/lib/map-theme";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
 import {
@@ -103,15 +97,6 @@ export const Route = createFileRoute("/map")({
 setWorkerUrl(maplibreWorkerUrl);
 
 // Free CARTO basemaps; no API key needed, attribution is shown by the map.
-
-// The markers are HTML, drawn from the clusters MapLibre works out for the source. MapLibre only
-// clusters a source a layer uses, so this one draws nothing.
-const hiddenLayer: LayerProps = {
-  id: "photo-points",
-  type: "circle",
-  source: SOURCE_ID,
-  paint: { "circle-opacity": 0, "circle-stroke-opacity": 0 },
-};
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
@@ -187,12 +172,15 @@ function useMapFilters() {
   return { search, mapPhotos };
 }
 
+/** The Photo Sets and the countries' sources, which the markers in view are worked out from. */
+type Grouped = Pick<MapPhotos, "sets" | "countries">;
+
 /**
  * The markers in view, the Photo Sets' among them, and what the map shows, for the day filter to
  * list only the days of the photos in view, with `updateMarkers` to work them out again after the
  * map moves. Markers are spaced for pins `pin` pixels wide, or as wide as `updateMarkers` is told.
  */
-function useMarkersInView(map: RefObject<MapRef | null>, pin: number, sets: MapSet[]) {
+function useMarkersInView(map: RefObject<MapRef | null>, pin: number, grouped: Grouped) {
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const [view, setView] = useState<LngLatBounds | null>(null);
   // Counts the updates, so a slower one finishing late doesn't replace a newer one's markers.
@@ -201,7 +189,8 @@ function useMarkersInView(map: RefObject<MapRef | null>, pin: number, sets: MapS
     if (!map.current) return;
     const update = ++latest.current;
     setView(map.current.getBounds());
-    const next = await markersInView(map.current, width, sets);
+    const countrySources = grouped.countries.map((country) => country.id);
+    const next = await markersInView(map.current, width, grouped.sets, countrySources);
     if (update === latest.current) setMarkers(next);
   }
   return { markers, view, updateMarkers };
@@ -211,9 +200,9 @@ function useMarkersInView(map: RefObject<MapRef | null>, pin: number, sets: MapS
  * The markers in view, drawn as the display options say, with `changeDisplay` to change those;
  * changing the pin size spaces the markers for the new size.
  */
-function useMarkersOnDisplay(map: RefObject<MapRef | null>, sets: MapSet[]) {
+function useMarkersOnDisplay(map: RefObject<MapRef | null>, grouped: Grouped) {
   const [display, setDisplay] = useMapDisplay();
-  const inView = useMarkersInView(map, PIN_PIXELS[display.pinSize], sets);
+  const inView = useMarkersInView(map, PIN_PIXELS[display.pinSize], grouped);
   function changeDisplay(change: Partial<MapDisplay>) {
     setDisplay(change);
     if (change.pinSize) void inView.updateMarkers(PIN_PIXELS[change.pinSize]);
@@ -240,7 +229,7 @@ function MapView() {
   const { search, mapPhotos } = useMapFilters();
   const { markers, view, updateMarkers, display, changeDisplay } = useMarkersOnDisplay(
     map,
-    mapPhotos.sets,
+    mapPhotos,
   );
   // A photo without an image, shown in a popup as the lightbox can't show it.
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
@@ -273,7 +262,7 @@ function MapView() {
   // ⌘- or Ctrl-click (`listPhotos`) on any group.
   async function openCluster(marker: ClusterMarkerData, listPhotos: boolean) {
     if (!map.current) return;
-    const clusterPhotos = await photosInCluster(map.current, marker.clusterId);
+    const clusterPhotos = await photosInCluster(map.current, marker);
     setSelected(null);
     const zoom = listPhotos ? null : zoomToFit(map.current, clusterPhotos);
     if (zoom) {
@@ -302,7 +291,7 @@ function MapView() {
           mapStyle={isDark ? MAP_STYLES.dark : MAP_STYLES.light}
           onMoveEnd={onMoveEnd}
           onSourceData={(event) => {
-            if (event.sourceId === SOURCE_ID && event.isSourceLoaded) void updateMarkers();
+            if (isPhotoSource(event.sourceId) && event.isSourceLoaded) void updateMarkers();
           }}
           // Clicking empty map closes the popups (the coordinates menu closes itself).
           onClick={() => {
@@ -328,20 +317,7 @@ function MapView() {
               }}
             />
           </FloatingHeader>
-          <Source
-            // Grouping differently needs a new source, as MapLibre can't change it on one.
-            key={clusterRadius(display)}
-            id={SOURCE_ID}
-            type="geojson"
-            data={mapPhotos.geoJson}
-            cluster
-            clusterMaxZoom={17}
-            // Photos group when they're closer than this many pixels: by default a little under a
-            // marker's width, so groups split as soon as their markers would barely overlap.
-            clusterRadius={clusterRadius(display)}
-          >
-            <Layer {...hiddenLayer} />
-          </Source>
+          <MapPhotoSources mapPhotos={mapPhotos} radius={clusterRadius(display)} />
           {markers.map((marker) => (
             <MapMarkerView
               key={marker.key}

@@ -93,8 +93,8 @@ const pairs: ScatterData = {
   xLabels: ["Jan", "Feb"],
   yLabels: ["2024", "2025"],
   points: [
-    { x: 0, y: 0, count: 4 },
-    { x: 1, y: 1, count: 1 },
+    { x: 0, y: 0, count: 4, value: 4 },
+    { x: 1, y: 1, count: 1, value: 1 },
   ],
 };
 

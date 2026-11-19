@@ -2,6 +2,7 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
 import { requestJson } from "@/api/request";
+import type { TripLegRide } from "@/api/trips";
 
 /**
  * How a stretch of a day was travelled. A walk is drawn through every photo in it; the others are
@@ -42,6 +43,11 @@ export interface TripSegment {
   path?: [number, number][];
   /** The bus, subway or train line a hop rode, picked from the ones OpenStreetMap maps. */
   line?: TripTransitLine;
+  /**
+   * The lines a hop rode one after another when its route changed lines, such as 北松江線 to 川跡
+   * and then 大社線, each with its stretch of `path`; left out for one line.
+   */
+  rides?: TripLegRide[];
   /** The station or stop a hop with a line got on at, with its name as the label. */
   board?: TripPoint;
   /** The station or stop it got off at, which can be a walk away from the next photo. */
@@ -61,11 +67,14 @@ export interface StationWalk {
 }
 
 /**
- * The bus, subway or train line a hop rode: an OpenStreetMap or Transitland route, with its name and
- * color.
+ * The bus, subway or train line a hop rode: an OpenStreetMap or Transitland route, or a route along
+ * Japan's rail map, with its name and color.
  */
 export interface TripTransitLine {
-  /** The route's ID: its OpenStreetMap relation, or its Transitland route when `source` says so. */
+  /**
+   * The route's ID: its OpenStreetMap relation, or its Transitland route or route along Japan's rail
+   * map when `source` says so.
+   */
   id: number;
   /** Its name, such as "Midosuji Line". */
   name: string;
@@ -73,8 +82,11 @@ export interface TripTransitLine {
   ref?: string;
   /** Its color, such as "#e5171f", which the map draws it in. */
   colour?: string;
-  /** Where it was found: left out for OpenStreetMap, "transitland" for Transitland. */
-  source?: "transitland";
+  /**
+   * Where it was found: left out for OpenStreetMap, "transitland" for Transitland, "mlit" for Japan's
+   * rail map, "osmrail" for a country's OpenStreetMap rail map.
+   */
+  source?: "transitland" | "mlit" | "osmrail";
 }
 
 /** A spot a segment's line goes through to shape it, such as a bridge crossed between two photos. */
@@ -85,7 +97,15 @@ export interface TripVia {
   longitude: number;
   /** The place visited (its index in the day's visits) this spot stands for; none for its own. */
   visit?: number;
+  /** How a walk goes to and from it when snapped to streets; left out, Snap to streets chooses. */
+  by?: ViaBy;
 }
+
+/**
+ * How a walk goes to and from a via spot when snapped to streets: along the road, as a car would
+ * (for a road OpenStreetMap closes to people on foot), or along walkways only.
+ */
+export type ViaBy = "road" | "foot";
 
 /**
  * A trip line file: the route of one day, which the portfolio's map draws. Commit combines them
@@ -156,6 +176,11 @@ export interface TripVisit {
   place?: string;
   /** The ID of the photo it comes after on the route; none leaves it off the route, as a pin only. */
   after?: number;
+  /**
+   * How it was reached from the point before it on the route, such as a walk between two stations
+   * in the middle of a train ride; left out, the way the route was travelled there.
+   */
+  mode?: Exclude<TripMode, "wander">;
   /**
    * On the route before the day's first photo: after the start spot when there is one, or else the
    * line starts there. It wins over `after`.

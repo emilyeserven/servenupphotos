@@ -25,7 +25,7 @@ function stationLabel(s: TransitStation): string {
 }
 
 /**
- * Finds a station or stop by name within 30 km of the end's day, from OpenStreetMap, and picking one
+ * Finds a station or stop by name near the end's day, from OpenStreetMap, and picking one
  * makes it the end's spot, labelled with its name, and closes the list.
  */
 export function StationSearch({ title, mode, near, onPick }: StationSearchProps) {
@@ -104,5 +104,5 @@ function StationChoices({
 /** What the search found, said when it found none. */
 function stationsNote(asked: string, stations: TransitStation[] | undefined): string {
   if (!asked || stations === undefined || stations.length > 0) return "";
-  return `Found no station named "${asked}" within 30 km of this end. Try the place's name alone, such as "Shimonoseki" for Shimonoseki Station, or the other search.`;
+  return `Found no station named "${asked}" near this end (within 100 km on Photon, 30 km on Overpass). Try the place's name alone, such as "Shimonoseki" for Shimonoseki Station, or the other search.`;
 }

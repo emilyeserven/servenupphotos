@@ -66,8 +66,13 @@ export function currentType(type: string | undefined): GraphType {
   return type === "dot" ? "photos" : (type as GraphType);
 }
 
-/** What a bar, line or pie measures: how many photos, or their share in percent. */
-export type Measure = "count" | "percent";
+/**
+ * What a graph's values are: how many photos (`count`), or their share in percent. A `percent`
+ * share is out of each x value's photos when the graph has a second stat (a split, or a scatterplot's
+ * or heatmap's y stat), and out of every photo kept when it hasn't. A `series` share is out of each
+ * of the second stat's values' photos, such as each year's, so a busy year doesn't drown out the rest.
+ */
+export type Measure = "count" | "percent" | "series";
 
 /** What order the x axis's values go in: the Numbers card's own, most photos first, or the card's reversed. */
 export type SortOrder = "group" | "count" | "reverse";
@@ -77,7 +82,7 @@ export interface GraphConfig extends GraphRanges {
   type: GraphType;
   /** The stat along the x axis, or the pie's slices. */
   x: string;
-  /** What a bar, line or pie measures. */
+  /** What a graph's values are: photos, or a share of them (see `Measure`). */
   measure: Measure;
   /** The stat along a scatterplot's or heatmap's y axis. */
   y: string;
@@ -224,16 +229,34 @@ function measuredAll(counts: Record<string, number>, total: number, measure: Mea
   );
 }
 
-/** A split graph: each x value's photos counted again by the split, one series per split value. */
+/** Each series' share of its own photos among those kept, in percent, such as a month's share of its year's. */
+function seriesShares(counts: Record<string, number>, totals: Record<string, number>) {
+  return Object.fromEntries(
+    Object.entries(counts).map(([key, count]) => [
+      key,
+      measured(count, totals[key] ?? 0, "percent"),
+    ]),
+  );
+}
+
+/**
+ * A split graph: each x value's photos counted again by the split, one series per split value.
+ * With the `series` measure, each value is its share of the split value's photos among those kept.
+ */
 function splitData(list: Photo[], rows: StatRow[], config: GraphConfig): GraphData {
   const stat = statById(config.split);
-  const series = splitSeries(stat.build(list).rows);
+  const all = stat.build(list);
+  const series = splitSeries(all.rows);
+  const totals = splitCounts(all, series);
   const data = rows.map((row) => {
     const counts = splitCounts(stat.build(rowPhotos(list, row)), series);
     return {
       label: row.label,
       photos: row.count,
-      values: measuredAll(counts, row.count, config.measure),
+      values:
+        config.measure === "series"
+          ? seriesShares(counts, totals)
+          : measuredAll(counts, row.count, config.measure),
     };
   });
   return { series, data };
@@ -283,6 +306,11 @@ export interface ScatterPoint {
   x: number;
   y: number;
   count: number;
+  /**
+   * What the dot's size or the cell's shade shows: its count, or its share in percent of its x
+   * value's photos (`percent`) or its y value's (`series`), as the graph's measure says.
+   */
+  value: number;
 }
 
 /** What a scatterplot or heatmap draws: each axis's values, and a dot or cell for every pair with photos. */
@@ -311,16 +339,33 @@ export function scatterData(list: Photo[], config: GraphConfig): ScatterData {
       .build(rowPhotos(list, row))
       .rows.map((cell) => ({ x, y: yLabels.indexOf(yBucket(cell.label)), count: cell.count })),
   );
+  const merged = mergePoints(points.filter((p) => p.y >= 0));
+  const yTotals = bucketTotals(yRows, yLabels, yBucket);
+  const totalOf = (point: Omit<ScatterPoint, "value">) =>
+    config.measure === "series" ? yTotals[point.y]! : xRows[point.x]!.count;
   return {
     xLabels: xRows.map((row) => row.label),
     yLabels,
-    points: mergePoints(points.filter((p) => p.y >= 0)),
+    points: merged.map((point) => ({
+      ...point,
+      value: measured(point.count, totalOf(point), config.measure),
+    })),
   };
 }
 
+/** How many photos each y value has among those kept, in the y labels' order, its bucket's rows added up. */
+function bucketTotals(rows: StatRow[], labels: string[], bucket: (label: string) => string) {
+  const totals = labels.map(() => 0);
+  for (const row of rows) {
+    const index = labels.indexOf(bucket(row.label));
+    if (index >= 0) totals[index]! += row.count;
+  }
+  return totals;
+}
+
 /** The points with the ones on the same spot, such as two y values in one bucket, made one. */
-function mergePoints(points: ScatterPoint[]): ScatterPoint[] {
-  const merged = new Map<string, ScatterPoint>();
+function mergePoints(points: Omit<ScatterPoint, "value">[]): Omit<ScatterPoint, "value">[] {
+  const merged = new Map<string, Omit<ScatterPoint, "value">>();
   for (const point of points) {
     const key = `${point.x}:${point.y}`;
     const count = (merged.get(key)?.count ?? 0) + point.count;
