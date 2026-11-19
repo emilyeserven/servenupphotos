@@ -9,9 +9,10 @@ import { Visits } from "@/components/trip-lines/visits";
 import type { TripDay } from "@/lib/trip-days";
 import type { GapDraft } from "@/lib/trip-gaps";
 import { type AreaPick, isAreaPick } from "@/lib/trip-wander";
+import type { BreakPick } from "@/lib/break-ends";
 
-/** What a click on the map places: the day's start or end spot, or a trip stop. */
-export type MapPick = EndKey | "visit" | AreaPick;
+/** What a click on the map places: the day's start or end spot, a break's, or a trip stop. */
+export type MapPick = EndKey | "visit" | AreaPick | BreakPick;
 
 /** The entrance or exit of an area wandered being picked, if that's what is. */
 function areaPicking(picking: MapPick | undefined): AreaPick | undefined {
