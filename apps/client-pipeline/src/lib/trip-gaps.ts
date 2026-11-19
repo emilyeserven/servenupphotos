@@ -28,7 +28,10 @@ export interface DraftVia extends TripPoint {
   by?: ViaBy;
 }
 
-/** How the day can get from its start to the first photo: any gap but a break or a wander. */
+/**
+ * How the day can get from its start to the first photo, or from its last photo to its end: any gap
+ * but a break or a wander.
+ */
 export type StartGap = Exclude<Gap, "break" | "wander">;
 
 /** A path along streets, each point [longitude, latitude]. */
@@ -44,6 +47,11 @@ export interface GapDraft {
    * photo, such as a bus from lunch; left out, it walked.
    */
   startGap?: StartGap;
+  /**
+   * How the day got from its last photo to its end spot, or the trip stops after that photo, when it
+   * wasn't walked, such as a drive back to the station.
+   */
+  endGap?: StartGap;
   /** A spot with no photo the day ends at. */
   end?: TripPoint;
   /** The via spots after the start spot and after each photo, in order. */
@@ -244,7 +252,23 @@ function plainSegments(photos: number[], draft: GapDraft): TripSegment[] {
     if (gap !== "break") segments.push(hopSegment(draft, gap, a, b));
     run = { photos: [b], via: [] };
   });
-  return [...segments, ...walkSegment(lastRun(run, draft))];
+  return [...segments, ...endSegments(run, draft)];
+}
+
+/**
+ * The last run, and the way from its last photo to the day's end: walked on with the run, or else
+ * its own hop from that photo, such as a drive back to the station.
+ */
+function endSegments(run: Run, draft: GapDraft): TripSegment[] {
+  const tail = lastRun(run, draft);
+  if (!draft.endGap || !tail.end || run.photos.length === 0) return walkSegment(tail);
+  const via = tail.via.slice(run.via.length);
+  const hop = {
+    mode: draft.endGap,
+    photos: run.photos.slice(-1),
+    ...withPoints({ end: tail.end, via }),
+  };
+  return [...walkSegment(run), hop];
 }
 
 /** The point's coordinates, or null when there's none. */
@@ -373,6 +397,7 @@ export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
     gaps,
     ...dayEnds(segments),
     ...startGapOf(segments),
+    ...endGapOf(segments),
     via,
     paths: pathsOf(segments),
     lines,
@@ -388,14 +413,32 @@ function startGapOf(segments: TripSegment[]): Pick<GapDraft, "startGap"> {
   return { startGap: first.mode };
 }
 
+/**
+ * How the saved line got from its last photo to its end, when it wasn't walked: the segment from that
+ * photo alone to an end spot.
+ */
+function endGapOf(segments: TripSegment[]): Pick<GapDraft, "endGap"> {
+  const last = segments.findLast((s) => s.photos.length > 0);
+  if (!last?.end || last.start || last.photos.length !== 1) return {};
+  if (last.mode === "walk" || last.mode === "wander") return {};
+  return { endGap: last.mode };
+}
+
 /** The draft with every gap kept walking: one line through all the photos. */
 export function walkingDraft(photos: number[]): GapDraft {
   return { gaps: photos.slice(1).map(() => "walk") };
 }
 
-/** The draft with gap index changed; index -1 is the way from the day's start to its first photo. */
+/** The gap index of the way from the day's last photo to its end. */
+export const END_GAP = -2;
+
+/**
+ * The draft with gap index changed; index -1 is the way from the day's start to its first photo,
+ * and END_GAP the way from its last photo to its end.
+ */
 export function withGap(draft: GapDraft, index: number, gap: Gap): GapDraft {
   if (index === -1) return withStartGap(draft, gap);
+  if (index === END_GAP) return withEndGap(draft, gap);
   return { ...draft, gaps: draft.gaps.map((g, i) => (i === index ? gap : g)) };
 }
 
@@ -404,6 +447,11 @@ function withStartGap({ startGap: _was, ...draft }: GapDraft, gap: Gap): GapDraf
   return gap === "walk" || gap === "break" || gap === "wander"
     ? draft
     : { ...draft, startGap: gap };
+}
+
+/** The draft with the way from its last photo to its end set; walking leaves it out. */
+function withEndGap({ endGap: _was, ...draft }: GapDraft, gap: Gap): GapDraft {
+  return gap === "walk" || gap === "break" || gap === "wander" ? draft : { ...draft, endGap: gap };
 }
 
 /** The keys of a draft that hold a list, such as its visits or its fences. */

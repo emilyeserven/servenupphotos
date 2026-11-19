@@ -1,11 +1,13 @@
 import { Flag, MapPin } from "lucide-react";
 import type { TripPoint, TripVisit } from "@/api/trip-lines";
 import { type EndKey, SpotLabel } from "@/components/trip-lines/end-spots";
-import { gapInfo } from "@/components/trip-lines/modes";
+import { END_GAPS, GapPicker } from "@/components/trip-lines/gap-picker";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { Button } from "@/components/ui/button";
+import { END_GAP, type Gap } from "@/lib/trip-gaps";
 import { endName } from "@/lib/trip-line-view";
+import { VISIT_KINDS } from "@/lib/trip-visits";
 import { cn } from "@/lib/utils";
 
 /** The day's start and end spots with no photo, such as the hotel, and setting them from the strip. */
@@ -56,6 +58,7 @@ const END_INFO = {
 export function EndChip({ which, ends, stops, choices, onInsert }: EndChipProps) {
   const spot = ends[which];
   const { title, heading } = END_INFO[which];
+  const stop = chipStop(which, ends, stops);
   return (
     <figure className="flex w-20 shrink-0 flex-col items-center gap-1">
       <VisitInsert
@@ -80,9 +83,31 @@ export function EndChip({ which, ends, stops, choices, onInsert }: EndChipProps)
           />
         )}
       />
-      <figcaption className="text-muted-foreground text-xs">{title}</figcaption>
+      <figcaption className="text-muted-foreground text-center text-xs">
+        {title}
+        {stop && <span className="block">({kindLabel(stop)})</span>}
+      </figcaption>
     </figure>
   );
+}
+
+/**
+ * The trip stop the Start or End chip stands for, when the day has no spot of its own there: the
+ * first stop before the first photo, or the last after the last photo. The strip shows it as the
+ * chip alone, with its kind under it, such as "End" over "(Station)".
+ */
+function chipStop(
+  which: EndKey,
+  ends: Pick<StripEnds, "start" | "end">,
+  stops: TripVisit[],
+): TripVisit | undefined {
+  if (ends[which]) return undefined;
+  return which === "start" ? stops[0] : stops.at(-1);
+}
+
+/** What kind of place a trip stop is, such as "Station". */
+function kindLabel(stop: TripVisit): string {
+  return VISIT_KINDS.find((k) => k.kind === stop.kind)?.label ?? "Stop";
 }
 
 interface ChipButtonProps extends React.ComponentProps<"button"> {
@@ -144,33 +169,34 @@ interface StripEndProps extends Omit<EndChipProps, "which" | "stops"> {
   onMove?: (visit: TripVisit, by: -1 | 1) => void;
   /** Takes a trip stop off the route; left out, they can't be taken off. */
   onOff?: (visit: TripVisit) => void;
+  /** How the day got from its last photo to where it ends. */
+  gap: Gap;
+  /** Changes that way; left out, it can't be changed. */
+  onGap?: (index: number, gap: Gap) => void;
 }
 
 /**
- * What comes after the day's last photo in the photo strip: the walk to the trip stops the route
- * ends at, such as dinner after the last photo, or to the end spot, then the End chip.
+ * What comes after the day's last photo in the photo strip: the way to the trip stops the route
+ * ends at, such as a walk to dinner or a drive back to the station, or to the end spot, which can be
+ * changed like any gap, then the End chip.
  */
-export function StripEnd({ stops, onMove, onOff, ...chip }: StripEndProps) {
-  const walks = stops.length > 0 || chip.ends.end !== undefined;
+export function StripEnd({ stops, onMove, onOff, gap, onGap, ...chip }: StripEndProps) {
+  const goes = stops.length > 0 || chip.ends.end !== undefined;
   return (
     <li className="flex shrink-0 items-center gap-1">
-      {walks && <WalkToEnd />}
-      <VisitChips visits={stops} onMove={onMove} onOff={onOff} />
+      {goes && <GapPicker gap={gap} index={END_GAP} onGap={onGap} choices={END_GAPS} />}
+      <VisitChips visits={withoutChipStop("end", chip.ends, stops)} onMove={onMove} onOff={onOff} />
       <EndChip which="end" stops={stops} {...chip} />
     </li>
   );
 }
 
-/** The walk from the last photo on to where the day ends. */
-function WalkToEnd() {
-  const { icon: Icon, label } = gapInfo("walk");
-  return (
-    <span
-      title={label}
-      className="bg-muted flex h-9 w-9 items-center justify-center rounded-md border"
-    >
-      <Icon className="size-4" aria-hidden />
-      <span className="sr-only">{label} to the end of the route</span>
-    </span>
-  );
+/** The trip stops to show as chips beside the Start or End chip: all but the one it stands for. */
+export function withoutChipStop(
+  which: EndKey,
+  ends: Pick<StripEnds, "start" | "end">,
+  stops: TripVisit[],
+): TripVisit[] {
+  const stop = chipStop(which, ends, stops);
+  return stop ? stops.filter((v) => v !== stop) : stops;
 }
