@@ -11,13 +11,13 @@
   "iso": 320,
   "focalLength": 36.6,
   "gpsPosition": "34 deg 24' 32.70\" N, 131 deg 23' 57.62\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.39727257149083, 131.40998795046423",
   "createDate": "2026:09:25 11:01:39",
   "customCreateDate": null,
-  "placeName": "Hagi Castle Town",
-  "customCity": null,
+  "placeName": "Aibagawa Waterway",
+  "customCity": "Hagi",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Yamaguchi",
   "city": "Hagi",
@@ -53,7 +53,7 @@
   "places": [
     {
       "relation": "in",
-      "id": "hagi-castle-town"
+      "id": "aibagawa-waterway"
     }
   ],
   "spotlightZones": [],
@@ -268,5 +268,8 @@
     "samples": 10050
   },
   "similarPhotos": [503, 501, 337, 312, 155, 160],
-  "compareGroup": "Koi from Above"
+  "compareGroup": "Koi from Above",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

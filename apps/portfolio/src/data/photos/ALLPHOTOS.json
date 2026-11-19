@@ -12036,13 +12036,13 @@
     "iso": 500,
     "focalLength": 55.6,
     "gpsPosition": "34 deg 24' 32.70\" N, 131 deg 23' 57.62\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.39727257149083, 131.40998795046423",
     "createDate": "2026:09:25 11:05:05",
     "customCreateDate": null,
-    "placeName": "Hagi Castle Town",
-    "customCity": null,
+    "placeName": "Aibagawa Waterway",
+    "customCity": "Hagi",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "Japan",
     "country": "Japan",
     "state": "Yamaguchi",
     "city": "Hagi",
@@ -12078,7 +12078,7 @@
     "places": [
       {
         "relation": "in",
-        "id": "hagi-castle-town"
+        "id": "aibagawa-waterway"
       }
     ],
     "spotlightZones": [],
@@ -12293,7 +12293,10 @@
       "samples": 10050
     },
     "similarPhotos": [502, 501, 337, 485, 393, 95],
-    "compareGroup": "Koi from Above"
+    "compareGroup": "Koi from Above",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Bridge Stone",
@@ -119688,10 +119691,10 @@
     "iso": 500,
     "focalLength": 110,
     "gpsPosition": "34 deg 24' 32.70\" N, 131 deg 23' 57.62\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.39727257149083, 131.40998795046423",
     "createDate": "2026:09:25 10:58:34",
     "customCreateDate": null,
-    "placeName": "Hagi Castle Town",
+    "placeName": "aibagawa-waterway",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -119730,7 +119733,7 @@
     "places": [
       {
         "relation": "in",
-        "id": "hagi-castle-town"
+        "id": "aibagawa-waterway"
       }
     ],
     "spotlightZones": [],
@@ -119945,7 +119948,10 @@
       "samples": 10050
     },
     "similarPhotos": [503, 502, 394, 509, 337, 307],
-    "compareGroup": "Koi from Above"
+    "compareGroup": "Koi from Above",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Red Tag",
@@ -130632,13 +130638,13 @@
     "iso": 400,
     "focalLength": 135,
     "gpsPosition": "34 deg 24' 32.70\" N, 131 deg 23' 57.62\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.39727257149083, 131.40998795046423",
     "createDate": "2026:09:25 10:35:42",
     "customCreateDate": null,
-    "placeName": "Hagi Castle Town",
-    "customCity": null,
+    "placeName": "Aibagawa Waterway",
+    "customCity": "Hagi",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "Japan",
     "country": "Japan",
     "state": "Yamaguchi",
     "city": "Hagi",
@@ -130674,7 +130680,7 @@
     "places": [
       {
         "relation": "in",
-        "id": "hagi-castle-town"
+        "id": "aibagawa-waterway"
       }
     ],
     "spotlightZones": [],
@@ -130892,7 +130898,9 @@
       "samples": 9801
     },
     "similarPhotos": [397, 457, 145, 504, 89, 506],
-    "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo."
+    "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo.",
+    "noGps": false,
+    "altText": null
   },
   {
     "id": 69,
@@ -139163,13 +139171,13 @@
     "iso": 320,
     "focalLength": 36.6,
     "gpsPosition": "34 deg 24' 32.70\" N, 131 deg 23' 57.62\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.39727257149083, 131.40998795046423",
     "createDate": "2026:09:25 11:01:39",
     "customCreateDate": null,
-    "placeName": "Hagi Castle Town",
-    "customCity": null,
+    "placeName": "Aibagawa Waterway",
+    "customCity": "Hagi",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "Japan",
     "country": "Japan",
     "state": "Yamaguchi",
     "city": "Hagi",
@@ -139205,7 +139213,7 @@
     "places": [
       {
         "relation": "in",
-        "id": "hagi-castle-town"
+        "id": "aibagawa-waterway"
       }
     ],
     "spotlightZones": [],
@@ -139420,7 +139428,10 @@
       "samples": 10050
     },
     "similarPhotos": [503, 501, 337, 312, 155, 160],
-    "compareGroup": "Koi from Above"
+    "compareGroup": "Koi from Above",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "id": 15,
