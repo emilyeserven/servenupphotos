@@ -23,40 +23,59 @@ export function MapTripToggles({
   onDisplayChange: (change: Partial<MapDisplay>) => void;
 }) {
   const map = useTripLinesOnDays(photos, true);
-  const trips = map ? mapTrips(map) : undefined;
-  const hidden = new Set(display.hiddenTrips);
-
-  /** Shows or hides one Trip's lines. */
-  function toggle(id: string, shown: boolean) {
-    const others = display.hiddenTrips.filter((each) => each !== id);
-    onDisplayChange({ hiddenTrips: shown ? others : [...others, id] });
-  }
-
   return (
     <PickerPart intro="Show or hide each trip's lines on the map.">
       {!display.tripLines && <LinesOff onTurnOn={() => onDisplayChange({ tripLines: true })} />}
-      {trips === undefined && <Note text="Loading trips…" />}
-      {trips?.length === 0 && <Note text="No trip lines for the photos on the map." />}
-      {trips && trips.length > 0 && (
-        <>
-          <ul className="flex flex-col gap-1" aria-label="Trips">
-            {trips.map((trip) => (
-              <TripRow
-                key={trip.id}
-                trip={trip}
-                shown={!hidden.has(trip.id)}
-                onChange={(shown) => toggle(trip.id, shown)}
-              />
-            ))}
-          </ul>
-          <AllButtons
-            onShowAll={() => onDisplayChange({ hiddenTrips: [] })}
-            onHideAll={() => onDisplayChange({ hiddenTrips: trips.map((trip) => trip.id) })}
-          />
-        </>
-      )}
+      <TripList
+        trips={map && mapTrips(map)}
+        hidden={display.hiddenTrips}
+        onHiddenChange={(hiddenTrips) => onDisplayChange({ hiddenTrips })}
+      />
     </PickerPart>
   );
+}
+
+/**
+ * The Trips' checkboxes with **Show all** and **Hide all** under them, or a note while they load
+ * or when there are none.
+ */
+function TripList({
+  trips,
+  hidden,
+  onHiddenChange,
+}: {
+  /** The Trips with lines on the map; undefined while they load. */
+  trips: MapTrip[] | undefined;
+  /** The hidden Trips' IDs. */
+  hidden: string[];
+  onHiddenChange: (hidden: string[]) => void;
+}) {
+  if (!trips) return <Note text="Loading trips…" />;
+  if (trips.length === 0) return <Note text="No trip lines for the photos on the map." />;
+  return (
+    <>
+      <ul className="flex flex-col gap-1" aria-label="Trips">
+        {trips.map((trip) => (
+          <TripRow
+            key={trip.id}
+            trip={trip}
+            shown={!hidden.includes(trip.id)}
+            onChange={(shown) => onHiddenChange(toggled(hidden, trip.id, shown))}
+          />
+        ))}
+      </ul>
+      <AllButtons
+        onShowAll={() => onHiddenChange([])}
+        onHideAll={() => onHiddenChange(trips.map((trip) => trip.id))}
+      />
+    </>
+  );
+}
+
+/** The hidden Trips with one shown or hidden. */
+function toggled(hidden: string[], id: string, shown: boolean): string[] {
+  const others = hidden.filter((each) => each !== id);
+  return shown ? others : [...others, id];
 }
 
 /** One Trip's checkbox, with its name, and its days with lines under it. */
