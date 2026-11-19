@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["apartments", "skyscrapers", "road", "crosswalk", "city"],
   "genres": [],
   "places": [],
   "noGps": false,

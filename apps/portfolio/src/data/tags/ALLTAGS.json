@@ -10,6 +10,12 @@
     "description": "narrow lanes and passageways between buildings, often lined with signs, power lines and street art"
   },
   {
+    "id": "andon",
+    "name": "andon",
+    "description": "a traditional Japanese lantern with a paper shade on a wood frame, often freestanding",
+    "parent": "lanterns"
+  },
+  {
     "id": "apartments",
     "name": "apartments",
     "description": "residential buildings divided into many units, often showing repeating windows and balconies"
@@ -202,6 +208,11 @@
     "id": "castle",
     "name": "castle",
     "description": "castles and their keeps, gates, walls and moats"
+  },
+  {
+    "id": "cats",
+    "name": "cats",
+    "description": ""
   },
   {
     "id": "cemetery",
@@ -453,6 +464,11 @@
     "id": "fences",
     "name": "fences",
     "description": "fences and railings of wood, metal or chain-link"
+  },
+  {
+    "id": "ferry",
+    "name": "ferry",
+    "description": ""
   },
   {
     "id": "festivals",
