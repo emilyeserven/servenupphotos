@@ -207,7 +207,7 @@ highlights its dot. Right-clicking the map copies that spot's coordinates (see
   saved by hand, or else the automatic line (so it copies the preview to change by hand), or else one walk through
   every photo.
 - By hand, each gap between two photos is a menu: **Keep walking**, **Break** (the line stops, and starts again at the
-  next photo), or a hop. An arrow marks each photo a line starts at and a flag each one it ends at (not a pin, since every photo in the strip has an exact spot; ones without go in [areas](#areas) instead).
+  next photo), or a hop by train, subway, bus, car or taxi, ropeway or gondola, or transit of unknown kind. An arrow marks each photo a line starts at and a flag each one it ends at (not a pin, since every photo in the strip has an exact spot; ones without go in [areas](#areas) instead).
 - **Start**, before the first photo, and **End**, after the last, are always at the ends of the strip
   (`components/trip-lines/strip-ends.tsx`). Each names what's there: a spot with no photo, such as "Hotel", or the trip
   stop the route starts or ends at, with its kind under the chip, such as "End (Station)", and no chip of its own beside
@@ -537,6 +537,12 @@ usually one direction of one line, listed with its number, color and ends. When 
 its two directions), it's picked by itself; otherwise pick one. When the lines found are of more than one kind, **Bus**, **Subway** and **Train** (and **Other**, such as a ferry) show only that kind. Subway covers light
 rail, monorails and trams. **Change line** looks again.
 
+**Or name it yourself** names the line by hand when no source has it, such as the Super HAGI bus: type its name and
+**Use this name**. It's saved as `{ "id": 0, "name": "Super HAGI", "source": "named" }`, kept drawn as it was (along
+the streets, when it was snapped), shown on the map with its name, and has no stations to pick. A **Ropeway or
+gondola** hop, such as the Shin-Kobe Ropeway up to the Nunobiki Herb Gardens, looks nothing up, since no source
+maps them as lines; it's drawn straight, as it runs, and named this way.
+
 While it looks, the hop says it's asking OpenStreetMap, since a busy public server can take up to a minute (see
 below). When nothing is found, often because a photo was a walk from the line (say the beach, 15 minutes from the end
 of the line), **Got on near** and **Got off near** each find a station by name near that photo, the same search as a
@@ -556,6 +562,8 @@ route** keeps the line, the stations and the track.
 The menu beside **Find lines** (and beside a Trip leg's **Look up route**) picks where lines are looked up, and the
 choice is kept in the browser for every look-up:
 
+- While a rail map is picked, a bus or ferry hop is looked up on OpenStreetMap instead (`lib/lookup-source.ts`),
+  since the rail maps only have trains and subways; asked directly, the backend says so and suggests naming the line.
 - **OpenStreetMap** (the default): the Overpass servers, as below. Its lines are each direction of a route, mapped
   by volunteers, and the public servers are often busy.
 - **Transitland** ([transit.land](https://www.transit.land)): the timetables transit agencies publish as GTFS, with
@@ -588,8 +596,12 @@ choice is kept in the browser for every look-up:
   Seoul to Busan (never a whole continent; a leg crossing a border finds none), and downloads that extract once
   (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract twice (its railway ways, then their
   points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
-  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/<extract>` beside the
-  settings file, then deletes the extract. A line is the ways of one name, shown by the English name most of its
+  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v2/<extract>` beside the
+  settings file, then deletes the extract. Railways tagged `highspeed=yes` are kept as high-speed track, and a route
+  counts each meter of it as 0.6 m (`highSpeedFactor`), so Seoul to Busan takes the KTX's 경부고속선 rather than the
+  slower 경부선 beside it, which is a little shorter once the change onto the high-speed line is counted. A map read
+  before high-speed track was kept (in `osm-rail/<extract>`) is downloaded and read again the first time it's used,
+  and the old folder removed. A line is the ways of one name, shown by the English name most of its
   ways have; unnamed track only joins lines, so a route never lists it. A station belongs to each line within 300 m
   of it. A route's ID holds up to 4 lines and, above them, its extract's place in the index, so its track and stops
   are looked up on the same extract (`be-pipeline/internal/transit/osmrail.go`, `osmrail_index.go`,

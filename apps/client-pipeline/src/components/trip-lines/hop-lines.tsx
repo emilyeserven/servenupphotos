@@ -7,6 +7,7 @@ import { HopStations } from "@/components/trip-lines/hop-stations";
 import { HopRideRows } from "@/components/trip-lines/hop-ride-rows";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
 import { LookupKind } from "@/components/trip-lines/lookup-kind";
+import { NamedLine } from "@/components/trip-lines/named-line";
 import { RouteSourcePicker } from "@/components/trip-lines/route-source-picker";
 import { gapInfo } from "@/components/trip-lines/modes";
 import { type HopEnds, useHopRide } from "@/components/trip-lines/use-hop-ride";
@@ -15,7 +16,7 @@ import type { Ride } from "@/lib/transit-ride";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap, GapDraft } from "@/lib/trip-gaps";
 import { legKeys } from "@/lib/hop-legs";
-import { ridesLine, withHopLine } from "@/lib/trip-hop-lines";
+import { isNamedLine, ridesLine, withHopLine, withNamedLine } from "@/lib/trip-hop-lines";
 
 interface HopLinesProps {
   photos: TripPhoto[];
@@ -43,6 +44,7 @@ export function HopLines({ photos, draft, segments, onChange }: HopLinesProps) {
           hop={hop}
           ends={legEnds(hop, byId)}
           onRide={(ride) => onChange(withHopLine(draft, hop, key, ride))}
+          onName={(name) => onChange(withNamedLine(draft, hop, key, name))}
         />
       ))}
     </div>
@@ -75,6 +77,8 @@ interface HopRowProps {
   hop: TripSegment;
   ends: HopEnd[];
   onRide: (ride?: Ride) => void;
+  /** Names the line by hand, for one no source has. */
+  onName: (name: string) => void;
 }
 
 /**
@@ -82,7 +86,7 @@ interface HopRowProps {
  * pick from, looked up at once while it has no line. When none is found near the photos, stations
  * can be picked to look near instead.
  */
-function HopRow({ hop, ends, onRide }: HopRowProps) {
+function HopRow({ hop, ends, onRide, onName }: HopRowProps) {
   const ask = askOf(hop, ends);
   const found = useHopRide(hop, ask, onRide);
   const { finding, setFinding, kind, setKind, lines, mutation, ride } = found;
@@ -103,14 +107,13 @@ function HopRow({ hop, ends, onRide }: HopRowProps) {
         />
       </div>
       <HopRideRows hop={hop} />
-      {hop.line && (
+      {hop.line && !isNamedLine(hop.line) && (
         <HopStations
           hop={{ ...hop, line: hop.line }}
           disabled={busy}
           onChange={(chosen) => ride(hop.line!, chosen)}
         />
       )}
-      {finding && <LookupKind mode={hop.mode} kind={kind} disabled={busy} onKind={setKind} />}
       <HopEndsPicker
         ask={ask}
         kind={kind}
@@ -118,7 +121,13 @@ function HopRow({ hop, ends, onRide }: HopRowProps) {
         ends={found.ends}
         onEnds={found.setEnds}
       />
-      {finding && <LineChoices lines={lines.data} onPick={ride} disabled={busy} />}
+      {finding && (
+        <>
+          <LookupKind mode={hop.mode} kind={kind} disabled={busy} onKind={setKind} />
+          <LineChoices lines={lines.data} onPick={ride} disabled={busy} />
+          <NamedLine onName={(name) => (onName(name), setFinding(false))} />
+        </>
+      )}
       <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines)} />
     </div>
   );

@@ -110,7 +110,7 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 		defer cancel()
 		lines, err := linesSource(finder, r)(ctx, r.URL.Query().Get("mode"), from, to)
 		if errors.Is(err, transit.ErrNoKind) {
-			writeError(w, http.StatusBadRequest, "Pick whether the hop was a train, subway, bus or ferry to find its lines.")
+			writeError(w, http.StatusBadRequest, noKindMessage(lineSource(r)))
 			return
 		}
 		if err != nil {
@@ -119,6 +119,15 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 		}
 		writeJSON(w, http.StatusOK, lines)
 	}
+}
+
+// noKindMessage says why source found no lines of the hop's kind: the rail
+// maps have only trains and subways, and other sources need the kind picked.
+func noKindMessage(source string) string {
+	if source == transit.SourceMLIT || source == transit.SourceOSMRail {
+		return "The rail maps only have trains and subways. For a bus, look lines up on OpenStreetMap or Transitland, or name the line yourself."
+	}
+	return "Pick whether the hop was a train, subway, bus or ferry to find its lines, or name the line yourself."
 }
 
 // handleTransitStations answers the ?mode= stations or stops ("train",

@@ -24,6 +24,10 @@ import (
 // subways. Trams, funiculars, and disused or planned track are left out.
 var osmRailways = map[string]int{"rail": 11, "narrow_gauge": 11, "light_rail": 16, "monorail": 23, "subway": 31}
 
+// highSpeedKind is the kind code a railway tagged highspeed=yes is kept as,
+// such as Korea's KTX lines, which a route prefers (see speedFactor).
+const highSpeedKind = 10
+
 // osmSkippedService are the railway service values left out: track in a yard
 // or a siding, which no ride follows.
 var osmSkippedService = map[string]bool{"yard": true, "siding": true, "spur": true}
@@ -64,6 +68,9 @@ func (r *osmRailReader) addWay(w *osm.Way) {
 	kind, ok := osmRailways[w.Tags.Find("railway")]
 	if !ok || osmSkippedService[w.Tags.Find("service")] || len(w.Nodes) < 2 {
 		return
+	}
+	if kind == 11 && w.Tags.Find("highspeed") == "yes" {
+		kind = highSpeedKind
 	}
 	way := osmRailWay{
 		name: w.Tags.Find("name"), nameEn: w.Tags.Find("name:en"),
@@ -135,12 +142,12 @@ func (r *osmRailReader) lines() map[string]osmLine {
 	en := map[string]map[string]int{}
 	ops := map[string]map[string]int{}
 	total := map[string]int{}
-	kinds := map[string]int{}
+	kinds := map[string]map[string]int{}
 	for _, w := range r.ways {
 		count(en, w.name, w.nameEn)
 		count(ops, w.name, w.operator)
+		count(kinds, w.name, strconv.Itoa(w.kind))
 		total[w.name]++
-		kinds[w.name] = w.kind
 	}
 	out := map[string]osmLine{}
 	for name, n := range total {
@@ -149,12 +156,19 @@ func (r *osmRailReader) lines() map[string]osmLine {
 			display = english
 		}
 		operator, _ := mostCommon(ops[name])
-		out[name] = osmLine{name: display, operator: operator, kind: kinds[name]}
+		out[name] = osmLine{name: display, operator: operator, kind: kindOf(kinds[name])}
 	}
 	if _, ok := out[""]; ok {
-		out[""] = osmLine{kind: kinds[""]}
+		out[""] = osmLine{kind: kindOf(kinds[""])}
 	}
 	return out
+}
+
+// kindOf is the kind most of a line's ways are kept as.
+func kindOf(counts map[string]int) int {
+	kind, _ := mostCommon(counts)
+	n, _ := strconv.Atoi(kind)
+	return n
 }
 
 // count adds one to counts[key][value], leaving out an empty value.

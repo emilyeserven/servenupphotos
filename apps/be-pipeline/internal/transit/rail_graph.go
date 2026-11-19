@@ -283,7 +283,7 @@ func (n *railNet) route(from, to [2]float64, allowed map[int]bool) (nodes, lines
 		}
 		for _, e := range n.edges[it.state.node] {
 			if allows(allowed, e.line) {
-				s.reach(railState{e.to, e.line}, it.state, it.dist+e.meters+n.changeCost(it.state.line, e.line))
+				s.reach(railState{e.to, e.line}, it.state, it.dist+e.meters*n.speedFactor(e.line)+n.changeCost(it.state.line, e.line))
 			}
 		}
 	}
@@ -317,6 +317,21 @@ func (s *railSearch) reach(next, prev railState, dist float64) {
 	}
 	s.best[next] = railStep{dist, prev}
 	heap.Push(s.queue, railItem{next, dist})
+}
+
+// highSpeedFactor is how much of each meter of high-speed track a route
+// counts, so a ride between two cities takes the high-speed line, as the
+// KTX from Seoul to Busan does, rather than the slower line beside it that
+// is a little shorter once a change of line is counted.
+const highSpeedFactor = 0.6
+
+// speedFactor is how much of each meter along line a route counts: less on
+// a high-speed line.
+func (n *railNet) speedFactor(line int) float64 {
+	if line >= 0 && n.lines[line].kind == highSpeedKind {
+		return highSpeedFactor
+	}
+	return 1
 }
 
 // changeCost is the extra cost of going on along line after arriving on prev:

@@ -37,7 +37,7 @@ export interface HopAsk {
  * The query string that asks Transitland or a rail map for a line from there, or nothing for
  * OpenStreetMap's Overpass servers.
  */
-function sourceParam(source: RouteSource | undefined): string {
+function sourceParam(source: RouteSource | "named" | undefined): string {
   return source && source !== "overpass" ? `&source=${source}` : "";
 }
 
@@ -51,13 +51,13 @@ function spotParams({ from, to }: Pick<HopAsk, "from" | "to">): string {
  * the Overpass API (which the backend asks at most once a second), from Transitland, or from Japan's
  * rail map.
  */
-export function transitLinesQuery(ask: HopAsk, source: RouteSource) {
-  const mode = encodeURIComponent(ask.mode);
+export function transitLinesQuery(ask: HopAsk | undefined, source: RouteSource) {
   return queryOptions({
     queryKey: ["transit", "lines", ask, source],
+    // Only run once the hop's kind is known; until then the query is turned off.
     queryFn: () =>
       transitJson<TransitLine[]>(
-        `/api/transit/lines?mode=${mode}&${spotParams(ask)}${sourceParam(source)}`,
+        `/api/transit/lines?mode=${encodeURIComponent(ask!.mode)}&${spotParams(ask!)}${sourceParam(source)}`,
       ),
     retry: false,
     staleTime: Infinity,

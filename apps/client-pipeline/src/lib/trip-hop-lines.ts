@@ -1,4 +1,4 @@
-import type { TripSegment } from "@/api/trip-lines";
+import type { TripSegment, TripTransitLine } from "@/api/trip-lines";
 import { LINE_MODES } from "@/lib/stop-ways";
 import type { Ride } from "@/lib/transit-ride";
 import { type Gap, type GapDraft, segmentKey } from "@/lib/trip-gaps";
@@ -27,4 +27,27 @@ export function withHopLine(draft: GapDraft, hop: TripSegment, key: string, ride
   const lines = { ...draft.lines, [key]: { mode: hop.mode as Gap, ...picked } };
   const ridden: TripSegment = { ...hop, ...picked, path: undefined };
   return { ...draft, lines, paths: { ...draft.paths, [segmentKey(ridden)]: path } };
+}
+
+/**
+ * The draft with the leg known by key riding a line named by hand, such as "Super HAGI" for a bus no
+ * source has: drawn as before (along the streets, when it was), and named on the map.
+ */
+export function withNamedLine(
+  draft: GapDraft,
+  hop: TripSegment,
+  key: string,
+  name: string,
+): GapDraft {
+  const line: TripTransitLine = { id: 0, name: name.trim(), source: "named" };
+  const lines = { ...draft.lines, [key]: { mode: hop.mode as Gap, line } };
+  const plain: TripSegment = { ...hop, line: undefined, board: undefined, alight: undefined };
+  const path = draft.paths?.[segmentKey(plain)];
+  if (!path) return { ...draft, lines };
+  return { ...draft, lines, paths: { ...draft.paths, [segmentKey({ ...plain, line })]: path } };
+}
+
+/** Whether the line was named by hand, so it has no stops or track to look up. */
+export function isNamedLine(line: TripTransitLine | undefined): boolean {
+  return line?.source === "named";
 }

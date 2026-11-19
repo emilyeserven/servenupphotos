@@ -205,6 +205,7 @@ const GAP_LABELS: [GapDraft["gaps"][number], string][] = [
   ["subway", "Subway"],
   ["bus", "Bus"],
   ["car", "Car"],
+  ["ropeway", "Ropeway"],
   ["transit", "Transit"],
 ];
 
