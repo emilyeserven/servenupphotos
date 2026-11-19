@@ -13,7 +13,10 @@ export interface LegendItems {
   noImage: boolean;
   /** Whether a day's walk is drawn. */
   walk: boolean;
-  /** The colors of the transit lines a hop rode, at most a few, in the order first drawn. */
+  /**
+   * The colors of the transit lines a hop rode, at most a few, in the order first drawn; RIDE_COLOR
+   * for a line with no color of its own.
+   */
   rides: string[];
   /** Whether a hop with no transit line picked is drawn, dashed. */
   hop: boolean;
@@ -53,13 +56,21 @@ function isRide(feature: TripMapFeature): boolean {
   return isLine(feature) && !OWN_STYLE.has(feature.properties.mode ?? "");
 }
 
-/** A hop's transit line color, or undefined for a walk, a hop without one, or no line at all. */
+/** The color the key shows for a ride on a transit line that has no color of its own. */
+export const RIDE_COLOR = "ride";
+
+/**
+ * A hop's transit line color (RIDE_COLOR for a line with none), or undefined for a walk, a hop
+ * without a line, or no line at all.
+ */
 function rideColor(feature: TripMapFeature): string | undefined {
-  return isRide(feature) ? feature.properties.colour : undefined;
+  if (!isRide(feature)) return undefined;
+  const { colour, line } = feature.properties;
+  return colour ?? (line ? RIDE_COLOR : undefined);
 }
 
 function isHop(feature: TripMapFeature): boolean {
-  return isRide(feature) && feature.properties.colour === undefined;
+  return isRide(feature) && rideColor(feature) === undefined;
 }
 
 /** The distinct transit line colors of the hops, up to MAX_RIDES. */

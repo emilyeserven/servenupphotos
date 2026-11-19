@@ -132,11 +132,18 @@ or on a hop or drive, stays a pin.
 `/trip-lines` lists the days with two or more photos at two or more different exact spots, newest first, as cards. Each
 card has how many photos and spots the day has, whether its line is **Marked**, **Out of date**, **Automatic**,
 **Planned** or **None** (with a filter by each), and a small drawing of the line from its file, by hand or automatic: the line in
-the map's colors and the photos as dots, drawn as SVG with no basemap so a long list stays quick. An automatic line
-saved before its segments were kept shows a note until it's saved again or the next Commit fills them in. **Out of date** (in red) is a line marked by hand
-that doesn't go through every photo of the day with an exact spot, such as photos added since, or goes through photos
-no longer on that day; the Dashboard's **Needs attention** lists them as urgent and links to this list filtered to
-them. A new photo opens with a break on both sides, ready to join the line.
+the map's colors and the photos as dots, drawn as SVG over the map's basemap so the card shows where the day was. The
+basemap is a few of CARTO's raster tiles (light or dark, like the map) laid in a Web Mercator box around the line
+(`lib/preview-tiles.ts`) and loaded lazily, rather than a whole map per card, so a long list stays quick; it zooms in
+no closer than zoom 16, and the list ends with the maps' credit to OpenStreetMap and CARTO.
+
+> **Frontend analogy:** a web map is a grid of 256 px images per zoom level, like a sprite sheet cut into squares, each
+> zoom doubling the grid each way. Placing the few squares under the line behind the SVG is an absolutely positioned
+> background behind a chart. An automatic line
+> saved before its segments were kept shows a note until it's saved again or the next Commit fills them in. **Out of date** (in red) is a line marked by hand
+> that doesn't go through every photo of the day with an exact spot, such as photos added since, or goes through photos
+> no longer on that day; the Dashboard's **Needs attention** lists them as urgent and links to this list filtered to
+> them. A new photo opens with a break on both sides, ready to join the line.
 
 A card opens the day's own pages, each a tab with its own link:
 

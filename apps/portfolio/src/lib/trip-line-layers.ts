@@ -9,6 +9,12 @@ const IS_LINE = ["!", ["has", "feature"]];
 const OWN_STYLE = ["!", ["in", ["get", "mode"], ["literal", ["walk", "car", "ferry", "flight"]]]];
 
 /**
+ * A hop along a transit line: one with a line's name, or its color. A line with no color of its own,
+ * such as one from Japan's rail map, is drawn solid in the ride blue, not dashed like a hop with none.
+ */
+const RIDDEN = ["any", ["has", "colour"], ["has", "line"]];
+
+/**
  * Each layer of the trip lines, under the photos' markers: areas, then lines. Trip stops aren't drawn: they belong to the Trip pages. The
  * portfolio's map draws TRIPLINES.geo.json with them, and the pipeline's Trip page its Trip's days.
  */
@@ -33,10 +39,10 @@ export function tripLineLayers(dark: boolean): LayerProps[] {
     {
       id: "trip-ride",
       type: "line",
-      filter: ["all", IS_LINE, OWN_STYLE, ["has", "colour"]],
+      filter: ["all", IS_LINE, OWN_STYLE, RIDDEN],
       layout: round,
       paint: {
-        "line-color": ["get", "colour"],
+        "line-color": ["coalesce", ["get", "colour"], colors.ride],
         "line-width": 3,
         "line-opacity": 0.85,
         "line-offset": LANE_OFFSET,
@@ -80,7 +86,7 @@ export function tripLineLayers(dark: boolean): LayerProps[] {
     {
       id: "trip-hop",
       type: "line",
-      filter: ["all", IS_LINE, OWN_STYLE, ["!", ["has", "colour"]]],
+      filter: ["all", IS_LINE, OWN_STYLE, ["!", RIDDEN]],
       paint: {
         "line-color": colors.hop,
         "line-width": 2,
