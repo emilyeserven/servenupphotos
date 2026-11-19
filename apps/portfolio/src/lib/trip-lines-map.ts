@@ -16,6 +16,8 @@ export interface TripMapFeature {
     feature?: "visit" | "fence";
     mode?: string;
     colour?: string;
+    /** The name of the transit line a hop rode; none when none was picked. */
+    line?: string;
     /** The Trip a leg between days is part of, and the day it arrived. */
     trip?: string;
     arrive?: string;

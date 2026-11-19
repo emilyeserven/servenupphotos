@@ -46,8 +46,8 @@ export function areaEdgePaint(dark: boolean) {
 }
 
 /**
- * The trip lines' colors that change with dark mode: walks, hops with no transit line picked,
- * drives, a Trip's ferries and flights, and the edge around a place visited, which matches the
+ * The trip lines' colors that change with dark mode: walks, hops with no transit line picked, rides
+ * on a transit line that has no color of its own (a deeper blue than walks), drives, a Trip's ferries and flights, and the edge around a place visited, which matches the
  * basemap. Places visited are amber in both.
  */
 export function tripColors(dark: boolean) {
@@ -58,6 +58,7 @@ const TRIP_COLORS = {
   light: {
     walk: "#2563eb",
     hop: "#9333ea",
+    ride: "#1e40af",
     drive: "#93c5fd",
     ferry: "#0d9488",
     flight: "#db2777",
@@ -67,6 +68,7 @@ const TRIP_COLORS = {
   dark: {
     walk: "#60a5fa",
     hop: "#c084fc",
+    ride: "#3b82f6",
     drive: "#bfdbfe",
     ferry: "#2dd4bf",
     flight: "#f472b6",

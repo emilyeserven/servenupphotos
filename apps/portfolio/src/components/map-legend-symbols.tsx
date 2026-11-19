@@ -1,5 +1,6 @@
 import { Image } from "lucide-react";
 import type { ReactNode } from "react";
+import { RIDE_COLOR } from "@/lib/map-legend";
 import { areaColors, tripColors } from "@/lib/map-theme";
 import { cn } from "@/lib/utils";
 
@@ -87,8 +88,11 @@ export function WalkSymbol({ dark }: { dark: boolean }) {
   );
 }
 
-/** Hops along transit lines: a solid line split into the colors of the lines ridden. */
-export function RideSymbol({ colors }: { colors: string[] }) {
+/**
+ * Hops along transit lines: a solid line split into the colors of the lines ridden, the ride blue for
+ * a line with no color of its own.
+ */
+export function RideSymbol({ colors, dark }: { colors: string[]; dark: boolean }) {
   const step = 26 / colors.length;
   return (
     <LineSample>
@@ -99,7 +103,7 @@ export function RideSymbol({ colors }: { colors: string[] }) {
           x2={3 + (i + 1) * step}
           y1={12}
           y2={12}
-          stroke={color}
+          stroke={color === RIDE_COLOR ? tripColors(dark).ride : color}
           strokeWidth={3}
         />
       ))}
