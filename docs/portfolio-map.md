@@ -69,7 +69,9 @@ Over the top left corner, beside the title on wider screens and under it on phon
 (`components/map-controls.tsx`). On phones, **More filters**, **View in grid**, **Nearest here** and **Browse** are just their icons, so the row
 fits without covering the map:
 
-- **Places** comes first, with the icon button beside it that zooms back out to every photo. It opens the same columns as
+- **Places** comes first, with the icon button beside it that zooms back out to every photo. Its menu has two tabs down
+  the left, like **Groups**: **Country** and **Trip**. **Trip** shows or hides each Trip's
+  [trip lines](#showing-or-hiding-a-trips-lines). **Country** opens the same columns as
   the [Places filter](portfolio-filters.md#places), without checkboxes, and it doesn't filter: picking a place (one with
   nothing in it, or **All of** at the top of a column, such as **All of Japan**) closes them and moves the map to that
   place's photos, the one place at a time, the way the
@@ -169,6 +171,22 @@ credits OpenStreetMap's contributors, which covers them.
 
 > **Frontend analogy:** the map reads a build artifact. The pipeline compiles each day's line into one GeoJSON file at
 > Commit, and the portfolio only renders it, the way a static site renders prebuilt JSON instead of calling an API.
+
+### Showing or hiding a Trip's lines
+
+The **Trip** tab of **Places** (`components/map-trip-toggles.tsx`, `lib/map-trips.ts`) lists the
+[Trips](trips.md) with trip lines on the days of the photos on the map, newest first, each with its days and a checkbox,
+and **Days in no trip** last when any of those days has lines but no Trip covers it. A line belongs to the Trip whose
+dates cover its day, and a leg between days (a train or flight from one day's end to the next) to the Trip it names.
+Unticking a Trip takes all its lines, legs and areas off the map and out of the key; **Show all** and **Hide all** set
+every one at once. The tab's name says how many are hidden, with a dot while any are. The choice is kept with the
+display options in this browser (`hiddenTrips` in `lib/map-display.ts`), but their **Reset to defaults** leaves it.
+While **Show trip lines** is off, the tab says so above the list, with a **Turn on** button.
+
+> **Frontend analogy:** it's a per-item visibility filter applied in a `useMemo` before the GeoJSON goes to the map's
+> `<Source>`, like filtering a list's rows before rendering them, rather than toggling each layer's style.
+
+The other lines on the map, the shading and the photos stay as they are.
 
 ## Copy coordinates
 

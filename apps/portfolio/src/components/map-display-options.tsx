@@ -30,7 +30,8 @@ export function MapDisplayOptions({
     // Eye only: the map's floating controls have no room for words.
     <ViewOptionsButton
       iconOnly
-      onReset={() => onChange(DEFAULT_MAP_DISPLAY)}
+      // The Trip tab under Places keeps its own choices.
+      onReset={() => onChange({ ...DEFAULT_MAP_DISPLAY, hiddenTrips: display.hiddenTrips })}
       choices={
         <>
           <PinChoiceFields
