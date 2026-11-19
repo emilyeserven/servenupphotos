@@ -4,7 +4,12 @@ import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
 import { END_GAPS, GapPicker, type GapPickerProps } from "@/components/trip-lines/gap-picker";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
-import { EndChip, StripEnd, type StripEnds } from "@/components/trip-lines/strip-ends";
+import {
+  EndChip,
+  StripEnd,
+  type StripEnds,
+  withoutChipStop,
+} from "@/components/trip-lines/strip-ends";
 import { Button } from "@/components/ui/button";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { type StripVia, ViaChips } from "@/components/trip-lines/via-list";
@@ -200,18 +205,17 @@ function FromStart(props: StripItemProps) {
  */
 function StartStops(props: StripItemProps) {
   const { gaps, onInsertFirst, choices, ends, before } = props;
+  if (!gaps || !onInsertFirst || !ends) return <StopsHere {...props} />;
   return (
     <>
-      {gaps && onInsertFirst && ends && (
-        <EndChip
-          which="start"
-          ends={ends}
-          stops={before}
-          choices={choices}
-          onInsert={onInsertFirst}
-        />
-      )}
-      <StopsHere {...props} />
+      <EndChip
+        which="start"
+        ends={ends}
+        stops={before}
+        choices={choices}
+        onInsert={onInsertFirst}
+      />
+      <StopsHere {...props} before={withoutChipStop("start", ends, before)} />
     </>
   );
 }

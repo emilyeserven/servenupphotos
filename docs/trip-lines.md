@@ -199,7 +199,8 @@ highlights its dot. Right-clicking the map copies that spot's coordinates (see
   next photo), or a hop. An arrow marks each photo a line starts at and a flag each one it ends at (not a pin, since every photo in the strip has an exact spot; ones without go in [areas](#areas) instead).
 - **Start**, before the first photo, and **End**, after the last, are always at the ends of the strip
   (`components/trip-lines/strip-ends.tsx`). Each names what's there: a spot with no photo, such as "Hotel", or the trip
-  stop the route starts or ends at; dashed with **Set** when there's nothing. Its menu picks a spot with no photo on the
+  stop the route starts or ends at, with its kind under the chip, such as "End (Station)", and no chip of its own beside
+  it (move it or take it off the route from **Trip Stops**); dashed with **Set** when there's nothing. Its menu picks a spot with no photo on the
   map (a note over the map says to click it, with **Cancel**), labels or removes it, or puts a trip stop there. Setting
   a spot on an automatic day, or one with no line, starts a line by hand from what's shown.
 - An automatic day shows the line as the next Commit would draw it. Putting trip stops on the route, moving them or

@@ -7,6 +7,7 @@ import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { Button } from "@/components/ui/button";
 import { END_GAP, type Gap } from "@/lib/trip-gaps";
 import { endName } from "@/lib/trip-line-view";
+import { VISIT_KINDS } from "@/lib/trip-visits";
 import { cn } from "@/lib/utils";
 
 /** The day's start and end spots with no photo, such as the hotel, and setting them from the strip. */
@@ -57,6 +58,7 @@ const END_INFO = {
 export function EndChip({ which, ends, stops, choices, onInsert }: EndChipProps) {
   const spot = ends[which];
   const { title, heading } = END_INFO[which];
+  const stop = chipStop(which, ends, stops);
   return (
     <figure className="flex w-20 shrink-0 flex-col items-center gap-1">
       <VisitInsert
@@ -81,9 +83,31 @@ export function EndChip({ which, ends, stops, choices, onInsert }: EndChipProps)
           />
         )}
       />
-      <figcaption className="text-muted-foreground text-xs">{title}</figcaption>
+      <figcaption className="text-muted-foreground text-center text-xs">
+        {title}
+        {stop && <span className="block">({kindLabel(stop)})</span>}
+      </figcaption>
     </figure>
   );
+}
+
+/**
+ * The trip stop the Start or End chip stands for, when the day has no spot of its own there: the
+ * first stop before the first photo, or the last after the last photo. The strip shows it as the
+ * chip alone, with its kind under it, such as "End" over "(Station)".
+ */
+function chipStop(
+  which: EndKey,
+  ends: Pick<StripEnds, "start" | "end">,
+  stops: TripVisit[],
+): TripVisit | undefined {
+  if (ends[which]) return undefined;
+  return which === "start" ? stops[0] : stops.at(-1);
+}
+
+/** What kind of place a trip stop is, such as "Station". */
+function kindLabel(stop: TripVisit): string {
+  return VISIT_KINDS.find((k) => k.kind === stop.kind)?.label ?? "Stop";
 }
 
 interface ChipButtonProps extends React.ComponentProps<"button"> {
@@ -161,8 +185,18 @@ export function StripEnd({ stops, onMove, onOff, gap, onGap, ...chip }: StripEnd
   return (
     <li className="flex shrink-0 items-center gap-1">
       {goes && <GapPicker gap={gap} index={END_GAP} onGap={onGap} choices={END_GAPS} />}
-      <VisitChips visits={stops} onMove={onMove} onOff={onOff} />
+      <VisitChips visits={withoutChipStop("end", chip.ends, stops)} onMove={onMove} onOff={onOff} />
       <EndChip which="end" stops={stops} {...chip} />
     </li>
   );
+}
+
+/** The trip stops to show as chips beside the Start or End chip: all but the one it stands for. */
+export function withoutChipStop(
+  which: EndKey,
+  ends: Pick<StripEnds, "start" | "end">,
+  stops: TripVisit[],
+): TripVisit[] {
+  const stop = chipStop(which, ends, stops);
+  return stop ? stops.filter((v) => v !== stop) : stops;
 }
