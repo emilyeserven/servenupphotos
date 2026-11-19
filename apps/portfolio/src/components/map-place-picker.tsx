@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { locationOptions } from "@/lib/filter-options";
 import type { MapDisplay } from "@/lib/map-display";
+import { hiddenText } from "@/lib/map-trips";
 import type { PlacedPhoto } from "@/lib/map-photos";
 import { filterPhotos, locationFilters } from "@/lib/photo-filters";
 
@@ -93,13 +94,19 @@ interface MenuProps {
 /** The menu's Country and Trip tabs on the left, and the chosen tab's contents. */
 function PlacesMenu({ onPick, ...props }: MenuProps & { onPick: (value: string) => void }) {
   const [tab, setTab] = useState<PlacesTab>("country");
-  const hidden = props.display.hiddenTrips.length;
+  const hidden = props.display.hiddenTrips;
   return (
     <SectionPicker
       label="Places"
       sections={[
         { key: "country", label: "Country", text: "Go to a place", Icon: Globe },
-        { key: "trip", label: "Trip", text: hiddenText(hidden), set: hidden > 0, Icon: Route },
+        {
+          key: "trip",
+          label: "Trip",
+          text: hiddenText(hidden),
+          set: hidden.length > 0,
+          Icon: Route,
+        },
       ]}
       chosen={tab}
       onChoose={setTab}
@@ -118,11 +125,4 @@ function PlacesMenu({ onPick, ...props }: MenuProps & { onPick: (value: string) 
       )}
     </SectionPicker>
   );
-}
-
-/** What the Trip tab says under its name: whether every Trip's lines are shown. */
-function hiddenText(hidden: number): string {
-  return hidden === 0
-    ? "All trip lines shown"
-    : `${hidden} ${hidden === 1 ? "trip" : "trips"} hidden`;
 }

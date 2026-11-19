@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { mapTrips, NO_TRIP, tripOf, withoutTrips } from "@portfolio/lib/map-trips";
+import {
+  dayKey,
+  hiddenText,
+  mapTrips,
+  NO_TRIP,
+  tripOf,
+  withoutTrips,
+} from "@portfolio/lib/map-trips";
 import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 import type { TripLinesMap, TripMapFeature } from "@portfolio/lib/trip-lines-map";
 
@@ -40,9 +47,27 @@ test("lists the Trips with lines newest first, then the days in no Trip", () => 
     TRIPS,
   );
   assert.deepEqual(trips, [
-    { id: "sf", name: "San Francisco", start: "2026-10-24", end: "2026-10-24", days: 1 },
-    { id: "korea", name: "Korea", start: "2026-09-20", end: "2026-09-25", days: 2 },
-    { id: NO_TRIP, name: "Days in no trip", start: "2025-01-19", end: "2025-01-19", days: 1 },
+    {
+      id: "sf",
+      name: "San Francisco",
+      start: "2026-10-24",
+      end: "2026-10-24",
+      days: ["2026-10-24"],
+    },
+    {
+      id: "korea",
+      name: "Korea",
+      start: "2026-09-20",
+      end: "2026-09-25",
+      days: ["2026-09-20", "2026-09-25"],
+    },
+    {
+      id: NO_TRIP,
+      name: "Days in no trip",
+      start: "2025-01-19",
+      end: "2025-01-19",
+      days: ["2025-01-19"],
+    },
   ]);
 });
 
@@ -51,4 +76,18 @@ test("leaves out the hidden Trips' lines", () => {
   assert.equal(withoutTrips(all, [], TRIPS), all);
   assert.deepEqual(withoutTrips(all, ["korea"], TRIPS).features, [line("2025-01-19")]);
   assert.deepEqual(withoutTrips(all, [NO_TRIP], TRIPS).features.length, 2);
+});
+
+test("leaves out a hidden day's lines, a leg by the day it arrived", () => {
+  const leg: TripMapFeature = { ...line("2026-09-20", "korea") };
+  leg.properties = { ...leg.properties, arrive: "2026-09-21" };
+  const all = map(line("2026-09-20"), line("2026-09-21"), leg);
+  assert.deepEqual(withoutTrips(all, [dayKey("2026-09-21")], TRIPS).features, [line("2026-09-20")]);
+});
+
+test("says how many Trips and days are hidden", () => {
+  assert.equal(hiddenText([]), "All trip lines shown");
+  assert.equal(hiddenText(["korea"]), "1 trip hidden");
+  assert.equal(hiddenText(["korea", "sf", dayKey("2026-10-24")]), "2 trips, 1 day hidden");
+  assert.equal(hiddenText([dayKey("2026-10-24"), dayKey("2026-10-25")]), "2 days hidden");
 });

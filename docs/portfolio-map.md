@@ -181,8 +181,11 @@ The **Trip** tab of **Places** (`components/map-trip-toggles.tsx`, `lib/map-trip
 and **Days in no trip** last when any of those days has lines but no Trip covers it. A line belongs to the Trip whose
 dates cover its day, and a leg between days (a train or flight from one day's end to the next) to the Trip it names.
 Unticking a Trip takes all its lines, legs and areas off the map and out of the key; **Show all** and **Hide all** set
-every one at once. The tab's name says how many are hidden, with a dot while any are. The choice is kept with the
-display options in this browser (`hiddenTrips` in `lib/map-display.ts`), but their **Reset to defaults** leaves it.
+every one at once. The arrow beside a Trip opens a checkbox for each of its days with lines (`components/map-trip-row.tsx`),
+so one day can be hidden on its own; a leg between days counts as the day it arrived. The Trip's checkbox is half ticked
+while any of its days are hidden, and its days can't be changed while the whole Trip is hidden. The tab's name says how
+many Trips and days are hidden, such as "1 trip, 2 days hidden", with a dot while any are. The choice is kept with the
+display options in this browser (`hiddenTrips` in `lib/map-display.ts`, holding Trip IDs and `day:2026-09-22` entries), but their **Reset to defaults** leaves it.
 While **Show trip lines** is off, the tab says so above the list, with a **Turn on** button.
 
 > **Frontend analogy:** it's a per-item visibility filter applied in a `useMemo` before the GeoJSON goes to the map's
