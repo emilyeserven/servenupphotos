@@ -1,5 +1,6 @@
 import { tripColors, useIsDark } from "@portfolio/lib/map-theme";
-import type { TripLine } from "@/api/trip-lines";
+import { useQuery } from "@tanstack/react-query";
+import { basemapQuery, type TripLine } from "@/api/trip-lines";
 import { lineFeatures } from "@/components/trip-lines/route-geometry";
 import type { TripPhoto } from "@/lib/trip-days";
 import { orderedPhotos } from "@/lib/trip-order";
@@ -26,7 +27,7 @@ interface LinePreviewProps {
 /**
  * A small drawing of a day's line as its file has it, in the map's colors, with its photos as dots,
  * over a few of the map's basemap tiles (`lib/preview-tiles.ts`) rather than a whole map, so a list
- * of days draws quickly.
+ * of days draws quickly; with no CARTO_KEY in the repo's .env, over a plain background.
  */
 export function LinePreview({ photos, line }: LinePreviewProps) {
   const dark = useIsDark();
@@ -36,7 +37,8 @@ export function LinePreview({ photos, line }: LinePreviewProps) {
     ...ordered.map((p): [number, number] => [p.longitude, p.latitude]),
     ...lines.flatMap((l) => l.geometry.coordinates),
   ];
-  const { at, tiles } = previewBox(points, [WIDTH, HEIGHT, PAD], dark);
+  const key = useQuery(basemapQuery).data?.cartoKey ?? "";
+  const { at, tiles } = previewBox(points, [WIDTH, HEIGHT, PAD], { dark, key });
   return (
     <span className="bg-muted/50 relative block aspect-[2/1] w-full overflow-hidden rounded-md">
       {tiles.map((t) => (

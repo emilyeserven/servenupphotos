@@ -135,7 +135,9 @@ card has how many photos and spots the day has, whether its line is **Marked**, 
 the map's colors and the photos as dots, drawn as SVG over the map's basemap so the card shows where the day was. The
 basemap is a few of CARTO's raster tiles (light or dark, like the map) laid in a Web Mercator box around the line
 (`lib/preview-tiles.ts`) and loaded lazily, rather than a whole map per card, so a long list stays quick; it zooms in
-no closer than zoom 16, and the list ends with the maps' credit to OpenStreetMap and CARTO.
+no closer than zoom 16, and the list ends with the maps' credit to OpenStreetMap and CARTO. CARTO's raster tiles need an API key (without one they carry an "API key required" watermark):
+set `CARTO_KEY` in the repo's `.env`, the same name the portfolio's deploy uses, and restart the backend. The page
+reads it from `GET /api/basemap` (`httpapi/basemap.go`); with none, the cards have no basemap.
 
 > **Frontend analogy:** a web map is a grid of 256 px images per zoom level, like a sprite sheet cut into squares, each
 > zoom doubling the grid each way. Placing the few squares under the line behind the SVG is an absolutely positioned
