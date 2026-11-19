@@ -1,22 +1,16 @@
-import { InfoIcon } from "lucide-react";
 import { type ComponentProps, type ReactNode } from "react";
 import Markdown, { type ExtraProps } from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import { type PhotoPlace, savedPlaces } from "@/api/places";
-import { RegionOverrideField } from "@/components/region-override-field";
-import { FieldSection } from "@/components/field-section";
 import { PhotoCustomDate } from "@/components/photo-custom-date";
 import { DetailsPhotoPreview } from "@/components/details-photo-preview";
-import { PhotoCustomGps } from "@/components/photo-custom-gps";
 import { PhotoAltTextField } from "@/components/photo-alt-text-field";
 import { PhotoNotesField } from "@/components/photo-notes-field";
-import type { LocationPrompt } from "@/components/edit-in-flight/location-prompt";
-import { PlaceFields } from "@/components/place-fields";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardTitleWithHint, Hint, LabeledHint } from "@/components/field-hint";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useUntitledDrafts } from "@/lib/drafts";
 
 /** Spacing and list, link, code and quote styles for rendered Markdown, which Tailwind's reset strips. */
@@ -172,16 +166,14 @@ interface PhotoDetailsCardProps {
   description: string;
   /** Saving is underway or done, so changing them now would not change the file. */
   disabled: boolean;
-  /** The Place field's location prompt, when the photo has one. */
-  locationPrompt?: LocationPrompt;
   /** The photo's Small version, shown at the right of Title and Date taken when there is one. */
   imageUrl?: string;
 }
 
 /**
- * The photo's optional title on the portfolio and Markdown comment in one card, and its places,
- * custom city and country and where it goes on the map in another, saved as the JSON's "title", "places" (with the first place's name as "placeName"),
- * "customCity", "customCountry", "customGpsPosition", "noGps", "comment", "altText" and the photographer-only "notes".
+ * The photo's optional title on the portfolio, date taken and Markdown comment, saved as the JSON's
+ * "title", "customCreateDate", "comment", "altText" and the photographer-only "notes". Where it was
+ * taken is in PhotoLocationCard.
  */
 export function PhotoDetailsCard({
   value,
@@ -190,84 +182,50 @@ export function PhotoDetailsCard({
   exifPlace,
   description,
   disabled,
-  locationPrompt,
   imageUrl,
 }: PhotoDetailsCardProps) {
-  const field = (name: "title" | "customCity" | "customState" | "customCountry") => ({
-    value: value[name],
-    disabled,
-    onChange: (next: string) => onChange({ ...value, [name]: next }),
-  });
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
-        <CardTitleWithHint title="Title and comment" description={description} />
-        <CardContent className="flex flex-col gap-6">
-          <DetailsPhotoPreview
-            imageUrl={imageUrl}
-            alt={value.altText.trim() || value.title.trim() || fallbackTitle}
-          >
-            <TextField
-              id="photo-title"
-              label="Title"
-              placeholder={fallbackTitle}
-              hint={<TitleHint fallbackTitle={fallbackTitle} />}
-              {...field("title")}
-            />
-            <PhotoCustomDate
-              value={value.customCreateDate}
-              exifDate={exifPlace.createDate}
-              fileStem={fallbackTitle}
-              disabled={disabled}
-              onChange={(customCreateDate) => onChange({ ...value, customCreateDate })}
-            />
-          </DetailsPhotoPreview>
-          <CommentField
-            value={value.comment}
+    <Card>
+      <CardTitleWithHint title="Title and comment" description={description} />
+      <CardContent className="flex flex-col gap-6">
+        <DetailsPhotoPreview
+          imageUrl={imageUrl}
+          alt={value.altText.trim() || value.title.trim() || fallbackTitle}
+        >
+          <TextField
+            id="photo-title"
+            label="Title"
+            placeholder={fallbackTitle}
+            hint={<TitleHint fallbackTitle={fallbackTitle} />}
+            value={value.title}
             disabled={disabled}
-            onChange={(comment) => onChange({ ...value, comment })}
+            onChange={(title) => onChange({ ...value, title })}
           />
-          <PhotoAltTextField
-            value={value.altText}
+          <PhotoCustomDate
+            value={value.customCreateDate}
+            exifDate={exifPlace.createDate}
+            fileStem={fallbackTitle}
             disabled={disabled}
-            onChange={(altText) => onChange({ ...value, altText })}
+            onChange={(customCreateDate) => onChange({ ...value, customCreateDate })}
           />
-          <PhotoNotesField
-            value={value.notes}
-            disabled={disabled}
-            onChange={(notes) => onChange({ ...value, notes })}
-          />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardTitleWithHint title="Location" description={description} />
-        <CardContent className="flex flex-col gap-3">
-          <PlaceFields
-            value={value}
-            disabled={disabled}
-            exifCountry={exifPlace.country}
-            exifGps={exifPlace.gpsPosition}
-            exifCity={exifPlace.city}
-            prompt={locationPrompt}
-            onChange={(place) => onChange({ ...value, ...place })}
-          />
-          <PhotoCustomGps
-            value={value.customGpsPosition}
-            exifGps={exifPlace.gpsPosition}
-            noGps={value.noGps}
-            disabled={disabled}
-            onChange={(customGpsPosition) => onChange({ ...value, customGpsPosition })}
-            onNoGps={(noGps) => onChange({ ...value, noGps })}
-          />
-          <CityAndCountry
-            exifPlace={exifPlace}
-            value={value}
-            field={field}
-            onCity={(city, country) => onChange(withCity(value, exifPlace, city, country))}
-          />
-        </CardContent>
-      </Card>
-    </div>
+        </DetailsPhotoPreview>
+        <CommentField
+          value={value.comment}
+          disabled={disabled}
+          onChange={(comment) => onChange({ ...value, comment })}
+        />
+        <PhotoAltTextField
+          value={value.altText}
+          disabled={disabled}
+          onChange={(altText) => onChange({ ...value, altText })}
+        />
+        <PhotoNotesField
+          value={value.notes}
+          disabled={disabled}
+          onChange={(notes) => onChange({ ...value, notes })}
+        />
+      </CardContent>
+    </Card>
   );
 }
 
@@ -293,122 +251,10 @@ function TitleHint({ fallbackTitle }: { fallbackTitle: string }) {
   );
 }
 
-/** A card's title, with what happens to its details when they're saved on hover beside it. */
-function CardTitleWithHint({ title, description }: { title: string; description: string }) {
-  return (
-    <CardHeader>
-      <CardTitle className="flex items-center gap-1.5">
-        {title}
-        <Hint label={`About ${title.toLowerCase()}`}>{description}</Hint>
-      </CardTitle>
-    </CardHeader>
-  );
-}
-
 interface FieldState {
   value: string;
   disabled: boolean;
   onChange: (value: string) => void;
-}
-
-interface CityAndCountryProps {
-  exifPlace: ExifPlace;
-  value: PhotoDetails;
-  field: (name: "customCity" | "customState" | "customCountry") => FieldState;
-  /** Sets the custom city, with the city's country when one is known. */
-  onCity: (city: string, country: string | undefined) => void;
-}
-
-/**
- * The details with the custom city set, and the custom country filled from the city's when it's
- * empty and the EXIF country isn't already that.
- */
-function withCity(
-  value: PhotoDetails,
-  exifPlace: ExifPlace,
-  city: string,
-  country: string | undefined,
-): PhotoDetails {
-  const fill = !value.customCountry.trim() && country !== exifPlace.country;
-  return {
-    ...value,
-    customCity: city,
-    customCountry: fill ? (country ?? "") : value.customCountry,
-  };
-}
-
-/**
- * The custom city and country, collapsed to what the portfolio will show, and open from the start
- * when either is written.
- */
-function CityAndCountry({ exifPlace, value, field, onCity }: CityAndCountryProps) {
-  const { summary, custom } = placeSummary(value, exifPlace);
-  return (
-    <FieldSection
-      title="City, state and country"
-      summary={summary}
-      defaultOpen={custom}
-      className="grid gap-4 sm:grid-cols-2"
-    >
-      <LabeledHint
-        id="photo-custom-city"
-        label="City"
-        hint="Shown instead of the city from the photo's EXIF, which is kept as it is. Choose one places are in or other photos show, or type one. Saved as customCity; leave it empty to use the EXIF one."
-      >
-        <RegionOverrideField
-          id="photo-custom-city"
-          kind="city"
-          placeholder={exifPlace.city ?? "Not in the EXIF"}
-          {...field("customCity")}
-          onChange={onCity}
-        />
-      </LabeledHint>
-      <LabeledHint
-        id="photo-custom-state"
-        label="State"
-        hint="The state, province, prefecture or other region between the city and the country. Shown instead of the EXIF's, which is kept as it is. Saved as customState; leave it empty to use the EXIF one."
-      >
-        <RegionOverrideField
-          id="photo-custom-state"
-          kind="state"
-          placeholder={exifPlace.state ?? "Not in the EXIF"}
-          {...field("customState")}
-        />
-      </LabeledHint>
-      <LabeledHint
-        id="photo-custom-country"
-        label="Country"
-        hint="Shown instead of the country from the photo's EXIF, which is kept as it is. Choose one places are in or other photos show, or type one. Saved as customCountry; leave it empty to use the EXIF one."
-      >
-        <RegionOverrideField
-          id="photo-custom-country"
-          kind="country"
-          placeholder={exifPlace.country ?? "Not in the EXIF"}
-          {...field("customCountry")}
-        />
-      </LabeledHint>
-    </FieldSection>
-  );
-}
-
-/** The value written here, or else the one from the EXIF. */
-function shown(written: string, exif: string | null): string | null {
-  return written.trim() || exif;
-}
-
-/** The city and country the portfolio will show, saying whether either is custom. */
-function placeSummary(value: PhotoDetails, exifPlace: ExifPlace) {
-  const custom = [value.customCity, value.customState, value.customCountry].some((written) =>
-    written.trim(),
-  );
-  const place = [
-    shown(value.customCity, exifPlace.city),
-    shown(value.customState, exifPlace.state),
-    shown(value.customCountry, exifPlace.country),
-  ]
-    .filter(Boolean)
-    .join(", ");
-  return { custom, summary: `${place || "None"} (${custom ? "custom" : "from EXIF"})` };
 }
 
 interface TextFieldProps extends FieldState {
@@ -432,64 +278,6 @@ function TextField({ id, label, placeholder, hint, value, disabled, onChange }: 
         onChange={(event) => onChange(event.target.value)}
       />
     </LabeledHint>
-  );
-}
-
-interface LabeledHintProps {
-  /** The id of the field inside, which the label points to. */
-  id: string;
-  label: string;
-  hint: ReactNode;
-  children: ReactNode;
-}
-
-/** A field with its label, and its hint on hover beside the label. */
-function LabeledHint({ id, label, hint, children }: LabeledHintProps) {
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-1.5">
-        <label htmlFor={id} className="text-sm font-medium">
-          {label}
-        </label>
-        <Hint label={`About ${label}`} id={`${id}-hint`}>
-          {hint}
-        </Hint>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-interface HintProps {
-  /** What the info button is called for screen readers. */
-  label: string;
-  /** An id for the hint's text, which stays in the page for aria-describedby. */
-  id?: string;
-  children: ReactNode;
-}
-
-/** An info icon showing helper text on hover or focus, to keep it from cluttering the form. */
-function Hint({ label, id, children }: HintProps) {
-  return (
-    <>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            aria-label={label}
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 rounded-full outline-none focus-visible:ring-[3px]"
-          >
-            <InfoIcon className="size-3.5" />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent className="max-w-xs font-normal">{children}</TooltipContent>
-      </Tooltip>
-      {id && (
-        <span id={id} className="sr-only">
-          {children}
-        </span>
-      )}
-    </>
   );
 }
 
