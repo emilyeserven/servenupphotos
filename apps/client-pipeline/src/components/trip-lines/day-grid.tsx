@@ -95,6 +95,16 @@ export function DayGrid({ days, lines, stale }: DayGridProps) {
           </li>
         ))}
       </ul>
+      <p className="text-muted-foreground text-xs">
+        Maps ©{" "}
+        <a href="https://www.openstreetmap.org/copyright" className="underline">
+          OpenStreetMap contributors
+        </a>{" "}
+        ©{" "}
+        <a href="https://carto.com/attributions" className="underline">
+          CARTO
+        </a>
+      </p>
     </div>
   );
 }
