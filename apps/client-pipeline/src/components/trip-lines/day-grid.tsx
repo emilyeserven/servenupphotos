@@ -135,9 +135,13 @@ function DayCard({ day, line, status }: DayCardProps) {
   );
 }
 
-/** The line drawn small, or a note on why there's no drawing. */
+/**
+ * The line drawn small, or where the day's photos are with a note on why there's no line, or just
+ * the note for a day with no photos yet.
+ */
 function Preview({ day, line }: { day: TripDay; line?: TripLine }) {
   if (isDrawn(line)) return <LinePreview photos={day.photos} line={line as TripLine} />;
+  if (day.photos.length > 0) return <LinePreview photos={day.photos} note={previewNote(line)} />;
   return (
     <span className="bg-muted/50 text-muted-foreground flex aspect-[2/1] items-center justify-center rounded-md px-3 text-center text-xs">
       {previewNote(line)}
