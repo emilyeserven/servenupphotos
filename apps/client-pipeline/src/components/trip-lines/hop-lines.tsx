@@ -1,6 +1,6 @@
 import { Search, X } from "lucide-react";
 import type { HopAsk, Spot, TransitLine } from "@/api/transit";
-import type { TripSegment } from "@/api/trip-lines";
+import type { TripPoint, TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { HopEndsPicker } from "@/components/trip-lines/hop-ends";
 import { HopStations } from "@/components/trip-lines/hop-stations";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import type { Ride } from "@/lib/transit-ride";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap, GapDraft } from "@/lib/trip-gaps";
+import { legKeys } from "@/lib/hop-legs";
 import { ridesLine, withHopLine } from "@/lib/trip-hop-lines";
 
 interface HopLinesProps {
@@ -24,39 +25,50 @@ interface HopLinesProps {
 }
 
 /**
- * The line each train, subway or bus hop rode: Find lines looks up the ones OpenStreetMap maps near
- * both of the hop's photos, and picking one draws the hop along its track, in its color.
+ * The line each train, subway or bus hop rode, one row for each stretch between photos and trip stops
+ * on it: Find lines looks up the ones OpenStreetMap maps near
+ * both of its ends, and picking one draws the hop along its track, in its color.
  */
 export function HopLines({ photos, draft, segments, onChange }: HopLinesProps) {
-  const hops = segments.filter(ridesLine);
+  const keys = legKeys(segments);
+  const hops = segments.flatMap((s, i) => (ridesLine(s) ? [{ hop: s, key: keys[i]! }] : []));
   if (hops.length === 0) return null;
   const byId = new Map(photos.map((p, i) => [p.id, { photo: p, n: i + 1 }]));
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-sm font-medium">Lines ridden</h3>
-      {hops.map((hop) => (
+      {hops.map(({ hop, key }) => (
         <HopRow
-          key={`${hop.photos[0]}-${hop.mode}`}
+          key={`${key}-${hop.mode}`}
           hop={hop}
-          ends={hop.photos.map((id) => byId.get(id))}
-          onRide={(ride) => onChange(withHopLine(draft, hop, ride))}
+          ends={legEnds(hop, byId)}
+          onRide={(ride) => onChange(withHopLine(draft, hop, key, ride))}
         />
       ))}
     </div>
   );
 }
 
-type HopEnd = { photo: TripPhoto; n: number } | undefined;
+/** One end of a leg: a photo with its number on the map, or a spot with no photo, such as a trip stop. */
+type HopEnd = { photo: TripPhoto; n: number } | { point: TripPoint } | undefined;
 
-/** A photo's spot as [longitude, latitude]. */
-function spotOf(photo: TripPhoto): Spot {
-  return [photo.longitude, photo.latitude];
+/** The leg's two ends: its start spot or first photo, and its end spot or last photo. */
+function legEnds(hop: TripSegment, byId: Map<number, { photo: TripPhoto; n: number }>): HopEnd[] {
+  const first = hop.start ? { point: hop.start } : byId.get(hop.photos[0]!);
+  const last = hop.end ? { point: hop.end } : byId.get(hop.photos.at(-1)!);
+  return [first, last];
 }
 
-/** What the hop's look-ups ask: its mode and its two photos' spots; none when a photo is missing. */
+/** An end's spot as [longitude, latitude]. */
+function spotOf(end: NonNullable<HopEnd>): Spot {
+  const p = "photo" in end ? end.photo : end.point;
+  return [p.longitude, p.latitude];
+}
+
+/** What the leg's look-ups ask: its mode and its two ends' spots; none when an end is missing. */
 function askOf(hop: TripSegment, [a, b]: HopEnd[]): HopAsk | undefined {
   if (!a || !b) return undefined;
-  return { mode: hop.mode, from: spotOf(a.photo), to: spotOf(b.photo) };
+  return { mode: hop.mode, from: spotOf(a), to: spotOf(b) };
 }
 
 interface HopRowProps {
@@ -128,14 +140,19 @@ function errorOf(lines: Pending, ride: Pending): Error | null {
   return lines.error ?? ride.error;
 }
 
-/** Which photos the hop joins, such as "Photo 3 → 4". */
-function hopTitle([a, b]: HopEnd[]): string {
-  return `Photo ${numberOf(a)} → ${numberOf(b)}`;
+/** What the leg joins, such as "Photo 3 → 4" or "Photo 1 → Dentetsu-Izumoshi". */
+function hopTitle(ends: HopEnd[]): string {
+  return ends
+    .map(nameOf)
+    .join(" → ")
+    .replace(/^(Photo \S+) → Photo /, "$1 → ");
 }
 
-/** The photo's number on the map, or "?" when it isn't on the day. */
-function numberOf(end: HopEnd): string {
-  return end ? String(end.n) : "?";
+/** An end's name: its photo's number on the map, or its spot's label. */
+function nameOf(end: HopEnd): string {
+  if (!end) return "?";
+  if ("photo" in end) return `Photo ${end.n}`;
+  return end.point.label || "a stop";
 }
 
 /** Whether to offer stations to look near: once nothing was found near the photos, or one is picked. */

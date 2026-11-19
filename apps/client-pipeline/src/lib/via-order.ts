@@ -18,7 +18,7 @@ export interface PlacedVia {
 function segmentKeys(segment: TripSegment): ViaKey[] {
   const [a] = segment.photos;
   if (segment.mode === "wander" || a === undefined) return [];
-  if (segment.line) return stationKeys(segment, a);
+  if (segment.line) return segment.start ? [] : stationKeys(segment, a);
   if (segment.mode !== "walk") return [segment.start ? "start" : String(a)];
   const photos = segment.end ? segment.photos : segment.photos.slice(0, -1);
   return [...(segment.start ? ["start"] : []), ...photos.map(String)];

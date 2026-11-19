@@ -96,14 +96,15 @@ function feature(properties: LineProps, coordinates: LngLat[]): LineFeature {
   return { type: "Feature", properties, geometry: { type: "LineString", coordinates } };
 }
 
-/** The walks from a hop's first photo to the station it got on at, and from where it got off. */
+/** The walks from a hop's first point to the station it got on at, and from where it got off to its last. */
 function stationWalks(
   segment: TripSegment,
   byId: Map<number, TripPhoto>,
   faded: boolean,
 ): LineFeature[] {
   if (!lineProps(segment).onLine) return [];
-  const [a, b] = segment.photos.map((id) => byId.get(id));
+  const a = segment.start ?? byId.get(segment.photos[0]!);
+  const b = segment.end ?? byId.get(segment.photos.at(-1)!);
   return [
     ...walkBetween(a, segment.board, segment.boardWalk, faded),
     ...walkBetween(segment.alight, b, segment.alightWalk, faded),
