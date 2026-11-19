@@ -131,7 +131,7 @@ function DraggablePin({ custom, exif, disabled, onMove }: PinMapProps) {
         // MapLibre sets a marker's color only when it's made, so a new one replaces it.
         key={look.key}
         {...pin}
-        anchor="bottom"
+        // The default pin already sets its own offset so its tip is on the spot; an anchor would move it.
         color={look.color}
         draggable={!disabled}
         onDragEnd={(event) => onMove(event.lngLat)}
