@@ -197,6 +197,21 @@ for the Places page's (!) warning, so a photo with one is never missing from the
 > **Frontend analogy:** like `customCity`, it's a user override layered over a read-only source:
 > `customGpsPosition ?? gpsPosition`.
 
+### Moving the pin
+
+The Location card (the Photo page's **Location** section, and the new photo's card under Title and comment) opens with
+a map of the photo's pin: red at its custom GPS position, or grey at the EXIF one. Dragging the pin, or clicking the
+map, writes that spot into **Custom GPS position** (six decimal places, about 10 cm), so **Save changes** saves it
+like a typed one. The EXIF position stays as it is and shows as a small grey dot once the pin has moved off it, and
+**Back to the EXIF position** (or **Remove the pin** for a photo whose EXIF has none) clears the custom one. A photo
+with neither starts on a map of the world, ready for a click. A position typed or pasted into the field moves the pin,
+and the map follows it when it lands out of view. The map is `PhotoLocationMap`
+(`client-pipeline/src/components/photo-location-map.tsx`), on the same CARTO basemaps and MapLibre as the Trip map.
+
+> **Frontend analogy:** the pin is a controlled input. The map never keeps its own position: a drag's `onDragEnd`
+> just calls the field's `onChange` with new text, and the pin is drawn from that text, so typing and dragging can't
+> disagree.
+
 Under the field, **This photo won't have a GPS position** marks a photo that goes without one on purpose, such as a
 studio photo. It's saved as `"noGps": true` (`false` otherwise, which new photos get and **Update Data → Missing
 fields** adds to older ones), the summary then reads **None, on purpose**, and the Dashboard's

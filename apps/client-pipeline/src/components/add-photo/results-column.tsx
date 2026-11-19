@@ -14,6 +14,7 @@ import {
   type PhotoDetails,
   PhotoDetailsCard,
 } from "@/components/photo-details";
+import { PhotoLocationCard } from "@/components/photo-location-card";
 import type { LensChoice } from "@/lib/custom-lens";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
@@ -112,7 +113,7 @@ interface NewPhotoDetailsProps {
   saved: boolean;
 }
 
-/** The new photo's title, place name, custom city and country, and comment, unless it's already in ALLPHOTOS.json. */
+/** The new photo's title, comment and location (its pin, places, custom city and country), unless it's already in ALLPHOTOS.json. */
 function NewPhotoDetails({
   identity,
   file,
@@ -121,20 +122,28 @@ function NewPhotoDetails({
   onDetailsChange,
   saved,
 }: NewPhotoDetailsProps) {
+  const description = saved
+    ? "Saved with the photo's JSON."
+    : "All optional, and saved in the JSON when you save.";
   return (
     <AllPhotosGate photo={identity} showStatus={false}>
-      <PhotoDetailsCard
-        value={details}
-        onChange={onDetailsChange}
-        fallbackTitle={fileStem(file)}
-        exifPlace={exifPlace}
-        description={
-          saved
-            ? "Saved with the photo's JSON."
-            : "All optional, and saved in the JSON when you save."
-        }
-        disabled={saved}
-      />
+      <div className="flex flex-col gap-6">
+        <PhotoDetailsCard
+          value={details}
+          onChange={onDetailsChange}
+          fallbackTitle={fileStem(file)}
+          exifPlace={exifPlace}
+          description={description}
+          disabled={saved}
+        />
+        <PhotoLocationCard
+          value={details}
+          onChange={onDetailsChange}
+          exifPlace={exifPlace}
+          description={description}
+          disabled={saved}
+        />
+      </div>
     </AllPhotosGate>
   );
 }

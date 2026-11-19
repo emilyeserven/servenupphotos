@@ -179,12 +179,36 @@ function hasThumbnail(saved: PhotoJson): boolean {
 
 /** Whether the title, place name, places, custom city or country, no-GPS mark, or comment differs from the ones saved in data. */
 function detailsChanged(data: PhotoJson, details: PhotoDetails): boolean {
+  return locationChanged(data, details) || describingChanged(data, details);
+}
+
+/** The text fields the Photo page's Location section edits. */
+const LOCATION_TEXT: readonly (keyof PhotoDetails)[] = [
+  "placeName",
+  "customCity",
+  "customState",
+  "customCountry",
+  "customGpsPosition",
+];
+
+/** Which of details' text fields differ from the ones saved in data. */
+function changedText(data: PhotoJson, details: PhotoDetails) {
   const next = withDetails({}, details);
+  return TEXT_FIELDS.filter((key) => next[key] !== (data[key] ?? null));
+}
+
+/** Whether where the photo was taken (its GPS position, places, city, state or country) differs from data. */
+export function locationChanged(data: PhotoJson, details: PhotoDetails): boolean {
   return (
-    TEXT_FIELDS.some((key) => next[key] !== (data[key] ?? null)) ||
+    changedText(data, details).some((key) => LOCATION_TEXT.includes(key)) ||
     placesChanged(data, details) ||
     noGpsChanged(data, details)
   );
+}
+
+/** Whether the title, date, comment, alt text or notes differ from the ones saved in data. */
+export function describingChanged(data: PhotoJson, details: PhotoDetails): boolean {
+  return changedText(data, details).some((key) => !LOCATION_TEXT.includes(key));
 }
 
 /** Whether the mark for a photo that won't have a GPS position differs from the one saved in data. */
