@@ -26,6 +26,16 @@ its EXIF one. A photo with neither goes at one of its places' position (see
 border is softer, and so is a group's when every photo in it is placed that way. A place marked as an **Exact
 location** on the Places page keeps the solid border for its photos. Like every view, the map leaves out a photo with no date, EXIF or [custom](data-model.md#date-taken), even when it has a position.
 
+Zoomed out further than zoom 6, about where one country fills the screen, a group only holds photos from one country
+(the photo's country as the [Places filter](portfolio-filters.md#places) matches it), so photos either side of a
+border, or of a short sea crossing, are two markers rather than one group. Each country's photos
+are their own source that MapLibre groups by distance as usual, and the markers come from those below that zoom and
+from the source of every photo from it in (`COUNTRY_MAX_ZOOM` and `groupingSources` in `lib/map-country-groups.ts`,
+`components/map-photo-sources.tsx`). Photos with no country share one source of their own.
+
+> **Frontend analogy:** it's like rendering one virtualized list per country instead of one list for everything:
+> each list still collapses its own nearby rows, but a row never ends up collapsed into another country's list.
+
 From city zoom (12) in, small groups split into photos of their own, so a sparse area shows each photo rather than a
 count: up to 3 photos at zoom 12, growing to 12 by zoom 16 (`fanLimit` in `lib/map-fan.ts`). Bigger groups stay one
 marker until closer.
