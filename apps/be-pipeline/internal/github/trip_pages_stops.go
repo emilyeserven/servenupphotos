@@ -15,6 +15,12 @@ type tripStop struct {
 	// Photos are the place's casual photos, baked here since they're never in
 	// AllPhotosFile: the portfolio has no other way to show them.
 	Photos []casualPhoto `json:"photos,omitempty"`
+	// Place is the saved place the stop is, whose localization the portfolio
+	// falls back to for the names the stop doesn't write; "" for none.
+	Place string `json:"place,omitempty"`
+	// StopNames are the stop's own localized names, which the portfolio shows
+	// as its Script display setting says.
+	StopNames
 }
 
 // casualPhoto is what the portfolio needs to show a casual photo: its
@@ -72,7 +78,7 @@ func pageStops(lines []TripLine, photos map[int]casualPhoto) map[string][]tripSt
 
 // pageStopOf is a trip stop as its Trip page shows it.
 func pageStopOf(v TripVisit, photos map[int]casualPhoto) tripStop {
-	place := tripStop{Name: v.Name, Kind: v.Kind, Note: v.Note, Link: v.Link, After: v.After}
+	place := tripStop{Name: v.Name, Kind: v.Kind, Note: v.Note, Link: v.Link, After: v.After, Place: v.Place, StopNames: v.StopNames}
 	for _, id := range v.Photos {
 		if photo, ok := photos[id]; ok {
 			place.Photos = append(place.Photos, photo)

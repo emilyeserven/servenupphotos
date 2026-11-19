@@ -1,6 +1,7 @@
 import committedPages from "@/data/triplines/TRIPPAGES.json";
 import { format, parseISO } from "date-fns";
 import type { PhotoText } from "@/components/album-rows";
+import type { StopNaming } from "@/lib/localize";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 
 /** One photo of a day's story on a Trip page, as the pipeline wrote it. */
@@ -29,7 +30,7 @@ export interface CasualPhoto {
 }
 
 /** A trip stop on a day, such as a restaurant, with the casual photos taken there. */
-export interface TripStop {
+export interface TripStop extends StopNaming {
   name: string;
   /** What sort of place it is, such as "restaurant" or "cafe". */
   kind: string;

@@ -72,7 +72,10 @@ date, or else its EXIF one), a photo listed twice, a photo with both `withNext` 
 
 A day's [trip stops](trip-lines.md#trip-stops), such as a restaurant, show in its story between the two photos the
 route puts them between (`after`), each on its own small line: a pin, its name (linking to its outside map), its kind
-and its note. A stop's [casual photos](trip-lines.md#casual-photos) are folded under it behind **3 photos**, as small
+and its note. The name is written the way the visitor's **Script display** setting says, from the stop's
+[localized names](trip-lines.md#localized-names) (or else its saved place's localization), with its local script
+beside it, faint, or its English name when the local script is the one shown (`localizeStop` in `lib/localize.ts`).
+Commit bakes the stop's `place` and localized names into `stops` for that. A stop's [casual photos](trip-lines.md#casual-photos) are folded under it behind **3 photos**, as small
 squares that each open the large version in a new tab (`components/trip-stops.tsx`). A stop ends its row the way a
 paragraph does, so a stop after a photo in the middle of a row splits it there, and it shows before that photo's
 paragraph. Stops not on the route, or after a photo left off the story, show after the day's last row. Casual photos
