@@ -4,6 +4,7 @@ import type { Place } from "@/api/places";
 import type { TripPoint, TripVisit, VisitKind } from "@/api/trip-lines";
 import { CasualPhotos, useClearCasual } from "@/components/trip-lines/casual-photos";
 import { StationStopAdder } from "@/components/trip-lines/station-stop-adder";
+import { StopNames } from "@/components/trip-lines/stop-names";
 import { StopWaySelect } from "@/components/trip-lines/stop-way";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
 import { Button } from "@/components/ui/button";
@@ -126,8 +127,8 @@ interface VisitRowProps {
 }
 
 /**
- * One trip stop: its kind, name, note, map link, where it is on the route, adding it again for a
- * second visit, and removing it.
+ * One trip stop: its kind, name, note, map link, where it is on the route, its localized names,
+ * adding it again for a second visit, and removing it.
  */
 function VisitRow({ visit, day, onChange, onAgain }: VisitRowProps) {
   const set = (fields: Partial<TripVisit>) => onChange({ ...visit, ...fields });
@@ -188,6 +189,7 @@ function VisitRow({ visit, day, onChange, onAgain }: VisitRowProps) {
         <Trash2 className="size-4" aria-hidden />
         <span className="sr-only">Remove</span>
       </Button>
+      <StopNames visit={visit} onChange={onChange} />
       <CasualPhotos day={day.day} visit={visit} onChange={onChange} />
     </div>
   );

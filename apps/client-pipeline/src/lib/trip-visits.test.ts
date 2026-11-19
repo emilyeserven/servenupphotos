@@ -6,6 +6,7 @@ import {
   againVisit,
   firstStops,
   firstVisit,
+  hasStopNames,
   movedVisit,
   offRoute,
   visitsAfter,
@@ -94,4 +95,12 @@ test("a trip stop moved a photo lands next to the stops already there", () => {
       ["A", 1],
     ],
   );
+});
+
+test("a stop has localized names once any is written, and a second visit keeps them", () => {
+  assert.equal(hasStopNames(lunch), false);
+  assert.equal(hasStopNames({ ...lunch, romanization: "  " }), false);
+  const named = { ...lunch, localScript: "一蘭" };
+  assert.equal(hasStopNames(named), true);
+  assert.equal(againVisit(named).localScript, "一蘭");
 });

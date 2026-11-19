@@ -13,7 +13,7 @@ func TestCasualPhotos(t *testing.T) {
 	}))
 	f, c := newMainRepo(t, files)
 	line := TripLine{ID: "2026-09-23", Segments: []TripSegment{{Mode: ModeWalk, Photos: []int{10, 11}}}, Visits: []TripVisit{
-		{Name: "Ramen shop", Kind: "restaurant", Latitude: 35, Longitude: 135.75, After: &ten, Photos: []int{15, 10}},
+		{Name: "Ramen shop", Kind: "restaurant", Latitude: 35, Longitude: 135.75, After: &ten, Photos: []int{15, 10}, Place: "ramen-shop", StopNames: StopNames{LocalScript: "ラーメン屋"}},
 		{Name: "Nothing casual", Kind: "shop", Latitude: 35, Longitude: 135.75, Photos: []int{11}},
 	}}
 	if _, err := c.SaveTripLine(t.Context(), placesGH, line); err != nil {
@@ -33,7 +33,7 @@ func TestCasualPhotos(t *testing.T) {
 		t.Errorf("%s has the casual photo:\n%s", AllPhotosFile, all)
 	}
 	pages := tree[dataRoot+"/triplines/"+TripPagesFile]
-	for _, want := range []string{`"name": "Ramen shop"`, `"after": 10`, `"id": 15`, `f-medium.webp`, `"width": 400`, `"name": "Nothing casual"`} {
+	for _, want := range []string{`"name": "Ramen shop"`, `"after": 10`, `"id": 15`, `f-medium.webp`, `"width": 400`, `"name": "Nothing casual"`, `"place": "ramen-shop"`, `"localScript": "ラーメン屋"`} {
 		if !strings.Contains(pages, want) {
 			t.Errorf("%s has no %s:\n%s", TripPagesFile, want, pages)
 		}

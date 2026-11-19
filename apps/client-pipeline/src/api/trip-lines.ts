@@ -191,6 +191,12 @@ export interface TripVisit {
    * so it shows only with the place on its day's Trip page.
    */
   photos?: number[];
+  /** Its name in Latin letters, such as "Ichiran Dōtonbori-ten"; left out when not written. */
+  romanization?: string;
+  /** How its local script is read, such as furigana: "いちらん どうとんぼりてん". */
+  pronunciation?: string;
+  /** Its name in its own script, such as "一蘭 道頓堀店". */
+  localScript?: string;
 }
 
 function isTripLine(value: unknown): value is TripLine {
