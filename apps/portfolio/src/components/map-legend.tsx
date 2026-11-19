@@ -127,7 +127,7 @@ export function MapLegend({
 }) {
   const [open, toggle] = useLegendOpen();
   const dark = useIsDark();
-  const trips = useShownTripLines(photos, display.tripLines);
+  const trips = useShownTripLines(photos, display.tripLines, display.hiddenTrips);
   const placeArea = usePlaceArea(area.id) !== undefined;
   const sets = useMemo(() => splitSets(photos, photoSets).sets.length > 0, [photos]);
   const items = legendItems(photos, trips, placeArea, sets);

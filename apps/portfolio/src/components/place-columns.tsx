@@ -38,16 +38,28 @@ interface PanelProps {
  * **All of** at the top of a column, picks that one. A search lists every match with what it's in.
  */
 export function PlacesPanel(props: PanelProps) {
-  const chosen = props.selected ?? [];
-  const [query, setQuery] = useState("");
-  const available = withPhotos(props.options, chosen);
-  const hidden = everyOption(props.options).length - everyOption(available).length;
   return (
     <PopoverContent
       align="start"
       collisionPadding={16}
       className="flex w-auto max-w-[calc(100vw-2rem)] min-w-[min(20rem,calc(100vw-2rem))] flex-col p-0"
     >
+      <PlacesBody {...props} />
+    </PopoverContent>
+  );
+}
+
+/**
+ * What's in the Places flyout, without the flyout: the search box, then the columns, or the
+ * matches while searching. The Map's Places menu shows it in its Country tab.
+ */
+export function PlacesBody(props: PanelProps) {
+  const chosen = props.selected ?? [];
+  const [query, setQuery] = useState("");
+  const available = withPhotos(props.options, chosen);
+  const hidden = everyOption(props.options).length - everyOption(available).length;
+  return (
+    <>
       <SearchRow query={query} onQuery={setQuery} count={chosen.length} onClear={props.onClear} />
       {query.trim() === "" ? (
         <Columns {...props} options={available} />
@@ -55,7 +67,7 @@ export function PlacesPanel(props: PanelProps) {
         <MatchList {...props} options={available} query={query.trim().toLowerCase()} />
       )}
       <HiddenNote count={hidden} noun="places" />
-    </PopoverContent>
+    </>
   );
 }
 
