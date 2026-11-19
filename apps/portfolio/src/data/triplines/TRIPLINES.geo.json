@@ -839,6 +839,32 @@
     {
       "type": "Feature",
       "geometry": {
+        "type": "Point",
+        "coordinates": [131.382346454432, 34.415778602498044]
+      },
+      "properties": {
+        "feature": "visit",
+        "day": "2026-09-24",
+        "name": "城跡ながお",
+        "kind": "restaurant"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.4189524382645, 34.415098286795946]
+      },
+      "properties": {
+        "feature": "visit",
+        "day": "2026-09-24",
+        "name": "Hagi Honjin",
+        "kind": "other"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
         "type": "LineString",
         "coordinates": [
           [131.398657, 34.409335],

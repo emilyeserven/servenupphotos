@@ -1130,6 +1130,28 @@
     ]
   },
   {
+    "id": "2026-09-24",
+    "day": "2026-09-24",
+    "auto": false,
+    "planned": true,
+    "segments": [],
+    "visits": [
+      {
+        "name": "城跡ながお",
+        "kind": "restaurant",
+        "latitude": 34.415778602498044,
+        "longitude": 131.382346454432,
+        "first": true
+      },
+      {
+        "name": "Hagi Honjin",
+        "kind": "other",
+        "latitude": 34.415098286795946,
+        "longitude": 131.4189524382645
+      }
+    ]
+  },
+  {
     "id": "2026-09-25",
     "day": "2026-09-25",
     "auto": false,
