@@ -66,7 +66,7 @@ function lineRows(items: LegendItems, dark: boolean): LegendRow[] {
     [items.walk, <WalkSymbol dark={dark} key="walk" />, "Walk"],
     [
       items.rides.length > 0,
-      <RideSymbol colors={items.rides} key="ride" />,
+      <RideSymbol colors={items.rides} dark={dark} key="ride" />,
       "Bus, subway or train",
     ],
     [items.drive, <DriveSymbol dark={dark} key="drive" />, "Drive"],

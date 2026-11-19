@@ -147,7 +147,9 @@ pipeline's Commit bakes (see [Trip lines](trip-lines.md#the-baked-map-triplinesg
 draws them (`lib/trip-lines-map.ts`):
 
 - Walks are solid blue (lighter in dark mode).
-- A hop along the bus, subway or train line it rode is solid in that line's color.
+- A hop along the bus, subway or train line it rode is solid in that line's color, or a deep blue (`tripColors().ride`)
+  when the line has no color of its own, such as one from Japan's rail map: a feature with a `line` name is a ride
+  even without a `colour`.
 - A drive (`car`, such as a big jump the automatic line marks) is a solid light blue line, next to walks' darker blue. Only hops by public transit with no line picked are dashed.
 - Where a line runs over an earlier one, such as walking a street one way and driving it back, the later one is
   drawn about 6 px to its side, in the next free lane, so both show. Lines are compared on a grid of about 30 m, and
@@ -161,7 +163,7 @@ draws them (`lib/trip-lines-map.ts`):
 
 - A [Trip](trips.md)'s ferry is a line of teal dots, and its flight a dashed pink arc. A leg shows with
   the photos of either the day it left or the day it arrived. The Timeline's route sketches leave legs out.
-- Any other hop is dashed purple.
+- Any other hop, with no line picked, is dashed purple.
 - Trip stops aren't drawn: they show on the [Trip pages](trip-pages.md#trip-stops), with their casual photos.
 - Areas that photos without an exact spot were taken in are shaded light blue, like a place's area.
 
