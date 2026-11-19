@@ -435,6 +435,12 @@ with a name:
 - The plus under the menu between two photos has **Start a new group here**, which starts a new group at the photo
   after it. The join button between two groups merges them. The menu between two groups picks what
   happened between them, like any gap.
+- When that is a **Break**, an **End** and a **Start** chip under it give each group its own ends, such as back to the
+  hotel for lunch and out from it again (`components/trip-lines/break-spots.tsx`). Each picks a spot with no photo on
+  the map, then labels or removes it, like the day's Start and End. The line before the break runs on to its end
+  spot, and the line after starts from its start spot, so even a group of one photo gets a line. They're saved as
+  that segment's `end` and the next one's `start` (the draft's `breakEnds` and `breakStarts`, by the photo beside
+  them, in `lib/break-ends.ts`), and kept while the gap is switched away from a break and back.
 - The shuffle button on a group's header marks it as an [area wandered](#areas-wandered).
 
 Saving writes each group's name on its segments, and a walk crossing from one group into the next is split there, so

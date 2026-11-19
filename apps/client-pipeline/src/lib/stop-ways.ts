@@ -157,8 +157,17 @@ export function cutAtStopWays(segments: TripSegment[], visits: TripVisit[] = [])
 
 /**
  * The way travelled between photos a and b when trip stops between them cut it: the mode of the
- * stretch from the last stop to b, which is the way the gap was travelled.
+ * stretch from the last stop to b, which is the way the gap was travelled. That stretch starts where
+ * an earlier one ended, at the stop; one starting anywhere else starts again after a break.
  */
 export function cutGap(segments: TripSegment[], a: number, b: number): string | undefined {
-  return segments.find((s) => s.start && s.photos[0] === b && !s.photos.includes(a))?.mode;
+  const i = segments.findIndex((s) => s.start && s.photos[0] === b && !s.photos.includes(a));
+  const from = segments[i]?.start;
+  const joined = segments.slice(0, Math.max(i, 0)).some((s) => s.end && samePoint(s.end, from!));
+  return joined ? segments[i]?.mode : undefined;
+}
+
+/** Whether two points are at the same spot. */
+function samePoint(p: TripPoint, q: TripPoint): boolean {
+  return p.latitude === q.latitude && p.longitude === q.longitude;
 }

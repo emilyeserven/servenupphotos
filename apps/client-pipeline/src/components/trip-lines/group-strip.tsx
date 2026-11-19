@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronRight, Eye, EyeOff, Merge, Plus, Shuffle } from "lucide-react";
 import { useState } from "react";
 import type { TripVisit } from "@/api/trip-lines";
+import { BreakSpots } from "@/components/trip-lines/break-spots";
 import { GroupAreaButton } from "@/components/trip-lines/group-area-button";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
 import type { StripEnds } from "@/components/trip-lines/strip-ends";
@@ -81,6 +82,7 @@ export function GroupStrip(props: GroupStripProps) {
               onOffVisit={onOffVisit}
               before={visitsAfter(draft.visits, ids[g.start - 1])}
               stacked={stacked}
+              spots={props.spots}
             />
           )}
           <GroupBox
@@ -116,6 +118,8 @@ interface GroupGapProps {
   before: TripVisit[];
   /** Whether the groups are stacked, so this sits between them under the first. */
   stacked: boolean;
+  /** Picking the spots either side of a break on the map. */
+  spots: Pick<StripEnds, "onPick" | "picking">;
 }
 
 /** What happened between two groups, the trip stops there, and joining the two. */
@@ -129,6 +133,7 @@ function GroupGap(props: GroupGapProps) {
       )}
       <VisitChips visits={before} onMove={onMoveVisit} onOff={props.onOffVisit} />
       <PhotoStripGap draft={draft} index={group.start - 1} onChange={onChange} />
+      <GapBreakSpots {...props} />
       {a && (
         <VisitInsert
           choices={offRoute(draft.visits)}
@@ -149,6 +154,13 @@ function GroupGap(props: GroupGapProps) {
       </Button>
     </div>
   );
+}
+
+/** The end of the group before and the start of this one, when a break is between them. */
+function GapBreakSpots({ draft, group, photos, onChange, spots }: GroupGapProps) {
+  const [a, b] = [photos[group.start - 1], photos[group.start]];
+  if (draft.gaps[group.start - 1] !== "break" || !a || !b) return null;
+  return <BreakSpots draft={draft} onChange={onChange} around={[a.id, b.id]} spots={spots} />;
 }
 
 /** The gap's layout: under the first group, on a dashed line, when stacked; level with the photos in a row. */

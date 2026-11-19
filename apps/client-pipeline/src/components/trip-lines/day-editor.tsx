@@ -16,7 +16,7 @@ import {
 } from "@/components/trip-lines/editor-actions";
 import { useDaySave, useLeaveGuard } from "@/components/trip-lines/day-save";
 import { editedView, modeView } from "@/lib/trip-line-view";
-import { type EndKey, PickHint } from "@/components/trip-lines/end-spots";
+import { PickHint, type SpotPick } from "@/components/trip-lines/end-spots";
 import { useDayPlaceAreas } from "@/components/trip-lines/use-day-place-areas";
 import { newVisit, withVisit } from "@/lib/trip-visits";
 import { GroupStrip } from "@/components/trip-lines/group-strip";
@@ -31,6 +31,7 @@ import { movedVia, withVia } from "@/lib/trip-points";
 import { viasInRouteOrder } from "@/lib/via-order";
 import { useTripDaySearch } from "@/lib/trip-lines-search";
 import { isAreaPick, withAreaEnd } from "@/lib/trip-wander";
+import { isBreakPick, withBreakEnd } from "@/lib/break-ends";
 import { MapTools, type MapPick } from "@/components/trip-lines/route-tools";
 import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
 import { keptStops, type KeptStops, withStopVias } from "@/lib/trip-stops-kept";
@@ -150,9 +151,9 @@ const PART_NOTES: Record<EditorPart, string> = {
     "Restaurants, shops and other stops along the day, with or without a photo, and the casual photos taken there. Each one's Where on the route menu puts it on the line.",
 };
 
-/** The start or end spot being picked on the map, if that's what is. */
-function endPicking(picking: MapPick | undefined): EndKey | undefined {
-  return picking === "start" || picking === "end" ? picking : undefined;
+/** The start or end spot, the day's or a break's, being picked on the map, if that's what is. */
+function endPicking(picking: MapPick | undefined): SpotPick | undefined {
+  return picking === "start" || picking === "end" || isBreakPick(picking) ? picking : undefined;
 }
 
 /**
@@ -183,7 +184,7 @@ export function DayEditor({ day: taken, line, part }: DayEditorProps) {
   const onMode = (mode: LineMode) =>
     show(modeView(mode, { view, ids, saved: line, auto: auto.data, lastHand: lastHand.current }));
   // Setting a spot with no photo draws the line by hand, so the map can be clicked.
-  const pickSpot = (which: EndKey) => {
+  const pickSpot = (which: SpotPick) => {
     if (view.kind !== "hand") show({ kind: "hand", draft: shownDraft });
     setPicking(which);
   };
@@ -311,8 +312,14 @@ function picked(
   via: () => GapDraft,
 ): GapDraft {
   if (picking === "visit") return withVisit(draft, newVisit(point));
+  return pickedAt(draft, picking, point) ?? (picking ? { ...draft, [picking]: point } : via());
+}
+
+/** The draft with an area's entrance or exit, or a break's end or start, set to point, if that's what's picked. */
+function pickedAt(draft: GapDraft, picking: MapPick | undefined, point: TripPoint) {
   if (isAreaPick(picking)) return withAreaEnd(draft, picking, point);
-  return picking ? { ...draft, [picking]: point } : via();
+  if (isBreakPick(picking)) return withBreakEnd(draft, picking, point);
+  return undefined;
 }
 
 interface HandMapProps {
