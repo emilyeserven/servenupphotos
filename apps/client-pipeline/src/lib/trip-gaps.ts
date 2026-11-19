@@ -10,6 +10,7 @@ import type {
 } from "@/api/trip-lines";
 import type { TripLegRide } from "@/api/trips";
 import { walkPathsOf, walkViasOf, withStationWalks } from "@/lib/station-walks";
+import { legLinesOf, withLegLines } from "@/lib/hop-legs";
 import { cutAtStopWays, cutGap } from "@/lib/stop-ways";
 import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
 
@@ -50,8 +51,9 @@ export interface GapDraft {
   /** Each segment's path along streets, by segmentKey, kept while the segment is unchanged. */
   paths?: Record<string, Path>;
   /**
-   * The line each hop rode, by the ID of the photo it starts from, with the hop's mode then: a hop
-   * changed to another mode leaves it out.
+   * The line each hop rode, by its leg key (`lib/hop-legs.ts`): the ID of the photo it starts from,
+   * with a leg's number for each stretch after a trip stop on it. Kept with the hop's mode then: a
+   * hop changed to another mode leaves it out.
    */
   lines?: Record<string, HopLine>;
   /**
@@ -221,16 +223,9 @@ function stopEnd(draft: Pick<GapDraft, "visits">, last: number | undefined): Tri
   return stop && { latitude: stop.latitude, longitude: stop.longitude, label: stop.name };
 }
 
-/** A hop's line and stations as its segment lists them, leaving out the stations it doesn't have. */
-function rideFields({ line, board, alight, rides }: Omit<HopLine, "mode">): Omit<HopLine, "mode"> {
-  return { line, ...(board && { board }), ...(alight && { alight }), ...(rides && { rides }) };
-}
-
-/** The hop from photo a to b, with its via spots, and its line when one was picked for its mode. */
+/** The hop from photo a to b, with its via spots; its line is put on once it's cut into legs. */
 function hopSegment(draft: GapDraft, gap: Exclude<Gap, "walk" | "break">, a: number, b: number) {
-  const picked = draft.lines?.[String(a)];
-  const line = picked?.mode === gap ? rideFields(picked) : {};
-  return { mode: gap, photos: [a, b], ...withPoints({ via: viaOf(draft, String(a)) }), ...line };
+  return { mode: gap, photos: [a, b], ...withPoints({ via: viaOf(draft, String(a)) }) };
 }
 
 /** The segments the gaps make between photos, taken one after the other, without their paths. */
@@ -309,11 +304,14 @@ function withAreaEnds(segment: TripSegment, draft: GapDraft): TripSegment {
 
 /** The segments the gaps make between photos, taken one after the other. */
 export function segmentsOf(photos: number[], draft: GapDraft): TripSegment[] {
-  const plain = cutAtStopWays(
-    splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
-      withAreaEnds(segment, draft),
+  const plain = withLegLines(
+    cutAtStopWays(
+      splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
+        withAreaEnds(segment, draft),
+      ),
+      draft.visits,
     ),
-    draft.visits,
+    draft.lines,
   );
   return withNames(
     plain.map((segment) => withStationWalks(withPath(segment, draft), draft)),
@@ -357,17 +355,6 @@ export function pathsOf(segments: TripSegment[]): Record<string, Path> {
   return { ...own, ...walkPathsOf(segments) };
 }
 
-/** The lines the segments' hops rode, by the photo each hop starts from. */
-function linesOf(segments: TripSegment[]): Record<string, HopLine> {
-  const ridden = segments.filter((s) => s.line && s.photos.length > 0);
-  return Object.fromEntries(
-    ridden.map((s) => [
-      String(s.photos[0]),
-      { mode: s.mode as Gap, ...rideFields({ ...s, line: s.line! }) },
-    ]),
-  );
-}
-
 /** The exits and entrances of the areas wandered that the segments run between. */
 function areaEndsOf(segments: TripSegment[]): Pick<GapDraft, "exits" | "entrances"> {
   const exits = segments.flatMap((s) => (s.from ? [[String(s.photos[0]), s.from] as const] : []));
@@ -380,7 +367,7 @@ function areaEndsOf(segments: TripSegment[]): Pick<GapDraft, "exits" | "entrance
 /** A saved trip line's segments as gaps between the photos, taken one after the other. */
 export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
   const gaps = photos.slice(1).map((b, i) => gapIn(segments, photos[i] as number, b));
-  const lines = linesOf(segments);
+  const lines = legLinesOf(segments);
   const via = { ...viaByKey(segments), ...walkViasOf(segments) };
   return {
     gaps,

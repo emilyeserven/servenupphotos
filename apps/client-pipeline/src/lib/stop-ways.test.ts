@@ -48,10 +48,21 @@ test("a station gone back to by car in the middle of a walk cuts the walk", () =
 
 test("a stop reached the way its stretch was travelled leaves the segment whole", () => {
   const draft: GapDraft = {
-    ...withGap(walkingDraft([1, 2]), 0, "bus"),
-    visits: [station("Stop", 1, 1, "bus")],
+    ...withGap(walkingDraft([1, 2]), 0, "car"),
+    visits: [station("Stop", 1, 1, "car")],
   };
-  assert.deepEqual(shape(draft, [1, 2]), [["bus", undefined, [1, 2], undefined]]);
+  assert.deepEqual(shape(draft, [1, 2]), [["car", undefined, [1, 2], undefined]]);
+});
+
+test("a train ride is cut at each trip stop on it, so each stretch names its own line", () => {
+  const draft: GapDraft = {
+    ...withGap(walkingDraft([1, 2]), 0, "train"),
+    visits: [station("Dentetsu-Izumoshi", 1, 1)],
+  };
+  assert.deepEqual(shape(draft, [1, 2]), [
+    ["train", undefined, [1], "Dentetsu-Izumoshi"],
+    ["train", "Dentetsu-Izumoshi", [2], undefined],
+  ]);
 });
 
 test("reads a cut line back as the same gaps and start", () => {

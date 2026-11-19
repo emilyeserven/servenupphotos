@@ -3,8 +3,10 @@ import type { TripPoint, TripSegment, TripVia, TripVisit } from "@/api/trip-line
 /**
  * A trip stop can say how it was reached from the point before it on the route (its `mode`), such
  * as a walk between two stations in the middle of a train ride. The segments the gaps make are cut
- * at such stops, each stretch its own segment in its own mode; a stop with no mode, or the mode of
- * the stretch it's on, leaves its segment whole.
+ * at such stops, each stretch its own segment in its own mode. A train, subway, bus or transit hop
+ * is also cut at every trip stop on it, such as a station changed trains at, so each stretch can
+ * name the line it rode; any other stop with no mode, or the mode of the stretch it's on, leaves
+ * its segment whole.
  */
 
 /** One point of a segment's line, in order: a spot with no photo, a photo, or a via spot. */
@@ -95,15 +97,29 @@ function keptVia({ after, ...v }: TripVia, photos: number[]): TripVia {
   return after !== undefined && photos.includes(after) ? { after, ...v } : v;
 }
 
+/** The modes whose hops can name the line they rode. */
+export const LINE_MODES: ReadonlySet<string> = new Set(["train", "subway", "bus", "transit"]);
+
+/**
+ * Whether the stretch into item i+1 ends there: the way travelled changes after it, or it's a trip
+ * stop on a hop that names its lines, or it's the last item.
+ */
+function endsAt(items: Item[], modes: string[], i: number, byStop: boolean): boolean {
+  if (i + 1 === modes.length || modes[i + 1] !== modes[i]) return true;
+  const item = items[i + 1]!;
+  return byStop && "via" in item && item.via.visit !== undefined;
+}
+
 /** The segment cut where the way travelled changes, each stretch in its own mode. */
 function cut(s: TripSegment, visits: TripVisit[]): TripSegment[] {
   const items = itemsOf(s);
   const modes = modesOf(s, items, visits);
-  if (modes.every((m) => m === s.mode)) return [s];
+  const byStop = LINE_MODES.has(s.mode);
+  if (!modes.some((_, i) => i + 1 < modes.length && endsAt(items, modes, i, byStop))) return [s];
   const out: TripSegment[] = [];
   let from = 0;
   modes.forEach((mode, i) => {
-    if (i + 1 < modes.length && modes[i + 1] === mode) return;
+    if (!endsAt(items, modes, i, byStop)) return;
     out.push(
       fieldsOf(s, stretchOf(items, from, i + 1, mode, visits), from === 0, i + 2 === items.length),
     );
@@ -130,9 +146,12 @@ function fieldsOf(
   };
 }
 
-/** The segments cut at the trip stops reached some other way than the stretch they're on. */
+/**
+ * The segments cut at the trip stops reached some other way than the stretch they're on, and at
+ * every trip stop on a hop that names its lines.
+ */
 export function cutAtStopWays(segments: TripSegment[], visits: TripVisit[] = []): TripSegment[] {
-  if (!visits.some((v) => v.mode)) return segments;
+  if (visits.length === 0) return segments;
   return segments.flatMap((s) => (s.mode === "wander" ? [s] : cut(s, visits)));
 }
 

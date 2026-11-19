@@ -33,9 +33,12 @@ function walkPathKey(segment: TripSegment, end: WalkEnd, via: TripPoint[]): stri
   return JSON.stringify(["walk", end, segment.photos, at(segment[end]), via.map(at)]);
 }
 
-/** The hop's stations it got on or off at, each with its end. */
+/**
+ * The hop's stations it got on or off at, each with its end. A leg after a trip stop has none whose
+ * walk can be shaped, since its walks' via lists are kept by the photo a hop starts from.
+ */
 function stationEnds(segment: TripSegment): WalkEnd[] {
-  if (!segment.line) return [];
+  if (!segment.line || segment.start) return [];
   return (["board", "alight"] as const).filter((end) => segment[end]);
 }
 

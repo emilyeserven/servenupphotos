@@ -252,8 +252,8 @@ two stations in the middle of a train ride, or **Car or taxi** back to a station
 there: the stretch into the stop is its own segment in that mode (from the photo or stop before it, with no photo of
 its own when between two stops), and the line goes on from the stop the gap's way. The photo strip shows the way as a
 small icon before the stop's chip. The gaps read back from a cut line are the same, since the stretch from a gap's last
-stop to its photo keeps the gap's way (`lib/stop-ways.ts`). A hop cut this way has no line to pick under
-[Lines ridden](#lines-ridden), since no one segment runs from one photo to the next.
+stop to its photo keeps the gap's way (`lib/stop-ways.ts`). A train, subway, bus or transit hop is also cut at every
+trip stop on it, even one reached the route's way, so each stretch is its own row under [Lines ridden](#lines-ridden).
 
 ### Casual photos
 
@@ -489,8 +489,13 @@ one run locally.
 
 ## Lines ridden
 
-Under the map, **Lines ridden** lists each train, subway, bus or transit hop of a line drawn by hand. A hop with no line
-yet looks up its lines at once: the ones of its kind that pass within 500 m of both of its photos. A transit hop of
+Under the map, **Lines ridden** lists each train, subway, bus or transit hop of a line drawn by hand, one row for each
+stretch of it between photos, trip stops and the day's start: a ride from photo 1 changed at Dentetsu-Izumoshi (a trip
+stop on it) is two rows, "Photo 1 → Dentetsu-Izumoshi" and "Dentetsu-Izumoshi → Photo 2", each with its own line. The
+draft keeps each stretch's line by a leg key (`lib/hop-legs.ts`): the ID of the photo the hop starts from for its first
+stretch, as before hops were cut, and that ID with the stretch's number after it, such as `12+1`, for each one after a
+trip stop. Walks to and from the stations of a stretch that starts at a trip stop can't take via spots. A hop with no line
+yet looks up its lines at once: the ones of its kind that pass within 500 m of both of its ends. A transit hop of
 unknown kind first asks **Look for a** **Train**, **Subway**, **Bus** or **Ferry** line, and looks nothing up until one
 is picked, since looking for every kind at once is slow on OpenStreetMap's servers (the backend turns down
 `mode=transit` with a 400). Picking another kind looks again; the hop stays a transit hop. Each is a [route relation](https://wiki.openstreetmap.org/wiki/Relation:route),
