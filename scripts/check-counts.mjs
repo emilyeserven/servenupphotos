@@ -1,5 +1,5 @@
 // Checks that "1 photo, 2 photos" is written with count() from apps/portfolio/src/lib/words.ts
-// (CLAUDE.md, "Conventions") and not by hand. It flags a number written next to its noun with an
+// (`.claude/rules/counting-words.md`) and not by hand. It flags a number written next to its noun with an
 // inline `=== 1 ?`, such as `${n} ${n === 1 ? "photo" : "photos"}`, `n === 1 ? "1 photo" : …` or
 // `photo${n === 1 ? "" : "s"}`. Agreeing a verb ("is" or "are") or wording one and many differently
 // ("the photo" or "3 photos") stays inline. Exits 1 and lists each line.

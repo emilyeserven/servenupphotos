@@ -1,6 +1,6 @@
 // Checks that the README's Features list and the docs/ folder match: every docs/<name>.md is linked
 // from the "## Features" section of README.md, and every docs/<name>.md link in that section points at
-// a file that exists (CLAUDE.md, "Docs"). Exits 1 and lists each problem.
+// a file that exists (`.claude/rules/docs.md`). Exits 1 and lists each problem.
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
