@@ -648,11 +648,13 @@ choice is kept in the browser for every look-up:
   name) for a ride inside one (never a whole continent; a leg crossing a border finds none), and downloads that extract once
   (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract three times (its rail route relations, then its railway
   ways, then their points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
-  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v3/<extract>` beside the
+  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v4/<extract>` beside the
   settings file, then deletes the extract. Railways tagged `highspeed=yes` are kept as high-speed track, and a route
   counts each meter of it as 0.6 m (`highSpeedFactor`), so Seoul to Busan takes the KTX's 경부고속선 rather than the
-  slower 경부선 beside it, which is a little shorter once the change onto the high-speed line is counted. A map read
-  by an older version (in `osm-rail/<extract>` or `osm-rail/v2/<extract>`) is downloaded and read again the first time
+  slower 경부선 beside it, which is a little shorter once the change onto the high-speed line is counted. This goes
+  by each stretch of track, not by line, since one line can run along both: the Gyeongbu Line KTX's route relation
+  holds the high-speed line and stretches of the old line, and counting them alike drew its track along the old line. A map read
+  by an older version (in `osm-rail/<extract>`, `osm-rail/v2/<extract>` or `osm-rail/v3/<extract>`) is downloaded and read again the first time
   it's used, and the old folder removed. A line is named by the
   [route relations](https://wiki.openstreetmap.org/wiki/Relation:route) (`route=train`, `subway`, `light_rail` or
   `monorail`) whose track it is: their
