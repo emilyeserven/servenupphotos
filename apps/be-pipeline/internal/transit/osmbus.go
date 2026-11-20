@@ -142,8 +142,15 @@ func (n *busNet) route(id int64) (busRoute, bool) {
 	return n.Routes[i], true
 }
 
+// trackReachM is how far a ride's end can be from a bus route's mapped
+// roads, in meters, and still be drawn along them.
+const trackReachM = 1000
+
 // track is route r's track from the point on it nearest from to the point
-// nearest to, with from and to added at its ends, as Track is.
+// nearest to, with from and to added at its ends, as Track is. A route whose
+// roads aren't all joined, as a bus route's often aren't (a road left out, or
+// roads listed out of order), is followed along its roads in the order the
+// route lists them instead, each turned to carry on from the one before.
 func (n *busNet) track(r busRoute, from, to [2]float64) ([][2]float64, error) {
 	lines := make([][][2]float64, 0, len(r.Ways))
 	for _, w := range r.Ways {
@@ -151,9 +158,73 @@ func (n *busNet) track(r busRoute, from, to [2]float64) ([][2]float64, error) {
 	}
 	path := newLinesGraph(lines).between(from, to)
 	if len(path) < 2 {
-		return nil, ErrNoTrack
+		var err error
+		if path, err = alongRoute(chainWays(lines), from, to); err != nil {
+			return nil, err
+		}
 	}
 	return append(append([][2]float64{from}, path...), to), nil
+}
+
+// chainWays are a route's roads as one line, in the order it lists them,
+// each turned so it starts at the end nearest where the one before ended.
+func chainWays(lines [][][2]float64) [][2]float64 {
+	var out [][2]float64
+	for i, l := range lines {
+		l = slices.Clone(l)
+		switch {
+		case len(out) > 0:
+			end := out[len(out)-1]
+			if meters(end, l[len(l)-1]) < meters(end, l[0]) {
+				slices.Reverse(l)
+			}
+		case i+1 < len(lines):
+			// The first road runs toward the second.
+			next := lines[i+1]
+			if minMeters(l[0], next) < minMeters(l[len(l)-1], next) {
+				slices.Reverse(l)
+			}
+		}
+		if len(out) > 0 && out[len(out)-1] == l[0] {
+			l = l[1:]
+		}
+		out = append(out, l...)
+	}
+	return out
+}
+
+// minMeters is how far p is from the nearest end of line.
+func minMeters(p [2]float64, line [][2]float64) float64 {
+	return min(meters(p, line[0]), meters(p, line[len(line)-1]))
+}
+
+// alongRoute is the stretch of chain from the point nearest from to the point
+// nearest to, run backwards when to comes first; it fails, saying how far
+// off they are, when either is over trackReachM from it.
+func alongRoute(chain [][2]float64, from, to [2]float64) ([][2]float64, error) {
+	if len(chain) == 0 {
+		return nil, ErrNoTrack
+	}
+	a, b := nearestIndex(chain, from), nearestIndex(chain, to)
+	da, db := meters(from, chain[a]), meters(to, chain[b])
+	if da > trackReachM || db > trackReachM {
+		return nil, fmt.Errorf("%w: the first spot is %s from the route's mapped roads and the last %s, more than %d m",
+			ErrNoTrack, metersText(da), metersText(db), trackReachM)
+	}
+	if a <= b {
+		return slices.Clone(chain[a : b+1]), nil
+	}
+	out := slices.Clone(chain[b : a+1])
+	slices.Reverse(out)
+	return out, nil
+}
+
+// metersText is a distance such as "350 m" or "2.4 km".
+func metersText(m float64) string {
+	if m < 1000 {
+		return fmt.Sprintf("%d m", int(m))
+	}
+	return fmt.Sprintf("%.1f km", m/1000)
 }
 
 // osmBusMapDir is the folder of region's bus map.

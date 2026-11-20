@@ -259,12 +259,22 @@ func handleTransitTrack(finder transitFinder) http.HandlerFunc {
 func writeTrack(w http.ResponseWriter, track trackAnswer, err error) {
 	switch {
 	case errors.Is(err, transit.ErrNoTrack):
-		writeError(w, http.StatusUnprocessableEntity, "That line's mapped track doesn't join those two spots. Try another line or direction.")
+		writeError(w, http.StatusUnprocessableEntity, noTrackMessage(err))
 	case err != nil:
 		writeOverpassError(w, "get the line's track", err)
 	default:
 		writeJSON(w, http.StatusOK, track)
 	}
+}
+
+// noTrackMessage says why a line's track couldn't be followed between two
+// spots, with how far off they were when the look-up says.
+func noTrackMessage(err error) string {
+	const base = "That line's mapped track doesn't join those two spots"
+	if detail := strings.TrimPrefix(err.Error(), transit.ErrNoTrack.Error()+": "); detail != err.Error() {
+		return base + ": " + detail + ". Try another line or direction, or pick the stops it got on and off at."
+	}
+	return base + ". Try another line or direction."
 }
 
 // writeOverpassError answers a failed look-up of what, such as "look up

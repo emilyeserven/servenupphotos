@@ -623,7 +623,10 @@ choice is kept in the browser for every look-up:
   and each route with its roads and its stops in order (its `stop` members, or else its platforms, as the Overpass
   look-up does) in `osm-rail/bus-v1/<extract>/bus-routes.json.gz`. A bus is listed when its roads pass within 500 m of
   both ends, the same as the Overpass look-up, its track is the shortest way along its own roads between the points
-  nearest each end, and its stops are its own. Each direction of a route is its own line. A line's ID holds its route
+  nearest each end, and its stops are its own. A route whose roads aren't all joined (a short road left out of the
+  relation, or roads listed out of order, as many are) is followed along its roads in the order the route lists them
+  instead, each turned to carry on from the one before; only an end over 1 km from its roads fails, saying how far off
+  each end is. The download card shows a failed map only under a look-up that failed naming it. Each direction of a route is its own line. A line's ID holds its route
   relation's OpenStreetMap ID in its low 40 bits and its extract's place in the index above them
   (`be-pipeline/internal/transit/osmbus.go`). A bus map has only buses: asked for a train, the backend says so.
 
