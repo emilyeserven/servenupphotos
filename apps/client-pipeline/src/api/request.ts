@@ -26,13 +26,33 @@ export async function requestJsonResponse<T>(
   return { data: json as T, headers: res.headers };
 }
 
-/** POSTs `body` as JSON to `url` and reads the JSON answer. */
-export function post<T>(url: string, body: unknown): Promise<T> {
+/** Sends `body` as JSON to `url` with `method` and reads the JSON answer. */
+function sendJson<T>(method: string, url: string, body: unknown): Promise<T> {
   return requestJson<T>(url, {
-    method: "POST",
+    method,
     headers: { "content-type": "application/json" },
     body: JSON.stringify(body),
   });
+}
+
+/** POSTs `body` as JSON to `url` and reads the JSON answer. */
+export function post<T>(url: string, body: unknown): Promise<T> {
+  return sendJson<T>("POST", url, body);
+}
+
+/** PUTs `body` as JSON to `url`, such as a file to save in place, and reads the JSON answer. */
+export function put<T>(url: string, body: unknown): Promise<T> {
+  return sendJson<T>("PUT", url, body);
+}
+
+/**
+ * Sends a DELETE to `url` and reads the JSON answer. With `body`, it goes as JSON, for the few
+ * deletes that say more than their URL does.
+ */
+export function del<T>(url: string, body?: unknown): Promise<T> {
+  return body === undefined
+    ? requestJson<T>(url, { method: "DELETE" })
+    : sendJson<T>("DELETE", url, body);
 }
 
 /** POSTs `form` as multipart form data to `url`, such as a photo to read, and reads the JSON answer. */
