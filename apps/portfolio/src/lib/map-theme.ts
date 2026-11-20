@@ -83,18 +83,16 @@ export function areaColors(dark: boolean) {
 }
 
 /**
- * How big a trip line is drawn: on a map (the portfolio's Map and the pipeline's Trip map), in the
- * pipeline's route map editor (walks and rides a little bolder, to see and click near while editing),
- * or in a small sketch (the Timeline's, a day's preview and a Trip card).
+ * How big a trip line is drawn: on a map (the portfolio's Map, the pipeline's Trip map and its route
+ * map), or in a small sketch (the Timeline's, a day's preview and a Trip card).
  */
-export type TripLineSize = "map" | "editor" | "sketch";
+export type TripLineSize = "map" | "sketch";
 
 /** The kinds of trip line drawn in a style of their own. */
 type TripLineKind = "walk" | "ride" | "drive" | "ferry" | "flight" | "hop";
 
 const TRIP_LINE_WIDTHS: Record<TripLineSize, Record<TripLineKind, number>> = {
   map: { walk: 3, ride: 3, drive: 3, ferry: 3, flight: 2, hop: 2 },
-  editor: { walk: 4, ride: 4, drive: 3, ferry: 3, flight: 2, hop: 2 },
   sketch: { walk: 2, ride: 2, drive: 2, ferry: 2, flight: 1.5, hop: 1.5 },
 };
 

@@ -35,10 +35,7 @@ test("ferries are dotted and flights dashed", () => {
   assert.deepEqual(tripLineStyle("flight", {}, false).dash, [3, 2]);
 });
 
-test("the editor draws walks and rides bolder, and sketches thinner", () => {
-  assert.equal(tripLineStyle("walk", {}, false, "editor").width, 4);
-  assert.equal(tripLineStyle("train", { onLine: true }, false, "editor").width, 4);
-  assert.equal(tripLineStyle("car", {}, false, "editor").width, 3);
+test("sketches draw thinner lines", () => {
   assert.equal(tripLineStyle("walk", {}, false, "sketch").width, 2);
   assert.equal(tripLineStyle("train", {}, false, "sketch").width, 1.5);
 });

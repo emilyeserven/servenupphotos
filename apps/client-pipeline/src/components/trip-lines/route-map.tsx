@@ -28,9 +28,9 @@ function opacity(full: number): ["case", ["get", string], number, number] {
   return ["case", ["get", "faded"], 0.15, full];
 }
 
-/** A line of the mode and kind given, as the route map draws it: a little bolder than the portfolio's Map. */
-function editorStyle(mode: string, onLine: boolean, dark: boolean) {
-  return tripLineStyle(mode, { onLine }, dark, "editor");
+/** A line of the mode and kind given, as every map draws it. */
+function mapStyle(mode: string, onLine: boolean, dark: boolean) {
+  return tripLineStyle(mode, { onLine }, dark);
 }
 
 /** The round ends and corners of the solid lines. */
@@ -44,7 +44,7 @@ function walkLayer(preview: boolean, dark: boolean): LayerProps {
     filter: ["==", ["get", "mode"], "walk"],
     layout: ROUND,
     paint: {
-      ...tripLinePaint(editorStyle("walk", false, dark)),
+      ...tripLinePaint(mapStyle("walk", false, dark)),
       "line-opacity": opacity(preview ? 0.5 : 0.9),
       "line-offset": LANE_OFFSET,
     },
@@ -59,7 +59,7 @@ function driveLayer(dark: boolean): LayerProps {
     filter: ["==", ["get", "mode"], "car"],
     layout: ROUND,
     paint: {
-      ...tripLinePaint(editorStyle("car", false, dark)),
+      ...tripLinePaint(mapStyle("car", false, dark)),
       "line-opacity": opacity(1),
       "line-offset": LANE_OFFSET,
     },
@@ -71,7 +71,7 @@ function driveLayer(dark: boolean): LayerProps {
  * color when one was picked, else the hop purple.
  */
 function hopLayer(dark: boolean): LayerProps {
-  const style = editorStyle("train", false, dark);
+  const style = mapStyle("train", false, dark);
   return {
     id: "trip-hop",
     type: "line",
@@ -91,7 +91,7 @@ function hopLayer(dark: boolean): LayerProps {
 
 /** A hop along the track of the line it rode, solid in that line's color. */
 function lineLayer(dark: boolean): LayerProps {
-  const style = editorStyle("train", true, dark);
+  const style = mapStyle("train", true, dark);
   return {
     id: "trip-transit-line",
     type: "line",
