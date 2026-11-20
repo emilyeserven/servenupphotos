@@ -94,6 +94,19 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
 - **Docs:** a change in behavior updates its `docs/<feature>.md`. A new feature gets a new `docs/` file and one line
   in the README's **Features** list (`pnpm check` fails on a doc missing from it or a link to a missing doc). Only touch the README itself for setup, commands or deployment. Docs explain
   backend ideas with a short "> **Frontend analogy:**" note, since the owner is a frontend engineer.
+- **Section titles:** a pipeline heading over a section of a page, card or panel is `SectionTitle`
+  (`components/section-title.tsx`), not a hand-styled `h2`/`h3`. `size="sm"` (the default) is a part of a card or
+  panel, `size="lg"` a section of a page or drawer; `as="h2"` sets the level without changing the look.
+- **Naming:**
+  - **color, not colour.** `colour` is only the trip line and transit line field copied from OpenStreetMap's
+    `colour` tag (in the committed trip line files) and the code that carries it. Every other field, prop and
+    variable, new ones included, says `color`.
+  - **Storage keys** are kebab-case with the app's prefix: `pipeline-…` in the pipeline, `servenup-…` in the
+    portfolio. A new stored value uses `storedValue` (`@portfolio/lib/stored-value`). Renaming a key calls
+    `moveStoredKey(old, new)` beside it so the browser keeps what it saved.
+  - **Go file names** are the feature squashed into one word (`tripstories.go`, `placeareas.go`, `albumsuggest.go`),
+    with an underscore only before a part of that feature (`triplines_route.go`, `bulktags_answer.go`,
+    `routes_<area>.go`). Tests add `_test`.
 - **Pull requests:** title is one sentence describing the change as the user sees it, such as "Show photo counts on
   the portfolio map". Squash-merged.
 

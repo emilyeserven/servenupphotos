@@ -103,7 +103,7 @@ under the list counts them, and uploading the picture again brings it in.
 
 **Limits** draws a red line, above every picture, in from the top, bottom, left and right, each a percentage of the frame (0 for none), with
 the space past it shaded, to fit every picture inside. The limits are a preference kept in this browser's local
-storage (`servenup-gear-crop-limits`), the same for every camera and lens, and aren't saved in the gear files.
+storage (`pipeline-gear-crop-limits`), the same for every camera and lens, and aren't saved in the gear files.
 
 The list marks each picture whose crop has changed, and **Save N sized pictures** cuts every changed crop, selected or
 not, into its sized version and saves its file, one after another, each a change waiting for Commit.

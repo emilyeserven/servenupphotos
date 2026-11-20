@@ -9,6 +9,7 @@ import {
 } from "@/lib/lightroom-albums";
 import { cn } from "@/lib/utils";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { SectionTitle } from "@/components/section-title";
 
 /** The drag's data type, carrying the dragged album's path. */
 const ALBUM_PATH = "application/x-lightroom-album-path";
@@ -65,10 +66,10 @@ function Lane({ stage, albums }: LaneProps) {
       onDragLeave={() => setOver(false)}
       onDrop={drop}
     >
-      <h3 className="flex items-center justify-between px-1 text-sm font-medium">
+      <SectionTitle className="flex items-center justify-between px-1">
         {stage ?? "No stage"}
         <span className="text-muted-foreground text-xs">{albums.length}</span>
-      </h3>
+      </SectionTitle>
       {albums.map((album) => (
         <BoardCard key={album.path} album={album} />
       ))}

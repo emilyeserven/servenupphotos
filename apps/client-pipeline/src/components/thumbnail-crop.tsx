@@ -24,6 +24,7 @@ import {
   sameCrop,
 } from "@/lib/crop";
 import { cn } from "@/lib/utils";
+import { moveStoredKey } from "@portfolio/lib/stored-value";
 
 // The handles sit just inside the square's corners, so the photo's edge never clips them.
 const CORNERS: (Corner & { className: string; label: string })[] = [
@@ -163,7 +164,9 @@ const OVERLAYS: { id: Overlay; label: string; Icon: typeof HashIcon }[] = [
 /** How many cells a side of the grid overlay has. */
 const GRID_CELLS = 6;
 
-const OVERLAYS_KEY = "thumbnail-crop-overlays";
+/** Where this browser remembers which overlays are on. */
+const OVERLAYS_KEY = "pipeline-thumbnail-crop-overlays";
+moveStoredKey("thumbnail-crop-overlays", OVERLAYS_KEY);
 
 function storedOverlays(): Overlay[] {
   try {

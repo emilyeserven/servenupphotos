@@ -10,6 +10,7 @@ import {
   pixelationPrompt,
   readPixelationAnswer,
 } from "@/lib/pixelation-prompt";
+import { SectionTitle } from "@/components/section-title";
 
 /**
  * The flagged photos as rows of the list to flag, each with the photo as it is now in `photos`, so
@@ -38,7 +39,7 @@ export function PixelationCheck({ photos }: { photos: AutogroupPhoto[] }) {
   const contact = useContactSheets(sheetPhotos);
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="font-medium">License plates and faces</h3>
+      <SectionTitle>License plates and faces</SectionTitle>
       <p className="text-muted-foreground max-w-prose text-sm">
         Copy one prompt into a chat with an LLM, which looks for readable license plates and faces
         someone could recognize. Paste its JSON answer back to list the photos it flagged, with what
