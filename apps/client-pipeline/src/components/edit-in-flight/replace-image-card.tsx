@@ -12,6 +12,7 @@ import { exifStripped, newSize, savedSize } from "@/components/edit-in-flight/re
 import { type ReplaceImage, useReplaceImage } from "@/components/edit-in-flight/use-replace-image";
 import { type Crop, type Size } from "@/lib/crop";
 import { useReplacedImageStore } from "@/stores/replaced-image";
+import { ErrorNote } from "@/components/error-note";
 
 interface ReplaceImageCardProps {
   editable: Editable;
@@ -152,7 +153,7 @@ function ReadStatus({ replace }: { replace: ReplaceImage }) {
       </p>
     );
   }
-  if (read.isError) return <p className="text-destructive text-sm">{read.error.message}</p>;
+  if (read.isError) return <ErrorNote error={read.error} />;
   return <NoExifNote replace={replace} />;
 }
 

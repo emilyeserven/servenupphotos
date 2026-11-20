@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Spinner } from "@/components/ui/spinner";
 import { exifValue } from "@/lib/camera-overrides";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { ErrorNote } from "@/components/error-note";
 
 /** EXIF tags about the camera, lens and settings, which the list shows unless asked for all. */
 const CAMERA_TAG = /make|model|lens|focal|camera|aperture|fnumber|serial|mount|adapter/i;
@@ -123,7 +124,7 @@ interface ExifResultProps {
 
 /** Why the read failed, or the tags it read. */
 function ExifResult({ error, tags, photo, onUse }: ExifResultProps) {
-  if (error) return <p className="text-destructive text-sm">{error.message}</p>;
+  if (error) return <ErrorNote error={error} />;
   if (!tags || !photo) return null;
   return <TagTable tags={tags} photo={photo} onUse={onUse} />;
 }

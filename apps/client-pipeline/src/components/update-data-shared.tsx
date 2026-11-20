@@ -6,6 +6,7 @@ import type { PendingSave } from "@/api/scan-changes";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
+import { ErrorNote } from "@/components/error-note";
 
 /** "1 file", "2 files". */
 export function count(n: number, word: string): string {
@@ -255,7 +256,7 @@ export function SaveButton({
         )}
       </Button>
       {children}
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
+      <ErrorNote error={error} />
     </div>
   );
 }

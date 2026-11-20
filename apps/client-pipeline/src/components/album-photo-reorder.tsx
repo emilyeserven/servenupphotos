@@ -10,6 +10,7 @@ import { type DragOrder, useDragOrder } from "@/hooks/use-drag-order";
 import { albumPhotoOrder, moved, photoId, savedPhotoOrder } from "@/lib/album-photo-order";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { cn } from "@/lib/utils";
+import { ErrorNote } from "@/components/error-note";
 
 interface AlbumPhotoReorderProps {
   album: Group;
@@ -56,7 +57,7 @@ export function AlbumPhotoReorder({ album, photos, onDone }: AlbumPhotoReorderPr
         onReset={() => saveOrder([])}
         onCancel={onDone}
       />
-      {save.isError && <p className="text-destructive">{save.error.message}</p>}
+      <ErrorNote error={save.error} />
     </div>
   );
 }

@@ -21,6 +21,7 @@ import { longDayFormat } from "@/lib/calendar";
 import { parseIsoDate } from "@portfolio/lib/dates";
 import { notStoredByDay } from "@/lib/not-stored";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 
 /** Each day's Not Stored post, by day, with the changes not committed yet. */
 export function useNotStored(): Map<string, NotStoredPost> {
@@ -74,7 +75,7 @@ export function MarkNotStoredButton({ day, onDone }: { day: string; onDone: () =
   const save = useMutation(saveNotStoredMutation);
   return (
     <DialogFooter className="items-center">
-      {save.error && <p className="text-destructive text-sm">{save.error.message}</p>}
+      <ErrorNote error={save.error} />
       <Button
         variant="outline"
         disabled={save.isPending}
@@ -135,7 +136,7 @@ function NotStoredForm({ post, onClose }: { post: NotStoredPost; onClose: () => 
         value={note}
         onChange={(event) => setNote(event.target.value)}
       />
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
+      <ErrorNote error={error} />
       <DialogFooter>
         <Button
           variant="outline"

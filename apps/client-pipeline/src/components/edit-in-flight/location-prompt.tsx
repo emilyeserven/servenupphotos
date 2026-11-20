@@ -24,6 +24,7 @@ import {
   parseLocationAnswer,
   withLocation,
 } from "@/lib/location-prompt";
+import { ErrorNote } from "@/components/error-note";
 
 interface LocationPromptProps {
   /** The public URL of the photo's version the prompt links to. */
@@ -174,7 +175,7 @@ function FillForm({
         filled={fill.isSuccess}
         onClick={() => fill.mutate(ticked)}
       />
-      {fill.isError && <p className="text-destructive">{fill.error.message}</p>}
+      <ErrorNote error={fill.error} />
     </>
   );
 }
