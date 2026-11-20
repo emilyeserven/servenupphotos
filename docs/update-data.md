@@ -1,138 +1,39 @@
 # Update Data
 
-`/update-data`, under **Configuration** in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one
-previews what it will change, then saves every changed file as a [change waiting for Commit](pending-changes.md),
-so one **Commit** sends them to the open **Add photo data** pull request (or opens one) together with `ALLPHOTOS.json`
-rebuilt.
+`/update-data`, under **Configuration** in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one previews what it will change, then saves every changed file as a [change waiting for Commit](pending-changes.md), so one **Commit** sends them to the open **Add photo data** pull request (or opens one) together with `ALLPHOTOS.json` rebuilt.
 
-Each bulk change has its own subpage, `/update-data/<name>` (such as `/update-data/image-names`), picked from a side
-navigation beside the card, each with its icon left of its name; on a phone the navigation is a dropdown above it.
-`/update-data` on its own opens the first, **Image base URL**, and the main sidebar keeps **Update Data** highlighted on
-every subpage. **Update Data** in the main sidebar also has a submenu of the same subpages, so hovering it opens any one
-directly. The list and each subpage's card are in `components/update-data/sections.tsx`, so a new bulk change is one
-entry there, in both navigations (`SectionsLayout` and `SectionNav` in `components/update-data/` draw the page and its navigation).
+Each bulk change has its own subpage, `/update-data/<name>` (such as `/update-data/image-names`), picked from a side navigation beside the card, each with its icon left of its name; on a phone the navigation is a dropdown above it. `/update-data` on its own opens the first, **Image base URL**, and the main sidebar keeps **Update Data** highlighted on every subpage. **Update Data** in the main sidebar also has a submenu of the same subpages, so hovering it opens any one directly. The list and each subpage's card are in `components/update-data/sections.tsx`, so a new bulk change is one entry there, in both navigations (`SectionsLayout` and `SectionNav` in `components/update-data/` draw the page and its navigation).
 
-Update Data keeps the changes to the photo files as a whole: **Image base URL**, **Image names**, **Missing fields**,
-**Colors**, **Camera overrides**, **Localizations**, [**Times across timezones**](timezone-shift.md),
-[**EXIF in R2**](r2-exif.md), the one change that writes to the originals in R2 rather than the photo files, and
-[**Quality Check**](quality-check.md), which checks crops and asks an LLM about plates and faces, flagging the photos that fail for re-edit. The rest
-moved into the sidebar, next to what they change, working just as described below:
+Update Data keeps the changes to the photo files as a whole: **Image base URL**, **Image names**, **Missing fields**, **Colors**, **Camera overrides**, **Localizations**, [**Times across timezones**](timezone-shift.md), [**EXIF in R2**](r2-exif.md), the one change that writes to the originals in R2 rather than the photo files, and [**Quality Check**](quality-check.md), which checks crops and asks an LLM about plates and faces, flagging the photos that fail for re-edit. The rest moved into the sidebar, next to what they change, working just as described below:
 
-- The four tag changes, **Bulk tagging**, **Tag library**, **Tag pruning** and **Tag descriptions**, are the tag
-  tools: each a page of its own (`/tag-tools/<name>`, `components/tag-tool-page.tsx`), listed in the **Tags** submenu
-  under a small **Tools** header. Their list is `tagTools` in the same file. They used to share a Tag Data page with
-  its own side navigation; an old `/tag-data` link opens Bulk tagging and `/tag-data/<name>` opens that tool.
-- **Location Names** (`/location-names`) and **Bulk Places** (`/bulk-places`) are under **Places**, **Genre
-  Suggestions** (`/genre-suggestions`) under **Genres**, and **Album Suggestions** (`/album-suggestions`) under
-  **Albums**, each a page with just its card (`components/update-data/card-page.tsx`).
+- The four tag changes, **Bulk tagging**, **Tag library**, **Tag pruning** and **Tag descriptions**, are the tag tools: each a page of its own (`/tag-tools/<name>`, `components/tag-tool-page.tsx`), listed in the **Tags** submenu under a small **Tools** header. Their list is `tagTools` in the same file. They used to share a Tag Data page with its own side navigation; an old `/tag-data` link opens Bulk tagging and `/tag-data/<name>` opens that tool.
+- **Location Names** (`/location-names`) and **Bulk Places** (`/bulk-places`) are under **Places**, **Genre Suggestions** (`/genre-suggestions`) under **Genres**, and **Album Suggestions** (`/album-suggestions`) under **Albums**, each a page with just its card (`components/update-data/card-page.tsx`).
 
 An old link to one of them, such as `/update-data/tag-library`, opens it where it is now (`movedSections`).
 
-**Image base URL** moves every image URL in the photo files from one base URL to another, such as from R2's public
-development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the photos folder
-(except `ALLPHOTOS.json`) as the next Commit will have it, and lists the
-origins their image URLs use (`POST /api/data/image-base-url/preview` with empty `from` and `to`). Previewing a change
-lists each URL under `images` that starts with `from` (followed by nothing, `/`, `?` or `#`), with its new value
-(`POST /data/image-base-url/preview`); applying it (`POST /data/image-base-url`) rewrites only those strings, keeping
-the rest of each URL (query strings such as `?crop=` included) and every other byte of the file as it was. Nothing is
-saved while any photo file can't be read. The images in R2 aren't touched, so connect the custom domain to the
-bucket in Cloudflare first, and set the R2 **Public URL** in Settings to it so new uploads use it too.
+**Image base URL** moves every image URL in the photo files from one base URL to another, such as from R2's public development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the photos folder (except `ALLPHOTOS.json`) as the next Commit will have it, and lists the origins their image URLs use (`POST /api/data/image-base-url/preview` with empty `from` and `to`). Previewing a change lists each URL under `images` that starts with `from` (followed by nothing, `/`, `?` or `#`), with its new value (`POST /data/image-base-url/preview`); applying it (`POST /data/image-base-url`) rewrites only those strings, keeping the rest of each URL (query strings such as `?crop=` included) and every other byte of the file as it was. Nothing is saved while any photo file can't be read. The images in R2 aren't touched, so connect the custom domain to the bucket in Cloudflare first, and set the R2 **Public URL** in Settings to it so new uploads use it too.
 
-**Image names** names each titled photo's image in R2 after its title, so camera file names that repeat (`DSC0001`,
-`IMG_0001`) stop clashing: `photos/59124cb186a8-dsc0001.jpg` becomes `photos/59124cb186a8-amsterdam-canal.jpg`, and
-each resized version, the Square Thumbnail and the Thumbnail Preview move with it (`…-amsterdam-canal-large.webp`). The
-hash stays, so it's still the same photo. The name is the title as `storage.TitleStem` writes it: lowercase, letters
-and numbers joined by `-`, common accents dropped (“Café” gives `cafe`), at most 60 characters. A name another photo
-already has, in the bucket or in a photo file, gets `-2`, `-3` and so on; a photo already named after its title (with
-or without such a suffix) keeps its name. Photos without a title, or with one that has no letters or numbers in it,
-and images the pipeline didn't upload are left as they are.
+**Image names** names each titled photo's image in R2 after its title, so camera file names that repeat (`DSC0001`, `IMG_0001`) stop clashing: `photos/59124cb186a8-dsc0001.jpg` becomes `photos/59124cb186a8-amsterdam-canal.jpg`, and each resized version, the Square Thumbnail and the Thumbnail Preview move with it (`…-amsterdam-canal-large.webp`). The hash stays, so it's still the same photo. The name is the title as `storage.TitleStem` writes it: lowercase, letters and numbers joined by `-`, common accents dropped (“Café” gives `cafe`), at most 60 characters. A name another photo already has, in the bucket or in a photo file, gets `-2`, `-3` and so on; a photo already named after its title (with or without such a suffix) keeps its name. Photos without a title, or with one that has no letters or numbers in it, and images the pipeline didn't upload are left as they are.
 
-**Check files** lists the bucket and reads every photo file as the next Commit will have it
-(`POST /api/data/image-names/preview`), and shows each photo that would be renamed with every `images` value that
-changes. **Apply** (`POST /api/data/image-names`) first copies each photo's original and versions to their new keys in
-R2 (`storage.CopyPhoto`, a server-side copy that keeps each object's metadata, such as the Square Thumbnail's crop),
-then saves its photo file with the new key and URLs, query strings such as `?crop=` kept, as a [change waiting for
-Commit](pending-changes.md). Nothing is saved while any photo file can't be read or any copy fails; the copies already
-made are harmless, and applying again copies over them. Nothing is deleted: the old images stay in R2, because the
-portfolio keeps showing them until the pull request merges. Once it has, they show as **Not saved** in
-[Explore Bucket](explore-bucket.md#filters), where they can be deleted.
+**Check files** lists the bucket and reads every photo file as the next Commit will have it (`POST /api/data/image-names/preview`), and shows each photo that would be renamed with every `images` value that changes. **Apply** (`POST /api/data/image-names`) first copies each photo's original and versions to their new keys in R2 (`storage.CopyPhoto`, a server-side copy that keeps each object's metadata, such as the Square Thumbnail's crop), then saves its photo file with the new key and URLs, query strings such as `?crop=` kept, as a [change waiting for Commit](pending-changes.md). Nothing is saved while any photo file can't be read or any copy fails; the copies already made are harmless, and applying again copies over them. Nothing is deleted: the old images stay in R2, because the portfolio keeps showing them until the pull request merges. Once it has, they show as **Not saved** in [Explore Bucket](explore-bucket.md#filters), where they can be deleted.
 
-> **Frontend analogy:** it's renaming a file that other modules import: copy it to the new path, update every import
-> (here, the links in each photo's JSON), ship that, and only then delete the old file, so nothing ever points at a
-> path that isn't there.
+> **Frontend analogy:** it's renaming a file that other modules import: copy it to the new path, update every import (here, the links in each photo's JSON), ship that, and only then delete the old file, so nothing ever points at a path that isn't there.
 
-**Missing fields** gives older photo files the fields new ones have, such as `title`, `comment`, `aperture` or
-`images.thumbnail` (`POST /api/data/missing-fields/preview`, then `POST /api/data/missing-fields`). The list of fields
-and their defaults is `newPhotoJSON` in `be-pipeline/internal/github/publish.go`, the same function that builds a new
-photo file, so a field added there (with its default, such as `[]` for a list) is backfilled with no other change.
-A missing `id` isn't a default: each file gets the next photo ID, counting up from the highest ID any photo file has, in
-the order the files were created: when each was first committed on the branch the next Commit goes to (one GraphQL
-query asks every file's history, 50 files at a time), or, for a file only in the pending changes, when it was saved.
-Files created in the same commit go by file name. See [Photo IDs](data-model.md#photo-ids).
-A missing `addedDate` isn't a default either: from the same history, each file that isn't a [draft](drafts.md) gets
-the time of the commit that first added it (or, only in the pending changes, when it was saved), and a draft gets
-`null`, to be dated when it gets a title. See [Date added](data-model.md#date-added).
-Missing fields go where a new file has them, nested `images` fields included, and the rest of each file is kept byte
-for byte; a field a file already has, even `null`, is never changed. With **Read missing camera details from the
-originals in R2** on, a missing EXIF field (`exif.SanitizeFields`) is read from the photo's original at `images.key`,
-as Explore Bucket reads it, instead of being added as `null`; the backend keeps each original's EXIF in memory, so
-applying doesn't download them again after a preview. A missing `images.thumbnailcrop` is read from the `?crop=x,y,size`
-on `images.thumbnail` when it has one, or, with that option on, from the crop saved with the Square Thumbnail in R2.
+**Missing fields** gives older photo files the fields new ones have, such as `title`, `comment`, `aperture` or `images.thumbnail` (`POST /api/data/missing-fields/preview`, then `POST /api/data/missing-fields`). The list of fields and their defaults is `newPhotoJSON` in `be-pipeline/internal/github/publish.go`, the same function that builds a new photo file, so a field added there (with its default, such as `[]` for a list) is backfilled with no other change. A missing `id` isn't a default: each file gets the next photo ID, counting up from the highest ID any photo file has, in the order the files were created: when each was first committed on the branch the next Commit goes to (one GraphQL query asks every file's history, 50 files at a time), or, for a file only in the pending changes, when it was saved. Files created in the same commit go by file name. See [Photo IDs](data-model.md#photo-ids). A missing `addedDate` isn't a default either: from the same history, each file that isn't a [draft](drafts.md) gets the time of the commit that first added it (or, only in the pending changes, when it was saved), and a draft gets `null`, to be dated when it gets a title. See [Date added](data-model.md#date-added). Missing fields go where a new file has them, nested `images` fields included, and the rest of each file is kept byte for byte; a field a file already has, even `null`, is never changed. With **Read missing camera details from the originals in R2** on, a missing EXIF field (`exif.SanitizeFields`) is read from the photo's original at `images.key`, as Explore Bucket reads it, instead of being added as `null`; the backend keeps each original's EXIF in memory, so applying doesn't download them again after a preview. A missing `images.thumbnailcrop` is read from the `?crop=x,y,size` on `images.thumbnail` when it has one, or, with that option on, from the crop saved with the Square Thumbnail in R2.
 
-**Colors** reads each photo's colors from its original in R2 (at `images.key`) and saves them as the file's `colors`
-(`POST /api/data/colors/preview`, then `POST /api/data/colors`). It's the summary the EXIF page's Colors tab shows
-(`colors.Summary` in `be-pipeline/internal/colors`): the average color, the 12 hue buckets, the neutrals' lightness
-histogram, the mean lightness and chroma, and `peakChroma`, the chroma the most vivid tenth of the pixels reach. The
-Raw color data tab's statistics aren't saved. Only files without `colors` (or with `null`), or whose `colors` were
-saved before `peakChroma` was added, are read, unless **Read the
-colors of photos that already have them again** is on, such as after replacing photos' images. Each original is
-downloaded and decoded, four at a time, so a first run over every photo takes a few minutes; the backend keeps each
-original's colors in memory, so applying doesn't download them again after a preview. A photo whose original can't
-be read, or that has no `images.key`, is listed with why and left as it is, and the rest are still saved. Only
-`colors` is rewritten, and nothing is saved while any photo file can't be read. New photos get `colors` when they're
-saved, so this is for older ones and for recomputing.
+**Colors** reads each photo's colors from its original in R2 (at `images.key`) and saves them as the file's `colors` (`POST /api/data/colors/preview`, then `POST /api/data/colors`). It's the summary the EXIF page's Colors tab shows (`colors.Summary` in `be-pipeline/internal/colors`): the average color, the 12 hue buckets, the neutrals' lightness histogram, the mean lightness and chroma, and `peakChroma`, the chroma the most vivid tenth of the pixels reach. The Raw color data tab's statistics aren't saved. Only files without `colors` (or with `null`), or whose `colors` were saved before `peakChroma` was added, are read, unless **Read the colors of photos that already have them again** is on, such as after replacing photos' images. Each original is downloaded and decoded, four at a time, so a first run over every photo takes a few minutes; the backend keeps each original's colors in memory, so applying doesn't download them again after a preview. A photo whose original can't be read, or that has no `images.key`, is listed with why and left as it is, and the rest are still saved. Only `colors` is rewritten, and nothing is saved while any photo file can't be read. New photos get `colors` when they're saved, so this is for older ones and for recomputing.
 
-**Camera overrides** applies the [camera overrides](camera-overrides.md) to every photo file again, after they've
-changed (`POST /api/data/camera-overrides/preview`, then `POST /api/data/camera-overrides`). Each file starts from its
-EXIF values (its own, with the ones its `exifOriginals` kept laid over them), so renaming a camera again, or removing a
-rule, reaches photos an older rule already changed; a field no rule sets any more goes back to its EXIF value. Each
-photo's [custom lens](custom-lenses.md) is applied after the rules, so it's kept, and a changed lens reaches its photos. Only the
-changed top-level fields are rewritten, and nothing is saved while any photo file can't be read.
+**Camera overrides** applies the [camera overrides](camera-overrides.md) to every photo file again, after they've changed (`POST /api/data/camera-overrides/preview`, then `POST /api/data/camera-overrides`). Each file starts from its EXIF values (its own, with the ones its `exifOriginals` kept laid over them), so renaming a camera again, or removing a rule, reaches photos an older rule already changed; a field no rule sets any more goes back to its EXIF value. Each photo's [custom lens](custom-lenses.md) is applied after the rules, so it's kept, and a changed lens reaches its photos. Only the changed top-level fields are rewritten, and nothing is saved while any photo file can't be read.
 
-**Location names** writes every country and city that's another name of one, such as `"United States"` for
-`"United States of America"`, as the name that wins, in the photo files' `country`, `city`, `customCountry` and
-`customCity` and the place files' `country` and `city` (`POST /api/data/location-names/preview`, then
-`POST /api/data/location-names`). The other names are picked on the Places page; see
-[Other names](places-and-localizations.md#other-names). It also fills in the city of a photo with a state but no
-city when the state is named like a city, such as Seoul; see
-[A city from its state](places-and-localizations.md#a-city-from-its-state).
+**Location names** writes every country and city that's another name of one, such as `"United States"` for `"United States of America"`, as the name that wins, in the photo files' `country`, `city`, `customCountry` and `customCity` and the place files' `country` and `city` (`POST /api/data/location-names/preview`, then `POST /api/data/location-names`). The other names are picked on the Places page; see [Other names](places-and-localizations.md#other-names). It also fills in the city of a photo with a state but no city when the state is named like a city, such as Seoul; see [A city from its state](places-and-localizations.md#a-city-from-its-state).
 
 ## Bulk tagging
 
-**Bulk tagging** tags up to 50 photos with one LLM prompt, or every photo without tags with **No limit**. The card first says how many photo files have no tags yet
-(`POST /api/data/bulk-tags/untagged`, read again after each save). **Photos to pick** next to the buttons sets how
-many each pick finds (5 at first, 1 to 50; the backend treats a missing `count` as 5 and caps it at 50, and the
-preview and save take any number of photos). **No limit** (`all: true`) hides the count and picks every photo
-without tags that's left: with **Pick photos that go together**, the first one and every photo that shares something
-with it; without, all of them. A big pick makes a long prompt, so make contact sheets before copying it. **Pick photos** (`POST /api/data/bulk-tags/pick`, `{ skip, count, any }`)
-reads every photo file as the next Commit will have it and only considers photos without tags (an empty or missing
-`tags`), so a photo that already has tags is never picked. It picks the first of those by path, then up to `count` − 1 more
-that share the most with it: each shared [place](places-and-localizations.md) counts 5, the same
-city 3 (or else the same country 1), each shared [genre](photographic-genres.md) 2, and being taken the same day 3
-(or else the same month 1), using the hand-written city, country and date over the EXIF ones. Photos that share
-nothing aren't picked. Each card says what it shares with the
-first photo. With **Pick photos that go together** turned off (`any: true`), it picks the first `count` photos without
-tags by path instead, whatever they share. **Pick other photos** sends the photos already shown as `skip`, so the next pick leaves them out;
-**Start over** picks from every photo again.
+**Bulk tagging** tags up to 50 photos with one LLM prompt, or every photo without tags with **No limit**. The card first says how many photo files have no tags yet (`POST /api/data/bulk-tags/untagged`, read again after each save). **Photos to pick** next to the buttons sets how many each pick finds (5 at first, 1 to 50; the backend treats a missing `count` as 5 and caps it at 50, and the preview and save take any number of photos). **No limit** (`all: true`) hides the count and picks every photo without tags that's left: with **Pick photos that go together**, the first one and every photo that shares something with it; without, all of them. A big pick makes a long prompt, so make contact sheets before copying it. **Pick photos** (`POST /api/data/bulk-tags/pick`, `{ skip, count, any }`) reads every photo file as the next Commit will have it and only considers photos without tags (an empty or missing `tags`), so a photo that already has tags is never picked. It picks the first of those by path, then up to `count` − 1 more that share the most with it: each shared [place](places-and-localizations.md) counts 5, the same city 3 (or else the same country 1), each shared [genre](photographic-genres.md) 2, and being taken the same day 3 (or else the same month 1), using the hand-written city, country and date over the EXIF ones. Photos that share nothing aren't picked. Each card says what it shares with the first photo. With **Pick photos that go together** turned off (`any: true`), it picks the first `count` photos without tags by path instead, whatever they share. **Pick other photos** sends the photos already shown as `skip`, so the next pick leaves them out; **Start over** picks from every photo again.
 
-**Make contact sheets**, optional, puts the picked photos on numbered sheets in R2 for the prompt to link
-([Contact sheets](contact-sheets.md)).
+**Make contact sheets**, optional, puts the picked photos on numbered sheets in R2 for the prompt to link ([Contact sheets](contact-sheets.md)).
 
-**Copy the tag prompt** (`lib/bulk-tag-prompt.ts`) copies one prompt for all of them: each photo by its file name
-(without `.json`), with a link to its Small version, what's known of where it was taken, and the tags it already has,
-then the same rules, existing tags and **Already filtered** list as one photo's [tag prompt](albums-and-tags.md#suggest-tags)
-(`TAG_RULES` and `tagListsSection` in `lib/tag-prompt.ts`), asking for 3 to 8 new tags each and for the answer as
-JSON:
+**Copy the tag prompt** (`lib/bulk-tag-prompt.ts`) copies one prompt for all of them: each photo by its file name (without `.json`), with a link to its Small version, what's known of where it was taken, and the tags it already has, then the same rules, existing tags and **Already filtered** list as one photo's [tag prompt](albums-and-tags.md#suggest-tags) (`TAG_RULES` and `tagListsSection` in `lib/tag-prompt.ts`), asking for 3 to 8 new tags each and for the answer as JSON:
 
 ```json
 {
@@ -143,42 +44,19 @@ JSON:
 }
 ```
 
-Paste the answer and **Review the tags** (`POST /api/data/bulk-tags/preview`, which saves nothing). The backend reads
-the JSON object in it (from the first `{` to the last `}`, so a code block or words around it are fine) and sorts
-each photo's names as pasting into a Tags field does (`github/bulktags_answer.go`): a name matching a tag's ID or name
-(ignoring case, or by the ID made from it) is that tag; one an album, genre or metadata group has, or with nothing to
-make an ID from, is left out saying why; the rest are new tags in lowercase kebab-case, with their definitions as
-descriptions. A parent that isn't a tag yet is made too, before the tag under it. Photos the answer names that weren't
-picked are found among every photo and reviewed after the picked ones, and names that aren't any photo's are listed
-and skipped ([photos outside the batch](copy-prompts.md#photos-outside-the-batch)).
+Paste the answer and **Review the tags** (`POST /api/data/bulk-tags/preview`, which saves nothing). The backend reads the JSON object in it (from the first `{` to the last `}`, so a code block or words around it are fine) and sorts each photo's names as pasting into a Tags field does (`github/bulktags_answer.go`): a name matching a tag's ID or name (ignoring case, or by the ID made from it) is that tag; one an album, genre or metadata group has, or with nothing to make an ID from, is left out saying why; the rest are new tags in lowercase kebab-case, with their definitions as descriptions. A parent that isn't a tag yet is made too, before the tag under it. Photos the answer names that weren't picked are found among every photo and reviewed after the picked ones, and names that aren't any photo's are listed and skipped ([photos outside the batch](copy-prompts.md#photos-outside-the-batch)).
 
-The review lists the new tags, each with a checkbox and one for its parent, then each photo with a checkbox per tag
-to add, marking the new ones, and the tags it already has. **Save tags for N photos** (`POST /api/data/bulk-tags`)
-makes the ticked new tags, parents first, and adds the ticked tags to each photo's `tags` after the ones it has, all
-in one save of [changes waiting for Commit](pending-changes.md). Each new tag is checked as **New tag** on `/tags`
-checks it, and nothing is saved when one can't be made or a photo can't be read. Once saved, the list of new tags is hidden, since they're made.
+The review lists the new tags, each with a checkbox and one for its parent, then each photo with a checkbox per tag to add, marking the new ones, and the tags it already has. **Save tags for N photos** (`POST /api/data/bulk-tags`) makes the ticked new tags, parents first, and adds the ticked tags to each photo's `tags` after the ones it has, all in one save of [changes waiting for Commit](pending-changes.md). Each new tag is checked as **New tag** on `/tags` checks it, and nothing is saved when one can't be made or a photo can't be read. Once saved, the list of new tags is hidden, since they're made.
 
-> **Frontend analogy:** it's the single-photo paste flow batched: a "dry run" mutation that returns a diff for the
-> user to edit (like a form's preview step), then one mutation that commits the edited diff.
+> **Frontend analogy:** it's the single-photo paste flow batched: a "dry run" mutation that returns a diff for the user to edit (like a form's preview step), then one mutation that commits the edited diff.
 
 ## Bulk places
 
-**Bulk places** gives [places](places-and-localizations.md) to up to 50 related photos with one LLM prompt, the way
-[Suggest a location](places-and-localizations.md#suggest-a-location) does for one photo. It picks like Bulk tagging,
-with the same **Photos to pick**, **Pick other photos** and **Start over** (`POST /api/data/bulk-places/pick`,
-`{ skip, count }`, `PickBulkPlacePhotos` in `github/bulkplaces.go`), but only considers photos without places (an empty
-or missing `places`, or only rows without an ID), and ranks them by their city or country, genres and date, as they
-have no places to share.
+**Bulk places** gives [places](places-and-localizations.md) to up to 50 related photos with one LLM prompt, the way [Suggest a location](places-and-localizations.md#suggest-a-location) does for one photo. It picks like Bulk tagging, with the same **Photos to pick**, **Pick other photos** and **Start over** (`POST /api/data/bulk-places/pick`, `{ skip, count }`, `PickBulkPlacePhotos` in `github/bulkplaces.go`), but only considers photos without places (an empty or missing `places`, or only rows without an ID), and ranks them by their city or country, genres and date, as they have no places to share.
 
-**Make contact sheets**, optional, puts the picked photos on numbered sheets in R2 for the prompt to link
-([Contact sheets](contact-sheets.md)).
+**Make contact sheets**, optional, puts the picked photos on numbered sheets in R2 for the prompt to link ([Contact sheets](contact-sheets.md)).
 
-**Copy the place prompt** (`lib/bulk-place-prompt.ts`) copies one prompt for all of them: each photo by its file name,
-with a link to its Small version and what's known of where it was taken (`knownLines` in `lib/location-prompt.ts`),
-then every existing place and the same naming and GPS rules as one photo's prompt. It asks the LLM to check each place
-on Google Maps, or on Naver Map or Kakao Map for a place in South Korea (where Google Maps shows little), and to give
-that link, the existing place it's in, the place's Wikidata item ID when it has one, and the same fields as one
-photo's answer, as JSON:
+**Copy the place prompt** (`lib/bulk-place-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a link to its Small version and what's known of where it was taken (`knownLines` in `lib/location-prompt.ts`), then every existing place and the same naming and GPS rules as one photo's prompt. It asks the LLM to check each place on Google Maps, or on Naver Map or Kakao Map for a place in South Korea (where Google Maps shows little), and to give that link, the existing place it's in, the place's Wikidata item ID when it has one, and the same fields as one photo's answer, as JSON:
 
 ```json
 {
@@ -203,67 +81,29 @@ photo's answer, as JSON:
 }
 ```
 
-Paste the answer and **Review the places**. Unlike Bulk tagging, the page reads it itself (`lib/bulk-places.ts`),
-from its first `{` to its last `}`: each place is matched to an existing one by name or ID, ignoring case, as one
-photo's answer is; the others are new places, each made once however many photos name it, with the answer's city,
-state, country and GPS position (`exactLocation` from `exact`), in the parent when that's an existing place. The
-review lists the new places the ticked photos use, then each photo with its place (and the place it's in, as
-choosing it on the Photo page adds), where it is, the LLM's confidence and reasoning, and links to check it: the
-answer's own map link, a search for it on Naver Map (in South Korea) or Google Maps, and its GPS position on Google
-Maps. A photo starts ticked unless the LLM's confidence is low. When a photo shows no city or country (custom or EXIF),
-its place's are written in as its custom ones.
+Paste the answer and **Review the places**. Unlike Bulk tagging, the page reads it itself (`lib/bulk-places.ts`), from its first `{` to its last `}`: each place is matched to an existing one by name or ID, ignoring case, as one photo's answer is; the others are new places, each made once however many photos name it, with the answer's city, state, country and GPS position (`exactLocation` from `exact`), in the parent when that's an existing place. The review lists the new places the ticked photos use, then each photo with its place (and the place it's in, as choosing it on the Photo page adds), where it is, the LLM's confidence and reasoning, and links to check it: the answer's own map link, a search for it on Naver Map (in South Korea) or Google Maps, and its GPS position on Google Maps. A photo starts ticked unless the LLM's confidence is low. When a photo shows no city or country (custom or EXIF), its place's are written in as its custom ones.
 
-The answer doesn't have to be for the picked photos. Before the review, the names in it that aren't picked photos are
-looked up among every photo (`POST /api/data/photos-by-name`, `FindPhotosByName` in `github/answered.go`); the ones
-found are reviewed after the picked ones, the rest are listed and skipped, and a picked photo the answer doesn't name
-is left as it is ([photos outside the batch](copy-prompts.md#photos-outside-the-batch)).
+The answer doesn't have to be for the picked photos. Before the review, the names in it that aren't picked photos are looked up among every photo (`POST /api/data/photos-by-name`, `FindPhotosByName` in `github/answered.go`); the ones found are reviewed after the picked ones, the rest are listed and skipped, and a picked photo the answer doesn't name is left as it is ([photos outside the batch](copy-prompts.md#photos-outside-the-batch)).
 
-**Save places for N photos** (`POST /api/data/bulk-places`, `ApplyBulkPlaces`) makes the new places, each checked as
-saving one on the Places page checks it, and replaces each ticked photo's `places`, sets its `placeName` to the first
-place's name and writes in the custom city and country, keeping the rest of the file byte for byte, all in one save of
-[changes waiting for Commit](pending-changes.md). Nothing is saved when a place can't be made or a photo can't be read.
+**Save places for N photos** (`POST /api/data/bulk-places`, `ApplyBulkPlaces`) makes the new places, each checked as saving one on the Places page checks it, and replaces each ticked photo's `places`, sets its `placeName` to the first place's name and writes in the custom city and country, keeping the rest of the file byte for byte, all in one save of [changes waiting for Commit](pending-changes.md). Nothing is saved when a place can't be made or a photo can't be read.
 
-Once that's saved, each new place the answer gave a Wikidata ID gets its real outline as its
-[area](places-and-localizations.md#areas) (`components/bulk-places/place-outlines.tsx`). The places are done one at a
-time through the area search (`GET /api/areas?q=Q…`, which follows the item's OpenStreetMap relation, two requests a
-second apart), and the first outline found is saved (`PUT /api/places/{id}/area`) as another change waiting for Commit.
-A list under the review says how each went: saved, no outline on OpenStreetMap (the maps then circle the place's GPS
-position), or what went wrong. The LLM only names the item; it never writes coordinates for the outline, since it
-would make up a plausible shape.
+Once that's saved, each new place the answer gave a Wikidata ID gets its real outline as its [area](places-and-localizations.md#areas) (`components/bulk-places/place-outlines.tsx`). The places are done one at a time through the area search (`GET /api/areas?q=Q…`, which follows the item's OpenStreetMap relation, two requests a second apart), and the first outline found is saved (`PUT /api/places/{id}/area`) as another change waiting for Commit. A list under the review says how each went: saved, no outline on OpenStreetMap (the maps then circle the place's GPS position), or what went wrong. The LLM only names the item; it never writes coordinates for the outline, since it would make up a plausible shape.
 
-> **Frontend analogy:** asking for an icon's name in a library such as Lucide rather than for its SVG path: the name
-> can be checked, and the real path is fetched from the source.
+> **Frontend analogy:** asking for an icon's name in a library such as Lucide rather than for its SVG path: the name can be checked, and the real path is fetched from the source.
 
 ### No place found
 
-When the answer names a photo but gives it no place (an empty `"place"`), **Review the places** remembers it in this
-browser's local storage (`stores/no-place-found.ts`, key `pipeline-no-place-found`, by the photo file's path) and marks
-it **No place found** in the review, with the LLM's reasoning. From then on, each pick sends those paths as
-`noPlaceFound` (`BulkPlacePickOptions`), and the backend neither picks them nor counts them in **N of M photos have
-no places yet**; the line adds “Leaving out N photos an LLM found no place for.” A photo the answer leaves out isn't
-remembered, since the LLM may just have missed it. The Dashboard's **Photos without a place** row leaves them out
-too.
+When the answer names a photo but gives it no place (an empty `"place"`), **Review the places** remembers it in this browser's local storage (`stores/no-place-found.ts`, key `pipeline-no-place-found`, by the photo file's path) and marks it **No place found** in the review, with the LLM's reasoning. From then on, each pick sends those paths as `noPlaceFound` (`BulkPlacePickOptions`), and the backend neither picks them nor counts them in **N of M photos have no places yet**; the line adds “Leaving out N photos an LLM found no place for.” A photo the answer leaves out isn't remembered, since the LLM may just have missed it. The Dashboard's **Photos without a place** row leaves them out too.
 
-**Pick it again** on a photo's row forgets that one (and **Don't pick it again** remembers it once more), and **Pick
-them again** under the count forgets them all. As it's kept in the browser, another browser or a cleared one picks
-them again; once a photo gets a place some other way, it's no longer without one, so being remembered changes nothing.
+**Pick it again** on a photo's row forgets that one (and **Don't pick it again** remembers it once more), and **Pick them again** under the count forgets them all. As it's kept in the browser, another browser or a cleared one picks them again; once a photo gets a place some other way, it's no longer without one, so being remembered changes nothing.
 
-> **Frontend analogy:** a "dismissed" list in `localStorage`, like hiding a banner for good, sent along with the
-> query as an exclude filter so the server's counts match what you see.
+> **Frontend analogy:** a "dismissed" list in `localStorage`, like hiding a banner for good, sent along with the query as an exclude filter so the server's counts match what you see.
 
-> **Frontend analogy:** the same dry run and commit as Bulk tagging, with the dry run done client-side: parsing the
-> answer is a pure function of the pasted text and the cached places query, like a `useMemo` over form input.
+> **Frontend analogy:** the same dry run and commit as Bulk tagging, with the dry run done client-side: parsing the answer is a pure function of the pasted text and the cached places query, like a `useMemo` over form input.
 
 ## Localizations
 
-**Localizations** fills in the [localizations](places-and-localizations.md#localizations) of up to 50 countries,
-states, cities and places with one LLM prompt. It lists the names the Localizations page does (from the combined
-data store and the place files) and counts the ones with no localization, or one without a romanization or local
-script, the two every name has; pronunciation is only for scripts that don't show it, such as kanji. **Names to ask
-about** (25 at first, 1 to 50) sets how many **Copy the prompt** (`lib/localization-prompt.ts`) asks about, the ones
-the most photos show first. Each is listed by its localization ID, with where it is and the fields already saved,
-asking for the romanization the country uses officially (Revised Romanization, Hepburn with macrons, Pinyin with tone
-marks), the pronunciation in kana or bopomofo when the script needs it, and the local script, as JSON:
+**Localizations** fills in the [localizations](places-and-localizations.md#localizations) of up to 50 countries, states, cities and places with one LLM prompt. It lists the names the Localizations page does (from the combined data store and the place files) and counts the ones with no localization, or one without a romanization or local script, the two every name has; pronunciation is only for scripts that don't show it, such as kanji. **Names to ask about** (25 at first, 1 to 50) sets how many **Copy the prompt** (`lib/localization-prompt.ts`) asks about, the ones the most photos show first. Each is listed by its localization ID, with where it is and the fields already saved, asking for the romanization the country uses officially (Revised Romanization, Hepburn with macrons, Pinyin with tone marks), the pronunciation in kana or bopomofo when the script needs it, and the local script, as JSON:
 
 ```json
 {
@@ -273,36 +113,17 @@ marks), the pronunciation in kana or bopomofo when the script needs it, and the 
 }
 ```
 
-Paste the answer and **Review the names**. The page reads it itself (`lib/localization-answer.ts`, from the first
-`{` to the last `}`, so a code block or words around it are fine), with no backend call: each name asked about gets a
-row like the Localizations page's, with the answer in the fields that are empty and the saved ones kept, to change
-before saving. The names the answer left out, and the IDs it gave that weren't asked about, are listed under them.
-Each row's **Save**, or **Save N localizations** for all of them, saves through the same queue as the Localizations
-page (`PUT /api/localizations/<id>`), as [changes waiting for Commit](pending-changes.md). Saved names drop out of
-the count, so copying the prompt again asks about the next ones.
+Paste the answer and **Review the names**. The page reads it itself (`lib/localization-answer.ts`, from the first `{` to the last `}`, so a code block or words around it are fine), with no backend call: each name asked about gets a row like the Localizations page's, with the answer in the fields that are empty and the saved ones kept, to change before saving. The names the answer left out, and the IDs it gave that weren't asked about, are listed under them. Each row's **Save**, or **Save N localizations** for all of them, saves through the same queue as the Localizations page (`PUT /api/localizations/<id>`), as [changes waiting for Commit](pending-changes.md). Saved names drop out of the count, so copying the prompt again asks about the next ones.
 
-> **Frontend analogy:** it's machine translation for your i18n files: export the keys missing a locale, let a
-> translator fill them in, then import the file back through the same form a person would use.
+> **Frontend analogy:** it's machine translation for your i18n files: export the keys missing a locale, let a translator fill them in, then import the file back through the same form a person would use.
 
 ## Genre suggestions
 
-**Genre suggestions** suggests [photographic genres](photographic-genres.md) for a batch of up to 50 photos with one
-LLM prompt. It works like Bulk tagging, and shares its pick controls, paste box and review. **Photos to pick** starts
-at 50 (1 to 50; the backend treats a missing `count` as 50). **Pick photos** (`POST /api/data/genre-suggestions/pick`,
-`{ skip, count }`) reads every photo file as the next Commit will have it and picks the first `count` photos without
-genres (an empty or missing `genres`) by file name, which for camera files is the order they were taken, as Bulk
-tagging does with **Pick photos that go together** off: a genre is judged one photo at a time. **Pick other photos** leaves out
-the ones already shown; **Start over** picks from the start again.
+**Genre suggestions** suggests [photographic genres](photographic-genres.md) for a batch of up to 50 photos with one LLM prompt. It works like Bulk tagging, and shares its pick controls, paste box and review. **Photos to pick** starts at 50 (1 to 50; the backend treats a missing `count` as 50). **Pick photos** (`POST /api/data/genre-suggestions/pick`, `{ skip, count }`) reads every photo file as the next Commit will have it and picks the first `count` photos without genres (an empty or missing `genres`) by file name, which for camera files is the order they were taken, as Bulk tagging does with **Pick photos that go together** off: a genre is judged one photo at a time. **Pick other photos** leaves out the ones already shown; **Start over** picks from the start again.
 
-**Make contact sheets**, optional, puts the picked photos on numbered sheets in R2 for the prompt to link
-([Contact sheets](contact-sheets.md)).
+**Make contact sheets**, optional, puts the picked photos on numbered sheets in R2 for the prompt to link ([Contact sheets](contact-sheets.md)).
 
-**Copy the genre prompt** (`lib/genre-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a
-link to its Small version, its title and what's known of where it was taken, and its tags, then every genre there is
-with its description, each [subgenre](photographic-genres.md#subgenres) indented under its genre (the prompt asks for
-the subgenre alone when it fits, since it already counts as its genre). It asks for 1 to 3 genres a photo, from that list when one fits, and only otherwise for a new
-genre that photographers would recognize (such as Night or Food, never a subject or a place), in Title Case, described
-once in `newGenres`:
+**Copy the genre prompt** (`lib/genre-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a link to its Small version, its title and what's known of where it was taken, and its tags, then every genre there is with its description, each [subgenre](photographic-genres.md#subgenres) indented under its genre (the prompt asks for the subgenre alone when it fits, since it already counts as its genre). It asks for 1 to 3 genres a photo, from that list when one fits, and only otherwise for a new genre that photographers would recognize (such as Night or Food, never a subject or a place), in Title Case, described once in `newGenres`:
 
 ```json
 {
@@ -311,47 +132,17 @@ once in `newGenres`:
 }
 ```
 
-Paste the answer and **Review the genres** (`POST /api/data/genre-suggestions/preview`, which saves nothing). The
-backend reads it as it reads a Bulk tagging answer (`github/genresuggest.go`): a name matching a genre's ID or name
-(ignoring case, or by the ID made from it) is that genre; one an album, tag or metadata group has is left out saying
-why; the rest are new genres, named as the answer first wrote them, with their descriptions. The review lists the new
-genres with a checkbox each, then each photo as a row with its image on the left and, on the right, a dropdown for
-each genre the answer suggested, starting at that genre. Each dropdown lists **No genre** and
-then every genre, with the new ones still ticked marked "(new)", so a suggestion can be swapped for another genre or
-left out; a photo the answer gave no genre gets one dropdown starting at **No genre**. Unticking a new genre turns its
-dropdowns to **No genre**. **Save genres for N photos** (`POST /api/data/genre-suggestions`) makes the ticked new
-genres (checked as **New genre** on `/genres` checks one) and adds the genres the dropdowns show (each once) to each
-photo's `genres` after the ones it has, in one save of
-[changes waiting for Commit](pending-changes.md). Nothing is saved when a genre can't be made or a photo can't be read.
+Paste the answer and **Review the genres** (`POST /api/data/genre-suggestions/preview`, which saves nothing). The backend reads it as it reads a Bulk tagging answer (`github/genresuggest.go`): a name matching a genre's ID or name (ignoring case, or by the ID made from it) is that genre; one an album, tag or metadata group has is left out saying why; the rest are new genres, named as the answer first wrote them, with their descriptions. The review lists the new genres with a checkbox each, then each photo as a row with its image on the left and, on the right, a dropdown for each genre the answer suggested, starting at that genre. Each dropdown lists **No genre** and then every genre, with the new ones still ticked marked "(new)", so a suggestion can be swapped for another genre or left out; a photo the answer gave no genre gets one dropdown starting at **No genre**. Unticking a new genre turns its dropdowns to **No genre**. **Save genres for N photos** (`POST /api/data/genre-suggestions`) makes the ticked new genres (checked as **New genre** on `/genres` checks one) and adds the genres the dropdowns show (each once) to each photo's `genres` after the ones it has, in one save of [changes waiting for Commit](pending-changes.md). Nothing is saved when a genre can't be made or a photo can't be read.
 
-**Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
-how far it has got, with a bar once it can count: reading the photo files from GitHub (no count),
-asking GitHub when the files were created (50 files a query, only files not asked before), then reading the originals in R2,
-such as "Reading each photo's colors from its original in R2: 42 of 150". The backend keeps each task's latest progress
-in memory (`github.WithProgress`, kept by `readProgress` in `be-pipeline/internal/httpapi/progress.go`), and the page
-asks `GET /api/data/progress/{task}` (`missing-fields` or `colors`) every half second until the read answers.
+**Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and how far it has got, with a bar once it can count: reading the photo files from GitHub (no count), asking GitHub when the files were created (50 files a query, only files not asked before), then reading the originals in R2, such as "Reading each photo's colors from its original in R2: 42 of 150". The backend keeps each task's latest progress in memory (`github.WithProgress`, kept by `readProgress` in `be-pipeline/internal/httpapi/progress.go`), and the page asks `GET /api/data/progress/{task}` (`missing-fields` or `colors`) every half second until the read answers.
 
-> **Frontend analogy:** the progress is polled, like a `useQuery` with `refetchInterval: 500` next to the slow
-> request, rather than streamed. The slow request stays an ordinary JSON answer; a second, cheap endpoint just reads a
-> variable the first one keeps updating.
+> **Frontend analogy:** the progress is polled, like a `useQuery` with `refetchInterval: 500` next to the slow request, rather than streamed. The slow request stays an ordinary JSON answer; a second, cheap endpoint just reads a variable the first one keeps updating.
 
-> **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
-> it opens (or adds to) a pull request.
+> **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before it opens (or adds to) a pull request.
 
 ## Tag library
 
-**Tag library** (`components/tag-library/`) overhauls every tag at once with one LLM prompt. Opening it reads every
-tag and every photo file as the next Commit will have them (`POST /api/data/tag-library/export`,
-`github/taglibrary_export.go`) and says how many there are, listing any photo file it couldn't read. **Copy the
-library prompt** (`lib/tag-library-prompt.ts`) copies the whole library as JSON, one line per tag (its parent,
-description and photo count) and one per photo (its file name without `.json`, title, city and country, places,
-genres, albums, tags and [photographer notes](photo-notes.md), leaving out the empty ones, and leaving out its
-`path` and `id`, which the export has for [Small Tags](small-tags.md)), with the **Already
-filtered** names. **Download the library JSON** saves that same JSON as `tag-library.json`, to attach to a chat or
-look over. The prompt asks for at least 3 photos per tag (`minTagPhotos`), subtags especially, and, whenever a tag is
-removed or one isn't made because too few photos would have it, a note on each of its photos saying which tag it was,
-what it described and why it isn't one. The [Small Tags](small-tags.md) page asks for the same answer, narrowed to the tags with too few photos, and saves
-with the same request. The answer has Tag pruning's three lists plus five more:
+**Tag library** (`components/tag-library/`) overhauls every tag at once with one LLM prompt. Opening it reads every tag and every photo file as the next Commit will have them (`POST /api/data/tag-library/export`, `github/taglibrary_export.go`) and says how many there are, listing any photo file it couldn't read. **Copy the library prompt** (`lib/tag-library-prompt.ts`) copies the whole library as JSON, one line per tag (its parent, description and photo count) and one per photo (its file name without `.json`, title, city and country, places, genres, albums, tags and [photographer notes](photo-notes.md), leaving out the empty ones, and leaving out its `path` and `id`, which the export has for [Small Tags](small-tags.md)), with the **Already filtered** names. **Download the library JSON** saves that same JSON as `tag-library.json`, to attach to a chat or look over. The prompt asks for at least 3 photos per tag (`minTagPhotos`), subtags especially, and, whenever a tag is removed or one isn't made because too few photos would have it, a note on each of its photos saying which tag it was, what it described and why it isn't one. The [Small Tags](small-tags.md) page asks for the same answer, narrowed to the tags with too few photos, and saves with the same request. The answer has Tag pruning's three lists plus five more:
 
 ```json
 {
@@ -380,53 +171,21 @@ with the same request. The answer has Tag pruning's three lists plus five more:
 }
 ```
 
-Paste it and **Review the changes** (`POST /api/data/tag-library/preview`, which saves nothing,
-`github/taglibrary_answer.go`). The backend reads it as Tag pruning does, and checks every change one at a time in
-this order, each against the ones before it (`github/taglibrary.go`, whose `tagLibrarian` is Tag pruning's
-`tagPruner` with new tags in it too): new tags (an ID made from the name, as Bulk tagging makes one, which no album,
-tag or genre has, under a tag that's kept), renames (a new tag with the old one's description and parent, and the old
-one merged into it), merges, removals, new parents, descriptions, each photo's tags (a photo found by its file name,
-with each tag followed to where a merge or rename took it), then notes. A change that can't be made is listed under
-**Left out** with why.
+Paste it and **Review the changes** (`POST /api/data/tag-library/preview`, which saves nothing, `github/taglibrary_answer.go`). The backend reads it as Tag pruning does, and checks every change one at a time in this order, each against the ones before it (`github/taglibrary.go`, whose `tagLibrarian` is Tag pruning's `tagPruner` with new tags in it too): new tags (an ID made from the name, as Bulk tagging makes one, which no album, tag or genre has, under a tag that's kept), renames (a new tag with the old one's description and parent, and the old one merged into it), merges, removals, new parents, descriptions, each photo's tags (a photo found by its file name, with each tag followed to where a merge or rename took it), then notes. A change that can't be made is listed under **Left out** with why.
 
-The review lists each change with a checkbox: new tags, renames (with how many photos), Tag pruning's three lists,
-descriptions (with the one there now), each photo's tags as **+added** and **−removed** with the tags it had, and the
-notes. Below them, a box lists every tag that would have fewer than 3 photos once everything listed is made (from the
-preview's `fewPhotos`, each with the file names of the photos that would have it). **Copy the follow-up prompt**
-(`tagLibraryFollowUpPrompt` in `lib/tag-library-prompt.ts`) copies those tags and their photos, for the same chat,
-asking the LLM to add each one to more photos or remove it (or not make it) with a note on each of its photos, and
-to send its whole answer again. Paste the new answer over the old one and review the changes again. **Save N changes** (`POST /api/data/tag-library`, `{ newTags: [{ id, description, parent }],
-rename: [{ tag, to }], merge, remove, reparent, describe: [{ tag, description }], photos: [{ path, add, remove }],
-notes: [{ path, note }] }`, `github/taglibrary_apply.go`) checks them again and saves, in one save of [changes
-waiting for Commit](pending-changes.md): each new tag's file (with its parent and description after the changes,
-unless it was merged away), each merged, renamed or removed tag's file deleted, each kept tag's file with its new
-`parent` or `description`, and every photo file whose `tags` changed, or that gets a note (added to its `notes`
-after a blank line). The answer and the save can be up to 4 MB. Nothing is saved when a change can't be made or a
-photo file can't be read. Unticking a new tag that a photo's change adds makes the save fail and say so.
+The review lists each change with a checkbox: new tags, renames (with how many photos), Tag pruning's three lists, descriptions (with the one there now), each photo's tags as **+added** and **−removed** with the tags it had, and the notes. Below them, a box lists every tag that would have fewer than 3 photos once everything listed is made (from the preview's `fewPhotos`, each with the file names of the photos that would have it). **Copy the follow-up prompt** (`tagLibraryFollowUpPrompt` in `lib/tag-library-prompt.ts`) copies those tags and their photos, for the same chat, asking the LLM to add each one to more photos or remove it (or not make it) with a note on each of its photos, and to send its whole answer again. Paste the new answer over the old one and review the changes again. **Save N changes** (`POST /api/data/tag-library`, `{ newTags: [{ id, description, parent }], rename: [{ tag, to }], merge, remove, reparent, describe: [{ tag, description }], photos: [{ path, add, remove }], notes: [{ path, note }] }`, `github/taglibrary_apply.go`) checks them again and saves, in one save of [changes waiting for Commit](pending-changes.md): each new tag's file (with its parent and description after the changes, unless it was merged away), each merged, renamed or removed tag's file deleted, each kept tag's file with its new `parent` or `description`, and every photo file whose `tags` changed, or that gets a note (added to its `notes` after a blank line). The answer and the save can be up to 4 MB. Nothing is saved when a change can't be made or a photo file can't be read. Unticking a new tag that a photo's change adds makes the save fail and say so.
 
-> **Frontend analogy:** it's Tag pruning grown into a full codemod for the design system: the whole token list
-> and every component's usage go to the LLM, and the diff that comes back can add, rename and delete tokens and
-> update each component, all reviewed as one PR.
+> **Frontend analogy:** it's Tag pruning grown into a full codemod for the design system: the whole token list and every component's usage go to the LLM, and the diff that comes back can add, rename and delete tokens and update each component, all reviewed as one PR.
 
 ## Tag pruning
 
-**Tag pruning** asks an LLM which tags to tidy up. **Copy the pruning prompt** (`lib/prune-tag-prompt.ts`) copies
-every tag as a tree, each under its [parent](albums-and-tags.md#parent-tags), with how many photos in `ALLPHOTOS.json`
-have it and its description, then the **Already filtered** names (albums, genres and metadata groups, as the
-[tag prompt](albums-and-tags.md#suggest-tags) lists them). It asks for three kinds of change, conservatively and with a
-short reason each, using only the listed tags:
+**Tag pruning** asks an LLM which tags to tidy up. **Copy the pruning prompt** (`lib/prune-tag-prompt.ts`) copies every tag as a tree, each under its [parent](albums-and-tags.md#parent-tags), with how many photos in `ALLPHOTOS.json` have it and its description, then the **Already filtered** names (albums, genres and metadata groups, as the [tag prompt](albums-and-tags.md#suggest-tags) lists them). It asks for three kinds of change, conservatively and with a short reason each, using only the listed tags:
 
-- **Merge** a tag into another that means the same or nearly so (a singular and a plural, a synonym, another
-  spelling). A culture's own word is put under a general tag instead of merged into it.
-- **Remove** a tag that doesn't help find photos: too vague, naming a specific place or thing, or repeating what the
-  site already filters by. Having only one photo isn't a reason on its own.
+- **Merge** a tag into another that means the same or nearly so (a singular and a plural, a synonym, another spelling). A culture's own word is put under a general tag instead of merged into it.
+- **Remove** a tag that doesn't help find photos: too vague, naming a specific place or thing, or repeating what the site already filters by. Having only one photo isn't a reason on its own.
 - **Reparent** a tag under a more general one it's a kind of, or move it to the top level (`"parent": null`).
 
-It asks for at least 3 photos per tag, subtags especially, and to remove or merge a tag with fewer. For the notes,
-the prompt also lists each photo with a tag that fewer than 3 photos have (by file name, from the Tag library's read,
-`fewPhotoTagLines`), and asks for a note on each photo of a tag it removes for that: which tag it was, what it
-described and why it isn't a tag, under `"notes": [{ "photo", "note" }]`, which go into the photos'
-[photographer notes](photo-notes.md).
+It asks for at least 3 photos per tag, subtags especially, and to remove or merge a tag with fewer. For the notes, the prompt also lists each photo with a tag that fewer than 3 photos have (by file name, from the Tag library's read, `fewPhotoTagLines`), and asks for a note on each photo of a tag it removes for that: which tag it was, what it described and why it isn't a tag, under `"notes": [{ "photo", "note" }]`, which go into the photos' [photographer notes](photo-notes.md).
 
 ```json
 {
@@ -442,45 +201,24 @@ described and why it isn't a tag, under `"notes": [{ "photo", "note" }]`, which 
 }
 ```
 
-Paste the answer and **Review the changes** (`POST /api/data/prune-tags/preview` with `{ answer }`, which saves
-nothing). The backend reads the JSON object in it as Bulk tagging does, matches each name to a tag by its ID or name
-(ignoring case, or by the ID made from it), and checks the changes one at a time, merges first, then removals, then
-new parents, each against the ones before it (`github/prunetags.go`). A change that can't be made is listed under
-**Left out** with why: a name that isn't a tag, a tag already merged or removed, removing a tag another is merged
-into, a tag that's already under that parent, or a change that would put a tag inside itself. Merging into a tag that
-is itself merged later follows it there.
+Paste the answer and **Review the changes** (`POST /api/data/prune-tags/preview` with `{ answer }`, which saves nothing). The backend reads the JSON object in it as Bulk tagging does, matches each name to a tag by its ID or name (ignoring case, or by the ID made from it), and checks the changes one at a time, merges first, then removals, then new parents, each against the ones before it (`github/prunetags.go`). A change that can't be made is listed under **Left out** with why: a name that isn't a tag, a tag already merged or removed, removing a tag another is merged into, a tag that's already under that parent, or a change that would put a tag inside itself. Merging into a tag that is itself merged later follows it there.
 
-The review lists each change with a checkbox, the LLM's reason, and what it does: how many photo files a merge or
-removal touches and which tags under it move, or where a tag sits now. **Save N changes**
-(`POST /api/data/prune-tags`, `{ merge: [{ tag, into }], remove: [ids], reparent: [{ tag, parent }], notes: [{ path, note }] }`) checks
-them again and saves, in one save of [changes waiting for Commit](pending-changes.md):
+The review lists each change with a checkbox, the LLM's reason, and what it does: how many photo files a merge or removal touches and which tags under it move, or where a tag sits now. **Save N changes** (`POST /api/data/prune-tags`, `{ merge: [{ tag, into }], remove: [ids], reparent: [{ tag, parent }], notes: [{ path, note }] }`) checks them again and saves, in one save of [changes waiting for Commit](pending-changes.md):
 
 - each merged or removed tag's file deleted;
-- every photo file listing one rewritten with only its `tags` changed: a merged tag replaced by the tag it went into
-  (kept once, where the first of them was), a removed one taken off;
-- the tags under a merged tag moved under the tag it went into, the ones under a removed tag under that tag's parent,
-  and each reparented tag's `parent` set (`null` at the top level);
-- each ticked note added to its photo's `notes`. The notes are listed in the review with a checkbox each, and a note
-  for a photo file that isn't there is left out saying so.
+- every photo file listing one rewritten with only its `tags` changed: a merged tag replaced by the tag it went into (kept once, where the first of them was), a removed one taken off;
+- the tags under a merged tag moved under the tag it went into, the ones under a removed tag under that tag's parent, and each reparented tag's `parent` set (`null` at the top level);
+- each ticked note added to its photo's `notes`. The notes are listed in the review with a checkbox each, and a note for a photo file that isn't there is left out saying so.
 
 Nothing is saved when a change can't be made or a photo file can't be read, since it might list a pruned tag.
 
-> **Frontend analogy:** it's a refactor of a design system's tokens: rename two tokens that mean the same into one,
-> delete unused ones, and regroup the rest, with a dry-run diff that rewrites every component using them on save.
+> **Frontend analogy:** it's a refactor of a design system's tokens: rename two tokens that mean the same into one, delete unused ones, and regroup the rest, with a dry-run diff that rewrites every component using them on save.
 
 ## Tag descriptions
 
-**Tag descriptions** writes descriptions for the tags that have none (an empty or missing `description`), with one LLM
-prompt for a batch of them. The batch is the first tags without a description by ID; **Tags per batch** sets its size
-(25 at first, 1 to 50), **Skip these N** moves on to the next ones without saving, and **Start over** brings the skipped
-ones back. Everything it reads is already in the app: the tags from `GET /api/organize`, and the photos from the
-[combined data store](combined-data-store.md), with the changes waiting for Commit.
+**Tag descriptions** writes descriptions for the tags that have none (an empty or missing `description`), with one LLM prompt for a batch of them. The batch is the first tags without a description by ID; **Tags per batch** sets its size (25 at first, 1 to 50), **Skip these N** moves on to the next ones without saving, and **Start over** brings the skipped ones back. Everything it reads is already in the app: the tags from `GET /api/organize`, and the photos from the [combined data store](combined-data-store.md), with the changes waiting for Commit.
 
-**Copy the description prompt** (`lib/tag-description-prompt.ts`) lists each tag by its ID with what's known of it:
-its parent tag and the tags under it, how many photos have it, the three countries they're most often from, and the
-six tags most often beside it, so the LLM can tell which meaning a word has. It asks for one short lowercase phrase per
-tag, saying which culture a cultural term comes from, and shows up to 8 tags that have descriptions as examples of the
-style. The answer is JSON:
+**Copy the description prompt** (`lib/tag-description-prompt.ts`) lists each tag by its ID with what's known of it: its parent tag and the tags under it, how many photos have it, the three countries they're most often from, and the six tags most often beside it, so the LLM can tell which meaning a word has. It asks for one short lowercase phrase per tag, saying which culture a cultural term comes from, and shows up to 8 tags that have descriptions as examples of the style. The answer is JSON:
 
 ```json
 {
@@ -493,35 +231,15 @@ style. The answer is JSON:
 }
 ```
 
-Paste the answer and **Review the descriptions**. It's read in the page, from the first `{` to the last `}`, so a code
-block or words around it are fine. Each name is matched to a tag by its ID or name (ignoring case, or by the ID made
-from it), the first description of a tag wins, and names that aren't tags are listed and left out. A tag outside the
-batch can be described too. Each description can be edited or unticked; one for a tag that already has a description
-starts unticked, showing the one it has. **Save N descriptions** (`PUT /api/organize/tags/descriptions`,
-`{ "descriptions": { "<tag ID>": "<text>" } }`) rewrites only each tag file's `description`, trimmed, as
-[changes waiting for Commit](pending-changes.md); nothing is saved when an ID isn't a tag, a tag file can't be read, or
-a description is empty or over 1000 characters. Once saved, the tags are read again, so the batch moves on to the next
-tags without one.
+Paste the answer and **Review the descriptions**. It's read in the page, from the first `{` to the last `}`, so a code block or words around it are fine. Each name is matched to a tag by its ID or name (ignoring case, or by the ID made from it), the first description of a tag wins, and names that aren't tags are listed and left out. A tag outside the batch can be described too. Each description can be edited or unticked; one for a tag that already has a description starts unticked, showing the one it has. **Save N descriptions** (`PUT /api/organize/tags/descriptions`, `{ "descriptions": { "<tag ID>": "<text>" } }`) rewrites only each tag file's `description`, trimmed, as [changes waiting for Commit](pending-changes.md); nothing is saved when an ID isn't a tag, a tag file can't be read, or a description is empty or over 1000 characters. Once saved, the tags are read again, so the batch moves on to the next tags without one.
 
-> **Frontend analogy:** the same paste-back flow as Bulk tagging, but the "dry run" is a pure function in the page
-> instead of a backend call, since every tag is already in the query cache. Only the save goes to the backend.
+> **Frontend analogy:** the same paste-back flow as Bulk tagging, but the "dry run" is a pure function in the page instead of a backend call, since every tag is already in the query cache. Only the save goes to the backend.
 
 ## Album suggestions
 
-**Album suggestions** asks an LLM which albums, existing or new, up to 50 related photos belong in. It works like
-Bulk tagging, with the same **Photos to pick**, **Pick photos**, **Pick other photos** and **Start over**
-(`POST /api/data/album-suggestions/pick`, `{ skip, count }`), but only considers photos that aren't in an album (an
-empty or missing `albums`), and ranks the ones that go with the first photo by its tags above all: each shared
-[tag](albums-and-tags.md) counts 4, then the places, city or country, genres and date count as they do for Bulk
-tagging. So photos with like tags come first, then photos from the same place and dates, such as one trip.
+**Album suggestions** asks an LLM which albums, existing or new, up to 50 related photos belong in. It works like Bulk tagging, with the same **Photos to pick**, **Pick photos**, **Pick other photos** and **Start over** (`POST /api/data/album-suggestions/pick`, `{ skip, count }`), but only considers photos that aren't in an album (an empty or missing `albums`), and ranks the ones that go with the first photo by its tags above all: each shared [tag](albums-and-tags.md) counts 4, then the places, city or country, genres and date count as they do for Bulk tagging. So photos with like tags come first, then photos from the same place and dates, such as one trip.
 
-**Copy the album prompt** (`lib/album-prompt.ts`) copies one prompt for all of them: each photo by its file name, with
-a link to its Small version, what's known of where it was taken, when it was taken (the custom date over the EXIF
-one), and its tags and genres; then every existing album as a tree, with its description, and the tag, genre and
-metadata group names, which an album can't have. It asks the LLM to group photos that share tags first, then photos
-from the same place and dates, to reuse an existing album when one fits, to make a new album only for two or more of
-the photos, named as a visitor would see it (such as "Busan Beaches"), inside an existing album when one is a more
-general home for it, and to put each photo in one album at most. The answer is JSON:
+**Copy the album prompt** (`lib/album-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a link to its Small version, what's known of where it was taken, when it was taken (the custom date over the EXIF one), and its tags and genres; then every existing album as a tree, with its description, and the tag, genre and metadata group names, which an album can't have. It asks the LLM to group photos that share tags first, then photos from the same place and dates, to reuse an existing album when one fits, to make a new album only for two or more of the photos, named as a visitor would see it (such as "Busan Beaches"), inside an existing album when one is a more general home for it, and to put each photo in one album at most. The answer is JSON:
 
 ```json
 {
@@ -536,22 +254,8 @@ general home for it, and to put each photo in one album at most. The answer is J
 }
 ```
 
-Paste the answer and **Review the albums** (`POST /api/data/album-suggestions/preview`, which saves nothing). The
-backend reads it as it reads a Bulk tagging answer (`parseLLMAnswer` in `github/bulktags_answer.go`) and sorts each
-album's name the same way (`github/albumsuggest.go`): a name matching an album's ID or name (ignoring case, or by the ID
-made from it) is that album; one a tag, genre or metadata group has, or with nothing to make an ID from, is left out
-saying why; the rest are new albums, named as the answer writes them, with an ID made from the name and the answer's
-description. A new album's `parent` is kept only when it names an existing album. Two entries naming the same album
-are merged. Photos the answer names that weren't picked are put in their albums too, and names that aren't any
-photo's are listed and skipped ([photos outside the batch](copy-prompts.md#photos-outside-the-batch)).
+Paste the answer and **Review the albums** (`POST /api/data/album-suggestions/preview`, which saves nothing). The backend reads it as it reads a Bulk tagging answer (`parseLLMAnswer` in `github/bulktags_answer.go`) and sorts each album's name the same way (`github/albumsuggest.go`): a name matching an album's ID or name (ignoring case, or by the ID made from it) is that album; one a tag, genre or metadata group has, or with nothing to make an ID from, is left out saying why; the rest are new albums, named as the answer writes them, with an ID made from the name and the answer's description. A new album's `parent` is kept only when it names an existing album. Two entries naming the same album are merged. Photos the answer names that weren't picked are put in their albums too, and names that aren't any photo's are listed and skipped ([photos outside the batch](copy-prompts.md#photos-outside-the-batch)).
 
-The review lists each album with a checkbox, marked new or existing, a new one's description and a checkbox for the
-album it goes inside, and its photos, each with a checkbox. **Save albums for N photos**
-(`POST /api/data/album-suggestions`, `{ newAlbums, photos: [{ path, albums }] }`) makes the ticked new albums that
-still have a photo, then adds the albums to each ticked photo's `albums`, all in one save of
-[changes waiting for Commit](pending-changes.md). Each new album is checked as **New album** on `/albums` checks it,
-and nothing is saved when one can't be made or a photo can't be read.
+The review lists each album with a checkbox, marked new or existing, a new one's description and a checkbox for the album it goes inside, and its photos, each with a checkbox. **Save albums for N photos** (`POST /api/data/album-suggestions`, `{ newAlbums, photos: [{ path, albums }] }`) makes the ticked new albums that still have a photo, then adds the albums to each ticked photo's `albums`, all in one save of [changes waiting for Commit](pending-changes.md). Each new album is checked as **New album** on `/albums` checks it, and nothing is saved when one can't be made or a photo can't be read.
 
-> **Frontend analogy:** the same "dry run, then commit the edited diff" flow as Bulk tagging, with a different
-> ranking function for which photos go in the batch: like sorting search results by a score where a shared tag is
-> worth more than a shared city.
+> **Frontend analogy:** the same "dry run, then commit the edited diff" flow as Bulk tagging, with a different ranking function for which photos go in the batch: like sorting search results by a score where a shared tag is worth more than a shared city.
