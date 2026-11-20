@@ -20,6 +20,7 @@ import {
 } from "@/lib/compare-autogroup";
 import { readAutogroupAnswer } from "@/lib/compare-autogroup-answer";
 import type { ComparePhoto } from "@/lib/compare-groups";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /**
@@ -115,7 +116,7 @@ function AutogroupPrompt({ ask, all }: AutogroupPromptProps) {
         label="Review the changes"
         onReview={review}
       />
-      {error && <p className="text-destructive text-sm">{error}</p>}
+      <ErrorNote error={error} />
       {answer && <AutogroupReview key={reviews} answer={answer} />}
       <PhotoTiles photos={ask.loose} />
     </div>

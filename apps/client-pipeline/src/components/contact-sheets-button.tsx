@@ -12,6 +12,7 @@ import type { BulkTagPhoto } from "@/api/bulk-tags";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { pickedSheetPhotos } from "@/lib/bulk-tag-prompt";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** The contact sheets for a prompt's photos, and how to make them. */
@@ -70,7 +71,7 @@ export function ContactSheetsButton({ state }: { state: ContactSheetsState }) {
         <p className="text-muted-foreground text-sm">{madeText(state.made)}</p>
       </div>
       {state.made && <MadeSheets made={state.made} />}
-      {state.error && <p className="text-destructive text-sm">{state.error.message}</p>}
+      <ErrorNote error={state.error} />
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { CommitSuccess } from "@/components/update-data-shared";
 import { currentPhotos } from "@/lib/group-photos";
 import { tagsToDescribe } from "@/lib/tag-description-prompt";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** How many tags a batch has until another number is chosen. */
@@ -66,7 +67,7 @@ interface TagCountsProps {
 
 /** How many of the tags have no description, or why the tags can't be read. */
 function TagCounts({ loading, error, tags }: TagCountsProps) {
-  if (error) return <p className="text-destructive text-sm">{error.message}</p>;
+  if (error) return <ErrorNote error={error} />;
   if (loading) return <p className="text-muted-foreground text-sm">Reading the tags…</p>;
   const missing = tagsToDescribe(tags, new Set()).length;
   return (

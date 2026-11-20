@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
 
 interface GenerateJsonProps {
   /** The original JPEG in R2. */
@@ -98,7 +99,7 @@ function ExtractResult({ extract, original, copies, onSaved }: GeneratedJsonProp
   if (extract.isError) {
     return (
       <div className="flex flex-col gap-2">
-        <p className="text-destructive text-sm">{extract.error.message}</p>
+        <ErrorNote error={extract.error} />
         <Button
           variant="outline"
           size="sm"

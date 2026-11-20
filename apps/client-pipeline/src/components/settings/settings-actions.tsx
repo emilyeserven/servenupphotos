@@ -5,6 +5,7 @@ import { type SectionConfig } from "@/components/settings/sections";
 import { type FormValues, type SettingsForm } from "@/components/settings/use-settings-form";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
 
 interface SettingsActionsProps {
   form: SettingsForm;
@@ -44,7 +45,7 @@ export function SettingsActions({ form, config, save, test }: SettingsActionsPro
 }
 
 function SaveStatus({ isSuccess, error }: { isSuccess: boolean; error: Error | null }) {
-  if (error) return <p className="text-destructive text-sm">{error.message}</p>;
+  if (error) return <ErrorNote error={error} />;
   if (isSuccess) return <p className="text-muted-foreground text-sm">Saved.</p>;
   return null;
 }

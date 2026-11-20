@@ -60,6 +60,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { currentPhotos, photoCounts } from "@/lib/group-photos";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** One album's or tag's page: what it is, where an album sits, and the photos in it. */
@@ -445,7 +446,7 @@ function ParentButtons({ changed, pending, onSave, onUndo }: ParentButtonsProps)
 
 /** What saving the parent did, or why it failed. */
 function ParentOutcome({ save, rebuild, kind }: ParentSave) {
-  if (save.isError) return <p className="text-destructive">{save.error.message}</p>;
+  if (save.isError) return <ErrorNote error={save.error} />;
   if (!save.isSuccess) return null;
   return (
     <div className="flex flex-col gap-2">

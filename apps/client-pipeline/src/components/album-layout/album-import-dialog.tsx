@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { type AlbumImport, type AlbumLayout, readAlbumImport } from "@/lib/album-layout-editor";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 interface AlbumImportDialogProps {
@@ -91,7 +92,7 @@ async function loadFile(event: ChangeEvent<HTMLInputElement>, setText: (text: st
 /** What the import has, or why it can't be used. */
 function ImportOutcome({ read }: { read?: AlbumImport }) {
   if (!read) return null;
-  if ("error" in read) return <p className="text-destructive text-sm">{read.error}</p>;
+  if ("error" in read) return <ErrorNote error={read.error} />;
   const { covers, layout } = read.layout;
   return (
     <div className="flex flex-col gap-1 text-sm">

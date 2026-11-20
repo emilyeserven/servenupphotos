@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { uploadNameProblem } from "@/lib/file-name";
 import { dateTimeText } from "@portfolio/lib/dates";
+import { ErrorNote } from "@/components/error-note";
 
 interface R2DetailsProps {
   r2: R2Upload;
@@ -86,7 +87,7 @@ function UploadFailure({ error }: { error: Error | null }) {
   const cloudflare = error instanceof UploadError ? error.cloudflare : undefined;
   return (
     <>
-      <p className="text-destructive text-sm">{error.message}</p>
+      <ErrorNote error={error} />
       {cloudflare && <CloudflareDetails response={cloudflare} />}
     </>
   );
@@ -251,7 +252,7 @@ function Uploaded({ r2, result }: { r2: R2Upload; result: UploadResponse }) {
 function RemakeStatus({ r2 }: { r2: R2Upload }) {
   const { remake } = r2;
   if (remake.isPending) return <Pending>Remaking the Square Thumbnail…</Pending>;
-  if (remake.isError) return <p className="text-destructive">{remake.error.message}</p>;
+  if (remake.isError) return <ErrorNote error={remake.error} />;
   if (r2.action !== "remake") return null;
   return (
     <p className="text-amber-700 dark:text-amber-400">

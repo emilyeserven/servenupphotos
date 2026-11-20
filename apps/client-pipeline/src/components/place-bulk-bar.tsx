@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
 import { type BulkChange, bulkChanged, bulkNotParents, parentOptions } from "@/lib/place-bulk";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 interface PlaceBulkBarProps {
@@ -75,7 +76,7 @@ export function PlaceBulkBar({ selected, places, onClear }: PlaceBulkBarProps) {
           onChange={(parent) => setChange((c) => ({ ...c, parent }))}
         />
       </div>
-      {bulk.error && <p className="text-destructive text-sm">{bulk.error}</p>}
+      <ErrorNote error={bulk.error} />
       <BulkSaveButton bulk={bulk} changed={changed} />
     </section>
   );

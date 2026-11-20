@@ -6,6 +6,7 @@ import type { PendingSave } from "@/api/scan-changes";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** Photo files that couldn't be read; while there are any, nothing can be changed. */
@@ -251,7 +252,7 @@ export function SaveButton({
         )}
       </Button>
       {children}
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
+      <ErrorNote error={error} />
     </div>
   );
 }

@@ -17,6 +17,7 @@ import { type CombinedPhoto, currentLists } from "@/lib/group-photos";
 import { labelsOf } from "@/lib/smart-album-photos";
 import { entriesMatching, type RulePhotos, rulePhotos } from "@/lib/smart-album-rules";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** How many of the matching photos the editor shows. */
@@ -214,7 +215,7 @@ function PreviewTiles({ photos }: { photos: CombinedPhoto[] }) {
 
 /** What saving did, or why it failed. */
 function RulesOutcome({ save }: { save: RulesSave }) {
-  if (save.isError) return <p className="text-destructive">{save.error.message}</p>;
+  if (save.isError) return <ErrorNote error={save.error} />;
   if (!save.data?.files) return null;
   return <SavedInApp what="the rules" pullRequestUrl={save.data.pullRequestUrl} />;
 }

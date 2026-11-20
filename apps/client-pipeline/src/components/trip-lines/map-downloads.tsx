@@ -11,6 +11,7 @@ import {
   sourceText,
   stageState,
 } from "@/lib/map-download";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * The rail and bus maps being downloaded or read while a look-up runs or after it failed (active),
@@ -65,7 +66,7 @@ function MapDownloadRow({ download }: { download: MapDownload }) {
       <RowTitle download={download} failed={failed} />
       {download.url && <Stages download={download} />}
       {failed ? (
-        <p className="text-destructive text-xs">{download.error}</p>
+        <ErrorNote error={download.error} className="text-xs" />
       ) : (
         <>
           <ProgressBar share={downloadShare(download)} label={downloadTitle(download)} />
