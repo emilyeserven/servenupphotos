@@ -94,7 +94,8 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
   (`apps/portfolio/src/components/empty-note.tsx`, imported as `@portfolio/components/empty-note` in both apps), never
   a hand-styled `<p>`. It has one look (muted, small); its `className` is for spacing only. Say what's missing in a full
   sentence ("No albums yet.", not "None yet."), then what to do next when there is something to do. A photo list that
-  filters or search leave empty says `NO_PHOTOS_MATCH` ("No photos match these filters.").
+  filters or search leave empty says `NO_PHOTOS_MATCH` ("No photos match these filters."). The `servenup/empty-note`
+  lint rule flags a muted `<p>` that starts "No", "None" or "Nothing".
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors

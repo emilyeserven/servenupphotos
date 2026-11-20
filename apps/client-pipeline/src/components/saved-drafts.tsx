@@ -58,7 +58,8 @@ function NoDrafts({ branch }: { branch: string }) {
     <section className="flex flex-col gap-1">
       <h2 className="text-lg font-semibold">Drafts on {branch}</h2>
       <EmptyNote>
-        No drafts: every photo on {branch} has a title, is in flight above, or is in Unselected Photos.
+        No drafts: every photo on {branch} has a title, is in flight above, or is in Unselected
+        Photos.
       </EmptyNote>
     </section>
   );
