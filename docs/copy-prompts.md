@@ -40,3 +40,18 @@ The pieces are in `components/copy-text.tsx`: `useCopyText` (the copy, the show 
 (an outlined copy button with the show button next to it) and `ShowTextButton`. `CopyPromptButton` in
 `components/bulk-tagging/pick-controls.tsx` and the Photo page's `PromptCopyButton` are built on them, so a new
 prompt gets the modal by using either.
+
+## Pasting the answer
+
+An answer copied out of a chat app often has curly double quotes (“ ”) around its keys and values instead of straight
+ones, which isn't JSON. Every box that takes a pasted LLM answer reads it as it is first, and only when that fails
+reads it again with every curly double quote made straight. Curly single quotes (‘ ’) are left as they are, since
+the words inside the values use them. An answer that already reads keeps any curly double quotes inside its values.
+
+The answers read in the page (Place, tag descriptions, localizations, Autogroup, the pixelation check, Bulk Places,
+Lightroom albums, an album layout, viewer likes) use `parsePastedJson` (`lib/pasted-json.ts`); the ones the backend
+reads (Bulk Tagging, tag pruning, the tag library, album and genre suggestions, alt text) use `parseLLMAnswer`
+(`github/llmanswer.go`).
+
+> **Frontend analogy:** it's a `try { JSON.parse(text) } catch { JSON.parse(text.replace(/[“”]/g, '"')) }`, so a
+> paste that was already fine is never changed.

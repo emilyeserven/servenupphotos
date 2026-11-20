@@ -1,5 +1,6 @@
 import { type Group, groupId } from "@/api/organize";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { parsePastedJson } from "@/lib/pasted-json";
 
 /** How many tags with descriptions the prompt shows as examples of the style to write in. */
 const STYLE_EXAMPLES = 8;
@@ -136,7 +137,7 @@ function answerEntries(answer: string): AnswerEntry[] {
   const json = answer.slice(answer.indexOf("{"), answer.lastIndexOf("}") + 1);
   let parsed: unknown;
   try {
-    parsed = JSON.parse(json);
+    parsed = parsePastedJson(json);
   } catch {
     throw new Error("The answer has no JSON object in it that can be read.");
   }

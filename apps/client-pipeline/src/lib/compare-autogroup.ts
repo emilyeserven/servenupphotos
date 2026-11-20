@@ -4,6 +4,7 @@ import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
 import type { ContactSheet, ContactSheetPhoto } from "@/api/contact-sheets";
 import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { promptImageUrl } from "@/lib/tag-prompt";
+import { parsePastedJson } from "@/lib/pasted-json";
 
 /** Which photos Autogroup asks about: every photo, or only the drafts. */
 export type AutogroupScope = "all" | "drafts";
@@ -251,7 +252,7 @@ export function answerObject(answer: string): unknown {
   const end = answer.lastIndexOf("}");
   if (start === -1 || end <= start) throw new Error("The answer has no JSON object in it.");
   try {
-    return JSON.parse(answer.slice(start, end + 1));
+    return parsePastedJson(answer.slice(start, end + 1));
   } catch {
     throw new Error("The answer's JSON couldn't be read. Paste the whole answer, from { to }.");
   }
