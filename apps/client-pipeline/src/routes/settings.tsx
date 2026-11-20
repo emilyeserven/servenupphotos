@@ -19,7 +19,7 @@ function SettingsPage() {
       title="Settings"
       description="Connections the pipeline will use. Secrets are stored on the backend and can be replaced, but never read back."
     >
-      <QueryResult query={settings}>
+      <QueryResult query={settings} pendingLabel="Reading settings…">
         {(data) =>
           SECTIONS.map((config) => (
             <SettingsCard key={config.section} config={config} stored={data[config.section]} />

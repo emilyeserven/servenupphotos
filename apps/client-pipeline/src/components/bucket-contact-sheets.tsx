@@ -13,10 +13,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { count } from "@/components/update-data-shared";
 import { type ContactSheetSet, contactSheetSets } from "@/lib/contact-sheets";
-
-const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+import { count } from "@portfolio/lib/words";
+import { dateTimeText } from "@portfolio/lib/dates";
+import { ErrorNote } from "@/components/error-note";
 
 /** A size in bytes as KB or MB. */
 function sizeText(bytes: number): string {
@@ -104,7 +104,7 @@ function SheetSetRow({ set, remove }: { set: ContactSheetSet<BucketImage>; remov
   return (
     <li className="flex flex-wrap items-center gap-3 py-2">
       <div className="flex min-w-48 flex-col text-sm">
-        <span>{dateFormat.format(new Date(set.modified))}</span>
+        <span>{dateTimeText(set.modified)}</span>
         <span className="text-muted-foreground text-xs">
           {count(set.sheets.length, "sheet")} · {sizeText(set.size)}
         </span>
@@ -140,7 +140,7 @@ function SheetSetRow({ set, remove }: { set: ContactSheetSet<BucketImage>; remov
 /** Why the last delete failed, or which sheets it couldn't delete. */
 function DeleteProblems({ remove }: { remove: DeleteSheets }) {
   const text = problemText(remove.error, remove.data);
-  return text ? <p className="text-destructive text-sm">{text}</p> : null;
+  return <ErrorNote error={text} />;
 }
 
 /** Why the last delete failed, or else which sheets it couldn't delete, or "". */

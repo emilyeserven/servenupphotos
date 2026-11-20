@@ -12,7 +12,8 @@ import { savedThumbnailCrop, thumbnailCropQuery } from "@/api/versions";
 import { PhotoGroupsCard } from "@/components/photo-groups-card";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-details";
-import { QueryResult } from "@/components/query-result";
+import { PhotoLocationCard } from "@/components/photo-location-card";
+import { QueryResult, ReadingNote } from "@/components/query-result";
 import { LowerTierCard } from "@/components/lower-tier";
 import { ReEditCard } from "@/components/re-edit-card";
 import { SocialPostsCard } from "@/components/social-posts-card";
@@ -73,7 +74,7 @@ export function EditInFlightPhoto({ path, from }: { path: string; from?: "galler
  */
 function EditFound({ inFlight, path }: { inFlight: InFlightRead; path: string }) {
   const editable = useEditable(inFlight, path);
-  if (editable === null) return <p>Reading the photo…</p>;
+  if (editable === null) return <ReadingNote label="Reading the photo…" />;
   if (typeof editable === "string") return <Problem>{editable}</Problem>;
   // Keyed by the photo's image rather than its file, which a new title can rename.
   return <EditWithSavedCrop key={editable.image.key} editable={editable} />;
@@ -167,7 +168,6 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
                 exifPlace={exif}
                 description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
                 disabled={pending}
-                locationPrompt={locationPrompt}
                 imageUrl={detailsSmallImage(edit.savedData, editable.image.url)}
               />
               <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
@@ -183,6 +183,16 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
                 disabled={pending}
               />
             </>
+          ),
+          location: (
+            <PhotoLocationCard
+              value={edit.details}
+              onChange={edit.setDetails}
+              exifPlace={exif}
+              description="All optional. Saving changes writes them over the ones in the JSON."
+              disabled={pending}
+              locationPrompt={locationPrompt}
+            />
           ),
           groups: (
             <PhotoGroupsCard

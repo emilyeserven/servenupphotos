@@ -42,6 +42,16 @@
     "country": "United States of America"
   },
   {
+    "id": "aibagawa-waterway",
+    "name": "Aibagawa Waterway",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "country": "Japan",
+    "latitude": 34.39727257149083,
+    "longitude": 131.40998795046423
+  },
+  {
     "id": "al-rifa-i-mosque",
     "name": "Al-Rifa'i Mosque",
     "description": "",
@@ -324,6 +334,17 @@
     "longitude": -74.00141720782541
   },
   {
+    "id": "cheonan-asan-station",
+    "name": "Cheonan-Asan Station",
+    "description": "",
+    "parent": "",
+    "city": "Asan",
+    "state": "Chungcheongnam-do",
+    "country": "South Korea",
+    "latitude": 36.794383,
+    "longitude": 127.104522
+  },
+  {
     "id": "cheonggyecheon",
     "name": "Cheonggyecheon",
     "description": "",
@@ -412,6 +433,16 @@
     "latitude": 37.801224,
     "longitude": -122.411362,
     "exactLocation": true
+  },
+  {
+    "id": "daegu-metro-line-3-geumho-river-bridge",
+    "name": "Daegu Metro Line 3 Geumho River Bridge",
+    "description": "",
+    "parent": "",
+    "city": "Daegu",
+    "country": "South Korea",
+    "latitude": 35.899,
+    "longitude": 128.553
   },
   {
     "id": "delray-public-beach",
@@ -766,6 +797,18 @@
     "exactLocation": true
   },
   {
+    "id": "hagi-sightseeing-boat-pier",
+    "name": "Hagi Sightseeing Boat Pier",
+    "description": "",
+    "parent": "hagi-castle-town",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.41514,
+    "longitude": 131.38367,
+    "exactLocation": true
+  },
+  {
     "id": "hagi-station",
     "name": "Hagi Station",
     "description": "",
@@ -776,6 +819,17 @@
     "latitude": 34.395228,
     "longitude": 131.394733,
     "exactLocation": true
+  },
+  {
+    "id": "hanano-e-teahouse",
+    "name": "Hanano'e Teahouse",
+    "description": "",
+    "parent": "hagi-castle",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.418545,
+    "longitude": 131.382703
   },
   {
     "id": "hannam-dong",
@@ -799,6 +853,17 @@
     "country": "United States of America",
     "latitude": 37.790656,
     "longitude": -122.40544
+  },
+  {
+    "id": "hashimoto-river",
+    "name": "Hashimoto River",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.41213,
+    "longitude": 131.38113
   },
   {
     "id": "heunginjimun-gate-park",
@@ -837,6 +902,18 @@
     "exactLocation": true
   },
   {
+    "id": "higashi-hagi-station",
+    "name": "Higashi-Hagi Station",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.416669,
+    "longitude": 131.410447,
+    "exactLocation": true
+  },
+  {
     "id": "himeji-castle",
     "name": "Himeji Castle",
     "description": "",
@@ -870,6 +947,18 @@
     "country": "South Korea",
     "latitude": 37.581853,
     "longitude": 126.976583,
+    "exactLocation": true
+  },
+  {
+    "id": "ikseon-dong",
+    "name": "Ikseon-dong",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.572497,
+    "longitude": 126.989914,
     "exactLocation": true
   },
   {
@@ -913,6 +1002,18 @@
     "parent": "",
     "city": "Seoul",
     "country": "South Korea"
+  },
+  {
+    "id": "jonggak-avenue-of-youth",
+    "name": "Jonggak Avenue of Youth",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.569714,
+    "longitude": 126.984481,
+    "exactLocation": true
   },
   {
     "id": "jongmyo-plaza-park",
@@ -1041,6 +1142,18 @@
     "country": "United States of America",
     "latitude": 40.71674815214738,
     "longitude": -73.98633590542832
+  },
+  {
+    "id": "main-street",
+    "name": "Main Street",
+    "description": "",
+    "parent": "",
+    "city": "Nantucket",
+    "state": "Massachusetts",
+    "country": "United States of America",
+    "latitude": 41.283583,
+    "longitude": -70.097731,
+    "exactLocation": true
   },
   {
     "id": "manhattan-bridge",
@@ -1240,6 +1353,29 @@
     "longitude": 131.4097
   },
   {
+    "id": "nagwon-dong",
+    "name": "Nagwon-dong",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.571808,
+    "longitude": 126.989258,
+    "exactLocation": true
+  },
+  {
+    "id": "nakdong-river",
+    "name": "Nakdong River",
+    "description": "",
+    "parent": "",
+    "city": "Gumi",
+    "state": "Gyeongsangbuk-do",
+    "country": "South Korea",
+    "latitude": 36.055,
+    "longitude": 128.385
+  },
+  {
     "id": "namba",
     "name": "Namba",
     "description": "",
@@ -1353,6 +1489,18 @@
     "exactLocation": true
   },
   {
+    "id": "okuhagi-observatory",
+    "name": "Okuhagi Observatory",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.418947,
+    "longitude": 131.419178,
+    "exactLocation": true
+  },
+  {
     "id": "outer-richmond",
     "name": "Outer Richmond",
     "description": "",
@@ -1418,6 +1566,17 @@
     "country": "United States of America",
     "latitude": 37.8029,
     "longitude": -122.4559
+  },
+  {
+    "id": "prinsengracht",
+    "name": "Prinsengracht",
+    "description": "",
+    "parent": "",
+    "city": "Amsterdam",
+    "state": "North Holland",
+    "country": "Netherlands",
+    "latitude": 52.3761,
+    "longitude": 4.8846
   },
   {
     "id": "qasr-el-sagha",
@@ -1517,6 +1676,18 @@
     "country": "Egypt"
   },
   {
+    "id": "samil-daero",
+    "name": "Samil-daero",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.569878,
+    "longitude": 126.9875,
+    "exactLocation": true
+  },
+  {
     "id": "samsung-837",
     "name": "Samsung 837",
     "description": "",
@@ -1562,6 +1733,18 @@
     "exactLocation": true
   },
   {
+    "id": "shizuki-shrine",
+    "name": "Shizuki Shrine",
+    "description": "",
+    "parent": "hagi-castle",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.418636,
+    "longitude": 131.3831,
+    "exactLocation": true
+  },
+  {
     "id": "shoin-shrine",
     "name": "Shoin Shrine",
     "description": "",
@@ -1571,6 +1754,17 @@
     "country": "Japan",
     "latitude": 34.4121,
     "longitude": 131.4183
+  },
+  {
+    "id": "singyeongju-station",
+    "name": "Singyeongju Station",
+    "description": "",
+    "parent": "",
+    "city": "Gyeongju",
+    "state": "Gyeongsangbuk-do",
+    "country": "South Korea",
+    "latitude": 35.8019,
+    "longitude": 129.136914
   },
   {
     "id": "soho",
@@ -1605,6 +1799,17 @@
     "parent": "",
     "city": "Stamford",
     "country": "United States of America"
+  },
+  {
+    "id": "state-station",
+    "name": "State Station",
+    "description": "",
+    "parent": "",
+    "city": "Boston",
+    "state": "Massachusetts",
+    "country": "United States of America",
+    "latitude": 42.358978,
+    "longitude": -71.057598
   },
   {
     "id": "step-pyramid-of-djoser",

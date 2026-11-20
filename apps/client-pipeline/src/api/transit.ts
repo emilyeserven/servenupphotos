@@ -1,5 +1,6 @@
-import { queryOptions } from "@tanstack/react-query";
-import { transitJson } from "@/api/transit-log";
+import { queryOptions, skipToken } from "@tanstack/react-query";
+import { requestJson } from "@/api/request";
+import { transitJson, transitResponse } from "@/api/transit-log";
 import type { TripTransitLine } from "@/api/trip-lines";
 
 /** A spot as [longitude, latitude]. */
@@ -26,6 +27,12 @@ export interface TransitLine extends TripTransitLine {
  */
 export type RouteSource = "overpass" | "transitland" | "mlit" | "osmrail";
 
+/**
+ * Where one look-up goes: the source picked, or a country's OpenStreetMap bus map ("osmbus", read
+ * from the same download as its rail map) for a bus while a rail map is picked.
+ */
+export type LookupSource = RouteSource | "osmbus";
+
 /** What a hop's look-ups ask about: how it was travelled, and its first and last spots. */
 export interface HopAsk {
   mode: string;
@@ -37,7 +44,7 @@ export interface HopAsk {
  * The query string that asks Transitland or a rail map for a line from there, or nothing for
  * OpenStreetMap's Overpass servers.
  */
-function sourceParam(source: RouteSource | undefined): string {
+function sourceParam(source: LookupSource | "named" | undefined): string {
   return source && source !== "overpass" ? `&source=${source}` : "";
 }
 
@@ -48,20 +55,48 @@ function spotParams({ from, to }: Pick<HopAsk, "from" | "to">): string {
 
 /**
  * The lines of the hop's kind whose track passes near both its spots, from OpenStreetMap through
- * the Overpass API (which the backend asks at most once a second), from Transitland, or from Japan's
- * rail map.
+ * the Overpass API (which the backend asks at most once a second), from Transitland, or from a
+ * downloaded rail or bus map. What the backend says it searched is kept beside it
+ * (`transitSearchedQuery`).
  */
-export function transitLinesQuery(ask: HopAsk, source: RouteSource) {
-  const mode = encodeURIComponent(ask.mode);
+export function transitLinesQuery(ask: HopAsk | undefined, source: LookupSource) {
   return queryOptions({
     queryKey: ["transit", "lines", ask, source],
-    queryFn: () =>
-      transitJson<TransitLine[]>(
-        `/api/transit/lines?mode=${mode}&${spotParams(ask)}${sourceParam(source)}`,
-      ),
+    // Only run once the hop's kind is known; until then the query is turned off.
+    queryFn: async ({ client }) => {
+      const url = `/api/transit/lines?mode=${encodeURIComponent(ask!.mode)}&${spotParams(ask!)}${sourceParam(source)}`;
+      const { data, headers } = await transitResponse<TransitLine[]>(url);
+      client.setQueryData(transitSearchedQuery(ask, source).queryKey, searchedOf(headers));
+      return data;
+    },
     retry: false,
     staleTime: Infinity,
   });
+}
+
+/**
+ * What the backend searched for a lines look-up, such as "OpenStreetMap's bus map of South Korea
+ * (4210 bus routes, …): 12 pass within 500 m of the first end and 0 within 500 m of the last"; ""
+ * when its answer didn't say, as a backend older than the page doesn't. Set by
+ * `transitLinesQuery`, never fetched itself.
+ */
+export function transitSearchedQuery(ask: HopAsk | undefined, source: LookupSource) {
+  return queryOptions<string>({
+    queryKey: ["transit", "searched", ask, source],
+    queryFn: skipToken,
+    staleTime: Infinity,
+  });
+}
+
+/** The answer's X-Transit-Searched header, read back from its escaping; "" with none. */
+function searchedOf(headers: Headers): string {
+  const raw = headers.get("x-transit-searched");
+  if (!raw) return "";
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
 }
 
 /** A station or stop on a line, where a hop can get on or off. */
@@ -143,4 +178,53 @@ export function fetchTrack({ id, source }: TripTransitLine, from: Spot, to: Spot
   return transitJson<Track>(
     `/api/transit/lines/${id}/track?${spotParams({ from, to })}${sourceParam(source)}`,
   );
+}
+
+/** What loading a map is doing, in the order a first download goes through them. */
+export type MapLoadStep =
+  | "checking"
+  | "waiting"
+  | "connecting"
+  | "downloading"
+  | "reading"
+  | "saving"
+  | "failed";
+
+/**
+ * A rail or bus map being downloaded or read, or one that failed lately, as
+ * `GET /api/transit/downloads` lists it.
+ */
+export interface MapDownload {
+  /** The map's name, such as "OpenStreetMap's bus map of South Korea". */
+  map: string;
+  step: MapLoadStep;
+  /** What it's doing, in a sentence, such as "Reading the bus routes (pass 3 of 5 over the 312 MB extract)". */
+  detail: string;
+  /** The file being downloaded, once it's asked for. */
+  url?: string;
+  /** How much of the file has been downloaded, or read while reading, in bytes. */
+  bytes: number;
+  /** The file's size in bytes; left out while it isn't known. */
+  total?: number;
+  /** How fast the step has gone so far, in bytes a second. */
+  rate?: number;
+  /** How long the whole load, and its step, have taken so far. */
+  seconds: number;
+  stepSeconds: number;
+  /** Why it failed, when step is "failed". */
+  error?: string;
+}
+
+/**
+ * The rail and bus maps being downloaded or read, asked every second while active (while a look-up
+ * runs), so the page can show how far a first download has got.
+ */
+export function transitDownloadsQuery(active: boolean) {
+  return queryOptions({
+    queryKey: ["transit", "downloads"],
+    queryFn: () => requestJson<MapDownload[]>("/api/transit/downloads"),
+    enabled: active,
+    refetchInterval: active ? 1000 : false,
+    retry: false,
+  });
 }

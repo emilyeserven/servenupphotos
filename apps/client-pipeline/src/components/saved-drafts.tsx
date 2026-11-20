@@ -6,7 +6,7 @@ import {
   publishedPhotosQuery,
   type PublishedResponse,
 } from "@/api/photos";
-import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
+import { CollapsiblePanel } from "@/components/collapsible-panel";
 import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-sort";
 import { DraftsSkeleton } from "@/components/in-flight-loading";
 import { MissingImageDrafts } from "@/components/missing-image-drafts";
@@ -16,6 +16,10 @@ import { useRevealed } from "@/hooks/use-revealed";
 import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
 import { editedData, undecidedPaths } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
+import { SectionTitle } from "@/components/section-title";
 
 interface SavedDraftsProps {
   /** Whether photos are in flight too: these drafts' Undecided panel is named after the branch to tell it apart from theirs. */
@@ -35,18 +39,18 @@ export function SavedDrafts(props: SavedDraftsProps) {
   const published = useQuery(publishedPhotosQuery);
   if (!useUntitledDrafts()) return null;
   if (published.isPending) return <DraftsSkeleton />;
-  if (published.isError) return <DraftsError message={published.error.message} />;
+  if (published.isError) return <DraftsError error={published.error} />;
   return <DraftsOnBase data={published.data} {...props} />;
 }
 
 /** Why the drafts on the base branch couldn't be read. */
-function DraftsError({ message }: { message: string }) {
+function DraftsError({ error }: { error: Error }) {
   return (
     <section className="flex flex-col gap-1">
-      <h2 className="text-lg font-semibold">Drafts</h2>
-      <p className="text-destructive text-sm">
-        Couldn&apos;t read the drafts on the base branch: {message}
-      </p>
+      <SectionTitle as="h2" size="lg">
+        Drafts
+      </SectionTitle>
+      <ErrorNote error={error} lead="Couldn't read the drafts on the base branch:" />
     </section>
   );
 }
@@ -55,10 +59,13 @@ function DraftsError({ message }: { message: string }) {
 function NoDrafts({ branch }: { branch: string }) {
   return (
     <section className="flex flex-col gap-1">
-      <h2 className="text-lg font-semibold">Drafts on {branch}</h2>
-      <p className="text-muted-foreground text-sm">
-        None: every photo on {branch} has a title, is in flight above, or is in Unselected Photos.
-      </p>
+      <SectionTitle as="h2" size="lg">
+        Drafts on {branch}
+      </SectionTitle>
+      <EmptyNote>
+        No drafts: every photo on {branch} has a title, is in flight above, or is in Unselected
+        Photos.
+      </EmptyNote>
     </section>
   );
 }
@@ -86,7 +93,9 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
   const undecided = undecidedPaths(drafts, edits);
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">Drafts on {data.branch}</h2>
+      <SectionTitle as="h2" size="lg">
+        Drafts on {data.branch}
+      </SectionTitle>
       <p className="text-muted-foreground text-sm">
         Photos saved without a title, so the portfolio doesn&apos;t show them. Edit one to name it;
         Commit then sends it to the “Add photo data” pull request.
@@ -99,6 +108,7 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
       >
         <DraftSortToggle sort={sort} />
       </PhotoFilterBar>
+      {drafts.length + missing.length === 0 && <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>}
       <DraftList files={drafts.filter((file) => !undecided.has(file.path))} data={data} />
       <UndecidedQueue
         files={drafts.filter((file) => undecided.has(file.path))}
@@ -137,7 +147,7 @@ function DraftList({ files, data }: { files: PublishedFile[]; data: PublishedRes
   const [revealedCount, revealedEnd] = useRevealed(files.length);
   if (files.length === 0) return null;
   return (
-    <CollapsiblePanel title="Drafts" count={countOf(files.length, "draft")} open>
+    <CollapsiblePanel title="Drafts" count={count(files.length, "draft")} open>
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
         {files.slice(0, revealedCount).map((file) => (
           <DraftTile

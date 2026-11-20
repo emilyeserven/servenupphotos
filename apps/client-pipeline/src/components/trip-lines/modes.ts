@@ -1,5 +1,6 @@
 import {
   BusFront,
+  CableCar,
   CarTaxiFront,
   Footprints,
   type LucideIcon,
@@ -19,6 +20,7 @@ export const GAPS: { gap: Gap; label: string; icon: LucideIcon }[] = [
   { gap: "subway", label: "Subway", icon: TramFront },
   { gap: "bus", label: "Bus", icon: BusFront },
   { gap: "car", label: "Car or taxi", icon: CarTaxiFront },
+  { gap: "ropeway", label: "Ropeway or gondola", icon: CableCar },
   { gap: "transit", label: "Transit (kind unknown)", icon: Route },
   { gap: "wander", label: "Wandered the area (no set route)", icon: Shuffle },
 ];

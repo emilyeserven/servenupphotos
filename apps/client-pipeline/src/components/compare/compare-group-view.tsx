@@ -7,9 +7,10 @@ import { ComparePhotoCard } from "@/components/compare/compare-photo-card";
 import { FinishComparing } from "@/components/compare/finish-comparing";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { type CompareGroup, photoNames, winnersOf } from "@/lib/compare-groups";
 import { cn } from "@/lib/utils";
+import { ReadingNote } from "@/components/query-result";
+import { count } from "@portfolio/lib/words";
 
 /** Columns for a group of two, or three for a larger one, so photos sit side by side. */
 function columns(count: number): string {
@@ -21,7 +22,7 @@ function columns(count: number): string {
  * comparing; or a note when no photo is in it.
  */
 export function CompareGroupView({ name, compare }: { name: string; compare: CompareRead }) {
-  if (compare.pending) return <Skeleton className="h-96 rounded-xl" />;
+  if (compare.pending) return <ReadingNote label="Reading the compare group…" />;
   const group = compare.groups.find((candidate) => candidate.name === name);
   return (
     <>
@@ -59,11 +60,11 @@ function winnerText(group: CompareGroup): string {
 }
 
 function GroupHeader({ group }: { group: CompareGroup }) {
-  const count = group.photos.length;
+  const n = group.photos.length;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{count === 1 ? "1 photo" : `${count} photos`} head-to-head</CardTitle>
+        <CardTitle>{count(n, "photo")} head-to-head</CardTitle>
         <CardDescription>{winnerText(group)}</CardDescription>
         <CardAction className="flex flex-wrap justify-end gap-2">
           <BackButton />

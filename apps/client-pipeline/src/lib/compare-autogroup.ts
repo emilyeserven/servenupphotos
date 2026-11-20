@@ -4,6 +4,7 @@ import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
 import type { ContactSheet, ContactSheetPhoto } from "@/api/contact-sheets";
 import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { promptImageUrl } from "@/lib/tag-prompt";
+import { nameFinder } from "@/lib/pasted-json";
 
 /** Which photos Autogroup asks about: every photo, or only the drafts. */
 export type AutogroupScope = "all" | "drafts";
@@ -125,12 +126,29 @@ export interface AutogroupAsk {
  */
 export function autogroupAsk(photos: ComparePhoto[], options: AutogroupOptions): AutogroupAsk {
   const loose = autogroupPhotos(photos, { scope: options.scope, skipGrouped: true });
-  if (!options.withGroups) return { loose, groups: [] };
-  const groups = compareGroups(photos).map((group) => ({
+  return { loose, groups: options.withGroups ? existingGroups(photos) : [] };
+}
+
+/** Every compare group there is among the photos, each with its photos, oldest first. */
+export function existingGroups(photos: ComparePhoto[]): ExistingGroup[] {
+  return compareGroups(photos).map((group) => ({
     name: group.name,
     photos: group.photos.map(asPromptPhoto).toSorted(byTaken),
   }));
-  return { loose, groups };
+}
+
+/**
+ * Every photo an answer can name, as the prompt would show it: the ones in the prompt, then every
+ * other photo that isn't unselected, so an answer written for another prompt still applies.
+ */
+export function answerablePhotos(ask: AutogroupAsk, photos: ComparePhoto[]): AutogroupPhoto[] {
+  const asked = askedPhotos(ask);
+  const keys = new Set(asked.map((entry) => entry.key));
+  const others = photos
+    .filter((photo) => !isUnselected(photo.data))
+    .map(asPromptPhoto)
+    .filter((entry) => !keys.has(entry.key));
+  return [...asked, ...others];
 }
 
 /** The photos the prompt links, in its order: the ones in no group, then each group's with an image. */
@@ -245,35 +263,9 @@ ${answerShape(groups)}
 - Leave a list empty when there's nothing for it.`;
 }
 
-/** The JSON object in the answer, from its first `{` to its last `}`, so a code fence or a sentence around it is fine. */
-export function answerObject(answer: string): unknown {
-  const start = answer.indexOf("{");
-  const end = answer.lastIndexOf("}");
-  if (start === -1 || end <= start) throw new Error("The answer has no JSON object in it.");
-  try {
-    return JSON.parse(answer.slice(start, end + 1));
-  } catch {
-    throw new Error("The answer's JSON couldn't be read. Paste the whole answer, from { to }.");
-  }
-}
-
-/** A name as the answer gave it, for looking up: no quotes, `.json` ending or case. */
-export function lookupName(name: string): string {
-  return name
-    .trim()
-    .replace(/^["']|["']$/g, "")
-    .replace(/\.json$/i, "")
-    .toLowerCase();
-}
-
-/** Looks a photo up by the name the answer gave, its JSON file's name or its original file's name. */
+/** Looks a photo up by the name the answer gave, its JSON file's name or its original file's name, with `matchName`. */
 export function photoFinder(
   photos: AutogroupPhoto[],
 ): (name: string) => AutogroupPhoto | undefined {
-  const byKey = new Map<string, AutogroupPhoto>();
-  for (const entry of photos) {
-    byKey.set(entry.key.toLowerCase(), entry);
-    byKey.set(entry.photo.file.photoName.toLowerCase(), entry);
-  }
-  return (name) => byKey.get(lookupName(name));
+  return nameFinder(photos, (entry) => [entry.key, entry.photo.file.photoName]);
 }

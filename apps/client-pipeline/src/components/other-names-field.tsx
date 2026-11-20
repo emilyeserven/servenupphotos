@@ -2,15 +2,11 @@ import { FieldLabel } from "@/components/field-label";
 import type { RegionListData } from "@/components/region-list";
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
 import type { RegionNode } from "@/lib/region-tree";
+import { count } from "@portfolio/lib/words";
 
 /** How to fill in Other names, shown beside its title. */
 const HELP =
   "Other ways photos and places write it, such as “United States” for “United States of America”. This name wins: the list counts them as it, and Places → Location Names rewrites them to it in the photo and place files.";
-
-/** The count with its noun, such as "1 photo" or "3 photos". */
-function photosText(count: number): string {
-  return `${count} photo${count === 1 ? "" : "s"}`;
-}
 
 /**
  * The other countries or cities in the list that can be another name of node: not itself, and
@@ -20,7 +16,7 @@ function candidates(node: RegionNode, list: RegionListData): ComboboxOption[] {
   const hasOwn = (n: RegionNode) => (list.localizations.get(n.key)?.otherNames ?? []).length > 0;
   return list.nodes
     .filter((n) => n.kind === node.kind && n.key !== node.key && !hasOwn(n))
-    .map((n) => ({ value: n.name, label: n.name, detail: photosText(n.photos) }));
+    .map((n) => ({ value: n.name, label: n.name, detail: count(n.photos, "photo") }));
 }
 
 /** The options, plus each chosen name that isn't one, so it doesn't show as unknown. */

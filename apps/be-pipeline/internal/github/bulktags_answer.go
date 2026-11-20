@@ -37,6 +37,15 @@ func parseBulkTagAnswer(text string) (bulkTagAnswer, *PublishError) {
 	return answer, nil
 }
 
+// names is the photo names the answer lists, as it wrote them.
+func (a bulkTagAnswer) names() []string {
+	out := make([]string, 0, len(a.Photos))
+	for _, p := range a.Photos {
+		out = append(out, p.Photo)
+	}
+	return out
+}
+
 // BulkTagSkipped is a name in the answer that can't be a tag (or, for Genre
 // Suggestions, a genre), with why.
 type BulkTagSkipped struct {
@@ -73,8 +82,12 @@ type BulkTagNew struct {
 type BulkTagsPreview struct {
 	Photos  []BulkTagPhotoPlan `json:"photos"`
 	NewTags []BulkTagNew       `json:"newTags"`
-	// Unknown is the photos in the answer that aren't any of the picked ones.
+	// Unknown is the photos in the answer that aren't any photo file's, which
+	// are skipped.
 	Unknown []string `json:"unknown"`
+	// Others is the photos in the answer that weren't picked, found among
+	// every photo, which the review shows after the picked ones.
+	Others []BulkTagPhoto `json:"others"`
 }
 
 // groupNamer sorts the names in an answer into existing tags (or genres), new
@@ -252,20 +265,16 @@ func (c *Client) PreviewBulkTags(ctx context.Context, gh settings.GitHub, paths 
 	if perr != nil {
 		return BulkTagsPreview{}, perr
 	}
-	photos, perr := pickedUpTo(scan, paths, 0)
+	picked, perr := pickedUpTo(scan, paths, 0)
 	if perr != nil {
 		return BulkTagsPreview{}, perr
 	}
+	photos, unknown := answeredPhotos(scan, picked, parsed.names())
 	n := newGroupNamer(Tags, scan.w.groups(), scan.w.entries(MetaInfo))
 	defs := n.definitions(parsed)
-	preview := BulkTagsPreview{Photos: []BulkTagPhotoPlan{}, Unknown: []string{}}
+	preview := BulkTagsPreview{Photos: []BulkTagPhotoPlan{}, Unknown: unknown, Others: answeredExtra(photos, len(picked))}
 	for _, p := range photos {
 		preview.Photos = append(preview.Photos, n.plan(p, parsed, defs))
-	}
-	for _, a := range parsed.Photos {
-		if !slices.ContainsFunc(photos, func(p bulkPhoto) bool { return p.name == strings.TrimSpace(a.Photo) }) {
-			preview.Unknown = append(preview.Unknown, a.Photo)
-		}
 	}
 	preview.NewTags = append([]BulkTagNew{}, n.newTags()...)
 	return preview, nil
@@ -304,7 +313,7 @@ func pickedUpTo(scan baseURLScan, paths []string, limit int) ([]bulkPhoto, *Publ
 func (n *groupNamer) plan(p bulkPhoto, answer bulkTagAnswer, defs map[string]BulkTagNew) BulkTagPhotoPlan {
 	var names []string
 	for _, a := range answer.Photos {
-		if strings.TrimSpace(a.Photo) == p.name {
+		if sameName(a.Photo, p.name) {
 			names = append(names, a.Tags...)
 		}
 	}

@@ -11,7 +11,7 @@
   "iso": 800,
   "focalLength": 18,
   "gpsPosition": "37 deg 34' 49.40\" N, 126 deg 59' 5.82\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "37.570262, 126.999279",
   "createDate": "2026:05:17 17:34:44",
   "customCreateDate": null,
   "placeName": "gwangjang-market",
@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["market", "storefronts", "signage", "pedestrians", "covered-street"],
+  "tags": ["market", "storefronts", "signage", "pedestrians", "covered-street", "street-food"],
   "genres": ["street"],
   "places": [
     {
@@ -275,6 +275,8 @@
     "peakChroma": 21.97,
     "samples": 10050
   },
-  "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.\n\nShows street food; 'street-food' isn't a tag, since only 2 photos have it.",
-  "similarPhotos": [306, 302, 282, 250, 319, 304]
+  "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.\n\nShows street food; 'street-food' isn't a tag, since only 2 photos have it.\n\nShows street food, now tagged 'street-food'.",
+  "similarPhotos": [306, 302, 282, 250, 319, 304],
+  "noGps": false,
+  "altText": null
 }

@@ -11,6 +11,7 @@ import { BOOK_PHOTO_DRAG_TYPE, FROM_PAGE_DRAG_TYPE } from "@/components/photo-bo
 import { usePhotoBookDraft } from "@/components/photo-book/use-photo-book";
 import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import { DecidedPhotoFiles } from "@/components/photo-files";
+import { QueryResult } from "@/components/query-result";
 import { SaveState } from "@/components/save-state";
 import {
   type PhotoBook,
@@ -26,6 +27,7 @@ import {
   setTitle,
 } from "@/lib/photo-book";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** What the photo drawer says beside the book. */
 const BOOK_DRAWER_WORDS = {
@@ -54,10 +56,17 @@ function useChosenBook(books: PhotoBook[]) {
 }
 
 function Books({ photos }: { photos: SocialPhoto[] }) {
-  const { data, isPending } = useCombinedData();
-  const books = photoBooks(data);
+  const combined = useCombinedData();
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photo books…">
+      {(data) => <BooksFound books={photoBooks(data)} photos={photos} />}
+    </QueryResult>
+  );
+}
+
+/** The books to choose from, and the chosen one's editor. */
+function BooksFound({ books, photos }: { books: PhotoBook[]; photos: SocialPhoto[] }) {
   const { chosen, choose } = useChosenBook(books);
-  if (isPending) return <p>Reading the photo books…</p>;
   return (
     <div className="flex flex-col gap-4">
       <BookChooser
@@ -107,9 +116,7 @@ function BookEditor({ saved, photos }: { saved: PhotoBook; photos: SocialPhoto[]
           </div>
         </div>
         {book.pages.length === 0 && (
-          <p className="text-muted-foreground text-sm">
-            No pages yet. Add one to start laying out the book.
-          </p>
+          <EmptyNote>No pages yet. Add one to start laying out the book.</EmptyNote>
         )}
         <div className="grid gap-x-1 gap-y-6 2xl:grid-cols-2">
           {book.pages.map((page, index) => (

@@ -1,12 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { type CustomLens, deleteLensMutation, lensId, saveLensMutation } from "@/api/lenses";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
+import { EntryEditorButtons } from "@/components/entry-buttons";
 import { Textarea } from "@/components/ui/textarea";
-import { canonicalJson } from "@/lib/combined";
+import { count } from "@portfolio/lib/words";
 
 /** The lens as typed, its numbers still text. */
 interface LensDraft {
@@ -115,7 +113,16 @@ export function LensEditor({ lens, photos, onSaved }: LensEditorProps) {
           />
           Manual/unknown aperture: photos with the lens get no aperture, and the portfolio says so
         </label>
-        <EditorButtons next={next} saved={lens} onSaved={onSaved} />
+        <EntryEditorButtons
+          next={next}
+          saved={lens}
+          save={saveLensMutation}
+          remove={deleteLensMutation}
+          whyNot={whyNot}
+          saveLabel="Save lens"
+          removeLabel="Remove lens"
+          onSaved={onSaved}
+        />
       </CardContent>
     </Card>
   );
@@ -126,7 +133,7 @@ function Usage({ lens, photos }: { lens?: CustomLens; photos: number }) {
   if (!lens) return <>Pick it on the Photo page once it&apos;s saved.</>;
   return (
     <>
-      {photos} saved {photos === 1 ? "photo has" : "photos have"} it. Changes reach them through
+      {count(photos, "saved photo")} {photos === 1 ? "has" : "have"} it. Changes reach them through
       Update Data&apos;s camera overrides, or the Photo page.
     </>
   );
@@ -160,49 +167,7 @@ function NumberInput({ value, disabled, onChange }: NumberInputProps) {
   );
 }
 
-interface ButtonsProps {
-  next: CustomLens;
-  saved?: CustomLens;
-  onSaved: (id: string) => void;
-}
-
-/** Save, and Remove for a saved lens, each saving a change waiting for Commit. */
-function EditorButtons({ next, saved, onSaved }: ButtonsProps) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <SaveButton next={next} saved={saved} onSaved={onSaved} />
-      {saved && <RemoveButton id={saved.id} />}
-    </div>
-  );
-}
-
-/** Whether next is what saved already has, or has no name, so there's nothing to save. */
-function cantSave(next: CustomLens, saved?: CustomLens): boolean {
-  return next.name === "" || canonicalJson(next) === canonicalJson(saved ?? null);
-}
-
-function SaveButton({ next, saved, onSaved }: ButtonsProps) {
-  const save = useMutation(saveLensMutation);
-  return (
-    <>
-      <Button
-        disabled={cantSave(next, saved) || save.isPending}
-        onClick={() => save.mutate(next, { onSuccess: () => onSaved(next.id) })}
-      >
-        <Busy busy={save.isPending} />
-        {saved ? "Save changes" : "Save lens"}
-      </Button>
-      <SaveNote error={save.error} why="" />
-    </>
-  );
-}
-
-function RemoveButton({ id }: { id: string }) {
-  const remove = useMutation(deleteLensMutation);
-  return (
-    <RemoveEntryButton
-      label="Remove lens"
-      remove={{ ...remove, mutate: () => remove.mutate(id) }}
-    />
-  );
+/** Why the lens can't be saved yet, or "" when it can. */
+function whyNot(next: CustomLens): string {
+  return next.name === "" ? "Give it a name." : "";
 }

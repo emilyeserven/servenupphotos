@@ -9,6 +9,8 @@ import {
   topOverall,
 } from "@/lib/lightroom-next-up";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { SectionTitle } from "@/components/section-title";
 
 const CONNECTIONS: { value: LightroomConnection; label: string }[] = [
   { value: "online", label: "Online" },
@@ -78,10 +80,8 @@ interface TopListProps {
 export function TopList({ title, albums, showStage = false, offline }: TopListProps) {
   return (
     <section className="flex flex-col gap-2">
-      <h3 className="text-sm font-medium">{title}</h3>
-      {albums.length === 0 && (
-        <p className="text-muted-foreground text-sm">Nothing to work on here.</p>
-      )}
+      <SectionTitle>{title}</SectionTitle>
+      {albums.length === 0 && <EmptyNote>Nothing to work on here.</EmptyNote>}
       <ol className="flex flex-col gap-1.5">
         {albums.map((album, i) => (
           <TopAlbum

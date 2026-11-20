@@ -2,9 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
-	"log/slog"
 	"net/http"
 	"time"
 
@@ -41,32 +38,8 @@ func handleReplaceBaseURL(store *settings.Store, gh *github.Client) http.Handler
 }
 
 func handleBaseURL(store *settings.Store, run func(context.Context, settings.GitHub, baseURLRequest) (any, error)) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req baseURLRequest
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes)).Decode(&req); err != nil {
-			writeError(w, http.StatusBadRequest, "invalid base URL body")
-			return
-		}
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), baseURLTimeout)
-		defer cancel()
-		result, err := run(ctx, cfg, req)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("change image base URL failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not change the image base URL")
-			return
-		}
-		writeJSON(w, http.StatusOK, result)
-	}
+	return withGitHubBody(store, baseURLTimeout, "base URLs", "Couldn't change the image base URL.",
+		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req baseURLRequest) (any, error) {
+			return run(ctx, cfg, req)
+		})
 }

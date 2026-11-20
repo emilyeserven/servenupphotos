@@ -28,6 +28,8 @@ import {
   regionParentKeys,
   regionTreeRows,
 } from "@/lib/region-tree";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { ErrorNote } from "@/components/error-note";
 
 /** Everything the Places list shows, worked out from the place files and the photos. */
 export interface RegionListData {
@@ -83,11 +85,7 @@ function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
   const [search, setSearch] = useState("");
   const [checked, setChecked] = useState<ReadonlySet<string>>(new Set());
   if (list.nodes.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        No places yet. Add one with New, or from a photo's Place field.
-      </p>
-    );
+    return <EmptyNote>No places yet. Add one with New, or from a photo's Place field.</EmptyNote>;
   }
   const rows = regionTreeRows(list.nodes, { collapsed, search });
   const toggle = (key: string) => setCollapsed(toggled(collapsed, key));
@@ -143,9 +141,7 @@ function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
           ))}
         </TableBody>
       </Table>
-      {rows.length === 0 && (
-        <p className="text-muted-foreground text-sm">Nothing is named like that.</p>
-      )}
+      {rows.length === 0 && <EmptyNote>Nothing is named like that.</EmptyNote>}
     </>
   );
 }
@@ -196,11 +192,7 @@ function ExpandButtons({ parents, collapsed, onChange, disabled }: ExpandButtons
 function UnreadableFiles({ files }: { files: PlacesResponse["places"] }) {
   return files
     .filter((file) => file.error)
-    .map((file) => (
-      <p key={file.path} className="text-destructive text-sm">
-        {file.path}: {file.error}
-      </p>
-    ));
+    .map((file) => <ErrorNote key={file.path} error={`${file.path}: ${file.error}`} />);
 }
 
 /** A city only photos show, which no place is in yet. */

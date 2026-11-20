@@ -1,10 +1,11 @@
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
 import { type StylePhoto, takenDay } from "@/lib/style-prompt";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 /** The photos the style prompt links, numbered as the prompt numbers them. */
 export function StylePhotos({ photos }: { photos: StylePhoto[] }) {
   if (photos.length === 0) {
-    return <p className="text-muted-foreground text-sm">No photos match these filters.</p>;
+    return <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>;
   }
   return (
     <ol className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-8">

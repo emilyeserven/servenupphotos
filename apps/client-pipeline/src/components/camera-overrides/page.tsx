@@ -10,6 +10,9 @@ import type { CombinedPhoto } from "@/lib/group-photos";
 import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { QueryResult } from "@/components/query-result";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 /** The Camera Overrides page: what to write instead of each camera's EXIF values. */
 export function CameraOverridesPage() {
@@ -26,9 +29,11 @@ export function CameraOverridesPage() {
 
 function Cameras() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and camera overrides…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <CameraChooser data={combined.data} />;
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photos and camera overrides…">
+      {(data) => <CameraChooser data={data} />}
+    </QueryResult>
+  );
 }
 
 /** The cameras listed on the left, and the chosen one's override edited on the right. */
@@ -48,7 +53,7 @@ function CameraChooser({ data }: { data: CombinedData }) {
 /** The editor for the chosen camera, keyed by it so each starts from its saved rules. */
 function ChosenCamera({ row, photos }: { row?: CameraRow; photos: CombinedPhoto[] }) {
   if (!row) {
-    return <p className="text-muted-foreground text-sm">No photo has a camera in its EXIF yet.</p>;
+    return <EmptyNote>No photo has a camera in its EXIF yet.</EmptyNote>;
   }
   return (
     <OverrideEditor
@@ -58,10 +63,6 @@ function ChosenCamera({ row, photos }: { row?: CameraRow; photos: CombinedPhoto[
       photos={cameraPhotos(photos, row.camera)}
     />
   );
-}
-
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
 }
 
 interface CameraListProps {
@@ -91,7 +92,7 @@ function CameraList({ rows, chosen, onChoose }: CameraListProps) {
           >
             <span className="min-w-0 truncate">{row.camera}</span>
             <span className="text-muted-foreground shrink-0 text-xs">
-              {plural(row.photos, "photo")}
+              {count(row.photos, "photo")}
               <RuleCount row={row} />
             </span>
           </button>
@@ -103,5 +104,5 @@ function CameraList({ rows, chosen, onChoose }: CameraListProps) {
 
 function RuleCount({ row }: { row: CameraRow }) {
   if (!row.override) return null;
-  return <span className="text-foreground">, {plural(row.override.rules.length, "rule")}</span>;
+  return <span className="text-foreground">, {count(row.override.rules.length, "rule")}</span>;
 }

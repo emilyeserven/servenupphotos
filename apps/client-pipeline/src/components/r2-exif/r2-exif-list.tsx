@@ -2,7 +2,8 @@ import { useState } from "react";
 import type { R2ExifPhoto, R2ExifPreview } from "@/api/r2-exif";
 import { R2ExifPhotoRow } from "@/components/r2-exif/r2-exif-photo";
 import { Button } from "@/components/ui/button";
-import { Unreadable, count } from "@/components/update-data-shared";
+import { Unreadable } from "@/components/update-data-shared";
+import { count } from "@portfolio/lib/words";
 
 /** Which photos the list shows. */
 type Show = "all" | "mismatch" | "written";

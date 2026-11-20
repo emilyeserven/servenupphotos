@@ -13,7 +13,7 @@ import { useBulkUploadStore } from "@/stores/bulk-upload";
 export function BulkUploadPanel({ onAdded }: { onAdded?: () => void }) {
   const settings = useQuery(settingsQuery);
   return (
-    <QueryResult query={settings} pendingLabel="Loading settings…">
+    <QueryResult query={settings} pendingLabel="Reading settings…">
       {(data) => <BulkUpload settings={data} onAdded={onAdded} />}
     </QueryResult>
   );

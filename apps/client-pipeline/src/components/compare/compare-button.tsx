@@ -16,6 +16,7 @@ import { canCompare, compareGroupOf } from "@/lib/compare-groups";
 import { editedData } from "@/lib/undecided";
 import { cn } from "@/lib/utils";
 import { useLocalEditsStore } from "@/stores/local-edits";
+import { count } from "@portfolio/lib/words";
 
 /** The compare group the file is in with its local edits made, or undefined when it's in none. */
 function useGroupOf(file: InFlightFileRead): string | undefined {
@@ -99,7 +100,7 @@ function useGroupOptions() {
   return groups.map((group) => ({
     value: group.name,
     label: group.name,
-    detail: group.photos.length === 1 ? "1 photo" : `${group.photos.length} photos`,
+    detail: count(group.photos.length, "photo"),
   }));
 }
 

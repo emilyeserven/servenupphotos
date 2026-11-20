@@ -6,11 +6,8 @@ import type { PendingSave } from "@/api/scan-changes";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
-
-/** "1 file", "2 files". */
-export function count(n: number, word: string): string {
-  return `${n} ${n === 1 ? word : `${word}s`}`;
-}
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** Photo files that couldn't be read; while there are any, nothing can be changed. */
 export function Unreadable({
@@ -22,7 +19,7 @@ export function Unreadable({
 }) {
   if (files.length === 0) return null;
   return (
-    <div className="text-destructive flex flex-col gap-1 text-sm">
+    <ErrorNote>
       <p>
         {files.length === 1 ? "This file couldn't" : "These files couldn't"} be read
         {blocking ? ", so nothing can be changed until it's fixed:" : ":"}
@@ -34,7 +31,7 @@ export function Unreadable({
           </li>
         ))}
       </ul>
-    </div>
+    </ErrorNote>
   );
 }
 
@@ -174,6 +171,8 @@ export function ScanPreviewBody({
   scan,
   changed,
   nothing,
+  unchanged,
+  total,
   headline,
   children,
 }: {
@@ -181,7 +180,11 @@ export function ScanPreviewBody({
   /** How many files the change touches. */
   changed: number;
   /** Why there's nothing to change, after "All N photo files on <branch>". */
-  nothing: string;
+  nothing?: string;
+  /** The whole sentence when nothing changes, in place of the one nothing finishes. */
+  unchanged?: ReactNode;
+  /** The files read, such as "12 photo files"; the photo files unless given. */
+  total?: string;
   /** What happens to the changed files, after "N of M photo files". */
   headline: string;
   children: ReactNode;
@@ -190,7 +193,11 @@ export function ScanPreviewBody({
     return (
       <>
         <p className="text-sm">
-          All {count(scan.photoFiles, "photo file")} on <code>{scan.branch}</code> {nothing}.
+          {unchanged ?? (
+            <>
+              All {count(scan.photoFiles, "photo file")} on <code>{scan.branch}</code> {nothing}.
+            </>
+          )}
         </p>
         <Unreadable files={scan.unreadable} />
       </>
@@ -201,7 +208,7 @@ export function ScanPreviewBody({
       <div className="flex flex-col gap-1 text-sm">
         <p>
           <strong>
-            {changed} of {count(scan.photoFiles, "photo file")}
+            {changed} of {total ?? count(scan.photoFiles, "photo file")}
           </strong>{" "}
           {headline}.
         </p>
@@ -245,7 +252,7 @@ export function SaveButton({
         )}
       </Button>
       {children}
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
+      <ErrorNote error={error} />
     </div>
   );
 }

@@ -27,9 +27,9 @@ func TestUploadGearImage(t *testing.T) {
 		{"uploaded", "image", redJPEG(t), nil, http.StatusOK, `"url":"https://cdn.example/gear/k.webp"`},
 		{"a PNG", "image", []byte("\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR"), nil, http.StatusOK, `"key":"gear/k.webp"`},
 		{"not a picture", "image", []byte("hello"), nil, http.StatusUnsupportedMediaType, "JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF"},
-		{"no image field", "photo", redJPEG(t), nil, http.StatusBadRequest, `missing \"image\" field`},
+		{"no image field", "photo", redJPEG(t), nil, http.StatusBadRequest, "Choose a picture"},
 		{"unreadable", "image", redJPEG(t), &storage.UploadError{Message: "Couldn't read this picture.", NotAPhoto: true}, http.StatusUnprocessableEntity, "Couldn't read"},
-		{"other failure", "image", redJPEG(t), errors.New("disk on fire"), http.StatusInternalServerError, "could not upload the picture"},
+		{"other failure", "image", redJPEG(t), errors.New("disk on fire"), http.StatusInternalServerError, "Couldn't upload the picture."},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -64,7 +64,7 @@ func TestCropGearImage(t *testing.T) {
 		message string
 	}{
 		{"cropped", `{"original":"https://cdn.example/gear/originals/a.png","crop":{"x":0.1,"y":0,"width":0.8,"height":0.6}}`, nil, http.StatusOK, `"url":"https://cdn.example/gear/c.webp"`},
-		{"not JSON", `crop`, nil, http.StatusBadRequest, "invalid crop body"},
+		{"not JSON", `crop`, nil, http.StatusBadRequest, "Couldn't read the crop sent"},
 		{"refused", `{"original":"x","crop":{}}`, &storage.UploadError{Message: "Pick a gear picture."}, http.StatusBadGateway, "Pick a gear picture."},
 	}
 	for _, tt := range tests {

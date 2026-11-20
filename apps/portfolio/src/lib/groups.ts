@@ -10,10 +10,14 @@ export interface Group {
   description?: string;
   /**
    * For an album, the ID of the album it's a sub-album of; for a tag, the more general tag it's a
-   * kind of, such as "covered-street" for "shotengai". Missing, "" or null at the top.
+   * kind of, such as "covered-street" for "shotengai"; for a subgenre, the broader genre, such as
+   * "architecture" for "traditional-architecture". Missing, "" or null at the top.
    */
   parent?: string | null;
-  /** For an album, its place among the albums, 1 first, set on the pipeline's Albums page. */
+  /**
+   * For an album, its place among the albums, 1 first, set on the pipeline's Albums page; for a
+   * genre, its place among the genres, set on Reorganize Genres.
+   */
   order?: number;
   /** For an album, the spots on the site that show its photos, such as "homepage". */
   spotlightZones?: string[];
@@ -66,7 +70,7 @@ export interface AlbumRow {
   textBelow: string;
 }
 
-/** Ranks an album without a place in the order after every album with one. */
+/** Ranks an album or genre without a place in the order after every one with one. */
 function rank({ order }: Group): number {
   return order ?? Number.MAX_SAFE_INTEGER;
 }
@@ -97,7 +101,10 @@ export const tags: Group[] =
     }),
   ) ?? (committedTags as Group[]);
 
-/** Every photographic genre, such as street or landscape, from ALLGENRES.json, by name. */
+/**
+ * Every photographic genre, such as street or landscape, from ALLGENRES.json, in the order set on
+ * the pipeline's Reorganize Genres page, then by name.
+ */
 export const genres: Group[] = (
   localFile(
     import.meta.glob<Group[]>("../data/genres/ALLGENRES.local.json", {
@@ -105,14 +112,14 @@ export const genres: Group[] = (
       import: "default",
     }),
   ) ?? (committedGenres as Group[])
-).toSorted((a, b) => a.name.localeCompare(b.name));
+).toSorted(byOrder);
 
-/** The albums or tags in list directly inside the one with the ID, or the top-level ones for "". */
+/** The albums, tags or genres in list directly inside the one with the ID, or the top-level ones for "". */
 function children(list: Group[], parent: string): Group[] {
   return list.filter((group) => (group.parent ?? "") === parent && group.id !== parent);
 }
 
-/** The ID and the IDs of every album or tag in list inside it, however deep; a loop stops where it comes back round. */
+/** The ID and the IDs of every album, tag or genre in list inside it, however deep; a loop stops where it comes back round. */
 function withDescendants(list: Group[], id: string, found = new Set<string>()): Set<string> {
   if (found.has(id)) return found;
   found.add(id);
@@ -144,6 +151,19 @@ export function subTags(parent: string): Group[] {
  */
 export function tagAndSubTags(id: string): Set<string> {
   return withDescendants(tags, id);
+}
+
+/** The subgenres of the genre with the ID, such as "traditional-architecture" under "architecture". */
+export function subGenres(parent: string): Group[] {
+  return children(genres, parent);
+}
+
+/**
+ * The genre's ID and the IDs of every subgenre under it, however deep, so a photo of traditional
+ * architecture counts as architecture too.
+ */
+export function genreAndSubGenres(id: string): Set<string> {
+  return withDescendants(genres, id);
 }
 
 /** The top-level albums in order, counting ones whose parent isn't an album. */

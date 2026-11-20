@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import type { TripLine } from "@/api/trip-lines";
-import { dayTitle } from "@/components/trip-lines/day-title";
 import { LinePreview } from "@/components/trip-lines/line-preview";
 import type { TripDay } from "@/lib/trip-days";
 import { type DayFilter, useTripLinesSearch } from "@/lib/trip-lines-search";
 import { cn } from "@/lib/utils";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
+import { weekdayDate } from "@portfolio/lib/dates";
 
 /**
  * Whether a day's line is marked by hand, marked by hand but out of date with the day's photos,
@@ -87,7 +89,7 @@ export function DayGrid({ days, lines, stale }: DayGridProps) {
           </button>
         ))}
       </div>
-      {shown.length === 0 && <p className="text-muted-foreground text-sm">None.</p>}
+      {shown.length === 0 && <EmptyNote>No days have this status.</EmptyNote>}
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {shown.map((d) => (
           <li key={d.day}>
@@ -95,6 +97,16 @@ export function DayGrid({ days, lines, stale }: DayGridProps) {
           </li>
         ))}
       </ul>
+      <p className="text-muted-foreground text-xs">
+        Maps ©{" "}
+        <a href="https://www.openstreetmap.org/copyright" className="underline">
+          OpenStreetMap contributors
+        </a>{" "}
+        ©{" "}
+        <a href="https://carto.com/attributions" className="underline">
+          CARTO
+        </a>
+      </p>
     </div>
   );
 }
@@ -114,7 +126,7 @@ function DayCard({ day, line, status }: DayCardProps) {
       className="hover:bg-muted/50 flex h-full flex-col gap-2 rounded-lg border p-3 text-sm"
     >
       <span className="flex items-baseline justify-between gap-2">
-        <span className="truncate font-medium">{dayTitle(day.day)}</span>
+        <span className="truncate font-medium">{weekdayDate(day.day)}</span>
         <span className={cn("shrink-0 text-xs", STATUS_CLASS[status])}>{status}</span>
       </span>
       <span className="text-muted-foreground text-xs">
@@ -125,9 +137,13 @@ function DayCard({ day, line, status }: DayCardProps) {
   );
 }
 
-/** The line drawn small, or a note on why there's no drawing. */
+/**
+ * The line drawn small, or where the day's photos are with a note on why there's no line, or just
+ * the note for a day with no photos yet.
+ */
 function Preview({ day, line }: { day: TripDay; line?: TripLine }) {
   if (isDrawn(line)) return <LinePreview photos={day.photos} line={line as TripLine} />;
+  if (day.photos.length > 0) return <LinePreview photos={day.photos} note={previewNote(line)} />;
   return (
     <span className="bg-muted/50 text-muted-foreground flex aspect-[2/1] items-center justify-center rounded-md px-3 text-center text-xs">
       {previewNote(line)}
@@ -146,7 +162,7 @@ function previewNote(line: TripLine | undefined): string {
 /** A planned day's note: no photos yet, and how many trip stops it has. */
 function plannedNote(line: TripLine): string {
   const stops = line.visits?.length ?? 0;
-  return `Planned: no photos yet, ${stops} trip ${stops === 1 ? "stop" : "stops"}`;
+  return `Planned: no photos yet, ${count(stops, "trip stop")}`;
 }
 
 /** Whether the line has segments to draw, by hand or as last worked out automatically. */

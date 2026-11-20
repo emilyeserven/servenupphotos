@@ -1,14 +1,18 @@
 import type { BulkTagPhoto } from "@/api/bulk-tags";
-import type { Group } from "@/api/organize";
+import { type Group, albumTree } from "@/api/organize";
 import type { ContactSheet } from "@/api/contact-sheets";
 import type { Place } from "@/api/places";
 import { photoWithTags as photoSection, sheetsBlock } from "@/lib/bulk-tag-prompt";
 
-/** The genres the prompt offers, one "- Name: description" line each. */
+/**
+ * The genres the prompt offers, one "- Name: description" line each, a subgenre's indented under
+ * its genre.
+ */
 function genreLines(genres: Group[]): string {
-  const lines = genres
-    .filter((genre) => !genre.error)
-    .map((genre) => `- ${genre.name}${genre.description ? `: ${genre.description}` : ""}`);
+  const lines = albumTree(genres.filter((genre) => !genre.error)).map(
+    ({ group, depth }) =>
+      `${"  ".repeat(depth)}- ${group.name}${group.description ? `: ${group.description}` : ""}`,
+  );
   return lines.join("\n") || "- None yet.";
 }
 
@@ -34,7 +38,7 @@ ${genreLines(genres)}
 
 Rules:
 - Give each photo 1 to 3 genres, the ones that fit it best, most fitting first. Look at the photo itself; what's known about it is only to help.
-- Use the genres there are already whenever one fits, spelled exactly as they're listed.
+- Use the genres there are already whenever one fits, spelled exactly as they're listed. A genre indented under another is a subgenre of it: when the subgenre fits, give the subgenre alone, since it already counts as its broader genre.
 - Only when none of them fits a photo, suggest a new genre: a kind of photography photographers would recognize (such as Night, Food, Wildlife or Macro), never a subject, place or mood (not "cats", "Kyoto" or "calm"). Name it in Title Case, and describe it in "newGenres" in one sentence, once.
 - Answer with only this JSON, with nothing before or after it, and every photo listed once by its name in quotes above:
 {

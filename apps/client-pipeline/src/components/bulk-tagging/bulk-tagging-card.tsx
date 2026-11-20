@@ -11,19 +11,16 @@ import { placesQuery, readEntries } from "@/api/places";
 import { BulkTagReview } from "@/components/bulk-tagging/bulk-tag-review";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
-import {
-  CopyPromptButton,
-  ErrorText,
-  PasteAnswer,
-  PickBar,
-  usePhotoPick,
-} from "@/components/bulk-tagging/pick-controls";
+import { CopyPromptButton, PickBar, usePhotoPick } from "@/components/bulk-tagging/pick-controls";
 import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
 import { UntaggedCount } from "@/components/bulk-tagging/untagged-count";
+import { PasteAnswer } from "@/components/paste-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { OptionCheckbox } from "@/components/update-data-shared";
 import { bulkTagPrompt } from "@/lib/bulk-tag-prompt";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * Bulk Tagging: picks up to the chosen number of photos without tags (5 at first, up to 50, or
@@ -64,7 +61,7 @@ export function BulkTaggingCard() {
           onChange={setNoLimit}
         />
         <PickBar {...bar} noLimit={noLimit} />
-        <ErrorText error={pick.error} />
+        <ErrorNote error={pick.error} />
         {pick.data && <PickedTagging key={pick.submittedAt} pick={pick.data} />}
       </CardContent>
     </Card>
@@ -73,24 +70,15 @@ export function BulkTaggingCard() {
 
 /** The picked photos, their prompt, the box to paste the answer into, and its review. */
 function PickedTagging({ pick }: { pick: BulkTagPick }) {
-  const [answer, setAnswer] = useState("");
   const paths = pick.photos.map((photo) => photo.path);
   const preview = useMutation(previewBulkTagsMutation);
+  const pasted = usePastedAnswer((answer) => preview.mutateAsync({ paths, answer }));
   return (
     <div className="flex flex-col gap-4">
       <PickedPhotos photos={pick.photos} />
       <CopyTagPromptButton pick={pick} />
-      <PasteAnswer
-        value={answer}
-        onChange={setAnswer}
-        pending={preview.isPending}
-        label="Review the tags"
-        onReview={() => preview.mutate({ paths, answer })}
-      />
-      <ErrorText error={preview.error} />
-      {preview.data && (
-        <BulkTagReview key={JSON.stringify(preview.data)} preview={preview.data} pick={pick} />
-      )}
+      <PasteAnswer pasted={pasted} label="Review the tags" />
+      {pasted.answer && <BulkTagReview key={pasted.reviews} preview={pasted.answer} pick={pick} />}
     </div>
   );
 }

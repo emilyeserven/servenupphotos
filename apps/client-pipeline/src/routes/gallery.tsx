@@ -12,6 +12,7 @@ import { Page } from "@/components/page";
 import { Card, CardContent } from "@/components/ui/card";
 import { BulkGroupsCard } from "@/components/gallery/bulk-groups-card";
 import { BulkLowerTier } from "@/components/gallery/bulk-lower-tier";
+import { BulkUndecided } from "@/components/gallery/bulk-undecided";
 import { type GalleryFile, galleryFiles, mergedImages } from "@/components/gallery/gallery-files";
 import { type GalleryRead, GalleryHeader } from "@/components/gallery/gallery-header";
 import { GalleryLightbox } from "@/components/gallery/gallery-lightbox";
@@ -78,7 +79,7 @@ function GalleryPage() {
       title="Gallery"
       description="Every photo in the portfolio, as the next Commit will save it. Show the drafts, Undecided and Lower Tier photos to see where each would go among the published ones. Editing one saves the change to the “Add photo data” pull request."
     >
-      <QueryResult query={settings} pendingLabel="Loading settings…">
+      <QueryResult query={settings} pendingLabel="Reading settings…">
         {(data) => (data.github.repo && data.github.token.set ? <Gallery /> : <NotSetUp />)}
       </QueryResult>
     </Page>
@@ -162,7 +163,6 @@ function Gallery() {
             total={all.length}
             images={reads.read?.images ?? data.images}
             shown={files.shown}
-            filter={filter}
             selection={selection.selected}
             onToggle={selection.toggle}
             highlight={files.search.photo}
@@ -176,7 +176,10 @@ function Gallery() {
   );
 }
 
-/** While choosing photos, the cards that add albums, tags and genres to them or mark them Lower Tier. */
+/**
+ * While choosing photos, the cards that add albums, tags and genres to them, send them to Undecided
+ * or mark them Lower Tier.
+ */
 function BulkCards({
   all,
   shown,
@@ -195,6 +198,7 @@ function BulkCards({
         selection={selection.selected}
         onSelectionChange={selection.setSelected}
       />
+      <BulkUndecided files={all} selection={selection.selected} />
       <BulkLowerTier files={all} selection={selection.selected} />
     </>
   );

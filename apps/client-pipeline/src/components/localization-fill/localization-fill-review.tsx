@@ -6,11 +6,12 @@ import {
   LocalizationRowForms,
   savedFields,
 } from "@/components/localization-row";
-import { count } from "@/components/update-data-shared";
+
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import type { LocalizationAnswer } from "@/lib/localization-answer";
 import type { LocalizationRow } from "@/lib/place-seeds";
+import { count } from "@portfolio/lib/words";
 
 /** The row's saved fields, with the answer's in the ones that are empty, so nothing saved is replaced. */
 function filledFields(row: LocalizationRow, answered: Fields): Fields {

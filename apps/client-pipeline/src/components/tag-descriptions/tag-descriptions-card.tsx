@@ -10,10 +10,13 @@ import {
 } from "@/components/tag-descriptions/tag-description-review";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CommitSuccess, count } from "@/components/update-data-shared";
+import { ReadingNote } from "@/components/query-result";
+import { CommitSuccess } from "@/components/update-data-shared";
 import { currentPhotos } from "@/lib/group-photos";
 import { tagsToDescribe } from "@/lib/tag-description-prompt";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** How many tags a batch has until another number is chosen. */
 const defaultBatchSize = 25;
@@ -65,8 +68,8 @@ interface TagCountsProps {
 
 /** How many of the tags have no description, or why the tags can't be read. */
 function TagCounts({ loading, error, tags }: TagCountsProps) {
-  if (error) return <p className="text-destructive text-sm">{error.message}</p>;
-  if (loading) return <p className="text-muted-foreground text-sm">Reading the tags…</p>;
+  if (error) return <ErrorNote error={error} />;
+  if (loading) return <ReadingNote label="Reading the tags…" />;
   const missing = tagsToDescribe(tags, new Set()).length;
   return (
     <p className="text-muted-foreground text-sm">

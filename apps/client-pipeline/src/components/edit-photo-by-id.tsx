@@ -7,6 +7,7 @@ import {
 } from "@/api/photos";
 import { EditInFlightPhoto } from "@/components/edit-in-flight";
 import { QueryResult } from "@/components/query-result";
+import { ErrorNote } from "@/components/error-note";
 
 /** The Photo page's `?photo=`: the ID of a photo to edit, for pages that know a photo only by ID. */
 export function photoIdSearch(search: Record<string, unknown>): { photo?: number } {
@@ -37,13 +38,13 @@ function FindPhoto({ inFlight, id }: { inFlight: InFlightRead; id: number }) {
   const published = useQuery({ ...publishedPhotosQuery, enabled: path === undefined });
   if (path) return <EditInFlightPhoto path={path} />;
   return (
-    <QueryResult query={published} pendingLabel="Finding the photo's file…">
+    <QueryResult query={published} pendingLabel="Reading the photo files on the base branch…">
       {(data) => <FoundOnBase path={pathOf(data.files, id)} id={id} />}
     </QueryResult>
   );
 }
 
 function FoundOnBase({ path, id }: { path?: string; id: number }) {
-  if (!path) return <p className="text-destructive">No photo file has the ID {id}.</p>;
+  if (!path) return <ErrorNote error={`No photo file has the ID ${id}.`} />;
   return <EditInFlightPhoto path={path} from="gallery" />;
 }

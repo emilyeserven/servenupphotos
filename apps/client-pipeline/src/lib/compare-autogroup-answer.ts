@@ -2,12 +2,13 @@ import {
   type AutogroupAsk,
   type AutogroupPhoto,
   type ExistingGroup,
-  answerObject as jsonObject,
-  askedPhotos,
-  lookupName,
+  answerablePhotos,
+  existingGroups,
   photoFinder,
 } from "@/lib/compare-autogroup";
 import { type ComparePhoto, compareGroupOf, comparePhotoName } from "@/lib/compare-groups";
+import { nameFinder, readPastedObject } from "@/lib/pasted-json";
+import { textOf } from "@portfolio/lib/values";
 
 /** A group the LLM suggested making, or photos it suggested adding to a group there is. */
 export interface AutogroupSuggestion {
@@ -36,19 +37,19 @@ export interface AutogroupAnswer {
   groups: AutogroupSuggestion[];
   merges: AutogroupMerge[];
   removals: AutogroupRemoval[];
-  /** Photo names that aren't photos in the prompt. */
+  /** Photo names that aren't any photo's, which are skipped. */
   unknown: string[];
-  /** Group names to combine or remove that aren't groups in the prompt. */
+  /** Group names to combine or remove that aren't any group's, which are skipped. */
   unknownGroups: string[];
 }
 
 /** The answer's JSON object, which has to have at least one of the lists the prompt asks for. */
 function answerObject(answer: string): Record<string, unknown> {
-  const lists = jsonObject(answer) as Record<string, unknown> | null;
-  if (!["groups", "merge", "remove"].some((key) => Array.isArray(lists?.[key]))) {
+  const lists = readPastedObject(answer);
+  if (!["groups", "merge", "remove"].some((key) => Array.isArray(lists[key]))) {
     throw new Error('The answer\'s JSON has no "groups", "merge" or "remove" list.');
   }
-  return lists as Record<string, unknown>;
+  return lists;
 }
 
 /** The answer's list under key, each entry as an object, or none. */
@@ -59,20 +60,14 @@ function entries(parsed: Record<string, unknown>, key: string): Record<string, u
     : [];
 }
 
-/** The value as trimmed text, or "" when it isn't text. */
-function text(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /** The value's text items, or none when it isn't a list. */
 function texts(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
 }
 
-/** Looks a group there is up by the name the answer gave, ignoring case and quotes. */
+/** Looks a group there is up by the name the answer gave, with `matchName`. */
 function groupFinder(groups: ExistingGroup[]): (name: string) => ExistingGroup | undefined {
-  const byName = new Map(groups.map((group) => [lookupName(group.name), group]));
-  return (name) => byName.get(lookupName(name));
+  return nameFinder(groups, (group) => [group.name]);
 }
 
 /** What reading the answer has found so far: the photos placed and the names it didn't know. */
@@ -114,7 +109,7 @@ function readGroups(
 ): AutogroupSuggestion[] {
   const groups: AutogroupSuggestion[] = [];
   for (const raw of entries(parsed, "groups")) {
-    const typed = text(raw.name);
+    const typed = textOf(raw.name);
     if (!typed) continue;
     // A group there is keeps its name as it's saved, whatever its case in the answer.
     const name = reading.findGroup(typed)?.name ?? typed;
@@ -146,7 +141,7 @@ function readMerges(parsed: Record<string, unknown>, reading: Reading): Autogrou
     const groups = knownGroups(texts(raw.groups), reading).filter((g) => !merged.has(g.name));
     if (groups.length < 2) continue;
     for (const group of groups) merged.add(group.name);
-    const name = text(raw.name);
+    const name = textOf(raw.name);
     merges.push({
       name: reading.findGroup(name)?.name ?? (name || (groups[0]?.name ?? "")),
       groups,
@@ -164,17 +159,18 @@ function readRemovals(
   const skip = new Set(merges.flatMap((merge) => merge.groups.map((group) => group.name)));
   const removals: AutogroupRemoval[] = [];
   for (const raw of entries(parsed, "remove")) {
-    const [group] = knownGroups([text(raw.group)].filter(Boolean), reading);
+    const [group] = knownGroups([textOf(raw.group)].filter(Boolean), reading);
     if (!group || skip.has(group.name)) continue;
     skip.add(group.name);
-    removals.push({ group, reason: text(raw.reason) });
+    removals.push({ group, reason: textOf(raw.reason) });
   }
   return removals;
 }
 
 /**
  * Reads the LLM's answer into the groups to make or add to, the groups to combine and the groups
- * to remove, looking each photo and group up among the prompt's. A photo named in more than one
+ * to remove, looking each photo and group up among every photo and group, not only the prompt's,
+ * so an answer written for another prompt still applies. A photo named in more than one
  * group stays in the first; a group left with fewer than 2 photos, counting the ones in it already,
  * is dropped; a group being combined isn't also removed. Throws an error a user can read when the
  * answer isn't the JSON the prompt asks for.
@@ -186,8 +182,8 @@ export function readAutogroupAnswer(
 ): AutogroupAnswer {
   const parsed = answerObject(answer);
   const reading: Reading = {
-    findPhoto: photoFinder(askedPhotos(ask)),
-    findGroup: groupFinder(ask.groups),
+    findPhoto: photoFinder(answerablePhotos(ask, all)),
+    findGroup: groupFinder(ask.groups.length > 0 ? ask.groups : existingGroups(all)),
     taken: new Set(),
     unknown: new Set(),
     unknownGroups: new Set(),

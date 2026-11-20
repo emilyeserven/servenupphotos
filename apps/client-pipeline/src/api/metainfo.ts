@@ -1,7 +1,7 @@
 import { mutationOptions } from "@tanstack/react-query";
 import type { CombinedData } from "@/api/photos";
 import { entryId } from "@/api/places";
-import { requestJson } from "@/api/request";
+import { del, put } from "@/api/request";
 import type { FileChange } from "@/lib/optimistic";
 
 /** A photo field a metadata group can group the values of, as the photo files name it. */
@@ -160,11 +160,7 @@ export const saveMetaGroupMutation = mutationOptions({
   scope: { id: "photo-data-entries" },
   meta: metaMeta,
   mutationFn: (group: MetaGroup) =>
-    requestJson<MetaGroupResult>(`/api/metainfo/${encodeURIComponent(group.id)}`, {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(group),
-    }),
+    put<MetaGroupResult>(`/api/metainfo/${encodeURIComponent(group.id)}`, group),
 });
 
 /** Removes a metadata group, as a change waiting for Commit. */
@@ -172,6 +168,5 @@ export const deleteMetaGroupMutation = mutationOptions({
   mutationKey: ["metainfo", "delete"],
   scope: { id: "photo-data-entries" },
   meta: metaMeta,
-  mutationFn: (id: string) =>
-    requestJson<MetaGroupResult>(`/api/metainfo/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  mutationFn: (id: string) => del<MetaGroupResult>(`/api/metainfo/${encodeURIComponent(id)}`),
 });

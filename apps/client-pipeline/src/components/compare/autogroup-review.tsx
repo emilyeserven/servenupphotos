@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { MergeRow, RemovalRow, SuggestionRow } from "@/components/compare/autogroup-changes";
+import { UnknownPhotos } from "@/components/paste-answer";
 import { Button } from "@/components/ui/button";
-import { count } from "@/components/update-data-shared";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
 import { type AutogroupAnswer, changeCount } from "@/lib/compare-autogroup-answer";
+import { count } from "@portfolio/lib/words";
 
 /** The key a change is left out by: its kind and name, or its place for a combination. */
 const keys = {
@@ -117,20 +118,21 @@ export function AutogroupReview({ answer }: { answer: AutogroupAnswer }) {
   );
 }
 
-/** The photo and group names in the answer that aren't in the prompt, so they were left out. */
+/** The groups to change that the answer names, such as “a”, “b”, and that they aren't compare groups. */
+function skippedGroups(names: string[]): string {
+  const what = names.length === 1 ? "isn’t a compare group" : "aren’t compare groups";
+  return `Skipped the answer’s changes to ${names.map((name) => `“${name}”`).join(", ")}, which ${what}.`;
+}
+
+/** The photo and group names in the answer that aren't any photo's or group's, so they were skipped. */
 function UnknownNames({ answer }: { answer: AutogroupAnswer }) {
-  const lines = [
-    answer.unknown.length > 0 && `photos that aren't in the prompt: ${answer.unknown.join(", ")}`,
-    answer.unknownGroups.length > 0 &&
-      `groups that aren't in the prompt: ${answer.unknownGroups.join(", ")}`,
-  ].filter(Boolean);
-  if (lines.length === 0) return null;
   return (
-    <div className="flex flex-col gap-1 text-amber-700 dark:text-amber-400">
-      {lines.map((line) => (
-        <p key={String(line)}>Left out {line}</p>
-      ))}
-    </div>
+    <>
+      <UnknownPhotos names={answer.unknown} noun="groups" />
+      {answer.unknownGroups.length > 0 && (
+        <p className="text-muted-foreground">{skippedGroups(answer.unknownGroups)}</p>
+      )}
+    </>
   );
 }
 

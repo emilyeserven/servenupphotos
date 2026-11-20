@@ -2,15 +2,12 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"image"
 	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
-	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
 )
 
@@ -35,36 +32,15 @@ type facesResponse struct {
 // handleSavedFaces responds with the faces pixelated on every version of the
 // photo at the "key" query parameter, as saved with them in R2.
 func handleSavedFaces(loadR2 func() (settings.R2, error), read savedFacesFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return withSettings(loadR2, findPhotosTimeout, func(ctx context.Context, w http.ResponseWriter, r *http.Request, cfg settings.R2) {
 		key := r.URL.Query().Get("key")
 		if key == "" {
-			writeError(w, http.StatusBadRequest, "key is required")
+			writeError(w, http.StatusBadRequest, keyMessage)
 			return
 		}
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), findPhotosTimeout)
-		defer cancel()
 		faces, err := read(ctx, cfg, key)
-		var uploadErr *storage.UploadError
-		switch {
-		case errors.As(err, &uploadErr):
-			status := uploadErrorStatus(uploadErr)
-			if uploadErr.NotFound {
-				status = http.StatusNotFound
-			}
-			writeJSON(w, status, uploadErrorResponse{Message: uploadErr.Message, Cloudflare: uploadErr.Cloudflare})
-		case err != nil:
-			slog.Error("read saved faces failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read the pixelated faces")
-		default:
-			writeJSON(w, http.StatusOK, facesResponse{Key: key, Faces: nonNilFaces(faces)})
-		}
-	}
+		writeR2Result(w, facesResponse{Key: key, Faces: nonNilFaces(faces)}, err, "Couldn't read the pixelated faces.")
+	})
 }
 
 // handleDetectFaces downloads the original at the body's "key" from R2 and
@@ -72,42 +48,41 @@ func handleSavedFaces(loadR2 func() (settings.R2, error), read savedFacesFunc) h
 // changed: the page shows them to check and adjust before remaking the
 // versions.
 func handleDetectFaces(loadR2 func() (settings.R2, error), get getPhotoFunc, detect detectFacesFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req struct {
-			Key string `json:"key"`
-		}
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 1<<12)).Decode(&req); err != nil || req.Key == "" {
-			writeError(w, http.StatusBadRequest, "key is required")
+	return withBody("photo's key", 1<<12, func(w http.ResponseWriter, r *http.Request, req bucketKeyRequest) {
+		if req.Key == "" {
+			writeError(w, http.StatusBadRequest, keyMessage)
 			return
 		}
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), detectFacesTimeout)
-		defer cancel()
-		photo, err := get(ctx, cfg, req.Key)
-		if err != nil {
-			status, msg := getPhotoError(err)
-			writeError(w, status, msg)
-			return
-		}
-		defer photo.Close() //nolint:errcheck // read-only
-		img, err := versions.Decode(photo)
-		if err != nil {
-			writeError(w, http.StatusUnprocessableEntity, "Couldn't read the original JPEG to look for faces.")
-			return
-		}
-		faces, err := detect(img)
-		if err != nil {
-			slog.Error("detect faces failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not look for faces")
-			return
-		}
-		writeJSON(w, http.StatusOK, facesResponse{Key: req.Key, Faces: nonNilFaces(faces)})
+		withSettings(loadR2, detectFacesTimeout, func(ctx context.Context, w http.ResponseWriter, _ *http.Request, cfg settings.R2) {
+			faces, status, msg := detectFaces(ctx, cfg, req.Key, get, detect)
+			if status != http.StatusOK {
+				writeError(w, status, msg)
+				return
+			}
+			writeJSON(w, http.StatusOK, facesResponse{Key: req.Key, Faces: nonNilFaces(faces)})
+		})(w, r)
+	})
+}
+
+// detectFaces looks for faces on the original at key in R2. On failure it
+// returns the status and message to send.
+func detectFaces(ctx context.Context, cfg settings.R2, key string, get getPhotoFunc, detect detectFacesFunc) (versions.Faces, int, string) {
+	photo, err := get(ctx, cfg, key)
+	if err != nil {
+		status, msg := getPhotoError(err)
+		return nil, status, msg
 	}
+	defer photo.Close() //nolint:errcheck // read-only
+	img, err := versions.Decode(photo)
+	if err != nil {
+		return nil, http.StatusUnprocessableEntity, "Couldn't read the original JPEG to look for faces."
+	}
+	faces, err := detect(img)
+	if err != nil {
+		slog.Error("detect faces failed", "err", err)
+		return nil, http.StatusInternalServerError, "Couldn't look for faces."
+	}
+	return faces, http.StatusOK, ""
 }
 
 // nonNilFaces is faces, or an empty list instead of nil.

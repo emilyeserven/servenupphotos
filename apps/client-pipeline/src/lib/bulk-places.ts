@@ -4,6 +4,7 @@ import { type PhotoPlace, type Place, entryId } from "@/api/places";
 import type { PastedPhotoPlace } from "@/lib/bulk-place-prompt";
 import { type MapSearch, googleMapsUrl, placeSearch } from "@/lib/google-maps";
 import { findPlace, newPlace } from "@/lib/location-prompt";
+import { matchName } from "@/lib/pasted-json";
 import { gpsText, writtenPosition } from "@/lib/place-gps";
 import { placeCity, withParent } from "@/lib/place-hierarchy";
 
@@ -26,8 +27,10 @@ export interface BulkPlacesReview {
   plans: BulkPlacePlan[];
   /** The places the answer names that aren't places yet, each once. */
   newPlaces: Place[];
-  /** Photos the answer names that aren't any of the picked ones. */
+  /** Photos the answer names that aren't any photo, which are skipped. */
   unknown: string[];
+  /** Photos the answer names that weren't picked, found among every photo; their plans follow the picked ones'. */
+  others: BulkTagPhoto[];
   /** Every place's name, the new ones too, by ID. */
   names: Record<string, string>;
   /** The Wikidata item ID the answer gives each new place, by the place's ID, to fetch its outline by. */
@@ -91,20 +94,36 @@ function photoPlan(photo: BulkTagPhoto, pasted: PastedPhotoPlace | undefined, al
   return place ? { ...none, ...placed(photo, pasted?.relation ?? "", place, all) } : none;
 }
 
-/** The review of the answer for the picked photos, given the places there are now. */
+/** The photo names the answer gives that aren't any of the photos (by `matchName`), each once, as it wrote them. */
+export function unpickedNames(photos: BulkTagPhoto[], answer: PastedPhotoPlace[]): string[] {
+  const names = new Set(photos.map((photo) => matchName(photo.name)));
+  const missing = answer
+    .map((pasted) => pasted.photo)
+    .filter((name) => !names.has(matchName(name)));
+  return [...new Set(missing)];
+}
+
+/**
+ * The review of the answer for the picked photos and `others`, the photos it names that weren't
+ * picked, found among every photo, given the places there are now. A picked photo the answer
+ * doesn't name is left as it is; a name that's none of the photos is skipped.
+ */
 export function reviewBulkPlaces(
-  photos: BulkTagPhoto[],
+  picked: BulkTagPhoto[],
   answer: PastedPhotoPlace[],
   places: Place[],
+  others: BulkTagPhoto[] = [],
 ): BulkPlacesReview {
   const made = newPlaces(answer, places);
   const all = [...places, ...made];
-  const byName = new Map(answer.map((pasted) => [pasted.photo.toLowerCase(), pasted]));
-  const names = new Set(photos.map((photo) => photo.name.toLowerCase()));
+  const byName = new Map(answer.map((pasted) => [matchName(pasted.photo), pasted]));
+  const extra = others.filter((photo) => !picked.some((p) => p.path === photo.path));
+  const photos = [...picked, ...extra];
   return {
-    plans: photos.map((photo) => photoPlan(photo, byName.get(photo.name.toLowerCase()), all)),
+    plans: photos.map((photo) => photoPlan(photo, byName.get(matchName(photo.name)), all)),
     newPlaces: made,
-    unknown: answer.map((pasted) => pasted.photo).filter((name) => !names.has(name.toLowerCase())),
+    unknown: unpickedNames(photos, answer),
+    others: extra,
     names: Object.fromEntries(all.map((place) => [place.id, place.name || place.id])),
     wikidata: newPlaceWikidata(answer, made),
   };

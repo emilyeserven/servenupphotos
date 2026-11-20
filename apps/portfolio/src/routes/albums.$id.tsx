@@ -8,6 +8,7 @@ import { albumRows } from "@/lib/album-layout";
 import { albums, albumShown, type Group } from "@/lib/groups";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { albumPhotos } from "@/lib/spotlight-zones";
+import { count } from "@/lib/words";
 
 export const Route = createFileRoute("/albums/$id")({
   validateSearch: (search: Record<string, unknown>): ShownPhotoSearch => parseShownPhoto(search),
@@ -76,9 +77,7 @@ function AlbumPhotos({ album }: { album: Group }) {
   const inOrder = [...rows.flatMap((row) => row.photos), ...rest];
   return (
     <>
-      <p className={`${NARROW} text-sm text-muted-foreground`}>
-        {photos.length} {photos.length === 1 ? "photo" : "photos"}.
-      </p>
+      <p className={`${NARROW} text-sm text-muted-foreground`}>{count(photos.length, "photo")}.</p>
       <AlbumRows rows={rows} onOpen={show} />
       <ul className="flex flex-col gap-6">
         {rest.map((photo) => (

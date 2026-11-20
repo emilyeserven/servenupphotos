@@ -1,12 +1,13 @@
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 import { useState } from "react";
 import type { TripLegEnd } from "@/api/trips";
-import { dayTitle } from "@/components/trip-lines/day-title";
 import { LegStation } from "@/components/trips/leg-station";
 import { PointFields } from "@/components/trips/point-fields";
 import { StationSearch } from "@/components/trips/station-search";
 import { endSpot, ridesLegLine } from "@/lib/trip-legs";
 import type { TripPhoto } from "@/lib/trip-days";
+import { ErrorNote } from "@/components/error-note";
+import { weekdayDate } from "@portfolio/lib/dates";
 
 interface LegEndFieldProps {
   /** What the end is, such as "Leaves". */
@@ -38,7 +39,7 @@ export function LegEndField(props: LegEndFieldProps) {
       >
         {dates.map((d) => (
           <option key={d} value={d}>
-            {dayTitle(d)}
+            {weekdayDate(d)}
           </option>
         ))}
       </select>
@@ -113,7 +114,7 @@ interface PhotoNoteProps {
 
 function PhotoNote({ photo, photoWord, named }: PhotoNoteProps) {
   if (!photo)
-    return <p className="text-destructive text-xs">No photo with an exact spot on this day.</p>;
+    return <ErrorNote error="No photo with an exact spot on this day." className="text-xs" />;
   if (named) return null;
   return (
     <p className="text-muted-foreground text-xs">

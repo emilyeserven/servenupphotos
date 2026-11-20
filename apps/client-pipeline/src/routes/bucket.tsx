@@ -30,6 +30,9 @@ import { Spinner } from "@/components/ui/spinner";
 import { type PhotoMarks, usePhotoMarks } from "@/hooks/use-photo-marks";
 import { isContactSheetKey } from "@/lib/contact-sheets";
 import { cn } from "@/lib/utils";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
+import { dateTimeText } from "@portfolio/lib/dates";
 
 export const Route = createFileRoute("/bucket")({
   component: BucketPage,
@@ -46,7 +49,7 @@ function BucketPage() {
       title="Explore Bucket"
       description="Every image in the R2 bucket, newest first. Click a stack to see its resized copies, generate JSON for a photo that isn't saved yet, or delete an image from R2. Contact sheets made for prompts have their own section."
     >
-      <QueryResult query={settings} pendingLabel="Loading settings…">
+      <QueryResult query={settings} pendingLabel="Reading settings…">
         {(data) =>
           r2IsSetUp(data.r2) ? (
             <BucketCard githubIsSetUp={Boolean(data.github.repo && data.github.token.set)} />
@@ -83,7 +86,7 @@ function BucketCard({ githubIsSetUp }: { githubIsSetUp: boolean }) {
           <CardTitle>Bucket</CardTitle>
           <CardDescription>
             {bucket.data
-              ? `${bucket.data.bucket}: ${photoCount(bucket.data.images)}, ${imageCount(bucket.data.images.length)}`
+              ? `${bucket.data.bucket}: ${photoCount(bucket.data.images)}, ${count(bucket.data.images.length, "image")}`
               : "Listing the bucket from Settings."}
           </CardDescription>
           <CardAction>
@@ -142,8 +145,8 @@ function BucketEmpty() {
   if (bucket.isSuccess && bucket.data.images.length > 0) return null;
   return (
     <CardContent>
-      <QueryResult query={bucket} pendingLabel="Listing images in R2…">
-        {() => <p className="text-muted-foreground">No images in this bucket yet.</p>}
+      <QueryResult query={bucket} pendingLabel="Reading the images in R2…">
+        {() => <EmptyNote>No images in this bucket yet.</EmptyNote>}
       </QueryResult>
     </CardContent>
   );
@@ -301,17 +304,11 @@ function StackItems({ stack, marks }: { stack: Stack; marks: PhotoMarks }) {
 
 /** How many photos the bucket holds, counting each original with its resized copies as one. */
 function photoCount(images: BucketImage[]): string {
-  const count = images.filter((image) => !parseVersionKey(image.key)).length;
-  return count === 1 ? "1 photo" : `${count} photos`;
-}
-
-function imageCount(count: number): string {
-  return count === 1 ? "1 image" : `${count} images`;
+  const n = images.filter((image) => !parseVersionKey(image.key)).length;
+  return count(n, "photo");
 }
 
 const sizeFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
-const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
-
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${sizeFormat.format(bytes / 1024)} KB`;
@@ -390,7 +387,7 @@ function TileActions({
 }
 
 function stackLabel(stack: StackToggle): string {
-  const sizes = stack.count === 1 ? "1 size" : `${stack.count} sizes`;
+  const sizes = count(stack.count, "size");
   return stack.expanded ? `Original · hide ${sizes}` : `Original + ${sizes}`;
 }
 
@@ -470,7 +467,7 @@ function TileCaption({ image }: { image: BucketImage }) {
         {image.key}
       </a>
       <span className="text-muted-foreground">
-        {formatSize(image.size)} · {dateFormat.format(new Date(image.modified))}
+        {formatSize(image.size)} · {dateTimeText(image.modified)}
       </span>
     </figcaption>
   );

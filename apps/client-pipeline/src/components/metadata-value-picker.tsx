@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { otherGroupNames } from "@/lib/meta-groups";
 import { type MetaValueCount, showValue, typedValue, valueKey } from "@/lib/meta-values";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 interface MetaValuePickerProps {
   info: MetaFieldInfo;
@@ -57,9 +58,7 @@ export function MetaValuePicker(props: MetaValuePickerProps) {
         aria-labelledby="meta-group-values"
         className="grid max-h-96 grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-x-4 gap-y-1.5 overflow-y-auto rounded-md border p-3"
       >
-        {shown.length === 0 && (
-          <p className="text-muted-foreground text-sm">No photo has a {info.one} yet.</p>
-        )}
+        {shown.length === 0 && <EmptyNote>No photo has a {info.one} yet.</EmptyNote>}
         {shown.map(({ value, count }) => (
           <ValueCheckbox
             key={valueKey(value)}

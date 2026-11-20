@@ -1,4 +1,3 @@
-import { format, parseISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import type { Matcher } from "react-day-picker";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { isoDate, parseIsoDate, weekdayDate } from "@portfolio/lib/dates";
 
 /** The years the month and year menus offer: from 1970 to ten years from now. */
 const FIRST_MONTH = new Date(1970, 0);
@@ -26,7 +26,7 @@ const DROPDOWN_CLASS_NAMES = {
 
 /** A YYYY-MM-DD day as a Date, or undefined for "". */
 function toDate(value: string | undefined): Date | undefined {
-  return value ? parseISO(value) : undefined;
+  return value ? parseIsoDate(value) : undefined;
 }
 
 /** The days outside `min` and `max`, which can't be picked. */
@@ -34,11 +34,6 @@ function outsideDays(min: string | undefined, max: string | undefined): Matcher[
   const before = toDate(min);
   const after = toDate(max);
   return [before && { before }, after && { after }].filter((matcher) => matcher !== undefined);
-}
-
-/** A day as the button shows it, such as "Tue, Nov 3, 2026", or the placeholder for "". */
-function dayText(value: string, placeholder: string): string {
-  return value ? format(parseISO(value), "EEE, MMM d, yyyy") : placeholder;
 }
 
 interface DatePickerProps {
@@ -93,7 +88,7 @@ export function DatePicker({
           {...button}
         >
           <CalendarIcon />
-          {dayText(value, placeholder)}
+          {value ? weekdayDate(value) : placeholder}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
@@ -106,7 +101,7 @@ export function DatePicker({
           selected={toDate(value)}
           defaultMonth={toDate(value) ?? toDate(min)}
           disabled={outsideDays(min, max)}
-          onSelect={(date) => pick(date ? format(date, "yyyy-MM-dd") : "")}
+          onSelect={(date) => pick(date ? isoDate(date) : "")}
         />
         <div className="flex justify-end border-t px-3 py-2">
           <Button

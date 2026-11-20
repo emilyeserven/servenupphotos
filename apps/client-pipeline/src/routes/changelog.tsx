@@ -4,9 +4,10 @@ import { useId, useState } from "react";
 import { type ChangelogPage, changelogQuery } from "@/api/changelog";
 import { ChangelogDayCard } from "@/components/changelog/changelog-day";
 import { type ChangelogDay, changelogDays } from "@/components/changelog/days";
-import { CommitError } from "@/components/commit-error";
 import { Page } from "@/components/page";
+import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 export const Route = createFileRoute("/changelog")({
   component: ChangelogView,
@@ -21,16 +22,16 @@ function ChangelogView() {
       title="Changelog"
       description="What changed, from the pull requests merged into the repository in Settings, newest first."
     >
-      {query.isPending && <p>Reading the branch's commits…</p>}
-      {query.isError && <CommitError error={query.error} />}
-      {query.data && (
-        <ChangelogBody
-          pages={query.data.pages}
-          more={query.hasNextPage}
-          loading={query.isFetchingNextPage}
-          onMore={() => void query.fetchNextPage()}
-        />
-      )}
+      <QueryResult query={query} pendingLabel="Reading the branch's commits…" githubOpen>
+        {(data) => (
+          <ChangelogBody
+            pages={data.pages}
+            more={query.hasNextPage}
+            loading={query.isFetchingNextPage}
+            onMore={() => void query.fetchNextPage()}
+          />
+        )}
+      </QueryResult>
     </Page>
   );
 }
@@ -61,7 +62,7 @@ function ChangelogBody({ pages, more, loading, onMore }: ChangelogBodyProps) {
       <ChangelogDays days={days} />
       {more && (
         <Button variant="outline" className="self-center" disabled={loading} onClick={onMore}>
-          {loading ? "Loading…" : "Load older changes"}
+          {loading ? "Reading older changes…" : "Load older changes"}
         </Button>
       )}
     </>
@@ -107,6 +108,6 @@ function PhotoDataToggle({
 
 /** A card for each day, or a note when no changes are left to show. */
 function ChangelogDays({ days }: { days: ChangelogDay[] }) {
-  if (days.length === 0) return <p className="text-muted-foreground text-sm">No changes yet.</p>;
+  if (days.length === 0) return <EmptyNote>No changes yet.</EmptyNote>;
   return days.map((day) => <ChangelogDayCard key={day.day} day={day} />);
 }

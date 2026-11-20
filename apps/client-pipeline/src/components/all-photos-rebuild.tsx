@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useCombinedSync } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 
 type StatusQuery = UseQueryResult<CombinedStatus>;
 
@@ -71,11 +72,7 @@ export function AllPhotosRebuild({
     );
   }
   if (sync.commitError) {
-    return (
-      <p className="text-destructive">
-        Couldn&apos;t commit {file}: {sync.commitError.message}
-      </p>
-    );
+    return <ErrorNote error={sync.commitError} lead={`Couldn't commit ${file}:`} githubOpen />;
   }
   if (!sync.unsynced) return <p className="text-muted-foreground">{file} is up to date.</p>;
   return (

@@ -22,20 +22,12 @@ const originalTimeout = 60 * time.Second
 // or else the name its key keeps. The Instagram Planned page links to it, so a
 // browser saves the file rather than opening it from R2's address.
 func handleOriginal(r2 func() (settings.R2, error), get getPhotoFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return withSettings(r2, originalTimeout, func(ctx context.Context, w http.ResponseWriter, r *http.Request, cfg settings.R2) {
 		key := r.URL.Query().Get("key")
 		if key == "" {
-			writeError(w, http.StatusBadRequest, `expected the photo's R2 key as "key"`)
+			writeError(w, http.StatusBadRequest, keyMessage)
 			return
 		}
-		cfg, err := r2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), originalTimeout)
-		defer cancel()
 		photo, err := get(ctx, cfg, key)
 		if err != nil {
 			status, msg := getPhotoError(err)
@@ -51,7 +43,7 @@ func handleOriginal(r2 func() (settings.R2, error), get getPhotoFunc) http.Handl
 		if _, err := io.Copy(w, io.LimitReader(photo, maxUploadBytes)); err != nil {
 			slog.Warn("sending original failed", "key", key, "err", err)
 		}
-	}
+	})
 }
 
 // downloadName is name when it's a plain JPEG file name, or else the name key

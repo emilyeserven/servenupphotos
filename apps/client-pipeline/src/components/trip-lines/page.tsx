@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { lineDays, staleTripLines } from "@/lib/stale-trip-lines";
 import { useTripLinesSearch } from "@/lib/trip-lines-search";
 import { useSessionData } from "@/hooks/use-session-data";
+import { QueryResult } from "@/components/query-result";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The Trip Lines page: each day's route, drawn on the portfolio's map. */
 export function TripLinesPage() {
@@ -26,9 +28,11 @@ export function TripLinesPage() {
 /** The page once the photos and lines are read. */
 function Days() {
   const combined = useSessionData();
-  if (combined.isPending) return <p>Reading the photos and trip lines…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <DaysAndTrips data={combined.data} />;
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photos and trip lines…">
+      {(data) => <DaysAndTrips data={data} />}
+    </QueryResult>
+  );
 }
 
 /** The days' lines, and the Trips that add the legs between days, each on a tab. */
@@ -67,11 +71,7 @@ function DayCards({ data }: { data: CombinedData }) {
 function DayList({ data }: { data: CombinedData }) {
   const days = lineDays(data);
   if (days.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        No day has two or more photos at two or more exact spots yet.
-      </p>
-    );
+    return <EmptyNote>No day has two or more photos at two or more exact spots yet.</EmptyNote>;
   }
   const stale = new Set(staleTripLines(data).map((s) => s.day));
   return <DayGrid days={days} lines={tripLines(data)} stale={stale} />;

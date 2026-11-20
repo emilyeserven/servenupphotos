@@ -1,5 +1,8 @@
 import { ChevronRight, ExternalLink, MapPin } from "lucide-react";
+import { useScriptDisplay } from "@/components/script-display-provider";
+import { localizeStop, type ScriptDisplay } from "@/lib/localize";
 import type { CasualPhoto, TripStop } from "@/lib/trip-pages";
+import { count } from "@/lib/words";
 
 /** The text's column, lined up with the page's title. */
 const NARROW = "mx-auto w-full max-w-5xl px-4 sm:px-6";
@@ -42,9 +45,21 @@ function StopItem({ stop }: { stop: TripStop }) {
   );
 }
 
+/**
+ * The stop's name as the Script display setting writes it, and its other name beside it, faint: in
+ * its local script, or in English when that's the one shown. Nothing beside it when they're the same.
+ */
+function shownNames(stop: TripStop, script: ScriptDisplay): { main: string; other?: string } {
+  const names = localizeStop(stop);
+  const main = names[script];
+  const other = script === "native" ? names.english : names.native;
+  return { main, other: other === main ? undefined : other };
+}
+
 /** The stop's name, linking to its outside map when it has one, with its kind beside it. */
 function StopName({ stop }: { stop: TripStop }) {
   const kind = KIND_LABELS[stop.kind];
+  const { main, other } = shownNames(stop, useScriptDisplay().script);
   return (
     <p className="flex flex-wrap items-center gap-x-2">
       <MapPin className="size-3.5 text-muted-foreground" aria-hidden />
@@ -55,12 +70,13 @@ function StopName({ stop }: { stop: TripStop }) {
           rel="noreferrer"
           className="inline-flex items-center gap-1 font-medium hover:underline"
         >
-          {stop.name}
+          {main}
           <ExternalLink className="size-3" aria-hidden />
         </a>
       ) : (
-        <span className="font-medium">{stop.name}</span>
+        <span className="font-medium">{main}</span>
       )}
+      {other && <span className="text-muted-foreground">{other}</span>}
       {kind && <span className="text-xs text-muted-foreground">{kind}</span>}
     </p>
   );
@@ -74,7 +90,7 @@ function StopPhotos({ stop }: { stop: TripStop }) {
     <details className="group">
       <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
         <ChevronRight className="size-3.5 transition-transform group-open:rotate-90" aria-hidden />
-        {photos.length} {photos.length === 1 ? "photo" : "photos"}
+        {count(photos.length, "photo")}
       </summary>
       <div className="mt-1.5 flex flex-wrap gap-1">
         {photos.map((photo) => (

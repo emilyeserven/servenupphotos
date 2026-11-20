@@ -9,13 +9,10 @@ import type { ReactNode } from "react";
 import type { BulkTagPhoto, BulkTagPhotoPlan } from "@/api/bulk-tags";
 import { organizeQuery } from "@/api/organize";
 import type { PendingSave } from "@/api/scan-changes";
-import {
-  CommitSuccess,
-  SaveButton,
-  count,
-  invalidatePhotoReads,
-} from "@/components/update-data-shared";
+import { CommitSuccess, SaveButton, invalidatePhotoReads } from "@/components/update-data-shared";
 import { photoTagKey } from "@/lib/bulk-tags";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 /**
  * A save of a reviewed answer that refreshes the photo reads and `refresh` once it's done: the
@@ -74,23 +71,6 @@ export function pickedTitle(photos: BulkTagPhoto[], path: string): string {
   return typeof data?.title === "string" ? data.title : "";
 }
 
-interface UnknownPhotosProps {
-  names: string[];
-  /** What the answer gives each photo, such as "tags". */
-  noun: string;
-}
-
-/** Says which photos the answer named that weren't picked, when it named any. */
-export function UnknownPhotos({ names, noun }: UnknownPhotosProps) {
-  if (names.length === 0) return null;
-  return (
-    <p className="text-muted-foreground">
-      Left out the answer&apos;s {noun} for {names.map((name) => `“${name}”`).join(", ")}, which{" "}
-      {names.length === 1 ? "isn’t one" : "aren’t any"} of the picked photos.
-    </p>
-  );
-}
-
 interface PlannedPhotoProps {
   plan: BulkTagPhotoPlan;
   title: string;
@@ -117,7 +97,7 @@ export function PlannedPhoto({ plan, title, noun, ...boxes }: PlannedPhotoProps)
         <code>{plan.name}</code>
         {title && <span className="text-muted-foreground"> · {title}</span>}
       </p>
-      {plan.add.length === 0 && <p className="text-muted-foreground">No {noun} to add.</p>}
+      {plan.add.length === 0 && <EmptyNote>No {noun} to add.</EmptyNote>}
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         {plan.add.map((id) => (
           <PlannedBox key={id} id={id} path={plan.path} {...boxes} />

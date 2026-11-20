@@ -12,13 +12,14 @@ import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
+import { count } from "@portfolio/lib/words";
 import {
   CommitSuccess,
   PreviewDestination,
+  SaveButton,
   Unreadable,
-  count,
 } from "@/components/update-data-shared";
+import { ErrorNote } from "@/components/error-note";
 
 /** Trims a base URL and its trailing slashes, as the backend does. */
 function cleanBaseUrl(value: string): string {
@@ -168,7 +169,7 @@ function BaseUrlForm({ scan, publicUrl }: BaseUrlFormProps) {
         </form.Field>
 
         <form.Subscribe selector={(state) => state.errorMap.onSubmit}>
-          {(error) => (error ? <p className="text-destructive text-sm">{String(error)}</p> : null)}
+          {(error) => <ErrorNote error={error ? String(error) : null} />}
         </form.Subscribe>
 
         <Button type="submit" variant="outline" className="self-start" disabled={replace.isPending}>
@@ -267,7 +268,7 @@ function UrlField(props: UrlFieldProps) {
         onChange={(event) => onChange(event.target.value)}
       />
       <p id={hintId} className="text-muted-foreground text-sm empty:hidden">
-        {error ? <span className="text-destructive">{error}</span> : hint}
+        {error ? <ErrorNote error={error} /> : hint}
       </p>
     </div>
   );
@@ -319,19 +320,13 @@ function ApplyChange({
   onApply,
 }: Omit<PreviewResultProps, "change"> & { preview: BaseUrlPreview }) {
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button type="button" disabled={preview.unreadable.length > 0 || pending} onClick={onApply}>
-        {pending ? (
-          <>
-            <Spinner />
-            Saving…
-          </>
-        ) : (
-          `Change ${count(preview.urls, "URL")}`
-        )}
-      </Button>
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
-    </div>
+    <SaveButton
+      label={`Change ${count(preview.urls, "URL")}`}
+      disabled={preview.unreadable.length > 0}
+      pending={pending}
+      error={error}
+      onClick={onApply}
+    />
   );
 }
 

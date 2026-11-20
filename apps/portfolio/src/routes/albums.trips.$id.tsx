@@ -15,6 +15,7 @@ import {
   type TripPage,
   tripPages,
 } from "@/lib/trip-pages";
+import { count } from "@/lib/words";
 
 export const Route = createFileRoute("/albums/trips/$id")({
   validateSearch: (search: Record<string, unknown>): ShownPhotoSearch => parseShownPhoto(search),
@@ -69,9 +70,7 @@ function TripFound({ page }: { page: TripPage }) {
   const inOrder = shownPhotos(days);
   return (
     <>
-      <p className={`${NARROW} text-sm text-muted-foreground`}>
-        {inOrder.length} {inOrder.length === 1 ? "photo" : "photos"}.
-      </p>
+      <p className={`${NARROW} text-sm text-muted-foreground`}>{count(inOrder.length, "photo")}.</p>
       <TripStory days={days} texts={pageTexts(page, withImages)} onOpen={show} />
       <PhotoLightbox photo={shown} photos={inOrder} onShow={show} onClose={close} />
     </>

@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2016:12:16 09:27:41",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Prinsengracht",
   "customCity": "Amsterdam",
   "customState": null,
   "customCountry": "Netherlands",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["canal", "houses", "facade", "bicycles", "fences", "windows"],
   "genres": ["architecture", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "prinsengracht"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

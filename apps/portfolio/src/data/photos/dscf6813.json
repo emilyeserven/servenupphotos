@@ -13,12 +13,12 @@
   "iso": 6400,
   "focalLength": 18,
   "gpsPosition": "37 deg 14' 32.61\" N, 126 deg 55' 32.98\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "36.796799, 127.104184",
   "createDate": "2026:09:20 08:40:49",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
-  "customState": null,
+  "placeName": "Cheonan-Asan Station",
+  "customCity": "Asan",
+  "customState": "Chungcheongnam-do",
   "customCountry": null,
   "country": "South Korea",
   "state": "Gyeonggi-do",
@@ -50,9 +50,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["apartments", "skyscrapers", "road", "crosswalk", "city"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "cheonan-asan-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

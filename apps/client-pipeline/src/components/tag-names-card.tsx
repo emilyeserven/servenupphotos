@@ -8,6 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 interface TagNamesCardProps {
   /** Every album and tag; undefined until it's read. */
@@ -46,7 +48,7 @@ export function TagNamesCard({ organize, onSaved }: TagNamesCardProps) {
 }
 
 /** Renames every tag whose name isn't its ID, saying why when it can't. */
-function RenameButton({ count, onSaved }: { count: number; onSaved: () => void }) {
+function RenameButton({ count: n, onSaved }: { count: number; onSaved: () => void }) {
   const normalize = useMutation({ ...normalizeTagNamesMutation, onSuccess: onSaved });
   return (
     <>
@@ -57,9 +59,9 @@ function RenameButton({ count, onSaved }: { count: number; onSaved: () => void }
         onClick={() => normalize.mutate()}
       >
         {normalize.isPending && <Spinner />}
-        Rename {count === 1 ? "1 tag" : `${count} tags`}
+        Rename {count(n, "tag")}
       </Button>
-      {normalize.isError && <p className="text-destructive">{normalize.error.message}</p>}
+      <ErrorNote error={normalize.error} />
     </>
   );
 }

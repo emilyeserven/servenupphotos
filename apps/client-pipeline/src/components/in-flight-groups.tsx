@@ -1,12 +1,14 @@
 import { useState } from "react";
 import type { InFlightGroupFile, InFlightGroups, InFlightResponse } from "@/api/photos";
-import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
+import { CollapsiblePanel } from "@/components/collapsible-panel";
 import { fileName } from "@/components/in-flight-checks";
 import { AllPhotosMark, FileJson } from "@/components/in-flight-file-json";
 import { FileLink, FileStatus } from "@/components/in-flight-pending";
 import { GROUP_KINDS, KIND_INFO } from "@/lib/data-kinds";
 import { lineChanges } from "@/lib/json-changes";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
+import { SectionTitle } from "@/components/section-title";
 
 interface GroupFilesProps {
   title: string;
@@ -25,7 +27,7 @@ interface GroupFilesProps {
 function GroupFiles({ title, groups, ...props }: GroupFilesProps) {
   if (groups.files.length === 0) return null;
   return (
-    <CollapsiblePanel title={title} count={countOf(groups.files.length, "file")}>
+    <CollapsiblePanel title={title} count={count(groups.files.length, "file")}>
       <GroupPanels groups={groups} {...props} />
     </CollapsiblePanel>
   );
@@ -98,6 +100,7 @@ function GroupFileButton({
 /** "+3 −1" for the lines the file adds and removes, or "!" when it couldn't be read. */
 function LineCounts({ file }: { file: InFlightGroupFile }) {
   const changes = lineChanges(file);
+  // oxlint-disable-next-line servenup/error-note -- a one-character mark beside the file name
   if (!changes) return <span className="text-destructive font-mono text-xs">!</span>;
   return (
     <span className="flex shrink-0 gap-1 font-mono text-xs">
@@ -121,11 +124,11 @@ function SelectedFile({
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-2">
-      <h3 className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
+      <SectionTitle className="flex flex-wrap items-center gap-x-2">
         <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
         <FileStatus status={file.status} pending={file.pending} />
         <AllPhotosMark inAllPhotos={file.inAll} rebuilding={rebuilding} allFile={allFile} />
-      </h3>
+      </SectionTitle>
       <FileJson file={file} baseBranch={baseBranch} />
     </div>
   );

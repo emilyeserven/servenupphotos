@@ -8,12 +8,13 @@ import {
 import {
   PlannedPhoto,
   SaveReviewed,
-  UnknownPhotos,
   pickedTitle,
   useReviewedSave,
 } from "@/components/bulk-tagging/review-parts";
-import { count } from "@/components/update-data-shared";
+import { UnknownPhotos } from "@/components/paste-answer";
 import { type BulkTagChoices, NO_CHOICES, bulkTagsToSave, toggled } from "@/lib/bulk-tags";
+import { withOthers } from "@/lib/answered-photos";
+import { count } from "@portfolio/lib/words";
 
 interface BulkTagReviewProps {
   preview: BulkTagsPreview;
@@ -24,14 +25,15 @@ interface BulkTagReviewProps {
  * The review of the LLM's answer: the new tags to make, each with its definition and parent, and
  * the tags each photo gets, any of which can be unticked, then a button that saves the rest.
  */
-export function BulkTagReview({ preview, pick }: BulkTagReviewProps) {
+export function BulkTagReview({ preview, pick: picked }: BulkTagReviewProps) {
+  const pick = withOthers(picked, preview.others);
   const [choices, setChoices] = useState<BulkTagChoices>(NO_CHOICES);
   const apply = useReviewedSave(applyBulkTagsMutation);
   const busy = apply.isPending || apply.isSuccess;
   const fresh = new Set(preview.newTags.map((tag) => tag.id));
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownPhotos names={preview.unknown} noun="tags" />
+      <UnknownPhotos names={preview.unknown} others={preview.others} noun="tags" />
       {/* Once saved, the new tags are made, so only what was saved is left to say. */}
       {!apply.isSuccess && (
         <NewTagList preview={preview} choices={choices} onChange={setChoices} disabled={busy} />

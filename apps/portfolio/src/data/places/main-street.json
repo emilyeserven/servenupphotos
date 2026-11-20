@@ -1,0 +1,12 @@
+{
+  "id": "main-street",
+  "name": "Main Street",
+  "description": "",
+  "parent": "",
+  "city": "Nantucket",
+  "state": "Massachusetts",
+  "country": "United States of America",
+  "latitude": 41.283583,
+  "longitude": -70.097731,
+  "exactLocation": true
+}

@@ -11,7 +11,7 @@ import { FIELDS, type Fields, savedFields } from "@/components/localization-row"
 import { Input } from "@/components/ui/input";
 
 /** How to fill in each localization field, shown beside its title. */
-const HELP: Record<keyof Fields, string> = {
+export const LOCALIZATION_HELP: Record<keyof Fields, string> = {
   romanization: "Optional. The name in Latin letters, such as Gyeongbokgung or Tōkyō.",
   pronunciation:
     "Optional. How the local script is read, such as furigana for kanji: とうきょう for 東京.",
@@ -65,7 +65,7 @@ export function LocalizationFields({ draft, idPrefix, disabled }: LocalizationFi
       <legend className="mb-2 text-sm font-semibold">Localization</legend>
       {FIELDS.map(({ key, label }) => (
         <div key={key} className="flex flex-col gap-2">
-          <FieldLabel htmlFor={`${idPrefix}-${key}`} help={HELP[key]}>
+          <FieldLabel htmlFor={`${idPrefix}-${key}`} help={LOCALIZATION_HELP[key]}>
             {label}
           </FieldLabel>
           <Input

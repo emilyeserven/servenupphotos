@@ -1,18 +1,14 @@
-import { useState } from "react";
 import type { Group } from "@/api/organize";
 import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import {
   type SaveDescriptions,
   TagDescriptionReview,
 } from "@/components/tag-descriptions/tag-description-review";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { PasteAnswer } from "@/components/paste-answer";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import type { CombinedPhoto } from "@/lib/group-photos";
-import {
-  type TagDescriptionsRead,
-  readTagDescriptions,
-  tagDescriptionPrompt,
-} from "@/lib/tag-description-prompt";
+import { readTagDescriptions, tagDescriptionPrompt } from "@/lib/tag-description-prompt";
+import { count } from "@portfolio/lib/words";
 
 interface TagDescriptionBatchProps {
   /** The tags to describe this time. */
@@ -38,18 +34,7 @@ export function TagDescriptionBatch({ batch, tags, photos, save }: TagDescriptio
 
 /** The batch's tags, their prompt, and the answer box, for a batch with tags in it. */
 function BatchPrompt({ batch, tags, photos, save }: TagDescriptionBatchProps) {
-  const [answer, setAnswer] = useState("");
-  const [read, setRead] = useState<TagDescriptionsRead>();
-  const [error, setError] = useState("");
-  const review = () => {
-    try {
-      setRead(readTagDescriptions(answer, tags));
-      setError("");
-    } catch (err) {
-      setRead(undefined);
-      setError((err as Error).message);
-    }
-  };
+  const pasted = usePastedAnswer((answer) => readTagDescriptions(answer, tags));
   return (
     <div className="flex flex-col gap-4">
       <ul className="flex flex-wrap gap-1.5 text-xs">
@@ -60,22 +45,14 @@ function BatchPrompt({ batch, tags, photos, save }: TagDescriptionBatchProps) {
         ))}
       </ul>
       <CopyPromptButton
-        label={`Copy the description prompt for ${batch.length === 1 ? "1 tag" : `${batch.length} tags`}`}
+        label={`Copy the description prompt for ${count(batch.length, "tag")}`}
         disabled={false}
         prompt={() => tagDescriptionPrompt(batch, tags, photos)}
       />
-      <Textarea
-        aria-label="The LLM's answer"
-        placeholder="Paste the LLM's JSON answer here"
-        className="min-h-32 font-mono text-xs"
-        value={answer}
-        onChange={(event) => setAnswer(event.target.value)}
-      />
-      <Button type="button" className="self-start" disabled={answer.trim() === ""} onClick={review}>
-        Review the descriptions
-      </Button>
-      {error && <p className="text-destructive text-sm">{error}</p>}
-      {read && <TagDescriptionReview key={answer} read={read} save={save} />}
+      <PasteAnswer pasted={pasted} label="Review the descriptions" />
+      {pasted.answer && (
+        <TagDescriptionReview key={pasted.reviews} read={pasted.answer} save={save} />
+      )}
     </div>
   );
 }

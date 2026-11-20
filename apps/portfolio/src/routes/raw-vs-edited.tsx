@@ -9,6 +9,8 @@ import {
 import { SiteHomeLink } from "@/components/site-home-link";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@/lib/words";
 
 interface RawVsEditedSearch extends ShownPhotoSearch {
   /** How the open photo is compared. Left out for the default, the slider. */
@@ -49,8 +51,7 @@ function RawVsEditedPage() {
           Raw vs Edited
         </h1>
         <p className="text-sm text-muted-foreground">
-          {compared.length} {compared.length === 1 ? "photo" : "photos"} next to the unedited
-          original, straight from the camera
+          {count(compared.length, "photo")} next to the unedited original, straight from the camera
         </p>
       </header>
       <div className="mx-auto w-full max-w-6xl px-1 sm:px-2">
@@ -95,9 +96,9 @@ function OpenComparison({ photo, mode }: { photo: ComparedPhoto; mode: Compariso
 function ComparedList() {
   if (compared.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+      <EmptyNote className="rounded-lg border border-dashed p-6 text-center">
         No photos are shown next to their originals yet.
-      </p>
+      </EmptyNote>
     );
   }
   return (

@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { uploadNameProblem } from "@/lib/file-name";
+import { dateTimeText } from "@portfolio/lib/dates";
+import { ErrorNote } from "@/components/error-note";
 
 interface R2DetailsProps {
   r2: R2Upload;
@@ -85,7 +87,7 @@ function UploadFailure({ error }: { error: Error | null }) {
   const cloudflare = error instanceof UploadError ? error.cloudflare : undefined;
   return (
     <>
-      <p className="text-destructive text-sm">{error.message}</p>
+      <ErrorNote error={error} />
       {cloudflare && <CloudflareDetails response={cloudflare} />}
     </>
   );
@@ -130,6 +132,7 @@ function SameNamePrompt({ error, photo, onUpload }: SameNamePromptProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1 text-sm">
+        {/* oxlint-disable-next-line servenup/error-note -- the question's heading, not shown as a failure */}
         <p className="font-medium">{error.message}</p>
         <p className="text-muted-foreground">
           Photos in Flight finds photos by name, so two photos named {photo.name} can show the wrong
@@ -169,8 +172,6 @@ function suggestedUploadName(error: UploadError, photo: File): string {
   return error.suggestedName ?? `${photo.name.replace(/\.[^.]*$/, "")}-2`;
 }
 
-const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
-
 /** A photo already in the bucket, linking to its public URL, with its key and upload time. */
 function ExistingPhoto({ image }: { image: BucketImage }) {
   const [failed, setFailed] = useState(false);
@@ -196,9 +197,7 @@ function ExistingPhoto({ image }: { image: BucketImage }) {
         <span className="truncate font-mono" title={image.key}>
           {image.key}
         </span>
-        <span className="text-muted-foreground">
-          Uploaded {dateFormat.format(new Date(image.modified))}
-        </span>
+        <span className="text-muted-foreground">Uploaded {dateTimeText(image.modified)}</span>
       </figcaption>
     </figure>
   );
@@ -254,7 +253,7 @@ function Uploaded({ r2, result }: { r2: R2Upload; result: UploadResponse }) {
 function RemakeStatus({ r2 }: { r2: R2Upload }) {
   const { remake } = r2;
   if (remake.isPending) return <Pending>Remaking the Square Thumbnail…</Pending>;
-  if (remake.isError) return <p className="text-destructive">{remake.error.message}</p>;
+  if (remake.isError) return <ErrorNote error={remake.error} />;
   if (r2.action !== "remake") return null;
   return (
     <p className="text-amber-700 dark:text-amber-400">

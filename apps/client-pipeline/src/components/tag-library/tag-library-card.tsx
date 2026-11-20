@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { DownloadIcon } from "lucide-react";
 import { type TagLibraryExport, tagLibraryQuery } from "@/api/tag-library";
-import { CopyPromptButton, ErrorText } from "@/components/bulk-tagging/pick-controls";
+import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { LibraryAnswer, useFilteredNames } from "@/components/tag-library/library-answer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
-import { count } from "@/components/update-data-shared";
 import { downloadFile } from "@/lib/album-layout-editor";
 import { tagLibraryJson, tagLibraryPrompt } from "@/lib/tag-library-prompt";
+import { ErrorNote } from "@/components/error-note";
+import { QueryResult } from "@/components/query-result";
+import { count } from "@portfolio/lib/words";
 
 /**
  * Tag library: reads every tag and every photo with its tags, copies them into one prompt (or
@@ -53,14 +54,18 @@ interface LibraryStatusProps {
 
 /** What the read found: how many tags and photos, and the files it couldn't read. */
 function LibraryStatus({ pending, error, data }: LibraryStatusProps) {
-  if (pending) {
-    return (
-      <p className="text-muted-foreground flex items-center gap-2 text-sm">
-        <Spinner /> Reading every tag and photo…
-      </p>
-    );
-  }
-  if (!data) return <ErrorText error={error} />;
+  return (
+    <QueryResult
+      query={{ isPending: pending, error, data }}
+      pendingLabel="Reading every tag and photo…"
+    >
+      {(read) => <LibraryCounts data={read} />}
+    </QueryResult>
+  );
+}
+
+/** How many tags and photos were read, and the files that couldn't be. */
+function LibraryCounts({ data }: { data: TagLibraryExport }) {
   return (
     <div className="flex flex-col gap-1 text-sm">
       <p>
@@ -68,9 +73,7 @@ function LibraryStatus({ pending, error, data }: LibraryStatusProps) {
         Commit will have them.
       </p>
       {data.unreadable.length > 0 && (
-        <p className="text-destructive">
-          Left out, since they couldn&apos;t be read: {data.unreadable.join(", ")}
-        </p>
+        <ErrorNote error={`Left out, since they couldn't be read: ${data.unreadable.join(", ")}`} />
       )}
     </div>
   );

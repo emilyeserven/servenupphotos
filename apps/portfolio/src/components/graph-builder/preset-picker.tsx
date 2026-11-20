@@ -12,6 +12,7 @@ import {
 } from "@/lib/graph-presets";
 import type { Photo } from "@/lib/photos";
 import type { SavedGraphs } from "@/lib/saved-graphs";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** Picking a preset: the graph takes its settings, and the filters stay as they are. */
 type OnPick = (change: Partial<GraphConfig>) => void;
@@ -66,7 +67,7 @@ function PickerBody(props: PickerProps & { info: boolean; onInfo: () => void }) 
   const sections = sectionsOf(props.saved);
   const [key, setKey] = useState(() => firstOn(sections, props.config));
   const section = sections.find((each) => each.id === key) ?? sections[0];
-  if (!section) return <p className="p-3 text-sm text-muted-foreground">No presets yet.</p>;
+  if (!section) return <EmptyNote className="p-3">No presets yet.</EmptyNote>;
   return <PickerPanels {...props} sections={sections} section={section} onSection={setKey} />;
 }
 

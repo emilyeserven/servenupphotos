@@ -5,9 +5,11 @@ import { imageSizesMutation } from "@/api/image-sizes";
 import { FlagList } from "@/components/quality-check/flag-list";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { count } from "@/components/update-data-shared";
 import { type AspectCheck, checkAspectRatios } from "@/lib/aspect-ratio";
 import type { AutogroupPhoto } from "@/lib/compare-autogroup";
+import { count } from "@portfolio/lib/words";
+import { SectionTitle } from "@/components/section-title";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * The aspect ratio check: measures every chosen photo's Small version on the backend and lists
@@ -22,7 +24,7 @@ export function AspectRatioCheck({ photos }: { photos: AutogroupPhoto[] }) {
   const urls = [...new Set(photos.map((entry) => entry.imageUrl))];
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="font-medium">Aspect ratios</h3>
+      <SectionTitle>Aspect ratios</SectionTitle>
       <p className="text-muted-foreground max-w-prose text-sm">
         Reads each photo&apos;s Small version and lists the ones that aren&apos;t the house crop:
         16:9 for a landscape photo and 5:7 for a portrait one, within 1%. A square photo is neither.
@@ -33,7 +35,7 @@ export function AspectRatioCheck({ photos }: { photos: AutogroupPhoto[] }) {
         disabled={urls.length === 0}
         onClick={() => measure.mutate({ urls })}
       />
-      {measure.error && <p className="text-destructive text-sm">{measure.error.message}</p>}
+      <ErrorNote error={measure.error} />
       {result && <AspectResult result={result} />}
     </section>
   );

@@ -3,6 +3,7 @@ import { ImageOffIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import type { GroupKind } from "@/api/organize";
 import { ImageLightbox } from "@/components/image-lightbox";
+import { QueryResult } from "@/components/query-result";
 import {
   type CombinedPhoto,
   currentPhotos,
@@ -14,6 +15,7 @@ import { albumPhotoOrder } from "@/lib/album-photo-order";
 import { squareImages, tileImageUrl } from "@/lib/offline-thumbnails";
 import { useCombinedData } from "@/stores/combined-data";
 import { FILE, TITLE } from "@/lib/photo-fields";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** ALLPHOTOS.json from the combined data store, and its photos listing any of ids under kind. */
 export function useGroupPhotos(kind: GroupKind, ids: ReadonlySet<string>) {
@@ -41,35 +43,37 @@ export function GroupPhotoGrid({
   order?: number[];
   action?: (photo: CombinedPhoto) => ReactNode;
 }) {
-  if (combined.isPending) return <p>Reading ALLPHOTOS.json…</p>;
-  if (!photos) return <ReadError error={combined.error} />;
-  if (photos.length === 0) return <NoPhotos />;
   return (
-    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]">
-      {albumPhotoOrder(photos, order).map((photo, i) => (
-        <li key={`${photoText(photo, FILE) ?? ""}-${i}`}>
-          <PhotoTile photo={photo} action={action?.(photo)} />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function ReadError({ error }: { error?: Error }) {
-  return (
-    <p className="text-destructive">{error ? error.message : "ALLPHOTOS.json couldn't be read."}</p>
+    <QueryResult
+      query={{ isPending: combined.isPending, error: combined.error, data: photos }}
+      pendingLabel="Reading ALLPHOTOS.json…"
+    >
+      {(found) =>
+        found.length === 0 ? (
+          <NoPhotos />
+        ) : (
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]">
+            {albumPhotoOrder(found, order).map((photo, i) => (
+              <li key={`${photoText(photo, FILE) ?? ""}-${i}`}>
+                <PhotoTile photo={photo} action={action?.(photo)} />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </QueryResult>
   );
 }
 
 function NoPhotos() {
   return (
-    <p className="text-muted-foreground">
+    <EmptyNote>
       No photos yet. Add them on the{" "}
       <Link to="/gallery" className="text-foreground underline underline-offset-4">
         Gallery
       </Link>{" "}
       or a photo's page.
-    </p>
+    </EmptyNote>
   );
 }
 

@@ -7,7 +7,6 @@ import { useDatedPhotos } from "@/components/timezone-shift/use-day-photos";
 import { ZonePickers, zoneOptions } from "@/components/timezone-shift/zone-pickers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
 import { type ClockSetting, DEFAULT_CLOCK } from "@/lib/clock-setting";
 import { type ShiftSide, type ShiftZones, browserZone } from "@/lib/timezone-shift";
 import {
@@ -18,6 +17,8 @@ import {
 } from "@/lib/timezone-shift-plan";
 import { type FieldChange, useLocalEditsStore } from "@/stores/local-edits";
 import { CUSTOM_DATE } from "@/lib/photo-fields";
+import { ReadingNote } from "@/components/query-result";
+import { count } from "@portfolio/lib/words";
 
 /**
  * Update Data's Times across timezones: fixes a session of photos whose camera clock was wrong
@@ -47,13 +48,7 @@ export function TimezoneShiftCard() {
 /** Waits for the photos from Photos in Flight and the Gallery, then shows the form. */
 function ShiftFormLoader() {
   const { photos, lines, pending } = useDatedPhotos();
-  if (pending) {
-    return (
-      <p className="text-muted-foreground flex items-center gap-2">
-        <Spinner /> Reading the photos…
-      </p>
-    );
-  }
+  if (pending) return <ReadingNote label="Reading the photos…" />;
   return <ShiftForm photos={photos} lines={lines} />;
 }
 
@@ -68,7 +63,7 @@ function changesOf(plans: PlannedShift[]): FieldChange[] {
 
 /** What the last fix did. */
 function doneText(changed: number): string {
-  const photos = changed === 1 ? "1 photo's time" : `${changed} photos' times`;
+  const photos = count(changed, "photo's time", "photos' times");
   return `Fixed ${photos}. The new custom dates are waiting for Commit.`;
 }
 
@@ -113,7 +108,7 @@ function ShiftForm({ photos, lines }: ShiftFormProps) {
       <ShiftPreview plans={plans} effects={effects} />
       <div className="flex flex-wrap items-center gap-3">
         <Button type="button" disabled={changed.length === 0} onClick={apply}>
-          {changed.length === 1 ? "Fix 1 photo's time" : `Fix ${changed.length} photos' times`}
+          Fix {count(changed.length, "photo's time", "photos' times")}
         </Button>
         {done !== null && <span className="text-muted-foreground text-xs">{doneText(done)}</span>}
       </div>

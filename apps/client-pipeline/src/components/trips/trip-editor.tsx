@@ -19,6 +19,8 @@ import type { TripLine } from "@/api/trip-lines";
 import { TripMap } from "@/components/trips/trip-map";
 import type { TripDay } from "@/lib/trip-days";
 import { datesBetween, legsInOrder } from "@/lib/trip-legs";
+import { count } from "@portfolio/lib/words";
+import { SectionTitle } from "@/components/section-title";
 
 interface TripEditorProps {
   /** The Trip as saved, or a new one with no ID yet. */
@@ -45,10 +47,10 @@ function withDays(draft: Trip): Trip {
 /** The days the Trip covers and how many photos were taken on them, once its first day is picked. */
 function Covers({ trip, countPhotos }: Pick<TripEditorProps, "trip" | "countPhotos">) {
   if (!trip.start) return <>Pick the days it covers. Each day can be in one Trip.</>;
-  const count = countPhotos(trip.start, trip.end);
+  const photos = countPhotos(trip.start, trip.end);
   return (
     <>
-      {dayRange(trip.start, trip.end)}: {count} saved {count === 1 ? "photo" : "photos"} taken then.
+      {dayRange(trip.start, trip.end)}: {count(photos, "saved photo")} taken then.
     </>
   );
 }
@@ -79,7 +81,7 @@ export function TripEditor(props: TripEditorProps) {
             onChange={(labels) => setDraft({ ...typed, labels })}
           />
           <div className="flex flex-col gap-1">
-            <h3 className="text-sm font-medium">Days and legs</h3>
+            <SectionTitle>Days and legs</SectionTitle>
             <p className="text-muted-foreground text-sm">
               Optional: the ferries and flights between places that a day's line can't hold, drawn
               on the map. Add them on the day they leave; a day can have several, each from one of

@@ -1,0 +1,12 @@
+{
+  "id": "higashi-hagi-station",
+  "name": "Higashi-Hagi Station",
+  "description": "",
+  "parent": "",
+  "city": "Hagi",
+  "state": "Yamaguchi",
+  "country": "Japan",
+  "latitude": 34.416669,
+  "longitude": 131.410447,
+  "exactLocation": true
+}

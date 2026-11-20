@@ -4,11 +4,11 @@ import type { SaveChange } from "@/components/small-tags/page";
 import { AddToPhotos } from "@/components/small-tags/add-to-photos";
 import { type PhotosById, TaggedPhotos } from "@/components/small-tags/small-photos";
 import { RemoveTag, RenameTag } from "@/components/small-tags/tag-actions";
-import { ErrorText } from "@/components/bulk-tagging/pick-controls";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { count } from "@/components/update-data-shared";
 import type { SmallTag } from "@/lib/small-tags";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** What can be done to a small tag, one at a time. */
 const ACTIONS = [
@@ -64,7 +64,7 @@ export function SmallTagCard({ error, ...props }: SmallTagCardProps) {
         {action === "remove" && <RemoveTag {...props} />}
         {action === "rename" && <RenameTag {...props} />}
         {action === "add" && <AddToPhotos {...props} />}
-        <ErrorText error={error} />
+        <ErrorNote error={error} />
       </CardContent>
     </Card>
   );

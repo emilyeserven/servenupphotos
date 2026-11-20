@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
 import { type BulkChange, bulkChanged, bulkNotParents, parentOptions } from "@/lib/place-bulk";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 interface PlaceBulkBarProps {
   /** The places checked in the list. */
@@ -18,11 +20,6 @@ interface PlaceBulkBarProps {
 }
 
 const NO_CHANGE: BulkChange = { city: "", parent: "" };
-
-/** The count with its noun, such as "1 place" or "3 places". */
-function placesText(count: number): string {
-  return `${count} place${count === 1 ? "" : "s"}`;
-}
 
 /** Saves each changed place as its own queued commit; says how many failed and why. */
 function useBulkSave(onDone: () => void) {
@@ -38,7 +35,7 @@ function useBulkSave(onDone: () => void) {
     setSaving(0);
     const failed = results.flatMap((r) => (r.status === "rejected" ? [r.reason as Error] : []));
     if (failed.length === 0) return onDone();
-    setError(`${placesText(failed.length)} didn't save: ${failed[0]?.message}`);
+    setError(`${count(failed.length, "place")} didn't save: ${failed[0]?.message}`);
   };
   return { run, saving, running: saving > 0, error };
 }
@@ -79,7 +76,7 @@ export function PlaceBulkBar({ selected, places, onClear }: PlaceBulkBarProps) {
           onChange={(parent) => setChange((c) => ({ ...c, parent }))}
         />
       </div>
-      {bulk.error && <p className="text-destructive text-sm">{bulk.error}</p>}
+      <ErrorNote error={bulk.error} />
       <BulkSaveButton bulk={bulk} changed={changed} />
     </section>
   );
@@ -92,10 +89,10 @@ interface BulkHeaderProps {
 }
 
 /** How many places are checked, and a button to uncheck them. */
-function BulkHeader({ count, disabled, onClear }: BulkHeaderProps) {
+function BulkHeader({ count: n, disabled, onClear }: BulkHeaderProps) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <span className="text-sm font-medium">{placesText(count)} checked</span>
+      <span className="text-sm font-medium">{count(n, "place")} checked</span>
       <Button type="button" variant="ghost" size="sm" onClick={onClear} disabled={disabled}>
         Uncheck all
       </Button>
@@ -106,8 +103,8 @@ function BulkHeader({ count, disabled, onClear }: BulkHeaderProps) {
 /** Saves the places the change would change, saying how many, or how many are saving. */
 function BulkSaveButton({ bulk, changed }: { bulk: BulkSave; changed: Place[] }) {
   const label = bulk.running
-    ? `Saving ${placesText(bulk.saving)}…`
-    : `Save ${placesText(changed.length)}`;
+    ? `Saving ${count(bulk.saving, "place")}…`
+    : `Save ${count(changed.length, "place")}`;
   return (
     <div>
       <Button

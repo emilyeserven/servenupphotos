@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { exifValueCounts } from "@/lib/camera-overrides";
 import { canonicalJson } from "@/lib/combined";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { SectionTitle } from "@/components/section-title";
 
 const selectClass = "border-input bg-background h-9 min-w-0 rounded-md border px-3 text-sm";
 
@@ -28,7 +29,7 @@ export function RuleCard({ index, rule, photos, onChange }: RuleCardProps) {
   return (
     <section aria-label={`Rule ${index + 1}`} className="flex flex-col gap-3 rounded-md border p-3">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-sm font-medium">Rule {index + 1}</h3>
+        <SectionTitle>Rule {index + 1}</SectionTitle>
         <Button
           variant="ghost"
           size="icon"

@@ -19,7 +19,7 @@ function SiteSpotlightPage() {
       title="Site Spotlight"
       description="Pick the album shown in each spotlight zone of the portfolio, such as behind the homepage."
     >
-      <QueryResult query={settings}>
+      <QueryResult query={settings} pendingLabel="Reading settings…">
         {(data) =>
           data.github.repo && data.github.token.set ? (
             <SiteSpotlight />

@@ -149,7 +149,8 @@ each photo's names as pasting into a Tags field does (`github/bulktags_answer.go
 (ignoring case, or by the ID made from it) is that tag; one an album, genre or metadata group has, or with nothing to
 make an ID from, is left out saying why; the rest are new tags in lowercase kebab-case, with their definitions as
 descriptions. A parent that isn't a tag yet is made too, before the tag under it. Photos the answer names that weren't
-picked are listed and left out.
+picked are found among every photo and reviewed after the picked ones, and names that aren't any photo's are listed
+and skipped ([photos outside the batch](copy-prompts.md#photos-outside-the-batch)).
 
 The review lists the new tags, each with a checkbox and one for its parent, then each photo with a checkbox per tag
 to add, marking the new ones, and the tags it already has. **Save tags for N photos** (`POST /api/data/bulk-tags`)
@@ -211,6 +212,11 @@ choosing it on the Photo page adds), where it is, the LLM's confidence and reaso
 answer's own map link, a search for it on Naver Map (in South Korea) or Google Maps, and its GPS position on Google
 Maps. A photo starts ticked unless the LLM's confidence is low. When a photo shows no city or country (custom or EXIF),
 its place's are written in as its custom ones.
+
+The answer doesn't have to be for the picked photos. Before the review, the names in it that aren't picked photos are
+looked up among every photo (`POST /api/data/photos-by-name`, `FindPhotosByName` in `github/answered.go`); the ones
+found are reviewed after the picked ones, the rest are listed and skipped, and a picked photo the answer doesn't name
+is left as it is ([photos outside the batch](copy-prompts.md#photos-outside-the-batch)).
 
 **Save places for N photos** (`POST /api/data/bulk-places`, `ApplyBulkPlaces`) makes the new places, each checked as
 saving one on the Places page checks it, and replaces each ticked photo's `places`, sets its `placeName` to the first
@@ -293,7 +299,8 @@ the ones already shown; **Start over** picks from the start again.
 
 **Copy the genre prompt** (`lib/genre-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a
 link to its Small version, its title and what's known of where it was taken, and its tags, then every genre there is
-with its description. It asks for 1 to 3 genres a photo, from that list when one fits, and only otherwise for a new
+with its description, each [subgenre](photographic-genres.md#subgenres) indented under its genre (the prompt asks for
+the subgenre alone when it fits, since it already counts as its genre). It asks for 1 to 3 genres a photo, from that list when one fits, and only otherwise for a new
 genre that photographers would recognize (such as Night or Food, never a subject or a place), in Title Case, described
 once in `newGenres`:
 
@@ -535,7 +542,8 @@ album's name the same way (`github/albumsuggest.go`): a name matching an album's
 made from it) is that album; one a tag, genre or metadata group has, or with nothing to make an ID from, is left out
 saying why; the rest are new albums, named as the answer writes them, with an ID made from the name and the answer's
 description. A new album's `parent` is kept only when it names an existing album. Two entries naming the same album
-are merged, and photos the answer names that weren't picked are listed and left out.
+are merged. Photos the answer names that weren't picked are put in their albums too, and names that aren't any
+photo's are listed and skipped ([photos outside the batch](copy-prompts.md#photos-outside-the-batch)).
 
 The review lists each album with a checkbox, marked new or existing, a new one's description and a checkbox for the
 album it goes inside, and its photos, each with a checkbox. **Save albums for N photos**

@@ -1,7 +1,7 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { InFlightPullRequest, PublishResult } from "@/api/photos";
 import { type PendingSave, changesByFolder, photoChanges } from "@/api/scan-changes";
-import { requestJson } from "@/api/request";
+import { del, post, put, requestJson } from "@/api/request";
 
 /**
  * A way of organizing photos: albums, tags and photographic genres. Each one is one JSON file, and
@@ -25,9 +25,15 @@ export interface Group {
   id: string;
   name: string;
   description?: string;
-  /** An album's parent album's ID; absent for a top-level album, and for every tag and genre. */
+  /**
+   * An album's parent album's ID, a tag's more general tag's ID, or a subgenre's genre's ID, such
+   * as "architecture"; absent at the top level.
+   */
   parent?: string;
-  /** An album's place among the albums, 1 first; absent until the albums are reordered. */
+  /**
+   * An album's place among the albums, or a genre's among the genres, 1 first; absent until they're
+   * reordered.
+   */
   order?: number;
   /** The IDs of the portfolio's spotlight spots that show an album's photos, such as "homepage". */
   spotlightZones?: string[];
@@ -110,7 +116,7 @@ interface NewGroup {
   id: string;
   name: string;
   description: string;
-  /** An album's parent album's ID, or a tag's parent tag's ID. */
+  /** An album's parent album's ID, a tag's parent tag's ID, or a subgenre's genre's ID. */
   parent?: string;
 }
 
@@ -125,12 +131,7 @@ export const createGroupMutation = (kind: GroupKind) =>
         return [{ kind, path, after: data }];
       },
     },
-    mutationFn: (group: NewGroup) =>
-      requestJson<PublishResult>(`/api/organize/${kind}`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(group),
-      }),
+    mutationFn: (group: NewGroup) => post<PublishResult>(`/api/organize/${kind}`, group),
   });
 
 /** The organize list with a just-made group in it, so it's named before the list is read again. */
@@ -200,19 +201,11 @@ function albumChanges(result: unknown) {
   return (result as PendingSave).changes.map((change) => ({ kind: "albums" as const, ...change }));
 }
 
-/** The kinds whose files can name a parent of the same kind: an album's album, or a tag's more general tag. */
-export type ParentKind = "albums" | "tags";
-
-/** Whether kind's albums or tags can have a parent; genres can't. */
-export function hasParents(kind: GroupKind): kind is ParentKind {
-  return kind === "albums" || kind === "tags";
-}
-
 /**
- * Moves the album or tag `id` under the one `parent` of the same kind, or to the top level when
+ * Moves the album, tag or genre `id` under the one `parent` of the same kind, or to the top level when
  * it's null, as a change waiting for Commit.
  */
-export const setGroupParentMutation = (kind: ParentKind) =>
+export const setGroupParentMutation = (kind: GroupKind) =>
   mutationOptions({
     mutationKey: ["organize", kind, "parent"],
     meta: {
@@ -220,11 +213,7 @@ export const setGroupParentMutation = (kind: ParentKind) =>
       changes: (result) => (result as PendingSave).changes.map((change) => ({ kind, ...change })),
     },
     mutationFn: ({ id, parent }: { id: string; parent: string | null }) =>
-      requestJson<AlbumParentResult>(`/api/organize/${kind}/${encodeURIComponent(id)}/parent`, {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ parent }),
-      }),
+      put<AlbumParentResult>(`/api/organize/${kind}/${encodeURIComponent(id)}/parent`, { parent }),
   });
 
 /** What a change to several albums did; nothing is saved when none of their files changed. */
@@ -238,12 +227,7 @@ function albumsMutation<T>(key: string, url: (vars: T) => string, body: (vars: T
   return mutationOptions({
     mutationKey: ["organize", "albums", key],
     meta: { saves: (result) => (result as AlbumsResult).files > 0, changes: albumChanges },
-    mutationFn: (vars: T) =>
-      requestJson<AlbumsResult>(url(vars), {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body(vars)),
-      }),
+    mutationFn: (vars: T) => put<AlbumsResult>(url(vars), body(vars)),
   });
 }
 
@@ -293,9 +277,7 @@ export const deleteAlbumMutation = mutationOptions({
   mutationKey: ["organize", "albums", "delete"],
   meta: { saves: true, changes: (result) => changesByFolder(result as PendingSave, "albums") },
   mutationFn: (id: string) =>
-    requestJson<DeleteAlbumResult>(`/api/organize/albums/${encodeURIComponent(id)}`, {
-      method: "DELETE",
-    }),
+    del<DeleteAlbumResult>(`/api/organize/albums/${encodeURIComponent(id)}`),
 });
 
 /** What taking photos out of an album did. */
@@ -312,11 +294,7 @@ export const removeAlbumPhotosMutation = mutationOptions({
   mutationKey: ["organize", "albums", "remove-photos"],
   meta: { saves: true, changes: (result) => changesByFolder(result as PendingSave, "albums") },
   mutationFn: ({ id, photoIds }: { id: string; photoIds: number[] }) =>
-    requestJson<RemovedPhotosResult>(`/api/organize/albums/${encodeURIComponent(id)}/photos`, {
-      method: "DELETE",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ photoIds }),
-    }),
+    del<RemovedPhotosResult>(`/api/organize/albums/${encodeURIComponent(id)}/photos`, { photoIds }),
 });
 
 /**
@@ -350,12 +328,7 @@ function tagsMutation<T>(key: string, body: (vars: T) => unknown) {
       changes: (result) =>
         (result as PendingSave).changes.map((change) => ({ kind: "tags" as const, ...change })),
     },
-    mutationFn: (vars: T) =>
-      requestJson<AlbumsResult>(`/api/organize/tags/${key}`, {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body(vars)),
-      }),
+    mutationFn: (vars: T) => put<AlbumsResult>(`/api/organize/tags/${key}`, body(vars)),
   });
 }
 
@@ -379,6 +352,33 @@ export const setTagFavoritesMutation = tagsMutation(
   "favorites",
   (favorites: Record<string, boolean>) => ({ favorites }),
 );
+
+/** One genre as Reorganize Genres arranges it; its ID never changes, so its photos keep it. */
+export interface GenreTreeEntry {
+  id: string;
+  /** Its name as shown, such as "Traditional architecture". */
+  name: string;
+  /** The ID of the genre it's a subgenre of, such as "architecture", or "" at the top level. */
+  parent: string;
+}
+
+/** What a Reorganize Genres save did; nothing is saved when no genre file changed. */
+export type GenreTreeResult = AlbumsResult;
+
+/**
+ * Saves `genres`, every genre in its new order, as each genre file's order, parent and name, as
+ * changes waiting for Commit.
+ */
+export const setGenreTreeMutation = mutationOptions({
+  mutationKey: ["organize", "genres", "tree"],
+  meta: {
+    saves: (result) => (result as AlbumsResult).files > 0,
+    changes: (result) =>
+      (result as PendingSave).changes.map((change) => ({ kind: "genres" as const, ...change })),
+  },
+  mutationFn: (genres: GenreTreeEntry[]) =>
+    put<GenreTreeResult>("/api/organize/genres/tree", { genres }),
+});
 
 /** The tags with favorites first, keeping the order of each. */
 export function favoritesFirst<T extends { favorite?: boolean }>(tags: T[]): T[] {
@@ -452,11 +452,7 @@ export const addPhotoGroupsMutation = mutationOptions({
   mutationKey: ["photos", "groups"],
   meta: { saves: true, changes: (result) => photoChanges(result as PhotoGroupsResult) },
   mutationFn: (add: PhotoGroups & { paths: string[] }) =>
-    requestJson<PhotoGroupsResult>("/api/photos/groups", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(add),
-    }),
+    post<PhotoGroupsResult>("/api/photos/groups", add),
 });
 
 /** The albums from `id` up through its parents, top first; it stops at a missing or repeated one. */
@@ -473,8 +469,15 @@ export function albumAncestry(albums: Group[], id: string): Group[] {
   return chain;
 }
 
-/** The IDs of the albums inside `id`, at any depth, never `id` itself. */
-export function albumDescendants(albums: Group[], id: string): Set<string> {
+/** Anything placed under a parent of its own kind by ID, as albums, tags and genres are. */
+interface Nested {
+  id: string;
+  /** The ID of the one it's under; absent or "" at the top level. */
+  parent?: string;
+}
+
+/** The IDs of the albums (or tags or genres) inside `id`, at any depth, never `id` itself. */
+export function albumDescendants(albums: Nested[], id: string): Set<string> {
   const found = new Set<string>();
   const queue = [id];
   for (let at = queue.shift(); at !== undefined; at = queue.shift()) {
@@ -490,7 +493,7 @@ export function albumDescendants(albums: Group[], id: string): Set<string> {
 }
 
 /** The albums whose parent is `id`, other than itself. */
-function childAlbums(albums: Group[], id: string): Group[] {
+function childAlbums<T extends Nested>(albums: T[], id: string): T[] {
   return albums.filter((album) => album.parent === id && album.id !== id);
 }
 
@@ -498,11 +501,11 @@ function childAlbums(albums: Group[], id: string): Group[] {
  * albums with each one's sub-albums right after it, in the order given, and how deep each is. An
  * album whose parent is missing, or that's in a loop, is listed at the top level.
  */
-export function albumTree(albums: Group[]): { group: Group; depth: number }[] {
+export function albumTree<T extends Nested = Group>(albums: T[]): { group: T; depth: number }[] {
   const ids = new Set(albums.map((album) => album.id));
-  const rows: { group: Group; depth: number }[] = [];
-  const placed = new Set<Group>();
-  const visit = (album: Group, depth: number) => {
+  const rows: { group: T; depth: number }[] = [];
+  const placed = new Set<T>();
+  const visit = (album: T, depth: number) => {
     if (placed.has(album)) return;
     placed.add(album);
     rows.push({ group: album, depth });
@@ -514,7 +517,7 @@ export function albumTree(albums: Group[]): { group: Group; depth: number }[] {
   return rows;
 }
 
-function isTopLevel(album: Group, ids: ReadonlySet<string>): boolean {
+function isTopLevel(album: Nested, ids: ReadonlySet<string>): boolean {
   return !album.parent || !ids.has(album.parent);
 }
 

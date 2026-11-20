@@ -26,6 +26,7 @@ import { modifierKey } from "@/lib/platform";
 import { type ShownArea, usePlaceArea } from "@/lib/place-areas";
 import { useShownTripLines } from "@/lib/trip-lines-map";
 import { cn } from "@/lib/utils";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** One row of the key: whether it's listed, its sample, what it means, and more help behind a (?). */
 type LegendRow = [shown: boolean, symbol: ReactNode, label: string, help?: ReactNode];
@@ -66,7 +67,7 @@ function lineRows(items: LegendItems, dark: boolean): LegendRow[] {
     [items.walk, <WalkSymbol dark={dark} key="walk" />, "Walk"],
     [
       items.rides.length > 0,
-      <RideSymbol colors={items.rides} key="ride" />,
+      <RideSymbol colors={items.rides} dark={dark} key="ride" />,
       "Bus, subway or train",
     ],
     [items.drive, <DriveSymbol dark={dark} key="drive" />, "Drive"],
@@ -127,7 +128,7 @@ export function MapLegend({
 }) {
   const [open, toggle] = useLegendOpen();
   const dark = useIsDark();
-  const trips = useShownTripLines(photos, display.tripLines);
+  const trips = useShownTripLines(photos, display.tripLines, display.hiddenTrips);
   const placeArea = usePlaceArea(area.id) !== undefined;
   const sets = useMemo(() => splitSets(photos, photoSets).sets.length > 0, [photos]);
   const items = legendItems(photos, trips, placeArea, sets);
@@ -172,7 +173,7 @@ function LegendToggle({ open, onToggle }: { open: boolean; onToggle: () => void 
 function LegendList({ groups }: { groups: LegendRow[][] }) {
   const listed = groups.filter((rows) => rows.length > 0);
   if (listed.length === 0)
-    return <p className="px-3 pb-2.5 text-muted-foreground">No photos on the map</p>;
+    return <EmptyNote className="px-3 pb-2.5">No photos on the map.</EmptyNote>;
   return (
     <div className="flex flex-col divide-y px-3 pb-1 dark:divide-input">
       {listed.map((rows) => (

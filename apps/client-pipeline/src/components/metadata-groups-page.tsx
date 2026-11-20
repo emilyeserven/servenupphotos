@@ -7,6 +7,7 @@ import { MetaMoveButtons } from "@/components/metadata-move-buttons";
 import { MetaUncovered } from "@/components/metadata-uncovered";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
+import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +16,10 @@ import { groupPhotoCount, groupTree, uncoveredValues } from "@/lib/meta-groups";
 import { fieldValues, type MetaValueCount, showRange } from "@/lib/meta-values";
 import { cn } from "@/lib/utils";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import type { CombinedData } from "@/api/photos";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 /** The Metadata Groups page: named groups of camera, lens, focal length and other EXIF values. */
 export function MetadataGroupsPage() {
@@ -32,10 +36,17 @@ export function MetadataGroupsPage() {
 
 function MetaGroupTabs() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and metadata groups…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  const photos = shownPhotos(combined.data);
-  const groups = metaGroups(combined.data);
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photos and metadata groups…">
+      {(data) => <FieldTabs data={data} />}
+    </QueryResult>
+  );
+}
+
+/** One tab per metadata field, each with its groups. */
+function FieldTabs({ data }: { data: CombinedData }) {
+  const photos = shownPhotos(data);
+  const groups = metaGroups(data);
   return (
     <Tabs defaultValue="camera">
       <TabsList className="h-auto flex-wrap">
@@ -108,9 +119,7 @@ function GroupList({ info, groups, values, chosen, onChoose }: GroupListProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
-        {groups.length === 0 && (
-          <p className="text-muted-foreground text-sm">No {info.one} groups yet.</p>
-        )}
+        {groups.length === 0 && <EmptyNote>No {info.one} groups yet.</EmptyNote>}
         {groupTree(groups).map(({ group, depth }) => (
           <GroupRow
             key={group.id}
@@ -158,14 +167,10 @@ interface GroupRowProps {
   onChoose: () => void;
 }
 
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
-}
-
 /** How many values the group lists, or how many groups are in it when it lists none. */
 function listed(group: MetaGroup, subgroups: number): string {
   const values = group.values.length;
-  return values === 0 && subgroups > 0 ? plural(subgroups, "group") : plural(values, "value");
+  return values === 0 && subgroups > 0 ? count(subgroups, "group") : count(values, "value");
 }
 
 /** What the group covers: its range, such as "10–24 mm", or how many values or groups it has. */
@@ -196,7 +201,7 @@ function GroupRow(props: GroupRowProps) {
       >
         <GroupName name={group.name} nested={depth > 0} />
         <span className="text-muted-foreground shrink-0 text-right text-xs">
-          {coverage(props.info, group, props.subgroups)}, {plural(props.photos, "photo")}
+          {coverage(props.info, group, props.subgroups)}, {count(props.photos, "photo")}
           <NotInSubgroups subgroups={props.subgroups} uncovered={props.uncovered} />
         </span>
       </button>

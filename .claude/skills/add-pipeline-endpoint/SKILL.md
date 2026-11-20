@@ -25,6 +25,30 @@ slow. How saves reach GitHub is in `docs/saving-to-github.md` and `docs/pending-
 
 ## 2. Handler and route
 
+### Route shape
+
+Pick the path before writing the handler. `pnpm check fixtures` fails on a route that breaks the rules it can see
+(marked _checked_; the rules are in `scripts/route-shapes.mjs`).
+
+- **The method says what happens.** `GET` reads, `PUT /<kind>/{id}` saves one thing whole, `DELETE` removes, and
+  `POST` runs a step or makes a change that isn't one of those. No path ends in a word the method already says
+  (`delete`, `remove`, `save`, `write`, `update`, `set`, `create`, `add`, `get`, `list`): `DELETE /photos/bucket`
+  with `{ "keys": [...] }`, not `POST /photos/bucket/delete`. A `DELETE` may carry a JSON body. _Checked._
+- **Segments are lowercase words joined by hyphens** (`contact-sheets`, `alt-text`); parameters are lowerCamelCase in
+  braces (`{id}`, `{day}`). _Checked._ A segment that names a data folder in `apps/portfolio/src/data` keeps the
+  folder's name, such as `metainfo`, `notstored`, `photobooks` and `triplines`.
+- **A collection is a plural noun** (`/places`, `/trips`), one item is `/<kind>/{id}`, and a part of one item is a
+  noun after it: `PUT /places/{id}/area`, `PUT /organize/albums/{id}/layout`.
+- **Update Data changes** live under `/data/<change>`, named like the card's slug. The change is `POST /data/<change>`;
+  the steps before it are `POST /data/<change>/pick` (choose photos for the LLM prompt) and
+  `POST /data/<change>/preview` (what the change would do, saving nothing). A `pick` or `preview` is always a `POST`
+  with the change next to it. _Checked._ Leave out `/preview` when the browser reads the answer itself and the review
+  needs nothing from the backend, as Bulk Places does.
+- **Progress** of a long read is `GET /data/progress/{task}`, with the task named like the change.
+- Never put `/api` in the pattern: the BFF strips it. _Checked._
+
+### Handler
+
 - Add the handler to `apps/be-pipeline/internal/httpapi/<area>.go` as a factory that takes its dependencies
   (`store *settings.Store`, `gh *github.Client`, storage funcs) and returns an `http.HandlerFunc`, so tests can
   pass fakes. `captions.go` is a short example.
@@ -53,15 +77,16 @@ slow. How saves reach GitHub is in `docs/saving-to-github.md` and `docs/pending-
 
 ## 5. Only if the backend gives the work more than 30s
 
-- Add the path prefix to `TIMEOUTS` in `apps/bff-pipeline/src/lib/timeouts.ts` with a wait a little longer than
-  the backend's, and a comment saying what takes the time.
+- Add the path prefix to `relayTimeouts` in `apps/be-pipeline/internal/httpapi/timeouts.go`, built from the
+  handler's own timeout constants. The BFF reads it from `GET /timeouts` at start-up (`docs/bff-timeouts.md`). A
+  prefix covers every method on that path, so a `DELETE` next to a slower `POST` needs no line of its own.
 
 ## Checks
 
 ```sh
 cd apps/be-pipeline && go test ./internal/github/      # or ./internal/storage/ ./internal/httpapi/
 cd apps/be-pipeline && golangci-lint run
-pnpm check                                             # oxlint, oxfmt --check, typecheck, fallow
+pnpm check                                             # oxlint, oxfmt --check, typecheck, fallow, fixtures and route shapes
 ```
 
 Then update `docs/<feature>.md` and screenshot the page: see the `finish-feature-pr` skill.

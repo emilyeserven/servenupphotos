@@ -1,10 +1,10 @@
 import { DownloadIcon, Trash2Icon } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
-import { type ChangeEvent, useState } from "react";
+import type { ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { count } from "@/components/update-data-shared";
+import { PasteAnswer } from "@/components/paste-answer";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { downloadFile } from "@/lib/album-layout-editor";
 import {
   type LightroomMerge,
@@ -12,19 +12,24 @@ import {
   readLightroomAlbums,
 } from "@/lib/lightroom-albums";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
+import { askFirst } from "@/stores/confirm";
 
-/** A read import: the merge to look over and the source it came from, or why it couldn't be read. */
-type ImportRead = { merge: LightroomMerge; source: string } | { error: string };
+/** A read import: the merge to look over and the source it came from. */
+interface ImportRead {
+  merge: LightroomMerge;
+  source: string;
+}
 
-/** Reads the pasted text and merges it with the albums already on the page, without saving anything yet. */
+/**
+ * Reads the pasted text and merges it with the albums already on the page, without saving anything
+ * yet. Throws a sentence a user can read when there's no list in it.
+ */
 function readImport(text: string): ImportRead {
-  try {
-    const file = readLightroomAlbums(text);
-    const current = useLightroomAlbumsStore.getState().file?.items ?? [];
-    return { merge: mergeLightroomAlbums(current, file.items), source: file.source };
-  } catch (error) {
-    return { error: (error as Error).message };
-  }
+  const file = readLightroomAlbums(text);
+  const current = useLightroomAlbumsStore.getState().file?.items ?? [];
+  return { merge: mergeLightroomAlbums(current, file.items), source: file.source };
 }
 
 /**
@@ -32,13 +37,7 @@ function readImport(text: string): ImportRead {
  * current list, keeping each matched album's stage and notes. Export downloads the list with every stage and note.
  */
 export function ImportCard() {
-  const [text, setText] = useState("");
-  const [read, setRead] = useState<ImportRead>();
-  const change = (value: string) => {
-    setText(value);
-    setRead(undefined);
-  };
-  const done = () => change("");
+  const pasted = usePastedAnswer(readImport);
   return (
     <Card>
       <CardHeader>
@@ -55,20 +54,18 @@ export function ImportCard() {
           accept="application/json,.json,.txt,.md"
           aria-label="Load an exported file"
           className="file:bg-muted text-sm file:mr-3 file:rounded-md file:border file:px-2 file:py-1 file:text-xs"
-          onChange={(event) => void loadFile(event, change)}
+          onChange={(event) => void loadFile(event, pasted.setTyped)}
         />
-        <Textarea
-          aria-label="LLM answer or exported JSON"
-          value={text}
+        <PasteAnswer
+          pasted={pasted}
+          label="Read the list"
           placeholder='{ "source": "lightroom-classic", "items": [ … ] }'
-          className="max-h-[40vh] min-h-32 font-mono"
-          onChange={(event) => change(event.target.value)}
-        />
-        <ImportReview read={read} onDone={done} />
-        <ImportButtons
-          canRead={text.trim() !== "" && !read}
-          onRead={() => setRead(readImport(text))}
-        />
+        >
+          <ListButtons />
+        </PasteAnswer>
+        {pasted.answer && (
+          <ImportReview key={pasted.reviews} read={pasted.answer} onDone={pasted.clear} />
+        )}
       </CardContent>
     </Card>
   );
@@ -80,24 +77,20 @@ async function loadFile(event: ChangeEvent<HTMLInputElement>, setText: (text: st
   event.target.value = "";
 }
 
-interface ImportButtonsProps {
-  canRead: boolean;
-  onRead: () => void;
-}
-
-/** Reads the import, exports the list, or forgets it. */
-function ImportButtons({ canRead, onRead }: ImportButtonsProps) {
+/** Exports the list, or forgets it. */
+function ListButtons() {
   const file = useLightroomAlbumsStore((state) => state.file);
   const clear = useLightroomAlbumsStore((state) => state.clear);
-  const forget = () => {
-    if (confirm("Forget every album, stage and note on this page? Export first to keep them."))
-      clear();
+  const forget = async () => {
+    const yes = await askFirst({
+      question: "Forget every album, stage and note on this page?",
+      note: "Export first to keep them.",
+      action: "Forget",
+    });
+    if (yes) clear();
   };
   return (
-    <div className="flex flex-wrap gap-2">
-      <Button type="button" disabled={!canRead} onClick={onRead}>
-        Read the list
-      </Button>
+    <>
       <Button
         type="button"
         variant="outline"
@@ -111,7 +104,7 @@ function ImportButtons({ canRead, onRead }: ImportButtonsProps) {
         <Trash2Icon />
         Forget the list
       </Button>
-    </div>
+    </>
   );
 }
 
@@ -121,16 +114,14 @@ function exportName() {
 }
 
 interface ImportReviewProps {
-  read?: ImportRead;
+  read: ImportRead;
   onDone: () => void;
 }
 
-/** What the import changes, with a button to use it, or why it couldn't be read. */
+/** What the import changes, with a button to use it. */
 function ImportReview({ read, onDone }: ImportReviewProps) {
   const replace = useLightroomAlbumsStore((state) => state.replace);
   const navigate = useNavigate();
-  if (!read) return null;
-  if ("error" in read) return <p className="text-destructive text-sm">{read.error}</p>;
   const { merge, source } = read;
   const use = () => {
     replace(source, merge.items);
@@ -161,7 +152,7 @@ function ImportReview({ read, onDone }: ImportReviewProps) {
 function DroppedAlbums({ merge }: { merge: LightroomMerge }) {
   if (merge.dropped.length === 0) return null;
   return (
-    <div className="text-destructive">
+    <ErrorNote>
       <p>
         {count(merge.dropped.length, "album")} with a stage or notes{" "}
         {merge.dropped.length === 1 ? "isn't" : "aren't"} in the new list and will be dropped:
@@ -171,6 +162,6 @@ function DroppedAlbums({ merge }: { merge: LightroomMerge }) {
           <li key={album.path}>{album.path}</li>
         ))}
       </ul>
-    </div>
+    </ErrorNote>
   );
 }

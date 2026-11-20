@@ -1,5 +1,6 @@
 import { overrideId } from "@/api/cameras";
 import { byName, settingEntries, settingMutations } from "@/api/data-files";
+import { parsePastedJson } from "@/lib/pasted-json";
 
 /**
  * A viewer likes file: one person and the photos they liked on the portfolio's My Likes page and
@@ -56,13 +57,13 @@ function listParts(text: string): string[] {
   const trimmed = text.trim();
   if (trimmed.startsWith("[")) {
     try {
-      const parsed: unknown = JSON.parse(trimmed);
+      const parsed: unknown = parsePastedJson(trimmed);
       if (Array.isArray(parsed)) return parsed.map(String);
     } catch {
       // Not JSON after all: read it as text, so "[12, 3" still gives its IDs.
     }
   }
-  return trimmed.split(/[\s,;[\]"]+/).filter(Boolean);
+  return trimmed.split(/[\s,;[\]"“”]+/).filter(Boolean);
 }
 
 /**

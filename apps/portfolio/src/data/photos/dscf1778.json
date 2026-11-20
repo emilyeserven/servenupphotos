@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:25 12:59:40",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Higashi-Hagi Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,9 +50,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
-  "genres": [],
-  "places": [],
+  "tags": ["railway", "platform", "train-station", "mountains", "power-lines", "countryside"],
+  "genres": ["architecture", "street"],
+  "places": [
+    {
+      "relation": "at",
+      "id": "higashi-hagi-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

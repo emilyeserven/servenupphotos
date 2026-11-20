@@ -5,18 +5,24 @@ import {
   FileTextIcon,
   ImageIcon,
   type LucideIcon,
+  MapPinIcon,
   Share2Icon,
   SquareSplitHorizontalIcon,
   TagsIcon,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import type { EditedFields } from "@/components/edit-in-flight/photo-json";
+import {
+  describingChanged,
+  type EditedFields,
+  locationChanged,
+} from "@/components/edit-in-flight/photo-json";
 import type { Edit } from "@/components/edit-in-flight/use-edit";
 import { cn } from "@/lib/utils";
 
 /** The Photo page's sections, in the order the subnavigation lists them. */
 const PHOTO_SECTIONS = [
   "details",
+  "location",
   "groups",
   "image",
   "original",
@@ -36,7 +42,9 @@ interface SectionInfo {
 }
 
 const SECTIONS: Record<PhotoSection, SectionInfo> = {
-  details: { label: "Details", icon: FileTextIcon, fields: ["details", "reEdit", "lowerTier"] },
+  // The details are split between Details and Location by unsavedSections.
+  details: { label: "Details", icon: FileTextIcon, fields: ["reEdit", "lowerTier"] },
+  location: { label: "Location", icon: MapPinIcon, fields: [] },
   groups: { label: "Albums & tags", icon: TagsIcon, fields: ["groups"] },
   image: { label: "Image", icon: ImageIcon, fields: [] },
   original: { label: "Original", icon: SquareSplitHorizontalIcon, fields: [] },
@@ -68,6 +76,15 @@ function usePhotoSection(): [PhotoSection, (section: PhotoSection) => void] {
   return [current, show];
 }
 
+/** Which of Details and Location have changed details, which both sections edit. */
+function detailsSections({ savedData, details }: Edit): PhotoSection[] {
+  const changed = {
+    details: describingChanged(savedData, details),
+    location: locationChanged(savedData, details),
+  };
+  return (["details", "location"] as const).filter((name) => changed[name]);
+}
+
 /** The sections with changes that Save changes would write. */
 function unsavedSections(edit: Edit): Set<PhotoSection> {
   const unsaved = new Set<PhotoSection>(
@@ -75,6 +92,7 @@ function unsavedSections(edit: Edit): Set<PhotoSection> {
       SECTIONS[name].fields.some((field) => edit.changedFields.includes(field)),
     ),
   );
+  for (const name of detailsSections(edit)) unsaved.add(name);
   if (edit.cropMoved) unsaved.add("image");
   if (edit.next) unsaved.add("json");
   return unsaved;

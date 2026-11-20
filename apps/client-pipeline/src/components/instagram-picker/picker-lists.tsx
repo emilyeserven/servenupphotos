@@ -7,12 +7,16 @@ import { PhotoImage } from "@/components/instagram-picker/photo-image";
 import type { PickerPhotos } from "@/components/instagram-picker/use-picker-photos";
 import { Input } from "@/components/ui/input";
 import { PickerSection, peekClass } from "@/components/picker-section";
-import { dayFormat, parseIsoDate } from "@/lib/calendar";
+import { dayFormat } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { PHOTO_DRAG_TYPE, type Unsaved, dateOf, photoName } from "@/lib/social-schedule";
 import { isFocused } from "@/lib/social-focus";
 import type { Neighbors } from "@/lib/social-neighbors";
 import type { Suggestion } from "@/lib/social-suggestions";
 import { cn } from "@/lib/utils";
+import { NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
+import { SectionTitle } from "@/components/section-title";
 
 /**
  * Whether the lists are in the calendar's photo drawer: 3 photos wide at every size, and each
@@ -129,12 +133,12 @@ function placeReason({ km, samePlace }: Suggestion): string | null {
 /** How far apart in time, such as "Same day" or "5 days apart". */
 function dateReason({ days }: Suggestion): string | null {
   if (days === null) return null;
-  return days === 0 ? "Same day" : `${days.toLocaleString()} ${days === 1 ? "day" : "days"} apart`;
+  return days === 0 ? "Same day" : `${count(days, "day")} apart`;
 }
 
 function tagReason({ sharedTags }: Suggestion): string | null {
   if (sharedTags === 0) return null;
-  return `${sharedTags} ${sharedTags === 1 ? "tag" : "tags"} in common`;
+  return `${count(sharedTags, "tag")} in common`;
 }
 
 /** Why the photo is suggested, against the nearest of the photos before the day. */
@@ -242,7 +246,7 @@ function emptyMessage({ focused, searching, hidingScheduled }: PickerPhotos): st
 
 /** What an empty list of choices says. */
 function noChoices(searching: boolean, hidingScheduled: boolean): string {
-  if (searching) return hidingScheduled ? "No unscheduled photos match." : "No photos match.";
+  if (searching) return hidingScheduled ? "No unscheduled photos match." : NO_PHOTOS_MATCH;
   return hidingScheduled ? "Every photo is already scheduled." : "There are no photo files yet.";
 }
 
@@ -261,7 +265,7 @@ function PickerChoices({ picker, current, unsaved, onPick }: PickerChoicesProps)
   }
   return (
     <section className="flex flex-col gap-2" aria-label="All photos">
-      {picker.titled && <h3 className="text-sm font-medium">All photos</h3>}
+      {picker.titled && <SectionTitle>All photos</SectionTitle>}
       <ul className={grid}>
         {picker.choices.map((photo) => (
           <li key={photo.path}>

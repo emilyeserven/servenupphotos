@@ -86,6 +86,10 @@ export function organizeFixtures() {
     "PUT /api/organize/albums/homepage-spotlight/visibility": { ...pendingSave(), files: 1 },
     "PUT /api/organize/albums/japan/rules": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/names": { ...pendingSave(), files: 1 },
+    "PUT /api/organize/genres/tree": ({ body }) => ({
+      ...pendingSave(),
+      files: body?.genres?.length,
+    }),
     "PUT /api/organize/tags/descriptions": ({ body }) => ({
       ...pendingSave(),
       files: Object.keys(body?.descriptions ?? {}).length,

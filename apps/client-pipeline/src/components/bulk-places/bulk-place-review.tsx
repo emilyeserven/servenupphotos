@@ -2,12 +2,8 @@ import { ExternalLinkIcon } from "lucide-react";
 import { useState } from "react";
 import { applyBulkPlacesMutation } from "@/api/bulk-places";
 import { type Place, placesQuery } from "@/api/places";
-import {
-  SaveReviewed,
-  UnknownPhotos,
-  useReviewedSave,
-} from "@/components/bulk-tagging/review-parts";
-import { count } from "@/components/update-data-shared";
+import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
+import { UnknownPhotos } from "@/components/paste-answer";
 import { outlineAsks, PlaceOutlines } from "@/components/bulk-places/place-outlines";
 import { NoPlaceFound } from "@/components/bulk-places/no-place-found";
 import {
@@ -21,6 +17,7 @@ import {
 } from "@/lib/bulk-places";
 import { promptImageUrl } from "@/lib/tag-prompt";
 import { tileImageUrl } from "@/lib/offline-thumbnails";
+import { count } from "@portfolio/lib/words";
 
 /** The paths of the photos that start ticked: those with a place the LLM isn't unsure of. */
 function firstTicked(review: BulkPlacesReview): Set<string> {
@@ -47,7 +44,7 @@ export function BulkPlaceReview({ review }: { review: BulkPlacesReview }) {
   const fresh = new Set(review.newPlaces.map((place) => place.id));
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownPhotos names={review.unknown} noun="places" />
+      <UnknownPhotos names={review.unknown} others={review.others} noun="places" />
       {/* Once saved, the new places are made, so only what was saved is left to say. */}
       {!apply.isSuccess && <NewPlaceList places={save.newPlaces} names={review.names} />}
       <ul className="flex flex-col gap-3">

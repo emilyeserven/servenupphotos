@@ -8,6 +8,7 @@ import { NewEntryForm } from "@/components/new-entry-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { PhotoBook } from "@/lib/photo-book";
+import { askFirst } from "@/stores/confirm";
 
 const SELECT =
   "border-input dark:bg-input/30 h-9 min-w-0 rounded-md border bg-transparent px-2 text-sm shadow-xs";
@@ -92,9 +93,12 @@ function DeleteBookButton({ book, onDeleted }: { book: PhotoBook; onDeleted: () 
     <Button
       variant="ghost"
       disabled={remove.isPending}
-      onClick={() => {
-        if (window.confirm(`Remove the photo book “${book.name}”?`))
-          remove.mutate(book.id, { onSuccess: onDeleted });
+      onClick={async () => {
+        const yes = await askFirst({
+          question: `Remove the photo book “${book.name}”?`,
+          action: "Remove book",
+        });
+        if (yes) remove.mutate(book.id, { onSuccess: onDeleted });
       }}
     >
       <Trash2Icon />

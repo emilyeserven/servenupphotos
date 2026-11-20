@@ -14,6 +14,7 @@ import {
   titleChanged,
 } from "@/components/edit-in-flight/photo-json";
 import { type Edit, type Save } from "@/components/edit-in-flight/use-edit";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * Save changes and, once the square has moved, a way back to the saved crop, floated next to the
@@ -152,14 +153,10 @@ function Waiting({ update }: { update: UpdateResult }) {
 }
 
 function SaveError({ save: { mutation, remadeOnly } }: { save: Save }) {
-  const message = mutation.error?.message;
-  return (
-    <p className="text-destructive">
-      {remadeOnly
-        ? `The Square Thumbnail was remade in R2, but the JSON couldn't be saved: ${message}`
-        : message}
-    </p>
-  );
+  const lead = remadeOnly
+    ? "The Square Thumbnail was remade in R2, but the JSON couldn't be saved:"
+    : undefined;
+  return <ErrorNote error={mutation.error} lead={lead} />;
 }
 
 function JsonOutcome({ update, capitalized }: { update: UpdateResult; capitalized?: boolean }) {

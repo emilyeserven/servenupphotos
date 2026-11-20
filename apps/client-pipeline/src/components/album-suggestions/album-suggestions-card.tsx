@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import {
   type AlbumPick,
   pickAlbumPhotosMutation,
@@ -10,17 +9,14 @@ import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { metaGroups } from "@/api/metainfo";
 import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
-import {
-  CopyPromptButton,
-  ErrorText,
-  PasteAnswer,
-  PickBar,
-  usePhotoPick,
-} from "@/components/bulk-tagging/pick-controls";
+import { CopyPromptButton, PickBar, usePhotoPick } from "@/components/bulk-tagging/pick-controls";
 import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
+import { PasteAnswer } from "@/components/paste-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { albumPrompt } from "@/lib/album-prompt";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * Album Suggestions: picks up to the chosen number of related photos without an album (5 at first,
@@ -43,7 +39,7 @@ export function AlbumSuggestionsCard() {
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <PickBar {...bar} />
-        <ErrorText error={pick.error} />
+        <ErrorNote error={pick.error} />
         {pick.data && <PickedAlbums key={pick.submittedAt} pick={pick.data} />}
       </CardContent>
     </Card>
@@ -52,9 +48,9 @@ export function AlbumSuggestionsCard() {
 
 /** The picked photos, their prompt, the box to paste the answer into, and its review. */
 function PickedAlbums({ pick }: { pick: AlbumPick }) {
-  const [answer, setAnswer] = useState("");
   const paths = pick.photos.map((photo) => photo.path);
   const preview = useMutation(previewAlbumSuggestionsMutation);
+  const pasted = usePastedAnswer((answer) => preview.mutateAsync({ paths, answer }));
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
@@ -62,20 +58,9 @@ function PickedAlbums({ pick }: { pick: AlbumPick }) {
       </p>
       <PickedPhotos photos={pick.photos} />
       <CopyAlbumPromptButton pick={pick} />
-      <PasteAnswer
-        value={answer}
-        onChange={setAnswer}
-        label="Review the albums"
-        pending={preview.isPending}
-        onReview={() => preview.mutate({ paths, answer })}
-      />
-      <ErrorText error={preview.error} />
-      {preview.data && (
-        <AlbumSuggestionReview
-          key={JSON.stringify(preview.data)}
-          preview={preview.data}
-          pick={pick}
-        />
+      <PasteAnswer pasted={pasted} label="Review the albums" />
+      {pasted.answer && (
+        <AlbumSuggestionReview key={pasted.reviews} preview={pasted.answer} pick={pick} />
       )}
     </div>
   );

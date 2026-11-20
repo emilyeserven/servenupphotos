@@ -20,6 +20,8 @@ import {
   socialPlatforms,
   statusLabels,
 } from "@/lib/social-posts";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 interface SocialPostsCardProps {
   value: SocialPostDraft[];
@@ -60,7 +62,7 @@ export function SocialPostsCard({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <CalendarNote date={calendarDate} />
-        {value.length === 0 && <p className="text-muted-foreground text-sm">No posts yet.</p>}
+        {value.length === 0 && <EmptyNote>No posts yet.</EmptyNote>}
         {value.map((post, index) => (
           <SocialPostFields
             key={post.id}
@@ -233,13 +235,9 @@ function SocialPostFields({
 
 /** How many hashtags the field holds, once it holds any. */
 function HashtagCount({ typed }: { typed: string }) {
-  const count = parseHashtags(typed).length;
-  if (count === 0) return null;
-  return (
-    <p className="text-muted-foreground text-xs">
-      {count} {count === 1 ? "hashtag" : "hashtags"}
-    </p>
-  );
+  const n = parseHashtags(typed).length;
+  if (n === 0) return null;
+  return <p className="text-muted-foreground text-xs">{count(n, "hashtag")}</p>;
 }
 
 interface FieldProps {

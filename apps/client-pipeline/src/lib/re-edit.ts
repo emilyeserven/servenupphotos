@@ -1,3 +1,5 @@
+import { isObject, stringOf } from "@portfolio/lib/values";
+
 /** A photo's mark for editing it again, as the photo JSON's `reEdit` saves it. */
 export interface ReEdit {
   /** Why it needs editing again, such as "Too warm"; empty when none was given. */
@@ -12,19 +14,11 @@ export interface ReEditDraft {
   reason: string;
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 /** The re-edit mark saved in a photo's JSON, or null when it isn't marked. */
 export function savedReEdit(data: unknown): ReEdit | null {
   const reEdit = isObject(data) ? data.reEdit : null;
   if (!isObject(reEdit)) return null;
-  return { reason: text(reEdit.reason), date: text(reEdit.date) };
-}
-
-function text(value: unknown): string {
-  return typeof value === "string" ? value : "";
+  return { reason: stringOf(reEdit.reason), date: stringOf(reEdit.date) };
 }
 
 /** The re-edit mark saved in a photo's JSON, to start editing from. */

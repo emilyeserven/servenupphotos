@@ -6,6 +6,7 @@ import { JsonCodeBlock } from "@/components/json-code-block";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ErrorNote } from "@/components/error-note";
 
 interface ExifResultProps {
   mutation: ExifMutation;
@@ -32,7 +33,7 @@ export function ExifResult({ mutation, sanitized, groups }: ExifResultProps) {
 
 function ExifResultBody({ mutation, sanitized, groups }: ExifResultProps) {
   if (mutation.isPending) return <Spinner className="size-6" />;
-  if (mutation.isError) return <p className="text-destructive">{mutation.error.message}</p>;
+  if (mutation.isError) return <ErrorNote error={mutation.error} />;
   if (!mutation.data) return null;
   const { file, exif, colors } = mutation.data;
   return (

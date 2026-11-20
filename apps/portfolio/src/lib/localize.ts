@@ -1,5 +1,6 @@
 import committedLocalizations from "@portfolio/data/localizations/LOCALIZATIONS.json";
 import committedPlaces from "@portfolio/data/places/PLACES.json";
+import { textOf } from "@portfolio/lib/values";
 
 /**
  * How place, city and country names are written: as named in English, romanized, as they're said
@@ -109,10 +110,6 @@ function placeKey(placeId: string): string {
   return `place-${placeId}`.slice(0, 100).replace(/-+$/, "");
 }
 
-function text(value: string | undefined): string {
-  return value?.trim() ?? "";
-}
-
 /** The localization field each way after English reads, least to most native. */
 const FIELDS: [ScriptDisplay, "romanization" | "pronunciation" | "localScript"][] = [
   ["romanized", "romanization"],
@@ -128,7 +125,7 @@ function localized(name: string, found: Localization | undefined): Localized {
   const written = unlocalized(name);
   let last = name;
   for (const [script, field] of FIELDS) {
-    last = text(found?.[field]) || last;
+    last = textOf(found?.[field]) || last;
     written[script] = last;
   }
   return written;
@@ -157,6 +154,27 @@ export function localizeName(type: "country" | "state" | "city", name: string): 
 /** A place's name written each way, from LOCALIZATIONS.json. */
 export function localizePlace(place: Place): Localized {
   return localized(place.name, byKey.get(placeKey(place.id)));
+}
+
+/** A trip stop's name, its own localized names and the saved place it is, as a Trip page has them. */
+export interface StopNaming {
+  name: string;
+  /** The saved place's ID, whose localization fills the names the stop doesn't write. */
+  place?: string;
+  romanization?: string;
+  pronunciation?: string;
+  localScript?: string;
+}
+
+/**
+ * A trip stop's name written each way: its own localized names, or else its saved place's from
+ * LOCALIZATIONS.json, each falling back to the next less native way as a place's do.
+ */
+export function localizeStop(stop: StopNaming): Localized {
+  const placed = stop.place ? byKey.get(placeKey(stop.place)) : undefined;
+  const merged: Partial<Localization> = {};
+  for (const [, field] of FIELDS) merged[field] = textOf(stop[field]) || textOf(placed?.[field]);
+  return localized(stop.name, merged as Localization);
 }
 
 /** The same text every way, for names with no localization to look up. */

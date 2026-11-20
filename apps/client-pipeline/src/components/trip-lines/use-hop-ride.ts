@@ -10,6 +10,7 @@ import {
 } from "@/api/transit";
 import type { TripPoint, TripSegment, TripTransitLine } from "@/api/trip-lines";
 import { lineOf } from "@/lib/transit-line";
+import { lookupSource } from "@/lib/lookup-source";
 import { useRouteSourceStore } from "@/stores/route-source";
 import {
   oneLine,
@@ -72,9 +73,12 @@ function useAutoPick(
   });
 }
 
-/** The kind to look lines up as at first: the hop's own, or none for a transit hop, whose kind is picked. */
+/**
+ * The kind to look lines up as at first: the hop's own, or none for a transit hop, whose kind is
+ * picked, or a ropeway, which no source has, so it's named by hand.
+ */
 function firstKind(mode: string): string | undefined {
-  return mode === "transit" ? undefined : mode;
+  return mode === "transit" || mode === "ropeway" ? undefined : mode;
 }
 
 /**
@@ -114,15 +118,30 @@ function lookupOf(ask: HopAsk | undefined, kind: string | undefined): HopAsk | u
 export function useHopRide(hop: TripSegment, ask: HopAsk | undefined, onRide: (r: Ride) => void) {
   const [finding, setFinding] = useState(!hop.line);
   const [kind, setKind] = useState(firstKind(hop.mode));
-  const source = useRouteSourceStore((s) => s.source);
+  const source = lookupSource(
+    useRouteSourceStore((s) => s.source),
+    kind,
+  );
   const [ends, setEnds] = useState<HopEnds>({});
   const near = nearOf(ask, ends);
   const lookup = lookupOf(near, kind);
   const lines = useQuery({
-    ...transitLinesQuery(lookup!, source),
+    ...transitLinesQuery(lookup, source),
     enabled: finding && lookup !== undefined,
   });
   const { mutation, ride } = useRide(ask, near, (r) => (onRide(r), setFinding(false)));
   useAutoPick(hop, lines.data, ride);
-  return { finding, setFinding, kind, setKind, ends, setEnds, lines, mutation, ride };
+  return {
+    finding,
+    setFinding,
+    kind,
+    setKind,
+    ends,
+    setEnds,
+    lines,
+    mutation,
+    ride,
+    source,
+    lookup,
+  };
 }

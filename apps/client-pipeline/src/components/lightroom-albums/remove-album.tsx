@@ -1,6 +1,7 @@
 import { Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { LightroomAlbum } from "@/lib/lightroom-albums";
+import { askFirst, type ConfirmAsk } from "@/stores/confirm";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
 
 /**
@@ -11,10 +12,14 @@ export const SHOW_ON_HOVER =
   "opacity-0 transition-opacity group-hover/row:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100";
 
 /** What the Remove button asks first; an album read from Lightroom comes back with the next import that has it. */
-function question(album: LightroomAlbum): string {
-  const ask = `Remove “${album.name}”, with its stage and notes?`;
-  if (album.manual) return ask;
-  return `${ask} It comes back the next time you import a list that still has it, so remove it in Lightroom too.`;
+function ask(album: LightroomAlbum): ConfirmAsk {
+  return {
+    question: `Remove “${album.name}”, with its stage and notes?`,
+    note: album.manual
+      ? undefined
+      : "It comes back the next time you import a list that still has it, so remove it in Lightroom too.",
+    action: "Remove",
+  };
 }
 
 interface RemoveAlbumButtonProps {
@@ -26,8 +31,8 @@ interface RemoveAlbumButtonProps {
 /** Removes an album from the list, after asking, whether it was read from Lightroom or added by hand. */
 export function RemoveAlbumButton({ album, iconOnly = false }: RemoveAlbumButtonProps) {
   const removeAlbum = useLightroomAlbumsStore((state) => state.removeAlbum);
-  const remove = () => {
-    if (window.confirm(question(album))) removeAlbum(album.path);
+  const remove = async () => {
+    if (await askFirst(ask(album))) removeAlbum(album.path);
   };
   if (iconOnly) {
     return (
@@ -38,14 +43,14 @@ export function RemoveAlbumButton({ album, iconOnly = false }: RemoveAlbumButton
         className={SHOW_ON_HOVER}
         aria-label={`Remove ${album.name}`}
         title="Remove"
-        onClick={remove}
+        onClick={() => void remove()}
       >
         <Trash2Icon />
       </Button>
     );
   }
   return (
-    <Button type="button" size="sm" variant="ghost" onClick={remove}>
+    <Button type="button" size="sm" variant="ghost" onClick={() => void remove()}>
       <Trash2Icon />
       Remove
     </Button>

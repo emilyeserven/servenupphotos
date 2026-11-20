@@ -1,4 +1,4 @@
-import { albumAndSubAlbums, tagAndSubTags } from "@portfolio/lib/groups";
+import { albumAndSubAlbums, genreAndSubGenres, tagAndSubTags } from "@portfolio/lib/groups";
 import type { Photo } from "@portfolio/lib/photos";
 import {
   matchesWhen,
@@ -14,7 +14,10 @@ export const LOCATION_KEYS = ["country", "state", "city", "place"] as const;
 
 export type LocationKey = (typeof LOCATION_KEYS)[number];
 
-/** The album, tag and genre filters' keys; an album also matches the photos in its sub-albums. */
+/**
+ * The album, tag and genre filters' keys; an album also matches the photos in its sub-albums, a
+ * tag the tags under it, and a genre its subgenres.
+ */
 export const GROUP_KEYS = ["album", "tag", "genre"] as const;
 
 type GroupKey = (typeof GROUP_KEYS)[number];
@@ -101,6 +104,12 @@ function inAlbum(photo: Photo, id: string): boolean {
   return photo.albums.some((album) => ids.has(album));
 }
 
+/** Whether the photo is in the genre or one of its subgenres. */
+function inGenre(photo: Photo, id: string): boolean {
+  const ids = genreAndSubGenres(id);
+  return photo.genres.some((genre) => ids.has(genre));
+}
+
 /** Whether the photo has the tag or one of the tags under it. */
 function hasTag(photo: Photo, id: string): boolean {
   const ids = tagAndSubTags(id);
@@ -123,7 +132,7 @@ const MATCHES: Record<FilterKey, (photo: Photo, value: string) => boolean> = {
   place: (photo, value) => photo.placeIds.includes(value),
   album: inAlbum,
   tag: hasTag,
-  genre: (photo, value) => photo.genres.includes(value),
+  genre: inGenre,
 };
 
 /** The chosen countries, cities and places, as pairs of a key and a value. */

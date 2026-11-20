@@ -2,6 +2,7 @@ import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ErrorNote } from "@/components/error-note";
 
 interface NewEntryFormProps {
   /** The name box's label, such as "New book's name". */
@@ -48,7 +49,7 @@ export function NewEntryForm(props: NewEntryFormProps) {
           Cancel
         </Button>
       )}
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
+      <ErrorNote error={error} />
     </form>
   );
 }

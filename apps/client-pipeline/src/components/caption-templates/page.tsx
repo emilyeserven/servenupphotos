@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { platformLabel } from "@/lib/social-posts";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { QueryResult } from "@/components/query-result";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The Caption Templates page: the captions the Photo page's Generate writes for a social media post. */
 export function CaptionTemplatesPage() {
@@ -26,9 +28,11 @@ export function CaptionTemplatesPage() {
 
 function Templates() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the caption templates…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <TemplateChooser data={combined.data} />;
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the caption templates…">
+      {(data) => <TemplateChooser data={data} />}
+    </QueryResult>
+  );
 }
 
 /** The chosen template's ID, or "" for a new one. */
@@ -66,7 +70,7 @@ function TemplateList({ templates, chosen, onChoose }: TemplateListProps) {
         <CardDescription>With the platform each is for.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
-        {templates.length === 0 && <p className="text-muted-foreground text-sm">None yet.</p>}
+        {templates.length === 0 && <EmptyNote>No templates yet.</EmptyNote>}
         {templates.map((template) => (
           <button
             key={template.id}

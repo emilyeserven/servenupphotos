@@ -38,7 +38,7 @@ day's story is kept apart from its line, so the line can be redrawn, turned auto
 
 Each day's story is `triplines/story-<YYYY-MM-DD>.json`, in the trip lines folder next to the days' lines, so
 it's listed, combined into `TRIPLINES.json` and committed with them (`PUT` and
-`DELETE /api/tripstories/story-<day>` → `/tripstories/{id}`, `be-pipeline/internal/github/trip_stories.go`):
+`DELETE /api/tripstories/story-<day>` → `/tripstories/{id}`, `be-pipeline/internal/github/tripstories.go`):
 
 ```json
 {
@@ -72,7 +72,10 @@ date, or else its EXIF one), a photo listed twice, a photo with both `withNext` 
 
 A day's [trip stops](trip-lines.md#trip-stops), such as a restaurant, show in its story between the two photos the
 route puts them between (`after`), each on its own small line: a pin, its name (linking to its outside map), its kind
-and its note. A stop's [casual photos](trip-lines.md#casual-photos) are folded under it behind **3 photos**, as small
+and its note. The name is written the way the visitor's **Script display** setting says, from the stop's
+[localized names](trip-lines.md#localized-names) (or else its saved place's localization), with its local script
+beside it, faint, or its English name when the local script is the one shown (`localizeStop` in `lib/localize.ts`).
+Commit bakes the stop's `place` and localized names into `stops` for that. A stop's [casual photos](trip-lines.md#casual-photos) are folded under it behind **3 photos**, as small
 squares that each open the large version in a new tab (`components/trip-stops.tsx`). A stop ends its row the way a
 paragraph does, so a stop after a photo in the middle of a row splits it there, and it shows before that photo's
 paragraph. Stops not on the route, or after a photo left off the story, show after the day's last row. Casual photos
@@ -81,7 +84,7 @@ and image URLs), into the day's `stops`.
 
 ## The baked pages: `TRIPPAGES.json`
 
-Every Commit also writes `triplines/TRIPPAGES.json` from the story and Trip files (`trip_pages.go`), newest first, and
+Every Commit also writes `triplines/TRIPPAGES.json` from the story and Trip files (`trippages.go`), newest first, and
 counts its pages (`tripPages`). Like `TRIPLINES.geo.json`, it's left out of `TRIPLINES.json`, and the **Combine photo
 data** workflow leaves it as it is.
 

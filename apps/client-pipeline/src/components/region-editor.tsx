@@ -7,6 +7,7 @@ import {
   LocalizationFields,
   useLocalizationDraft,
 } from "@/components/localization-fields";
+import { ErrorNote } from "@/components/error-note";
 import { FloatingSaveButton } from "@/components/floating-save-button";
 import { OtherNamesField } from "@/components/other-names-field";
 import { RegionIcon } from "@/components/region-icon";
@@ -15,23 +16,20 @@ import type { RegionListData } from "@/components/region-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { SavedInApp } from "@/components/waiting-for-commit";
 import { type RegionType, unrenamedCounts } from "@/lib/location-names";
 import type { CityRow, CountryRow } from "@/lib/place-cities";
 import type { RegionNode } from "@/lib/region-tree";
-
-/** The count with its noun, such as "1 place" or "3 places". */
-function counted(count: number, noun: string, plural = `${noun}s`): string {
-  return `${count} ${count === 1 ? noun : plural}`;
-}
+import { count } from "@portfolio/lib/words";
 
 /** What's known about a city or country: where it is, and how many cities, places and photos have it. */
 function regionSummary(node: RegionNode): string {
   const region = node.region as Partial<CityRow & CountryRow>;
   const parts = [
     region.country ? `In ${region.country}` : undefined,
-    region.cities === undefined ? undefined : counted(region.cities, "city", "cities"),
-    counted(region.places ?? 0, "place"),
-    counted(node.photos, "photo"),
+    region.cities === undefined ? undefined : count(region.cities, "city", "cities"),
+    count(region.places ?? 0, "place"),
+    count(node.photos, "photo"),
   ];
   return parts.filter(Boolean).join(" · ");
 }
@@ -173,8 +171,9 @@ function RegionLocalizationForm({ node, saved, list }: RegionEditorProps) {
 /** Why saving failed, or that it saved, until something else is typed. */
 function SaveStatus({ draft }: { draft: LocalizationDraft }) {
   const { save } = draft;
-  if (save.error) return <p className="text-destructive text-sm">{save.error.message}</p>;
-  return save.isSuccess ? <p className="text-sm">Saved to the photo data pull request.</p> : null;
+  if (save.error) return <ErrorNote error={save.error} />;
+  if (!save.isSuccess) return null;
+  return <SavedInApp what="the localization" pullRequestUrl={save.data.pullRequestUrl} />;
 }
 
 /** Such as "3 photos and 1 place", leaving out a zero. */
@@ -185,7 +184,7 @@ function stillWriting(left: { photos: number; places: number }): string {
   ] as const;
   return parts
     .filter(([n]) => n > 0)
-    .map(([n, noun]) => counted(n, noun))
+    .map(([n, noun]) => count(n, noun))
     .join(" and ");
 }
 

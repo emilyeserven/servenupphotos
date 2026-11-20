@@ -2,9 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
-	"log/slog"
 	"net/http"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
@@ -44,54 +41,42 @@ type regenerateResponse struct {
 // already in R2 from its original, replacing any already there, and responds
 // with where they ended up.
 func handleRegenerateVersions(loadR2 func() (settings.R2, error), regenerate regenerateFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req regenerateRequest
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 1<<16)).Decode(&req); err != nil || req.Key == "" {
-			writeError(w, http.StatusBadRequest, "key is required")
+	return withBody("versions to make", 1<<16, func(w http.ResponseWriter, r *http.Request, req regenerateRequest) {
+		vs, msg := checkRegenerate(req)
+		if msg != "" {
+			writeError(w, http.StatusBadRequest, msg)
 			return
 		}
-		vs, ok := findVersions(req.Versions)
-		if !ok {
-			writeError(w, http.StatusBadRequest, "no such version")
-			return
-		}
-		if req.Crop != nil && (req.Crop.Size <= 0 || req.Crop.X < 0 || req.Crop.Y < 0) {
-			writeError(w, http.StatusBadRequest, "crop needs a size and a corner inside the photo")
-			return
-		}
-		if req.Faces != nil {
-			if msg := req.Faces.Valid(); msg != "" {
-				writeError(w, http.StatusBadRequest, msg)
-				return
-			}
-		}
+		withSettings(loadR2, uploadTimeout, func(ctx context.Context, w http.ResponseWriter, _ *http.Request, cfg settings.R2) {
+			made, err := regenerate(ctx, cfg, req.Key, vs, req.Crop, req.Faces)
+			writeR2Result(w, regenerateResponse{Key: req.Key, Versions: made}, err, "Couldn't make the resized versions.")
+		})(w, r)
+	})
+}
 
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), uploadTimeout)
-		defer cancel()
-		made, err := regenerate(ctx, cfg, req.Key, vs, req.Crop, req.Faces)
-		var uploadErr *storage.UploadError
-		switch {
-		case errors.As(err, &uploadErr):
-			status := uploadErrorStatus(uploadErr)
-			if uploadErr.NotFound {
-				status = http.StatusNotFound
-			}
-			writeJSON(w, status, uploadErrorResponse{Message: uploadErr.Message, Cloudflare: uploadErr.Cloudflare})
-		case err != nil:
-			slog.Error("regenerate versions failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not make the resized versions")
-		default:
-			writeJSON(w, http.StatusOK, regenerateResponse{Key: req.Key, Versions: made})
+// checkRegenerate is the versions req asks for, or why it can't be done.
+func checkRegenerate(req regenerateRequest) ([]versions.Version, string) {
+	if req.Key == "" {
+		return nil, keyMessage
+	}
+	vs, ok := findVersions(req.Versions)
+	if !ok {
+		return nil, noSuchVersionMessage
+	}
+	if req.Crop != nil && (req.Crop.Size <= 0 || req.Crop.X < 0 || req.Crop.Y < 0) {
+		return nil, "Give the crop a size above 0 and a corner inside the photo."
+	}
+	if req.Faces != nil {
+		if msg := req.Faces.Valid(); msg != "" {
+			return nil, msg
 		}
 	}
+	return vs, ""
 }
+
+// noSuchVersionMessage is the answer to a request for a resized version the
+// pipeline doesn't make.
+const noSuchVersionMessage = "There's no resized version by that name. Reload the page to get the current list."
 
 type thumbnailCropResponse struct {
 	Key string `json:"key"`
@@ -103,37 +88,15 @@ type thumbnailCropResponse struct {
 // handleThumbnailCrop responds with the crop saved with the thumbnail of the
 // photo at the "key" query parameter, the square it was cut from.
 func handleThumbnailCrop(loadR2 func() (settings.R2, error), readCrop thumbnailCropFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return withSettings(loadR2, findPhotosTimeout, func(ctx context.Context, w http.ResponseWriter, r *http.Request, cfg settings.R2) {
 		key := r.URL.Query().Get("key")
 		if key == "" {
-			writeError(w, http.StatusBadRequest, "key is required")
+			writeError(w, http.StatusBadRequest, keyMessage)
 			return
 		}
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), findPhotosTimeout)
-		defer cancel()
 		crop, err := readCrop(ctx, cfg, key)
-		var uploadErr *storage.UploadError
-		switch {
-		case errors.As(err, &uploadErr):
-			status := uploadErrorStatus(uploadErr)
-			if uploadErr.NotFound {
-				status = http.StatusNotFound
-			}
-			writeJSON(w, status, uploadErrorResponse{Message: uploadErr.Message, Cloudflare: uploadErr.Cloudflare})
-		case err != nil:
-			slog.Error("read thumbnail crop failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read the Square Thumbnail's crop")
-		default:
-			writeJSON(w, http.StatusOK, thumbnailCropResponse{Key: key, Crop: crop})
-		}
-	}
+		writeR2Result(w, thumbnailCropResponse{Key: key, Crop: crop}, err, "Couldn't read the Square Thumbnail's crop.")
+	})
 }
 
 // findVersions looks up each of names, or returns every version and the

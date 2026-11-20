@@ -13,10 +13,10 @@
   "iso": 4000,
   "focalLength": 135,
   "gpsPosition": "35 deg 48' 6.84\" N, 129 deg 8' 12.89\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "35.8001, 129.135872",
   "createDate": "2026:09:20 10:25:38",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Singyeongju Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,9 +50,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["hills", "road", "traffic", "cars", "trees"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "singyeongju-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -36,7 +36,7 @@ function StatusPage() {
           <CardDescription>client → bff-pipeline (Fastify) → be-pipeline (Go)</CardDescription>
         </CardHeader>
         <CardContent>
-          <QueryResult query={health} pendingLabel="Checking…">
+          <QueryResult query={health} pendingLabel="Reading the connection status…">
             {(data) => (
               <dl className="grid grid-cols-2 gap-2 text-sm">
                 <dt className="text-muted-foreground">BFF</dt>
@@ -56,7 +56,9 @@ function StatusPage() {
           <CardTitle>Hello from Go</CardTitle>
         </CardHeader>
         <CardContent>
-          <QueryResult query={hello}>{(data) => <p>{data.message}</p>}</QueryResult>
+          <QueryResult query={hello} pendingLabel="Reading the backend's answer…">
+            {(data) => <p>{data.message}</p>}
+          </QueryResult>
         </CardContent>
       </Card>
     </Page>
@@ -94,7 +96,7 @@ function ConnectionsCard() {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <QueryResult query={settings} pendingLabel="Loading settings…">
+        <QueryResult query={settings} pendingLabel="Reading settings…">
           {(data) => (
             <dl className="grid grid-cols-[auto_1fr] items-center gap-x-6 gap-y-2 text-sm">
               {CONNECTIONS.map(({ section, label }) => (

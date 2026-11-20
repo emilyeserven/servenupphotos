@@ -6,7 +6,6 @@ import { RemoveAlbumButton } from "@/components/lightroom-albums/remove-album";
 import { RemoveFolderButton } from "@/components/lightroom-albums/remove-folder";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { count } from "@/components/update-data-shared";
 import {
   type LightroomAlbum,
   type LightroomFolder,
@@ -16,6 +15,8 @@ import {
 import { folderPaths } from "@/lib/lightroom-tree";
 import { cn } from "@/lib/utils";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 /** The path that opens and closes the No Parent group, which no real folder can have. */
 const NO_PARENT = "\u0000no-parent";
@@ -70,7 +71,7 @@ export function FolderButtons({ items }: { items: LightroomItem[] }) {
 
 /** The folders and albums at one level of the tree, with what's inside each open folder under it. */
 function ItemList({ items, openAll }: { items: LightroomItem[]; openAll: boolean }) {
-  if (items.length === 0) return <p className="text-muted-foreground text-sm">No albums here.</p>;
+  if (items.length === 0) return <EmptyNote>No albums here.</EmptyNote>;
   return (
     <ul className="flex flex-col gap-2">
       {items.map((item) => (

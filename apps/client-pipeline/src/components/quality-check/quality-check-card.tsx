@@ -6,9 +6,9 @@ import { MissingPlacesCheck } from "@/components/quality-check/missing-places-ch
 import { PixelationCheck } from "@/components/quality-check/pixelation-check";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useCompareGroups } from "@/hooks/use-compare-groups";
 import { type AutogroupScope, autogroupPhotos } from "@/lib/compare-autogroup";
+import { ReadingNote } from "@/components/query-result";
 
 /**
  * Quality Check: checks every photo, or only the drafts, for what should be fixed before it's
@@ -22,6 +22,10 @@ export function QualityCheckCard() {
   const photos = useMemo(
     () => autogroupPhotos(compare.photos, { scope, skipGrouped: false }),
     [compare.photos, scope],
+  );
+  const every = useMemo(
+    () => autogroupPhotos(compare.photos, { scope: "all", skipGrouped: false }),
+    [compare.photos],
   );
   return (
     <Card>
@@ -38,12 +42,12 @@ export function QualityCheckCard() {
         <ReadProblems problems={compare.problems} />
         <PhotoScopeToggle label="Which photos to check" value={scope} onChange={setScope} />
         {compare.pending ? (
-          <Skeleton className="h-40 rounded-xl" />
+          <ReadingNote label="Reading the photos…" />
         ) : (
           <>
             <AspectRatioCheck key={`aspect-${scope}`} photos={photos} />
             <Separator />
-            <PixelationCheck key={`pixelation-${scope}`} photos={photos} />
+            <PixelationCheck key={`pixelation-${scope}`} photos={photos} every={every} />
             <Separator />
             <MissingPlacesCheck photos={photos} />
           </>

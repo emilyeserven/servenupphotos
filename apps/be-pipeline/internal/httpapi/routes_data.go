@@ -21,6 +21,7 @@ func registerDataRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("POST /data/bulk-tags/preview", handlePreviewBulkTags(d.store, d.gh))
 	mux.HandleFunc("POST /data/bulk-tags", handleApplyBulkTags(d.store, d.gh))
 	mux.HandleFunc("POST /data/bulk-places/pick", handlePickBulkPlacePhotos(d.store, d.gh))
+	mux.HandleFunc("POST /data/photos-by-name", handleFindPhotosByName(d.store, d.gh))
 	mux.HandleFunc("POST /data/bulk-places", handleApplyBulkPlaces(d.store, d.gh))
 	mux.HandleFunc("POST /data/prune-tags/preview", handlePreviewPruneTags(d.store, d.gh))
 	mux.HandleFunc("POST /data/prune-tags", handleApplyPruneTags(d.store, d.gh))
@@ -50,5 +51,5 @@ func registerDataRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("POST /data/near-duplicates", progress.tracked("near-duplicates", handleFindNearDuplicates(d.store, d.gh, d.hashes)))
 	mux.HandleFunc("POST /data/r2-exif/preview", progress.tracked("r2-exif",
 		handlePreviewR2Exif(d.extractor, d.store, d.gh, storage.GetPhoto, exifs)))
-	mux.HandleFunc("POST /data/r2-exif/write", handleWriteR2Exif(d.extractor, d.store, d.gh, storage.GetPhoto, replaceOriginal, exifs))
+	mux.HandleFunc("POST /data/r2-exif", handleWriteR2Exif(d.extractor, d.store, d.gh, storage.GetPhoto, replaceOriginal, exifs))
 }

@@ -5,6 +5,7 @@ import { isSmartAlbum, ruleCount, type SmartRules } from "@portfolio/lib/smart-a
 import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 import { type Group, organizeQuery, setAlbumRulesMutation } from "@/api/organize";
 import { GridFilterBar } from "@/components/gallery/grid-filters";
+import { QueryResult } from "@/components/query-result";
 import { PhotoTile } from "@/components/group-photo-grid";
 import { DateRules } from "@/components/smart-album/date-rules";
 import { type RuleParams, useRuleParams } from "@/components/smart-album/rule-params";
@@ -17,6 +18,8 @@ import { type CombinedPhoto, currentLists } from "@/lib/group-photos";
 import { labelsOf } from "@/lib/smart-album-photos";
 import { entriesMatching, type RulePhotos, rulePhotos } from "@/lib/smart-album-rules";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** How many of the matching photos the editor shows. */
 const PREVIEW_PHOTOS = 12;
@@ -142,16 +145,33 @@ interface RuleEditorProps {
 }
 
 /** The rules being edited, the photos they match, and the buttons to save them or cancel. */
-function RuleEditor({ album, rules, save, onCancel }: RuleEditorProps) {
+function RuleEditor(props: RuleEditorProps) {
   const combined = useCombinedData();
   const tried = useMemo(() => rulePhotos(combined.data), [combined.data]);
-  if (!tried) return <p>Reading ALLPHOTOS.json…</p>;
+  return (
+    <QueryResult
+      query={{ isPending: combined.isPending, error: combined.error, data: tried }}
+      pendingLabel="Reading ALLPHOTOS.json…"
+    >
+      {(found) => <RuleFields tried={found} {...props} />}
+    </QueryResult>
+  );
+}
+
+/** The rule fields and match preview once the photos are read. */
+function RuleFields({
+  album,
+  rules,
+  save,
+  onCancel,
+  tried,
+}: RuleEditorProps & { tried: RulePhotos }) {
   const count = ruleCount(rules.draft);
   return (
     <>
       <DateRules rules={rules} labels={tried.labels} />
       <GridFilterBar photos={tried.photos} />
-      <MatchPreview tried={tried} rules={rules.draft} count={count} />
+      <MatchPreview tried={tried} rules={rules.draft} ruleTotal={count} />
       <div className="flex flex-wrap gap-2">
         <Button
           disabled={count === 0 || save.isPending}
@@ -172,13 +192,13 @@ function RuleEditor({ album, rules, save, onCancel }: RuleEditorProps) {
 function MatchPreview({
   tried,
   rules,
-  count,
+  ruleTotal,
 }: {
   tried: RulePhotos;
   rules: SmartRules;
-  count: number;
+  ruleTotal: number;
 }) {
-  if (count === 0) {
+  if (ruleTotal === 0) {
     return (
       <p className="text-muted-foreground">
         Set a Trip, a day or one of the filters to pick the album's photos.
@@ -189,16 +209,13 @@ function MatchPreview({
   return (
     <div className="flex flex-col gap-3">
       <p className="font-medium">
-        {count === 1 ? "1 rule matches" : `${count} rules match`} {photoCount(matching.length)}
+        {count(ruleTotal, "rule")} {ruleTotal === 1 ? "matches" : "match"}{" "}
+        {count(matching.length, "photo")}
         {matching.length > PREVIEW_PHOTOS && `, the first ${PREVIEW_PHOTOS} shown`}.
       </p>
       <PreviewTiles photos={matching.slice(0, PREVIEW_PHOTOS)} />
     </div>
   );
-}
-
-function photoCount(count: number): string {
-  return count === 1 ? "1 photo" : `${count} photos`;
 }
 
 function PreviewTiles({ photos }: { photos: CombinedPhoto[] }) {
@@ -216,7 +233,7 @@ function PreviewTiles({ photos }: { photos: CombinedPhoto[] }) {
 
 /** What saving did, or why it failed. */
 function RulesOutcome({ save }: { save: RulesSave }) {
-  if (save.isError) return <p className="text-destructive">{save.error.message}</p>;
+  if (save.isError) return <ErrorNote error={save.error} />;
   if (!save.data?.files) return null;
   return <SavedInApp what="the rules" pullRequestUrl={save.data.pullRequestUrl} />;
 }

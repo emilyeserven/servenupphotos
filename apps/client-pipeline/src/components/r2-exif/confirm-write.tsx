@@ -21,7 +21,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
-import { count } from "@/components/update-data-shared";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 interface ConfirmWriteProps {
   photo: R2ExifPhoto;
@@ -87,7 +88,7 @@ function ConfirmWrite({ photo, fields, onDone }: ConfirmWriteProps & { onDone: (
         kept. Check these are already changed in Lightroom: if anything goes wrong, export the photo
         again and swap it in with Replace image on the Photo page.
       </p>
-      {write.error && <p className="text-destructive">{write.error.message}</p>}
+      <ErrorNote error={write.error} />
       <DialogFooter>
         <Button variant="outline" disabled={write.isPending} onClick={onDone}>
           Cancel

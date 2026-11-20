@@ -5,6 +5,7 @@ import type { TripLegRide } from "@/api/trips";
 import {
   changedItem,
   draftOf,
+  END_GAP,
   type GapDraft,
   segmentKey,
   segmentsOf,
@@ -213,4 +214,19 @@ test("keeps the lines a hop rode in turn through a save", () => {
   const hop = segmentsOf(photos, draft).find((s) => s.mode === "train");
   assert.deepEqual(hop?.rides, rides);
   assert.deepEqual(draftOf(photos, segmentsOf(photos, draft)).lines?.["1"]?.rides, rides);
+});
+
+test("the way from the last photo to the end can be a drive, read back the same", () => {
+  const end = { latitude: 9, longitude: 9, label: "Izumoshi" };
+  const draft: GapDraft = { ...walkingDraft([1, 2]), end, endGap: "car" };
+  const segments = segmentsOf([1, 2], draft);
+  assert.deepEqual(
+    segments.map((s) => [s.mode, s.photos, s.end?.label]),
+    [
+      ["walk", [1, 2], undefined],
+      ["car", [2], "Izumoshi"],
+    ],
+  );
+  assert.equal(draftOf([1, 2], segments).endGap, "car");
+  assert.equal(withGap(draft, END_GAP, "walk").endGap, undefined);
 });

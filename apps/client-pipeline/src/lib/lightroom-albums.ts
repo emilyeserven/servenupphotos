@@ -1,6 +1,8 @@
 import screenshotsPrompt from "@/lib/lightroom-albums-prompt.md?raw";
 import recordingPrompt from "@/lib/lightroom-albums-recording-prompt.md?raw";
 import { insertAlbum, keepMove } from "@/lib/lightroom-tree";
+import { readPastedObject } from "@/lib/pasted-json";
+import { stringOf } from "@portfolio/lib/values";
 
 /** How the album panel is captured for the LLM: overlapping screenshots, or a screen recording scrolling through it. */
 export type LightroomCapture = "screenshots" | "recording";
@@ -87,22 +89,6 @@ export interface LightroomAlbumsFile {
   items: LightroomItem[];
 }
 
-/** The JSON object in pasted text, from its first `{` to its last `}`, so a code block or words around it are fine. */
-function jsonObject(input: string): Record<string, unknown> {
-  const start = input.indexOf("{");
-  const end = input.lastIndexOf("}");
-  if (start < 0 || end < start) throw new Error("There's no JSON object in it.");
-  try {
-    return JSON.parse(input.slice(start, end + 1)) as Record<string, unknown>;
-  } catch {
-    throw new Error("The JSON couldn't be read. Check it's the whole answer or file.");
-  }
-}
-
-function text(value: unknown): string {
-  return typeof value === "string" ? value : "";
-}
-
 function count(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
@@ -111,23 +97,23 @@ function count(value: unknown): number | null {
 const OLD_STAGES: Record<string, LightroomStage> = { Culling: "Cull Round 1" };
 
 function stage(value: unknown): LightroomStage | null {
-  return LIGHTROOM_STAGES.find((s) => s === value) ?? OLD_STAGES[text(value)] ?? null;
+  return LIGHTROOM_STAGES.find((s) => s === value) ?? OLD_STAGES[stringOf(value)] ?? null;
 }
 
 /** The uncertain note, kept when the item was marked uncertain (an LLM answer) or has one (an exported file). */
 function uncertainty(raw: Record<string, unknown>): { uncertainNote?: string } {
-  if (raw.uncertain !== true && !text(raw.uncertainNote)) return {};
-  return { uncertainNote: text(raw.uncertainNote) || "Not sure it was read right." };
+  if (raw.uncertain !== true && !stringOf(raw.uncertainNote)) return {};
+  return { uncertainNote: stringOf(raw.uncertainNote) || "Not sure it was read right." };
 }
 
 /** The item's path, made from its parent's when the JSON doesn't have one. */
 function itemPath(raw: Record<string, unknown>, name: string, parent: string): string {
-  return text(raw.path) || (parent ? `${parent}/${name}` : name);
+  return stringOf(raw.path) || (parent ? `${parent}/${name}` : name);
 }
 
 /** Whether the album was added by hand, and where Lightroom has it when it was moved on this page. */
 function origin(raw: Record<string, unknown>): Pick<LightroomAlbum, "manual" | "lightroomPath"> {
-  const lightroomPath = text(raw.lightroomPath);
+  const lightroomPath = stringOf(raw.lightroomPath);
   return {
     ...(raw.manual === true ? { manual: true } : {}),
     ...(lightroomPath ? { lightroomPath } : {}),
@@ -145,7 +131,7 @@ function readAlbum(raw: Record<string, unknown>, name: string, path: string): Li
     offline: raw.offline === true,
     ...origin(raw),
     stage: stage(raw.stage),
-    notes: text(raw.notes),
+    notes: stringOf(raw.notes),
     ...uncertainty(raw),
   };
 }
@@ -168,7 +154,7 @@ function asRecord(value: unknown): Record<string, unknown> {
 
 function readItem(value: unknown, parent: string): LightroomItem | null {
   const raw = asRecord(value);
-  const name = text(raw.name).trim();
+  const name = stringOf(raw.name).trim();
   if (!name) return null;
   const path = itemPath(raw, name, parent);
   return raw.kind === "folder" ? readFolder(raw, name, path) : readAlbum(raw, name, path);
@@ -184,11 +170,11 @@ function readItems(value: unknown, parent: string): LightroomItem[] {
  * shape. Throws an error a person can read when there's no tree in it.
  */
 export function readLightroomAlbums(input: string): LightroomAlbumsFile {
-  const raw = jsonObject(input);
-  if (!Array.isArray(raw.items)) throw new Error(`The JSON has no "items" list.`);
+  const raw = readPastedObject(input);
+  if (!Array.isArray(raw.items)) throw new Error(`The answer's JSON has no "items" list.`);
   const items = readItems(raw.items, "");
   if (items.length === 0) throw new Error("The list has no folders or albums in it.");
-  return { source: text(raw.source) || "unknown", updatedAt: new Date().toISOString(), items };
+  return { source: stringOf(raw.source) || "unknown", updatedAt: new Date().toISOString(), items };
 }
 
 /** The tree read again, so a list kept in the browser by an older version of the page gets the current fields and stages. */

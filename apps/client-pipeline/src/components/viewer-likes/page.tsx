@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { QueryResult } from "@/components/query-result";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The User Likes page: the lists of liked photos people sent from the portfolio's My Likes page. */
 export function ViewerLikesPage() {
@@ -26,9 +28,11 @@ export function ViewerLikesPage() {
 
 function Likes() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and user likes…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <ViewerChooser data={combined.data} />;
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photos and user likes…">
+      {(data) => <ViewerChooser data={data} />}
+    </QueryResult>
+  );
 }
 
 /** The chosen person's ID, or "" for a new one. */
@@ -73,7 +77,7 @@ function ViewerList({ viewers, chosen, onChoose }: ViewerListProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
-        {viewers.length === 0 && <p className="text-muted-foreground text-sm">None yet.</p>}
+        {viewers.length === 0 && <EmptyNote>No viewers have sent their likes yet.</EmptyNote>}
         {viewers.map((viewer) => (
           <button
             key={viewer.id}

@@ -1,4 +1,5 @@
 import { DatePicker } from "@/components/date-picker";
+import { count } from "@portfolio/lib/words";
 
 /** The days to list photos from, as "2016-12-23"; `to` is blank for one day. */
 interface DayRange {
@@ -14,10 +15,10 @@ interface DayRangeFieldsProps {
 }
 
 /** What the range lists, or what to do to list something. */
-function countText({ from }: DayRange, count: number): string {
+function countText({ from }: DayRange, n: number): string {
   if (!from) return "Pick a day, or the first and last of a range, to list their photos.";
-  if (count === 0) return "No photos were taken then.";
-  const photos = count === 1 ? "1 photo" : `${count} photos`;
+  if (n === 0) return "No photos were taken then.";
+  const photos = count(n, "photo");
   return `${photos}, in the order the camera took them. Mark the ones taken after the timezone change.`;
 }
 

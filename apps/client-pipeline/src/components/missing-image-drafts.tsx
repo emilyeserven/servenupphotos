@@ -1,9 +1,10 @@
 import { ArchiveXIcon } from "lucide-react";
 import type { InFlightImages, PublishedFile } from "@/api/photos";
-import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
+import { CollapsiblePanel } from "@/components/collapsible-panel";
 import { DraftTile } from "@/components/undecided-photos";
 import { Button } from "@/components/ui/button";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
+import { count } from "@portfolio/lib/words";
 
 /** Whether R2 was searched (or its offline copy read), so a draft missing from `byPath` has no image there. */
 function imagesKnown(images: InFlightImages): boolean {
@@ -27,7 +28,7 @@ export function MissingImageDrafts({
   return (
     <CollapsiblePanel
       title="Can't be edited"
-      count={`${countOf(files.length, "draft")} without an image`}
+      count={`${count(files.length, "draft")} without an image`}
     >
       {imagesKnown(images) ? <MoveAll files={files} /> : <NotSearched message={images.message} />}
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">

@@ -7,6 +7,7 @@ import {
   type OrganizeResponse,
   type PhotoGroups,
   albumAncestry,
+  albumTree,
   createGroupMutation,
   groupId,
   groupLabel,
@@ -20,11 +21,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
 import { useTagPaste } from "@/components/pasted-tags";
 import { validateGroupName } from "@/lib/group-name";
+import { ErrorNote } from "@/components/error-note";
 
 /** Where an album sits, such as “In Asia › Korea”, or undefined for a top-level one. */
-function albumPlace(albums: Group[], album: Group): string | undefined {
+function albumPlace(albums: Group[], album: Group, lead = "In"): string | undefined {
   const parents = albumAncestry(albums, album.id).slice(0, -1);
-  return parents.length > 0 ? `In ${parents.map(groupLabel).join(" › ")}` : undefined;
+  return parents.length > 0 ? `${lead} ${parents.map(groupLabel).join(" › ")}` : undefined;
 }
 
 /** groups as options to choose from, leaving out ones that couldn't be read or are in `exclude`. */
@@ -33,8 +35,10 @@ function groupOptions(
   groups: Group[],
   exclude: ReadonlySet<string> = new Set(),
 ): ComboboxOption[] {
-  // Favorite tags come first, so they're at the top of the Tags field's list.
-  return favoritesFirst(groups)
+  // Favorite tags come first, so they're at the top of the Tags field's list, and each subgenre
+  // comes right after its genre.
+  const ordered = kind === "genres" ? albumTree(groups).map((row) => row.group) : groups;
+  return favoritesFirst(ordered)
     .filter((group) => !group.error && !exclude.has(group.id))
     .map((group) => ({
       value: group.id,
@@ -44,9 +48,13 @@ function groupOptions(
     }));
 }
 
-/** The line under an option: where an album sits, or "★ Favorite" for a favorite tag. */
+/**
+ * The line under an option: where an album sits, the genres a subgenre is under, or "★ Favorite"
+ * for a favorite tag.
+ */
 function optionDetail(kind: GroupKind, groups: Group[], group: Group): string | undefined {
   if (kind === "albums") return albumPlace(groups, group);
+  if (kind === "genres") return albumPlace(groups, group, "Under");
   return group.favorite ? "★ Favorite" : undefined;
 }
 
@@ -139,7 +147,7 @@ export function PhotoGroupFields({
   const albumsId = `${idPrefix}-albums`;
   return (
     <div className="flex flex-col gap-4">
-      {organize.isError && <p className="text-destructive text-sm">{organize.error.message}</p>}
+      <ErrorNote error={organize.error} />
       <div className="flex flex-col gap-2">
         <FieldLabel htmlFor={albumsId} kind="albums" />
         <GroupCombobox
@@ -214,7 +222,7 @@ function NewGroupHint({
   return (
     <div id={id} aria-live="polite" className="text-sm">
       {pending && <p className="text-muted-foreground">Saving the new genre…</p>}
-      {problem && <p className="text-destructive">{problem}</p>}
+      <ErrorNote error={problem} />
     </div>
   );
 }

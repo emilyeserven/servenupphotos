@@ -2,8 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"log/slog"
 	"net/http"
 	"time"
@@ -29,39 +27,16 @@ const publishColorsTimeout = 20 * time.Second
 // by readHash when they're there. A photo that looks nearly the same as
 // others goes in a compare group with them.
 func handlePublishPhoto(store *settings.Store, gh *github.Client, readColors github.ColorReader, readHash github.HashReader) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var photo github.Photo
-		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
-		dec.DisallowUnknownFields()
-		if err := dec.Decode(&photo); err != nil {
-			// The reason names the field, such as `unknown field "noGps"`.
-			writeError(w, http.StatusBadRequest, "invalid photo data body: "+err.Error())
-			return
-		}
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		photo.Colors = photoColors(r.Context(), readColors, photo.Sanitized.Images.Key)
-		photo.PerceptualHash = photoHash(r.Context(), readHash, photo.Sanitized.Images.Small)
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.Publish(ctx, cfg, photo)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("publish photo failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not publish photo data")
-			return
-		}
-		writeJSON(w, http.StatusOK, result)
-	}
+	// The colors and the hash have their own timeouts, so the publish's
+	// starts once they're read.
+	return withGitHubBody(store, publishColorsTimeout+publishHashTimeout+publishTimeout, "photo data", "Couldn't save the photo data.",
+		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, photo github.Photo) (any, error) {
+			photo.Colors = photoColors(ctx, readColors, photo.Sanitized.Images.Key)
+			photo.PerceptualHash = photoHash(ctx, readHash, photo.Sanitized.Images.Small)
+			ctx, cancel := context.WithTimeout(ctx, publishTimeout)
+			defer cancel()
+			return gh.Publish(ctx, cfg, photo)
+		})
 }
 
 // photoColors reads the colors of the original at key, or nil when there's no
@@ -85,32 +60,8 @@ func photoColors(ctx context.Context, readColors github.ColorReader, key *string
 // name, GPS position and creation date, in ALLPHOTOS.json on GitHub, so a
 // photo already in the portfolio isn't uploaded or saved again.
 func handleAllPhotosCheck(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var photo github.PhotoIdentity
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes)).Decode(&photo); err != nil {
-			writeError(w, http.StatusBadRequest, "invalid photo body")
-			return
-		}
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.FindInPullRequest(ctx, cfg, photo)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("check ALLPHOTOS.json failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not check ALLPHOTOS.json")
-			return
-		}
-		writeJSON(w, http.StatusOK, result)
-	}
+	return withGitHubBody(store, publishTimeout, "photo", "Couldn't check ALLPHOTOS.json.",
+		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, photo github.PhotoIdentity) (any, error) {
+			return gh.FindInPullRequest(ctx, cfg, photo)
+		})
 }

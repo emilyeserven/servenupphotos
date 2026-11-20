@@ -14,6 +14,7 @@ import { type PreviewZoom, usePreviewZoom } from "@/components/face-pixelation/u
 import { ZoomControls } from "@/components/face-pixelation/zoom-controls";
 import { type FaceBox, type Point, drawnBox, isBigEnough } from "@/lib/face-boxes";
 import { cn } from "@/lib/utils";
+import { ReadingNote } from "@/components/query-result";
 
 /**
  * The photo at src, once loaded. It's loaded without CORS, which is enough to draw it on a canvas:
@@ -91,7 +92,7 @@ export function FacePreview({ src, onLoad, ...props }: FacePreviewProps) {
   useEffect(() => {
     if (loaded) onLoad(loaded.photo);
   }, [loaded, onLoad]);
-  if (!loaded) return <p className="text-muted-foreground text-sm">Loading the photo…</p>;
+  if (!loaded) return <ReadingNote label="Reading the photo…" />;
   return <LoadedPreview loaded={loaded} {...props} />;
 }
 

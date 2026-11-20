@@ -7,11 +7,12 @@ import { PlannedPhotoView } from "@/components/instagram-planned/planned-photo";
 import { useMarkScheduled } from "@/components/instagram-planned/use-mark-scheduled";
 import { usePostedPhotoFiles } from "@/components/social-post-date-picker";
 import { Button } from "@/components/ui/button";
-import { isoDate } from "@/lib/calendar";
+import { isoDate } from "@portfolio/lib/dates";
 import { captionLists, captionValues, fillCaption } from "@/lib/caption-template";
 import { type PlannedPhoto, plannedPhotos } from "@/lib/instagram-planned";
 import { parseHashtags } from "@/lib/social-posts";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The planned post's own caption, trimmed, or "" when it has none. */
 function writtenCaption(planned: PlannedPhoto): string {
@@ -128,12 +129,12 @@ function MarkedNote({ name, onUndo }: { name: string | null; onUndo: () => void 
 
 function NothingPlanned() {
   return (
-    <p className="text-muted-foreground rounded-md border border-dashed p-6 text-center text-sm">
+    <EmptyNote className="rounded-md border border-dashed p-6 text-center">
       Nothing is planned for Instagram. Put photos on the{" "}
       <Link to="/instagram" className="text-foreground underline underline-offset-4">
         Instagram calendar
       </Link>{" "}
       to go through them here.
-    </p>
+    </EmptyNote>
   );
 }

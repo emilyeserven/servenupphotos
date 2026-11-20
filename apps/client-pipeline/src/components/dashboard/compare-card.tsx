@@ -2,8 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { TrophyIcon } from "lucide-react";
 import type { CompareRead } from "@/components/compare/compare-group-list";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { type CompareGroup, winnersOf } from "@/lib/compare-groups";
+import { ReadingNote } from "@/components/query-result";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 /** The compare groups still open, each linked to its head-to-head view. */
 export function CompareCard({ compare }: { compare: CompareRead }) {
@@ -25,9 +27,9 @@ export function CompareCard({ compare }: { compare: CompareRead }) {
 }
 
 function GroupList({ compare }: { compare: CompareRead }) {
-  if (compare.pending) return <Skeleton className="h-20 rounded-md" />;
+  if (compare.pending) return <ReadingNote label="Reading the compare groups…" />;
   if (compare.groups.length === 0) {
-    return <p className="text-muted-foreground text-sm">No compare groups are open.</p>;
+    return <EmptyNote>No compare groups are open.</EmptyNote>;
   }
   return (
     <ul className="flex flex-col gap-1.5">
@@ -43,7 +45,7 @@ function GroupList({ compare }: { compare: CompareRead }) {
 /** A group's name, photo count and how many winners are picked. */
 function GroupRow({ group }: { group: CompareGroup }) {
   const winners = winnersOf(group).length;
-  const count = group.photos.length;
+  const n = group.photos.length;
   return (
     <Link
       to="/compare"
@@ -52,7 +54,7 @@ function GroupRow({ group }: { group: CompareGroup }) {
     >
       <span className="truncate font-medium">{group.name}</span>
       <span className="text-muted-foreground flex shrink-0 items-center gap-2 text-xs">
-        {count === 1 ? "1 photo" : `${count} photos`}
+        {count(n, "photo")}
         {winners > 0 && (
           <span className="flex items-center gap-1 text-amber-700 dark:text-amber-400">
             <TrophyIcon className="size-3.5" aria-hidden />

@@ -1,13 +1,12 @@
 import { useId, useMemo, useState } from "react";
 import { AutogroupReview } from "@/components/compare/autogroup-review";
 import { ReadProblems } from "@/components/compare/compare-group-list";
-import { CopyPromptButton, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
+import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
+import { PasteAnswer } from "@/components/paste-answer";
 import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
 import { PhotoScopeToggle } from "@/components/photo-scope-toggle";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { count } from "@/components/update-data-shared";
 import { useCompareGroups } from "@/hooks/use-compare-groups";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import {
@@ -21,6 +20,9 @@ import {
 } from "@/lib/compare-autogroup";
 import { readAutogroupAnswer } from "@/lib/compare-autogroup-answer";
 import type { ComparePhoto } from "@/lib/compare-groups";
+import { ReadingNote } from "@/components/query-result";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 /**
  * Autogroup: chooses every photo or only the drafts, copies one prompt linking all their Small
@@ -56,7 +58,7 @@ export function AutogroupCard() {
           />
         </div>
         {compare.pending ? (
-          <Skeleton className="h-40 rounded-xl" />
+          <ReadingNote label="Reading the photos…" />
         ) : (
           <AutogroupPrompt
             key={`${options.scope}-${options.withGroups}`}
@@ -102,21 +104,12 @@ interface AutogroupPromptProps {
 /** The photos asked about, their prompt, the box to paste the answer into, and the review of it. */
 function AutogroupPrompt({ ask, all }: AutogroupPromptProps) {
   // Each review starts fresh, so changes left out of the last one aren't left out of the next.
-  const { typed, setTyped, answer, error, reviews, review } = usePastedAnswer((text) =>
-    readAutogroupAnswer(text, ask, all),
-  );
+  const pasted = usePastedAnswer((text) => readAutogroupAnswer(text, ask, all));
   return (
     <div className="flex flex-col gap-4">
       <CopyAutogroupPrompt ask={ask} />
-      <PasteAnswer
-        value={typed}
-        onChange={setTyped}
-        pending={false}
-        label="Review the changes"
-        onReview={review}
-      />
-      {error && <p className="text-destructive text-sm">{error}</p>}
-      {answer && <AutogroupReview key={reviews} answer={answer} />}
+      <PasteAnswer pasted={pasted} label="Review the changes" />
+      {pasted.answer && <AutogroupReview key={pasted.reviews} answer={pasted.answer} />}
       <PhotoTiles photos={ask.loose} />
     </div>
   );
@@ -148,9 +141,7 @@ function promptLabel(ask: AutogroupAsk): string {
 /** The photos as small square tiles, each named on hover, or that there are none. */
 function PhotoTiles({ photos }: { photos: AutogroupPhoto[] }) {
   if (photos.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">No photos outside a group with these choices.</p>
-    );
+    return <EmptyNote>No photos outside a group with these choices.</EmptyNote>;
   }
   return (
     <ul className="grid grid-cols-6 gap-1.5 sm:grid-cols-10 lg:grid-cols-12">

@@ -6,13 +6,16 @@ import type {
   TripTransitLine,
   TripVia,
   TripVisit,
+  TransitLike,
   ViaBy,
 } from "@/api/trip-lines";
 import type { TripLegRide } from "@/api/trips";
 import { walkPathsOf, walkViasOf, withStationWalks } from "@/lib/station-walks";
 import { legLinesOf, withLegLines } from "@/lib/hop-legs";
+import { legLikesOf, withLegLikes } from "@/lib/transit-like";
 import { cutAtStopWays, cutGap } from "@/lib/stop-ways";
 import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
+import { breakEndsOf, breakSpots } from "@/lib/break-ends";
 
 /**
  * What happened between two photos taken one after the other: kept walking, a break (the line
@@ -28,7 +31,10 @@ export interface DraftVia extends TripPoint {
   by?: ViaBy;
 }
 
-/** How the day can get from its start to the first photo: any gap but a break or a wander. */
+/**
+ * How the day can get from its start to the first photo, or from its last photo to its end: any gap
+ * but a break or a wander.
+ */
 export type StartGap = Exclude<Gap, "break" | "wander">;
 
 /** A path along streets, each point [longitude, latitude]. */
@@ -44,6 +50,11 @@ export interface GapDraft {
    * photo, such as a bus from lunch; left out, it walked.
    */
   startGap?: StartGap;
+  /**
+   * How the day got from its last photo to its end spot, or the trip stops after that photo, when it
+   * wasn't walked, such as a drive back to the station.
+   */
+  endGap?: StartGap;
   /** A spot with no photo the day ends at. */
   end?: TripPoint;
   /** The via spots after the start spot and after each photo, in order. */
@@ -56,6 +67,11 @@ export interface GapDraft {
    * hop changed to another mode leaves it out.
    */
   lines?: Record<string, HopLine>;
+  /**
+   * The mode each transit hop (of unknown kind) is routed and drawn as, such as a car along the
+   * roads, by its leg key; a hop left out is a straight dashed hop.
+   */
+  likes?: Record<string, TransitLike>;
   /**
    * The photos (by ID) that start a group of their own, such as the first photo in a new park; the
    * day's first photo always does. Each group is its own named line.
@@ -76,6 +92,13 @@ export interface GapDraft {
   exits?: Record<string, TripPoint>;
   /** Where the line entered each area wandered, by the ID of the first photo there. */
   entrances?: Record<string, TripPoint>;
+  /**
+   * Where the line before a break ends, such as the hotel at lunchtime, by the ID of the last photo
+   * before the break; so each group around a break can have its own end.
+   */
+  breakEnds?: Record<string, TripPoint>;
+  /** Where the line after a break starts, by the ID of the first photo after it. */
+  breakStarts?: Record<string, TripPoint>;
 }
 
 /** The line a hop rode, and how the hop was travelled when it was picked. */
@@ -240,11 +263,28 @@ function plainSegments(photos: number[], draft: GapDraft): TripSegment[] {
       run.photos.push(b);
       return;
     }
-    segments.push(...walkSegment(run));
+    const { end, start } = breakSpots(draft, gap, [a, b]);
+    segments.push(...walkSegment({ ...run, ...(end && { end }) }));
     if (gap !== "break") segments.push(hopSegment(draft, gap, a, b));
-    run = { photos: [b], via: [] };
+    run = { ...(start && { start }), photos: [b], via: [] };
   });
-  return [...segments, ...walkSegment(lastRun(run, draft))];
+  return [...segments, ...endSegments(run, draft)];
+}
+
+/**
+ * The last run, and the way from its last photo to the day's end: walked on with the run, or else
+ * its own hop from that photo, such as a drive back to the station.
+ */
+function endSegments(run: Run, draft: GapDraft): TripSegment[] {
+  const tail = lastRun(run, draft);
+  if (!draft.endGap || !tail.end || run.photos.length === 0) return walkSegment(tail);
+  const via = tail.via.slice(run.via.length);
+  const hop = {
+    mode: draft.endGap,
+    photos: run.photos.slice(-1),
+    ...withPoints({ end: tail.end, via }),
+  };
+  return [...walkSegment(run), hop];
 }
 
 /** The point's coordinates, or null when there's none. */
@@ -258,14 +298,14 @@ function shapingVia(s: TripSegment): TripVia[] {
 }
 
 /**
- * What makes a segment's path: its mode, points and line, but not its spots' labels, nor the via
+ * What makes a segment's path: its mode (and the one a transit hop borrows), points and line, but not its spots' labels, nor the via
  * spots of a hop with a line, so adding one doesn't drop the line's track.
  */
 export function segmentKey(s: TripSegment): string {
   const via = shapingVia(s).map((v) => [v.after ?? null, v.latitude, v.longitude, v.by ?? null]);
   const ride = [s.line?.id ?? null, at(s.board), at(s.alight)];
   return JSON.stringify([
-    s.mode,
+    s.like ? [s.mode, s.like] : s.mode,
     at(s.start),
     s.photos,
     at(s.end),
@@ -304,15 +344,13 @@ function withAreaEnds(segment: TripSegment, draft: GapDraft): TripSegment {
 
 /** The segments the gaps make between photos, taken one after the other. */
 export function segmentsOf(photos: number[], draft: GapDraft): TripSegment[] {
-  const plain = withLegLines(
-    cutAtStopWays(
-      splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
-        withAreaEnds(segment, draft),
-      ),
-      draft.visits,
+  const cut = cutAtStopWays(
+    splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
+      withAreaEnds(segment, draft),
     ),
-    draft.lines,
+    draft.visits,
   );
+  const plain = withLegLikes(withLegLines(cut, draft.lines), draft.likes);
   return withNames(
     plain.map((segment) => withStationWalks(withPath(segment, draft), draft)),
     photos,
@@ -332,9 +370,18 @@ function gapIn(segments: TripSegment[], a: number, b: number): Gap {
   return (segment?.mode ?? cutGap(segments, a, b) ?? "break") as Gap;
 }
 
-/** The day's spots with no photo: the first segment's start and the last one's end. */
-function dayEnds(segments: TripSegment[]): Pick<GapDraft, "start" | "end"> {
-  return { start: segments[0]?.start, end: segments.at(-1)?.end };
+/**
+ * The day's spots with no photo: the first segment's start and the last one's end, unless that
+ * segment starts after the first photo or ends before the last, at a break.
+ */
+function dayEnds(photos: number[], segments: TripSegment[]): Pick<GapDraft, "start" | "end"> {
+  const [first, last] = [segments[0], segments.at(-1)];
+  const starts = first?.photos[0] ?? photos[0];
+  const ends = last?.photos.at(-1) ?? photos.at(-1);
+  return {
+    start: starts === photos[0] ? first?.start : undefined,
+    end: ends === photos.at(-1) ? last?.end : undefined,
+  };
 }
 
 /** The segments' via spots, by what they come after. */
@@ -371,11 +418,14 @@ export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
   const via = { ...viaByKey(segments), ...walkViasOf(segments) };
   return {
     gaps,
-    ...dayEnds(segments),
+    ...dayEnds(photos, segments),
+    ...breakEndsOf(photos, gaps, segments),
     ...startGapOf(segments),
+    ...endGapOf(segments),
     via,
     paths: pathsOf(segments),
     lines,
+    likes: legLikesOf(segments),
     ...groupsOf(segments),
     ...areaEndsOf(segments),
   };
@@ -388,14 +438,32 @@ function startGapOf(segments: TripSegment[]): Pick<GapDraft, "startGap"> {
   return { startGap: first.mode };
 }
 
+/**
+ * How the saved line got from its last photo to its end, when it wasn't walked: the segment from that
+ * photo alone to an end spot.
+ */
+function endGapOf(segments: TripSegment[]): Pick<GapDraft, "endGap"> {
+  const last = segments.findLast((s) => s.photos.length > 0);
+  if (!last?.end || last.start || last.photos.length !== 1) return {};
+  if (last.mode === "walk" || last.mode === "wander") return {};
+  return { endGap: last.mode };
+}
+
 /** The draft with every gap kept walking: one line through all the photos. */
 export function walkingDraft(photos: number[]): GapDraft {
   return { gaps: photos.slice(1).map(() => "walk") };
 }
 
-/** The draft with gap index changed; index -1 is the way from the day's start to its first photo. */
+/** The gap index of the way from the day's last photo to its end. */
+export const END_GAP = -2;
+
+/**
+ * The draft with gap index changed; index -1 is the way from the day's start to its first photo,
+ * and END_GAP the way from its last photo to its end.
+ */
 export function withGap(draft: GapDraft, index: number, gap: Gap): GapDraft {
   if (index === -1) return withStartGap(draft, gap);
+  if (index === END_GAP) return withEndGap(draft, gap);
   return { ...draft, gaps: draft.gaps.map((g, i) => (i === index ? gap : g)) };
 }
 
@@ -404,6 +472,11 @@ function withStartGap({ startGap: _was, ...draft }: GapDraft, gap: Gap): GapDraf
   return gap === "walk" || gap === "break" || gap === "wander"
     ? draft
     : { ...draft, startGap: gap };
+}
+
+/** The draft with the way from its last photo to its end set; walking leaves it out. */
+function withEndGap({ endGap: _was, ...draft }: GapDraft, gap: Gap): GapDraft {
+  return gap === "walk" || gap === "break" || gap === "wander" ? draft : { ...draft, endGap: gap };
 }
 
 /** The keys of a draft that hold a list, such as its visits or its fences. */

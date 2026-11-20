@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import { SaveIcon } from "lucide-react";
 import { useState } from "react";
 import { setPickedSimilarMutation } from "@/api/related-photos";
-import { ErrorText } from "@/components/bulk-tagging/pick-controls";
 import type { SavedPhoto } from "@/components/saved-photo-picker";
 import { PickedSimilarFields } from "@/components/related-photos/picked-similar-fields";
 import {
@@ -15,6 +14,8 @@ import {
 } from "@/components/related-photos/picks";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
+import { SavedInApp } from "@/components/waiting-for-commit";
 
 interface PickedEditorProps {
   photo: SavedPhoto;
@@ -51,11 +52,11 @@ function SavePicks({ photo, picks }: { photo: SavedPhoto; picks: Pick[] }) {
           disabled={!changed}
           onClick={() => save.mutate({ path: photo.path, ...pickFields(picks) })}
         />
-        {save.isSuccess && !changed && (
-          <span className="text-muted-foreground text-sm">Saved, waiting for Commit.</span>
-        )}
       </div>
-      <ErrorText error={save.error} />
+      {save.isSuccess && !changed && (
+        <SavedInApp what="the picks" pullRequestUrl={save.data.pullRequestUrl} />
+      )}
+      <ErrorNote error={save.error} />
     </>
   );
 }

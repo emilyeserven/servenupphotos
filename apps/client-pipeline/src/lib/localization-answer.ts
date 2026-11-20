@@ -1,4 +1,6 @@
 import type { Fields } from "@/components/localization-row";
+import { matchName, readPastedList } from "@/lib/pasted-json";
+import { textOf } from "@portfolio/lib/values";
 
 /** What an LLM's answer to the localization prompt says, matched to the names it was asked about. */
 export interface LocalizationAnswer {
@@ -8,35 +10,12 @@ export interface LocalizationAnswer {
   unknown: string[];
 }
 
-/** The JSON object in the pasted answer, from its first `{` to its last `}`, so a code block or words around it are fine. */
-function answerObject(answer: string): unknown {
-  const start = answer.indexOf("{");
-  const end = answer.lastIndexOf("}");
-  if (start < 0 || end < start) throw new Error("The answer has no JSON object in it.");
-  try {
-    return JSON.parse(answer.slice(start, end + 1));
-  } catch {
-    throw new Error("The answer's JSON couldn't be read. Check it's the whole answer.");
-  }
-}
-
-/** The answer's list of localizations, or an error saying it has none. */
-function answerEntries(answer: string): unknown[] {
-  const entries = (answerObject(answer) as { localizations?: unknown } | null)?.localizations;
-  if (!Array.isArray(entries)) throw new Error(`The answer's JSON has no "localizations" list.`);
-  return entries;
-}
-
-function text(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /** One entry of the answer as fields, trimmed, with anything that isn't text read as "". */
 function entryFields(entry: Record<string, unknown>): Fields {
   return {
-    romanization: text(entry.romanization),
-    pronunciation: text(entry.pronunciation),
-    localScript: text(entry.localScript),
+    romanization: textOf(entry.romanization),
+    pronunciation: textOf(entry.pronunciation),
+    localScript: textOf(entry.localScript),
   };
 }
 
@@ -46,14 +25,15 @@ function entryFields(entry: Record<string, unknown>): Fields {
  */
 export function readLocalizationAnswer(answer: string, asked: string[]): LocalizationAnswer {
   const result: LocalizationAnswer = { fields: {}, unknown: [] };
-  for (const entry of answerEntries(answer))
+  for (const entry of readPastedList(answer, "localizations"))
     addEntry(result, entry as Record<string, unknown>, asked);
   return result;
 }
 
-/** Keeps one entry's fields when it's of a name asked about, or else notes its ID. */
+/** Keeps one entry's fields when it's of a name asked about (matched with `matchName`), or else notes its ID. */
 function addEntry(result: LocalizationAnswer, entry: Record<string, unknown>, asked: string[]) {
-  const id = text(entry?.id);
-  if (asked.includes(id)) result.fields[id] = entryFields(entry);
-  else if (id) result.unknown.push(id);
+  const given = textOf(entry?.id);
+  const id = asked.find((name) => matchName(name) === matchName(given));
+  if (id) result.fields[id] = entryFields(entry);
+  else if (given) result.unknown.push(given);
 }

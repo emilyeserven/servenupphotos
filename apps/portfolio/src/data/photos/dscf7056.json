@@ -13,11 +13,11 @@
   "iso": 1250,
   "focalLength": 49.4,
   "gpsPosition": "36 deg 5' 15.44\" N, 128 deg 15' 55.60\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "36.021874, 128.399284",
   "createDate": "2026:09:20 09:47:39",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Nakdong River",
+  "customCity": "Chilgok",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,9 +50,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["bridges", "river", "reflections", "apartments", "cables"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "overlooking",
+      "id": "nakdong-river"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

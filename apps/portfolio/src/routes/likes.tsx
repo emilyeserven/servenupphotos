@@ -13,6 +13,8 @@ import {
   type ShownPhotoSearch,
   useShownPhoto,
 } from "@/lib/shown-photo";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@/lib/words";
 
 interface LikesSearch extends ShownPhotoSearch {
   /** Set to `text` when the text to send is just the ids, for Messenger or a text message. Left out for Discord. */
@@ -67,7 +69,7 @@ function LikesPage() {
           My Likes
         </h1>
         <p className="text-sm text-muted-foreground">
-          {liked.length} {liked.length === 1 ? "photo" : "photos"}, saved in this browser
+          {count(liked.length, "photo")}, saved in this browser
         </p>
       </header>
       <div className="mx-auto w-full max-w-6xl px-1 sm:px-2">
@@ -102,10 +104,10 @@ function serviceSearch(service: LikedListService) {
 /** What My Likes says before anything is liked: how to like a photo. */
 function NoLikes() {
   return (
-    <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+    <EmptyNote className="rounded-lg border border-dashed p-6 text-center">
       No likes yet. Open any photo and double tap it, or press its{" "}
       <HeartIcon className="inline size-4 align-text-bottom" aria-label="heart" /> button, to keep
       it here.
-    </p>
+    </EmptyNote>
   );
 }

@@ -4,6 +4,7 @@ import { PhotoTile, squareUrl } from "@/components/group-photo-grid";
 import { type CombinedPhoto, currentListedPhotos } from "@/lib/group-photos";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The photos ALLPHOTOS.json lists, by photo ID, for their Square Thumbnails. */
 export type PhotosById = ReadonlyMap<number, CombinedPhoto>;
@@ -51,7 +52,7 @@ export function TaggedPhotos({
   byId: PhotosById;
 }) {
   if (photos.length === 0) {
-    return <p className="text-muted-foreground text-sm">No photo has it itself.</p>;
+    return <EmptyNote>No photo has it itself.</EmptyNote>;
   }
   return (
     <ul className="grid grid-cols-3 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(8rem,1fr))]">

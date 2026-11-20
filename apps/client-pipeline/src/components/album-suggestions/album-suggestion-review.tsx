@@ -5,16 +5,15 @@ import {
   type AlbumSuggestionsPreview,
   applyAlbumSuggestionsMutation,
 } from "@/api/album-suggestions";
-import {
-  SaveReviewed,
-  UnknownPhotos,
-  useReviewedSave,
-} from "@/components/bulk-tagging/review-parts";
-import { count } from "@/components/update-data-shared";
+import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
+import { UnknownPhotos } from "@/components/paste-answer";
 import { type AlbumChoices, albumSuggestionsToSave } from "@/lib/album-suggestions";
 import { NO_CHOICES, photoTagKey, toggled } from "@/lib/bulk-tags";
 import { promptImageUrl } from "@/lib/tag-prompt";
 import { tileImageUrl } from "@/lib/offline-thumbnails";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { withOthers } from "@/lib/answered-photos";
+import { count } from "@portfolio/lib/words";
 
 interface AlbumSuggestionReviewProps {
   preview: AlbumSuggestionsPreview;
@@ -25,14 +24,15 @@ interface AlbumSuggestionReviewProps {
  * The review of the LLM's answer: each album it names, existing or new, with the picked photos to
  * put in it, any of which can be unticked, then a button that saves the rest.
  */
-export function AlbumSuggestionReview({ preview, pick }: AlbumSuggestionReviewProps) {
+export function AlbumSuggestionReview({ preview, pick: picked }: AlbumSuggestionReviewProps) {
+  const pick = withOthers(picked, preview.others);
   const [choices, setChoices] = useState<AlbumChoices>(NO_CHOICES);
   const apply = useReviewedSave(applyAlbumSuggestionsMutation);
   const busy = apply.isPending || apply.isSuccess;
   const save = albumSuggestionsToSave(preview, choices);
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownPhotos names={preview.unknown} noun="albums" />
+      <UnknownPhotos names={preview.unknown} others={preview.others} noun="albums" />
       <ul className="flex flex-col gap-3">
         {preview.albums.map((album) => (
           <SuggestedAlbum
@@ -149,7 +149,7 @@ function ParentToggle({
 /** The picked photos to put in the album, each of which can be unticked. */
 function AlbumPhotos({ album, pick, choices, onChange, disabled }: SuggestedAlbumProps) {
   if (album.photos.length === 0) {
-    return <p className="text-muted-foreground ml-6">No picked photos to put in it.</p>;
+    return <EmptyNote className="ml-6">No picked photos to put in it.</EmptyNote>;
   }
   return (
     <ul className="ml-6 flex flex-wrap gap-3">

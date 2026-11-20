@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { shownPhotos } from "@/lib/place-seeds";
 import { lineDays } from "@/lib/stale-trip-lines";
 import { useSessionData } from "@/hooks/use-session-data";
+import { QueryResult } from "@/components/query-result";
 
 /** A new Trip with no name, days or legs yet. */
 const NEW_TRIP: Trip = { id: "", name: "", start: "", end: "", legs: [], labels: [] };
@@ -44,9 +45,11 @@ function BackToTrips() {
 
 function TripContent({ id }: { id: string }) {
   const combined = useSessionData();
-  if (combined.isPending) return <p>Reading the photos and Trips…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <TripDetail id={id} data={combined.data} />;
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photos and Trips…">
+      {(data) => <TripDetail id={id} data={data} />}
+    </QueryResult>
+  );
 }
 
 /** The Trip the URL names, or a new one: its map, then its editor. */

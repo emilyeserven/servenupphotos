@@ -19,23 +19,22 @@ const photoReadAllowance = 25 * time.Second
 // little longer than each; the longest matching prefix wins. A new endpoint
 // that gives its work more than defaultRelayTimeout adds a line here.
 var relayTimeouts = map[string]time.Duration{
-	"/exif":                                photoBodyAllowance + overridesTimeout + photoReadAllowance,
-	"/upload":                              photoBodyAllowance + uploadTimeout,
-	"/photos/versions/":                    photoBodyAllowance + photoReadAllowance,
-	"/photos/github":                       publishColorsTimeout + publishHashTimeout + publishTimeout,
-	"/photos/in-flight":                    publishTimeout + findPhotosTimeout,
-	"/photos/groups":                       baseURLTimeout,
-	"/photos/saved":                        publishTimeout + findPhotosTimeout + deleteImagesTimeout,
-	"/photos/published":                    publishTimeout + findPhotosTimeout,
-	"/photos/combined":                     commitCombinedTimeout,
-	"/photos/original":                     originalTimeout,
-	"/photos/bucket/exif":                  getPhotoTimeout + overridesTimeout + photoReadAllowance,
-	"/photos/bucket/versions":              uploadTimeout,
-	"/photos/bucket/faces/detect":          detectFacesTimeout,
-	"/photos/bucket/contact-sheets":        contactSheetsTimeout,
-	"/photos/bucket/contact-sheets/delete": deleteContactSheetsTimeout,
-	"/photos/bucket/sizes":                 imageSizesTimeout,
-	"/data/":                               baseURLTimeout,
+	"/exif":                         photoBodyAllowance + overridesTimeout + photoReadAllowance,
+	"/upload":                       photoBodyAllowance + uploadTimeout,
+	"/photos/versions/":             photoBodyAllowance + photoReadAllowance,
+	"/photos/github":                publishColorsTimeout + publishHashTimeout + publishTimeout,
+	"/photos/in-flight":             publishTimeout + findPhotosTimeout,
+	"/photos/groups":                baseURLTimeout,
+	"/photos/saved":                 publishTimeout + findPhotosTimeout + deleteImagesTimeout,
+	"/photos/published":             publishTimeout + findPhotosTimeout,
+	"/photos/combined":              commitCombinedTimeout,
+	"/photos/original":              originalTimeout,
+	"/photos/bucket/exif":           getPhotoTimeout + overridesTimeout + photoReadAllowance,
+	"/photos/bucket/versions":       uploadTimeout,
+	"/photos/bucket/faces/detect":   detectFacesTimeout,
+	"/photos/bucket/contact-sheets": contactSheetsTimeout,
+	"/photos/bucket/sizes":          imageSizesTimeout,
+	"/data/":                        baseURLTimeout,
 	// Answers from memory while a Missing fields or Colors read runs.
 	"/data/progress/":       0,
 	"/data/missing-fields":  backfillTimeout,
@@ -45,7 +44,9 @@ var relayTimeouts = map[string]time.Duration{
 	"/data/near-duplicates": nearDuplicatesTimeout,
 	"/publish/":             baseURLTimeout,
 	"/transit/":             transitTimeout,
-	"/bio/portrait":         photoBodyAllowance + bioUploadTimeout,
+	// Answers from memory while a rail or bus map downloads.
+	"/transit/downloads": 0,
+	"/bio/portrait":      photoBodyAllowance + bioUploadTimeout,
 }
 
 // defaultRelayTimeout is how long the backend may spend on every other path:

@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { moved, photoId } from "@/lib/album-photo-order";
 import { EMPTY_ROW, MAX_ROW_PHOTOS, emptyRow, placedIds, withRow } from "@/lib/album-layout-editor";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
+import { SectionTitle } from "@/components/section-title";
 
 interface LayoutRowsProps {
   layout: AlbumRow[];
@@ -29,7 +32,7 @@ export function LayoutRows({ layout, photos, byId, onChange }: LayoutRowsProps) 
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h3 className="font-medium">Rows</h3>
+        <SectionTitle>Rows</SectionTitle>
         <p className="text-muted-foreground text-xs">
           The album's page shows each row's photos side by side, as tall as each other, with its
           text above and below. <UnplacedNote count={unplaced.length} rows={layout.length} />
@@ -56,10 +59,10 @@ export function LayoutRows({ layout, photos, byId, onChange }: LayoutRowsProps) 
 }
 
 /** How the portfolio shows the photos no row has. */
-function UnplacedNote({ count, rows }: { count: number; rows: number }) {
+function UnplacedNote({ count: n, rows }: { count: number; rows: number }) {
   if (rows === 0) return "With no rows, it shows one photo after another, in the album's order.";
-  if (count === 0) return "Every photo is in a row.";
-  const photos = count === 1 ? "1 photo isn't" : `${count} photos aren't`;
+  if (n === 0) return "Every photo is in a row.";
+  const photos = count(n, "photo isn't", "photos aren't");
   return `${photos} in a row; the page shows them after the rows, one after another.`;
 }
 
@@ -166,7 +169,7 @@ function RowHeader({ place, last, empty, onMove, onRemove }: RowHeaderProps) {
   return (
     <div className="flex items-center gap-1">
       <span className="text-sm font-medium">Row {n}</span>
-      {empty && <span className="text-destructive text-xs">needs photos or text</span>}
+      {empty && <ErrorNote error="needs photos or text" className="text-xs" />}
       <Button
         size="icon-sm"
         variant="ghost"

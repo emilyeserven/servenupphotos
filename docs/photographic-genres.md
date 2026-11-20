@@ -8,8 +8,47 @@ that name or ID, and saves `<folder>/genres/<id>.json` (`POST /api/organize/genr
 list shows every genre on the Settings branch and in the open **Add photo data** pull request, by name, with how many
 photos in `ALLPHOTOS.json` list it, and each name links to its page (`/genres/<id>`) with its file, status and photos.
 
-A genre file is `{ "id", "name", "description" }`, like a tag's. Genres share one set of IDs and names with albums and
-tags, compared ignoring case, so a photo's `albums`, `tags` and `genres` never mean the same thing.
+A genre file is `{ "id", "name", "description" }`, like a tag's, plus `parent` and `order` once it's been placed (see
+below). Genres share one set of IDs and names with albums and tags, compared ignoring case, so a photo's `albums`,
+`tags` and `genres` never mean the same thing.
+
+## Subgenres
+
+A genre can be a subgenre of one broader genre, such as Traditional architecture under Architecture. Its file's
+`parent` is the broader genre's ID (missing or `null` at the top level), the same as a [parent tag](albums-and-tags.md#parent-tags).
+**New genre** has an optional **Parent genre**, a genre's page shows where it sits (**Under**) and has a **Parent
+genre** card that changes it (`PUT /api/organize/genres/<id>/parent`), and the Genres list shows each subgenre indented
+under its genre. The pipeline never lets a genre end up under itself.
+
+A photo lists only the genres it was given, so a photo of `traditional-architecture` keeps `["traditional-architecture"]`.
+Everywhere that filters or counts by genre reads the tree instead: the portfolio's **Genres** filter for Architecture
+shows the Traditional architecture photos too and lists the subgenre under it, and the Graph's Genre counts a photo in
+each genre over its own. The **Photographic genres** combobox lists each subgenre after its genre with "Under
+Architecture" beneath it, and the Genre Suggestions prompt indents subgenres and asks for the subgenre alone when it
+fits.
+
+> **Frontend analogy:** a category tree like a shop's "Shoes › Sneakers": the product only stores its most specific
+> category, and filtering by the parent walks down the tree to include every category under it.
+
+## Reorganize Genres
+
+**Genres → Reorganize Genres** (`/reorganize-genres`) shows every genre as a tree to tidy at once. Each row has the
+genre's name to edit, an **Under** picker to move it under another genre (or back to **Top level**), how many photos
+list it, and buttons to move it up or down among the genres beside it, out of its parent, or under the genre just
+above it as a subgenre. A genre moves with its subgenres, and the **Under** picker leaves out the genre itself and the
+ones under it. Nothing is saved until **Save genres**; **Undo changes** goes back to what's saved, and the button stays
+off while a name is empty or two genres share one.
+
+Saving sends every genre in its new order (`PUT /api/organize/genres/tree`, `{ "genres": [{ "id", "name", "parent" }]
+}`), and the backend checks them all before it saves any: every genre listed once, names not empty, not shared, and
+not an album's or tag's, parents that are genres, and no loops. It then gives each genre file its `order` (1 first),
+and its `parent` and `name` where they changed, as [changes waiting for Commit](pending-changes.md), leaving the files
+that already had them alone. IDs never change here, so every photo keeps its genres; renaming only changes the name
+shown. The Genres page, every genre picker and the portfolio list the genres in this order, then by name for any
+without one.
+
+> **Frontend analogy:** a controlled form over the whole list: the page edits a local copy of the tree and submits it
+> once, like a drag-and-drop list that PUTs the full array instead of one PATCH per move.
 
 ## On a photo
 

@@ -1,6 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
 import { photoChanges, type PendingSave } from "@/api/scan-changes";
-import { post, requestJson } from "@/api/request";
+import { post, put } from "@/api/request";
 
 /** What Find Related Photos saved: a new list of related photos on each photo whose list changed. */
 interface SimilarPhotosResult extends PendingSave {
@@ -32,10 +32,5 @@ export const findSimilarPhotosMutation = mutationOptions({
 export const setPickedSimilarMutation = mutationOptions({
   mutationKey: ["data", "related-photos", "picked"],
   meta: { saves: true, changes: (result) => photoChanges(result as PendingSave) },
-  mutationFn: (body: PickedSimilar) =>
-    requestJson<PendingSave>("/api/data/related-photos/picked", {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-    }),
+  mutationFn: (body: PickedSimilar) => put<PendingSave>("/api/data/related-photos/picked", body),
 });

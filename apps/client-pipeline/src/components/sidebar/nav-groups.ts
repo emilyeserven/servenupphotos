@@ -19,6 +19,7 @@ import {
   LayoutGridIcon,
   LightbulbIcon,
   ListChecksIcon,
+  ListTreeIcon,
   type LucideIcon,
   MapPinIcon,
   MapPinnedIcon,
@@ -119,7 +120,10 @@ export const navGroups: readonly NavGroup[] = [
         title: "Genres",
         url: "/genres",
         icon: ShapesIcon,
-        children: [{ title: "Genre Suggestions", url: "/genre-suggestions", icon: LightbulbIcon }],
+        children: [
+          { title: "Reorganize Genres", url: "/reorganize-genres", icon: ListTreeIcon },
+          { title: "Genre Suggestions", url: "/genre-suggestions", icon: LightbulbIcon },
+        ],
       },
       {
         title: "Places",

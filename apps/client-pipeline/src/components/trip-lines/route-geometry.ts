@@ -3,13 +3,15 @@ import type { TripLegRide } from "@/api/trips";
 import type { TripPhoto } from "@/lib/trip-days";
 import { type LngLat, linePoints } from "@/lib/trip-points";
 import { walkLine } from "@/lib/station-walks";
+import { wayOf } from "@/lib/transit-like";
 
-/** What the map draws a line by: its mode, and for a hop along its line, that line's color. */
+/** What the map draws a line by: its mode (the one a transit hop borrows), and for a hop along its line, that line's color. */
 interface LineProps {
   mode: string;
   /** Whether it's a hop drawn along the track of the line it rode. */
   onLine: boolean;
-  colour: string;
+  /** The color of the line it rode; left out when none was picked, so it's drawn in the hop purple. */
+  colour?: string;
   /** Whether it's outside the group shown on its own, so drawn faint. */
   faded: boolean;
 }
@@ -33,14 +35,11 @@ function segmentCoordinates(segment: TripSegment, byId: Map<number, TripPhoto>):
   return linePoints(segment, byId).map((p) => p.at);
 }
 
-/** The hop color when a line has none of its own. */
-const HOP_COLOUR = "#9333ea";
-
 /** What the map draws the segment by. */
 function lineProps(segment: TripSegment, focus?: string): LineProps {
   const onLine = segment.line !== undefined && hasPath(segment);
   const faded = focus !== undefined && segment.name !== focus;
-  return { mode: segment.mode, onLine, colour: colourOf(segment), faded };
+  return { mode: wayOf(segment), onLine, colour: colourOf(segment), faded };
 }
 
 /** Whether the segment has a path to draw along. */
@@ -48,9 +47,9 @@ function hasPath(segment: TripSegment): boolean {
   return (segment.path?.length ?? 0) >= 2;
 }
 
-/** The color of the line the segment rode, or else the usual hop color. */
-function colourOf(segment: TripSegment): string {
-  return segment.line?.colour || HOP_COLOUR;
+/** The color of the line the segment rode, if it has one. */
+function colourOf(segment: TripSegment): string | undefined {
+  return segment.line?.colour || undefined;
 }
 
 /** The segments as GeoJSON lines with their mode, the way the map draws them; a wander draws none. */
@@ -87,7 +86,7 @@ function drawnRides(rides: TripLegRide[] = []): TripLegRide[] {
 }
 
 /** The ride's line's color, or else the hop's. */
-function rideColour(ride: TripLegRide, props: LineProps): string {
+function rideColour(ride: TripLegRide, props: LineProps): string | undefined {
   return ride.line?.colour || props.colour;
 }
 
@@ -119,7 +118,7 @@ function walkBetween(
   faded: boolean,
 ): LineFeature[] {
   if (!x || !y) return [];
-  const walk = { mode: "walk", onLine: false, colour: HOP_COLOUR, faded };
+  const walk = { mode: "walk", onLine: false, faded };
   return [
     feature(
       walk,

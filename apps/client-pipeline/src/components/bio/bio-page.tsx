@@ -7,6 +7,7 @@ import { PortraitUpload } from "@/components/bio/portrait-upload";
 import { PhotoDrawerToggle } from "@/components/instagram-picker/photo-drawer";
 import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import { DecidedPhotoFiles } from "@/components/photo-files";
+import { QueryResult } from "@/components/query-result";
 import { SaveState } from "@/components/save-state";
 import { useDelayedDraft } from "@/hooks/use-delayed-draft";
 import {
@@ -20,6 +21,7 @@ import {
   sitePhotosIn,
 } from "@/lib/bio";
 import { useCombinedData } from "@/stores/combined-data";
+import { SectionTitle } from "@/components/section-title";
 
 /** What the photo drawer says beside the bio. */
 const BIO_DRAWER_WORDS = {
@@ -35,9 +37,12 @@ export function BioEditorPage() {
 
 /** The bio as the next Commit will have it, once the combined lists are read. */
 function SavedBio({ photos }: { photos: SocialPhoto[] }) {
-  const { data, isPending } = useCombinedData();
-  if (isPending) return <p>Reading the bio…</p>;
-  return <BioEditor saved={bioFile(data)} photos={photos} />;
+  const combined = useCombinedData();
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the bio…">
+      {(data) => <BioEditor saved={bioFile(data)} photos={photos} />}
+    </QueryResult>
+  );
 }
 
 /** What the bio's photos do to bio, through update. */
@@ -72,7 +77,9 @@ function BioEditor({ saved, photos }: { saved: Bio; photos: SocialPhoto[] }) {
         <section className="flex flex-col gap-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex flex-col gap-0.5">
-              <h2 className="font-semibold">Photos</h2>
+              <SectionTitle as="h2" size="lg">
+                Photos
+              </SectionTitle>
               <p className="text-muted-foreground text-sm">
                 Drag the photos into the order the bio shows them, or move one with its arrows.
                 Self-portraits are only on the bio; portfolio photos stay where they are on the rest

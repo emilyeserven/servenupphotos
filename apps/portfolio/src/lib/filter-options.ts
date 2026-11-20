@@ -1,4 +1,12 @@
-import { albums, genres, type Group, subAlbums, subTags, tags } from "@portfolio/lib/groups";
+import {
+  albums,
+  genres,
+  type Group,
+  subAlbums,
+  subGenres,
+  subTags,
+  tags,
+} from "@portfolio/lib/groups";
 import {
   localizeName,
   localizePlace,
@@ -123,15 +131,15 @@ export function locationOptions(list: Photo[], facet: Photo[]): LocationOption[]
   return childOptions(locationTree(list), facet);
 }
 
-/** The albums inside an album, or the tags under a tag; genres have none. */
-const CHILDREN = { album: shownSubAlbums, tag: subTags, genre: () => [] } as const;
+/** The albums inside an album, the tags under a tag, or a genre's subgenres. */
+const CHILDREN = { album: shownSubAlbums, tag: subTags, genre: subGenres } as const;
 
 /** The albums inside an album, without the hidden ones. */
 function shownSubAlbums(parent: string): Group[] {
   return subAlbums(parent).filter((album) => !album.hidden);
 }
 
-/** An album, tag or genre as a choice, and the albums or tags inside it after it. */
+/** An album, tag or genre as a choice, and the albums, tags or subgenres inside it after it. */
 function groupOptions(
   key: "album" | "tag" | "genre",
   group: Group,
@@ -149,7 +157,7 @@ function groupOptions(
   return [option, ...inside.flatMap((child) => groupOptions(key, child, facet, depth + 1))];
 }
 
-/** The albums or tags in list at the top: ones without a parent in list, so none is lost. */
+/** The albums, tags or genres in list at the top: ones without a parent in list, so none is lost. */
 function topLevel(list: Group[]): Group[] {
   const known = new Set(list.map((group) => group.id));
   return list.filter((group) => !known.has(group.parent ?? "") || group.parent === group.id);
@@ -166,9 +174,9 @@ export function tagOptions(facet: Photo[]): FilterOption[] {
   return topLevel(tags).flatMap((tag) => groupOptions("tag", tag, facet, 0));
 }
 
-/** The genre filter's choices: every photographic genre. */
+/** The genre filter's choices: every photographic genre, each subgenre under its genre. */
 export function genreOptions(facet: Photo[]): FilterOption[] {
-  return genres.flatMap((genre) => groupOptions("genre", genre, facet, 0));
+  return topLevel(genres).flatMap((genre) => groupOptions("genre", genre, facet, 0));
 }
 
 /** Camera or lens names as choices at the depth, each counting the photos taken with it. */

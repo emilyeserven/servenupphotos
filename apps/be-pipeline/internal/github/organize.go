@@ -21,7 +21,7 @@ import (
 // Each album, tag or genre is one JSON file in its kind's folder, named by
 // its ID, and CI combines them into the kind's AllFile. A photo lists the IDs
 // of its albums, tags and genres in its "albums", "tags" and "genres" keys.
-// An album may have one parent album, by ID.
+// An album, tag or genre may have one parent of its own kind, by ID.
 type Kind struct {
 	// Name is the kind's singular name, as shown: "album", "tag" or "genre".
 	Name string
@@ -67,16 +67,16 @@ type NewGroup struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	// Parent is the ID of an album's parent album, or of a tag's parent tag
-	// (the more general tag it's a kind of), or empty for none. Genres have
-	// no parent.
+	// Parent is the ID of an album's parent album, of a tag's parent tag
+	// (the more general tag it's a kind of), or of a subgenre's genre, such as
+	// "architecture" for "traditional-architecture"; empty for none.
 	Parent string `json:"parent,omitempty"`
 }
 
 // HasParents says whether kind's files can name a parent of the same kind:
-// albums and tags can, genres can't.
+// albums, tags and genres all can.
 func HasParents(kind Kind) bool {
-	return kind == Albums || kind == Tags
+	return kind == Albums || kind == Tags || kind == Genres
 }
 
 // groupJSON is the content of an album or tag file, as read.
@@ -85,7 +85,8 @@ type groupJSON struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Parent      *string `json:"parent,omitempty"`
-	// Order is an album's place among the albums, 1 first.
+	// Order is an album's place among the albums, or a genre's among the
+	// genres, 1 first.
 	Order *int `json:"order,omitempty"`
 	// SpotlightZones are the IDs of the portfolio's spots that show an
 	// album's photos, such as "homepage".
@@ -165,11 +166,12 @@ type Group struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description,omitempty"`
-	// Parent is an album's parent album's ID, or a tag's parent tag's ID;
-	// empty at the top level.
+	// Parent is an album's parent album's ID, a tag's parent tag's ID, or a
+	// subgenre's genre's ID; empty at the top level.
 	Parent string `json:"parent,omitempty"`
-	// Order is an album's place among the albums, 1 first, or 0 when it
-	// hasn't been given one, which puts it after the ones that have.
+	// Order is an album's place among the albums, or a genre's among the
+	// genres, 1 first, or 0 when it hasn't been given one, which puts it
+	// after the ones that have.
 	Order int `json:"order,omitempty"`
 	// SpotlightZones are the IDs of the portfolio's spots that show an
 	// album's photos, such as "homepage".
@@ -289,7 +291,7 @@ func validGroup(kind Kind, group NewGroup) (groupJSON, *PublishError) {
 	}
 	if parent := strings.TrimSpace(group.Parent); parent != "" {
 		if !HasParents(kind) {
-			return g, publishErr(http.StatusBadRequest, "Only albums and tags can have a parent.")
+			return g, publishErr(http.StatusBadRequest, "Only albums, tags and genres can have a parent.")
 		}
 		g.Parent = &parent
 	}
@@ -334,7 +336,7 @@ type AlbumParentResult struct {
 // without parents, and when that would make one its own ancestor.
 func (c *Client) SetGroupParent(ctx context.Context, gh settings.GitHub, kind Kind, id, parent string) (AlbumParentResult, error) {
 	if !HasParents(kind) {
-		return AlbumParentResult{}, publishErr(http.StatusBadRequest, "Only albums and tags can have a parent.")
+		return AlbumParentResult{}, publishErr(http.StatusBadRequest, "Only albums, tags and genres can have a parent.")
 	}
 	id, parent = strings.TrimSpace(id), strings.TrimSpace(parent)
 	w, perr := c.workspace(ctx, gh)

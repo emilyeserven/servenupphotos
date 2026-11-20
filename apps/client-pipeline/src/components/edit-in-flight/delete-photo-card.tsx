@@ -67,6 +67,7 @@ function DeleteConsequences() {
         It&apos;s taken out of every album&apos;s photo order, covers and layout, other photos&apos;
         Unselected winners, the bio, viewer likes, photo books and trip lines.
       </li>
+      {/* oxlint-disable-next-line servenup/error-note -- a warning about what deleting does, not a failure */}
       <li className="text-destructive">
         Its image, every resized version, the Square Thumbnail and any unedited original are deleted
         from R2 now.

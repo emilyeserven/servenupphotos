@@ -26,7 +26,8 @@ import {
 import type { NotStoredPost } from "@/api/not-stored";
 import { notStoredPath, withNotStoredDays } from "@/lib/not-stored";
 import { Button } from "@/components/ui/button";
-import { calendarDays, dayFormat, isoDate, longDayFormat, parseIsoDate } from "@/lib/calendar";
+import { calendarDays, dayFormat, longDayFormat } from "@/lib/calendar";
+import { isoDate, parseIsoDate } from "@portfolio/lib/dates";
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
 import {
   PHOTO_DRAG_TYPE,
@@ -45,13 +46,11 @@ import { type DayPost, instagramPostsByDay } from "@/lib/social-post-days";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import { PUBLISH_DATE } from "@/lib/photo-fields";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
+import { SectionTitle } from "@/components/section-title";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-/** "1 photo", "2 photos". */
-function count(n: number, word: string): string {
-  return `${n} ${n === 1 ? word : `${word}s`}`;
-}
 
 function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
   return (
@@ -316,10 +315,9 @@ function AllPhotosName({ calendar: { allPhotos } }: { calendar: SocialCalendar }
 function Unreadable({ calendar: { unreadable } }: { calendar: SocialCalendar }) {
   if (unreadable.length === 0) return null;
   return (
-    <p className="text-destructive">
-      {count(unreadable.length, "photo file")} couldn&apos;t be read, so nothing can be committed:{" "}
-      {unreadable.map((f) => `${f.path} (${f.error})`).join(", ")}
-    </p>
+    <ErrorNote
+      error={`${count(unreadable.length, "photo file")} couldn't be read, so nothing can be committed: ${unreadable.map((f) => `${f.path} (${f.error})`).join(", ")}`}
+    />
   );
 }
 
@@ -387,9 +385,9 @@ function WeekNav(props: CalendarGridProps) {
   const last = parseIsoDate(days.at(-1) ?? today);
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <h2 className="text-lg font-medium">
+      <SectionTitle as="h2" size="lg">
         {dayFormat.format(first)} – {dayFormat.format(last)}
-      </h2>
+      </SectionTitle>
       <div className="flex flex-wrap items-center gap-1">
         {weeksSelect}
         <Button

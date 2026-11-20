@@ -51,6 +51,9 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - **`line`** is the bus, subway or train line a hop rode, picked under [Lines ridden](#lines-ridden):
   `{ "id": 1234, "name": "Midosuji Line", "ref": "M", "colour": "#e5171f" }`, where `id` is the OpenStreetMap route
   relation. Only train, subway, bus and transit hops keep one.
+- **`like`** is `car` or `bus` on a `transit` hop drawn like that mode ([Drawing a transit hop like a car or
+  bus](#drawing-a-transit-hop-like-a-car-or-bus)): it's snapped to streets by road, keeps its `path`, and is baked
+  as that mode. Left out on any other hop, and it does nothing while the hop rides a line found in a source.
 - **`board`** and **`alight`** are the station or stop a hop with a `line` got on and off at, with its name as the
   `label`, when that isn't at the photo: say the subway was left and then a 10-minute walk led to the next photo.
 - **`boardWalk`** and **`alightWalk`** shape the walk from the hop's first photo to `board`, and from `alight` to its
@@ -132,11 +135,22 @@ or on a hop or drive, stays a pin.
 `/trip-lines` lists the days with two or more photos at two or more different exact spots, newest first, as cards. Each
 card has how many photos and spots the day has, whether its line is **Marked**, **Out of date**, **Automatic**,
 **Planned** or **None** (with a filter by each), and a small drawing of the line from its file, by hand or automatic: the line in
-the map's colors and the photos as dots, drawn as SVG with no basemap so a long list stays quick. An automatic line
-saved before its segments were kept shows a note until it's saved again or the next Commit fills them in. **Out of date** (in red) is a line marked by hand
-that doesn't go through every photo of the day with an exact spot, such as photos added since, or goes through photos
-no longer on that day; the Dashboard's **Needs attention** lists them as urgent and links to this list filtered to
-them. A new photo opens with a break on both sides, ready to join the line.
+the map's colors and the photos as white dots, drawn as SVG over the map's basemap so the card shows where the day was. A
+day with photos but no line yet still shows its photos' dots on the basemap, with the reason there's no line (such as
+**No line yet**) in the drawing's corner, so you can see where it was before drawing one. The
+basemap is a few of CARTO's raster tiles (light or dark, like the map) laid in a Web Mercator box around the line
+(`lib/preview-tiles.ts`) and loaded lazily, rather than a whole map per card, so a long list stays quick; it zooms in
+no closer than zoom 16, and the list ends with the maps' credit to OpenStreetMap and CARTO. CARTO's raster tiles need an API key (without one they carry an "API key required" watermark):
+set `CARTO_KEY` in the repo's `.env`, the same name the portfolio's deploy uses, and restart the backend. The page
+reads it from `GET /api/basemap` (`httpapi/basemap.go`); with none, the cards have no basemap.
+
+> **Frontend analogy:** a web map is a grid of 256 px images per zoom level, like a sprite sheet cut into squares, each
+> zoom doubling the grid each way. Placing the few squares under the line behind the SVG is an absolutely positioned
+> background behind a chart. An automatic line
+> saved before its segments were kept shows a note until it's saved again or the next Commit fills them in. **Out of date** (in red) is a line marked by hand
+> that doesn't go through every photo of the day with an exact spot, such as photos added since, or goes through photos
+> no longer on that day; the Dashboard's **Needs attention** lists them as urgent and links to this list filtered to
+> them. A new photo opens with a break on both sides, ready to join the line.
 
 A card opens the day's own pages, each a tab with its own link:
 
@@ -186,7 +200,7 @@ from before days had pages, `/trip-lines?day=2026-09-29&group=…`, opens that d
 > like keeping a table's sort and filter in the query string.
 
 The Route page edits the day: its photos in the order they were taken, with what happened between each two, and
-a map of the line drawn through them (photos as numbered dots; walks solid, hops dashed). Pointing at a photo
+a map of the line drawn through them (photos as numbered dots; lines as in [Line styles](#line-styles)). Pointing at a photo
 highlights its dot. Right-clicking the map copies that spot's coordinates (see
 [Copy coordinates](portfolio-map.md#copy-coordinates)).
 
@@ -196,10 +210,11 @@ highlights its dot. Right-clicking the map copies that spot's coordinates (see
   saved by hand, or else the automatic line (so it copies the preview to change by hand), or else one walk through
   every photo.
 - By hand, each gap between two photos is a menu: **Keep walking**, **Break** (the line stops, and starts again at the
-  next photo), or a hop. An arrow marks each photo a line starts at and a flag each one it ends at (not a pin, since every photo in the strip has an exact spot; ones without go in [areas](#areas) instead).
+  next photo), or a hop by train, subway, bus, car or taxi, ropeway or gondola, or transit of unknown kind. An arrow marks each photo a line starts at and a flag each one it ends at (not a pin, since every photo in the strip has an exact spot; ones without go in [areas](#areas) instead).
 - **Start**, before the first photo, and **End**, after the last, are always at the ends of the strip
   (`components/trip-lines/strip-ends.tsx`). Each names what's there: a spot with no photo, such as "Hotel", or the trip
-  stop the route starts or ends at; dashed with **Set** when there's nothing. Its menu picks a spot with no photo on the
+  stop the route starts or ends at, with its kind under the chip, such as "End (Station)", and no chip of its own beside
+  it (move it or take it off the route from **Trip Stops**); dashed with **Set** when there's nothing. Its menu picks a spot with no photo on the
   map (a note over the map says to click it, with **Cancel**), labels or removes it, or puts a trip stop there. Setting
   a spot on an automatic day, or one with no line, starts a line by hand from what's shown.
 - An automatic day shows the line as the next Commit would draw it. Putting trip stops on the route, moving them or
@@ -224,6 +239,28 @@ the way a line marked by hand starts; saving it then drops `planned`. A planned 
 
 > **Frontend analogy:** a planned day is like a draft route created before its data loads: the page renders from the
 > saved stops alone, and the photos hydrate it once they exist, rather than the page waiting for them.
+
+## Line styles
+
+Every drawing of a trip line uses the same style, from `tripLineStyle(mode, { onLine, colour }, dark, size)` in
+`portfolio/src/lib/map-theme.ts`: the portfolio's Map, the pipeline's Trip map, the route map on the Route page, a day's
+preview in the list, a Trip card, and the Timeline's sketches. MapLibre layers read it with `tripLinePaint` and SVG
+drawings with `tripLineStroke`, which turns its dashes (in line widths, as MapLibre counts them) into pixels.
+
+| Line                  | Drawn as                                                                         | Map | Sketch |
+| --------------------- | -------------------------------------------------------------------------------- | --- | ------ |
+| Walk                  | Solid blue, lighter in dark mode                                                 | 3   | 2      |
+| Ride on a picked line | Solid in the line's color, or the ride blue without one                          | 3   | 2      |
+| Drive                 | Solid light blue                                                                 | 3   | 2      |
+| Hop with no line      | Dashed 2-2, purple (in a line's color when picked but not drawn along its track) | 2   | 1.5    |
+| A Trip's ferry        | Teal dots                                                                        | 3   | 2      |
+| A Trip's flight       | Dashed 3-2, pink                                                                 | 2   | 1.5    |
+
+The numbers are widths in pixels: "Map" covers the portfolio's Map, the Trip map and the route map. How see-through a line is (fainter for a preview, or outside the group shown on its own) stays with each
+drawing. A new drawing of trip lines reads `tripLineStyle` rather than picking its own colors, widths or dashes.
+
+> **Frontend analogy:** it's a design token for lines, like a shared `buttonVariants()` that every button reads, so
+> a dashed line means the same thing on every page.
 
 ## Trip Stops
 
@@ -255,6 +292,19 @@ small icon before the stop's chip. The gaps read back from a cut line are the sa
 stop to its photo keeps the gap's way (`lib/stop-ways.ts`). A train, subway, bus or transit hop is also cut at every
 trip stop on it, even one reached the route's way, so each stretch is its own row under [Lines ridden](#lines-ridden).
 
+### Localized names
+
+A stop can have **localized names**, the same three a [saved place's localization](places-and-localizations.md) has:
+its **Romanization** (Ichiran Dōtonbori-ten), **Local pronunciation** (いちらん どうとんぼりてん) and **Local script**
+(一蘭 道頓堀店). The translate button at the end of its row opens them under it, already open when any is written. On a
+stop added from a saved place, each one left empty shows the place's localization faintly, and the portfolio uses
+the place's for it, so a saved place's names needn't be typed again. They're saved on the stop as `"romanization"`,
+`"pronunciation"` and `"localScript"`, trimmed, each up to 200 characters, and left out when empty. **Visited again**
+copies them. The day's [Trip page](trip-pages.md#trip-stops) shows them.
+
+> **Frontend analogy:** like `placeholder` versus `value` on an input: the saved place's localization is the
+> placeholder, and anything typed on the stop is the value that wins.
+
 ### Casual photos
 
 A stop can have **casual photos**: snapshots taken there, such as the food at a restaurant, that show only with the
@@ -282,16 +332,25 @@ They're saved with the line as `visits`:
   "note": "Ramen before the river walk",
   "link": "https://maps.app.goo.gl/…",
   "place": "ichiran-dotonbori",
+  "localScript": "一蘭 道頓堀店",
   "after": 305,
   "photos": [311, 312]
 }
 ```
 
 The photo strip on **Route** puts these places on the route too: the plus under each gap lists the day's places not on
-the route yet, and picking one puts it between those two photos (with a link to the Trip Stops page to add more). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
+the route yet, and picking one puts it between those two photos (with a link to the Trip Stops page to add more). Below
+them it lists each place already on the route, marked **again**: picking one adds a second visit there, a copy as
+**Visited again** makes, leaving the first where it is, such as a ropeway's bottom station gone up from in the morning
+and back to after lunch (`lib/stop-insert.ts`). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
-two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one spot earlier or later on the
+two photos, its name shown on hover. Before each place is the way it was reached from the point before it (its
+**Got here by**, or else the gap's), and after the last one is the gap's own way, to the next photo. Each changes on
+its own: picking **Ropeway or gondola** before the second of two stations makes just the stretch between them a
+ropeway, and changing the gap after them keeps the ways to them (a stop that went the gap's way is saved with that way
+first), so a car to a station and a walk from it stay a car and a walk. Between groups each way is a menu; in a break
+the places show no way. Pointing at that icon shows arrows that move the place one spot earlier or later on the
 route: first past the next stop between the same two photos, such as two stops before the first photo, then on one photo, landing next to the stops already there. A cross takes it off the route again. Moving one earlier from after the
 first photo, or picking it from the strip's **Start**, puts it before the first photo, as `"first": true` with no `after`, such as lunch before the first photo
 was taken: the line goes from the start spot through it to the first photo (as a via spot after the start spot), or,
@@ -302,8 +361,10 @@ or picking it from the strip's **End**, puts it after the last photo, such as
 dinner after the last photo was taken: the line ends there. With an end spot, the line goes from the last photo
 through it to the end spot (as a via spot after the last photo); with none, the last segment's `end` is the place,
 named after it, and when the day ends with more than one such place, the line goes through the others to the last one
-added. The strip shows the walk and the place's icon after the last photo, and loading the line again
-keeps that `end` as the place rather than an end spot of its own. A place not on the route is a pin only, and a place
+added. The strip shows the way there and the place's icon after the last photo, and loading the line again
+keeps that `end` as the place rather than an end spot of its own. That way can be changed like any gap, such as a
+drive back to the station: the line is then a hop from the last photo to the end, saved as the last segment with that
+mode, only the last photo and an `end` (the draft's `endGap`). A place not on the route is a pin only, and a place
 put after a break in the middle of the day has no line to sit on, so it stays a pin too. The editor works the via spot out from `after` each
 time, so moving or removing the place keeps the line in step; the backend checks that `after` is one of the day's
 photos with an exact spot (not necessarily on a drawn segment, so a stop can follow a photo on an automatic line or at
@@ -407,6 +468,12 @@ with a name:
 - The plus under the menu between two photos has **Start a new group here**, which starts a new group at the photo
   after it. The join button between two groups merges them. The menu between two groups picks what
   happened between them, like any gap.
+- When that is a **Break**, an **End** and a **Start** chip under it give each group its own ends, such as back to the
+  hotel for lunch and out from it again (`components/trip-lines/break-spots.tsx`). Each picks a spot with no photo on
+  the map, then labels or removes it, like the day's Start and End. The line before the break runs on to its end
+  spot, and the line after starts from its start spot, so even a group of one photo gets a line. They're saved as
+  that segment's `end` and the next one's `start` (the draft's `breakEnds` and `breakStarts`, by the photo beside
+  them, in `lib/break-ends.ts`), and kept while the gap is switched away from a break and back.
 - The shuffle button on a group's header marks it as an [area wandered](#areas-wandered).
 
 Saving writes each group's name on its segments, and a walk crossing from one group into the next is split there, so
@@ -456,7 +523,8 @@ A line drawn by hand is straight from point to point. To make it follow the stre
    at one says where it is.
 2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
    servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
-   walk, bus or car segment's points and via points, walking on foot and buses and cars by road, and for every walk to
+   walk, bus or car segment's points and via points (and every transit hop [drawn like a car or
+   bus](#drawing-a-transit-hop-like-a-car-or-bus)), walking on foot and buses and cars by road, and for every walk to
    or from a station. Train and subway hops without a line stay dashed straight lines. A walk may turn back at a via
    point (a via point just off the way is a there-and-back), while a bus or car can't and goes on round the block, so
    each request says which with OSRM's `continue_straight` rather than leaving it to the server's default.
@@ -503,8 +571,30 @@ usually one direction of one line, listed with its number, color and ends. When 
 its two directions), it's picked by itself; otherwise pick one. When the lines found are of more than one kind, **Bus**, **Subway** and **Train** (and **Other**, such as a ferry) show only that kind. Subway covers light
 rail, monorails and trams. **Change line** looks again.
 
-While it looks, the hop says it's asking OpenStreetMap, since a busy public server can take up to a minute (see
-below). When nothing is found, often because a photo was a walk from the line (say the beach, 15 minutes from the end
+**Or name it yourself** names the line by hand when no source has it, such as the Super HAGI bus: type its name and
+**Use this name**. It's saved as `{ "id": 0, "name": "Super HAGI", "source": "named" }`, kept drawn as it was (along
+the streets, when it was snapped), shown on the map with its name, and has no stations to pick. A **Ropeway or
+gondola** hop, such as the Shin-Kobe Ropeway up to the Nunobiki Herb Gardens, looks nothing up, since no source
+maps them as lines; its button says **Name it** (**Rename** once named), and it's drawn straight, as it runs.
+
+Once named, a ropeway shows **Starts at** and **Ends at**, each **At the photo** until **On the map** is pressed and
+the map clicked where its station is (`lib/ropeway-ends.ts`, the map pick `ropeway-start:<leg key>` or
+`ropeway-end:<leg key>`). The ropeway is then drawn as a straight line from one station to the other, solid like a
+line ridden, with a walk from the photo to the station it starts at and from the station it ends at to the next
+photo, which **Snap to streets** routes like any walk to a station. Each station is named **Start station** or
+**End station** at first, renamed in its field, and moved with **Move**; **The photo** puts that end back at the photo.
+It saves as the hop's `board` and `alight` beside its named line, with a two-point `path` between them, the same
+fields a train ridden between stations uses, so the backend and the portfolio draw it as they draw any line ridden.
+Renaming the ropeway keeps its stations.
+
+> **Frontend analogy:** it's a controlled input whose value is two map clicks: the stations are state on the hop,
+> and the line on the map is derived from them, the same way a train's track is derived from its picked stations.
+
+While it looks, the hop says where it's asking, since a busy public server can take up to a minute (see
+below). When the look-up needs a map that isn't loaded yet (a rail or bus map's first download, or reading one after
+the pipeline starts), a progress card shows from the start what it's waiting for: "Downloading OpenStreetMap's bus map
+of South Korea", how much of the file it has ("120 of 310 MB · 0:45") with a bar, and then "Reading …" while the
+download is read into lines (see [Download progress](#download-progress)). When nothing is found, often because a photo was a walk from the line (say the beach, 15 minutes from the end
 of the line), **Got on near** and **Got off near** each find a station by name near that photo, the same search as a
 [Trip's legs](trips.md#stations-and-routes). Picking one looks again with the station standing in for the photo, and the line then gets on
 or off at the stop nearest it, so the walk from the photo to the station is drawn and baked as below. **The photo**
@@ -517,11 +607,36 @@ hop is drawn along the line's track between them, solid in the line's color, wit
 it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
 route** keeps the line, the stations and the track.
 
+### Drawing a transit hop like a car or bus
+
+A transit hop of unknown kind is a straight dashed line, which cuts across the map when the ride went along roads no
+rail or bus map has, such as a shuttle up a valley. Its row's **Draw it like** menu borrows another mode's way of
+being routed and drawn (`lib/transit-like.ts`, `components/trip-lines/transit-like-picker.tsx`):
+
+- **Transit (straight, dashed)**, the default.
+- **Car (along roads, solid)**: **Snap to streets** (and saving) routes it by road like a drive, and the map draws it
+  as a solid light blue drive line.
+- **Bus (along roads, dashed)**: routed by road like a bus with no line, and drawn as a dashed hop.
+
+The hop stays a `transit` hop with `"like": "car"` or `"bus"` beside its mode, kept in the draft by its leg key (like
+its line) and in `segmentKey`, so a path snapped as one mode isn't reused for another. Until it's snapped, the row
+says to. The baked map gives its line the borrowed `mode`, so the portfolio's map and legend draw it as a drive (or a
+hop by bus) with nothing of their own to change (`wayMode` in `github/triplines_route.go`, `wayOf` in the pipeline). A
+line named by hand keeps the borrowed way; a line found in a source draws along its own track instead, and the menu is
+hidden while it's picked.
+
+> **Frontend analogy:** `like` is a variant prop: the hop's data still says "transit", but the renderer and the router
+> pick their styles and behavior from `like ?? mode`, the way a `<Button asChild>` keeps its own semantics while
+> borrowing another element's look.
+
 ### Looking lines up on Transitland or a rail map
 
 The menu beside **Find lines** (and beside a Trip leg's **Look up route**) picks where lines are looked up, and the
 choice is kept in the browser for every look-up:
 
+- While a rail map is picked, a bus is looked up on OpenStreetMap's bus map (below) and a ferry on OpenStreetMap
+  instead (`lib/lookup-source.ts`), since the rail maps only have trains and subways; asked directly, the backend says
+  so. A Trip leg's **Look up route** does the same.
 - **OpenStreetMap** (the default): the Overpass servers, as below. Its lines are each direction of a route, mapped
   by volunteers, and the public servers are often busy.
 - **Transitland** ([transit.land](https://www.transit.land)): the timetables transit agencies publish as GTFS, with
@@ -551,21 +666,105 @@ choice is kept in the browser for every look-up:
   [Geofabrik](https://download.geofabrik.de), looked up the same way as Japan's rail map, for when the Overpass
   servers are too slow. The backend downloads Geofabrik's [index](https://download.geofabrik.de/technical.html) of
   its extracts once (`index-v1.json`), picks the smallest one whose outline holds both ends, such as South Korea for
-  Seoul to Busan (never a whole continent; a leg crossing a border finds none), and downloads that extract once
-  (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract twice (its railway ways, then their
-  points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
-  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/<extract>` beside the
-  settings file, then deletes the extract. A line is the ways of one name, shown by the English name most of its
-  ways have; unnamed track only joins lines, so a route never lists it. A station belongs to each line within 300 m
-  of it. A route's ID holds up to 4 lines and, above them, its extract's place in the index, so its track and stops
-  are looked up on the same extract (`be-pipeline/internal/transit/osmrail.go`, `osmrail_index.go`,
+  Seoul to Busan, or a US state such as Massachusetts (ID `us/massachusetts`, named from its ID when the index gives no
+  name) for a ride inside one (never a whole continent; a leg crossing a border finds none), and downloads that extract once
+  (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract three times (its rail route relations, then its railway
+  ways, then their points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
+  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v4/<extract>` beside the
+  settings file, then deletes the extract. Railways tagged `highspeed=yes` are kept as high-speed track, and a route
+  counts each meter of it as 0.6 m (`highSpeedFactor`), so Seoul to Busan takes the KTX's 경부고속선 rather than the
+  slower 경부선 beside it, which is a little shorter once the change onto the high-speed line is counted. This goes
+  by each stretch of track, not by line, since one line can run along both: the Gyeongbu Line KTX's route relation
+  holds the high-speed line and stretches of the old line, and counting them alike drew its track along the old line. A map read
+  by an older version (in `osm-rail/<extract>`, `osm-rail/v2/<extract>` or `osm-rail/v3/<extract>`) is downloaded and read again the first time
+  it's used, and the old folder removed. A line is named by the
+  [route relations](https://wiki.openstreetmap.org/wiki/Relation:route) (`route=train`, `subway`, `light_rail` or
+  `monorail`) whose track it is: their
+  [route master](https://wiki.openstreetmap.org/wiki/Relation:route_master)'s name, such as **Red Line** for the
+  routes to Ashmont and to Braintree, or else the route's name less its direction ("Red Line: Alewife => Ashmont"), in
+  the relation's `colour`. Track several lines run along belongs to each. Only track in no route relation is named by
+  its own name, and a name that only numbers the track, such as "Track 3", names no line: the track's names alone
+  broke Boston's Red Line into pieces named "Red Line" and "Track 1", so it couldn't be followed as one line. Each
+  line is shown by the English name most of its ways have; unnamed track only joins lines, so a route never lists it,
+  and a one-line route may run along it. A route relation often leaves out a station's tracks or a short stretch,
+  so when a picked line's own track doesn't join the two spots, its track crosses each gap along other lines' track,
+  each meter of it counting as 4 (`offLineFactor`), as a bus's track crosses gaps between its roads. A station belongs to each line within 300 m
+  of it. A route's ID holds up to 3 lines and, above them, its extract's place in the index, so its track and stops
+  are looked up on the same extract. The ID stays under 2^53 so the page's JavaScript holds it exactly; with 4 lines,
+  an extract far down the index, such as Massachusetts, gave IDs the page rounded off, so a picked line's stops
+  couldn't be found (`be-pipeline/internal/transit/osmrail.go`, `osmrail_index.go`,
   `osmrail_pbf.go`). The data is © OpenStreetMap contributors, under the
   [ODbL](https://www.openstreetmap.org/copyright).
+- **Bus map (OpenStreetMap)**, used for a bus while either rail map is picked (the menu calls the OpenStreetMap one
+  **Rail and bus map (OpenStreetMap)**): the same country's bus routes, read from the same Geofabrik extract as its rail
+  map, so one download serves both. Whichever of the two is asked first downloads the extract (one at a time, so a
+  rail and a bus look-up don't both download it) and reads every map of that country not yet on this computer: a
+  country whose rail map was read before this downloads its extract once more for its buses. A bus route in
+  OpenStreetMap is a route relation (`type=route`, `route=bus`, `trolleybus` or `coach`) of the roads it runs along and
+  its stops, unlike a railway, whose track is its own ways, so the extract is read in three passes: the bus routes,
+  then the roads they name, then those roads' points and the stops' names (`osmbus_pbf.go`). It keeps each road once
+  and each route with its roads and its stops in order (its `stop` members, or else its platforms, as the Overpass
+  look-up does) in `osm-rail/bus-v1/<extract>/bus-routes.json.gz`. A bus is listed when its roads pass within 500 m of
+  both ends, the same as the Overpass look-up, its track is the shortest way along its own roads between the points
+  nearest each end, and its stops are its own. A route whose roads aren't all joined (a short road left out of the
+  relation, or roads listed out of order, as many are) is followed along its roads in the order the route lists them
+  instead, each turned to carry on from the one before; only an end over 1 km from its roads fails, saying how far off
+  each end is. The download card shows a failed map only under a look-up that failed naming it. Each direction of a route is its own line. A line's ID holds its route
+  relation's OpenStreetMap ID in its low 40 bits and its extract's place in the index above them
+  (`be-pipeline/internal/transit/osmbus.go`). A bus map has only buses: asked for a train, the backend says so.
+
+> **Frontend analogy:** a bus route is like a playlist that points at songs (roads) shared with other playlists,
+> rather than owning its own copies. Reading the extract is like resolving those references in three `fetch` waves:
+> the playlists, then the songs they name, then each song's details.
 
 A line picked from Transitland is saved with `"source": "transitland"`, one from Japan's rail map with
-`"source": "mlit"`, and one from an OpenStreetMap rail map with `"source": "osmrail"`, so its stops and track are
-fetched from there again; one from the Overpass servers has no `source`. The `?source=transitland`, `?source=mlit`
-and `?source=osmrail` queries below ask those.
+`"source": "mlit"`, one from an OpenStreetMap rail map with `"source": "osmrail"`, and one from an OpenStreetMap bus
+map with `"source": "osmbus"`, so its stops and track are fetched from there again; one from the Overpass servers has
+no `source`. The `?source=transitland`, `?source=mlit`, `?source=osmrail` and `?source=osmbus` queries below ask
+those.
+
+### Download progress
+
+The rail and bus maps take minutes to download and read the first time, and seconds to read again after each start of
+the pipeline, so the backend lists each map being loaded, what it's doing and how far it has got, and logs each step
+(`map load` in the backend's terminal; `be-pipeline/internal/transit/progress.go`). The steps, in order:
+
+- `checking`: looking for a copy saved on this computer, which is then read (`reading`) with no download.
+- `waiting`: another OpenStreetMap extract is downloading; one downloads at a time.
+- `connecting`: the request for the file is sent and the server hasn't answered yet.
+- `downloading`: the bytes so far, the file's size (its `Content-Length`) and the speed.
+- `reading`: each pass over the extract (2 for railways, 3 for bus routes, so 5 when a country's first look-up reads
+  both), with the bytes of the extract that pass has read, such as "Reading the bus routes (pass 3 of 5 over the 312 MB
+  extract)".
+- `saving`: writing what was read, such as "Saving 4210 bus routes along 52011 roads to …".
+- `failed`: why, such as "downloading California's extract failed: couldn't reach download.geofabrik.de: …". A failed
+  load stays listed for 5 minutes so the page can still show it.
+
+Geofabrik's list of extracts is listed the same way while it downloads.
+
+- `GET /api/transit/downloads` answers that list, from memory: each map's `map`, `step`, `detail` (what it's doing in a
+  sentence), `url`, `bytes`, `total`, `rate` (bytes a second), `seconds` (the whole load), `stepSeconds` and `error`.
+
+While a hop's or a leg's look-up runs, or after it failed, the page asks it every second (`transitDownloadsQuery`) and
+shows a card for each map (`components/trip-lines/map-downloads.tsx`): its title ("Downloading OpenStreetMap's bus map
+of California"), the stages Connect, Download, Read and Save with the ones done ticked, "412 MB of 1180 MB · 6.4 MB/s ·
+about 2 min left", a bar filled to the share downloaded or read (pulsing when that can't be told), the step's sentence,
+and where the file comes from and how long it has taken; or, once it failed, why. A look-up still waits at most 100 s
+for its map; it then answers 503 with `"loading": true`, and the page asks again by itself (`api/transit-log.ts`, up to
+40 times) instead of showing an error, so the card stays until the lines are found.
+
+Once a look-up answers, the hop or leg says what it searched, from the lines answer's `X-Transit-Searched` header (which
+the BFF passes on; `transit.Client.Searched`): "Searched OpenStreetMap's Overpass servers, asked live", or for a
+downloaded map which one and how big, and for a bus map how many routes pass near each end, such as "Searched
+OpenStreetMap's bus map of South Korea (21407 bus routes, saved in …): 38 pass within 500 m of the first end and 6
+within 500 m of the last". So "no line found" tells a map with no bus near one end (often a photo a walk from the road)
+apart from buses near both ends that are different routes (a ride with a change). An answer without the header, as
+from a backend started before it was added, which also looks a bus up on the Overpass servers whatever source the page
+asks for, says to restart the backend; so does the download card when `GET /api/transit/downloads` fails.
+
+> **Frontend analogy:** it's an upload progress bar turned around: the long job runs on the server, and the page polls
+> a cheap status endpoint with TanStack Query's `refetchInterval` while the real request is pending, then quietly
+> retries the request if the server timed it out.
 
 A rail map route that changes lines, such as "北松江線 → 大社線" from 電鉄出雲市 to 出雲大社前, is ridden as each
 of its lines in turn. Its track answer also lists `rides`: each line alone (its own ID, so its stops are its own),

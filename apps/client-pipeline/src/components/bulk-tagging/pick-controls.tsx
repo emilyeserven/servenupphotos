@@ -4,7 +4,6 @@ import { CopyTextButton } from "@/components/copy-text";
 import { PickCount, bulkTagCount } from "@/components/bulk-tagging/pick-count";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
 
 interface PickButtonsProps {
   /** Whether photos have been picked already, so the next pick leaves them out. */
@@ -98,11 +97,6 @@ export function PickBar({ count, fallback, setCount, noLimit, ...buttons }: Pick
   );
 }
 
-/** What went wrong, when something did. */
-export function ErrorText({ error }: { error: Error | null }) {
-  return error && <p className="text-destructive text-sm">{error.message}</p>;
-}
-
 interface CopyPromptButtonProps {
   /** The button's text, such as "Copy the tag prompt for 5 photos". */
   label: string;
@@ -127,38 +121,5 @@ export function CopyPromptButton({ label, disabled, prompt, onCopied }: CopyProm
       text={prompt}
       onCopied={onCopied}
     />
-  );
-}
-
-interface PasteAnswerProps {
-  value: string;
-  onChange: (value: string) => void;
-  pending: boolean;
-  /** The review button's text, such as "Review the tags". */
-  label: string;
-  onReview: () => void;
-}
-
-/** The box to paste the LLM's JSON answer into, and the button that reviews it. */
-export function PasteAnswer({ value, onChange, pending, label, onReview }: PasteAnswerProps) {
-  return (
-    <>
-      <Textarea
-        aria-label="The LLM's answer"
-        placeholder="Paste the LLM's JSON answer here"
-        className="min-h-32 font-mono text-xs"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      />
-      <Button
-        type="button"
-        className="self-start"
-        disabled={value.trim() === "" || pending}
-        onClick={onReview}
-      >
-        {pending && <Spinner />}
-        {label}
-      </Button>
-    </>
   );
 }

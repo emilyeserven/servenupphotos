@@ -1,5 +1,6 @@
 import type { Size } from "@/lib/crop";
 import { type BoxCorner, type FaceBox, type Point, type Rect, blockSide } from "@/lib/face-boxes";
+import { clamp } from "@portfolio/lib/values";
 
 /** The smallest a box can shrink to while resizing it turned, in the photo's pixels. */
 const MIN_SIDE = 16;
@@ -86,10 +87,6 @@ export function turnedGrid(face: FaceBox): TurnedGrid {
     }
   }
   return { cover: { ...bounds, width: cols * side, height: rows * side }, cols, rows, cells };
-}
-
-function clamp(value: number, low: number, high: number): number {
-  return Math.min(Math.max(value, low), high);
 }
 
 /**

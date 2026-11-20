@@ -2,8 +2,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { organizeQuery, setTagDescriptionsMutation } from "@/api/organize";
 import { Textarea } from "@/components/ui/textarea";
-import { SaveButton, count } from "@/components/update-data-shared";
+import { SaveButton } from "@/components/update-data-shared";
 import type { TagDescriptionAnswer, TagDescriptionsRead } from "@/lib/tag-description-prompt";
+import { count } from "@portfolio/lib/words";
 
 /** Saves the reviewed descriptions, then reads the tags again so the next batch leaves them out. */
 export function useSaveDescriptions() {

@@ -50,8 +50,9 @@ parent folder are grouped after the folders under an italic _No Parent_, which o
 ## Changing an album's parent
 
 Each album in the tree has a **Parent** select under its stage: **No parent**, every folder there is, or **New
-folder…**, which asks for a path such as `Travel/Korea` and makes the folders it needs (`moveAlbum` in
-`lib/lightroom-tree.ts`). A folder that already has something with the album's name refuses the move with a message.
+folder…**, which opens a dialog asking for a path such as `Travel/Korea` and makes the folders it needs (`moveAlbum`
+in `lib/lightroom-tree.ts`). A folder that already has something with the album's name refuses the move with a
+message, under the select or in the dialog.
 Folders a move leaves empty stay, as they do in Lightroom.
 
 A moved album read from Lightroom keeps where Lightroom has it as `lightroomPath`. A new import matches it by that

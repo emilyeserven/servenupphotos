@@ -7,7 +7,8 @@ import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import { type InFlightFileRead, photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
 import { photoName } from "@/components/gallery/published-file";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
+import { ReadingNote } from "@/components/query-result";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 /** A saved photo to pick: one in the photo data pull request, or one already in the portfolio. */
 export interface SavedPhoto {
@@ -80,13 +81,13 @@ export function SavedPhotoPicker({ onPicked }: { onPicked?: () => void }) {
   const { photos, pending } = useSavedPhotos();
   const [search, setSearch] = useState("");
   const shown = photos.filter((photo) => matchesSearch(photo, search));
-  if (pending) return <Spinner className="size-6" />;
+  if (pending) return <ReadingNote label="Reading the saved photos…" />;
 
   return (
     <div className="flex flex-col gap-3">
       <SavedPhotoSearch value={search} onChange={setSearch} />
       {shown.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No saved photos match.</p>
+        <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>
       ) : (
         <ul className="grid max-h-[50dvh] grid-cols-3 gap-2 overflow-y-auto sm:grid-cols-4">
           {shown.map((photo) => (

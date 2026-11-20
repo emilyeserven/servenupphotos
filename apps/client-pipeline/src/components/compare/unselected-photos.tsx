@@ -9,6 +9,9 @@ import { useDiscardImages } from "@/hooks/use-discard-images";
 import { type ComparePhoto, comparePhotoName } from "@/lib/compare-groups";
 import { offlineImageUrl, squareImages } from "@/lib/offline-thumbnails";
 import { notChosenIn, UNSELECTED_IMAGES, type Unselected, unselectedOf } from "@/lib/unselected";
+import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
+import { SectionTitle } from "@/components/section-title";
 
 /**
  * Unselected Photos: the photos that weren't chosen when a compare group was finished, each with why,
@@ -28,10 +31,12 @@ export function UnselectedPhotos({
   return (
     <section id="unselected" className="flex flex-col gap-3">
       <header>
-        <h2 className="text-xl font-semibold">Unselected Photos</h2>
+        <SectionTitle as="h2" size="lg">
+          Unselected Photos
+        </SectionTitle>
         <p className="text-muted-foreground text-sm">
-          {unselected.length === 1 ? "1 photo" : `${unselected.length} photos`} not chosen in a
-          compare group. Commit leaves them off the portfolio.
+          {count(unselected.length, "photo")} not chosen in a compare group. Commit leaves them off
+          the portfolio.
         </p>
       </header>
       <ul className="grid gap-4 lg:grid-cols-2">
@@ -226,12 +231,7 @@ function DeleteMoreButton({
         {busy ? <Spinner /> : <Trash2Icon />}
         {look.label}
       </Button>
-      <DeleteError error={error} />
+      <ErrorNote error={error} className="w-full text-xs" />
     </>
   );
-}
-
-function DeleteError({ error }: { error?: string }) {
-  if (!error) return null;
-  return <p className="text-destructive w-full text-xs">{error}</p>;
 }

@@ -94,36 +94,26 @@ type contactSheetsResponse struct {
 // sheets after a day.
 func handleContactSheets(loadR2 func() (settings.R2, error), read sheetImageFunc, upload uploadSheetsFunc, expiry sheetExpiryFunc) http.HandlerFunc {
 	var expirySet sync.Map // buckets known to have the rule, by account and name
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req contactSheetsRequest
-		if !decodeEntryUpTo(w, r, &req, "contact sheets", 2<<20) {
-			return
-		}
+	return withBody("contact sheets", 2<<20, func(w http.ResponseWriter, r *http.Request, req contactSheetsRequest) {
 		if len(req.Photos) == 0 || len(req.Photos) > maxContactSheetPhotos {
 			writeError(w, http.StatusBadRequest, fmt.Sprintf("Send 1 to %d photos to put on contact sheets.", maxContactSheetPhotos))
 			return
 		}
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), contactSheetsTimeout)
-		defer cancel()
-		resp, err := makeContactSheets(ctx, cfg, req.Photos, read, upload)
-		if err != nil {
-			writeContactSheetsError(w, err)
-			return
-		}
-		bucket := cfg.AccountID + "/" + cfg.Bucket
-		if _, ok := expirySet.Load(bucket); !ok {
-			if resp.ExpiryProblem = expiry(ctx, cfg); resp.ExpiryProblem == "" {
-				expirySet.Store(bucket, true)
+		withSettings(loadR2, contactSheetsTimeout, func(ctx context.Context, w http.ResponseWriter, _ *http.Request, cfg settings.R2) {
+			resp, err := makeContactSheets(ctx, cfg, req.Photos, read, upload)
+			if err != nil {
+				writeContactSheetsError(w, err)
+				return
 			}
-		}
-		writeJSON(w, http.StatusOK, resp)
-	}
+			bucket := cfg.AccountID + "/" + cfg.Bucket
+			if _, ok := expirySet.Load(bucket); !ok {
+				if resp.ExpiryProblem = expiry(ctx, cfg); resp.ExpiryProblem == "" {
+					expirySet.Store(bucket, true)
+				}
+			}
+			writeJSON(w, http.StatusOK, resp)
+		})(w, r)
+	})
 }
 
 // makeContactSheets draws photos on sheets of contactsheet.PerSheet, one
@@ -195,7 +185,7 @@ func writeContactSheetsError(w http.ResponseWriter, err error) {
 		writeError(w, http.StatusGatewayTimeout, "Making the contact sheets took too long. Try fewer photos.")
 	default:
 		slog.Error("contact sheets failed", "err", err)
-		writeError(w, http.StatusInternalServerError, "could not make the contact sheets")
+		writeError(w, http.StatusInternalServerError, "Couldn't make the contact sheets.")
 	}
 }
 
@@ -244,15 +234,16 @@ func fetchSheetImage(ctx context.Context, raw string) (image.Image, error) {
 }
 
 // deleteContactSheetsTimeout bounds deleting contact sheets: every set at
-// once can be a few hundred sheets, one request each.
+// once can be a few hundred sheets, one request each. The BFF's wait for it
+// comes from contactSheetsTimeout, which shares its path.
 const deleteContactSheetsTimeout = 2 * time.Minute
 
 // deleteSheetsFunc deletes one set of sheets, or all of them for "";
 // storage.DeleteContactSheets in production.
 type deleteSheetsFunc func(ctx context.Context, cfg settings.R2, set string) (storage.DeletedContactSheets, error)
 
-// deleteContactSheetsRequest is the body of POST
-// /photos/bucket/contact-sheets/delete.
+// deleteContactSheetsRequest is the body of DELETE
+// /photos/bucket/contact-sheets.
 type deleteContactSheetsRequest struct {
 	// Set is the folder of one set of sheets, such as
 	// 20261115-045000-1a2b3c4d, or "" for every set.
@@ -263,29 +254,19 @@ type deleteContactSheetsRequest struct {
 // every set, for Explore Bucket, since R2 can't always be set to delete them
 // by itself. It answers 200 with how many went and which didn't.
 func handleDeleteContactSheets(loadR2 func() (settings.R2, error), del deleteSheetsFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req deleteContactSheetsRequest
-		if !decodeEntryUpTo(w, r, &req, "contact sheets", 1<<12) {
-			return
-		}
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), deleteContactSheetsTimeout)
-		defer cancel()
-		res, err := del(ctx, cfg, req.Set)
-		var lerr *storage.ListError
-		switch {
-		case errors.As(err, &lerr):
-			writeError(w, http.StatusBadRequest, lerr.Message)
-		case err != nil:
-			slog.Error("delete contact sheets failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not delete the contact sheets")
-		default:
-			writeJSON(w, http.StatusOK, res)
-		}
-	}
+	return withBody("contact sheets", 1<<12, func(w http.ResponseWriter, r *http.Request, req deleteContactSheetsRequest) {
+		withSettings(loadR2, deleteContactSheetsTimeout, func(ctx context.Context, w http.ResponseWriter, _ *http.Request, cfg settings.R2) {
+			res, err := del(ctx, cfg, req.Set)
+			var lerr *storage.ListError
+			switch {
+			case errors.As(err, &lerr):
+				writeError(w, http.StatusBadRequest, lerr.Message)
+			case err != nil:
+				slog.Error("delete contact sheets failed", "err", err)
+				writeError(w, http.StatusInternalServerError, "Couldn't delete the contact sheets.")
+			default:
+				writeJSON(w, http.StatusOK, res)
+			}
+		})(w, r)
+	})
 }

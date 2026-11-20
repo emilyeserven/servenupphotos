@@ -27,12 +27,18 @@ function blockPath(segment) {
   return spots.flatMap((spot, i) => (i === 0 ? [spot] : [[spot[0], spots[i - 1][1]], spot]));
 }
 
-/** The Snap to streets answer: every walk, bus or car segment gets a block-shaped path. */
+/** How a segment goes: the mode a transit hop is drawn like, or else its own. */
+const wayOf = (s) => (s.mode === "transit" && s.like ? s.like : s.mode);
+
+/**
+ * The Snap to streets answer: every walk, bus or car segment (and transit hop drawn like one) without
+ * a path gets a block-shaped one, as the backend routes only those.
+ */
 const snapped = ({ body }) => ({
   line: {
     ...body,
     segments: body.segments.map((s) =>
-      ["walk", "bus", "car"].includes(s.mode) ? { ...s, path: blockPath(s) } : s,
+      ["walk", "bus", "car"].includes(wayOf(s)) && !s.path ? { ...s, path: blockPath(s) } : s,
     ),
   },
   unrouted: 0,
@@ -88,6 +94,8 @@ export function triplinesFixtures() {
       ],
     },
     "POST /api/triplines/2026-10-01/route": snapped,
+    "POST /api/triplines/2026-11-01/route": snapped,
+    "GET /api/basemap": { cartoKey: "sample-key" },
     "GET /api/areas": [
       {
         name: "Upper East Side",
@@ -134,6 +142,8 @@ export function triplinesFixtures() {
       { name: "南海難波", nameEn: "Nankai Namba", latitude: 34.6627, longitude: 135.5018, km: 0.8 },
     ],
     "GET /api/transit/lines/1/track": curvedTrack,
+    // No rail or bus map downloading; a screenshot of one can pass its own list.
+    "GET /api/transit/downloads": [],
     "DELETE /api/triplines/2026-10-01": () => ({
       ...pendingSave(),
       path: `${FOLDER}/triplines/2026-10-01.json`,

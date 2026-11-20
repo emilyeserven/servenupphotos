@@ -4,6 +4,7 @@ import { routeTripLineMutation, type TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { Button } from "@/components/ui/button";
 import { unsnappedWalks } from "@/lib/station-walks";
+import { wayOf } from "@/lib/transit-like";
 import { type GapDraft, pathsOf } from "@/lib/trip-gaps";
 
 interface ShapeToolsProps {
@@ -16,9 +17,13 @@ interface ShapeToolsProps {
   onAddingVia: (on: boolean) => void;
 }
 
-/** Whether a segment follows streets once snapped: a walk, bus ride or drive. */
+/**
+ * Whether a segment follows streets once snapped: a walk, bus ride or drive, or a transit hop drawn
+ * like a bus or car.
+ */
 function followsStreets(segment: TripSegment): boolean {
-  return segment.mode === "walk" || segment.mode === "bus" || segment.mode === "car";
+  const way = wayOf(segment);
+  return way === "walk" || way === "bus" || way === "car";
 }
 
 /** How many segments that follow streets, and walks to and from stations, aren't snapped yet. */

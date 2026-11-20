@@ -26,6 +26,8 @@ export interface MapDisplay {
   tripLines: boolean;
   /** Whether a light runs along each trip line the way it was travelled, like a ride app's route. */
   tripFlow: boolean;
+  /** The Trips whose trip lines are hidden, by ID, turned off in the Places menu's Trip tab. */
+  hiddenTrips: string[];
 }
 
 /** The display options a first visit starts with. */
@@ -37,6 +39,7 @@ export const DEFAULT_MAP_DISPLAY: MapDisplay = {
   groupPhotos: "added",
   tripLines: true,
   tripFlow: false,
+  hiddenTrips: [],
 };
 
 /** The grouping slider's range and step, in pixels. */
@@ -77,6 +80,7 @@ const VALID: Record<keyof MapDisplay, (value: unknown) => boolean> = {
   groupPhotos: (value) => value === "added" || value === "taken",
   tripLines: (value) => typeof value === "boolean",
   tripFlow: (value) => typeof value === "boolean",
+  hiddenTrips: (value) => Array.isArray(value) && value.every((id) => typeof id === "string"),
 };
 
 /** The options in a saved value that are still valid, leaving out the rest. */

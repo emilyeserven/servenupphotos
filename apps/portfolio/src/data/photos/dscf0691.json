@@ -11,7 +11,7 @@
   "iso": 200,
   "focalLength": 88.2,
   "gpsPosition": "34 deg 24' 57.91\" N, 131 deg 22' 58.25\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.417557, 131.38253",
   "createDate": "2026:09:24 12:03:22",
   "customCreateDate": null,
   "placeName": "Hagi Castle",
@@ -268,5 +268,8 @@
     "samples": 9768
   },
   "similarPhotos": [393, 389, 334, 448, 489, 392],
-  "compareGroup": "Hagi Castle Moat"
+  "compareGroup": "Hagi Castle Moat",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MapPinIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import {
   type Place,
@@ -11,7 +10,8 @@ import {
 import { PromptCopyButton } from "@/components/edit-in-flight/prompt-copy-button";
 import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { PasteAnswer } from "@/components/paste-answer";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import {
   type LocationClues,
   type LocationField,
@@ -24,6 +24,7 @@ import {
   parseLocationAnswer,
   withLocation,
 } from "@/lib/location-prompt";
+import { ErrorNote } from "@/components/error-note";
 
 interface LocationPromptProps {
   /** The public URL of the photo's version the prompt links to. */
@@ -72,39 +73,21 @@ type PasteLocationProps = LocationPromptProps & { clues: LocationClues };
 
 /** The field to paste the LLM's answer into, and what it suggests. */
 function PasteLocation({ clues, onChange, disabled }: PasteLocationProps) {
-  const [text, setText] = useState("");
-  const [pasted, setPasted] = useState<PastedLocation | null | undefined>(undefined);
+  const pasted = usePastedAnswer(parseLocationAnswer);
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">
-      <label htmlFor="location-prompt-answer" className="text-sm font-medium">
-        The LLM&apos;s answer to the location prompt
-      </label>
-      <Textarea
-        id="location-prompt-answer"
-        value={text}
+      <p className="text-sm font-medium">The LLM&apos;s answer to the location prompt</p>
+      <PasteAnswer
+        pasted={pasted}
+        label="Read the answer"
         placeholder='{"place": "Gyeongbokgung Palace", "city": "Seoul", …}'
         disabled={disabled}
-        onChange={(event) => setText(event.target.value)}
       />
-      <Button
-        type="button"
-        className="self-start"
-        disabled={disabled || !text.trim()}
-        onClick={() => setPasted(parseLocationAnswer(text))}
-      >
-        <MapPinIcon />
-        Read answer
-      </Button>
-      {pasted === null && (
-        <p className="text-destructive text-sm">
-          There&apos;s no JSON object in that answer. Paste all of it, from {"{"} to {"}"}.
-        </p>
-      )}
-      {pasted && (
+      {pasted.answer && (
         <PastedAnswer
           // A new answer starts with its own suggestions ticked.
-          key={JSON.stringify(pasted)}
-          pasted={pasted}
+          key={pasted.reviews}
+          pasted={pasted.answer}
           clues={clues}
           onChange={onChange}
           disabled={disabled}
@@ -174,7 +157,7 @@ function FillForm({
         filled={fill.isSuccess}
         onClick={() => fill.mutate(ticked)}
       />
-      {fill.isError && <p className="text-destructive">{fill.error.message}</p>}
+      <ErrorNote error={fill.error} />
     </>
   );
 }

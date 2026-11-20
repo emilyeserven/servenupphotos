@@ -10,6 +10,8 @@ import type { CombinedPhoto } from "@/lib/group-photos";
 import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
+import { SectionTitle } from "@/components/section-title";
 
 /**
  * The Lenses tab's custom lenses: lenses the EXIF doesn't name well, such as manual ones, to pick on
@@ -21,7 +23,9 @@ export function CustomLensesSection() {
   return (
     <section aria-label="Custom lenses" className="mt-6 flex flex-col gap-3">
       <div>
-        <h2 className="text-lg font-semibold">Custom lenses</h2>
+        <SectionTitle as="h2" size="lg">
+          Custom lenses
+        </SectionTitle>
         <p className="text-muted-foreground text-sm">
           Lenses the EXIF doesn&apos;t name well, such as manual lenses adapted to the camera. Pick
           one on the Photo page and the photo gets its name as its lens, and its focal length and
@@ -71,7 +75,7 @@ function LensList({ lenses, photos, chosen, onChoose }: LensListProps) {
         <CardDescription>With how many photos have each.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
-        {lenses.length === 0 && <p className="text-muted-foreground text-sm">None yet.</p>}
+        {lenses.length === 0 && <EmptyNote>No custom lenses yet.</EmptyNote>}
         {lenses.map((lens) => (
           <button
             key={lens.id}

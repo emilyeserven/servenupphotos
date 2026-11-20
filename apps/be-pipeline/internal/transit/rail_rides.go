@@ -49,7 +49,9 @@ func railRides(net *railNet, id int64, from, to [2]float64) ([]RouteRide, error)
 	}
 	nodes, lines := net.route(from, to, allowed)
 	if len(nodes) == 0 {
-		return nil, ErrNoTrack
+		// Its track crossed a gap in its lines' mapped track (see
+		// routeAcross), so it isn't split into rides.
+		return nil, nil
 	}
 	rides := net.splitRides(nodes, lines)
 	if len(rides) < 2 {

@@ -18,7 +18,7 @@ function InstagramPlannedPage() {
       title="Planned Posts"
       description="Go through the photos planned for Instagram in order: download each original, copy its caption, and mark it Scheduled once it's on Instagram."
     >
-      <QueryResult query={settings}>
+      <QueryResult query={settings} pendingLabel="Reading settings…">
         {(data) =>
           data.github.repo && data.github.token.set ? <PlannedPhotos /> : <SettingsFirst />
         }
