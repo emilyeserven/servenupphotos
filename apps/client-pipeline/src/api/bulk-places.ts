@@ -56,3 +56,19 @@ export const applyBulkPlacesMutation = mutationOptions({
   meta: { saves: true, changes: (result) => locationChanges(result as BulkPlacesResult) },
   mutationFn: (bulk: BulkPlaces) => post<BulkPlacesResult>("/api/data/bulk-places", bulk),
 });
+
+/** The photos a pasted answer names, found among every photo, and the names that aren't any photo's. */
+interface PhotosByName {
+  photos: BulkTagPhoto[];
+  /** The names that aren't any photo file's, as the answer gave them. */
+  unknown: string[];
+}
+
+/**
+ * Finds the photos an LLM's answer names by their JSON file's name without `.json`, among every
+ * photo, so Bulk Places can apply an answer to photos it didn't pick. It only reads.
+ */
+export const findPhotosByNameMutation = mutationOptions({
+  mutationKey: ["data", "photos-by-name"],
+  mutationFn: (names: string[]) => post<PhotosByName>("/api/data/photos-by-name", { names }),
+});
