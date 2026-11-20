@@ -90,8 +90,10 @@ section shown, and the picker keeps 16px from the screen's edges.
 
 **Albums** lists every album in `ALLALBUMS.json`, each sub-album under its parent. Choosing an album (`?album=<id>`)
 shows the photos in it and in any album inside it. **Tags** lists every tag in `ALLTAGS.json` (`?tag=<id>`), each [under its parent tag](albums-and-tags.md#parent-tags); choosing one shows the photos with it or any tag under it, and is left
-out while there are no tags. **Genres** lists every [photographic genre](photographic-genres.md) in `ALLGENRES.json`, by
-name (`?genre=<id>`), and is likewise left out while there are none.
+out while there are no tags. **Genres** lists every [photographic genre](photographic-genres.md) in `ALLGENRES.json`, in the order set on
+[Reorganize Genres](photographic-genres.md#reorganize-genres) and each [subgenre](photographic-genres.md#subgenres) under its
+genre (`?genre=<id>`); choosing one shows the photos with it or any subgenre under it, and is likewise left out while
+there are none.
 
 ## When
 

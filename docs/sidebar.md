@@ -25,6 +25,7 @@ branches that add pages don't clash:
     - Small Tags
     - Tools: Bulk tagging, Tag library, Tag pruning, Tag descriptions
   - Genres
+    - Reorganize Genres
     - Genre Suggestions
   - Places
     - Location Names

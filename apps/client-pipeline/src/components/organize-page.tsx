@@ -13,8 +13,6 @@ import {
   groupId,
   groupLabel,
   groupName,
-  hasParents,
-  type ParentKind,
   organizeQuery,
 } from "@/api/organize";
 import { type PublishResult, photosInFlightQuery } from "@/api/photos";
@@ -72,7 +70,7 @@ const PAGES: Record<GroupKind, { title: string; description: string }> = {
   genres: {
     title: "Photographic Genres",
     description:
-      "The kinds of photography a photo is, such as street, landscape or portrait. A photo can have several genres, each genre is its own JSON file, and the portfolio can filter by them.",
+      "The kinds of photography a photo is, such as street, landscape or portrait. A photo can have several genres, a genre can be a subgenre of a broader one, each genre is its own JSON file, and the portfolio can filter by them. Reorganize Genres changes their order, names and subgenres.",
   },
 };
 
@@ -269,24 +267,22 @@ function NewGroupForm({
         )}
       </form.Field>
 
-      {hasParents(kind) && (
-        <form.Field name="parent">
-          {(field) => (
-            <FormField id={field.name} label={NEW_PARENT[kind].label} hint={NEW_PARENT[kind].hint}>
-              <GroupCombobox
-                id={field.name}
-                kind={kind}
-                multiple={false}
-                value={field.state.value}
-                disabled={create.isPending}
-                placeholder={NEW_PARENT[kind].none}
-                aria-describedby={`${field.name}-hint`}
-                onChange={(parent) => field.handleChange(parent)}
-              />
-            </FormField>
-          )}
-        </form.Field>
-      )}
+      <form.Field name="parent">
+        {(field) => (
+          <FormField id={field.name} label={NEW_PARENT[kind].label} hint={NEW_PARENT[kind].hint}>
+            <GroupCombobox
+              id={field.name}
+              kind={kind}
+              multiple={false}
+              value={field.state.value}
+              disabled={create.isPending}
+              placeholder={NEW_PARENT[kind].none}
+              aria-describedby={`${field.name}-hint`}
+              onChange={(parent) => field.handleChange(parent)}
+            />
+          </FormField>
+        )}
+      </form.Field>
 
       <ErrorNote error={create.error} />
 
@@ -303,7 +299,7 @@ function NewGroupForm({
 }
 
 /** The new album or tag form's parent field, for each kind with parents. */
-const NEW_PARENT: Record<ParentKind, { label: string; hint: string; none: string }> = {
+const NEW_PARENT: Record<GroupKind, { label: string; hint: string; none: string }> = {
   albums: {
     label: "Parent album",
     hint: "Optional. Puts this album inside another, as one of its sub-albums.",
@@ -313,6 +309,11 @@ const NEW_PARENT: Record<ParentKind, { label: string; hint: string; none: string
     label: "Parent tag",
     hint: "Optional. A more general tag this one is a kind of, such as covered-street for shotengai, so filtering by it shows this tag's photos too.",
     none: "None: a top-level tag",
+  },
+  genres: {
+    label: "Parent genre",
+    hint: "Optional. Makes this a subgenre of a broader genre, such as Traditional architecture under Architecture, so filtering by it shows this genre's photos too.",
+    none: "None: a top-level genre",
   },
 };
 
@@ -454,8 +455,8 @@ function GroupTable({
   label: string;
 }) {
   const countOf = usePhotoCounts(kind);
-  // Albums and tags list each one under its parent, the ones under it indented.
-  const rows = hasParents(kind) ? albumTree(groups) : groups.map((group) => ({ group, depth: 0 }));
+  // Each one is listed under its parent, the ones under it indented.
+  const rows = albumTree(groups);
   return (
     <Table aria-label={label}>
       <TableHeader>
@@ -483,8 +484,8 @@ function GroupTable({
   );
 }
 
-/** How many photos in ALLPHOTOS.json list an album or tag, by ID; undefined until it's read. */
-function usePhotoCounts(kind: GroupKind): ((id: string) => number) | undefined {
+/** How many photos in ALLPHOTOS.json list an album, tag or genre, by ID; undefined until it's read. */
+export function usePhotoCounts(kind: GroupKind): ((id: string) => number) | undefined {
   const combined = useCombinedData();
   const current = combined.data ? currentPhotos(combined.data) : undefined;
   if (!current) return undefined;

@@ -41,7 +41,7 @@ func handleSetGroupParent(store *settings.Store, gh *github.Client) http.Handler
 	return func(w http.ResponseWriter, r *http.Request) {
 		kind, ok := github.KindByFolder(r.PathValue("kind"))
 		if !ok || !github.HasParents(kind) {
-			writeError(w, http.StatusNotFound, "Only albums and tags have a parent.")
+			writeError(w, http.StatusNotFound, "Only albums, tags and genres have a parent.")
 			return
 		}
 		withGitHubBody(store, publishTimeout, "parent", "Couldn't save the parent.",
@@ -196,5 +196,20 @@ func handleSetAlbumRules(store *settings.Store, gh *github.Client) http.HandlerF
 	return withGitHubBody(store, publishTimeout, "Smart Album rules", "Couldn't save the Smart Album's rules.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, req albumRulesBody) (any, error) {
 			return gh.SetAlbumRules(ctx, cfg, r.PathValue("id"), req.Rules)
+		})
+}
+
+// genreTreeBody is the body of a Reorganize Genres save: every genre in its
+// new order, with its name and parent.
+type genreTreeBody struct {
+	Genres []github.GenreTreeEntry `json:"genres"`
+}
+
+// handleSetGenreTree saves the body's genres, in their new order, as each
+// genre file's order, parent and name, as changes waiting for Commit.
+func handleSetGenreTree(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return withGitHubBody(store, publishTimeout, "genre tree", "Couldn't save the genres.",
+		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req genreTreeBody) (any, error) {
+			return gh.SetGenreTree(ctx, cfg, req.Genres)
 		})
 }

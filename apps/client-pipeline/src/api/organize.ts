@@ -25,9 +25,15 @@ export interface Group {
   id: string;
   name: string;
   description?: string;
-  /** An album's parent album's ID; absent for a top-level album, and for every tag and genre. */
+  /**
+   * An album's parent album's ID, a tag's more general tag's ID, or a subgenre's genre's ID, such
+   * as "architecture"; absent at the top level.
+   */
   parent?: string;
-  /** An album's place among the albums, 1 first; absent until the albums are reordered. */
+  /**
+   * An album's place among the albums, or a genre's among the genres, 1 first; absent until they're
+   * reordered.
+   */
   order?: number;
   /** The IDs of the portfolio's spotlight spots that show an album's photos, such as "homepage". */
   spotlightZones?: string[];
@@ -110,7 +116,7 @@ interface NewGroup {
   id: string;
   name: string;
   description: string;
-  /** An album's parent album's ID, or a tag's parent tag's ID. */
+  /** An album's parent album's ID, a tag's parent tag's ID, or a subgenre's genre's ID. */
   parent?: string;
 }
 
@@ -195,19 +201,11 @@ function albumChanges(result: unknown) {
   return (result as PendingSave).changes.map((change) => ({ kind: "albums" as const, ...change }));
 }
 
-/** The kinds whose files can name a parent of the same kind: an album's album, or a tag's more general tag. */
-export type ParentKind = "albums" | "tags";
-
-/** Whether kind's albums or tags can have a parent; genres can't. */
-export function hasParents(kind: GroupKind): kind is ParentKind {
-  return kind === "albums" || kind === "tags";
-}
-
 /**
- * Moves the album or tag `id` under the one `parent` of the same kind, or to the top level when
+ * Moves the album, tag or genre `id` under the one `parent` of the same kind, or to the top level when
  * it's null, as a change waiting for Commit.
  */
-export const setGroupParentMutation = (kind: ParentKind) =>
+export const setGroupParentMutation = (kind: GroupKind) =>
   mutationOptions({
     mutationKey: ["organize", kind, "parent"],
     meta: {
@@ -355,6 +353,33 @@ export const setTagFavoritesMutation = tagsMutation(
   (favorites: Record<string, boolean>) => ({ favorites }),
 );
 
+/** One genre as Reorganize Genres arranges it; its ID never changes, so its photos keep it. */
+export interface GenreTreeEntry {
+  id: string;
+  /** Its name as shown, such as "Traditional architecture". */
+  name: string;
+  /** The ID of the genre it's a subgenre of, such as "architecture", or "" at the top level. */
+  parent: string;
+}
+
+/** What a Reorganize Genres save did; nothing is saved when no genre file changed. */
+export type GenreTreeResult = AlbumsResult;
+
+/**
+ * Saves `genres`, every genre in its new order, as each genre file's order, parent and name, as
+ * changes waiting for Commit.
+ */
+export const setGenreTreeMutation = mutationOptions({
+  mutationKey: ["organize", "genres", "tree"],
+  meta: {
+    saves: (result) => (result as AlbumsResult).files > 0,
+    changes: (result) =>
+      (result as PendingSave).changes.map((change) => ({ kind: "genres" as const, ...change })),
+  },
+  mutationFn: (genres: GenreTreeEntry[]) =>
+    put<GenreTreeResult>("/api/organize/genres/tree", { genres }),
+});
+
 /** The tags with favorites first, keeping the order of each. */
 export function favoritesFirst<T extends { favorite?: boolean }>(tags: T[]): T[] {
   return [...tags.filter((tag) => tag.favorite), ...tags.filter((tag) => !tag.favorite)];
@@ -444,8 +469,15 @@ export function albumAncestry(albums: Group[], id: string): Group[] {
   return chain;
 }
 
-/** The IDs of the albums inside `id`, at any depth, never `id` itself. */
-export function albumDescendants(albums: Group[], id: string): Set<string> {
+/** Anything placed under a parent of its own kind by ID, as albums, tags and genres are. */
+interface Nested {
+  id: string;
+  /** The ID of the one it's under; absent or "" at the top level. */
+  parent?: string;
+}
+
+/** The IDs of the albums (or tags or genres) inside `id`, at any depth, never `id` itself. */
+export function albumDescendants(albums: Nested[], id: string): Set<string> {
   const found = new Set<string>();
   const queue = [id];
   for (let at = queue.shift(); at !== undefined; at = queue.shift()) {
@@ -461,7 +493,7 @@ export function albumDescendants(albums: Group[], id: string): Set<string> {
 }
 
 /** The albums whose parent is `id`, other than itself. */
-function childAlbums(albums: Group[], id: string): Group[] {
+function childAlbums<T extends Nested>(albums: T[], id: string): T[] {
   return albums.filter((album) => album.parent === id && album.id !== id);
 }
 
@@ -469,11 +501,11 @@ function childAlbums(albums: Group[], id: string): Group[] {
  * albums with each one's sub-albums right after it, in the order given, and how deep each is. An
  * album whose parent is missing, or that's in a loop, is listed at the top level.
  */
-export function albumTree(albums: Group[]): { group: Group; depth: number }[] {
+export function albumTree<T extends Nested = Group>(albums: T[]): { group: T; depth: number }[] {
   const ids = new Set(albums.map((album) => album.id));
-  const rows: { group: Group; depth: number }[] = [];
-  const placed = new Set<Group>();
-  const visit = (album: Group, depth: number) => {
+  const rows: { group: T; depth: number }[] = [];
+  const placed = new Set<T>();
+  const visit = (album: T, depth: number) => {
     if (placed.has(album)) return;
     placed.add(album);
     rows.push({ group: album, depth });
@@ -485,7 +517,7 @@ export function albumTree(albums: Group[]): { group: Group; depth: number }[] {
   return rows;
 }
 
-function isTopLevel(album: Group, ids: ReadonlySet<string>): boolean {
+function isTopLevel(album: Nested, ids: ReadonlySet<string>): boolean {
   return !album.parent || !ids.has(album.parent);
 }
 

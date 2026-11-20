@@ -53,7 +53,10 @@ export const GenreCrumbs: RouteCrumbs = ({ children }) => {
   return children(useGroupCrumbs("genres", id));
 };
 
-/** The open album's, tag's or genre's name, after the albums it sits in; its ID until they're read. */
+/** Each kind's page for one album, tag or genre. */
+const GROUP_PAGES = { albums: "/albums/$id", tags: "/tags/$id", genres: "/genres/$id" } as const;
+
+/** The open album's, tag's or genre's name, after the albums, tags or genres it sits in; its ID until they're read. */
 function useGroupCrumbs(kind: GroupKind, id: string): Crumb[] {
   const organize = useQuery(organizeQuery);
   const byId = new Map(groupsOf(organize.data, kind).map((g) => [g.id, g]));
@@ -61,7 +64,7 @@ function useGroupCrumbs(kind: GroupKind, id: string): Crumb[] {
   if (!group) return [{ title: id }];
   const parents = parentChain(group, byId).map((p) => ({
     title: groupLabel(p),
-    link: { to: "/albums/$id", params: { id: p.id } } as LinkOptions,
+    link: { to: GROUP_PAGES[kind], params: { id: p.id } } as LinkOptions,
   }));
   return [...parents, { title: groupLabel(group) }];
 }
@@ -70,7 +73,7 @@ function groupsOf(data: OrganizeResponse | undefined, kind: GroupKind): Group[] 
   return data ? data[kind] : [];
 }
 
-/** The albums an album sits in, outermost first, stopping at a parent that's missing or repeats. */
+/** The albums an album sits in (or the tags or genres one is under), outermost first, stopping at a parent that's missing or repeats. */
 function parentChain(group: Group, byId: Map<string, Group>, seen = new Set([group.id])): Group[] {
   const parent = byId.get(group.parent ?? "");
   if (!parent || seen.has(parent.id)) return [];

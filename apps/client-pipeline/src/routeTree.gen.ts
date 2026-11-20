@@ -39,6 +39,7 @@ import { Route as PlacesRouteImport } from './routes/places'
 import { Route as QuickEditRouteImport } from './routes/quick-edit'
 import { Route as ReEditRouteImport } from './routes/re-edit'
 import { Route as RelatedPhotosRouteImport } from './routes/related-photos'
+import { Route as ReorganizeGenresRouteImport } from './routes/reorganize-genres'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
@@ -217,6 +218,11 @@ const RelatedPhotosRoute = RelatedPhotosRouteImport.update({
   path: '/related-photos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReorganizeGenresRoute = ReorganizeGenresRouteImport.update({
+  id: '/reorganize-genres',
+  path: '/reorganize-genres',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -384,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/quick-edit': typeof QuickEditRoute
   '/re-edit': typeof ReEditRoute
   '/related-photos': typeof RelatedPhotosRoute
+  '/reorganize-genres': typeof ReorganizeGenresRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
@@ -443,6 +450,7 @@ export interface FileRoutesByTo {
   '/quick-edit': typeof QuickEditRoute
   '/re-edit': typeof ReEditRoute
   '/related-photos': typeof RelatedPhotosRoute
+  '/reorganize-genres': typeof ReorganizeGenresRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
@@ -502,6 +510,7 @@ export interface FileRoutesById {
   '/quick-edit': typeof QuickEditRoute
   '/re-edit': typeof ReEditRoute
   '/related-photos': typeof RelatedPhotosRoute
+  '/reorganize-genres': typeof ReorganizeGenresRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
@@ -563,6 +572,7 @@ export interface FileRouteTypes {
     | '/quick-edit'
     | '/re-edit'
     | '/related-photos'
+    | '/reorganize-genres'
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
@@ -622,6 +632,7 @@ export interface FileRouteTypes {
     | '/quick-edit'
     | '/re-edit'
     | '/related-photos'
+    | '/reorganize-genres'
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
@@ -680,6 +691,7 @@ export interface FileRouteTypes {
     | '/quick-edit'
     | '/re-edit'
     | '/related-photos'
+    | '/reorganize-genres'
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
@@ -740,6 +752,7 @@ export interface RootRouteChildren {
   QuickEditRoute: typeof QuickEditRoute
   ReEditRoute: typeof ReEditRoute
   RelatedPhotosRoute: typeof RelatedPhotosRoute
+  ReorganizeGenresRoute: typeof ReorganizeGenresRoute
   SettingsRoute: typeof SettingsRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
@@ -979,6 +992,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RelatedPhotosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reorganize-genres': {
+      id: '/reorganize-genres'
+      path: '/reorganize-genres'
+      fullPath: '/reorganize-genres'
+      preLoaderRoute: typeof ReorganizeGenresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -1216,6 +1236,7 @@ const rootRouteChildren: RootRouteChildren = {
   QuickEditRoute: QuickEditRoute,
   ReEditRoute: ReEditRoute,
   RelatedPhotosRoute: RelatedPhotosRoute,
+  ReorganizeGenresRoute: ReorganizeGenresRoute,
   SettingsRoute: SettingsRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
