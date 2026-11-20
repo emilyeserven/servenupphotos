@@ -3,7 +3,8 @@ import {
   type AutogroupPhoto,
   type ExistingGroup,
   answerObject as jsonObject,
-  askedPhotos,
+  answerablePhotos,
+  existingGroups,
   lookupName,
   photoFinder,
 } from "@/lib/compare-autogroup";
@@ -36,9 +37,9 @@ export interface AutogroupAnswer {
   groups: AutogroupSuggestion[];
   merges: AutogroupMerge[];
   removals: AutogroupRemoval[];
-  /** Photo names that aren't photos in the prompt. */
+  /** Photo names that aren't any photo's, which are skipped. */
   unknown: string[];
-  /** Group names to combine or remove that aren't groups in the prompt. */
+  /** Group names to combine or remove that aren't any group's, which are skipped. */
   unknownGroups: string[];
 }
 
@@ -174,7 +175,8 @@ function readRemovals(
 
 /**
  * Reads the LLM's answer into the groups to make or add to, the groups to combine and the groups
- * to remove, looking each photo and group up among the prompt's. A photo named in more than one
+ * to remove, looking each photo and group up among every photo and group, not only the prompt's,
+ * so an answer written for another prompt still applies. A photo named in more than one
  * group stays in the first; a group left with fewer than 2 photos, counting the ones in it already,
  * is dropped; a group being combined isn't also removed. Throws an error a user can read when the
  * answer isn't the JSON the prompt asks for.
@@ -186,8 +188,8 @@ export function readAutogroupAnswer(
 ): AutogroupAnswer {
   const parsed = answerObject(answer);
   const reading: Reading = {
-    findPhoto: photoFinder(askedPhotos(ask)),
-    findGroup: groupFinder(ask.groups),
+    findPhoto: photoFinder(answerablePhotos(ask, all)),
+    findGroup: groupFinder(ask.groups.length > 0 ? ask.groups : existingGroups(all)),
     taken: new Set(),
     unknown: new Set(),
     unknownGroups: new Set(),
