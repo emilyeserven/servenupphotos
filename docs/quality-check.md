@@ -61,8 +61,9 @@ The prompt asks for only the photos to flag:
 ```
 
 `reEdit` becomes the re-edit reason and `note` the photographer note, after `Quality Check (pixelation): `. An answer
-that leaves either out gets one made from `pixelate`, such as "Pixelate face". Names that aren't photos in the
-prompt are listed as left out, and a photo named twice is flagged once. The answer is read in the browser
+that leaves either out gets one made from `pixelate`, such as "Pixelate face". A photo the answer names
+that the prompt didn't ask about (such as a photo that isn't a draft) is flagged too, names that aren't any photo's
+are listed as skipped, and a photo named twice is flagged once. The answer is read in the browser
 (`readPixelationAnswer` in `lib/pixelation-prompt.ts`); nothing is sent to the backend.
 
 Each flagged photo links to **Pixelate faces**: the Photo page's Image section (`/exif?edit=<path>&section=image`),

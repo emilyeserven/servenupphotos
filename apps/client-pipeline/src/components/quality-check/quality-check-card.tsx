@@ -23,6 +23,10 @@ export function QualityCheckCard() {
     () => autogroupPhotos(compare.photos, { scope, skipGrouped: false }),
     [compare.photos, scope],
   );
+  const every = useMemo(
+    () => autogroupPhotos(compare.photos, { scope: "all", skipGrouped: false }),
+    [compare.photos],
+  );
   return (
     <Card>
       <CardHeader>
@@ -43,7 +47,7 @@ export function QualityCheckCard() {
           <>
             <AspectRatioCheck key={`aspect-${scope}`} photos={photos} />
             <Separator />
-            <PixelationCheck key={`pixelation-${scope}`} photos={photos} />
+            <PixelationCheck key={`pixelation-${scope}`} photos={photos} every={every} />
             <Separator />
             <MissingPlacesCheck photos={photos} />
           </>
