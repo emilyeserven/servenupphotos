@@ -31,6 +31,7 @@ import { useRememberViewOptions } from "@/lib/view-options";
 import { cn } from "@/lib/utils";
 import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-sketch";
 import { MonthMaps, TripLinesButton, useMonthTripLines } from "@/components/timeline-month-map";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { isoDate } from "@/lib/dates";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
@@ -157,7 +158,7 @@ function PhotoMonths({
 }) {
   if (photos.length === 0) {
     const matching = filtered ? "match these filters" : "were taken";
-    return <p className="text-muted-foreground">No photos {matching} in this time range.</p>;
+    return <EmptyNote>No photos {matching} in this time range.</EmptyNote>;
   }
 
   return (

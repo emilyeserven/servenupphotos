@@ -21,6 +21,7 @@ import {
 } from "@/lib/compare-autogroup";
 import { readAutogroupAnswer } from "@/lib/compare-autogroup-answer";
 import type { ComparePhoto } from "@/lib/compare-groups";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { ErrorNote } from "@/components/error-note";
 
 /**
@@ -149,9 +150,7 @@ function promptLabel(ask: AutogroupAsk): string {
 /** The photos as small square tiles, each named on hover, or that there are none. */
 function PhotoTiles({ photos }: { photos: AutogroupPhoto[] }) {
   if (photos.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">No photos outside a group with these choices.</p>
-    );
+    return <EmptyNote>No photos outside a group with these choices.</EmptyNote>;
   }
   return (
     <ul className="grid grid-cols-6 gap-1.5 sm:grid-cols-10 lg:grid-cols-12">

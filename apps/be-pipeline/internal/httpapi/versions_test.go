@@ -20,7 +20,7 @@ func TestVersionPreview(t *testing.T) {
 	}{
 		{"small", "small", redJPEG(t), http.StatusOK, ""},
 		{"xlarge", "xlarge", redJPEG(t), http.StatusOK, ""},
-		{"unknown version", "huge", redJPEG(t), http.StatusNotFound, "no such version"},
+		{"unknown version", "huge", redJPEG(t), http.StatusNotFound, "no resized version by that name"},
 		{"not a jpeg", "small", []byte("\x89PNG\r\n\x1a\n"), http.StatusUnsupportedMediaType, "photo must be a JPEG"},
 		{"unreadable jpeg", "small", truncatedJPEG, http.StatusUnprocessableEntity, "Couldn't read this JPEG"},
 	}

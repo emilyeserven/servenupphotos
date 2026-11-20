@@ -16,6 +16,7 @@ import {
 } from "@portfolio/lib/place-tree";
 import { cn } from "@portfolio/lib/utils";
 import { TruncatedText } from "@portfolio/components/truncated-text";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** What the Places flyout lists, and what choosing in it does. */
 interface PanelProps {
@@ -259,7 +260,7 @@ function Chevron({ shown }: { shown: boolean }) {
 
 /** What the flyout says when no place has photos. */
 function Empty() {
-  return <p className="px-2 py-6 text-center text-sm text-muted-foreground">No places found.</p>;
+  return <EmptyNote className="px-2 py-6 text-center">No places found.</EmptyNote>;
 }
 
 /** Every place matching the search, each with what it's in under its name. */

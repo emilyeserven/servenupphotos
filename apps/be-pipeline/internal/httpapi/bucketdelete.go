@@ -2,8 +2,7 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
-	"log/slog"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -40,27 +39,19 @@ type deleteImagesResponse struct {
 // at the images is left as it is. It responds 200 with what was and wasn't
 // deleted, even when some couldn't be.
 func handleDeleteBucketImages(loadR2 func() (settings.R2, error), deleteImage deletePhotoFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req deleteImagesRequest
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 1<<16)).Decode(&req); err != nil || len(req.Keys) == 0 {
-			writeError(w, http.StatusBadRequest, "keys is required")
+	return withBody("images to delete", 1<<16, func(w http.ResponseWriter, r *http.Request, req deleteImagesRequest) {
+		if len(req.Keys) == 0 {
+			writeError(w, http.StatusBadRequest, "Pick the images to delete first.")
 			return
 		}
 		if len(req.Keys) > maxDeleteKeys {
-			writeError(w, http.StatusBadRequest, "too many images to delete at once")
+			writeError(w, http.StatusBadRequest, fmt.Sprintf("Delete up to %d images at once.", maxDeleteKeys))
 			return
 		}
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), deleteImagesTimeout)
-		defer cancel()
-		writeJSON(w, http.StatusOK, deleteImages(ctx, cfg, deleteImage, req.Keys))
-	}
+		withSettings(loadR2, deleteImagesTimeout, func(ctx context.Context, w http.ResponseWriter, _ *http.Request, cfg settings.R2) {
+			writeJSON(w, http.StatusOK, deleteImages(ctx, cfg, deleteImage, req.Keys))
+		})(w, r)
+	})
 }
 
 // deleteImages deletes each key in turn, noting which went and which didn't.

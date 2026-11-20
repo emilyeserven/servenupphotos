@@ -16,7 +16,7 @@ const reapplyTimeout = time.Minute
 // handleSaveCameraOverride saves the body as the path's camera override, new
 // or replacing the one there, as a change waiting for Commit.
 func handleSaveCameraOverride(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "camera override", "could not save the camera override",
+	return withGitHubBody(store, publishTimeout, "camera override", "Couldn't save the camera override.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, override github.CameraOverride) (any, error) {
 			override.ID = r.PathValue("id")
 			return gh.SaveCameraOverride(ctx, cfg, override)
@@ -26,7 +26,7 @@ func handleSaveCameraOverride(store *settings.Store, gh *github.Client) http.Han
 // handleDeleteCameraOverride removes the path's camera override as a change
 // waiting for Commit.
 func handleDeleteCameraOverride(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHub(store, publishTimeout, "could not remove the camera override", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, publishTimeout, "Couldn't remove the camera override.", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.DeleteCameraOverride(ctx, cfg, r.PathValue("id"))
 	})
 }
@@ -35,7 +35,7 @@ func handleDeleteCameraOverride(store *settings.Store, gh *github.Client) http.H
 // again would change in each photo JSON file, as the Update Data page
 // previews it.
 func handlePreviewReapplyOverrides(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHub(store, reapplyTimeout, "could not read the photo files", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, reapplyTimeout, "Couldn't read the photo files.", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.PreviewReapplyOverrides(ctx, cfg)
 	})
 }
@@ -43,7 +43,7 @@ func handlePreviewReapplyOverrides(store *settings.Store, gh *github.Client) htt
 // handleReapplyOverrides applies the camera overrides again to every photo
 // JSON file, as changes waiting for Commit.
 func handleReapplyOverrides(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHub(store, reapplyTimeout, "could not apply the camera overrides", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, reapplyTimeout, "Couldn't apply the camera overrides.", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.ReapplyOverrides(ctx, cfg)
 	})
 }
@@ -52,7 +52,7 @@ func handleReapplyOverrides(store *settings.Store, gh *github.Client) http.Handl
 // and place file that are another name of one, as the Update Data page
 // previews it.
 func handlePreviewLocationNames(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHub(store, reapplyTimeout, "could not read the photo and place files", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, reapplyTimeout, "Couldn't read the photo and place files.", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.PreviewLocationNames(ctx, cfg)
 	})
 }
@@ -60,7 +60,7 @@ func handlePreviewLocationNames(store *settings.Store, gh *github.Client) http.H
 // handleApplyLocationNames writes each of those countries and cities as the
 // name that wins over it, as changes waiting for Commit.
 func handleApplyLocationNames(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHub(store, reapplyTimeout, "could not apply the location names", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, reapplyTimeout, "Couldn't apply the location names.", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.ApplyLocationNames(ctx, cfg)
 	})
 }
@@ -68,7 +68,7 @@ func handleApplyLocationNames(store *settings.Store, gh *github.Client) http.Han
 // handleSaveCustomLens saves the body as the path's custom lens, new or
 // replacing the one there, as a change waiting for Commit.
 func handleSaveCustomLens(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "custom lens", "could not save the custom lens",
+	return withGitHubBody(store, publishTimeout, "custom lens", "Couldn't save the custom lens.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, lens github.CustomLens) (any, error) {
 			lens.ID = r.PathValue("id")
 			return gh.SaveCustomLens(ctx, cfg, lens)
@@ -78,7 +78,7 @@ func handleSaveCustomLens(store *settings.Store, gh *github.Client) http.Handler
 // handleDeleteCustomLens removes the path's custom lens as a change waiting
 // for Commit.
 func handleDeleteCustomLens(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHub(store, publishTimeout, "could not remove the custom lens", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, publishTimeout, "Couldn't remove the custom lens.", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.DeleteCustomLens(ctx, cfg, r.PathValue("id"))
 	})
 }

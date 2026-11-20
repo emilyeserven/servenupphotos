@@ -15,7 +15,7 @@ const maxTagLibraryBytes = 4 << 20
 // handleExportTagLibrary reads every tag and photo with its tags, for the Tag
 // library prompt, without saving anything.
 func handleExportTagLibrary(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "tag library export", "could not read the tags and photos",
+	return handleBulkTags(store, "tag library export", "Couldn't read the tags and photos.",
 		func(ctx context.Context, cfg settings.GitHub, _ struct{}) (any, error) {
 			return gh.ExportTagLibrary(ctx, cfg)
 		})
@@ -24,7 +24,7 @@ func handleExportTagLibrary(store *settings.Store, gh *github.Client) http.Handl
 // handlePreviewTagLibrary reads the LLM's pasted answer with changes to the
 // whole tag library, and says what each would do, without saving anything.
 func handlePreviewTagLibrary(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTagsUpTo(store, maxTagLibraryBytes, "tag library answer", "could not read the answer",
+	return handleBulkTagsUpTo(store, maxTagLibraryBytes, "tag library answer", "Couldn't read the answer.",
 		func(ctx context.Context, cfg settings.GitHub, req pruneTagAnswer) (any, error) {
 			return gh.PreviewTagLibrary(ctx, cfg, req.Answer)
 		})
@@ -33,7 +33,7 @@ func handlePreviewTagLibrary(store *settings.Store, gh *github.Client) http.Hand
 // handleApplyTagLibrary saves the reviewed changes to the tag library, as
 // changes waiting for Commit.
 func handleApplyTagLibrary(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTagsUpTo(store, maxTagLibraryBytes, "tag library", "could not change the tags",
+	return handleBulkTagsUpTo(store, maxTagLibraryBytes, "tag library", "Couldn't change the tags.",
 		func(ctx context.Context, cfg settings.GitHub, req github.TagLibrary) (any, error) {
 			return gh.ApplyTagLibrary(ctx, cfg, req)
 		})

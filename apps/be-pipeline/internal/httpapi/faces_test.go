@@ -29,9 +29,9 @@ func TestSavedFacesHandler(t *testing.T) {
 	}{
 		{"saved", "?key=photos/k.jpg", versions.Faces{{X: 1, Y: 2, Width: 30, Height: 40, Blocks: 8}}, nil, http.StatusOK, `"faces":[{"x":1,"y":2,"width":30,"height":40,"blocks":8}]`},
 		{"none", "?key=photos/k.jpg", nil, nil, http.StatusOK, `"faces":[]`},
-		{"no key", "", nil, nil, http.StatusBadRequest, "key is required"},
+		{"no key", "", nil, nil, http.StatusBadRequest, "its key is missing"},
 		{"not a pipeline photo", "?key=k.jpg", nil, &storage.UploadError{Message: "Only photos", NotFound: true}, http.StatusNotFound, "Only photos"},
-		{"other failure", "?key=photos/k.jpg", nil, errors.New("disk on fire"), http.StatusInternalServerError, "could not read"},
+		{"other failure", "?key=photos/k.jpg", nil, errors.New("disk on fire"), http.StatusInternalServerError, "Couldn't read"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -62,7 +62,7 @@ func TestDetectFacesHandler(t *testing.T) {
 		want   string
 	}{
 		{"found", `{"key":"photos/k.jpg"}`, photo.String(), nil, http.StatusOK, `"faces":[{"x":5,"y":5,"width":10,"height":10,"blocks":8}]`},
-		{"no key", `{}`, "", nil, http.StatusBadRequest, "key is required"},
+		{"no key", `{}`, "", nil, http.StatusBadRequest, "its key is missing"},
 		{"not a JPEG", `{"key":"photos/k.jpg"}`, "nope", nil, http.StatusUnprocessableEntity, "Couldn't read"},
 		{"gone", `{"key":"photos/k.jpg"}`, "", &storage.GetError{Message: "That photo isn't in the bucket.", NotFound: true}, http.StatusNotFound, "isn't in the bucket"},
 	}

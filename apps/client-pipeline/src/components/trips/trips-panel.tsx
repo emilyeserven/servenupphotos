@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { shownPhotos } from "@/lib/place-seeds";
 import { lineDays } from "@/lib/stale-trip-lines";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The ID in a Trip page's URL for a new Trip, not saved yet. */
 export const NEW_TRIP_ID = "new";
@@ -56,7 +57,7 @@ export function TripsPanel({ data }: { data: CombinedData }) {
           onCancel={() => setPicked(undefined)}
         />
       )}
-      {all.length === 0 && <p className="text-muted-foreground text-sm">No Trips yet.</p>}
+      {all.length === 0 && <EmptyNote>No Trips yet.</EmptyNote>}
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {all.map((trip) => (
           <li key={trip.id}>

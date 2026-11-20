@@ -2,7 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"errors"
 	"io"
 	"log/slog"
 	"net/http"
@@ -52,21 +51,19 @@ func handleUpload(loadR2 func() (settings.R2, error), upload uploadFunc, cache *
 
 		crop, ok := parseCrop(photo.fields)
 		if !ok {
-			writeError(w, http.StatusBadRequest, "cropX, cropY and cropSize must be whole numbers, with a size above 0")
+			writeError(w, http.StatusBadRequest, "Give the crop as whole numbers in cropX, cropY and cropSize, with a size above 0.")
 			return
 		}
 
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
+		cfg, ok := loadSettings(w, loadR2)
+		if !ok {
 			return
 		}
 
 		f, err := os.Open(photo.path)
 		if err != nil {
 			slog.Error("open upload failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read photo")
+			writeError(w, http.StatusInternalServerError, "Couldn't read photo.")
 			return
 		}
 		defer f.Close() //nolint:errcheck // read-only
@@ -75,22 +72,10 @@ func handleUpload(loadR2 func() (settings.R2, error), upload uploadFunc, cache *
 		defer cancel()
 		opts := storage.UploadOptions{KeepSameName: photo.fields["sameName"] == "keep", Crop: crop}
 		res, err := upload(ctx, cfg, photo.name, f, opts)
-		var uploadErr *storage.UploadError
-		switch {
-		case errors.As(err, &uploadErr):
-			writeJSON(w, uploadErrorStatus(uploadErr), uploadErrorResponse{
-				Message:       uploadErr.Message,
-				SameName:      uploadErr.SameName,
-				SuggestedName: uploadErr.SuggestedName,
-				Cloudflare:    uploadErr.Cloudflare,
-			})
-		case err != nil:
-			slog.Error("upload failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not upload photo")
-		default:
+		if err == nil {
 			cacheColors(cache, res.Key, photo.path)
-			writeJSON(w, http.StatusOK, res)
 		}
+		writeR2Result(w, res, err, "Couldn't upload the photo.")
 	}
 }
 
@@ -134,6 +119,8 @@ func uploadErrorStatus(err *storage.UploadError) int {
 	switch {
 	case err.NotConfigured:
 		return http.StatusBadRequest
+	case err.NotFound:
+		return http.StatusNotFound
 	case err.NotAPhoto:
 		return http.StatusUnprocessableEntity
 	case len(err.SameName) > 0:

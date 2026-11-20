@@ -27,6 +27,7 @@ import {
   fileName,
   selectProblem,
 } from "@/components/gallery/published-file";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 interface PhotoGridProps {
   /** The base branch the photos were read from, for when there are none. */
@@ -36,7 +37,6 @@ interface PhotoGridProps {
   /** The images found in R2, for whether R2 could be checked. */
   images: InFlightImages;
   shown: GalleryFile[];
-  filter: string;
   selection: Selection;
   onToggle: (path: string) => void;
   /** The path of the photo `?photo=` names, ringed. */
@@ -45,30 +45,25 @@ interface PhotoGridProps {
   onOpen: (path: string) => void;
 }
 
-/** What the photos were filtered by, when none match: the search text, or else the filters. */
-function noMatch(filter: string): string {
-  return filter.trim() ? `“${filter.trim()}”` : "the filters";
-}
-
 /**
  * The photos shown, as Square Thumbnail tiles with their names, albums, tags, genres and Edit
  * buttons, drawn a batch at a time as the page scrolls (`useRevealed`).
  */
 export function PhotoGrid(props: PhotoGridProps) {
-  const { shown, filter, selection, onToggle } = props;
+  const { shown, selection, onToggle } = props;
   const likes = useLikeCounts();
   const [revealed, revealedEnd] = useRevealed(shown.length);
   // Draws at least up to the photo `?photo=` names, so it can be scrolled to.
   const revealedCount = Math.max(revealed, shown.findIndex((f) => f.path === props.highlight) + 1);
   if (props.total === 0) {
     return (
-      <p className="text-muted-foreground rounded-xl border border-dashed p-4 text-sm">
+      <EmptyNote className="rounded-xl border border-dashed p-4">
         No photo JSON on {props.branch} yet. Photos show here once they're saved.
-      </p>
+      </EmptyNote>
     );
   }
   if (shown.length === 0) {
-    return <p className="text-muted-foreground text-sm">No photos match {noMatch(filter)}.</p>;
+    return <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>;
   }
   return (
     <>

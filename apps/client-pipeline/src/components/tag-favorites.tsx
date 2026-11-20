@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { ErrorNote } from "@/components/error-note";
 
 /** Saves whether tags are favorites, reading the tags again after. */
@@ -80,7 +81,7 @@ export function FavoriteTagsCard({ organize }: { organize?: OrganizeResponse }) 
       </CardHeader>
       <CardContent>
         {favorites.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No favorite tags yet.</p>
+          <EmptyNote>No favorite tags yet.</EmptyNote>
         ) : (
           <ul className="flex flex-wrap gap-2" aria-label="Favorite tags">
             {favorites.map((tag) => (

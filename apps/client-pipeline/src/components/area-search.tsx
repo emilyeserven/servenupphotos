@@ -4,6 +4,7 @@ import { useState } from "react";
 import { type Area, areasQuery } from "@/api/areas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { ErrorNote } from "@/components/error-note";
 
 /** Finds an area on OpenStreetMap by name or Wikidata ID, and adds the one picked. */
@@ -84,7 +85,7 @@ function AreaResults({ asked, found, onPick }: AreaResultsProps) {
 /** The areas found, each a button that adds it; a note when none match. */
 function AreaList({ areas, onPick }: { areas: Area[]; onPick: (area: Area) => void }) {
   if (areas.length === 0) {
-    return <p className="text-muted-foreground text-xs">No area with an outline matches.</p>;
+    return <EmptyNote>No area with an outline matches.</EmptyNote>;
   }
   return (
     <ul className="flex flex-col gap-1">

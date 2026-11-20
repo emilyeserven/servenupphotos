@@ -43,40 +43,17 @@ func handleImageNames(
 	store *settings.Store, list listImagesFunc,
 	run func(context.Context, settings.GitHub, settings.R2, []string) (any, error),
 ) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
+	return withGitHub(store, imageNamesTimeout, "Couldn't rename the images.", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
 		r2, err := store.R2()
 		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
+			return nil, settingsFailed(err)
 		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), imageNamesTimeout)
-		defer cancel()
 		keys, status, msg := bucketKeys(ctx, r2, list)
 		if status != http.StatusOK {
-			writeError(w, status, msg)
-			return
+			return nil, &github.PublishError{Status: status, Message: msg}
 		}
-		result, err := run(ctx, cfg, r2, keys)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("rename images failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not rename the images")
-			return
-		}
-		writeJSON(w, http.StatusOK, result)
-	}
+		return run(ctx, cfg, r2, keys)
+	})
 }
 
 // bucketKeys lists every image's key in the bucket, so new names don't take
@@ -92,7 +69,7 @@ func bucketKeys(ctx context.Context, cfg settings.R2, list listImagesFunc) ([]st
 	}
 	if err != nil {
 		slog.Error("list bucket failed", "err", err)
-		return nil, http.StatusInternalServerError, "could not list the bucket"
+		return nil, http.StatusInternalServerError, "Couldn't list the photos in R2."
 	}
 	keys := make([]string, 0, len(images))
 	for _, img := range images {

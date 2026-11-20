@@ -3,6 +3,7 @@ import { type ViewerLikes, likeCounts } from "@/api/viewer-likes";
 import type { CombinedData } from "@/api/photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { shownPhotos } from "@/lib/place-seeds";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** How many of the most liked photos are listed. */
 const SHOWN = 30;
@@ -44,7 +45,7 @@ export function MostLiked({ viewers, titles }: MostLikedProps) {
       </CardHeader>
       <CardContent>
         {known.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No likes yet.</p>
+          <EmptyNote>No likes yet.</EmptyNote>
         ) : (
           <ol className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2 lg:grid-cols-3">
             {known.slice(0, SHOWN).map(([id, count]) => (

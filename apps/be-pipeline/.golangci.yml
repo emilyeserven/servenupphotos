@@ -7,6 +7,8 @@ linters:
     # Holds the line at today's most similar code (dupl, 200 tokens); tighten it over time.
     - dupl
     - errorlint
+    # Keeps request bodies read in one place: httpapi's respond.go (see the exclusions below).
+    - forbidigo
     # Holds the line at today's longest function (SetSocialDates, 76 lines / 51 statements); tighten it over time.
     - funlen
     - gocritic
@@ -20,6 +22,10 @@ linters:
     - unparam
     - usestdlibvars
   settings:
+    forbidigo:
+      forbid:
+        - pattern: ^json\.NewDecoder$
+          msg: "Read a request's JSON body with withBody, withGitHubBody or decodeEntryUpTo from respond.go."
     dupl:
       threshold: 200
     funlen:
@@ -34,6 +40,14 @@ linters:
         linters:
           - funlen
           - gocyclo
+          - forbidigo
+      # Only handlers read request bodies, and respond.go is where they do it.
+      - path-except: internal/httpapi/
+        linters:
+          - forbidigo
+      - path: internal/httpapi/respond\.go
+        linters:
+          - forbidigo
 
 formatters:
   enable:

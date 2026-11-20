@@ -26,16 +26,7 @@ type bucketResponse struct {
 // handleBucketImages lists every image in the R2 bucket from Settings,
 // without changing anything.
 func handleBucketImages(r2 func() (settings.R2, error), list listImagesFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, err := r2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), listImagesTimeout)
-		defer cancel()
+	return withSettings(r2, listImagesTimeout, func(ctx context.Context, w http.ResponseWriter, _ *http.Request, cfg settings.R2) {
 		images, err := list(ctx, cfg)
 		var lerr *storage.ListError
 		if errors.As(err, &lerr) {
@@ -48,9 +39,9 @@ func handleBucketImages(r2 func() (settings.R2, error), list listImagesFunc) htt
 		}
 		if err != nil {
 			slog.Error("list bucket failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not list the bucket")
+			writeError(w, http.StatusInternalServerError, "Couldn't list the photos in R2.")
 			return
 		}
 		writeJSON(w, http.StatusOK, bucketResponse{Bucket: strings.TrimSpace(cfg.Bucket), Images: images})
-	}
+	})
 }

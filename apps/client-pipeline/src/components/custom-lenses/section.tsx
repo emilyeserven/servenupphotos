@@ -10,6 +10,7 @@ import type { CombinedPhoto } from "@/lib/group-photos";
 import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { SectionTitle } from "@/components/section-title";
 
 /**
@@ -74,7 +75,7 @@ function LensList({ lenses, photos, chosen, onChoose }: LensListProps) {
         <CardDescription>With how many photos have each.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
-        {lenses.length === 0 && <p className="text-muted-foreground text-sm">None yet.</p>}
+        {lenses.length === 0 && <EmptyNote>No custom lenses yet.</EmptyNote>}
         {lenses.map((lens) => (
           <button
             key={lens.id}
