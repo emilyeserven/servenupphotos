@@ -85,6 +85,10 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
   flyout puts `choices` (`OptionChoices`, sliders) in the left column and `checks` (checkboxes in titled `OptionGroup`s)
   in the right, stacking on a phone (a flyout with only checkboxes leaves `choices` out). Next to search and **Show filters**, it goes at the right end of that row with
   `align="end"`.
+- **Entry editors:** a page that edits one JSON file per entry (camera overrides, custom lenses, metadata groups, …)
+  ends its editor with `EntryEditorButtons` (`components/entry-buttons.tsx`), passing the save and remove
+  `mutationOptions`, `next`, `saved` and a `whyNot` function, rather than its own Save and Remove buttons. An Update
+  Data card's preview uses `ScanPreviewBody` and `SaveButton` from `components/update-data-shared.tsx`.
 - **Filter pickers:** build on `SectionPicker` and follow [Picker conventions](docs/portfolio-filters.md#picker-conventions):
   extra info behind `InfoButton` in the `aside` panel on the right, Group by and Sort as small menus left of the (i),
   grouping off by default, and no icons in choice lists.
