@@ -6,7 +6,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
-const root = path.resolve(import.meta.dirname, "..");
+const root = path.resolve(import.meta.dirname, "../..");
 const FOLDERS = ["apps/client-pipeline/src", "apps/portfolio/src", "apps/portfolio/map-preview"];
 const WORDS = "apps/portfolio/src/lib/words.ts";
 

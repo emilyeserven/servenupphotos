@@ -56,16 +56,9 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: oxlint
-        run: pnpm lint
-      - name: oxfmt
-        run: pnpm fmt:check
-      - name: typecheck
-        run: pnpm typecheck
-      - name: fallow
-        run: pnpm fallow
-      - name: fixtures
-        run: pnpm check:fixtures
+      # Lint, format, typecheck, fallow and every check in scripts/checks/, the same as on a laptop.
+      - name: check
+        run: pnpm check
       # bff-pipeline's build is the same tsc pass as its typecheck, so only
       # the Vite apps are built.
       - name: build

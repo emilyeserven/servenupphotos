@@ -80,86 +80,7 @@ plain background. Options are listed at the top of `scripts/screenshot.mjs`: `--
 
 ## Features
 
-How each part of the pipeline and portfolio works is in [`docs/`](docs):
-
-- [Portfolio with your own photo data](docs/local-photo-data.md): how `pnpm photos:local` and the portfolio's dev server build its local photo, place, localization, album and tag data, and what each portfolio view shows
-- [EXIF and color data](docs/exif-and-colors.md) (`/exif`): reading a photo's EXIF metadata and color analysis
-- [Times across timezones](docs/timezone-shift.md) (`/update-data/timezones`): fixing the times of a session's photos, picked by day or range of days, taken across timezones (even when the camera's clock setting isn't known), with a preview and its effect on trip lines
-- [EXIF in R2](docs/r2-exif.md) (`/update-data/r2-exif`): finding the originals in R2 whose EXIF doesn't match the photo data, such as times fixed across timezones, and writing fields already changed in Lightroom into one after a confirm step
-- [Portfolio homepage](docs/portfolio-homepage.md) (`/` on the portfolio): the ways to explore, over the album picked on Site Spotlight
-- [Portfolio Filters](docs/portfolio-filters.md): filtering the portfolio's views by place, album and tag (plus camera, lens and settings on the Grid), kept in the URL across views
-- [Photo Viewer](docs/photo-viewer.md): the portfolio's full-window photo, and moving between photos with the arrow keys
-- [More Like This](docs/more-like-this.md) (`/related-photos` in the pipeline): the photo viewer's drawer of related photos, found by the backend or picked by hand
-- [Portfolio Timeline](docs/portfolio-timeline.md) (`/timeline` on the portfolio): photos by month and day, with technical info and a scrubber
-- [Portfolio Grid](docs/portfolio-grid.md) (`/grid` on the portfolio): square and natural tiles (vertical photos in rows of their own) and the Table view, with its sorting, Columns menu and place names
-- [Portfolio Lucky](docs/portfolio-lucky.md) (`/lucky` on the portfolio): whole rows of photos picked at random from the ones the filters leave, with Shuffle
-- [Portfolio Settings](docs/portfolio-settings.md) (`/settings` on the portfolio): Script display, color theme and Show Lower Tier photos, each with a short description, linked from the bottom of the site menu
-- [Portfolio Likes](docs/portfolio-likes.md) (`/likes` on the portfolio): double tap a photo to like it, then My Likes lists them with your comments and text to send over Discord or Messenger/Text
-- [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
-- [Map Link Previews](docs/map-link-previews.md): the map's Copy link, and the place pages built on deploy whose link previews show a picture of the map
-- [Portfolio Albums](docs/portfolio-albums.md) (`/albums` on the portfolio): a strip of each album's photos, in the order set on the pipeline
-- [Portfolio analytics](docs/portfolio-analytics.md): Umami page views and query events on the published portfolio
-- [Portfolio Tags](docs/portfolio-tags.md) (`/tags` on the portfolio): every tag with a few of its photos, grouped under parent tags, each linking to the Grid
-- [Portfolio Numbers](docs/portfolio-stats.md) (`/stats` on the portfolio): the photos counted by gear, place and time, each row opening its photos on the Grid
-- [Portfolio Graph](docs/portfolio-graph.md) (`/graph` on the portfolio): a bar, line, dot, pie or scatter graph of your own from those counts and the camera settings, with filters, axis ranges, presets (and your own, saved in the browser) and a Wide view
-- [Portfolio Color](docs/portfolio-color.md) (`/color` on the portfolio): filtering photos by hue bucket or shade, sorting them by color or vividness, with each photo's share of colors
-- [Portfolio Back to top button](docs/portfolio-back-to-top.md): the button at the bottom left of every page but the Map and Color that scrolls back to the top
-- [Portfolio page errors](docs/portfolio-page-errors.md): the card a portfolio page shows when it fails to draw, which waits and retries first so a passing error doesn't flash up
-- [Page fade](docs/page-fade.md): the short fade out and in when switching pages, on the portfolio and in the pipeline
-- [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
-- [Dashboard](docs/dashboard.md) (`/`): the home page, with the next Lightroom albums, drafts, Compare sets, Instagram queue and Site Spotlight dates
-- [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets, and Status (`/settings/status`), the services and connections check
-- [Edit in Pipeline Chrome extension](docs/chrome-extension.md) (downloaded from `/settings`): a toolbar button that opens the pipeline's editor for the portfolio page you are on, through `/quick-edit?url=…`, even with the pipeline on plain HTTP
-- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, colors), and the tag tools (`/tag-tools/<name>`, under Tools in the Tags submenu) for bulk tagging, the whole tag library, pruning and tag descriptions
-- [Quality Check](docs/quality-check.md) (`/update-data/quality-check`): finds photos that aren't the house aspect ratios (16:9 and 5:7) and, with an LLM prompt, ones with license plates or faces to pixelate, flagging them for re-edit with a note, and lists photos without a place
-- [Photographer notes](docs/photo-notes.md): private notes on a photo, written on the Photo page or by the Tag library, which the portfolio's build leaves out
-- [Alt text](docs/alt-text.md) (`/alt-text`): a description of each photo for screen readers, written on the Photo page or for many photos at once with an LLM prompt, which the portfolio uses as the images' `alt`
-- [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
-- [Saving photo data to GitHub](docs/saving-to-github.md): saving a photo's JSON to the Add photo data pull request, uploading to R2, resized versions and the Square Thumbnail
-- [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails
-- [Photo page sections](docs/photo-page.md) (`/exif?edit=…`): the Photo page's cards for a saved photo grouped into Details, Albums & tags, Image, Camera & lens, Posts & related and JSON, with a subnavigation and dots for unsaved changes
-- [Photos in Flight](docs/photos-in-flight.md) (`/in-flight`): the open pull request's photos, removing and editing them
-- [Gallery](docs/gallery.md) (`/gallery`): every photo as the next Commit will save it, sorted any way, with drafts, Undecided and Lower Tier photos shown among them on request, a full-size viewer, a box to jump to each draft, editing and adding albums, tags and genres
-- [Compare groups](docs/compare-groups.md) (`/compare`): putting Gallery and in-flight photos in groups to weigh them side by side and pick the ones to post, and Unselected Photos for the rest, with why and what's kept in R2; only in the pipeline
-- [Deleting a photo](docs/delete-photo.md): **Delete photo** on the Photo page, after asking, deletes the photo's JSON and takes it out of albums, Unselected winners, the bio, viewer likes, photo books and trip lines (waiting for Commit), and deletes its images from R2
-- [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, the Re-Edit page listing every marked photo, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
-- [Lower Tier photos](docs/lower-tier.md): marking photos you like but don't want shown unless chosen, on the Photo page or in bulk from the Gallery, which hides them until its Show → Lower Tier is on
-- [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
-- [Offline mode](docs/offline-mode.md): the Gallery, Undecided queue and drafts without the internet, from Square Thumbnails kept on disk and fetched from R2 when the pipeline starts; in-flight work kept in the browser, and exported or imported as JSON
-- [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
-- [Changes waiting for Commit](docs/pending-changes.md): saves stay in the app until **Commit** sends them to GitHub as one commit, and the few GitHub calls that takes
-- [Albums and Tags](docs/albums-and-tags.md) (`/albums` and `/tags`): making albums and tags, parent albums, album and tag pages
-- [Small Tags](docs/small-tags.md) (`/small-tags`): cleaning up the tags and subtags with fewer than 3 photos, one by one or with an LLM
-- [Album Layouts and Covers](docs/album-layouts.md) (`/albums/<id>`): rows of photos with Markdown text, up to 5 cover photos, and album JSON export and import
-- [Smart Albums](docs/smart-albums.md) (`/albums/<id>`): albums whose photos come from saved Grid filters, a Trip and dates
-- [Photographic Genres](docs/photographic-genres.md) (`/genres`): kinds of photography such as street or landscape, set on each photo and filterable on the portfolio, kept in `ALLGENRES.json`
-- [Photo Sets](docs/photo-sets.md) (`/photo-sets`, under Organize): photos the portfolio map always shows as one stacked marker, at every zoom, opening their grid when clicked, kept in `SETS.json`
-- [Places and Localizations](docs/places-and-localizations.md) (`/places` and `/localizations`): places a photo was taken at and how it relates to them, and the local script, pronunciation and romanization of countries, cities and places
-- [Metadata Groups](docs/metadata-groups.md) (`/metadata-groups`): named groups of cameras, lenses, focal lengths, apertures, exposures and ISO values, kept in `METAINFO.json`
-- [Camera Overrides](docs/camera-overrides.md) (`/camera-overrides`): per-camera rules that write other values over a photo's EXIF, such as a lens's name for "21.0 mm", applied to new photos and again from Update Data and the Photo page, kept in `CAMERAS.json`
-- [Custom Lenses](docs/custom-lenses.md) (Metadata Groups → Lenses): lenses the EXIF doesn't name well, such as manual ones, picked for a photo on the Photo page, with a Manual/unknown aperture option, kept in `LENSES.json`
-- [Photo Book](docs/photo-book.md) (`/photo-book`): rough mockups of a photo book's pages, with photos dragged from a drawer and captions filled in from a caption template, kept in `PHOTOBOOKS.json`
-- [Bio](docs/bio.md) (`/bio`): the bio the portfolio will show, in Markdown, with self-portraits only it shows and portfolio photos, in order, kept in `ALLBIO.json`
-- [Caption Templates](docs/caption-templates.md) (`/caption-templates`): social media captions with placeholders for a photo's fields, filled in by **Generate** on the Photo page's posts, kept in `CAPTIONS.json`
-- [Trips](docs/trips.md) (the Trip Lines page's Trips tab, a page per Trip): names for runs of days, such as "Japan", shown beside those days on the portfolio Timeline, with the ferries and flights between days drawn on the map and a Trip page for their stories, kept in `TIMELINE.json`
-- [Trip Lines](docs/trip-lines.md) (`/trip-lines`): the route of a day, walking from photo to photo and hopping by train, subway, bus or car, kept in `TRIPLINES.json` and baked into `TRIPLINES.geo.json` for the portfolio map
-- [Gear Pictures](docs/gear-pictures.md) (`/gear-pictures`): a picture and description for each camera and lens, shown in the portfolio's Gear & settings filter in place of its drawings, kept in `GEAR.json`
-- [Trip Pages](docs/trip-pages.md) (`/trip-lines`, and `/albums/trips/<id>` on the portfolio): captions, paragraphs between photos and rows of photos for each day, gathered into one story page per Trip under the portfolio's Albums, baked into `TRIPPAGES.json`
-- [Graph Presets](docs/graph-presets.md) (`/graph-presets`): the ready-made graphs over the portfolio Graph page, and preset groups shown there as dropdowns, kept in `GRAPHS.json`
-- [User Likes](docs/viewer-likes.md) (`/viewer-likes`): import the liked-photo lists people send from the portfolio's My Likes page, one per person, and see each photo's total likes, kept in `LIKES.json`
-- [Lightroom Albums](docs/lightroom-albums.md) (`/lightroom-albums`): your Lightroom folders and albums, read by an LLM from screenshots or a screen recording, with a stage and notes on each album as a tree or a Kanban board and the next albums to work on, imported on its own page or added by hand, kept only in the browser and moved between computers with Export and Import
-- [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, filterable, making JSON for an original that isn't saved, and deleting images
-- [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
-- [Describe my style](docs/describe-style.md) (`/describe-style`): a prompt that asks an LLM to describe your photography style from links to your photos, narrowed by the portfolio's filters
-- [Unedited originals](docs/unedited-originals.md) (`/raw-vs-edited` on the portfolio): keeping a photo's straight-from-camera original in the pipeline, with its crop and pixelated faces, compared by slider, side by side or switching, and shown on the portfolio's Raw vs Edited page only when marked to
-- [Pixelating faces](docs/face-pixelation.md): finding or boxing faces on a photo in R2 (as boxes or circles, with areas to keep unpixelated), setting each one's pixelation density with a live preview, and remaking every version with them hidden
-- [Changelog](docs/changelog.md) (`/changelog`): the pull requests merged into the repository, by day, with links to GitHub and without merge commits or photo data merges
-- [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
-- [Quick Edit](docs/quick-edit.md): pasting a portfolio link to open the pipeline page that edits it
-- [BFF timeouts](docs/bff-timeouts.md) (`/api/timeouts`): how long the BFF waits for each backend path, read from the backend at start-up
-- [Copying prompts](docs/copy-prompts.md): copying an LLM prompt, or showing it in a modal to copy by hand when the browser won't (the pipeline over plain HTTP)
-- [Contact sheets](docs/contact-sheets.md) (`/api/photos/bucket/contact-sheets`): numbered sheets of 30 photos in R2 for the prompts that link many photos, deleted after a day by an R2 lifecycle rule or by hand on Explore Bucket
-- [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
+How each part of the pipeline and portfolio works is in [`docs/`](docs), one file per feature. Each starts with a sentence saying what it covers.
 
 ## Checks (same as CI)
 
@@ -168,7 +89,7 @@ pnpm lint        # oxlint
 pnpm fmt:check   # oxfmt --check   (pnpm fmt to write)
 pnpm typecheck   # tsc --noEmit in each TS app
 pnpm fallow      # dead code, duplication, complexity
-pnpm check       # all of the above
+pnpm check       # all of the above, plus every check in scripts/checks/
 
 cd apps/be-pipeline && golangci-lint run && go test ./...   # golangci-lint also checks gofmt/goimports
 ```

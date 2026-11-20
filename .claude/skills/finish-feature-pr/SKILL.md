@@ -10,7 +10,8 @@ Run through this before `gh pr create` or pushing more commits to an open pull r
 ## 1. Checks
 
 ```sh
-pnpm check                                   # oxlint, oxfmt --check, typecheck, fallow (~6s)
+git fetch origin main && git merge origin/main   # first, so the checks see what has merged since the branch started
+pnpm check                                   # oxlint, oxfmt --check, typecheck, fallow, scripts/checks/ (~6s)
 pnpm build                                   # all three TS apps (~5s); CI runs it too
 cd apps/be-pipeline && go test ./...         # when Go changed (~8s)
 cd apps/be-pipeline && golangci-lint run     # when Go changed
@@ -34,9 +35,9 @@ pnpm --filter @servenup/portfolio test       # when apps/portfolio/map-preview c
 
 ## 3. Docs
 
-- A change in behavior updates its `docs/<feature>.md` (the README's **Features** list names each one).
-- A new feature gets a new `docs/<feature>.md` and one line in the README's **Features** list, in the same form
-  as its neighbors: link, the route in parentheses, one sentence. Backend ideas get a short
+- A change in behavior updates its `docs/<feature>.md`.
+- A new feature gets a new `docs/<feature>.md` that starts with its title, a blank line, then a sentence saying
+  what the feature is and where it lives. No list names the docs. Backend ideas get a short
   "> **Frontend analogy:**" note.
 - Touch the README itself only for setup, commands or deployment.
 
