@@ -83,7 +83,7 @@ type photoNames struct {
 // handleFindPhotosByName finds the photos an LLM's answer names among every
 // photo, so Bulk Places can apply an answer to photos it didn't pick.
 func handleFindPhotosByName(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "photo names", "could not find the photos",
+	return handleBulkTags(store, "photo names", "Couldn't find the photos.",
 		func(ctx context.Context, cfg settings.GitHub, req photoNames) (any, error) {
 			return gh.FindPhotosByName(ctx, cfg, req.Names)
 		})
