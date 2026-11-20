@@ -3,6 +3,7 @@ package httpapi
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -16,6 +17,8 @@ type fakeFinder struct {
 	mode     string
 	from, to [2]float64
 	err      error
+	// downloads are the maps Downloads lists.
+	downloads []transit.Download
 }
 
 func (f *fakeFinder) Lines(_ context.Context, mode string, from, to [2]float64) ([]transit.Line, error) {
@@ -86,6 +89,30 @@ func (f *fakeFinder) OSMRailStops(_ context.Context, _ int64) ([]transit.Stop, e
 	return []transit.Stop{{Name: "Seoul", Latitude: 37.55, Longitude: 126.97}}, f.err
 }
 
+func (f *fakeFinder) OSMBusLines(_ context.Context, mode string, from, _ [2]float64) ([]transit.Line, error) {
+	if mode != "bus" {
+		return nil, transit.ErrNoKind
+	}
+	f.mode, f.from = mode, from
+	return []transit.Line{{ID: 1<<40 | 77, Name: "Bus 7: Seoul Station → City Hall", Kind: "bus", Source: transit.SourceOSMBus}}, f.err
+}
+
+func (f *fakeFinder) OSMBusTrack(_ context.Context, _ int64, from, to [2]float64) ([][2]float64, error) {
+	return [][2]float64{from, {6, 6}, to}, f.err
+}
+
+func (f *fakeFinder) OSMBusStops(_ context.Context, _ int64) ([]transit.Stop, error) {
+	return []transit.Stop{{Name: "City Hall", Latitude: 37.56, Longitude: 126.97}}, f.err
+}
+
+func (f *fakeFinder) Searched(source string, _, _ [2]float64) string {
+	return "searched " + source
+}
+
+func (f *fakeFinder) Downloads() []transit.Download {
+	return f.downloads
+}
+
 func (f *fakeFinder) RailRides(_ context.Context, source string, _ int64, from, to [2]float64) ([]transit.RouteRide, error) {
 	if source != transit.SourceMLIT {
 		return nil, f.err
@@ -121,6 +148,49 @@ func TestOSMRailSource(t *testing.T) {
 		if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), body) {
 			t.Errorf("%s: %d %s", url, rec.Code, rec.Body)
 		}
+	}
+}
+
+func TestOSMBusSource(t *testing.T) {
+	f := &fakeFinder{}
+	for url, body := range map[string]string{
+		"/transit/lines?mode=bus&from=126.97,37.55&to=126.98,37.57&source=osmbus": "Bus 7",
+		"/transit/lines/1099511627853/stops?source=osmbus":                        "City Hall",
+		"/transit/lines/1099511627853/track?from=0,0&to=5,5&source=osmbus":        "[6,6]",
+	} {
+		rec := httptest.NewRecorder()
+		transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, url, nil))
+		if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), body) {
+			t.Errorf("%s: %d %s", url, rec.Code, rec.Body)
+		}
+	}
+	rec := httptest.NewRecorder()
+	transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=bus&from=0,0&to=1,1&source=osmbus", nil))
+	if got := rec.Header().Get("X-Transit-Searched"); got != "searched%20osmbus" {
+		t.Errorf("searched header = %q", got)
+	}
+	rec = httptest.NewRecorder()
+	transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=train&from=0,0&to=1,1&source=osmbus", nil))
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "only has buses") {
+		t.Errorf("train on the bus map: %d %s", rec.Code, rec.Body)
+	}
+}
+
+func TestTransitDownloads(t *testing.T) {
+	f := &fakeFinder{downloads: []transit.Download{{Map: "OpenStreetMap's bus map of South Korea", Step: transit.StepDownloading, Bytes: 10, Total: 100}}}
+	rec := httptest.NewRecorder()
+	transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/downloads", nil))
+	if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), `"bytes":10,"total":100`) {
+		t.Errorf("downloads: %d %s", rec.Code, rec.Body)
+	}
+}
+
+func TestMapStillLoading(t *testing.T) {
+	f := &fakeFinder{err: &transit.RailMapError{Map: "Japan's rail map", Err: transit.ErrMapLoading}}
+	rec := httptest.NewRecorder()
+	transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=train&from=0,0&to=1,1&source=mlit", nil))
+	if rec.Code != http.StatusServiceUnavailable || !strings.Contains(rec.Body.String(), `"loading":true`) {
+		t.Errorf("still loading: %d %s", rec.Code, rec.Body)
 	}
 }
 
@@ -269,5 +339,15 @@ func TestTransitSlow(t *testing.T) {
 	transitMux(&fakeFinder{err: slow}).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=subway&from=1,2&to=3,4", nil))
 	if rec.Code != http.StatusServiceUnavailable || !strings.Contains(rec.Body.String(), "the last, maps.mail.ru, took too long to answer). Try again in a minute.") {
 		t.Errorf("slow: %d %s", rec.Code, rec.Body)
+	}
+}
+
+func TestNoTrackMessage(t *testing.T) {
+	far := fmt.Errorf("%w: the first spot is 2.4 km from the route's mapped roads", transit.ErrNoTrack)
+	if got := noTrackMessage(far); !strings.Contains(got, "doesn't join those two spots: the first spot is 2.4 km") {
+		t.Errorf("far = %q", got)
+	}
+	if got := noTrackMessage(transit.ErrNoTrack); got != "That line's mapped track doesn't join those two spots. Try another line or direction." {
+		t.Errorf("plain = %q", got)
 	}
 }

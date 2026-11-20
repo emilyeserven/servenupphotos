@@ -556,8 +556,11 @@ Renaming the ropeway keeps its stations.
 > **Frontend analogy:** it's a controlled input whose value is two map clicks: the stations are state on the hop,
 > and the line on the map is derived from them, the same way a train's track is derived from its picked stations.
 
-While it looks, the hop says it's asking OpenStreetMap, since a busy public server can take up to a minute (see
-below). When nothing is found, often because a photo was a walk from the line (say the beach, 15 minutes from the end
+While it looks, the hop says where it's asking, since a busy public server can take up to a minute (see
+below). When the look-up needs a map that isn't loaded yet (a rail or bus map's first download, or reading one after
+the pipeline starts), a progress card shows from the start what it's waiting for: "Downloading OpenStreetMap's bus map
+of South Korea", how much of the file it has ("120 of 310 MB · 0:45") with a bar, and then "Reading …" while the
+download is read into lines (see [Download progress](#download-progress)). When nothing is found, often because a photo was a walk from the line (say the beach, 15 minutes from the end
 of the line), **Got on near** and **Got off near** each find a station by name near that photo, the same search as a
 [Trip's legs](trips.md#stations-and-routes). Picking one looks again with the station standing in for the photo, and the line then gets on
 or off at the stop nearest it, so the walk from the photo to the station is drawn and baked as below. **The photo**
@@ -575,8 +578,9 @@ route** keeps the line, the stations and the track.
 The menu beside **Find lines** (and beside a Trip leg's **Look up route**) picks where lines are looked up, and the
 choice is kept in the browser for every look-up:
 
-- While a rail map is picked, a bus or ferry hop is looked up on OpenStreetMap instead (`lib/lookup-source.ts`),
-  since the rail maps only have trains and subways; asked directly, the backend says so and suggests naming the line.
+- While a rail map is picked, a bus is looked up on OpenStreetMap's bus map (below) and a ferry on OpenStreetMap
+  instead (`lib/lookup-source.ts`), since the rail maps only have trains and subways; asked directly, the backend says
+  so. A Trip leg's **Look up route** does the same.
 - **OpenStreetMap** (the default): the Overpass servers, as below. Its lines are each direction of a route, mapped
   by volunteers, and the public servers are often busy.
 - **Transitland** ([transit.land](https://www.transit.land)): the timetables transit agencies publish as GTFS, with
@@ -606,7 +610,8 @@ choice is kept in the browser for every look-up:
   [Geofabrik](https://download.geofabrik.de), looked up the same way as Japan's rail map, for when the Overpass
   servers are too slow. The backend downloads Geofabrik's [index](https://download.geofabrik.de/technical.html) of
   its extracts once (`index-v1.json`), picks the smallest one whose outline holds both ends, such as South Korea for
-  Seoul to Busan (never a whole continent; a leg crossing a border finds none), and downloads that extract once
+  Seoul to Busan, or a US state such as Massachusetts (ID `us/massachusetts`, named from its ID when the index gives no
+  name) for a ride inside one (never a whole continent; a leg crossing a border finds none), and downloads that extract once
   (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract twice (its railway ways, then their
   points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
   them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v2/<extract>` beside the
@@ -620,11 +625,76 @@ choice is kept in the browser for every look-up:
   are looked up on the same extract (`be-pipeline/internal/transit/osmrail.go`, `osmrail_index.go`,
   `osmrail_pbf.go`). The data is © OpenStreetMap contributors, under the
   [ODbL](https://www.openstreetmap.org/copyright).
+- **Bus map (OpenStreetMap)**, used for a bus while either rail map is picked (the menu calls the OpenStreetMap one
+  **Rail and bus map (OpenStreetMap)**): the same country's bus routes, read from the same Geofabrik extract as its rail
+  map, so one download serves both. Whichever of the two is asked first downloads the extract (one at a time, so a
+  rail and a bus look-up don't both download it) and reads every map of that country not yet on this computer: a
+  country whose rail map was read before this downloads its extract once more for its buses. A bus route in
+  OpenStreetMap is a route relation (`type=route`, `route=bus`, `trolleybus` or `coach`) of the roads it runs along and
+  its stops, unlike a railway, whose track is its own ways, so the extract is read in three passes: the bus routes,
+  then the roads they name, then those roads' points and the stops' names (`osmbus_pbf.go`). It keeps each road once
+  and each route with its roads and its stops in order (its `stop` members, or else its platforms, as the Overpass
+  look-up does) in `osm-rail/bus-v1/<extract>/bus-routes.json.gz`. A bus is listed when its roads pass within 500 m of
+  both ends, the same as the Overpass look-up, its track is the shortest way along its own roads between the points
+  nearest each end, and its stops are its own. A route whose roads aren't all joined (a short road left out of the
+  relation, or roads listed out of order, as many are) is followed along its roads in the order the route lists them
+  instead, each turned to carry on from the one before; only an end over 1 km from its roads fails, saying how far off
+  each end is. The download card shows a failed map only under a look-up that failed naming it. Each direction of a route is its own line. A line's ID holds its route
+  relation's OpenStreetMap ID in its low 40 bits and its extract's place in the index above them
+  (`be-pipeline/internal/transit/osmbus.go`). A bus map has only buses: asked for a train, the backend says so.
+
+> **Frontend analogy:** a bus route is like a playlist that points at songs (roads) shared with other playlists,
+> rather than owning its own copies. Reading the extract is like resolving those references in three `fetch` waves:
+> the playlists, then the songs they name, then each song's details.
 
 A line picked from Transitland is saved with `"source": "transitland"`, one from Japan's rail map with
-`"source": "mlit"`, and one from an OpenStreetMap rail map with `"source": "osmrail"`, so its stops and track are
-fetched from there again; one from the Overpass servers has no `source`. The `?source=transitland`, `?source=mlit`
-and `?source=osmrail` queries below ask those.
+`"source": "mlit"`, one from an OpenStreetMap rail map with `"source": "osmrail"`, and one from an OpenStreetMap bus
+map with `"source": "osmbus"`, so its stops and track are fetched from there again; one from the Overpass servers has
+no `source`. The `?source=transitland`, `?source=mlit`, `?source=osmrail` and `?source=osmbus` queries below ask
+those.
+
+### Download progress
+
+The rail and bus maps take minutes to download and read the first time, and seconds to read again after each start of
+the pipeline, so the backend lists each map being loaded, what it's doing and how far it has got, and logs each step
+(`map load` in the backend's terminal; `be-pipeline/internal/transit/progress.go`). The steps, in order:
+
+- `checking`: looking for a copy saved on this computer, which is then read (`reading`) with no download.
+- `waiting`: another OpenStreetMap extract is downloading; one downloads at a time.
+- `connecting`: the request for the file is sent and the server hasn't answered yet.
+- `downloading`: the bytes so far, the file's size (its `Content-Length`) and the speed.
+- `reading`: each pass over the extract (2 for railways, 3 for bus routes, so 5 when a country's first look-up reads
+  both), with the bytes of the extract that pass has read, such as "Reading the bus routes (pass 3 of 5 over the 312 MB
+  extract)".
+- `saving`: writing what was read, such as "Saving 4210 bus routes along 52011 roads to …".
+- `failed`: why, such as "downloading California's extract failed: couldn't reach download.geofabrik.de: …". A failed
+  load stays listed for 5 minutes so the page can still show it.
+
+Geofabrik's list of extracts is listed the same way while it downloads.
+
+- `GET /api/transit/downloads` answers that list, from memory: each map's `map`, `step`, `detail` (what it's doing in a
+  sentence), `url`, `bytes`, `total`, `rate` (bytes a second), `seconds` (the whole load), `stepSeconds` and `error`.
+
+While a hop's or a leg's look-up runs, or after it failed, the page asks it every second (`transitDownloadsQuery`) and
+shows a card for each map (`components/trip-lines/map-downloads.tsx`): its title ("Downloading OpenStreetMap's bus map
+of California"), the stages Connect, Download, Read and Save with the ones done ticked, "412 MB of 1180 MB · 6.4 MB/s ·
+about 2 min left", a bar filled to the share downloaded or read (pulsing when that can't be told), the step's sentence,
+and where the file comes from and how long it has taken; or, once it failed, why. A look-up still waits at most 100 s
+for its map; it then answers 503 with `"loading": true`, and the page asks again by itself (`api/transit-log.ts`, up to
+40 times) instead of showing an error, so the card stays until the lines are found.
+
+Once a look-up answers, the hop or leg says what it searched, from the lines answer's `X-Transit-Searched` header (which
+the BFF passes on; `transit.Client.Searched`): "Searched OpenStreetMap's Overpass servers, asked live", or for a
+downloaded map which one and how big, and for a bus map how many routes pass near each end, such as "Searched
+OpenStreetMap's bus map of South Korea (21407 bus routes, saved in …): 38 pass within 500 m of the first end and 6
+within 500 m of the last". So "no line found" tells a map with no bus near one end (often a photo a walk from the road)
+apart from buses near both ends that are different routes (a ride with a change). An answer without the header, as
+from a backend started before it was added, which also looks a bus up on the Overpass servers whatever source the page
+asks for, says to restart the backend; so does the download card when `GET /api/transit/downloads` fails.
+
+> **Frontend analogy:** it's an upload progress bar turned around: the long job runs on the server, and the page polls
+> a cheap status endpoint with TanStack Query's `refetchInterval` while the real request is pending, then quietly
+> retries the request if the server timed it out.
 
 A rail map route that changes lines, such as "北松江線 → 大社線" from 電鉄出雲市 to 出雲大社前, is ridden as each
 of its lines in turn. Its track answer also lists `rides`: each line alone (its own ID, so its stops are its own),

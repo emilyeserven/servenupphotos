@@ -43,7 +43,7 @@ type trackGraph struct {
 func newTrackGraph(members []member) *trackGraph {
 	var lines [][][2]float64
 	for _, m := range members {
-		if m.Type != "way" || strings.HasPrefix(m.Role, "platform") {
+		if m.Type != "way" || isPlatform(m.Role) {
 			continue
 		}
 		line := make([][2]float64, 0, len(m.Geometry))
@@ -53,6 +53,12 @@ func newTrackGraph(members []member) *trackGraph {
 		lines = append(lines, line)
 	}
 	return newLinesGraph(lines)
+}
+
+// isPlatform reports whether a route member's role marks a platform, where
+// riders wait, rather than the way the line runs.
+func isPlatform(role string) bool {
+	return strings.HasPrefix(role, "platform")
 }
 
 // newLinesGraph builds the graph of lines, each point a node joined to the
