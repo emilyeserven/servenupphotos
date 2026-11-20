@@ -1,4 +1,4 @@
-import { tripColors, useIsDark } from "@portfolio/lib/map-theme";
+import { tripLineStroke, tripLineStyle, useIsDark } from "@portfolio/lib/map-theme";
 import { useQuery } from "@tanstack/react-query";
 import { basemapQuery, type TripLine } from "@/api/trip-lines";
 import { lineFeatures } from "@/components/trip-lines/route-geometry";
@@ -10,14 +10,6 @@ import { type PlacedTile, type PreviewBox, previewBox } from "@/lib/preview-tile
 const WIDTH = 240;
 const HEIGHT = 120;
 const PAD = 10;
-
-/** How a line of a mode is drawn: its color and whether it's dashed. */
-function strokeOf(mode: string, colour: string, onLine: boolean, dark: boolean) {
-  const colors = tripColors(dark);
-  if (mode === "walk") return { stroke: colors.walk };
-  if (mode === "car") return { stroke: colors.drive, strokeDasharray: "6 3" };
-  return onLine ? { stroke: colour } : { stroke: colour, strokeDasharray: "3 3" };
-}
 
 interface LinePreviewProps {
   photos: TripPhoto[];
@@ -52,10 +44,9 @@ export function LinePreview({ photos, line, note }: LinePreviewProps) {
             key={i}
             points={l.geometry.coordinates.map(([lng, lat]) => at(lng, lat).join(",")).join(" ")}
             fill="none"
-            strokeWidth={2.5}
             strokeLinecap="round"
             strokeLinejoin="round"
-            {...strokeOf(l.properties.mode, l.properties.colour, l.properties.onLine, dark)}
+            {...tripLineStroke(tripLineStyle(l.properties.mode, l.properties, dark, "sketch"))}
           />
         ))}
         <PhotoDots photos={ordered} at={at} />

@@ -1,4 +1,4 @@
-import { type SketchLineStyle, SketchDrawing } from "@portfolio/components/sketch-drawing";
+import { SketchDrawing } from "@portfolio/components/sketch-drawing";
 import { routePlaces } from "@portfolio/lib/route-places";
 import {
   type RouteSketch,
@@ -29,7 +29,11 @@ function dayFeatures(line: TripLine, day: TripDay | undefined): SketchFeature[] 
   const photos = orderedPhotos(day?.photos ?? [], line.order);
   const segments = lineFeatures(line.segments, photos).features.map((f) => ({
     geometry: f.geometry,
-    properties: { mode: f.properties.mode, colour: f.properties.colour },
+    properties: {
+      mode: f.properties.mode,
+      colour: f.properties.colour,
+      onLine: f.properties.onLine,
+    },
   }));
   const visits = (line.visits ?? []).map((v) => ({
     geometry: { type: "Point", coordinates: [v.longitude, v.latitude] },
@@ -66,13 +70,6 @@ function tripSketches(trip: Trip, dayLines: DayLines): RouteSketch[] {
   );
 }
 
-/** How a line is drawn: walks solid dark blue, drives solid light blue, transit dashed in its line's color. */
-const lineStyle: SketchLineStyle = (line, colors) => {
-  if (line.mode === "walk") return { stroke: colors.walk, strokeWidth: 2 };
-  if (line.mode === "car") return { stroke: colors.drive, strokeWidth: 2 };
-  return { stroke: line.colour ?? colors.hop, strokeWidth: 2, strokeDasharray: "4 3" };
-};
-
 /**
  * A Trip card's map preview of its days' lines: one map, or a small one for each place when its
  * lines are far apart; a note when none of its days has a line yet. Legs between days, such as a
@@ -98,7 +95,6 @@ export function TripPreview({ trip, dayLines }: { trip: Trip; dayLines: DayLines
           <SketchDrawing
             sketch={sketch}
             size={size}
-            lineStyle={lineStyle}
             className="bg-muted/50 h-auto w-full rounded-md"
           />
         </li>

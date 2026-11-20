@@ -1,5 +1,5 @@
 import { ViaNumber } from "@/components/trip-lines/via-list";
-import { MAP_STYLES, tripColors, useIsDark } from "@portfolio/lib/map-theme";
+import { MAP_STYLES, tripLinePaint, tripLineStyle, useIsDark } from "@portfolio/lib/map-theme";
 import { LANE_OFFSET, withLanes } from "@portfolio/lib/trip-lanes";
 import {
   Layer,
@@ -28,16 +28,23 @@ function opacity(full: number): ["case", ["get", string], number, number] {
   return ["case", ["get", "faded"], 0.15, full];
 }
 
+/** A line of the mode and kind given, as the route map draws it: a little bolder than the portfolio's Map. */
+function editorStyle(mode: string, onLine: boolean, dark: boolean) {
+  return tripLineStyle(mode, { onLine }, dark, "editor");
+}
+
+/** The round ends and corners of the solid lines. */
+const ROUND = { "line-cap": "round", "line-join": "round" } as const;
+
 /** Walking, a solid line, fainter for a preview. */
-function walkLayer(preview: boolean): LayerProps {
+function walkLayer(preview: boolean, dark: boolean): LayerProps {
   return {
     id: "trip-walk",
     type: "line",
     filter: ["==", ["get", "mode"], "walk"],
-    layout: { "line-cap": "round", "line-join": "round" },
+    layout: ROUND,
     paint: {
-      "line-color": "#2563eb",
-      "line-width": 4,
+      ...tripLinePaint(editorStyle("walk", false, dark)),
       "line-opacity": opacity(preview ? 0.5 : 0.9),
       "line-offset": LANE_OFFSET,
     },
@@ -50,47 +57,54 @@ function driveLayer(dark: boolean): LayerProps {
     id: "trip-drive",
     type: "line",
     filter: ["==", ["get", "mode"], "car"],
-    layout: { "line-cap": "round", "line-join": "round" },
+    layout: ROUND,
     paint: {
-      "line-color": tripColors(dark).drive,
-      "line-width": 3,
+      ...tripLinePaint(editorStyle("car", false, dark)),
       "line-opacity": opacity(1),
       "line-offset": LANE_OFFSET,
     },
   };
 }
 
-/** A hop by train, subway, bus or transit with no line picked, a dashed line. */
-const hopLayer: LayerProps = {
-  id: "trip-hop",
-  type: "line",
-  filter: [
-    "all",
-    ["!", ["in", ["get", "mode"], ["literal", ["walk", "car"]]]],
-    ["!", ["get", "onLine"]],
-  ],
-  paint: {
-    "line-color": ["get", "colour"],
-    "line-width": 3,
-    "line-dasharray": [2, 2],
-    "line-opacity": opacity(1),
-    "line-offset": LANE_OFFSET,
-  },
-};
+/**
+ * A hop by train, subway, bus or transit not drawn along a line's track, a dashed line: in its line's
+ * color when one was picked, else the hop purple.
+ */
+function hopLayer(dark: boolean): LayerProps {
+  const style = editorStyle("train", false, dark);
+  return {
+    id: "trip-hop",
+    type: "line",
+    filter: [
+      "all",
+      ["!", ["in", ["get", "mode"], ["literal", ["walk", "car"]]]],
+      ["!", ["get", "onLine"]],
+    ],
+    paint: {
+      ...tripLinePaint(style),
+      "line-color": ["coalesce", ["get", "colour"], style.color],
+      "line-opacity": opacity(1),
+      "line-offset": LANE_OFFSET,
+    },
+  };
+}
 
 /** A hop along the track of the line it rode, solid in that line's color. */
-const lineLayer: LayerProps = {
-  id: "trip-transit-line",
-  type: "line",
-  filter: ["get", "onLine"],
-  layout: { "line-cap": "round", "line-join": "round" },
-  paint: {
-    "line-color": ["get", "colour"],
-    "line-width": 4,
-    "line-opacity": opacity(0.9),
-    "line-offset": LANE_OFFSET,
-  },
-};
+function lineLayer(dark: boolean): LayerProps {
+  const style = editorStyle("train", true, dark);
+  return {
+    id: "trip-transit-line",
+    type: "line",
+    filter: ["get", "onLine"],
+    layout: ROUND,
+    paint: {
+      ...tripLinePaint(style),
+      "line-color": ["coalesce", ["get", "colour"], style.color],
+      "line-opacity": opacity(0.9),
+      "line-offset": LANE_OFFSET,
+    },
+  };
+}
 
 interface RouteMapProps {
   day: string;
@@ -152,10 +166,10 @@ export function RouteMap({
         <NavigationControl position="bottom-right" showCompass={false} />
         <FenceAreas fences={fences} dark={dark} />
         <Source id="trip-line" type="geojson" data={lanes(lineFeatures(segments, photos, focus))}>
-          <Layer {...walkLayer(preview === true)} />
-          <Layer {...hopLayer} />
+          <Layer {...walkLayer(preview === true, dark)} />
+          <Layer {...hopLayer(dark)} />
           <Layer {...driveLayer(dark)} />
-          <Layer {...lineLayer} />
+          <Layer {...lineLayer(dark)} />
         </Source>
         {photos.map((p, i) => (
           <Marker key={p.id} latitude={p.latitude} longitude={p.longitude}>

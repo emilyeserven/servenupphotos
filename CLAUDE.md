@@ -85,6 +85,9 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
 - **Filter pickers:** build on `SectionPicker` and follow [Picker conventions](docs/portfolio-filters.md#picker-conventions):
   extra info behind `InfoButton` in the `aside` panel on the right, Group by and Sort as small menus left of the (i),
   grouping off by default, and no icons in choice lists.
+- **Trip line styles:** every map or sketch of trip lines takes its color, width and dashes from `tripLineStyle` in
+  `@portfolio/lib/map-theme` (MapLibre paint via `tripLinePaint`, SVG via `tripLineStroke`), never its own numbers
+  ([Line styles](docs/trip-lines.md#line-styles)).
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors

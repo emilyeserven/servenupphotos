@@ -200,7 +200,7 @@ from before days had pages, `/trip-lines?day=2026-09-29&group=…`, opens that d
 > like keeping a table's sort and filter in the query string.
 
 The Route page edits the day: its photos in the order they were taken, with what happened between each two, and
-a map of the line drawn through them (photos as numbered dots; walks solid, hops dashed). Pointing at a photo
+a map of the line drawn through them (photos as numbered dots; lines as in [Line styles](#line-styles)). Pointing at a photo
 highlights its dot. Right-clicking the map copies that spot's coordinates (see
 [Copy coordinates](portfolio-map.md#copy-coordinates)).
 
@@ -239,6 +239,29 @@ the way a line marked by hand starts; saving it then drops `planned`. A planned 
 
 > **Frontend analogy:** a planned day is like a draft route created before its data loads: the page renders from the
 > saved stops alone, and the photos hydrate it once they exist, rather than the page waiting for them.
+
+## Line styles
+
+Every drawing of a trip line uses the same style, from `tripLineStyle(mode, { onLine, colour }, dark, size)` in
+`portfolio/src/lib/map-theme.ts`: the portfolio's Map, the pipeline's Trip map, the route map on the Route page, a day's
+preview in the list, a Trip card, and the Timeline's sketches. MapLibre layers read it with `tripLinePaint` and SVG
+drawings with `tripLineStroke`, which turns its dashes (in line widths, as MapLibre counts them) into pixels.
+
+| Line                  | Drawn as                                                                         | Map | Route map | Sketch |
+| --------------------- | -------------------------------------------------------------------------------- | --- | --------- | ------ |
+| Walk                  | Solid blue, lighter in dark mode                                                 | 3   | 4         | 2      |
+| Ride on a picked line | Solid in the line's color, or the ride blue without one                          | 3   | 4         | 2      |
+| Drive                 | Solid light blue                                                                 | 3   | 3         | 2      |
+| Hop with no line      | Dashed 2-2, purple (in a line's color when picked but not drawn along its track) | 2   | 2         | 1.5    |
+| A Trip's ferry        | Teal dots                                                                        | 3   | 3         | 2      |
+| A Trip's flight       | Dashed 3-2, pink                                                                 | 2   | 2         | 1.5    |
+
+The numbers are widths in pixels. The route map draws walks and rides a little bolder because it's where lines are
+edited. How see-through a line is (fainter for a preview, or outside the group shown on its own) stays with each
+drawing. A new drawing of trip lines reads `tripLineStyle` rather than picking its own colors, widths or dashes.
+
+> **Frontend analogy:** it's a design token for lines, like a shared `buttonVariants()` that every button reads, so
+> a dashed line means the same thing on every page.
 
 ## Trip Stops
 
