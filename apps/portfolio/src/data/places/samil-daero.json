@@ -1,0 +1,12 @@
+{
+  "id": "samil-daero",
+  "name": "Samil-daero",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.569878,
+  "longitude": 126.9875,
+  "exactLocation": true
+}

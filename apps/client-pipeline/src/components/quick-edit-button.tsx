@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { quickEditTarget } from "@/lib/quick-edit";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * The sidebar's Quick Edit button, under Bulk Upload: it opens a modal to paste a link from the
@@ -114,9 +115,5 @@ function TargetNote({ target }: { target: ReturnType<typeof quickEditTarget> | u
         Opens <span className="font-medium text-foreground">{target.label}</span>.
       </p>
     );
-  return (
-    <p className="text-sm text-destructive" role="alert">
-      {target.error}
-    </p>
-  );
+  return <ErrorNote error={target.error} />;
 }

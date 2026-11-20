@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { requestBlob, requestJson } from "@/api/request";
+import { post, requestBlob, requestJson } from "@/api/request";
 import type { Crop } from "@/lib/crop";
 import { type FaceBox, roundedBox } from "@/lib/face-boxes";
 
@@ -178,14 +178,10 @@ interface RegenerateRequest {
 export const regenerateVersionsMutation = mutationOptions({
   mutationKey: ["photos", "bucket", "versions"],
   mutationFn: ({ crop, faces, ...request }: RegenerateRequest) =>
-    requestJson<RegenerateResult>("/api/photos/bucket/versions", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        ...request,
-        crop: crop && roundedCrop(crop),
-        faces: faces?.map(roundedBox),
-      }),
+    post<RegenerateResult>("/api/photos/bucket/versions", {
+      ...request,
+      crop: crop && roundedCrop(crop),
+      faces: faces?.map(roundedBox),
     }),
 });
 

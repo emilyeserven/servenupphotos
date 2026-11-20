@@ -33,6 +33,7 @@ import {
 } from "@/lib/album-layout-editor";
 import { albumPhotoOrder, photoId } from "@/lib/album-photo-order";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * An album's cover photos and its rows of photos with Markdown text above and below each, as the
@@ -150,7 +151,7 @@ function LayoutSaveBar({ album, draft, save, onUndo }: LayoutSaveBarProps) {
 
 function BlockedNote({ show }: { show: boolean }) {
   if (!show) return null;
-  return <span className="text-destructive text-xs">Give every row photos or text first.</span>;
+  return <ErrorNote error="Give every row photos or text first." className="text-xs" />;
 }
 
 function UndoButton({
@@ -171,7 +172,7 @@ function UndoButton({
 }
 
 function SaveOutcome({ save }: { save: LayoutSave }) {
-  if (save.isError) return <p className="text-destructive">{save.error.message}</p>;
+  if (save.isError) return <ErrorNote error={save.error} />;
   if (!save.isSuccess) return null;
   return (
     <p className="flex items-start gap-2">

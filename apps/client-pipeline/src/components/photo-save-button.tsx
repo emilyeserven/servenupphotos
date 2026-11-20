@@ -13,6 +13,7 @@ import { RenameForm } from "@/components/rename-prompt";
 import { Spinner } from "@/components/ui/spinner";
 import { jsonFileName, jsonNameProblem } from "@/lib/file-name";
 import { photoData } from "@/lib/photo-data";
+import { ErrorNote } from "@/components/error-note";
 
 type Publish = UseMutationResult<PublishResult, Error, PhotoData>;
 
@@ -154,7 +155,7 @@ function SaveIntro({ github, name, uploaded, error }: SaveIntroProps) {
         file name without one.
       </p>
       <NotUploadedNote uploaded={uploaded} />
-      {error && <p className="text-destructive">{error.message}</p>}
+      <ErrorNote error={error} />
     </>
   );
 }

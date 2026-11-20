@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 13:26:58",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Nagwon-dong",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["hangul", "storefronts", "signage", "string-lights", "pedestrians", "elderly"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "nagwon-dong"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

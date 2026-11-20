@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { type GitHubFailure, githubFailureOf } from "@/api/errors";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { cn } from "@/lib/utils";
@@ -6,8 +8,14 @@ import { cn } from "@/lib/utils";
 type ErrorLike = Error | string;
 
 interface ErrorNoteProps {
-  /** What failed. Nothing is shown when it's null, undefined or an empty string. */
-  error: ErrorLike | null | undefined;
+  /** What failed. Nothing is shown when it's null, undefined or an empty string and there are no children. */
+  error?: ErrorLike | null;
+  /** Words before the message that say what was being done, such as "Couldn't commit ALLPHOTOS.json:". */
+  lead?: string;
+  /** Shown in place of the message, for a failure that needs more than a sentence, such as a list of files. */
+  children?: ReactNode;
+  /** The note's id, for a field's `aria-describedby`. */
+  id?: string;
   /** Whether GitHub's answer starts open, as on the Commit button where it's what to read next. */
   githubOpen?: boolean;
   /** Extra classes, such as `text-xs` beside small buttons or a grid column. */
@@ -19,20 +27,39 @@ interface ErrorNoteProps {
  * readers, and when a GitHub call failed, GitHub's own answer under it (the failing step, the
  * request and GitHub's errors) so it can be read and copied.
  */
-export function ErrorNote({ error, githubOpen = false, className }: ErrorNoteProps) {
-  if (!error) return null;
-  const message = typeof error === "string" ? error : error.message;
-  const github = githubFailureOf(error);
+export function ErrorNote({
+  error,
+  lead,
+  children,
+  id,
+  githubOpen = false,
+  className,
+}: ErrorNoteProps) {
+  if (!error && !children) return null;
   return (
-    <span role="alert" className={cn("flex min-w-0 flex-col items-start gap-2 text-sm", className)}>
-      <span className="text-destructive">{message}</span>
-      {github && <GitHubFailureDetails failure={github} open={githubOpen} />}
+    <span
+      id={id}
+      role="alert"
+      className={cn("flex min-w-0 flex-col items-start gap-2 text-sm", className)}
+    >
+      <span className="text-destructive flex flex-col gap-1">
+        {children ?? messageOf(error, lead)}
+      </span>
+      <GitHubFailureDetails error={error} open={githubOpen} />
     </span>
   );
 }
 
-/** GitHub's answer to the call that failed, as a summary and the whole answer as JSON. */
-function GitHubFailureDetails({ failure, open }: { failure: GitHubFailure; open: boolean }) {
+/** The message to show: the error's own words, after the lead when there is one. */
+function messageOf(error: ErrorLike | null | undefined, lead: string | undefined): string {
+  const message = typeof error === "string" ? error : error?.message;
+  return [lead, message].filter(Boolean).join(" ");
+}
+
+/** GitHub's answer to the call that failed, as a summary and the whole answer as JSON; nothing for other failures. */
+function GitHubFailureDetails({ error, open }: { error: ErrorNoteProps["error"]; open: boolean }) {
+  const failure = githubFailureOf(error);
+  if (!failure) return null;
   return (
     <details open={open} className="w-full min-w-0 text-sm">
       <summary className="text-muted-foreground cursor-pointer">GitHub&apos;s answer</summary>

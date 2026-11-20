@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["wood"],
+  "tags": ["wood", "goats", "farm-animals", "farm"],
   "genres": [],
   "places": [
     {
@@ -269,7 +269,7 @@
     "peakChroma": 27,
     "samples": 9728
   },
-  "notes": "Shows a goat with hay in a barn; 'goats', 'farm-animals', 'hay' and 'barn' aren't tags, since only this photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 294 (1.70:1), not the 16:9 crop for a landscape photo.",
+  "notes": "Shows a goat with hay in a barn; 'goats', 'farm-animals', 'hay' and 'barn' aren't tags, since only this photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 294 (1.70:1), not the 16:9 crop for a landscape photo.\n\nShows a goat with hay in a barn, now tagged 'goats', 'farm-animals' and 'farm'; 'hay' and 'barn' aren't tags, since only 2 photos have them.",
   "similarPhotos": [477, 495, 499, 201, 474, 290],
   "compareGroup": "Goats at the Hay Feeder"
 }

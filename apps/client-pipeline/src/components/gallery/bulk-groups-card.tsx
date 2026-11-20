@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { fileData, selectProblem } from "@/components/gallery/published-file";
+import { ErrorNote } from "@/components/error-note";
 
 interface BulkGroupsCardProps {
   files: PublishedFile[];
@@ -164,7 +165,7 @@ function AlreadyInAlbum({ count }: { count: number }) {
 
 /** What adding the albums, tags and genres did, or why it failed. */
 function BulkOutcome({ add, rebuild }: BulkAdd) {
-  if (add.isError) return <p className="text-destructive">{add.error.message}</p>;
+  if (add.isError) return <ErrorNote error={add.error} />;
   if (!add.isSuccess) return null;
   const result = add.data;
   return (

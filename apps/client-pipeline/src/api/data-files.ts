@@ -1,6 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
 import { entryId } from "@/api/places";
-import { requestJson } from "@/api/request";
+import { del, put } from "@/api/request";
 import type { CombinedData } from "@/api/photos";
 import type { FileChange } from "@/lib/optimistic";
 
@@ -60,18 +60,13 @@ export function settingMutations<T extends { id: string }>(
       mutationKey: [route, "save"],
       scope: { id: "photo-data-entries" },
       meta: settingMeta<T>(kind),
-      mutationFn: (entry: T) =>
-        requestJson<SettingResult<T>>(url(entry.id), {
-          method: "PUT",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(entry),
-        }),
+      mutationFn: (entry: T) => put<SettingResult<T>>(url(entry.id), entry),
     }),
     remove: mutationOptions({
       mutationKey: [route, "delete"],
       scope: { id: "photo-data-entries" },
       meta: settingMeta<T>(kind),
-      mutationFn: (id: string) => requestJson<SettingResult<T>>(url(id), { method: "DELETE" }),
+      mutationFn: (id: string) => del<SettingResult<T>>(url(id)),
     }),
   };
 }

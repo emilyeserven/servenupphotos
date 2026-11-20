@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 13:07:31",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Samil-daero",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["observation-towers", "skyscrapers", "road", "traffic", "hills", "trees"],
   "genres": ["cityscape", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "samil-daero"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

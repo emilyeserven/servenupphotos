@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:25 11:12:47",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Aibagawa Waterway",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["inscriptions", "bridges", "stones", "texture"],
   "genres": ["abstract", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "aibagawa-waterway"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

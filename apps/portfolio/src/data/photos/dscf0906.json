@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["wabi-sabi", "toro", "moss", "grass", "forest"],
-  "genres": [],
+  "genres": ["nature"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

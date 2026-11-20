@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useObjectUrl } from "@/hooks/use-object-url";
+import { ErrorNote } from "@/components/error-note";
 
 const sizeFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
 
@@ -100,8 +101,8 @@ function VersionRow({ photo, version, onPreview }: VersionRowProps) {
   if (query.isError) {
     return (
       <SizeRow label={label} onPreview={onPreview}>
-        <TableCell colSpan={2} className="text-destructive whitespace-normal">
-          {query.error.message}
+        <TableCell colSpan={2} className="whitespace-normal">
+          <ErrorNote error={query.error} />
         </TableCell>
       </SizeRow>
     );
@@ -284,7 +285,7 @@ function VersionImage({ photo, version }: { photo: File; version: VersionName })
       </p>
     );
   }
-  if (query.isError) return <p className="px-4 text-sm text-red-400">{query.error.message}</p>;
+  if (query.isError) return <ErrorNote error={query.error} className="px-4" />;
   return (
     <LightboxImage
       blob={query.data.webp}

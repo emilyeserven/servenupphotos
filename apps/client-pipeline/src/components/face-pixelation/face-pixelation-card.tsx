@@ -26,6 +26,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Spinner } from "@/components/ui/spinner";
 import type { FaceBox } from "@/lib/face-boxes";
 import { facesFromJson } from "@/lib/face-json";
+import { ErrorNote } from "@/components/error-note";
 
 interface FacePixelationCardProps {
   editable: Editable;
@@ -276,13 +277,7 @@ function foundText(found: FaceBox[]): string {
 
 /** What finding faces came back with, or why it failed. */
 function DetectNote({ detect }: { detect: DetectMutation }) {
-  if (detect.isError) {
-    return (
-      <p role="alert" className="text-destructive text-sm">
-        {detect.error.message}
-      </p>
-    );
-  }
+  if (detect.isError) return <ErrorNote error={detect.error} />;
   if (!detect.data) return null;
   return <p className="text-muted-foreground text-sm">{foundText(detect.data)}</p>;
 }

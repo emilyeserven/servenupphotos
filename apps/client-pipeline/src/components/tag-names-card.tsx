@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
 
 interface TagNamesCardProps {
   /** Every album and tag; undefined until it's read. */
@@ -59,7 +60,7 @@ function RenameButton({ count, onSaved }: { count: number; onSaved: () => void }
         {normalize.isPending && <Spinner />}
         Rename {count === 1 ? "1 tag" : `${count} tags`}
       </Button>
-      {normalize.isError && <p className="text-destructive">{normalize.error.message}</p>}
+      <ErrorNote error={normalize.error} />
     </>
   );
 }

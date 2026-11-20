@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { winningName } from "@/lib/location-names";
 import { regionNodeKey } from "@/lib/region-tree";
+import { ErrorNote } from "@/components/error-note";
 
 /** A country, state or city that can be added on the Places page. */
 export type AddedRegionKind = "country" | "state" | "city";
@@ -149,7 +150,7 @@ function AdderButtons({ kind, form }: { kind: AddedRegionKind; form: RegionAdder
   const disabled = form.blocked || form.busy;
   return (
     <>
-      {form.message && <p className="text-destructive text-sm">{form.message}</p>}
+      <ErrorNote error={form.message} />
       <FloatingSaveButton form="region-adder-form" disabled={disabled} busy={form.busy} />
       <div>
         <Button type="submit" disabled={disabled}>

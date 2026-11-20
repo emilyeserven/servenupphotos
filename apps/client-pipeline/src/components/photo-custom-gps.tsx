@@ -3,6 +3,7 @@ import { FieldSection } from "@/components/field-section";
 import { FieldLabel } from "@/components/field-label";
 import { Input } from "@/components/ui/input";
 import { decimalGps, parseGps } from "@/lib/place-gps";
+import { ErrorNote } from "@/components/error-note";
 
 /** How to fill in the custom GPS position, shown beside its title. */
 const HELP =
@@ -54,10 +55,7 @@ export function PhotoCustomGps(props: PhotoCustomGpsProps) {
         onChange={(event) => onChange(decimalGps(event.target.value))}
       />
       {invalid && (
-        <p className="text-destructive text-sm">
-          Write it as latitude, longitude in degrees, such as 40.7795, -73.9634, or as 37°34′12″N
-          126°59′56″E.
-        </p>
+        <ErrorNote error="Write it as latitude, longitude in degrees, such as 40.7795, -73.9634, or as 37°34′12″N 126°59′56″E." />
       )}
       <NoGpsCheckbox checked={noGps} disabled={disabled} onChange={props.onNoGps} />
     </FieldSection>
