@@ -14,7 +14,7 @@
         "allow": ["**/*.css"]
       }
     ],
-    "servenup/error-note": "warn",
+    "servenup/error-note": "error",
     "servenup/reading-label": "error",
     "no-alert": "error",
     "servenup/empty-note": "error",
