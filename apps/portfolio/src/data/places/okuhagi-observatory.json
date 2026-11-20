@@ -1,0 +1,12 @@
+{
+  "id": "okuhagi-observatory",
+  "name": "Okuhagi Observatory",
+  "description": "",
+  "parent": "",
+  "city": "Hagi",
+  "state": "Yamaguchi",
+  "country": "Japan",
+  "latitude": 34.418947,
+  "longitude": 131.419178,
+  "exactLocation": true
+}

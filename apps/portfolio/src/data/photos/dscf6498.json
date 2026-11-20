@@ -3,7 +3,7 @@
   "comment": null,
   "id": 602,
   "altText": null,
-  "notes": "Shows pipes; 'pipes' was removed as a tag, since only 1 photo has them.",
+  "notes": "Shows pipes; 'pipes' was removed as a tag, since only 1 photo has them.\n\nShows pipes, now tagged 'pipes'.",
   "file": "DSCF6498.jpg",
   "addedDate": "2026-11-15T20:49:28Z",
   "camera": "Fujifilm X-T5",
@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["rust", "wood", "ivy", "texture", "cables"],
+  "tags": ["rust", "wood", "ivy", "texture", "cables", "pipes"],
   "genres": ["abstract", "architecture"],
   "places": [
     {

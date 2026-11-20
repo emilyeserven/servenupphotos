@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["pyramids", "stairs", "wood", "stones", "walls"],
+  "tags": ["pyramids", "stairs", "wood", "stones", "walls", "scaffolding"],
   "genres": ["architecture", "abstract"],
   "places": [
     {
@@ -266,6 +266,6 @@
     "peakChroma": 23.61,
     "samples": 9828
   },
-  "notes": "Shows scaffolding; 'scaffolding' isn't a tag, since only 2 photos have it.",
+  "notes": "Shows scaffolding; 'scaffolding' isn't a tag, since only 2 photos have it.\n\nShows scaffolding, now tagged 'scaffolding'.",
   "similarPhotos": [289, 284, 291, 294, 271, 279]
 }

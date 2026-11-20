@@ -1,0 +1,12 @@
+{
+  "id": "hagi-sightseeing-boat-pier",
+  "name": "Hagi Sightseeing Boat Pier",
+  "description": "",
+  "parent": "hagi-castle-town",
+  "city": "Hagi",
+  "state": "Yamaguchi",
+  "country": "Japan",
+  "latitude": 34.41514,
+  "longitude": 131.38367,
+  "exactLocation": true
+}

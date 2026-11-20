@@ -1,5 +1,6 @@
 {
   "id": "fallen-leaves",
   "name": "fallen-leaves",
-  "description": "leaves lying on the ground, paths and water"
+  "description": "leaves lying on the ground, paths and water",
+  "parent": "leaves"
 }

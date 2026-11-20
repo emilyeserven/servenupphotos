@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2019:07:15 19:24:29",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Main Street",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["signposts", "signage", "trees", "typography", "wood"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "main-street"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

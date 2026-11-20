@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["torii", "shinto", "sando", "road", "mountains", "trees"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

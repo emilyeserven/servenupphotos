@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["railway", "trains", "snow", "winter", "repetition"],
+  "tags": ["railway", "trains", "snow", "winter", "repetition", "numbers"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -264,6 +264,6 @@
     "peakChroma": 24.17,
     "samples": 9750
   },
-  "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo.",
+  "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo.\n\nShows numbers by the tracks, now tagged 'numbers'.",
   "similarPhotos": [106, 7, 22, 24, 116, 242]
 }
