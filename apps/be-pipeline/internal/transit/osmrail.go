@@ -28,13 +28,14 @@ const osmLineBits = 3 * routeBits
 
 // osmRailVersion is the folder of the rail maps read as this version reads
 // them: v2 keeps which railways are high-speed, and v3 names lines by the
-// route relations their track is in, with their colors. A map read by an
-// older version is downloaded and read again the first time it's used.
-const osmRailVersion = "v3"
+// route relations their track is in, with their colors, and v4 keeps which
+// of each line's track is high-speed. A map read by an older version is
+// downloaded and read again the first time it's used.
+const osmRailVersion = "v4"
 
 // osmRailOldVersions are the folders of maps read by older versions, deleted
 // once the map is read again ("" is the first version's, with none).
-var osmRailOldVersions = []string{"", "v2"}
+var osmRailOldVersions = []string{"", "v2", "v3"}
 
 // osmRailDir is OSM_RAIL_DIR, or else a folder beside the settings file, as
 // Japan's rail map's is (see mlitDir).

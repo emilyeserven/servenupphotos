@@ -90,6 +90,12 @@ type TripSegment struct {
 	// and from Alight to the last photo; nil draws them straight.
 	BoardWalk  *StationWalk `json:"boardWalk,omitempty"`
 	AlightWalk *StationWalk `json:"alightWalk,omitempty"`
+	// Like is the mode a ModeTransit hop is routed and drawn as, one of
+	// transitLikes, such as ModeCar for a hop along roads no rail or bus map
+	// has: Snap to streets routes it by road and the map draws it as that
+	// mode. "" (and any other mode's hop) keeps the straight dashed hop. It
+	// does nothing while the hop rides a line found in a source (see wayMode).
+	Like string `json:"like,omitempty"`
 }
 
 // TripVia is a spot a segment's line goes through to shape it, such as a

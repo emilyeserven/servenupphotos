@@ -82,3 +82,35 @@ func TestOSMRailIDsStaySafe(t *testing.T) {
 		t.Errorf("ID through a float64 = %v, %v", lines, err)
 	}
 }
+
+// TestKTXTakesTheHighSpeedTrack follows a KTX route relation that runs along
+// both the high-speed line and the older, slightly shorter line beside it,
+// and keeps its track on the high-speed one.
+func TestKTXTakesTheHighSpeedTrack(t *testing.T) {
+	r := newOSMRailReader()
+	r.routes.add(osmRelation(1, "route", map[string]string{"route": "train", "name": "Gyeongbu Line KTX"},
+		osm.Member{Type: osm.TypeWay, Ref: 10}, osm.Member{Type: osm.TypeWay, Ref: 11}))
+	r.routes.resolve()
+	old := way("rail", "경부선", "", 1, 2, 3)
+	old.ID = 10
+	fast := way("rail", "경부고속선", "", 1, 4, 3)
+	fast.ID = 11
+	fast.Tags = append(fast.Tags, osm.Tag{Key: "highspeed", Value: "yes"})
+	r.addWay(old)
+	r.addWay(fast)
+	for _, n := range []*osm.Node{
+		node(1, [2]float64{127, 36}, ""), node(2, [2]float64{127.05, 36.5}, ""),
+		node(3, [2]float64{127, 37}, ""), node(4, [2]float64{126.93, 36.5}, ""),
+	} {
+		r.addNode(n)
+	}
+	n := newRailNet(r.features())
+	n.lineBits = osmLineBits
+	if len(n.lines) != 1 {
+		t.Fatalf("lines = %+v, want the one KTX line", n.lines)
+	}
+	track, err := railTrack(n, n.lineOf([]int{0}).ID, [2]float64{127, 36}, [2]float64{127, 37})
+	if err != nil || len(track) != 5 || track[2] != [2]float64{126.93, 36.5} {
+		t.Errorf("track = %v, %v; want it along the high-speed line", track, err)
+	}
+}

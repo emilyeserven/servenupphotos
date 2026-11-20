@@ -41,11 +41,13 @@ type railLine struct {
 }
 
 // railEdge joins a node to the next one along line, or to a station of the
-// same name on another line when line is changeEdge.
+// same name on another line when line is changeEdge; fast on high-speed
+// track.
 type railEdge struct {
 	to     int
 	meters float64
 	line   int
+	fast   bool
 }
 
 // railStation is a station on a line, at the node of that line nearest it.
@@ -81,7 +83,7 @@ func newRailNet(sections, stations []mlitFeature) *railNet {
 	for _, f := range sections {
 		line := n.lineID(ids, f)
 		for _, part := range f.Geometry.lines() {
-			lineNodes[line] = append(lineNodes[line], n.addPart(part, line)...)
+			lineNodes[line] = append(lineNodes[line], n.addPart(part, line, f.Properties.HighSpeed)...)
 		}
 	}
 	for _, f := range stations {
@@ -109,14 +111,15 @@ func (n *railNet) lineID(ids map[[2]string]int, f mlitFeature) int {
 	return len(n.lines) - 1
 }
 
-// addPart adds part's points as nodes joined along line, and says which.
-func (n *railNet) addPart(part [][2]float64, line int) []int {
+// addPart adds part's points as nodes joined along line, on high-speed track
+// when fast, and says which.
+func (n *railNet) addPart(part [][2]float64, line int, fast bool) []int {
 	nodes := make([]int, 0, len(part))
 	prev := -1
 	for _, p := range part {
 		node := n.node(p)
 		if prev >= 0 && prev != node {
-			n.join(prev, node, line)
+			n.join(prev, node, line, fast)
 		}
 		nodes = append(nodes, node)
 		prev = node
@@ -140,10 +143,10 @@ func (n *railNet) node(p [2]float64) int {
 }
 
 // join adds the edge between a and b, both ways.
-func (n *railNet) join(a, b, line int) {
+func (n *railNet) join(a, b, line int, fast bool) {
 	d := meters(n.points[a], n.points[b])
-	n.edges[a] = append(n.edges[a], railEdge{b, d, line})
-	n.edges[b] = append(n.edges[b], railEdge{a, d, line})
+	n.edges[a] = append(n.edges[a], railEdge{b, d, line, fast})
+	n.edges[b] = append(n.edges[b], railEdge{a, d, line, fast})
 }
 
 // joinStations joins each two stations of one name on different lines within
@@ -157,7 +160,7 @@ func (n *railNet) joinStations() {
 		for i, a := range same {
 			for _, b := range same[i+1:] {
 				if a.line != b.line && a.node != b.node && meters(n.points[a.node], n.points[b.node]) <= changeWalkM {
-					n.join(a.node, b.node, changeEdge)
+					n.join(a.node, b.node, changeEdge, false)
 				}
 			}
 		}
@@ -256,19 +259,40 @@ type railStep struct {
 }
 
 // route is the shortest way along allowed's lines (any when nil), and the
-// unnamed track joining them, from near from to near to, each change of line counting changePenaltyM more: its nodes
-// and the line of each edge between them. It may start and end on any track
-// within railRouteM of each end, so an end between two railways, such as
-// 電鉄出雲市 beside JR's 出雲市, starts on whichever one goes there. Nil when
-// there's no such way.
+// unnamed track joining them, from near from to near to, each change of line
+// counting changePenaltyM more: its nodes and the line of each edge between
+// them. It may start and end on any track within railRouteM of each end, so an
+// end between two railways, such as 電鉄出雲市 beside JR's 出雲市, starts on
+// whichever one goes there. Nil when there's no such way.
 func (n *railNet) route(from, to [2]float64, allowed map[int]bool) (nodes, lines []int) {
-	goals := n.ends(to, allowed)
+	return n.search(from, to, allowed, n.ends(from, allowed), n.ends(to, allowed), 0)
+}
+
+// offLineFactor is how many meters each meter of other lines' track counts as
+// on a route that may leave its line where the line's mapped track has a gap.
+const offLineFactor = 4
+
+// routeAcross is route along allowed's lines that may cross gaps in their
+// mapped track, start and end on any track, and ride other lines' track where
+// it must, each meter of it counting offLineFactor, as a line's own route
+// relation often leaves out a station's tracks or a short stretch. Its other
+// lines' edges are given as changeEdge.
+func (n *railNet) routeAcross(from, to [2]float64, allowed map[int]bool) []int {
+	nodes, _ := n.search(from, to, allowed, n.ends(from, nil), n.ends(to, nil), offLineFactor)
+	return nodes
+}
+
+// search is the shortest way from one of starts to one of goals, each with
+// what walking to it counts as, along allowed's lines and unnamed track, and
+// along other lines' track too, counting offLine for each meter, when offLine
+// isn't 0.
+func (n *railNet) search(from, to [2]float64, allowed map[int]bool, starts, goals map[int]float64, offLine float64) (nodes, lines []int) {
 	s := railSearch{
 		best:  map[railState]railStep{},
 		queue: &railQueue{},
-		limit: detourLimit*meters(from, to) + 4*changePenaltyM + 2*walkFactor*railRouteM,
+		limit: (detourLimit+offLine)*meters(from, to) + 4*changePenaltyM + 2*walkFactor*railRouteM,
 	}
-	for node, walk := range n.ends(from, allowed) {
+	for node, walk := range starts {
 		start := railState{node, changeEdge}
 		s.reach(start, start, walk)
 	}
@@ -284,12 +308,26 @@ func (n *railNet) route(from, to [2]float64, allowed map[int]bool) (nodes, lines
 			s.reach(arrived, it.state, it.dist+walk)
 		}
 		for _, e := range n.edges[it.state.node] {
-			if allows(allowed, e.line) || n.unnamed(e.line) {
-				s.reach(railState{e.to, e.line}, it.state, it.dist+e.meters*n.speedFactor(e.line)+n.changeCost(it.state.line, e.line))
+			if next, cost, ok := n.step(it.state.line, e, allowed, offLine); ok {
+				s.reach(next, it.state, it.dist+cost)
 			}
 		}
 	}
 	return nil, nil
+}
+
+// step is the state going along e after arriving on line prev reaches, and
+// what it counts as: along allowed's lines or unnamed track, its length and
+// any change of line; along another line's track, offLine for each meter, as
+// a changeEdge; false when offLine is 0.
+func (n *railNet) step(prev int, e railEdge, allowed map[int]bool, offLine float64) (railState, float64, bool) {
+	if allows(allowed, e.line) || n.unnamed(e.line) {
+		return railState{e.to, e.line}, e.meters*speedFactor(e) + n.changeCost(prev, e.line), true
+	}
+	if offLine > 0 {
+		return railState{e.to, changeEdge}, e.meters * offLine, true
+	}
+	return railState{}, 0, false
 }
 
 // arrived is the state of a route that has walked from its last node to its
@@ -327,10 +365,12 @@ func (s *railSearch) reach(next, prev railState, dist float64) {
 // is a little shorter once a change of line is counted.
 const highSpeedFactor = 0.6
 
-// speedFactor is how much of each meter along line a route counts: less on
-// a high-speed line.
-func (n *railNet) speedFactor(line int) float64 {
-	if line >= 0 && n.lines[line].kind == highSpeedKind {
+// speedFactor is how much of each meter along e a route counts: less on
+// high-speed track. It goes by the track, not the line, since one line, such
+// as the Gyeongbu Line KTX, can run along both the high-speed line and the
+// older one beside it.
+func speedFactor(e railEdge) float64 {
+	if e.fast {
 		return highSpeedFactor
 	}
 	return 1

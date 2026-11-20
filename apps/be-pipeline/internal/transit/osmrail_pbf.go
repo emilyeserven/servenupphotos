@@ -139,7 +139,9 @@ func (r *osmRailReader) features() (sections, stations []mlitFeature) {
 				addToCell(cells, r.needed[id], line.name)
 			}
 		}
-		sections = append(sections, railFeatureOf(line, "", coords))
+		f := railFeatureOf(line, "", coords)
+		f.Properties.HighSpeed = w.kind == highSpeedKind
+		sections = append(sections, f)
 	}
 	byName := map[string]osmLine{}
 	for _, l := range lines {
@@ -245,12 +247,13 @@ func linesNearSpot(cells map[[2]int32][]linePoint, p [2]float64) map[string]bool
 }
 
 // railFeatureOf is a section of line through coords, or its station named
-// station.
+// station; high-speed when the line is.
 func railFeatureOf(line osmLine, station string, coords [][2]float64) mlitFeature {
 	var f mlitFeature
 	f.Properties.Type = json.Number(strconv.Itoa(line.kind))
 	f.Properties.Line, f.Properties.Operator, f.Properties.Station = line.name, line.operator, station
 	f.Properties.Colour = line.colour
+	f.Properties.HighSpeed = line.kind == highSpeedKind
 	raw, _ := json.Marshal(coords) //nolint:errchkjson // plain numbers always marshal
 	f.Geometry = tlGeometry{Type: "LineString", Coordinates: raw}
 	return f

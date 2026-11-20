@@ -1,6 +1,6 @@
 import { PenLine, Search, X } from "lucide-react";
 import type { HopAsk, LookupSource, Spot, TransitLine } from "@/api/transit";
-import type { TripPoint, TripSegment } from "@/api/trip-lines";
+import type { TransitLike, TripPoint, TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { HopEndsPicker } from "@/components/trip-lines/hop-ends";
 import { HopStations } from "@/components/trip-lines/hop-stations";
@@ -12,6 +12,7 @@ import { SearchedNote } from "@/components/trip-lines/searched-note";
 import { NamedLine } from "@/components/trip-lines/named-line";
 import { RopewayStations } from "@/components/trip-lines/ropeway-stations";
 import { RouteSourcePicker } from "@/components/trip-lines/route-source-picker";
+import { TransitLikePicker } from "@/components/trip-lines/transit-like-picker";
 import { gapInfo } from "@/components/trip-lines/modes";
 import { type HopEnds, useHopRide } from "@/components/trip-lines/use-hop-ride";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import type { Ride } from "@/lib/transit-ride";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap, GapDraft } from "@/lib/trip-gaps";
 import { legKeys } from "@/lib/hop-legs";
+import { withLegLike } from "@/lib/transit-like";
 import { isNamedLine, ridesLine, withHopLine, withNamedLine } from "@/lib/trip-hop-lines";
 import {
   type RopewayPick,
@@ -63,6 +65,7 @@ export function HopLines({ photos, draft, segments, onChange, ...map }: HopLines
           hop={hop}
           ends={legEnds(hop, byId)}
           onRide={(ride) => onChange(withHopLine(draft, hop, key, ride))}
+          onLike={(like) => onChange(withLegLike(draft, key, like))}
           onName={(name) =>
             hop.mode === "ropeway"
               ? ropeway(hop, key, { line: { id: 0, name: name.trim(), source: "named" } })
@@ -118,6 +121,8 @@ interface HopRowProps {
   hop: TripSegment;
   ends: HopEnd[];
   onRide: (ride?: Ride) => void;
+  /** Draws a transit hop like another mode, such as a car along the roads, or as transit for none. */
+  onLike: (like?: TransitLike) => void;
   /** Names the line by hand, for one no source has. */
   onName: (name: string) => void;
   /** A ropeway's stations: which is being placed on the map, and placing or renaming one. */
@@ -132,7 +137,7 @@ interface HopRowProps {
  * pick from, looked up at once while it has no line. When none is found near the photos, stations
  * can be picked to look near instead.
  */
-function HopRow({ hop, ends, onRide, onName, stations }: HopRowProps) {
+function HopRow({ hop, ends, onRide, onLike, onName, stations }: HopRowProps) {
   const ask = askOf(hop, ends);
   const found = useHopRide(hop, ask, onRide);
   const { finding, setFinding, kind, setKind, lines, mutation, ride } = found;
@@ -152,6 +157,7 @@ function HopRow({ hop, ends, onRide, onName, stations }: HopRowProps) {
           onClear={() => onRide(undefined)}
         />
       </div>
+      <TransitLikePicker hop={hop} onLike={onLike} />
       <HopRideRows hop={hop} />
       <RopewayStations hop={hop} {...stations} />
       {hop.line && !isNamedLine(hop.line) && (

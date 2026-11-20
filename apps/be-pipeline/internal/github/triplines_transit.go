@@ -39,8 +39,8 @@ var lineModes = map[string]bool{ModeTrain: true, ModeSubway: true, ModeBus: true
 var colourPattern = regexp.MustCompile(`^#?[0-9A-Za-z]{1,32}$`)
 
 // trimLine drops the nth segment's line when its mode rides none, checks the
-// line it keeps, and drops its path when it neither follows streets nor
-// rides a line.
+// line it keeps, drops a Like that isn't a transit hop's road mode, and drops
+// its path when it neither follows streets nor rides a line.
 func trimLine(seg *TripSegment, n int) *PublishError {
 	if !lineModes[seg.Mode] {
 		seg.Line = nil
@@ -53,7 +53,10 @@ func trimLine(seg *TripSegment, n int) *PublishError {
 			return perr
 		}
 	}
-	if !streetModes[seg.Mode] && seg.Line == nil {
+	if seg.Mode != ModeTransit || !transitLikes[seg.Like] {
+		seg.Like = ""
+	}
+	if !streetModes[wayMode(*seg)] && seg.Line == nil {
 		seg.Path = nil
 	}
 	for _, p := range []*TripPoint{seg.Board, seg.Alight} {

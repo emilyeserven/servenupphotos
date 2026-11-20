@@ -51,6 +51,9 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - **`line`** is the bus, subway or train line a hop rode, picked under [Lines ridden](#lines-ridden):
   `{ "id": 1234, "name": "Midosuji Line", "ref": "M", "colour": "#e5171f" }`, where `id` is the OpenStreetMap route
   relation. Only train, subway, bus and transit hops keep one.
+- **`like`** is `car` or `bus` on a `transit` hop drawn like that mode ([Drawing a transit hop like a car or
+  bus](#drawing-a-transit-hop-like-a-car-or-bus)): it's snapped to streets by road, keeps its `path`, and is baked
+  as that mode. Left out on any other hop, and it does nothing while the hop rides a line found in a source.
 - **`board`** and **`alight`** are the station or stop a hop with a `line` got on and off at, with its name as the
   `label`, when that isn't at the photo: say the subway was left and then a 10-minute walk led to the next photo.
 - **`boardWalk`** and **`alightWalk`** shape the walk from the hop's first photo to `board`, and from `alight` to its
@@ -498,7 +501,8 @@ A line drawn by hand is straight from point to point. To make it follow the stre
    at one says where it is.
 2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
    servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
-   walk, bus or car segment's points and via points, walking on foot and buses and cars by road, and for every walk to
+   walk, bus or car segment's points and via points (and every transit hop [drawn like a car or
+   bus](#drawing-a-transit-hop-like-a-car-or-bus)), walking on foot and buses and cars by road, and for every walk to
    or from a station. Train and subway hops without a line stay dashed straight lines. A walk may turn back at a via
    point (a via point just off the way is a there-and-back), while a bus or car can't and goes on round the block, so
    each request says which with OSRM's `continue_straight` rather than leaving it to the server's default.
@@ -581,6 +585,28 @@ hop is drawn along the line's track between them, solid in the line's color, wit
 it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
 route** keeps the line, the stations and the track.
 
+### Drawing a transit hop like a car or bus
+
+A transit hop of unknown kind is a straight dashed line, which cuts across the map when the ride went along roads no
+rail or bus map has, such as a shuttle up a valley. Its row's **Draw it like** menu borrows another mode's way of
+being routed and drawn (`lib/transit-like.ts`, `components/trip-lines/transit-like-picker.tsx`):
+
+- **Transit (straight, dashed)**, the default.
+- **Car (along roads, solid)**: **Snap to streets** (and saving) routes it by road like a drive, and the map draws it
+  as a solid light blue drive line.
+- **Bus (along roads, dashed)**: routed by road like a bus with no line, and drawn as a dashed hop.
+
+The hop stays a `transit` hop with `"like": "car"` or `"bus"` beside its mode, kept in the draft by its leg key (like
+its line) and in `segmentKey`, so a path snapped as one mode isn't reused for another. Until it's snapped, the row
+says to. The baked map gives its line the borrowed `mode`, so the portfolio's map and legend draw it as a drive (or a
+hop by bus) with nothing of their own to change (`wayMode` in `github/triplines_route.go`, `wayOf` in the pipeline). A
+line named by hand keeps the borrowed way; a line found in a source draws along its own track instead, and the menu is
+hidden while it's picked.
+
+> **Frontend analogy:** `like` is a variant prop: the hop's data still says "transit", but the renderer and the router
+> pick their styles and behavior from `like ?? mode`, the way a `<Button asChild>` keeps its own semantics while
+> borrowing another element's look.
+
 ### Looking lines up on Transitland or a rail map
 
 The menu beside **Find lines** (and beside a Trip leg's **Look up route**) picks where lines are looked up, and the
@@ -622,11 +648,13 @@ choice is kept in the browser for every look-up:
   name) for a ride inside one (never a whole continent; a leg crossing a border finds none), and downloads that extract once
   (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract three times (its rail route relations, then its railway
   ways, then their points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
-  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v3/<extract>` beside the
+  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v4/<extract>` beside the
   settings file, then deletes the extract. Railways tagged `highspeed=yes` are kept as high-speed track, and a route
   counts each meter of it as 0.6 m (`highSpeedFactor`), so Seoul to Busan takes the KTX's 경부고속선 rather than the
-  slower 경부선 beside it, which is a little shorter once the change onto the high-speed line is counted. A map read
-  by an older version (in `osm-rail/<extract>` or `osm-rail/v2/<extract>`) is downloaded and read again the first time
+  slower 경부선 beside it, which is a little shorter once the change onto the high-speed line is counted. This goes
+  by each stretch of track, not by line, since one line can run along both: the Gyeongbu Line KTX's route relation
+  holds the high-speed line and stretches of the old line, and counting them alike drew its track along the old line. A map read
+  by an older version (in `osm-rail/<extract>`, `osm-rail/v2/<extract>` or `osm-rail/v3/<extract>`) is downloaded and read again the first time
   it's used, and the old folder removed. A line is named by the
   [route relations](https://wiki.openstreetmap.org/wiki/Relation:route) (`route=train`, `subway`, `light_rail` or
   `monorail`) whose track it is: their
@@ -636,7 +664,9 @@ choice is kept in the browser for every look-up:
   its own name, and a name that only numbers the track, such as "Track 3", names no line: the track's names alone
   broke Boston's Red Line into pieces named "Red Line" and "Track 1", so it couldn't be followed as one line. Each
   line is shown by the English name most of its ways have; unnamed track only joins lines, so a route never lists it,
-  and a one-line route may run along it. A station belongs to each line within 300 m
+  and a one-line route may run along it. A route relation often leaves out a station's tracks or a short stretch,
+  so when a picked line's own track doesn't join the two spots, its track crosses each gap along other lines' track,
+  each meter of it counting as 4 (`offLineFactor`), as a bus's track crosses gaps between its roads. A station belongs to each line within 300 m
   of it. A route's ID holds up to 3 lines and, above them, its extract's place in the index, so its track and stops
   are looked up on the same extract. The ID stays under 2^53 so the page's JavaScript holds it exactly; with 4 lines,
   an extract far down the index, such as Massachusetts, gave IDs the page rounded off, so a picked line's stops
