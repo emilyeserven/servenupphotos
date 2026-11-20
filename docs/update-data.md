@@ -299,7 +299,8 @@ the ones already shown; **Start over** picks from the start again.
 
 **Copy the genre prompt** (`lib/genre-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a
 link to its Small version, its title and what's known of where it was taken, and its tags, then every genre there is
-with its description. It asks for 1 to 3 genres a photo, from that list when one fits, and only otherwise for a new
+with its description, each [subgenre](photographic-genres.md#subgenres) indented under its genre (the prompt asks for
+the subgenre alone when it fits, since it already counts as its genre). It asks for 1 to 3 genres a photo, from that list when one fits, and only otherwise for a new
 genre that photographers would recognize (such as Night or Food, never a subject or a place), in Title Case, described
 once in `newGenres`:
 

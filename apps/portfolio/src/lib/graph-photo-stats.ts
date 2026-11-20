@@ -1,5 +1,5 @@
 import type { GraphStat } from "@portfolio/lib/graph-data";
-import { genres, tagAndSubTags, tags } from "@portfolio/lib/groups";
+import { genreAndSubGenres, genres, tagAndSubTags, tags } from "@portfolio/lib/groups";
 import { matchesOrientation, ORIENTATION_KEY, ORIENTATIONS } from "@portfolio/lib/orientation";
 import {
   colorLabel,
@@ -24,11 +24,21 @@ const GENRE_BUCKETS: Bucket[] = genres.map((genre) => ({
   filter: { genre: genre.id },
 }));
 
-/** The genres the photos are in, biggest first; a photo counts in each genre it has. */
+/** Each genre's ID with the IDs of its subgenres, as the genre filter matches them. */
+const GENRE_IDS = new Map(genres.map((genre) => [genre.id, genreAndSubGenres(genre.id)]));
+
+/** Whether the photo is in the bucket's genre or one of its subgenres. */
+function inGenre(photo: Photo, bucket: Bucket): boolean {
+  const ids = GENRE_IDS.get(bucket.key);
+  return photo.genres.some((genre) => ids?.has(genre));
+}
+
+/**
+ * The genres the photos are in, biggest first; a photo counts in each genre it has, and in the
+ * genres over those.
+ */
 function genreGroup(list: Photo[]): StatGroup {
-  return biggestFirst(
-    bucketGroup("Genre", list, GENRE_BUCKETS, (photo, bucket) => photo.genres.includes(bucket.key)),
-  );
+  return biggestFirst(bucketGroup("Genre", list, GENRE_BUCKETS, inGenre));
 }
 
 /** Each tag as a row, filtering to it. */

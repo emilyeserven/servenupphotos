@@ -41,7 +41,9 @@ An album's `parent` is the ID of the one album it sits inside, or `null` for a t
 lets an album end up inside itself. A tag file may have a `parent` too: the ID of a more general tag it's a kind of
 (see [Parent tags](albums-and-tags.md#parent-tags)), missing or `null` at the top, and a `favorite`, `true` for a
 [favorite tag](albums-and-tags.md#favorite-tags) and missing or `false` otherwise. A photo's `genres` lists its [photographic genres](photographic-genres.md), such as
-`["street"]`, each a file like a tag's. Albums, tags and genres share one set of IDs and names, compared ignoring case,
+`["street"]`, each a file like a tag's. A genre file may also have a `parent`, the ID of the broader genre it's a
+[subgenre](photographic-genres.md#subgenres) of, and an `order`, its place among the genres (1 first), both set on
+Reorganize Genres. Albums, tags and genres share one set of IDs and names, compared ignoring case,
 so a photo's `albums`, `tags` and `genres` never mean the same thing.
 
 ## Photo IDs

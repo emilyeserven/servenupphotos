@@ -315,7 +315,4 @@ func TestTagParents(t *testing.T) {
 	if content, _ := stagedContent(t, c, "data/tags/shotengai.json"); !strings.Contains(content.Content, `"parent": null`) {
 		t.Errorf("shotengai.json = %q, want parent null", content.Content)
 	}
-	if _, err := c.SetGroupParent(t.Context(), organizeGH, Genres, "street", ""); err == nil {
-		t.Error("SetGroupParent(genre): want an error, genres have no parent")
-	}
 }

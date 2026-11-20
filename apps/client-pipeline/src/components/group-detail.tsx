@@ -19,8 +19,6 @@ import {
   albumTree,
   groupLabel,
   organizeQuery,
-  type ParentKind,
-  hasParents,
   setGroupParentMutation,
 } from "@/api/organize";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
@@ -150,9 +148,7 @@ function GroupColumns({ kind, group, organize }: GroupDetailProps) {
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <div className="flex min-w-0 flex-col gap-6">
         <AboutCard kind={kind} group={group} organize={organize} />
-        {hasParents(kind) && !group.error && (
-          <ParentCard kind={kind} group={group} organize={organize} />
-        )}
+        {!group.error && <ParentCard kind={kind} group={group} organize={organize} />}
         {kind === "albums" && <AlbumSideCards album={group} albums={organize.albums} />}
       </div>
       <GroupPhotos kind={kind} group={group} albums={organize.albums} />
@@ -187,7 +183,7 @@ function AboutCard({ kind, group, organize }: GroupDetailProps) {
           <dd>
             <GroupStatus inFlight={group.inFlight} pullRequestUrl={organize.pullRequest?.url} />
           </dd>
-          {hasParents(kind) && <GroupPlace kind={kind} group={group} list={organize[kind]} />}
+          <GroupPlace kind={kind} group={group} list={organize[kind]} />
         </dl>
       </CardContent>
     </Card>
@@ -195,9 +191,10 @@ function AboutCard({ kind, group, organize }: GroupDetailProps) {
 }
 
 /** How each kind with parents names where one sits. */
-const PLACE_TEXT: Record<ParentKind, { label: string; top: string }> = {
+const PLACE_TEXT: Record<GroupKind, { label: string; top: string }> = {
   albums: { label: "Inside", top: "Nothing: it's a top-level album" },
   tags: { label: "Under", top: "Nothing: it's a top-level tag" },
+  genres: { label: "Under", top: "Nothing: it's a top-level genre" },
 };
 
 /**
@@ -214,8 +211,8 @@ function AlbumSideCards({ album, albums }: { album: Group; albums: Group[] }) {
   );
 }
 
-/** The albums an album is inside, or the tags a tag is under, as rows of AboutCard's list. */
-function GroupPlace({ kind, group, list }: { kind: ParentKind; group: Group; list: Group[] }) {
+/** The albums an album is inside, or the tags or genres one is under, as rows of AboutCard's list. */
+function GroupPlace({ kind, group, list }: { kind: GroupKind; group: Group; list: Group[] }) {
   const parents = albumAncestry(list, group.id).slice(0, -1);
   return (
     <>
@@ -237,12 +234,13 @@ function GroupPlace({ kind, group, list }: { kind: ParentKind; group: Group; lis
 }
 
 /** Says a group has no parent, or that the one it names isn't of its kind. */
-function NoParent({ kind, parent }: { kind: ParentKind; parent?: string }) {
+function NoParent({ kind, parent }: { kind: GroupKind; parent?: string }) {
   if (!parent) return <span className="text-muted-foreground">{PLACE_TEXT[kind].top}</span>;
   return (
     <ErrorNote>
       <span>
-        <code>{parent}</code>, which isn't {kind === "albums" ? "an album" : "a tag"}
+        <code>{parent}</code>, which isn't{" "}
+        {kind === "albums" ? "an album" : `a ${GROUP_KINDS[kind].singular}`}
       </span>
     </ErrorNote>
   );
@@ -324,10 +322,13 @@ function photoCountText(n?: number): string {
   return count(n, "photo");
 }
 
-function GroupLink({ kind, group }: { kind: ParentKind; group: Group }) {
+/** Each kind's page for one album, tag or genre. */
+const GROUP_LINKS = { albums: "/albums/$id", tags: "/tags/$id", genres: "/genres/$id" } as const;
+
+function GroupLink({ kind, group }: { kind: GroupKind; group: Group }) {
   return (
     <Link
-      to={kind === "albums" ? "/albums/$id" : "/tags/$id"}
+      to={GROUP_LINKS[kind]}
       params={{ id: group.id }}
       className="underline-offset-4 hover:underline"
     >
@@ -337,7 +338,7 @@ function GroupLink({ kind, group }: { kind: ParentKind; group: Group }) {
 }
 
 /** How the parent card describes each kind's parent. */
-const PARENT_TEXT: Record<ParentKind, { title: string; description: string; none: string }> = {
+const PARENT_TEXT: Record<GroupKind, { title: string; description: string; none: string }> = {
   albums: {
     title: "Parent album",
     description: "An album can be inside one other album.",
@@ -349,15 +350,21 @@ const PARENT_TEXT: Record<ParentKind, { title: string; description: string; none
       "A tag can be under one more general tag, such as shotengai under covered-street, so filtering by the parent shows its photos too.",
     none: "None: a top-level tag",
   },
+  genres: {
+    title: "Parent genre",
+    description:
+      "A genre can be a subgenre of one broader genre, such as Traditional architecture under Architecture, so filtering by the parent shows its photos too. To arrange every genre at once, use Reorganize Genres.",
+    none: "None: a top-level genre",
+  },
 };
 
-/** Picks the album's or tag's one parent, leaving out itself and the ones under it, and saves it. */
+/** Picks the album's, tag's or genre's one parent, leaving out itself and the ones under it, and saves it. */
 function ParentCard({
   kind,
   group,
   organize,
 }: {
-  kind: ParentKind;
+  kind: GroupKind;
   group: Group;
   organize: OrganizeResponse;
 }) {
@@ -406,7 +413,7 @@ function parentChanged(parent: string[], album: Group): boolean {
 }
 
 /** Saves an album's or tag's parent, reading them again and following CI's rebuild after a change. */
-function useParentSave(kind: ParentKind, hasPullRequest: boolean) {
+function useParentSave(kind: GroupKind, hasPullRequest: boolean) {
   const { refetch } = useQuery(organizeQuery);
   const rebuild = useAllPhotosRebuild(hasPullRequest, () => {});
   const save = useMutation({
