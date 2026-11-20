@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:24 10:40:07",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hashimoto River",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["river", "bridges", "trees", "reflections"],
-  "genres": [],
-  "places": [],
+  "genres": ["landscape"],
+  "places": [
+    {
+      "relation": "on",
+      "id": "hashimoto-river"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

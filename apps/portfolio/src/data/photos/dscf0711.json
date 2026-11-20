@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:24 12:07:50",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hanano'e Teahouse",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["toro", "garden", "stones", "path", "trees"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "nature"],
+  "places": [
+    {
+      "relation": "at",
+      "id": "hanano-e-teahouse"
+    },
+    {
+      "relation": "in",
+      "id": "hagi-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:24 18:06:10",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Okuhagi Observatory",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["twilight", "islands", "ocean", "clouds", "rooftops"],
-  "genres": [],
-  "places": [],
+  "genres": ["landscape", "cityscape"],
+  "places": [
+    {
+      "relation": "at",
+      "id": "okuhagi-observatory"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

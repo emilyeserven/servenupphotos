@@ -15,7 +15,7 @@
     "customGpsPosition": null,
     "createDate": "2016:12:16 09:27:41",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Prinsengracht",
     "customCity": "Amsterdam",
     "customState": null,
     "customCountry": "Netherlands",
@@ -51,7 +51,12 @@
     "albums": [],
     "tags": ["canal", "houses", "facade", "bicycles", "fences", "windows"],
     "genres": ["architecture", "street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "prinsengracht"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -580,7 +585,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["mushrooms", "fungi", "moss", "forest", "hiking-trail"],
+    "tags": ["mushrooms", "fungi", "moss", "forest", "hiking-trail", "roots"],
     "genres": ["nature", "macro"],
     "places": [
       {
@@ -798,7 +803,7 @@
       "peakChroma": 54.01,
       "samples": 9975
     },
-    "notes": "Shows tree roots; 'roots' isn't a tag, since only 1 photo has them.",
+    "notes": "Shows tree roots; 'roots' isn't a tag, since only 1 photo has them.\n\nShows tree roots, now tagged 'roots'.",
     "similarPhotos": [287, 8, 114, 91, 85, 92],
     "compareGroup": "Tiny Mushroom in Moss"
   },
@@ -3308,7 +3313,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["pyramids", "stairs", "wood", "stones", "walls"],
+    "tags": ["pyramids", "stairs", "wood", "stones", "walls", "scaffolding"],
     "genres": ["architecture", "abstract"],
     "places": [
       {
@@ -3526,7 +3531,7 @@
       "peakChroma": 23.61,
       "samples": 9828
     },
-    "notes": "Shows scaffolding; 'scaffolding' isn't a tag, since only 2 photos have it.",
+    "notes": "Shows scaffolding; 'scaffolding' isn't a tag, since only 2 photos have it.\n\nShows scaffolding, now tagged 'scaffolding'.",
     "similarPhotos": [289, 284, 291, 294, 271, 279]
   },
   {
@@ -4398,7 +4403,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["necropolis", "pyramids", "tourists", "monuments", "stones", "clouds"],
+    "tags": ["necropolis", "pyramids", "tourists", "monuments", "stones", "clouds", "crowd"],
     "genres": ["architecture", "street"],
     "places": [
       {
@@ -12314,7 +12319,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 11:12:47",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Aibagawa Waterway",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -12350,7 +12355,12 @@
     "albums": [],
     "tags": ["inscriptions", "bridges", "stones", "texture"],
     "genres": ["abstract", "architecture"],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "aibagawa-waterway"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "spotlightPlacement": null,
@@ -18160,7 +18170,15 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["bay-windows", "apartments", "power-lines", "storefronts", "pedestrians", "cars"],
+    "tags": [
+      "bay-windows",
+      "apartments",
+      "power-lines",
+      "storefronts",
+      "pedestrians",
+      "cars",
+      "traffic-lights"
+    ],
     "genres": ["street", "architecture"],
     "places": [
       {
@@ -18382,7 +18400,7 @@
       "peakChroma": 26.19,
       "samples": 10050
     },
-    "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.\n\nQuality Check (pixelation): The front plate of the white Toyota at the bottom left of the intersection is visible.",
+    "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.\n\nQuality Check (pixelation): The front plate of the white Toyota at the bottom left of the intersection is visible.\n\nShows traffic lights, now tagged 'traffic-lights'.",
     "similarPhotos": [436, 429, 413, 435, 250, 373],
     "noGps": false,
     "altText": null
@@ -18677,7 +18695,7 @@
     "customGpsPosition": null,
     "createDate": "2025:01:25 14:06:43",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Qasr el-Sagha",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -18713,7 +18731,12 @@
     "albums": [],
     "tags": ["desert", "rock-formations", "sand", "cars", "shadows"],
     "genres": ["landscape"],
-    "places": [],
+    "places": [
+      {
+        "relation": "near",
+        "id": "qasr-el-sagha"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -20060,8 +20083,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:25 12:49:44",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Jonggak Avenue of Youth",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -20096,7 +20119,12 @@
     "albums": [],
     "tags": ["hangul", "signage", "storefronts", "pedestrians", "sidewalk", "office-buildings"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "jonggak-avenue-of-youth"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -20605,8 +20633,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:25 12:50:07",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Jonggak Avenue of Youth",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -20641,7 +20669,12 @@
     "albums": [],
     "tags": ["hangul", "signage", "storefronts", "sidewalk", "skyscrapers", "posters"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "jonggak-avenue-of-youth"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -21452,7 +21485,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["silhouettes", "pedestrians", "signage", "skylights", "covered-street"],
+    "tags": ["silhouettes", "pedestrians", "signage", "skylights", "covered-street", "shotengai"],
     "genres": ["street", "architecture"],
     "places": [
       {
@@ -21670,7 +21703,7 @@
       "peakChroma": 17.77,
       "samples": 10115
     },
-    "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one.",
+    "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one.\n\nShows a shotengai, now tagged 'shotengai'.",
     "similarPhotos": [306, 303, 219, 377, 307, 304]
   },
   {
@@ -21691,8 +21724,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:25 13:02:02",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Jonggak Avenue of Youth",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -21727,7 +21760,12 @@
     "albums": [],
     "tags": ["hangul", "signage", "storefronts", "cars", "road", "pedestrians"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "jonggak-avenue-of-youth"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -21967,8 +22005,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:25 13:04:00",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Jonggak Avenue of Youth",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -22003,7 +22041,12 @@
     "albums": [],
     "tags": ["hangul", "signage", "storefronts", "pedestrians", "crosswalk", "sidewalk"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "jonggak-avenue-of-youth"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -22271,7 +22314,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["signage", "chochin", "lanterns", "calligraphy", "covered-street"],
+    "tags": ["signage", "chochin", "lanterns", "calligraphy", "covered-street", "shotengai"],
     "genres": ["street", "abstract"],
     "places": [
       {
@@ -22489,7 +22532,7 @@
       "peakChroma": 37.4,
       "samples": 9694
     },
-    "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one.",
+    "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one.\n\nShows a shotengai, now tagged 'shotengai'.",
     "similarPhotos": [302, 304, 450, 306, 305, 307]
   },
   {
@@ -22510,8 +22553,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:25 13:29:04",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Nagwon-dong",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -22546,7 +22589,12 @@
     "albums": [],
     "tags": ["hangul", "signage", "power-lines", "pedestrians", "crowd", "umbrellas"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "nagwon-dong"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -22833,8 +22881,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:25 13:33:25",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Ikseon-dong",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -22869,7 +22917,12 @@
     "albums": [],
     "tags": ["hangul", "alley", "signage", "lanterns", "string-lights", "pedestrians"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "ikseon-dong"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -23406,8 +23459,8 @@
     "customGpsPosition": null,
     "createDate": "2026:05:25 13:36:57",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Ikseon-dong",
+    "customCity": "Seoul",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -23442,7 +23495,12 @@
     "albums": [],
     "tags": ["hangul", "alley", "signage", "pedestrians", "storefronts"],
     "genres": ["street"],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "ikseon-dong"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -25642,7 +25700,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:24 18:41:45",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Okuhagi Observatory",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -25677,8 +25735,13 @@
     "customLens": null,
     "albums": [],
     "tags": ["night", "twilight", "city-lights", "islands", "ocean"],
-    "genres": [],
-    "places": [],
+    "genres": ["cityscape", "landscape"],
+    "places": [
+      {
+        "relation": "at",
+        "id": "okuhagi-observatory"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -25949,7 +26012,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["night", "twilight", "city-lights", "city", "mountains"],
-    "genres": [],
+    "genres": ["cityscape"],
     "places": [],
     "noGps": false,
     "spotlightZones": [],
@@ -27072,7 +27135,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:25 12:59:49",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Higashi-Hagi Station",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -27107,8 +27170,13 @@
     "customLens": null,
     "albums": [],
     "tags": ["framing", "windows", "train-station", "platform", "railway"],
-    "genres": [],
-    "places": [],
+    "genres": ["architecture"],
+    "places": [
+      {
+        "relation": "at",
+        "id": "higashi-hagi-station"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -27331,7 +27399,7 @@
     "comment": null,
     "id": 571,
     "altText": null,
-    "notes": null,
+    "notes": "Shows closed shop shutters; 'shutters' isn't a tag, since only 2 photos have them.",
     "file": "DSCF1812.jpg",
     "addedDate": "2026-11-15T20:50:55Z",
     "camera": "Fujifilm X-T5",
@@ -27668,7 +27736,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["trains", "railway", "platform", "train-station"],
-    "genres": [],
+    "genres": ["transportation"],
     "places": [],
     "noGps": false,
     "spotlightZones": [],
@@ -28508,7 +28576,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["trains", "railway", "platform", "train-station", "countryside"],
-    "genres": [],
+    "genres": ["transportation"],
     "places": [],
     "noGps": false,
     "spotlightZones": [],
@@ -28732,7 +28800,7 @@
     "comment": null,
     "id": 578,
     "altText": null,
-    "notes": "Shows street food at a rainy night market; 'street-food' was removed as a tag, since only 2 photos have it.",
+    "notes": "Shows street food at a rainy night market; 'street-food' was removed as a tag, since only 2 photos have it.\n\nShows street food, now tagged 'street-food'.",
     "file": "DSCF1983.jpg",
     "addedDate": "2026-11-15T20:51:59Z",
     "camera": "Fujifilm X-T5",
@@ -28779,7 +28847,16 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["market", "rain", "umbrellas", "reflections", "pedestrians", "neon", "night"],
+    "tags": [
+      "market",
+      "rain",
+      "umbrellas",
+      "reflections",
+      "pedestrians",
+      "neon",
+      "night",
+      "street-food"
+    ],
     "genres": ["street"],
     "places": [
       {
@@ -29955,7 +30032,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["trains", "platform", "train-station", "signage"],
-    "genres": [],
+    "genres": ["transportation"],
     "places": [],
     "noGps": false,
     "spotlightZones": [],
@@ -30227,7 +30304,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["train-station", "trains", "mountains", "rain", "rooftops"],
-    "genres": [],
+    "genres": ["architecture", "transportation"],
     "places": [],
     "noGps": false,
     "spotlightZones": [],
@@ -30499,7 +30576,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["koshi", "kawara", "kanji", "signage", "power-lines", "rain"],
-    "genres": [],
+    "genres": ["street", "architecture"],
     "places": [],
     "noGps": false,
     "spotlightZones": [],
@@ -30771,7 +30848,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["toro", "fog", "mountains", "clouds"],
-    "genres": [],
+    "genres": ["landscape", "architecture"],
     "places": [],
     "noGps": false,
     "spotlightZones": [],
@@ -31043,7 +31120,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["torii", "shinto", "sando", "silhouettes", "pine-trees"],
-    "genres": [],
+    "genres": ["architecture"],
     "places": [],
     "noGps": false,
     "spotlightZones": [],
@@ -32373,7 +32450,7 @@
     "comment": null,
     "id": 812,
     "altText": null,
-    "notes": null,
+    "notes": "Shows ema prayer plaques, now tagged 'plaques'; 'ema' isn't a tag, since only 1 photo has them.",
     "file": "DSCF2882.jpg",
     "addedDate": "2026-11-16T00:52:47Z",
     "camera": "Fujifilm X-T5",
@@ -32420,7 +32497,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["ema", "omikuji", "shinto", "prayers", "trees", "tourists"],
+    "tags": ["omikuji", "shinto", "prayers", "trees", "tourists", "plaques"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -34330,7 +34407,16 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["giwa", "palace", "pond", "islands", "footbridges", "trees", "reflections"],
+    "tags": [
+      "giwa",
+      "palace",
+      "pond",
+      "islands",
+      "footbridges",
+      "trees",
+      "reflections",
+      "pavilion"
+    ],
     "genres": ["architecture", "landscape"],
     "places": [
       {
@@ -37744,7 +37830,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["market", "storefronts", "signage", "pedestrians", "covered-street"],
+    "tags": ["market", "storefronts", "signage", "pedestrians", "covered-street", "street-food"],
     "genres": ["street"],
     "places": [
       {
@@ -37971,7 +38057,7 @@
       "peakChroma": 21.97,
       "samples": 10050
     },
-    "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.\n\nShows street food; 'street-food' isn't a tag, since only 2 photos have it.",
+    "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.\n\nShows street food; 'street-food' isn't a tag, since only 2 photos have it.\n\nShows street food, now tagged 'street-food'.",
     "similarPhotos": [306, 302, 282, 250, 319, 304],
     "noGps": false,
     "altText": null
@@ -44302,7 +44388,7 @@
     "comment": null,
     "id": 901,
     "altText": null,
-    "notes": null,
+    "notes": "Shows bamboo lanterns; 'bamboo' isn't a tag, since only 2 photos have it.",
     "file": "DSCF5004.jpg",
     "addedDate": "2026-11-17T19:03:36Z",
     "camera": "Fujifilm X-T5",
@@ -44349,7 +44435,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["bamboo", "lanterns", "art-installations", "patterns", "night"],
+    "tags": ["lanterns", "art-installations", "patterns", "night"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -44574,7 +44660,7 @@
     "comment": null,
     "id": 902,
     "altText": null,
-    "notes": null,
+    "notes": "Shows bamboo lanterns; 'bamboo' isn't a tag, since only 2 photos have it.",
     "file": "DSCF5023.jpg",
     "addedDate": "2026-11-17T19:03:43Z",
     "camera": "Fujifilm X-T5",
@@ -44621,7 +44707,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["bamboo", "lanterns", "arches", "art-installations", "night"],
+    "tags": ["lanterns", "arches", "art-installations", "night"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -47110,7 +47196,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["stickers", "walls", "texture", "rust", "urban-decay"],
+    "tags": ["stickers", "walls", "texture", "rust", "urban-decay", "pipes"],
     "genres": ["street"],
     "places": [
       {
@@ -48782,7 +48868,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["brick", "doorways", "ironwork", "rust", "urban-decay"],
+    "tags": ["brick", "doorways", "ironwork", "rust", "urban-decay", "alley"],
     "genres": ["architecture", "street"],
     "places": [
       {
@@ -54129,7 +54215,7 @@
     "comment": null,
     "id": 722,
     "altText": null,
-    "notes": null,
+    "notes": "Shows the station's turnstiles and a kiosk; 'turnstiles' and 'kiosk' aren't tags, since only 1 photo has them.",
     "file": "DSCF6046.jpg",
     "addedDate": "2026-11-15T20:42:37Z",
     "camera": "Fujifilm X-T5",
@@ -54142,7 +54228,7 @@
     "customGpsPosition": null,
     "createDate": "2026:11:07 17:48:52",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Porter Square Station",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -54176,9 +54262,18 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["train-station", "subway", "turnstiles", "kiosk", "signage"],
+    "tags": ["train-station", "subway", "signage"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "inside",
+        "id": "porter-square-station"
+      },
+      {
+        "relation": "in",
+        "id": "porter-square"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -56048,7 +56143,7 @@
     "comment": null,
     "id": 773,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a painted shop shutter; 'shutters' isn't a tag, since only 2 photos have them.",
     "file": "DSCF6333.jpg",
     "addedDate": "2026-11-17T18:56:19Z",
     "camera": "Fujifilm X-T5",
@@ -56095,7 +56190,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["murals", "street-art", "storefronts", "shutters"],
+    "tags": ["murals", "street-art", "storefronts"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -56592,7 +56687,7 @@
     "comment": null,
     "id": 731,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a carousel; 'carousel' isn't a tag, since only 1 photo has one.",
     "file": "DSCF6440.jpg",
     "addedDate": "2026-11-15T20:41:27Z",
     "camera": "Fujifilm X-T5",
@@ -56639,7 +56734,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["carousel", "night", "rain", "reflections", "string-lights", "park"],
+    "tags": ["night", "rain", "reflections", "string-lights", "park"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -57428,7 +57523,7 @@
     "comment": null,
     "id": 602,
     "altText": null,
-    "notes": "Shows pipes; 'pipes' was removed as a tag, since only 1 photo has them.",
+    "notes": "Shows pipes; 'pipes' was removed as a tag, since only 1 photo has them.\n\nShows pipes, now tagged 'pipes'.",
     "file": "DSCF6498.jpg",
     "addedDate": "2026-11-15T20:49:28Z",
     "camera": "Fujifilm X-T5",
@@ -57475,7 +57570,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["rust", "wood", "ivy", "texture", "cables"],
+    "tags": ["rust", "wood", "ivy", "texture", "cables", "pipes"],
     "genres": ["abstract", "architecture"],
     "places": [
       {
@@ -58249,7 +58344,7 @@
     "comment": null,
     "id": 734,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a payphone; 'payphone' isn't a tag, since only 1 photo has one.",
     "file": "DSCF6554.jpg",
     "addedDate": "2026-11-15T20:40:37Z",
     "camera": "Fujifilm X-T5",
@@ -58296,7 +58391,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["payphone", "humor", "vintage", "walls"],
+    "tags": ["humor", "vintage", "walls"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -59351,7 +59446,7 @@
     "iso": 4000,
     "focalLength": 55.6,
     "gpsPosition": "37 deg 14' 32.61\" N, 126 deg 55' 32.98\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "37.242392, 126.925828",
     "createDate": "2026:09:20 08:30:46",
     "customCreateDate": null,
     "placeName": null,
@@ -59613,7 +59708,7 @@
     "comment": null,
     "id": 736,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a pub; 'pub' isn't a tag, since only 2 photos have one.",
     "file": "DSCF6741.jpg",
     "addedDate": "2026-11-15T20:39:57Z",
     "camera": "Fujifilm X-T5",
@@ -59660,7 +59755,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["pub", "night", "crowd", "pedestrians", "storefronts", "signage"],
+    "tags": ["night", "crowd", "pedestrians", "storefronts", "signage"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -59885,7 +59980,7 @@
     "comment": null,
     "id": 737,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a pub; 'pub' isn't a tag, since only 2 photos have one.",
     "file": "DSCF6790.jpg",
     "addedDate": "2026-11-15T20:39:35Z",
     "camera": "Fujifilm X-T5",
@@ -59932,7 +60027,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["pub", "night", "crowd", "signage", "sidewalk"],
+    "tags": ["night", "crowd", "signage", "sidewalk"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -60167,12 +60262,12 @@
     "iso": 6400,
     "focalLength": 18,
     "gpsPosition": "37 deg 14' 32.61\" N, 126 deg 55' 32.98\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "36.796799, 127.104184",
     "createDate": "2026:09:20 08:40:49",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
-    "customState": null,
+    "placeName": "Cheonan-Asan Station",
+    "customCity": "Asan",
+    "customState": "Chungcheongnam-do",
     "customCountry": null,
     "country": "South Korea",
     "state": "Gyeonggi-do",
@@ -60206,7 +60301,12 @@
     "albums": [],
     "tags": ["apartments", "skyscrapers", "road", "crosswalk", "city"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "near",
+        "id": "cheonan-asan-station"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -60711,12 +60811,12 @@
     "iso": 3200,
     "focalLength": 70.2,
     "gpsPosition": "37 deg 14' 32.61\" N, 126 deg 55' 32.98\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "36.613134, 127.336129",
     "createDate": "2026:09:20 08:48:04",
     "customCreateDate": null,
     "placeName": null,
-    "customCity": null,
-    "customState": null,
+    "customCity": "Cheongju",
+    "customState": "Chungcheongbuk-do",
     "customCountry": null,
     "country": "South Korea",
     "state": "Gyeonggi-do",
@@ -61894,7 +61994,7 @@
     "iso": 6400,
     "focalLength": 98.6,
     "gpsPosition": "36 deg 5' 15.44\" N, 128 deg 15' 55.60\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "36.087622, 128.265444",
     "createDate": "2026:09:20 09:45:05",
     "customCreateDate": null,
     "placeName": null,
@@ -62166,11 +62266,11 @@
     "iso": 1250,
     "focalLength": 49.4,
     "gpsPosition": "36 deg 5' 15.44\" N, 128 deg 15' 55.60\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "36.021874, 128.399284",
     "createDate": "2026:09:20 09:47:39",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Nakdong River",
+    "customCity": "Chilgok",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -62205,7 +62305,12 @@
     "albums": [],
     "tags": ["bridges", "river", "reflections", "apartments", "cables"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "overlooking",
+        "id": "nakdong-river"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -62982,11 +63087,11 @@
     "iso": 2000,
     "focalLength": 83.3,
     "gpsPosition": "36 deg 5' 15.44\" N, 128 deg 15' 55.60\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "35.968226, 128.485169",
     "createDate": "2026:09:20 10:01:00",
     "customCreateDate": null,
     "placeName": null,
-    "customCity": null,
+    "customCity": "Chilgok",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -63254,11 +63359,11 @@
     "iso": 1600,
     "focalLength": 135,
     "gpsPosition": "36 deg 5' 15.44\" N, 128 deg 15' 55.60\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "35.884111, 128.569821",
     "createDate": "2026:09:20 10:02:49",
     "customCreateDate": null,
     "placeName": null,
-    "customCity": null,
+    "customCity": "Daegu",
     "customState": null,
     "customCountry": null,
     "country": "South Korea",
@@ -64110,7 +64215,7 @@
     "comment": null,
     "id": 635,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a Beacon Hill stoop; 'stoop' isn't a tag, since only 2 photos have one.",
     "file": "DSCF7121.jpg",
     "addedDate": "2026-11-15T17:14:19Z",
     "camera": "Fujifilm X-T5",
@@ -64157,7 +64262,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["stoop", "pumpkins", "stairs", "doors", "autumn"],
+    "tags": ["pumpkins", "stairs", "doors", "autumn"],
     "genres": [],
     "places": [
       {
@@ -64388,7 +64493,7 @@
     "comment": null,
     "id": 636,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a Beacon Hill stoop; 'stoop' isn't a tag, since only 2 photos have one.",
     "file": "DSCF7125-2.jpg",
     "addedDate": "2026-11-15T17:17:18Z",
     "camera": "Fujifilm X-T5",
@@ -64435,7 +64540,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["stoop", "pumpkins", "plants", "stairs", "doors", "autumn"],
+    "tags": ["pumpkins", "plants", "stairs", "doors", "autumn"],
     "genres": [],
     "places": [
       {
@@ -64676,7 +64781,7 @@
     "iso": 2500,
     "focalLength": 18,
     "gpsPosition": "35 deg 48' 57.19\" N, 129 deg 6' 29.80\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "35.815886, 129.108278",
     "createDate": "2026:09:20 10:13:24",
     "customCreateDate": null,
     "placeName": null,
@@ -64948,7 +65053,7 @@
     "iso": 3200,
     "focalLength": 135,
     "gpsPosition": "35 deg 48' 57.19\" N, 129 deg 6' 29.80\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "35.808347, 129.121634",
     "createDate": "2026:09:20 10:13:43",
     "customCreateDate": null,
     "placeName": null,
@@ -65220,10 +65325,10 @@
     "iso": 4000,
     "focalLength": 135,
     "gpsPosition": "35 deg 48' 6.84\" N, 129 deg 8' 12.89\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "35.8001, 129.135872",
     "createDate": "2026:09:20 10:25:38",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Singyeongju Station",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -65259,7 +65364,12 @@
     "albums": [],
     "tags": ["hills", "road", "traffic", "cars", "trees"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "near",
+        "id": "singyeongju-station"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -69330,7 +69440,7 @@
     "comment": null,
     "id": 652,
     "altText": null,
-    "notes": null,
+    "notes": "Shows hands holding a camera; 'hands' isn't a tag, since only 1 photo has them.",
     "file": "DSCF7534.jpg",
     "addedDate": "2026-11-17T19:18:11Z",
     "camera": "Fujifilm X-T5",
@@ -69377,7 +69487,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["cameras", "hands", "faces"],
+    "tags": ["cameras", "faces"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -70406,7 +70516,7 @@
     "comment": null,
     "id": 653,
     "altText": null,
-    "notes": null,
+    "notes": "Shows books on library shelves; 'books' and 'bookshelves' aren't tags, since only 1 photo has them.",
     "file": "DSCF7570.jpg",
     "addedDate": "2026-11-15T17:10:45Z",
     "camera": "Fujifilm X-T5",
@@ -70453,7 +70563,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["library", "books", "bookshelves", "interior"],
+    "tags": ["library", "interior"],
     "genres": [],
     "places": [
       {
@@ -71537,7 +71647,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["toro", "buddhism", "temple", "flags", "statues", "moss", "path"],
+    "tags": ["toro", "buddhism", "temple", "flags", "statues", "moss", "path", "nobori"],
     "genres": [],
     "places": [
       {
@@ -71755,7 +71865,7 @@
       "peakChroma": 27.07,
       "samples": 9975
     },
-    "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them.",
+    "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them.\n\nShows nobori banners, now tagged 'nobori'.",
     "similarPhotos": [315, 309, 310, 313, 312, 384],
     "noGps": false,
     "altText": null
@@ -72354,7 +72464,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["crosswalk", "pedestrian-signals", "signage", "humor"],
+    "tags": ["crosswalk", "traffic-lights", "signage", "humor"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -73127,7 +73237,7 @@
     "comment": null,
     "id": 669,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a squirrel; 'squirrels' isn't a tag, since only 1 photo has one.",
     "file": "DSCF7822.jpg",
     "addedDate": "2026-11-15T20:43:25Z",
     "camera": "Fujifilm X-T5",
@@ -73174,7 +73284,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["squirrels", "grass", "fallen-leaves", "humor"],
+    "tags": ["grass", "fallen-leaves", "humor"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -75026,7 +75136,7 @@
     "comment": null,
     "id": 836,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a tsuri-doro hanging lantern; 'tsuri-doro' isn't a tag, since only 1 photo has one.",
     "file": "DSCF8334.jpg",
     "addedDate": "2026-11-17T19:12:43Z",
     "camera": "Fujifilm X-T5",
@@ -75073,7 +75183,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["tsuri-doro", "shinto", "shrine", "lanterns", "beams"],
+    "tags": ["shinto", "shrine", "lanterns", "beams"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -75570,7 +75680,7 @@
     "comment": null,
     "id": 839,
     "altText": null,
-    "notes": null,
+    "notes": "Shows kitsune fox statues; 'kitsune' isn't a tag, since only 1 photo has them.",
     "file": "DSCF8397.jpg",
     "addedDate": "2026-11-17T19:14:38Z",
     "camera": "Fujifilm X-T5",
@@ -75617,7 +75727,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["kitsune", "torii", "shinto", "statues", "repetition"],
+    "tags": ["torii", "shinto", "statues", "repetition"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -76386,7 +76496,7 @@
     "comment": null,
     "id": 843,
     "altText": null,
-    "notes": null,
+    "notes": "Shows kazaridaru sake barrels; 'kazaridaru' and 'barrels' aren't tags, since only 1 photo has them.",
     "file": "DSCF8515.jpg",
     "addedDate": "2026-11-17T19:15:21Z",
     "camera": "Fujifilm X-T5",
@@ -76433,7 +76543,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["kazaridaru", "shinto", "shrine", "barrels", "kanji", "repetition"],
+    "tags": ["shinto", "shrine", "kanji", "repetition"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -79165,7 +79275,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["washitsu", "tatami", "shoji", "interior", "koshi"],
+    "tags": ["washitsu", "tatami", "shoji", "interior", "koshi", "machiya"],
     "genres": [],
     "places": [
       {
@@ -79387,7 +79497,7 @@
       "peakChroma": 0.01,
       "samples": 9975
     },
-    "notes": "Shows a byobu folding screen in a machiya townhouse; 'byobu' and 'machiya' aren't tags, since only 1–2 photos have them.",
+    "notes": "Shows a byobu folding screen in a machiya townhouse; 'byobu' and 'machiya' aren't tags, since only 1–2 photos have them.\n\nShows a machiya townhouse interior, now tagged 'machiya'.",
     "similarPhotos": [344, 343, 347, 346, 378, 381],
     "compareGroup": "Lattice Door in Dark Room"
   },
@@ -79712,7 +79822,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["koshi", "shoji", "interior", "windows", "trees"],
+    "tags": ["koshi", "shoji", "interior", "windows", "trees", "machiya"],
     "genres": [],
     "places": [
       {
@@ -79934,7 +80044,7 @@
       "peakChroma": 0.01,
       "samples": 10050
     },
-    "notes": "Shows a machiya townhouse; 'machiya' isn't a tag, since only 2 photos have it.",
+    "notes": "Shows a machiya townhouse; 'machiya' isn't a tag, since only 2 photos have it.\n\nShows a machiya townhouse, now tagged 'machiya'.",
     "similarPhotos": [345, 346, 344, 343, 70, 73],
     "compareGroup": "Lattice Door in Dark Room",
     "noGps": false,
@@ -82972,7 +83082,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["storefronts", "umbrellas", "autumn", "signage", "repetition"],
+    "tags": ["storefronts", "umbrellas", "autumn", "signage", "repetition", "pumpkins"],
     "genres": [],
     "places": [
       {
@@ -83193,7 +83303,7 @@
       "peakChroma": 48.12,
       "samples": 9727
     },
-    "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 257 (1.95:1), not the 16:9 crop for a landscape photo.",
+    "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 257 (1.95:1), not the 16:9 crop for a landscape photo.\n\nShows pumpkins, now tagged 'pumpkins'; 'produce' still isn't a tag.",
     "similarPhotos": [17, 250, 469, 437, 438, 282]
   },
   {
@@ -89000,7 +89110,7 @@
     "comment": null,
     "id": 696,
     "altText": null,
-    "notes": null,
+    "notes": "Shows construction cranes at Hudson Yards; 'construction' and 'cranes' aren't tags, since only 1–2 photos have them.",
     "file": "IMG_0250.jpg",
     "addedDate": "2026-11-15T05:23:43Z",
     "camera": "Canon EOS REBEL T3i",
@@ -89047,7 +89157,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["construction", "cranes", "skyscrapers", "glass", "clouds"],
+    "tags": ["skyscrapers", "glass", "clouds"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -89544,7 +89654,7 @@
     "comment": null,
     "id": 681,
     "altText": null,
-    "notes": null,
+    "notes": "Shows chickens; 'chickens' isn't a tag (the photo keeps 'farm-animals'), since only 1 photo has them.",
     "file": "IMG_1170.jpg",
     "addedDate": "2026-11-15T21:27:40Z",
     "camera": "Canon EOS Rebel T6i",
@@ -89591,7 +89701,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["chickens", "farm-animals", "farm", "fences"],
+    "tags": ["farm-animals", "farm", "fences"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -90089,7 +90199,7 @@
     "comment": null,
     "id": 684,
     "altText": null,
-    "notes": null,
+    "notes": "Shows gravel; 'gravel' isn't a tag, since only 1 photo has it.",
     "file": "IMG_1502.jpg",
     "addedDate": "2026-11-15T21:27:47Z",
     "camera": "Canon EOS REBEL T3i",
@@ -90136,7 +90246,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["flowers", "gravel", "stones"],
+    "tags": ["flowers", "stones"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -90361,7 +90471,7 @@
     "comment": null,
     "id": 705,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a couple; 'couples' isn't a tag (the photo keeps 'romance'), since only 1 photo has one.",
     "file": "IMG_2289.jpg",
     "addedDate": "2026-11-15T05:14:50Z",
     "camera": "Canon EOS Rebel T6i",
@@ -90408,7 +90518,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["romance", "couples", "park", "rock-formations", "trees"],
+    "tags": ["romance", "park", "rock-formations", "trees"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -90633,7 +90743,7 @@
     "comment": null,
     "id": 708,
     "altText": null,
-    "notes": null,
+    "notes": "Shows a taxi and construction; 'taxis' and 'construction' aren't tags, since only 1–2 photos have them.",
     "file": "IMG_2842.jpg",
     "addedDate": "2026-11-15T05:10:54Z",
     "camera": "Canon EOS Rebel T6i",
@@ -90680,7 +90790,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["steam", "traffic", "taxis", "construction", "skyscrapers"],
+    "tags": ["steam", "traffic", "skyscrapers"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -93085,7 +93195,7 @@
     "comment": null,
     "id": 687,
     "altText": null,
-    "notes": "Quality Check (aspect ratio): the Small version is 500 × 285 (1.75:1), not the 16:9 crop for a landscape photo.",
+    "notes": "Quality Check (aspect ratio): the Small version is 500 × 285 (1.75:1), not the 16:9 crop for a landscape photo.\n\nShows litter and cigarette butts; 'litter' and 'cigarette-butts' aren't tags, since only 1 photo has them.",
     "file": "IMG_4744.jpg",
     "addedDate": "2026-11-15T05:18:00Z",
     "camera": "Canon EOS Rebel T6i",
@@ -93132,7 +93242,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["litter", "cigarette-butts", "roots", "stones"],
+    "tags": ["roots", "stones"],
     "genres": [],
     "places": [],
     "noGps": false,
@@ -99425,7 +99535,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["shells", "stones", "beach", "sand"],
+    "tags": ["shells", "stones", "beach", "sand", "insects"],
     "genres": [],
     "places": [
       {
@@ -99646,7 +99756,7 @@
       "peakChroma": 9.15,
       "samples": 10112
     },
-    "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 306 (1.63:1), not the 16:9 crop for a landscape photo.",
+    "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 306 (1.63:1), not the 16:9 crop for a landscape photo.\n\nShows an insect, now tagged 'insects'.",
     "similarPhotos": [140, 142, 147, 144, 141, 145]
   },
   {
@@ -103508,7 +103618,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["temple", "ruins", "stairs"],
+    "tags": ["temple", "ruins", "stairs", "scaffolding"],
     "genres": [],
     "places": [
       {
@@ -103726,7 +103836,7 @@
       "peakChroma": 28.58,
       "samples": 9620
     },
-    "notes": "Shows workers restoring the temple on scaffolding; 'restoration', 'workers' and 'scaffolding' aren't tags, since only 1–2 photos have them.",
+    "notes": "Shows workers restoring the temple on scaffolding; 'restoration', 'workers' and 'scaffolding' aren't tags, since only 1–2 photos have them.\n\nShows scaffolding, now tagged 'scaffolding'; 'restoration' and 'workers' still aren't tags.",
     "similarPhotos": [359, 292, 339, 290, 369, 289]
   },
   {
@@ -105987,7 +106097,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["padlocks", "fences", "city"],
+    "tags": ["padlocks", "fences", "city", "romance"],
     "genres": [],
     "places": [
       {
@@ -106208,7 +106318,7 @@
       "peakChroma": 17.23,
       "samples": 9956
     },
-    "notes": "Shows love locks; 'love-locks' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 289 (1.73:1), not the 16:9 crop for a landscape photo.",
+    "notes": "Shows love locks; 'love-locks' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 289 (1.73:1), not the 16:9 crop for a landscape photo.\n\nShows love locks, now also tagged 'romance'.",
     "similarPhotos": [13, 58, 24, 267, 27, 44]
   },
   {
@@ -107088,7 +107198,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["pine-trees", "castle", "moat", "bridges", "reflections"],
+    "tags": ["pine-trees", "castle", "moat", "bridges", "reflections", "tenshu"],
     "genres": [],
     "places": [
       {
@@ -107306,7 +107416,7 @@
       "peakChroma": 19.9,
       "samples": 10050
     },
-    "notes": "Shows the castle keep (tenshu); 'tenshu' isn't a tag, since only 2 photos have one.",
+    "notes": "Shows the castle keep (tenshu); 'tenshu' isn't a tag, since only 2 photos have one.\n\nShows the castle keep, now tagged 'tenshu'.",
     "similarPhotos": [394, 337, 223, 393, 253, 10]
   },
   {
@@ -109282,7 +109392,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["walls", "palm-trees", "garden", "countryside"],
+    "tags": ["walls", "palm-trees", "garden", "countryside", "farm"],
     "genres": [],
     "places": [
       {
@@ -109500,7 +109610,7 @@
       "peakChroma": 34.52,
       "samples": 9975
     },
-    "notes": "Shows farmland and pottery; 'farmland' and 'pottery' aren't tags, since only 1–2 photos have them.",
+    "notes": "Shows farmland and pottery; 'farmland' and 'pottery' aren't tags, since only 1–2 photos have them.\n\nShows farmland, now tagged 'farm'; 'pottery' still isn't a tag.",
     "similarPhotos": [364, 363, 296, 370, 290, 361]
   },
   {
@@ -109832,7 +109942,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": ["homepage-spotlight"],
-    "tags": ["castle", "lanterns", "night", "festivals"],
+    "tags": ["castle", "lanterns", "night", "festivals", "tenshu", "andon"],
     "genres": [],
     "places": [
       {
@@ -110050,7 +110160,7 @@
       "peakChroma": 2.28,
       "samples": 10115
     },
-    "notes": "Shows the castle keep (tenshu), andon lanterns and the Suitoro festival; 'tenshu', 'andon', 'matsuri' and 'suitorou' aren't tags, since each is on only 1–2 photos.",
+    "notes": "Shows the castle keep (tenshu), andon lanterns and the Suitoro festival; 'tenshu', 'andon', 'matsuri' and 'suitorou' aren't tags, since each is on only 1–2 photos.\n\nShows the castle keep and andon lanterns, now tagged 'tenshu' and 'andon'; 'matsuri' and 'suitorou' still aren't tags.",
     "spotlightZoneFocus": {
       "homepage": {
         "focus": {
@@ -110650,7 +110760,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": ["homepage-spotlight"],
-    "tags": ["dancheong", "pavilion", "birds", "patterns", "symmetry", "reflections"],
+    "tags": ["dancheong", "pavilion", "birds", "patterns", "symmetry", "reflections", "pond"],
     "genres": [],
     "placeName": "Mirror Pond",
     "customCity": "Seoul",
@@ -114526,7 +114636,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["wood"],
+    "tags": ["wood", "goats", "farm-animals", "farm"],
     "genres": [],
     "places": [
       {
@@ -114747,7 +114857,7 @@
       "peakChroma": 27,
       "samples": 9728
     },
-    "notes": "Shows a goat with hay in a barn; 'goats', 'farm-animals', 'hay' and 'barn' aren't tags, since only this photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 294 (1.70:1), not the 16:9 crop for a landscape photo.",
+    "notes": "Shows a goat with hay in a barn; 'goats', 'farm-animals', 'hay' and 'barn' aren't tags, since only this photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 294 (1.70:1), not the 16:9 crop for a landscape photo.\n\nShows a goat with hay in a barn, now tagged 'goats', 'farm-animals' and 'farm'; 'hay' and 'barn' aren't tags, since only 2 photos have them.",
     "similarPhotos": [477, 495, 499, 201, 474, 290],
     "compareGroup": "Goats at the Hay Feeder"
   },
@@ -114801,7 +114911,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["ruins", "desert", "tourists", "clouds"],
+    "tags": ["ruins", "desert", "tourists", "clouds", "dogs"],
     "genres": [],
     "places": [
       {
@@ -115019,7 +115129,7 @@
       "peakChroma": 36.25,
       "samples": 9417
     },
-    "notes": "Shows a dog; 'dogs' isn't a tag, since only 2 photos have one.",
+    "notes": "Shows a dog; 'dogs' isn't a tag, since only 2 photos have one.\n\nShows a dog, now tagged 'dogs'.",
     "similarPhotos": [366, 362, 365, 368, 359, 294]
   },
   {
@@ -125487,7 +125597,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["railway", "trains", "snow", "winter", "repetition"],
+    "tags": ["railway", "trains", "snow", "winter", "repetition", "numbers"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -125703,7 +125813,7 @@
       "peakChroma": 24.17,
       "samples": 9750
     },
-    "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo.",
+    "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo.\n\nShows numbers by the tracks, now tagged 'numbers'.",
     "similarPhotos": [106, 7, 22, 24, 116, 242]
   },
   {

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["walls", "palm-trees", "garden", "countryside"],
+  "tags": ["walls", "palm-trees", "garden", "countryside", "farm"],
   "genres": [],
   "places": [
     {
@@ -266,6 +266,6 @@
     "peakChroma": 34.52,
     "samples": 9975
   },
-  "notes": "Shows farmland and pottery; 'farmland' and 'pottery' aren't tags, since only 1–2 photos have them.",
+  "notes": "Shows farmland and pottery; 'farmland' and 'pottery' aren't tags, since only 1–2 photos have them.\n\nShows farmland, now tagged 'farm'; 'pottery' still isn't a tag.",
   "similarPhotos": [364, 363, 296, 370, 290, 361]
 }
