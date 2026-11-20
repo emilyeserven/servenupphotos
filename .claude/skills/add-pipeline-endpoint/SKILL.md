@@ -27,7 +27,7 @@ slow. How saves reach GitHub is in `docs/saving-to-github.md` and `docs/pending-
 
 ### Route shape
 
-Pick the path before writing the handler. `pnpm check:fixtures` fails on a route that breaks the rules it can see
+Pick the path before writing the handler. `pnpm check fixtures` fails on a route that breaks the rules it can see
 (marked _checked_; the rules are in `scripts/route-shapes.mjs`).
 
 - **The method says what happens.** `GET` reads, `PUT /<kind>/{id}` saves one thing whole, `DELETE` removes, and

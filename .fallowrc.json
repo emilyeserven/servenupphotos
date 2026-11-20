@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
-  "entry": ["scripts/lint/rules/*.mjs"],
+  "entry": ["scripts/checks/*.mjs", "scripts/lint/rules/*.mjs"],
   "ignorePatterns": ["**/routeTree.gen.ts"],
   "ignoreExports": [
     {

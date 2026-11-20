@@ -9,10 +9,10 @@
 // apps/be-pipeline/internal/httpapi; the fixtures from scripts/fixtures (merged by scripts/screenshot-fixtures.mjs).
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { routeShapeProblems } from "./route-shapes.mjs";
-import { defaultFixtures } from "./screenshot-fixtures.mjs";
+import { routeShapeProblems } from "../route-shapes.mjs";
+import { defaultFixtures } from "../screenshot-fixtures.mjs";
 
-const root = path.resolve(import.meta.dirname, "..");
+const root = path.resolve(import.meta.dirname, "../..");
 const HTTPAPI = path.join(root, "apps/be-pipeline/internal/httpapi");
 
 /**
@@ -72,7 +72,7 @@ if (missing.length > 0) {
   console.error("These backend routes have no fixture in scripts/fixtures/<area>.mjs:");
   for (const route of missing) console.error(`  ${route}`);
   console.error(
-    "Add one for each (or list it in WITHOUT_FIXTURE in scripts/check-fixtures.mjs if `pnpm shot` can never need it).",
+    "Add one for each (or list it in WITHOUT_FIXTURE in scripts/checks/fixtures.mjs if `pnpm shot` can never need it).",
   );
 }
 if (misshapen.length > 0) {

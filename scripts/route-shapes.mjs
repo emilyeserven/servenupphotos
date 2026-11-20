@@ -1,4 +1,4 @@
-// The shape every backend route follows, checked by `pnpm check:fixtures` (scripts/check-fixtures.mjs).
+// The shape every backend route follows, checked by `pnpm check fixtures` (scripts/checks/fixtures.mjs).
 // The rules, with examples, are in the add-pipeline-endpoint skill (.claude/skills/add-pipeline-endpoint/SKILL.md).
 
 /** A literal path segment: lowercase words joined by hyphens, such as `contact-sheets`. */

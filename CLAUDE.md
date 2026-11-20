@@ -2,7 +2,7 @@
 
 A photography portfolio (`apps/portfolio`, static, GitHub Pages) and the local "pipeline" tool that feeds it photo data: `apps/client-pipeline` (React UI) → `apps/bff-pipeline` (Fastify) → `apps/be-pipeline` (Go). The pipeline reads photos, uploads them to Cloudflare R2, and keeps one JSON file per photo as a change waiting for Commit (`docs/pending-changes.md`). The pipeline's **Commit** button is its only write of photo data to GitHub: one commit to an **Add photo data** pull request with every waiting file and `ALLPHOTOS.json` rebuilt from them, which the portfolio reads.
 
-The README covers setup and commands. Each feature's behavior is in `docs/<feature>.md` (listed in the README under **Features**). Read the doc for the feature you're changing instead of the whole README.
+The README covers setup and commands. Each feature's behavior is in `docs/<feature>.md`, which starts with a sentence saying what it covers. Read the doc for the feature you're changing instead of the whole README.
 
 ## Map
 
@@ -30,8 +30,8 @@ Adding or changing a pipeline `/api` route touches the Go backend, the client's 
 Everything here is fast; run the narrowest check while working and `pnpm check` before pushing.
 
 ```sh
-pnpm check                         # oxlint, oxfmt --check, typecheck, fallow, check:fixtures, check:docs, check:counts (~6s); `pnpm fmt` fixes formatting
-pnpm check:fixtures                # every backend route has a fixture in scripts/fixtures/ and follows the route shape rules
+pnpm check                         # oxlint, oxfmt --check, typecheck, fallow and every file in scripts/checks/ (~6s); `pnpm fmt` fixes formatting
+pnpm check fixtures                # one check by name: every backend route has a fixture in scripts/fixtures/ and follows the route shape rules
 pnpm build                         # all three TS apps (~5s); CI runs it too
 pnpm test                          # node --test: the portfolio's map-preview and both apps' src/lib (~2s); CI runs it too
 cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes ~8s
