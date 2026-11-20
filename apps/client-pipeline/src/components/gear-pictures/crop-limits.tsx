@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { storedValue } from "@portfolio/lib/stored-value";
+import { moveStoredKey, storedValue } from "@portfolio/lib/stored-value";
 import type { CropLimits } from "@/lib/gear-crop";
 import { Input } from "@/components/ui/input";
 
@@ -36,7 +36,8 @@ function readLimits(stored: unknown): CropLimits {
 }
 
 /** The crop frame's limit lines, remembered in this browser for every camera and lens. */
-export const cropLimits = storedValue("servenup-gear-crop-limits", readLimits);
+moveStoredKey("servenup-gear-crop-limits", "pipeline-gear-crop-limits");
+export const cropLimits = storedValue("pipeline-gear-crop-limits", readLimits);
 
 /** Where a side's limit line sits in the frame, and how its outside is shaded. */
 const LINE_PLACES: Record<Side, (inset: string) => CSSProperties> = {

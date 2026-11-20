@@ -1,5 +1,6 @@
-import { format } from "date-fns";
 import { canonicalJson } from "@/lib/combined";
+import { isObject, stringOf } from "@portfolio/lib/values";
+import { isoDate } from "@portfolio/lib/dates";
 
 /** The photo JSON field that lists the photo's posts on social media. */
 const SOCIAL_POSTS = "socialPosts";
@@ -39,8 +40,8 @@ function isStatus(value: unknown): value is SocialPostStatus {
 
 /** Whether a post saved before posts kept their status is on the site: it has a link, or its day has come. */
 function looksUp(post: Record<string, unknown>, today: string): boolean {
-  const date = text(post.date);
-  return text(post.url).trim() !== "" || (date !== "" && date <= today);
+  const date = stringOf(post.date);
+  return stringOf(post.url).trim() !== "" || (date !== "" && date <= today);
 }
 
 /**
@@ -93,14 +94,6 @@ export function newSocialPost(): SocialPostDraft {
   };
 }
 
-function text(value: unknown): string {
-  return typeof value === "string" ? value : "";
-}
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 /** The hashtags typed in a draft: split on spaces and commas, without their "#". */
 export function parseHashtags(typed: string): string[] {
   return typed
@@ -110,18 +103,18 @@ export function parseHashtags(typed: string): string[] {
 }
 
 function savedHashtags(value: unknown): string[] {
-  return Array.isArray(value) ? value.map(text).filter(Boolean) : [];
+  return Array.isArray(value) ? value.map(stringOf).filter(Boolean) : [];
 }
 
 /** A saved post as a draft to edit. */
 function toDraft(post: Record<string, unknown>, today: string): SocialPostDraft {
   return {
     id: draftId(),
-    platform: text(post.platform) || "other",
+    platform: stringOf(post.platform) || "other",
     status: savedStatus(post, today),
-    date: text(post.date),
-    url: text(post.url),
-    caption: text(post.caption),
+    date: stringOf(post.date),
+    url: stringOf(post.url),
+    caption: stringOf(post.caption),
     hashtags: savedHashtags(post.hashtags)
       .map((tag) => `#${tag}`)
       .join(" "),
@@ -134,7 +127,7 @@ function toDraft(post: Record<string, unknown>, today: string): SocialPostDraft 
  */
 export function savedSocialPosts(
   data: Record<string, unknown>,
-  today = format(new Date(), "yyyy-MM-dd"),
+  today = isoDate(new Date()),
 ): SocialPostDraft[] {
   const posts = data[SOCIAL_POSTS];
   return Array.isArray(posts) ? posts.filter(isObject).map((post) => toDraft(post, today)) : [];

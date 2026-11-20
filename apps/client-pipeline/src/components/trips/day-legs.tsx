@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import type { TripLeg } from "@/api/trips";
-import { dayTitle } from "@/components/trip-lines/day-title";
 import { LegRow } from "@/components/trips/leg-row";
 import { Button } from "@/components/ui/button";
 import type { TripDay } from "@/lib/trip-days";
+import { weekdayDate } from "@portfolio/lib/dates";
 
 /** How a leg's mode reads in a sentence, such as "Flight". */
 const MODE_WORDS: Record<TripLeg["mode"], string> = {
@@ -106,7 +106,7 @@ function DayName({ day, trip }: { day: string; trip: TripDay | undefined }) {
   if (!trip) {
     return (
       <span className="text-sm font-medium">
-        {dayTitle(day)}{" "}
+        {weekdayDate(day)}{" "}
         <span className="text-muted-foreground font-normal">· no route to mark</span>
       </span>
     );
@@ -117,7 +117,7 @@ function DayName({ day, trip }: { day: string; trip: TripDay | undefined }) {
       params={{ day, part: "route" }}
       className="text-sm font-medium underline-offset-4 hover:underline"
     >
-      {dayTitle(day)}{" "}
+      {weekdayDate(day)}{" "}
       <span className="text-muted-foreground font-normal">· {trip.photos.length} photos</span>
     </Link>
   );
@@ -130,7 +130,8 @@ function Arrivals({ legs, indexes }: { legs: TripLeg[]; indexes: number[] }) {
     <ul className="text-muted-foreground flex flex-col text-xs">
       {indexes.map((i) => (
         <li key={i}>
-          Arrives by {MODE_WORDS[legs[i]!.mode]} (leg {i + 1}, from {dayTitle(legs[i]!.from.day)})
+          Arrives by {MODE_WORDS[legs[i]!.mode]} (leg {i + 1}, from {weekdayDate(legs[i]!.from.day)}
+          )
         </li>
       ))}
     </ul>

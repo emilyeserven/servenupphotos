@@ -5,6 +5,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { type InferredPlace, inferredPlaces } from "@/lib/inferred-places";
 import { shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
+import { SectionTitle } from "@/components/section-title";
 
 /**
  * The place names written on two or more photos that aren't saved places yet, each with a button to
@@ -16,9 +17,7 @@ export function InferredPlaceList({ places }: { places: Place[] }) {
   return (
     <section className="flex flex-col gap-2 border-t pt-4" aria-labelledby="inferred-places">
       <div>
-        <h3 id="inferred-places" className="text-sm font-medium">
-          Inferred places
-        </h3>
+        <SectionTitle id="inferred-places">Inferred places</SectionTitle>
         <p className="text-muted-foreground text-sm">
           Place names on more than one photo that aren't places yet. They can be chosen on the Photo
           page too, which saves them.

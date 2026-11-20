@@ -1,5 +1,6 @@
 import committedLocalizations from "@portfolio/data/localizations/LOCALIZATIONS.json";
 import committedPlaces from "@portfolio/data/places/PLACES.json";
+import { textOf } from "@portfolio/lib/values";
 
 /**
  * How place, city and country names are written: as named in English, romanized, as they're said
@@ -109,10 +110,6 @@ function placeKey(placeId: string): string {
   return `place-${placeId}`.slice(0, 100).replace(/-+$/, "");
 }
 
-function text(value: string | undefined): string {
-  return value?.trim() ?? "";
-}
-
 /** The localization field each way after English reads, least to most native. */
 const FIELDS: [ScriptDisplay, "romanization" | "pronunciation" | "localScript"][] = [
   ["romanized", "romanization"],
@@ -128,7 +125,7 @@ function localized(name: string, found: Localization | undefined): Localized {
   const written = unlocalized(name);
   let last = name;
   for (const [script, field] of FIELDS) {
-    last = text(found?.[field]) || last;
+    last = textOf(found?.[field]) || last;
     written[script] = last;
   }
   return written;
@@ -176,7 +173,7 @@ export interface StopNaming {
 export function localizeStop(stop: StopNaming): Localized {
   const placed = stop.place ? byKey.get(placeKey(stop.place)) : undefined;
   const merged: Partial<Localization> = {};
-  for (const [, field] of FIELDS) merged[field] = text(stop[field]) || text(placed?.[field]);
+  for (const [, field] of FIELDS) merged[field] = textOf(stop[field]) || textOf(placed?.[field]);
   return localized(stop.name, merged as Localization);
 }
 

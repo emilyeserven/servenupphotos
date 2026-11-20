@@ -8,6 +8,7 @@ import {
   photoFinder,
 } from "@/lib/compare-autogroup";
 import { type ComparePhoto, compareGroupOf, comparePhotoName } from "@/lib/compare-groups";
+import { textOf } from "@portfolio/lib/values";
 
 /** A group the LLM suggested making, or photos it suggested adding to a group there is. */
 export interface AutogroupSuggestion {
@@ -57,11 +58,6 @@ function entries(parsed: Record<string, unknown>, key: string): Record<string, u
   return Array.isArray(list)
     ? list.filter((item): item is Record<string, unknown> => typeof item === "object" && !!item)
     : [];
-}
-
-/** The value as trimmed text, or "" when it isn't text. */
-function text(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
 }
 
 /** The value's text items, or none when it isn't a list. */
@@ -114,7 +110,7 @@ function readGroups(
 ): AutogroupSuggestion[] {
   const groups: AutogroupSuggestion[] = [];
   for (const raw of entries(parsed, "groups")) {
-    const typed = text(raw.name);
+    const typed = textOf(raw.name);
     if (!typed) continue;
     // A group there is keeps its name as it's saved, whatever its case in the answer.
     const name = reading.findGroup(typed)?.name ?? typed;
@@ -146,7 +142,7 @@ function readMerges(parsed: Record<string, unknown>, reading: Reading): Autogrou
     const groups = knownGroups(texts(raw.groups), reading).filter((g) => !merged.has(g.name));
     if (groups.length < 2) continue;
     for (const group of groups) merged.add(group.name);
-    const name = text(raw.name);
+    const name = textOf(raw.name);
     merges.push({
       name: reading.findGroup(name)?.name ?? (name || (groups[0]?.name ?? "")),
       groups,
@@ -164,10 +160,10 @@ function readRemovals(
   const skip = new Set(merges.flatMap((merge) => merge.groups.map((group) => group.name)));
   const removals: AutogroupRemoval[] = [];
   for (const raw of entries(parsed, "remove")) {
-    const [group] = knownGroups([text(raw.group)].filter(Boolean), reading);
+    const [group] = knownGroups([textOf(raw.group)].filter(Boolean), reading);
     if (!group || skip.has(group.name)) continue;
     skip.add(group.name);
-    removals.push({ group, reason: text(raw.reason) });
+    removals.push({ group, reason: textOf(raw.reason) });
   }
   return removals;
 }

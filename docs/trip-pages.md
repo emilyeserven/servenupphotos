@@ -38,7 +38,7 @@ day's story is kept apart from its line, so the line can be redrawn, turned auto
 
 Each day's story is `triplines/story-<YYYY-MM-DD>.json`, in the trip lines folder next to the days' lines, so
 it's listed, combined into `TRIPLINES.json` and committed with them (`PUT` and
-`DELETE /api/tripstories/story-<day>` → `/tripstories/{id}`, `be-pipeline/internal/github/trip_stories.go`):
+`DELETE /api/tripstories/story-<day>` → `/tripstories/{id}`, `be-pipeline/internal/github/tripstories.go`):
 
 ```json
 {
@@ -84,7 +84,7 @@ and image URLs), into the day's `stops`.
 
 ## The baked pages: `TRIPPAGES.json`
 
-Every Commit also writes `triplines/TRIPPAGES.json` from the story and Trip files (`trip_pages.go`), newest first, and
+Every Commit also writes `triplines/TRIPPAGES.json` from the story and Trip files (`trippages.go`), newest first, and
 counts its pages (`tripPages`). Like `TRIPLINES.geo.json`, it's left out of `TRIPLINES.json`, and the **Combine photo
 data** workflow leaves it as it is.
 

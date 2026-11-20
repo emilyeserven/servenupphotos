@@ -1,6 +1,7 @@
 import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 import type { WheelPoint } from "@/lib/color-wheel";
 import { useViewAnimation } from "@/lib/use-view-animation";
+import { clamp } from "@/lib/values";
 
 /**
  * What part of the color wheel is in view: how far it's zoomed in (1 shows the whole wheel), and
@@ -19,11 +20,6 @@ export const ZOOM_STEP = 1.5;
 
 /** How far, in pixels, a pointer moves before a press counts as a drag rather than a click. */
 const DRAG_PX = 5;
-
-/** value kept from min to max. */
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
-}
 
 /** The view kept within the wheel: zoom from 1 to MAX_ZOOM, and no further out than its edge. */
 function clampView({ zoom, x, y }: WheelView): WheelView {

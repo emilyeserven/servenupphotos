@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { UploadIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import {
@@ -10,12 +9,11 @@ import {
   parseLikes,
   saveViewerMutation,
 } from "@/api/viewer-likes";
-import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
+import { EntryEditorButtons } from "@/components/entry-buttons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { canonicalJson } from "@/lib/combined";
 
 interface ViewerImporterProps {
   /** The saved person; undefined for a new one. */
@@ -56,18 +54,20 @@ export function ViewerImporter({ viewer, viewers, titles, onSaved }: ViewerImpor
         </label>
         <ListField text={text} onText={setText} />
         <ParsedNote text={text} parsed={parsed} titles={titles} />
-        <div className="flex flex-wrap items-center gap-2">
-          <SaveButton
-            next={next}
-            viewer={viewer}
-            viewers={viewers}
-            onSaved={(id) => {
-              setText("");
-              onSaved(id);
-            }}
-          />
-          <RemoveButton viewer={viewer} />
-        </div>
+        <EntryEditorButtons
+          next={next}
+          saved={viewer && { ...viewer, importedAt: undefined }}
+          save={saveViewerMutation}
+          remove={deleteViewerMutation}
+          whyNot={(person) => whyNot(person, viewer, viewers)}
+          saveLabel="Import likes"
+          changesLabel="Save and replace likes"
+          removeLabel="Remove person"
+          onSaved={(id) => {
+            setText("");
+            onSaved(id);
+          }}
+        />
       </CardContent>
     </Card>
   );
@@ -174,46 +174,4 @@ function newViewerProblem(next: ViewerLikes, viewers: ViewerLikes[]): string {
   return taken
     ? `“${taken.name}” is already here. Pick them on the left to replace their likes.`
     : "";
-}
-
-/** Whether saving would change nothing: the same name and the same photos. */
-function unchanged(next: ViewerLikes, viewer?: ViewerLikes): boolean {
-  if (!viewer) return false;
-  return canonicalJson(next) === canonicalJson({ ...viewer, importedAt: undefined });
-}
-
-interface SaveButtonProps {
-  next: ViewerLikes;
-  viewer?: ViewerLikes;
-  viewers: ViewerLikes[];
-  onSaved: (id: string) => void;
-}
-
-function SaveButton({ next, viewer, viewers, onSaved }: SaveButtonProps) {
-  const save = useMutation(saveViewerMutation);
-  const why = whyNot(next, viewer, viewers);
-  return (
-    <>
-      <Button
-        disabled={why !== "" || unchanged(next, viewer) || save.isPending}
-        onClick={() => save.mutate(next, { onSuccess: () => onSaved(next.id) })}
-      >
-        <Busy busy={save.isPending} />
-        {viewer ? "Save and replace likes" : "Import likes"}
-      </Button>
-      <SaveNote error={save.error} why={why} />
-    </>
-  );
-}
-
-/** Removes a saved person and their likes; nothing for a new one. */
-function RemoveButton({ viewer }: { viewer?: ViewerLikes }) {
-  const remove = useMutation(deleteViewerMutation);
-  if (!viewer) return null;
-  return (
-    <RemoveEntryButton
-      label="Remove person"
-      remove={{ ...remove, mutate: () => remove.mutate(viewer.id) }}
-    />
-  );
 }

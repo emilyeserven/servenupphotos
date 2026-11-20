@@ -7,12 +7,14 @@ import { PhotoImage } from "@/components/instagram-picker/photo-image";
 import type { PickerPhotos } from "@/components/instagram-picker/use-picker-photos";
 import { Input } from "@/components/ui/input";
 import { PickerSection, peekClass } from "@/components/picker-section";
-import { dayFormat, parseIsoDate } from "@/lib/calendar";
+import { dayFormat } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { PHOTO_DRAG_TYPE, type Unsaved, dateOf, photoName } from "@/lib/social-schedule";
 import { isFocused } from "@/lib/social-focus";
 import type { Neighbors } from "@/lib/social-neighbors";
 import type { Suggestion } from "@/lib/social-suggestions";
 import { cn } from "@/lib/utils";
+import { SectionTitle } from "@/components/section-title";
 
 /**
  * Whether the lists are in the calendar's photo drawer: 3 photos wide at every size, and each
@@ -261,7 +263,7 @@ function PickerChoices({ picker, current, unsaved, onPick }: PickerChoicesProps)
   }
   return (
     <section className="flex flex-col gap-2" aria-label="All photos">
-      {picker.titled && <h3 className="text-sm font-medium">All photos</h3>}
+      {picker.titled && <SectionTitle>All photos</SectionTitle>}
       <ul className={grid}>
         {picker.choices.map((photo) => (
           <li key={photo.path}>

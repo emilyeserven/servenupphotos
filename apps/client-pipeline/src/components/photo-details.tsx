@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useUntitledDrafts } from "@/lib/drafts";
+import { stringOf } from "@portfolio/lib/values";
 
 /** Spacing and list, link, code and quote styles for rendered Markdown, which Tailwind's reset strips. */
 export const MARKDOWN_CLASSES = [
@@ -88,7 +89,7 @@ export function fileStem(file: string): string {
 
 /** The details saved in a photo's JSON, to start editing from. */
 export function savedDetails(data: Record<string, unknown>): PhotoDetails {
-  const texts = Object.fromEntries(TEXT_FIELDS.map((field) => [field, text(data[field])]));
+  const texts = Object.fromEntries(TEXT_FIELDS.map((field) => [field, stringOf(data[field])]));
   return {
     ...(texts as unknown as PhotoText),
     places: savedPlaces(data.places),
@@ -98,7 +99,7 @@ export function savedDetails(data: Record<string, unknown>): PhotoDetails {
 
 /** The EXIF city, state, country, GPS position and date saved in a photo's JSON. */
 export function savedExifPlace(data: Record<string, unknown>): ExifPlace {
-  const field = (name: string) => text(data[name]) || null;
+  const field = (name: string) => stringOf(data[name]) || null;
   return {
     city: field("city"),
     state: field("state"),
@@ -106,10 +107,6 @@ export function savedExifPlace(data: Record<string, unknown>): ExifPlace {
     gpsPosition: field("gpsPosition"),
     createDate: field("createDate"),
   };
-}
-
-function text(value: unknown): string {
-  return typeof value === "string" ? value : "";
 }
 
 /**

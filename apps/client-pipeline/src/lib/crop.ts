@@ -1,3 +1,5 @@
+import { clamp } from "@portfolio/lib/values";
+
 /** A square on a photo, in pixels of the photo as it's shown (turned upright from its EXIF orientation). */
 export interface Crop {
   /** The square's top-left corner. */
@@ -31,10 +33,6 @@ export function centerCrop({ width, height }: Size): Crop {
 /** Whether a and b are the same square, to the pixel. */
 export function sameCrop(a: Crop, b: Crop): boolean {
   return [a.x - b.x, a.y - b.y, a.size - b.size].every((d) => Math.abs(d) < 0.5);
-}
-
-function clamp(value: number, low: number, high: number): number {
-  return Math.min(Math.max(value, low), high);
 }
 
 /** crop moved by dx, dy, kept inside the photo. */
