@@ -29,8 +29,10 @@ export interface AltTextSuggestion {
 /** What pasting the answer would do: the alt text each picked photo gets. */
 export interface AltTextPreview {
   photos: AltTextSuggestion[];
-  /** Photos the answer names that aren't any of the picked ones. */
+  /** Photos the answer names that aren't any photo, which are skipped. */
   unknown: string[];
+  /** Photos the answer names that weren't picked, found among every photo; the review shows them too. */
+  others: BulkTagPhoto[];
 }
 
 /** What the Alt Text page saves once reviewed: the alt text for each photo. */

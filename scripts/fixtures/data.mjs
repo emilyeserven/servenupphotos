@@ -21,6 +21,7 @@ import {
   genrePick,
   genreSuggestionsPreview,
   imageNamesPreview,
+  photosByName,
   pruneTagsPreview,
   r2ExifPhotos,
   scannedPhotos,
@@ -87,6 +88,7 @@ export function dataFixtures() {
       const { untagged, ...pick } = bulkTagPick(body?.count);
       return { ...pick, unplaced: untagged, noPlaceFound: body?.noPlaceFound?.length ?? 0 };
     },
+    "POST /api/data/photos-by-name": ({ body }) => photosByName(body?.names ?? []),
     "POST /api/data/bulk-places": () => ({ ...pendingSave(), newPlaces: 1, photos: 4 }),
     "POST /api/data/prune-tags/preview": () => pruneTagsPreview(),
     "POST /api/data/prune-tags": () => ({

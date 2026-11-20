@@ -48,6 +48,22 @@ ones, which isn't JSON. Every box that takes a pasted LLM answer reads it as it 
 reads it again with every curly double quote made straight. Curly single quotes (‘ ’) are left as they are, since
 the words inside the values use them. An answer that already reads keeps any curly double quotes inside its values.
 
+### Photos outside the batch
+
+An answer doesn't have to be about the photos the page picked. On Bulk Tagging, Bulk Places, album and genre
+suggestions, alt text, Autogroup and the pixelation check, a photo the answer names that wasn't picked (or isn't in
+the prompt) is looked up by its JSON file's name among every photo and reviewed after the picked ones, so an answer
+copied for an earlier batch still applies to the photos it names. A picked photo the answer doesn't name is left as it
+is, and a name that isn't any photo's is listed as skipped rather than failing the whole answer.
+
+The backend previews use `answeredPhotos` (`github/answered.go`), which add the photos they find to the preview's
+`photos` and return them in `others` for the review's titles and images (`withOthers` in `lib/answered-photos.ts`).
+Bulk Places reads its answer in the page, so it asks `POST /api/data/photos-by-name` for the photos it didn't pick;
+Autogroup and the pixelation check already have every photo in the page.
+
+> **Frontend analogy:** it's like a form that accepts a pasted JSON patch keyed by ID: instead of rejecting the patch
+> when it mentions rows that aren't on the current page, it fetches those rows and shows them in the diff too.
+
 The answers read in the page (Place, tag descriptions, localizations, Autogroup, the pixelation check, Bulk Places,
 Lightroom albums, an album layout, viewer likes) use `parsePastedJson` (`lib/pasted-json.ts`); the ones the backend
 reads (Bulk Tagging, tag pruning, the tag library, album and genre suggestions, alt text) use `parseLLMAnswer`
