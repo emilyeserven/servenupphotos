@@ -85,6 +85,11 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
 - **Filter pickers:** build on `SectionPicker` and follow [Picker conventions](docs/portfolio-filters.md#picker-conventions):
   extra info behind `InfoButton` in the `aside` panel on the right, Group by and Sort as small menus left of the (i),
   grouping off by default, and no icons in choice lists.
+- **Errors:** show every failure with `ErrorNote` (`components/error-note.tsx`): pass it the `Error` (or a sentence
+  written for the page) and it shows the message in red with `role="alert"`, plus GitHub's answer when a GitHub call
+  failed. `QueryResult`, `SaveNote` and `SaveState` already use it. Don't write `text-destructive` or `{x.error.message}`
+  into JSX; the `servenup/error-note` lint rule (`scripts/lint/servenup-plugin.mjs`) flags both. Red that isn't an error
+  (an icon, a removed count) takes an `oxlint-disable-next-line servenup/error-note` comment saying why.
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors
