@@ -15,7 +15,6 @@ import {
   type Header,
   type SortingState,
 } from "@tanstack/react-table";
-import { format } from "date-fns";
 import { ArrowDown, ArrowUp, ArrowUpDown, Columns3 } from "lucide-react";
 import { type ReactNode, useRef } from "react";
 import { PhotoLightbox } from "@/components/photo-lightbox";
@@ -43,6 +42,7 @@ import {
   type TableSearch,
 } from "@/lib/table-search";
 import { cn } from "@/lib/utils";
+import { shortDate } from "@portfolio/lib/dates";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
@@ -358,7 +358,7 @@ function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
 
 /** A day, such as "Oct 25, 2026". */
 function DateCell({ date }: { date: Date }) {
-  return <time dateTime={date.toISOString()}>{format(date, "MMM d, yyyy")}</time>;
+  return <time dateTime={date.toISOString()}>{shortDate(date)}</time>;
 }
 
 /** A dash for a value the photo doesn't have. */

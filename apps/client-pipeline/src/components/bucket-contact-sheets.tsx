@@ -15,8 +15,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { count } from "@/components/update-data-shared";
 import { type ContactSheetSet, contactSheetSets } from "@/lib/contact-sheets";
-
-const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+import { dateTimeText } from "@portfolio/lib/dates";
 
 /** A size in bytes as KB or MB. */
 function sizeText(bytes: number): string {
@@ -104,7 +103,7 @@ function SheetSetRow({ set, remove }: { set: ContactSheetSet<BucketImage>; remov
   return (
     <li className="flex flex-wrap items-center gap-3 py-2">
       <div className="flex min-w-48 flex-col text-sm">
-        <span>{dateFormat.format(new Date(set.modified))}</span>
+        <span>{dateTimeText(set.modified)}</span>
         <span className="text-muted-foreground text-xs">
           {count(set.sheets.length, "sheet")} · {sizeText(set.size)}
         </span>

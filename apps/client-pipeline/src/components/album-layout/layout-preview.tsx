@@ -8,6 +8,7 @@ import { photoId } from "@/lib/album-photo-order";
 import type { AlbumLayout } from "@/lib/album-layout-editor";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { offlineXSmallUrl } from "@/lib/offline-thumbnails";
+import { SectionTitle } from "@/components/section-title";
 
 /** Keeps each line break written, as the portfolio shows it. */
 const MARKDOWN_PLUGINS = [remarkBreaks];
@@ -34,7 +35,7 @@ export function LayoutPreview({ draft, photos, byId }: LayoutPreviewProps) {
   return (
     <aside className="bg-muted/20 flex flex-col gap-4 self-start rounded-lg border p-3 lg:sticky lg:top-4">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="font-medium">Preview</h3>
+        <SectionTitle>Preview</SectionTitle>
         <OfflinePreviewsButton photos={photos} />
       </div>
       <PreviewCovers covers={draft.covers} photos={photos} byId={byId} />

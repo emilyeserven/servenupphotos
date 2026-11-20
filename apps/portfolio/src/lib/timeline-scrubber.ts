@@ -1,3 +1,5 @@
+import { clamp } from "@/lib/values";
+
 /**
  * How big a mark's tick is: 0 for a plain month or day, 1 for the first day of a month, and 2 for
  * the first month or day of a year.
@@ -101,12 +103,12 @@ export function labelAt(layout: MonthLayout, fraction: number): string {
 
 /** How far down the list the top of the window is, from 0 to 1. */
 export function scrollFraction(layout: MonthLayout, scrollY: number): number {
-  return clamp((scrollY - layout.top) / layout.height);
+  return clamp((scrollY - layout.top) / layout.height, 0, 1);
 }
 
 /** The page scroll that puts the point a fraction of the way down the list at the top of the window. */
 export function scrollFor(layout: MonthLayout, fraction: number): number {
-  return layout.top + clamp(fraction) * layout.height;
+  return layout.top + clamp(fraction, 0, 1) * layout.height;
 }
 
 /** The month at a fraction of the way down the list: the last one starting at or above it. */
@@ -156,9 +158,4 @@ function spaced(labels: GroupLabel[], placed: GroupLabel[], trackHeight: number,
     if (kept.every((other) => Math.abs(label.at - other.at) * trackHeight >= gap)) kept.push(label);
   }
   return kept;
-}
-
-/** A number kept between 0 and 1. */
-function clamp(value: number): number {
-  return Math.min(1, Math.max(0, value));
 }

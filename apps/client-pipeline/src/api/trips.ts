@@ -6,6 +6,7 @@ import type { PendingSave } from "@/api/scan-changes";
 import type { CombinedData } from "@/api/photos";
 import type { TripPoint, TripTransitLine } from "@/api/trip-lines";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { textOf } from "@portfolio/lib/values";
 
 /** How a Trip's leg between days was travelled. */
 export type LegMode = "ferry" | "flight" | "train" | "bus" | "car";
@@ -162,11 +163,6 @@ export function overlappingTrip(
 function photoDay(photo: CombinedPhoto): string | undefined {
   const date = textOf(photo.customCreateDate) || textOf(photo.createDate);
   return /^(\d{4}):(\d{2}):(\d{2})/.exec(date)?.slice(1).join("-");
-}
-
-/** A field's text, trimmed, or "" when it isn't text. */
-function textOf(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
 }
 
 /** How many of the photos were taken on a day from start to end, both included. */

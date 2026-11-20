@@ -11,9 +11,11 @@ import {
 import { usePickerPhotos } from "@/components/instagram-picker/use-picker-photos";
 import { Button } from "@/components/ui/button";
 import { useDropTarget } from "@/hooks/use-drop-target";
-import { longDayFormat, parseIsoDate } from "@/lib/calendar";
+import { longDayFormat } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { PHOTO_DRAG_TYPE, type Unsaved } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
+import { SectionTitle } from "@/components/section-title";
 
 const STORAGE_KEY = "pipeline-instagram-photo-drawer";
 
@@ -150,7 +152,9 @@ function DrawerHeader({ onClose }: { onClose: () => void }) {
   return (
     <div className="flex items-start justify-between gap-2">
       <div className="flex flex-col gap-0.5">
-        <h2 className="font-semibold">Photos</h2>
+        <SectionTitle as="h2" size="lg">
+          Photos
+        </SectionTitle>
         <p className="text-muted-foreground text-xs">
           Drag a photo onto a day, or click it to put it on the day below. Drop a calendar photo
           here to take it off the calendar.

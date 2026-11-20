@@ -10,8 +10,8 @@ import {
   jsonObject,
   listed,
   readLocation,
-  str,
 } from "@/lib/location-prompt";
+import { textOf } from "@portfolio/lib/values";
 
 /**
  * One photo's part of the prompt: its name, its tile on the contact sheets when there are any, its
@@ -79,13 +79,13 @@ export interface PastedPhotoPlace extends PastedLocation {
 
 /** value when it's a Wikidata item ID such as "Q1490", in capitals, or else "". */
 function wikidataId(value: unknown): string {
-  const id = str(value).toUpperCase();
+  const id = textOf(value).toUpperCase();
   return /^Q\d+$/.test(id) ? id : "";
 }
 
 /** url when it's an http or https link, or else "". */
 function webLink(value: unknown): string {
-  const url = str(value);
+  const url = textOf(value);
   return /^https?:\/\/\S+$/i.test(url) ? url : "";
 }
 
@@ -93,12 +93,12 @@ function webLink(value: unknown): string {
 function readPhoto(value: unknown): PastedPhotoPlace | null {
   if (typeof value !== "object" || value === null) return null;
   const item = value as Record<string, unknown>;
-  const photo = str(item.photo).replace(/\.json$/i, "");
+  const photo = textOf(item.photo).replace(/\.json$/i, "");
   if (!photo) return null;
   return {
     ...readLocation(item),
     photo,
-    parent: str(item.parent),
+    parent: textOf(item.parent),
     mapUrl: webLink(item.mapUrl),
     wikidata: wikidataId(item.wikidata),
   };

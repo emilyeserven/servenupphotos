@@ -1,6 +1,7 @@
 import type * as React from "react";
 import type { Bin, ColorSummary, RawColorData as RawData } from "@/api/exif";
 import { JsonCodeBlock } from "@/components/json-code-block";
+import { SectionTitle } from "@/components/section-title";
 
 export function ColorData({ colors }: { colors: ColorSummary }) {
   return (
@@ -119,7 +120,7 @@ export function RawColorData({ raw, samples }: { raw: RawData; samples: number }
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-2">
-      <h3 className="text-sm font-medium">{title}</h3>
+      <SectionTitle>{title}</SectionTitle>
       {children}
     </section>
   );

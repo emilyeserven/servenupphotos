@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { format, parseISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { socialCalendarQuery } from "@/api/publish";
@@ -9,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { type UsedPostDays } from "@/lib/social-post-dates";
 import { type PostedPhotoFile, postedPhotoFiles } from "@/lib/social-post-days";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
+import { isoDate, parseIsoDate, weekdayDate } from "@portfolio/lib/dates";
 
 /**
  * Every photo file as the app has it now, gallery and in flight alike, with the changes waiting for
@@ -38,14 +38,9 @@ interface SocialPostDatePickerProps {
   usedDays: UsedPostDays;
 }
 
-/** A day as the button shows it, such as "Tue, Nov 3, 2026". */
-function dayText(value: string): string {
-  return value ? format(parseISO(value), "EEE, MMM d, yyyy") : "Pick a day";
-}
-
 /** The chosen day as a Date for the calendar, or undefined when none is. */
 function chosenDate(value: string): Date | undefined {
-  return value ? parseISO(value) : undefined;
+  return value ? parseIsoDate(value) : undefined;
 }
 
 /**
@@ -60,7 +55,7 @@ export function SocialPostDatePicker({
   usedDays,
 }: SocialPostDatePickerProps) {
   const [open, setOpen] = useState(false);
-  const used = useMemo(() => [...usedDays.keys()].map((day) => parseISO(day)), [usedDays]);
+  const used = useMemo(() => [...usedDays.keys()].map((day) => parseIsoDate(day)), [usedDays]);
   const pick = (next: string) => {
     onChange(next);
     setOpen(false);
@@ -77,7 +72,7 @@ export function SocialPostDatePicker({
             className="data-[empty=true]:text-muted-foreground h-9 w-full justify-start text-sm font-normal"
           >
             <CalendarIcon />
-            {dayText(value)}
+            {value ? weekdayDate(value) : "Pick a day"}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
@@ -85,7 +80,7 @@ export function SocialPostDatePicker({
             mode="single"
             selected={chosenDate(value)}
             defaultMonth={chosenDate(value)}
-            onSelect={(date) => pick(date ? format(date, "yyyy-MM-dd") : "")}
+            onSelect={(date) => pick(date ? isoDate(date) : "")}
             modifiers={{ used }}
             modifiersClassNames={{
               used: "text-muted-foreground opacity-50 data-[selected=true]:opacity-100",
