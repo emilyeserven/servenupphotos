@@ -1,15 +1,11 @@
 import { type Group, albumTree } from "@/api/organize";
 import { type TagPromptLists, filteredNames } from "@/lib/tag-prompt";
-
-/** "1 photo", "2 photos". */
-function photos(n: number): string {
-  return `${n} ${n === 1 ? "photo" : "photos"}`;
-}
+import { count } from "@portfolio/lib/words";
 
 /** One tag's line in the prompt: indented under its parent, with its photo count and description. */
 function tagLine(tag: Group, depth: number, counts: ReadonlyMap<string, number>): string {
   const description = tag.description ? `: ${tag.description}` : "";
-  return `${"  ".repeat(depth)}- ${tag.id} (${photos(counts.get(tag.id) ?? 0)})${description}`;
+  return `${"  ".repeat(depth)}- ${tag.id} (${count(counts.get(tag.id) ?? 0, "photo")})${description}`;
 }
 
 /** Every readable tag as a tree, each under its parent. */

@@ -10,6 +10,7 @@ import { type ComparePhoto, comparePhotoName } from "@/lib/compare-groups";
 import { offlineImageUrl, squareImages } from "@/lib/offline-thumbnails";
 import { notChosenIn, UNSELECTED_IMAGES, type Unselected, unselectedOf } from "@/lib/unselected";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 import { SectionTitle } from "@/components/section-title";
 
 /**
@@ -34,8 +35,8 @@ export function UnselectedPhotos({
           Unselected Photos
         </SectionTitle>
         <p className="text-muted-foreground text-sm">
-          {unselected.length === 1 ? "1 photo" : `${unselected.length} photos`} not chosen in a
-          compare group. Commit leaves them off the portfolio.
+          {count(unselected.length, "photo")} not chosen in a compare group. Commit leaves them off
+          the portfolio.
         </p>
       </header>
       <ul className="grid gap-4 lg:grid-cols-2">

@@ -16,6 +16,7 @@ import { squareImages } from "@/lib/offline-thumbnails";
 import { unselectedPhotos } from "@/lib/unselected";
 import { cn } from "@/lib/utils";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** The photos and compare groups, as `useCompareGroups` reads them. */
 export type CompareRead = ReturnType<typeof useCompareGroups>;
@@ -83,7 +84,7 @@ function NoGroups() {
 
 /** A group's name, photo count, winner, and its first photos, linked to the group. */
 function GroupCard({ group }: { group: CompareGroup }) {
-  const count = group.photos.length;
+  const n = group.photos.length;
   return (
     <Link
       to="/compare"
@@ -94,7 +95,7 @@ function GroupCard({ group }: { group: CompareGroup }) {
         <CardHeader>
           <CardTitle className="truncate">{group.name}</CardTitle>
           <CardDescription>
-            {count === 1 ? "1 photo" : `${count} photos`}
+            {count(n, "photo")}
             <WinnerLine group={group} />
           </CardDescription>
         </CardHeader>

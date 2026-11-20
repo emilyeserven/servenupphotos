@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { GridRow, NarrowRow } from "@/components/stat-row";
 import type { StatGroup, StatRow } from "@/lib/stat-groups";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@/lib/words";
 
 /** A row chosen in a group that narrows another, and which group it narrows. */
 export interface StatFocus {
@@ -155,7 +156,7 @@ function GroupFooter({ group }: { group: StatGroup }) {
 
 /** What a group says about the photos it couldn't count, such as "3 photos don't say". */
 function missingText({ missing, missingReason }: StatGroup): string {
-  const photos = missing === 1 ? "1 photo" : `${missing} photos`;
+  const photos = count(missing, "photo");
   if (missingReason === "uncategorized") return `${photos} in none of these`;
   return `${photos} ${missing === 1 ? "doesn't" : "don't"} say`;
 }

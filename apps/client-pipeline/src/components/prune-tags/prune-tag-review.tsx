@@ -8,7 +8,8 @@ import {
   useChangeToggle,
   useTagSave,
 } from "@/components/prune-tags/change-list";
-import { CommitSuccess, count } from "@/components/update-data-shared";
+import { CommitSuccess } from "@/components/update-data-shared";
+import { count } from "@portfolio/lib/words";
 
 /** How many changes save makes, notes too. */
 function changeCount(save: PruneTags & { notes: unknown[] }): number {

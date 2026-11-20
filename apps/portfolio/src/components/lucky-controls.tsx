@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Shuffle } from "lucide-react";
 import { DEFAULT_LUCKY_ROWS, type LuckyChoice, LUCKY_ROWS, type LuckyRows } from "@/lib/lucky";
 import { SELECT_CLASS } from "@/lib/segmented-control";
+import { count } from "@/lib/words";
 
 /** How many rows a dropdown value names, the default for anything else. */
 function rowsOf(value: string): LuckyRows {
@@ -10,8 +11,8 @@ function rowsOf(value: string): LuckyRows {
 
 /** A choice's label, such as "15 photos (3 rows)". */
 function choiceLabel({ rows, photos }: LuckyChoice): string {
-  const photoText = photos === 1 ? "1 photo" : `${photos} photos`;
-  return `${photoText} (${rows === 1 ? "1 row" : `${rows} rows`})`;
+  const photoText = count(photos, "photo");
+  return `${photoText} (${count(rows, "row")})`;
 }
 
 /**

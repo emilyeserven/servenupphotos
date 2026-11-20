@@ -18,6 +18,7 @@ import { labelsOf } from "@/lib/smart-album-photos";
 import { entriesMatching, type RulePhotos, rulePhotos } from "@/lib/smart-album-rules";
 import { useCombinedData } from "@/stores/combined-data";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** How many of the matching photos the editor shows. */
 const PREVIEW_PHOTOS = 12;
@@ -152,7 +153,7 @@ function RuleEditor({ album, rules, save, onCancel }: RuleEditorProps) {
     <>
       <DateRules rules={rules} labels={tried.labels} />
       <GridFilterBar photos={tried.photos} />
-      <MatchPreview tried={tried} rules={rules.draft} count={count} />
+      <MatchPreview tried={tried} rules={rules.draft} ruleTotal={count} />
       <div className="flex flex-wrap gap-2">
         <Button
           disabled={count === 0 || save.isPending}
@@ -173,13 +174,13 @@ function RuleEditor({ album, rules, save, onCancel }: RuleEditorProps) {
 function MatchPreview({
   tried,
   rules,
-  count,
+  ruleTotal,
 }: {
   tried: RulePhotos;
   rules: SmartRules;
-  count: number;
+  ruleTotal: number;
 }) {
-  if (count === 0) {
+  if (ruleTotal === 0) {
     return (
       <p className="text-muted-foreground">
         Set a Trip, a day or one of the filters to pick the album's photos.
@@ -190,16 +191,13 @@ function MatchPreview({
   return (
     <div className="flex flex-col gap-3">
       <p className="font-medium">
-        {count === 1 ? "1 rule matches" : `${count} rules match`} {photoCount(matching.length)}
+        {count(ruleTotal, "rule")} {ruleTotal === 1 ? "matches" : "match"}{" "}
+        {count(matching.length, "photo")}
         {matching.length > PREVIEW_PHOTOS && `, the first ${PREVIEW_PHOTOS} shown`}.
       </p>
       <PreviewTiles photos={matching.slice(0, PREVIEW_PHOTOS)} />
     </div>
   );
-}
-
-function photoCount(count: number): string {
-  return count === 1 ? "1 photo" : `${count} photos`;
 }
 
 function PreviewTiles({ photos }: { photos: CombinedPhoto[] }) {

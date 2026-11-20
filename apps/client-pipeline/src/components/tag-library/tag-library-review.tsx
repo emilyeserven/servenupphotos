@@ -17,7 +17,8 @@ import {
   NewTagSections,
   PhotoSections,
 } from "@/components/tag-library/library-sections";
-import { CommitSuccess, count } from "@/components/update-data-shared";
+import { CommitSuccess } from "@/components/update-data-shared";
+import { count } from "@portfolio/lib/words";
 
 /** The ticked changes of preview, as the save takes them. */
 function libraryToSave(preview: TagLibraryPreview, unticked: ReadonlySet<string>): TagLibrary {

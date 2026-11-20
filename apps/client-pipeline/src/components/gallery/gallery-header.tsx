@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { count } from "@portfolio/lib/words";
 
 /** The base branch's read, with the images found in R2 for it and the pull request together. */
 export interface GalleryRead {
@@ -114,12 +115,12 @@ function SelectButton({
  */
 function Summary({ files, read }: { files: GalleryFile[]; read: GalleryRead }) {
   const { images, published } = read;
-  const count = files.length;
+  const n = files.length;
   return (
     <>
       <OfflineNotice images={images} />
       <p className="text-muted-foreground">
-        {count === 1 ? "1 photo" : `${count.toLocaleString()} photos`}
+        {count(n, "photo")}
         <InFlightCount files={files} pullRequest={published.pullRequest} />
         {r2Problem(images)}
       </p>

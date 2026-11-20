@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { count } from "@portfolio/lib/words";
 
 interface ViewerImporterProps {
   /** The saved person; undefined for a new one. */
@@ -85,8 +86,7 @@ function ImporterHeader({ viewer }: { viewer?: ViewerLikes }) {
 /** How many photos the saved person liked and when, or how to add a new one. */
 function viewerNote(viewer?: ViewerLikes): string {
   if (!viewer) return "Name who sent the list, then paste or upload it.";
-  const photos = viewer.photos.length === 1 ? "photo" : "photos";
-  return `${viewer.photos.length} liked ${photos}. ${importedText(viewer.importedAt)}. Paste their new list to replace it.`;
+  return `${count(viewer.photos.length, "liked photo")}. ${importedText(viewer.importedAt)}. Paste their new list to replace it.`;
 }
 
 /** The pasted list, with a button that reads it from a .txt or .json file instead. */
@@ -139,7 +139,7 @@ function ParsedNote({ text, parsed, titles }: ParsedNoteProps) {
   return (
     <ul className="text-muted-foreground flex flex-col gap-0.5 text-sm">
       <li>
-        {parsed.ids.length} {parsed.ids.length === 1 ? "photo" : "photos"} in the list
+        {count(parsed.ids.length, "photo")} in the list
         {parsed.fromLinks ? ", read from its photo links. Titles and comments are ignored." : "."}
       </li>
       <Warning label="Not a saved photo, kept anyway" items={unknown} />

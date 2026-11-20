@@ -19,9 +19,9 @@ import {
   OptionCheckbox,
   SaveButton,
   ScanPreviewBody,
-  count,
 } from "@/components/update-data-shared";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 interface PhotoColorsCardProps {
   /** Whether R2 is set up, so the originals can be read. */

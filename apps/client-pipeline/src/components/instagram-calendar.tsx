@@ -47,14 +47,10 @@ import { useChangedPhotoFiles } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import { PUBLISH_DATE } from "@/lib/photo-fields";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 import { SectionTitle } from "@/components/section-title";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-/** "1 photo", "2 photos". */
-function count(n: number, word: string): string {
-  return `${n} ${n === 1 ? word : `${word}s`}`;
-}
 
 function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
   return (

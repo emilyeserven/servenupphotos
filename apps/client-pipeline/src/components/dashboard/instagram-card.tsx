@@ -8,6 +8,7 @@ import { dayFormat } from "@/lib/calendar";
 import { parseIsoDate } from "@portfolio/lib/dates";
 import { photoName } from "@/lib/social-schedule";
 import type { SocialQueue } from "@/lib/social-queue";
+import { count } from "@portfolio/lib/words";
 
 /** How many of the next scheduled photos the card shows. */
 const SHOWN = 3;
@@ -80,7 +81,7 @@ function QueueNote({ queue }: { queue: SocialQueue }) {
 /** The days in a row from today with a photo, through the last of them. */
 function DaysLeft({ queue }: { queue: SocialQueue }) {
   if (!queue.lastDay) return <strong>Nothing is queued for today.</strong>;
-  const days = queue.daysLeft === 1 ? "1 day" : `${queue.daysLeft} days`;
+  const days = count(queue.daysLeft, "day");
   return (
     <>
       <strong>{days} left</strong> in the queue, through{" "}
@@ -94,7 +95,7 @@ function LaterNote({ later }: { later: number }) {
   return (
     <span className="text-muted-foreground">
       {" "}
-      {later === 1 ? "1 more is" : `${later} more are`} scheduled after a gap.
+      {count(later, "more is", "more are")} scheduled after a gap.
     </span>
   );
 }

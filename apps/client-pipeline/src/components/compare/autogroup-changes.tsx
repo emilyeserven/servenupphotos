@@ -1,6 +1,5 @@
 import { type ReactNode, useId } from "react";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
-import { count } from "@/components/update-data-shared";
 import type { AutogroupPhoto } from "@/lib/compare-autogroup";
 import {
   type AutogroupMerge,
@@ -9,6 +8,7 @@ import {
   movingPhotos,
 } from "@/lib/compare-autogroup-answer";
 import { comparePhotoName } from "@/lib/compare-groups";
+import { count } from "@portfolio/lib/words";
 
 /** Whether a change is kept, whether it can still be changed, and what changes it. */
 interface Choice {

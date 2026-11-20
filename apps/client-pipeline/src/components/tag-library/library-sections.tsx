@@ -9,8 +9,8 @@ import {
   placeName,
 } from "@/components/prune-tags/change-list";
 import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
-import { count } from "@/components/update-data-shared";
 import { tagLibraryFollowUpPrompt } from "@/lib/tag-library-prompt";
+import { count } from "@portfolio/lib/words";
 
 interface SectionsProps {
   preview: TagLibraryPreview;

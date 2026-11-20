@@ -12,9 +12,10 @@ import {
   pickedTitle,
   useReviewedSave,
 } from "@/components/bulk-tagging/review-parts";
-import { count } from "@/components/update-data-shared";
+
 import { type BulkTagChoices, NO_CHOICES, bulkTagsToSave, toggled } from "@/lib/bulk-tags";
 import { withOthers } from "@/lib/answered-photos";
+import { count } from "@portfolio/lib/words";
 
 interface BulkTagReviewProps {
   preview: BulkTagsPreview;

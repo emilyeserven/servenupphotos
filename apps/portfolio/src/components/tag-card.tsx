@@ -4,6 +4,7 @@ import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 import type { TagEntry, TagSection } from "@/lib/tag-list";
 import { rememberedViewOptions } from "@/lib/view-options";
+import { count } from "@/lib/words";
 
 /** The Grid filtered to the tag, in the view and sort the Grid was last left with. */
 function gridSearchFor(tag: string) {
@@ -11,13 +12,8 @@ function gridSearchFor(tag: string) {
 }
 
 /** "1 photo" or "N photos", in small grey type after a tag's name. */
-function PhotoCount({ count }: { count: number }) {
-  return (
-    <span className="text-sm font-normal text-muted-foreground">
-      {" "}
-      · {count} {count === 1 ? "photo" : "photos"}
-    </span>
-  );
+function PhotoCount({ count: n }: { count: number }) {
+  return <span className="text-sm font-normal text-muted-foreground"> · {count(n, "photo")}</span>;
 }
 
 /** The tag's description, when one is written. */

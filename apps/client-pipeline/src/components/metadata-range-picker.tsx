@@ -5,6 +5,7 @@ import { STANDARD_STOPS } from "@/lib/meta-stops";
 import { Input } from "@/components/ui/input";
 import { type MetaValueCount, metaNumber, showRange, showValue, valuesIn } from "@/lib/meta-values";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 interface MetaRangePickerProps {
   info: MetaFieldInfo;
@@ -44,7 +45,7 @@ export function MetaRangePicker({ info, values, range, onChange }: MetaRangePick
         id="meta-group-range"
         help={`Drag either end, or type it, to choose every ${info.one} from one to the other. The slider goes past the photos' values (the marks under it) to the common ones, and a typed end can be anything. Tick “No lowest” or “No highest” to leave that end open, such as every ISO from 12800 up. A ${info.one} a photo takes later is in the group when it's in the range.`}
       >
-        Range: {showRange(info.field, range)} · {photos} {photos === 1 ? "photo" : "photos"}
+        Range: {showRange(info.field, range)} · {count(photos, "photo")}
       </FieldLabel>
       <RangeSlider stops={stops} marks={marks} range={range} onChange={onChange} />
       <div className="flex flex-wrap items-center gap-2 text-sm">

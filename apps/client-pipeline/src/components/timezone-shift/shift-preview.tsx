@@ -12,6 +12,7 @@ import { readableDate } from "@/lib/photo-date";
 import { dayOf, readableDay, readableShift } from "@/lib/timezone-shift";
 import { type PlannedShift, type TripLineEffect, movesDay } from "@/lib/timezone-shift-plan";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 interface ShiftPreviewProps {
   plans: PlannedShift[];
@@ -78,7 +79,7 @@ function dayNote(moves: number): string {
   if (moves === 0) {
     return "Every photo stays on its day; only the order the portfolio's Timeline and the Grid's date sort show them in can change.";
   }
-  const photos = moves === 1 ? "1 photo moves" : `${moves} photos move`;
+  const photos = count(moves, "photo moves", "photos move");
   return `${photos} to another day, so the portfolio's Timeline, the Grid's date sort and Trip Lines put them on the new day.`;
 }
 

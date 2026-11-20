@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { dayKey, type MapTrip } from "@/lib/map-trips";
 import { cn } from "@/lib/utils";
+import { count } from "@/lib/words";
 
 /**
  * One Trip in the map's Trip tab: its checkbox, name and dates, and an arrow that opens a
@@ -130,5 +131,5 @@ function tripDays({ start, end, days }: MapTrip): string {
     start === end
       ? format(first, "MMM d, yyyy")
       : `${format(first, sameYear ? "MMM d" : "MMM d, yyyy")} – ${format(last, "MMM d, yyyy")}`;
-  return `${range} · ${days.length} ${days.length === 1 ? "day" : "days"}`;
+  return `${range} · ${count(days.length, "day")}`;
 }

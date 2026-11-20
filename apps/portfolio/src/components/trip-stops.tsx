@@ -2,6 +2,7 @@ import { ChevronRight, ExternalLink, MapPin } from "lucide-react";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { localizeStop, type ScriptDisplay } from "@/lib/localize";
 import type { CasualPhoto, TripStop } from "@/lib/trip-pages";
+import { count } from "@/lib/words";
 
 /** The text's column, lined up with the page's title. */
 const NARROW = "mx-auto w-full max-w-5xl px-4 sm:px-6";
@@ -89,7 +90,7 @@ function StopPhotos({ stop }: { stop: TripStop }) {
     <details className="group">
       <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
         <ChevronRight className="size-3.5 transition-transform group-open:rotate-90" aria-hidden />
-        {photos.length} {photos.length === 1 ? "photo" : "photos"}
+        {count(photos.length, "photo")}
       </summary>
       <div className="mt-1.5 flex flex-wrap gap-1">
         {photos.map((photo) => (

@@ -17,6 +17,7 @@ import {
 } from "@/lib/photo-data-filters";
 import { cn } from "@/lib/utils";
 import { useLocalEditsStore } from "@/stores/local-edits";
+import { count } from "@portfolio/lib/words";
 
 /** A photo file as the filters read it. */
 interface FilteredFile {
@@ -181,7 +182,7 @@ export function FilterResult({
 function ResultText({ shown, total }: { shown: number; total: number }) {
   return (
     <span className="text-muted-foreground">
-      Showing {shown} of {total} {total === 1 ? "photo" : "photos"}
+      Showing {shown} of {count(total, "photo")}
     </span>
   );
 }

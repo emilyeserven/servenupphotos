@@ -4,11 +4,7 @@ import { ColumnNames } from "@/components/graph-builder/heatmap-graph";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { seriesColor } from "@/lib/graph-data";
 import type { DotColumn, PhotoDot, PhotoDotsData } from "@/lib/graph-photo-dots";
-
-/** A count of photos as words, such as "1 photo" or "12 photos". */
-function photoCount(count: number): string {
-  return `${count.toLocaleString()} ${count === 1 ? "photo" : "photos"}`;
-}
+import { count } from "@/lib/words";
 
 /** How many rows of dots the tallest stack gets, at most, so the graph keeps a height that fits a screen. */
 const MOST_ROWS = 30;
@@ -68,7 +64,7 @@ function DotStack({ column, width }: { column: DotColumn; width: number }) {
   return (
     <button
       type="button"
-      aria-label={`${column.label}: ${photoCount(column.dots.length)}`}
+      aria-label={`${column.label}: ${count(column.dots.length, "photo")}`}
       aria-pressed={pick?.x === column.label}
       onClick={() => onPick({ x: column.label })}
       style={{ opacity: pickedOpacity(pick, column.label) }}

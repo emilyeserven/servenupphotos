@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { CopyPromptButton, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
 import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
 import { type FlagItem, FlagList } from "@/components/quality-check/flag-list";
-import { count } from "@/components/update-data-shared";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { type AutogroupPhoto, autogroupSheetPhotos } from "@/lib/compare-autogroup";
 import {
@@ -10,6 +9,7 @@ import {
   pixelationPrompt,
   readPixelationAnswer,
 } from "@/lib/pixelation-prompt";
+import { count } from "@portfolio/lib/words";
 import { SectionTitle } from "@/components/section-title";
 import { ErrorNote } from "@/components/error-note";
 

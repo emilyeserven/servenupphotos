@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
+import { count } from "@/lib/words";
 
 /**
  * The site's name linking home, then a full-page view's title and how many photos it shows, with its controls beside it on wider
@@ -11,7 +12,7 @@ import { SiteHomeLink } from "@/components/site-home-link";
 export function FloatingHeader({
   icon: Icon,
   title,
-  count,
+  count: n,
   children,
 }: {
   icon: LucideIcon;
@@ -28,9 +29,7 @@ export function FloatingHeader({
             <Icon className="size-5 text-muted-foreground" aria-hidden />
             {title}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {count} {count === 1 ? "photo" : "photos"}
-          </p>
+          <p className="text-sm text-muted-foreground">{count(n, "photo")}</p>
         </div>
       </header>
       {children}

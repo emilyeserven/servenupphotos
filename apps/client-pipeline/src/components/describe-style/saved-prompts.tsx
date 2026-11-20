@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { parsePublishedOnly } from "@/lib/style-prompt";
 import { type SavedStylePrompt, useStylePromptsStore } from "@/stores/style-prompts";
+import { count } from "@portfolio/lib/words";
 
 interface SavedPromptsProps {
   /** How many photos to link, as typed, to save. */
@@ -92,9 +93,9 @@ export function SavedPrompts({ count, focus, onLoad }: SavedPromptsProps) {
 
 /** How many filters the saved prompt has set, such as "2 filters", or "No filters". */
 function filterCount(prompt: SavedStylePrompt): string {
-  const count = Object.values(prompt.filters).filter((value) => value !== undefined).length;
-  if (count === 0) return "No filters";
-  return count === 1 ? "1 filter" : `${count} filters`;
+  const n = Object.values(prompt.filters).filter((value) => value !== undefined).length;
+  if (n === 0) return "No filters";
+  return count(n, "filter");
 }
 
 interface SavedPromptRowProps {

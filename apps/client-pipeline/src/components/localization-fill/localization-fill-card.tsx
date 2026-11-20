@@ -5,7 +5,6 @@ import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { bulkTagCount, PickCount } from "@/components/bulk-tagging/pick-count";
 import { useLocalizationRows } from "@/components/localization-drafts";
 import { LocalizationFillReview } from "@/components/localization-fill/localization-fill-review";
-import { count } from "@/components/update-data-shared";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +12,7 @@ import { type LocalizationAnswer, readLocalizationAnswer } from "@/lib/localizat
 import { localizationPrompt, rowsToFill } from "@/lib/localization-prompt";
 import type { LocalizationRow } from "@/lib/place-seeds";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** How many names a prompt asks about until another number is chosen. */
 const defaultNameCount = 25;

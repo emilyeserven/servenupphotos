@@ -1,11 +1,11 @@
 import { Trash2Icon } from "lucide-react";
 import { SHOW_ON_HOVER } from "@/components/lightroom-albums/remove-album";
 import { Button } from "@/components/ui/button";
-import { count } from "@/components/update-data-shared";
 import { allAlbums, type LightroomFolder } from "@/lib/lightroom-albums";
 import { findFolder } from "@/lib/lightroom-tree";
 import { askFirst, type ConfirmAsk } from "@/stores/confirm";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { count } from "@portfolio/lib/words";
 
 /**
  * What the Delete button asks first: how many albums go with the folder, counted in the whole list rather than only

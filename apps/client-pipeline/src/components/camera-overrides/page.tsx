@@ -11,6 +11,7 @@ import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 /** The Camera Overrides page: what to write instead of each camera's EXIF values. */
 export function CameraOverridesPage() {
@@ -61,10 +62,6 @@ function ChosenCamera({ row, photos }: { row?: CameraRow; photos: CombinedPhoto[
   );
 }
 
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
-}
-
 interface CameraListProps {
   rows: CameraRow[];
   chosen?: string;
@@ -92,7 +89,7 @@ function CameraList({ rows, chosen, onChoose }: CameraListProps) {
           >
             <span className="min-w-0 truncate">{row.camera}</span>
             <span className="text-muted-foreground shrink-0 text-xs">
-              {plural(row.photos, "photo")}
+              {count(row.photos, "photo")}
               <RuleCount row={row} />
             </span>
           </button>
@@ -104,5 +101,5 @@ function CameraList({ rows, chosen, onChoose }: CameraListProps) {
 
 function RuleCount({ row }: { row: CameraRow }) {
   if (!row.override) return null;
-  return <span className="text-foreground">, {plural(row.override.rules.length, "rule")}</span>;
+  return <span className="text-foreground">, {count(row.override.rules.length, "rule")}</span>;
 }

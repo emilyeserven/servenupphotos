@@ -3,8 +3,9 @@ import type { TagLibraryPhotoInfo } from "@/api/tag-library";
 import type { ActionProps } from "@/components/small-tags/small-tag-card";
 import { PickablePhoto } from "@/components/small-tags/small-photos";
 import { Input } from "@/components/ui/input";
-import { SaveButton, count } from "@/components/update-data-shared";
+import { SaveButton } from "@/components/update-data-shared";
 import { type SmallTag, emptyLibrary } from "@/lib/small-tags";
+import { count } from "@portfolio/lib/words";
 
 /** How many photos the picker shows at once. */
 const SHOWN = 30;
