@@ -15,7 +15,7 @@ func TestPickGenrePhotos(t *testing.T) {
 		"d.json": `{"genres":[],"tags":["temple"]}`,
 		"f.json": `{"file":`,
 	})
-	got, err := c.PickGenrePhotos(t.Context(), baseURLSettings, nil, 0)
+	got, err := c.PickGenrePhotos(t.Context(), baseURLSettings, GenrePickOptions{})
 	if err != nil {
 		t.Fatalf("PickGenrePhotos() error = %v", err)
 	}
@@ -31,13 +31,13 @@ func TestPickGenrePhotos(t *testing.T) {
 		t.Errorf("PickGenrePhotos() = %+v, want 3 without genres of 5 photo files", got)
 	}
 
-	got, err = c.PickGenrePhotos(t.Context(), baseURLSettings, []string{photosDir + "a.json"}, 1)
+	got, err = c.PickGenrePhotos(t.Context(), baseURLSettings, GenrePickOptions{Skip: []string{photosDir + "a.json"}, Count: 1})
 	if err != nil || len(got.Photos) != 1 || got.Photos[0].Name != "c" {
 		t.Errorf("PickGenrePhotos(skip a, count 1) = %+v, %v; want c", got.Photos, err)
 	}
 
 	all := []string{photosDir + "a.json", photosDir + "c.json", photosDir + "d.json"}
-	if _, err := c.PickGenrePhotos(t.Context(), baseURLSettings, all, 0); err == nil || !strings.Contains(err.Error(), "no more photos") {
+	if _, err := c.PickGenrePhotos(t.Context(), baseURLSettings, GenrePickOptions{Skip: all}); err == nil || !strings.Contains(err.Error(), "no more photos") {
 		t.Errorf("PickGenrePhotos(skip all) error = %v, want no more photos", err)
 	}
 }
@@ -58,7 +58,7 @@ func TestPreviewGenreSuggestions(t *testing.T) {
 		"a.json": `{"genres":[]}`,
 		"b.json": `{"genres":["street"]}`,
 	})
-	got, err := c.PreviewGenreSuggestions(t.Context(), baseURLSettings, []string{photosDir + "a.json", photosDir + "b.json"}, genreSuggestAnswer)
+	got, err := c.PreviewGenreSuggestions(t.Context(), baseURLSettings, []string{photosDir + "a.json", photosDir + "b.json"}, genreSuggestAnswer, false)
 	if err != nil {
 		t.Fatalf("PreviewGenreSuggestions() error = %v", err)
 	}
@@ -79,7 +79,7 @@ func TestPreviewGenreSuggestions(t *testing.T) {
 	if !slices.Equal(got.Unknown, []string{"zzz"}) {
 		t.Errorf("Unknown = %v, want zzz", got.Unknown)
 	}
-	if _, err := c.PreviewGenreSuggestions(t.Context(), baseURLSettings, []string{photosDir + "a.json"}, `{"photos": []}`); err == nil {
+	if _, err := c.PreviewGenreSuggestions(t.Context(), baseURLSettings, []string{photosDir + "a.json"}, `{"photos": []}`, false); err == nil {
 		t.Error("PreviewGenreSuggestions(no photos) error = nil")
 	}
 }

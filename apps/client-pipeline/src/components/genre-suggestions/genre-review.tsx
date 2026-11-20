@@ -5,11 +5,11 @@ import {
   type GenreSuggestionsPreview,
   applyGenreSuggestionsMutation,
 } from "@/api/genre-suggestions";
-import { organizeQuery } from "@/api/organize";
+import { type Group, organizeQuery } from "@/api/organize";
+import { NewGenreList } from "@/components/genre-suggestions/new-genre-list";
 import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
 import { UnknownPhotos } from "@/components/paste-answer";
 import { type GenreOption, PhotoGenreRow } from "@/components/genre-suggestions/photo-genre-row";
-import { toggled } from "@/lib/bulk-tags";
 import { type GenreChoices, NO_GENRE_CHOICES, genresToSave } from "@/lib/genre-suggestions";
 import { withOthers } from "@/lib/answered-photos";
 import { count } from "@portfolio/lib/words";
@@ -17,6 +17,8 @@ import { count } from "@portfolio/lib/words";
 interface GenreReviewProps {
   preview: GenreSuggestionsPreview;
   pick: GenrePick;
+  /** True when the photos' genres are replaced by the reviewed ones, rather than added to. */
+  reassign: boolean;
 }
 
 /**
@@ -24,8 +26,9 @@ interface GenreReviewProps {
  * next to a dropdown per suggested genre, which can pick another genre or none, then a button that
  * saves them.
  */
-export function GenreReview({ preview, pick: picked }: GenreReviewProps) {
+export function GenreReview({ preview, pick: picked, reassign }: GenreReviewProps) {
   const pick = withOthers(picked, preview.others);
+  const genres = useGenres();
   const [choices, setChoices] = useState<GenreChoices>(NO_GENRE_CHOICES);
   const apply = useReviewedSave(applyGenreSuggestionsMutation);
   const busy = apply.isPending || apply.isSuccess;
@@ -33,27 +36,43 @@ export function GenreReview({ preview, pick: picked }: GenreReviewProps) {
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
       <UnknownPhotos names={preview.unknown} others={preview.others} noun="genres" />
       {/* Once saved, the new genres are made, so only what was saved is left to say. */}
-      {!apply.isSuccess && (
-        <NewGenreList preview={preview} choices={choices} onChange={setChoices} disabled={busy} />
-      )}
+      <NewGenreList
+        hidden={apply.isSuccess}
+        preview={preview}
+        genres={genres}
+        choices={choices}
+        onChange={setChoices}
+        disabled={busy}
+      />
       <PhotoGenreList
         preview={preview}
         pick={pick}
+        genres={genres}
+        reassign={reassign}
         choices={choices}
         onChange={setChoices}
         disabled={busy}
       />
       <SaveReviewed
         apply={apply}
-        save={genresToSave(preview, choices)}
+        save={genresToSave(preview, choices, reassign)}
         noun="genres"
         busy={busy}
-        done={(data) =>
-          `Made ${count(data.newGenres, "new genre")} and added genres to ${count(data.photos, "photo")}`
-        }
+        done={(data) => doneText(data, reassign)}
       />
     </div>
   );
+}
+
+/** Every genre there is, or none until they're read. */
+function useGenres(): Group[] {
+  return useQuery(organizeQuery).data?.genres ?? [];
+}
+
+/** What a save did, in words, such as "Made 1 new genre and added genres to 3 photos". */
+function doneText(data: { newGenres: number; photos: number }, reassign: boolean): string {
+  const did = reassign ? "changed the genres of" : "added genres to";
+  return `Made ${count(data.newGenres, "new genre")} and ${did} ${count(data.photos, "photo")}`;
 }
 
 interface ChoicesProps {
@@ -66,11 +85,12 @@ interface ChoicesProps {
 function PhotoGenreList({
   preview,
   pick,
+  genres,
+  reassign,
   choices,
   onChange,
   disabled,
-}: ChoicesProps & GenreReviewProps) {
-  const genres = useQuery(organizeQuery).data?.genres ?? [];
+}: ChoicesProps & GenreReviewProps & { genres: Group[] }) {
   const options = genreOptions(genres, preview.newGenres, choices.dropped);
   return (
     <ul className="flex flex-col gap-3">
@@ -80,6 +100,7 @@ function PhotoGenreList({
           plan={plan}
           photo={pick.photos.find((photo) => photo.path === plan.path)}
           options={options}
+          genres={reassign ? genres : undefined}
           choices={choices}
           onChange={onChange}
           disabled={disabled}
@@ -101,44 +122,4 @@ function genreOptions(
       .filter(({ id }) => !dropped.has(id))
       .map(({ id, name }) => ({ id, name, fresh: true })),
   ];
-}
-
-/** The new genres the answer names, each of which can be left out. */
-function NewGenreList({
-  preview,
-  choices,
-  onChange,
-  disabled,
-}: ChoicesProps & { preview: GenreSuggestionsPreview }) {
-  if (preview.newGenres.length === 0) {
-    return <p className="text-muted-foreground">Every genre is one already.</p>;
-  }
-  return (
-    <div className="flex flex-col gap-2 rounded-md border p-3">
-      <p>New genres, made with the descriptions. Untick any you don&apos;t want:</p>
-      <ul className="flex flex-col gap-1.5">
-        {preview.newGenres.map((genre) => (
-          <li key={genre.id}>
-            <label className="flex items-start gap-1.5">
-              <input
-                type="checkbox"
-                className="mt-1"
-                checked={!choices.dropped.has(genre.id)}
-                disabled={disabled}
-                onChange={() =>
-                  onChange({ ...choices, dropped: toggled(choices.dropped, genre.id) })
-                }
-              />
-              <span>
-                {genre.name} <code className="text-muted-foreground text-xs">{genre.id}</code>
-                {genre.description && (
-                  <span className="text-muted-foreground">: {genre.description}</span>
-                )}
-              </span>
-            </label>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
 }

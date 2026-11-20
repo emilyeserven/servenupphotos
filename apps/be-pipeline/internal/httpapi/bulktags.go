@@ -131,20 +131,29 @@ func handleApplyPruneTags(store *settings.Store, gh *github.Client) http.Handler
 }
 
 // handlePickGenrePhotos picks up to the asked number of photos without
-// genres for Genre Suggestions, leaving out the photos already shown.
+// genres for Genre Suggestions, or with genres to reassign them, leaving out
+// the photos already shown.
 func handlePickGenrePhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return handleBulkTags(store, "photo pick", "Couldn't pick the photos.",
-		func(ctx context.Context, cfg settings.GitHub, req github.BulkTagPickOptions) (any, error) {
-			return gh.PickGenrePhotos(ctx, cfg, req.Skip, req.Count)
+		func(ctx context.Context, cfg settings.GitHub, req github.GenrePickOptions) (any, error) {
+			return gh.PickGenrePhotos(ctx, cfg, req)
 		})
+}
+
+// genreAnswerBody is the body of a Genre Suggestions preview: the picked
+// photos, the LLM's pasted answer, and whether its genres replace theirs.
+type genreAnswerBody struct {
+	Paths    []string `json:"paths"`
+	Answer   string   `json:"answer"`
+	Reassign bool     `json:"reassign"`
 }
 
 // handlePreviewGenreSuggestions reads the LLM's pasted answer for the picked
 // photos and says which genres each would get, without saving anything.
 func handlePreviewGenreSuggestions(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return handleBulkTags(store, "genre suggestions answer", "Couldn't read the answer.",
-		func(ctx context.Context, cfg settings.GitHub, req bulkTagAnswer) (any, error) {
-			return gh.PreviewGenreSuggestions(ctx, cfg, req.Paths, req.Answer)
+		func(ctx context.Context, cfg settings.GitHub, req genreAnswerBody) (any, error) {
+			return gh.PreviewGenreSuggestions(ctx, cfg, req.Paths, req.Answer, req.Reassign)
 		})
 }
 

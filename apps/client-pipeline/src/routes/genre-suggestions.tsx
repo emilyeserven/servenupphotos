@@ -11,7 +11,7 @@ function GenreSuggestionsPage() {
   return (
     <CardPage
       title="Genre Suggestions"
-      description="Asks an LLM which genres fit photos without any, then reviews them before they're saved."
+      description="Asks an LLM which genres fit photos without any, or looks again at the genres photos have and suggests subgenres, then reviews them before they're saved."
     >
       <GenreSuggestionsCard />
     </CardPage>
