@@ -51,6 +51,9 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - **`line`** is the bus, subway or train line a hop rode, picked under [Lines ridden](#lines-ridden):
   `{ "id": 1234, "name": "Midosuji Line", "ref": "M", "colour": "#e5171f" }`, where `id` is the OpenStreetMap route
   relation. Only train, subway, bus and transit hops keep one.
+- **`like`** is `car` or `bus` on a `transit` hop drawn like that mode ([Drawing a transit hop like a car or
+  bus](#drawing-a-transit-hop-like-a-car-or-bus)): it's snapped to streets by road, keeps its `path`, and is baked
+  as that mode. Left out on any other hop, and it does nothing while the hop rides a line found in a source.
 - **`board`** and **`alight`** are the station or stop a hop with a `line` got on and off at, with its name as the
   `label`, when that isn't at the photo: say the subway was left and then a 10-minute walk led to the next photo.
 - **`boardWalk`** and **`alightWalk`** shape the walk from the hop's first photo to `board`, and from `alight` to its
@@ -498,7 +501,8 @@ A line drawn by hand is straight from point to point. To make it follow the stre
    at one says where it is.
 2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
    servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
-   walk, bus or car segment's points and via points, walking on foot and buses and cars by road, and for every walk to
+   walk, bus or car segment's points and via points (and every transit hop [drawn like a car or
+   bus](#drawing-a-transit-hop-like-a-car-or-bus)), walking on foot and buses and cars by road, and for every walk to
    or from a station. Train and subway hops without a line stay dashed straight lines. A walk may turn back at a via
    point (a via point just off the way is a there-and-back), while a bus or car can't and goes on round the block, so
    each request says which with OSRM's `continue_straight` rather than leaving it to the server's default.
@@ -580,6 +584,28 @@ Either can be changed to another station, such as one a walk away from the next 
 hop is drawn along the line's track between them, solid in the line's color, with a walk from the first photo to where
 it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
 route** keeps the line, the stations and the track.
+
+### Drawing a transit hop like a car or bus
+
+A transit hop of unknown kind is a straight dashed line, which cuts across the map when the ride went along roads no
+rail or bus map has, such as a shuttle up a valley. Its row's **Draw it like** menu borrows another mode's way of
+being routed and drawn (`lib/transit-like.ts`, `components/trip-lines/transit-like-picker.tsx`):
+
+- **Transit (straight, dashed)**, the default.
+- **Car (along roads, solid)**: **Snap to streets** (and saving) routes it by road like a drive, and the map draws it
+  as a solid light blue drive line.
+- **Bus (along roads, dashed)**: routed by road like a bus with no line, and drawn as a dashed hop.
+
+The hop stays a `transit` hop with `"like": "car"` or `"bus"` beside its mode, kept in the draft by its leg key (like
+its line) and in `segmentKey`, so a path snapped as one mode isn't reused for another. Until it's snapped, the row
+says to. The baked map gives its line the borrowed `mode`, so the portfolio's map and legend draw it as a drive (or a
+hop by bus) with nothing of their own to change (`wayMode` in `github/triplines_route.go`, `wayOf` in the pipeline). A
+line named by hand keeps the borrowed way; a line found in a source draws along its own track instead, and the menu is
+hidden while it's picked.
+
+> **Frontend analogy:** `like` is a variant prop: the hop's data still says "transit", but the renderer and the router
+> pick their styles and behavior from `like ?? mode`, the way a `<Button asChild>` keeps its own semantics while
+> borrowing another element's look.
 
 ### Looking lines up on Transitland or a rail map
 

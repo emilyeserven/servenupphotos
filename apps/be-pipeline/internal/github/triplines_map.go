@@ -34,7 +34,8 @@ type tripLineGeometry struct {
 	Coordinates [][2]float64 `json:"coordinates"`
 }
 
-// tripLineProps say what a line is: its day and mode, the photos it goes
+// tripLineProps say what a line is: its day and mode (the mode it's drawn
+// as, so a transit hop drawn like a car is baked as "car"), the photos it goes
 // through, how long it is, the labels of its spots with no photo, and the
 // transit line it rode.
 type tripLineProps struct {
@@ -130,7 +131,7 @@ func segmentFeature(line TripLine, seg TripSegment, spots map[int]tripSpot) (tri
 	if pathFits(seg.Path, coords) {
 		coords = seg.Path
 	}
-	props := tripLineProps{Day: line.Day, Mode: seg.Mode, Name: seg.Name, Auto: line.Auto, Photos: photos, Km: lineKm(coords)}
+	props := tripLineProps{Day: line.Day, Mode: wayMode(seg), Name: seg.Name, Auto: line.Auto, Photos: photos, Km: lineKm(coords)}
 	props.Start, props.End = labelOf(seg.Start), labelOf(seg.End)
 	props.Line, props.Ref, props.Colour = lineProps(seg.Line)
 	return tripLineFeature{Type: "Feature", Geometry: tripLineGeometry{Type: "LineString", Coordinates: coords}, Properties: props}, true
