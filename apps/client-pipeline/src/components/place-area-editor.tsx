@@ -48,7 +48,6 @@ export function PlaceAreaEditor({ id, name }: { id: string; name: string }) {
   );
 }
 
-/** Why the last save or removal failed, when it did. */
 interface AreaStatusProps {
   area: PlaceArea | null | undefined;
   busy: boolean;
