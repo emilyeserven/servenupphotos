@@ -13,6 +13,7 @@ import { ReadingNote } from "@/components/query-result";
 import { type LocalizationAnswer, readLocalizationAnswer } from "@/lib/localization-answer";
 import { localizationPrompt, rowsToFill } from "@/lib/localization-prompt";
 import type { LocalizationRow } from "@/lib/place-seeds";
+import { ErrorNote } from "@/components/error-note";
 
 /** How many names a prompt asks about until another number is chosen. */
 const defaultNameCount = 25;
@@ -45,7 +46,7 @@ export function LocalizationFillCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
-        {error && <p className="text-destructive text-sm">{error.message}</p>}
+        <ErrorNote error={error} />
         {pending ? (
           <ReadingNote label="Reading photos, places and localizations…" />
         ) : (
@@ -145,7 +146,7 @@ function PasteAnswer({ asked }: { asked: LocalizationRow[] }) {
       <Button type="button" className="self-start" disabled={!answer.trim()} onClick={review}>
         Review the names
       </Button>
-      {read.error && <p className="text-destructive text-sm">{read.error}</p>}
+      <ErrorNote error={read.error} />
       {read.answer && <LocalizationFillReview key={answer} rows={asked} answer={read.answer} />}
     </div>
   );

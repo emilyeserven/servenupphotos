@@ -6,6 +6,7 @@ import { type InferredPlace, inferredPlaces } from "@/lib/inferred-places";
 import { shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
 import { SectionTitle } from "@/components/section-title";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * The place names written on two or more photos that aren't saved places yet, each with a button to
@@ -46,7 +47,7 @@ function InferredPlaceItem({ place }: { place: InferredPlace }) {
         <div className="text-muted-foreground text-xs">
           <code>{place.id}</code> · on {place.photos} photos
         </div>
-        {save.error && <p className="text-destructive text-sm">{save.error.message}</p>}
+        <ErrorNote error={save.error} />
       </div>
       <Button
         type="button"

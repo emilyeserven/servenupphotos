@@ -2,7 +2,7 @@ import { mutationOptions } from "@tanstack/react-query";
 import type { GearBox, GearCrop, GearFile, GearKind } from "@portfolio/lib/gear-pictures";
 import { settingEntries, settingMutations } from "@/api/data-files";
 import { entryId } from "@/api/places";
-import { requestJson } from "@/api/request";
+import { post, requestJson } from "@/api/request";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
 function isGearFile(value: unknown): value is GearFile {
@@ -91,12 +91,7 @@ interface GearCropRequest {
 /** Cuts a 200px-tall crop out of an original gear picture and puts it in R2 right away. */
 export const cropGearImageMutation = mutationOptions({
   mutationKey: ["gear", "crop"],
-  mutationFn: (request: GearCropRequest) =>
-    requestJson<UploadedGearImage>("/api/gear/crop", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(request),
-    }),
+  mutationFn: (request: GearCropRequest) => post<UploadedGearImage>("/api/gear/crop", request),
 });
 
 const gearMutations = settingMutations<GearFile>("gear");

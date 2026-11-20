@@ -1,5 +1,5 @@
 import { mutationOptions } from "@tanstack/react-query";
-import { post, requestJson } from "@/api/request";
+import { del, post } from "@/api/request";
 
 /** One photo to put on a contact sheet: the name the prompt calls it by, and its image. */
 export interface ContactSheetPhoto {
@@ -50,9 +50,5 @@ interface DeletedContactSheets {
 export const deleteContactSheetsMutation = mutationOptions({
   mutationKey: ["photos", "bucket", "contact-sheets", "delete"],
   mutationFn: (set: string) =>
-    requestJson<DeletedContactSheets>("/api/photos/bucket/contact-sheets", {
-      method: "DELETE",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ set }),
-    }),
+    del<DeletedContactSheets>("/api/photos/bucket/contact-sheets", { set }),
 });

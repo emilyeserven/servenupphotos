@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["shinto", "shrine", "carvings", "wood", "plaques"],
-  "genres": [],
+  "genres": ["architecture"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

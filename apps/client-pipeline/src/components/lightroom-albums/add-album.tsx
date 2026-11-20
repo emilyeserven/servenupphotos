@@ -20,6 +20,7 @@ import { SingleCombobox } from "@/components/ui/single-combobox";
 import type { LightroomItem } from "@/lib/lightroom-albums";
 import { type ManualAlbum, folderPaths, manualAlbum, pathTaken } from "@/lib/lightroom-tree";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { ErrorNote } from "@/components/error-note";
 
 const EMPTY: ManualAlbum = {
   name: "",
@@ -234,5 +235,5 @@ function Field({ children }: { children: React.ReactNode }) {
 /** The form's error, such as a missing name. */
 function FormError({ errors }: { errors: unknown[] }) {
   const message = errors.find((e) => typeof e === "string");
-  return message ? <p className="text-destructive text-sm">{message}</p> : null;
+  return <ErrorNote error={message} />;
 }

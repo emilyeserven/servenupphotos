@@ -4,6 +4,7 @@ import type { PixelateSave } from "@/components/face-pixelation/use-pixelate-sav
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import type { FaceBox } from "@/lib/face-boxes";
+import { ErrorNote } from "@/components/error-note";
 
 interface PixelateActionsProps {
   editor: FaceEditorState;
@@ -93,10 +94,8 @@ function SaveNote({ pixelate, done, pixelated }: SaveNoteProps) {
 
 /** Why pixelating failed, and whether the versions were remade before it did. */
 function SaveError({ pixelate: { mutation, remadeOnly } }: { pixelate: PixelateSave }) {
-  const prefix = remadeOnly ? "The versions are remade, but saving the photo's JSON failed: " : "";
-  return (
-    <p role="alert" className="text-destructive text-sm">
-      {prefix + (mutation.error?.message ?? "")}
-    </p>
-  );
+  const lead = remadeOnly
+    ? "The versions are remade, but saving the photo's JSON failed:"
+    : undefined;
+  return <ErrorNote error={mutation.error} lead={lead} />;
 }

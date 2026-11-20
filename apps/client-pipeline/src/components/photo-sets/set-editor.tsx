@@ -9,6 +9,7 @@ import { SaveState } from "@/components/save-state";
 import { Input } from "@/components/ui/input";
 import { useDelayedDraft } from "@/hooks/use-delayed-draft";
 import { addToSet, moveSetPhoto, photoIdOf, removeSetPhoto, setsByPhoto } from "@/lib/photo-sets";
+import { ErrorNote } from "@/components/error-note";
 
 /** What the photo drawer says beside the set. */
 const SET_DRAWER_WORDS = {
@@ -61,7 +62,7 @@ export function SetEditor({ saved, sets, photos }: SetEditorProps) {
             <PhotoDrawerToggle open={drawerOpen} onToggle={() => setDrawerOpen(!drawerOpen)} />
           </div>
         </div>
-        {note && <p className="text-destructive text-sm">{note}</p>}
+        <ErrorNote error={note} />
         <SetPhotos
           ids={set.photos}
           byId={byId}

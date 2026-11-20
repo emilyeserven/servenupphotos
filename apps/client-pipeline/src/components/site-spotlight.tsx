@@ -20,6 +20,7 @@ import {
   zoneAlbum,
   zoneOrientation,
 } from "@/lib/site-spotlight";
+import { ErrorNote } from "@/components/error-note";
 
 /** Picks the album each spotlight zone of the portfolio shows, such as the homepage's. */
 export function SiteSpotlight() {
@@ -76,7 +77,7 @@ function ZoneCard({ zone, albums }: { zone: SpotlightZone; albums: Group[] }) {
             placeholder="No album"
             onChange={(next) => save.mutate({ zone: zone.id, album: next[0] ?? null })}
           />
-          {save.isError && <p className="text-destructive">{save.error.message}</p>}
+          <ErrorNote error={save.error} />
         </div>
         {album ? (
           <ZoneAlbum

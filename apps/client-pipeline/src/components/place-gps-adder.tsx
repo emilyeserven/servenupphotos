@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { decimalGps, gpsSource, parseGps } from "@/lib/place-gps";
+import { ErrorNote } from "@/components/error-note";
 
 interface PlaceGpsAddersProps {
   /** The photo's places, in order. */
@@ -117,5 +118,5 @@ function problemText(text: string, error: Error | null): string {
 /** Why the save failed, or that what's typed can't be read as a GPS position. */
 function FormProblem({ text, error }: { text: string; error: Error | null }) {
   const message = problemText(text, error);
-  return message ? <p className="text-destructive text-xs">{message}</p> : null;
+  return <ErrorNote error={message} className="text-xs" />;
 }

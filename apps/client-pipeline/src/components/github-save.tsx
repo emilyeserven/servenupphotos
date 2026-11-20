@@ -16,6 +16,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { jsonFileName, jsonNameProblem } from "@/lib/file-name";
 import { photoData } from "@/lib/photo-data";
+import { ErrorNote } from "@/components/error-note";
 
 type GitHubSettings = SettingsResponse["github"];
 
@@ -135,7 +136,7 @@ function GitHubSaveForm({
               />
               <p id={`${field.name}-hint`} className="text-muted-foreground text-sm">
                 {error ? (
-                  <span className="text-destructive">{error}</span>
+                  <ErrorNote error={error} />
                 ) : (
                   <>
                     Saves <code>{jsonPath(github.folder, field.state.value)}</code> in {github.repo}
@@ -149,7 +150,7 @@ function GitHubSaveForm({
         }}
       </form.Field>
 
-      {publish.isError && <p className="text-destructive text-sm">{publish.error.message}</p>}
+      <ErrorNote error={publish.error} />
       <UseFreeName
         error={publish.error}
         onUse={(name) => {

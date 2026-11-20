@@ -15,7 +15,8 @@
       }
     ],
     "servenup/error-note": "warn",
-    "servenup/reading-label": "error"
+    "servenup/reading-label": "error",
+    "servenup/json-request": "error"
   },
   "ignorePatterns": ["**/dist/**", "**/routeTree.gen.ts"]
 }

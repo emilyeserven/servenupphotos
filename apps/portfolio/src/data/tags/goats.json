@@ -1,5 +1,6 @@
 {
   "id": "goats",
   "name": "goats",
-  "description": ""
+  "description": "goats in pens, barns and fields",
+  "parent": "farm-animals"
 }

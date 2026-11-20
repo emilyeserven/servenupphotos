@@ -25,6 +25,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { ReadingNote } from "@/components/query-result";
+import { ErrorNote } from "@/components/error-note";
 
 /** Adds saved photos to an album, then reads the saved photos again and follows CI's rebuild. */
 export function useAlbumAdd() {
@@ -88,7 +89,7 @@ export function AlbumAddPhotos({ album, add }: AlbumAddPhotosProps) {
           disabled={add.isPending}
           onChange={setPicked}
         />
-        {add.isError && <p className="text-destructive text-sm">{add.error.message}</p>}
+        <ErrorNote error={add.error} />
         <DialogFooter className="bg-popover sticky -bottom-4 -mx-4 -mb-4 items-center border-t px-4 py-3">
           <span className="text-muted-foreground mr-auto text-sm" aria-live="polite">
             {photoCount(picked.size)} picked

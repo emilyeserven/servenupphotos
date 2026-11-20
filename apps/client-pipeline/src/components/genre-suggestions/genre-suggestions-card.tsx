@@ -10,7 +10,6 @@ import { placesQuery, readEntries } from "@/api/places";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import {
   CopyPromptButton,
-  ErrorText,
   PasteAnswer,
   PickBar,
   usePhotoPick,
@@ -19,6 +18,7 @@ import { ContactSheetsButton, usePickedContactSheets } from "@/components/contac
 import { GenreReview } from "@/components/genre-suggestions/genre-review";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { genrePrompt } from "@/lib/genre-prompt";
+import { ErrorNote } from "@/components/error-note";
 
 /** How many photos Genre Suggestions picks until another number is chosen: a whole batch. */
 const defaultGenreCount = 50;
@@ -43,7 +43,7 @@ export function GenreSuggestionsCard() {
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <PickBar {...bar} />
-        <ErrorText error={pick.error} />
+        <ErrorNote error={pick.error} />
         {pick.data && <PickedGenres key={pick.submittedAt} pick={pick.data} />}
       </CardContent>
     </Card>
@@ -69,7 +69,7 @@ function PickedGenres({ pick }: { pick: GenrePick }) {
         label="Review the genres"
         onReview={() => preview.mutate({ paths, answer })}
       />
-      <ErrorText error={preview.error} />
+      <ErrorNote error={preview.error} />
       {preview.data && (
         <GenreReview key={JSON.stringify(preview.data)} preview={preview.data} pick={pick} />
       )}

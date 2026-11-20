@@ -1,5 +1,6 @@
 {
   "id": "flowers",
   "name": "flowers",
-  "description": ""
+  "description": "blooming flowers in gardens, fields and along paths",
+  "parent": "plants"
 }

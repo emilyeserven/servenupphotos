@@ -9,6 +9,7 @@ import { count } from "@/components/update-data-shared";
 import { downloadFile } from "@/lib/album-layout-editor";
 import { tagLibraryJson, tagLibraryPrompt } from "@/lib/tag-library-prompt";
 import { QueryResult } from "@/components/query-result";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * Tag library: reads every tag and every photo with its tags, copies them into one prompt (or
@@ -72,9 +73,7 @@ function LibraryCounts({ data }: { data: TagLibraryExport }) {
         Commit will have them.
       </p>
       {data.unreadable.length > 0 && (
-        <p className="text-destructive">
-          Left out, since they couldn&apos;t be read: {data.unreadable.join(", ")}
-        </p>
+        <ErrorNote error={`Left out, since they couldn't be read: ${data.unreadable.join(", ")}`} />
       )}
     </div>
   );

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import type { LocalizationRow } from "@/lib/place-seeds";
+import { ErrorNote } from "@/components/error-note";
 
 /** The three fields a localization notes, as the JSON names them, with their labels. */
 export const FIELDS = [
@@ -87,7 +88,7 @@ function LocalizationRowForm({ row, fields, onChange, onSave }: LocalizationRowF
         />
       ))}
       <SaveButton changed={isChanged(row, fields)} state={state} />
-      {state.error && <p className="text-destructive text-sm lg:col-span-5">{state.error}</p>}
+      <ErrorNote error={state.error} className="lg:col-span-5" />
     </form>
   );
 }

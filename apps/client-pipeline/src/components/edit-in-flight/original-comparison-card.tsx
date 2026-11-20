@@ -19,6 +19,7 @@ import {
   knownSize,
   originalShown,
 } from "@/lib/unedited-original";
+import { ErrorNote } from "@/components/error-note";
 
 interface OriginalComparisonCardProps {
   original: UneditedOriginal;
@@ -146,7 +147,7 @@ function RemoveOriginal({ original, blocked }: { original: UneditedOriginal; blo
           Remove original
         </Button>
         {change.isPending && <Spinner />}
-        {change.error && <span className="text-destructive text-sm">{change.error.message}</span>}
+        <ErrorNote error={change.error} />
       </div>
       <p className="text-muted-foreground text-xs">
         Removing it only takes it off the photo&apos;s JSON; its files stay in R2, to delete from{" "}

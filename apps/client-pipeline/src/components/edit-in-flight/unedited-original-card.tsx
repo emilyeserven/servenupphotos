@@ -13,6 +13,7 @@ import {
   type UneditedOriginal,
   useUneditedOriginal,
 } from "@/components/edit-in-flight/use-unedited-original";
+import { ErrorNote } from "@/components/error-note";
 
 interface UneditedOriginalCardsProps {
   editable: Editable;
@@ -109,7 +110,7 @@ function UploadSteps({ original, blocked }: { original: UneditedOriginal; blocke
 /** Reading the chosen JPEG, or why it couldn't be read. */
 function ReadStatus({ original: { read } }: { original: UneditedOriginal }) {
   if (read.isPending) return <ReadingNote label="Reading the original…" />;
-  if (read.isError) return <p className="text-destructive text-sm">{read.error.message}</p>;
+  if (read.isError) return <ErrorNote error={read.error} />;
   return read.isSuccess ? <NoSizeNote sanitized={read.data.sanitized} /> : null;
 }
 
@@ -117,9 +118,7 @@ function ReadStatus({ original: { read } }: { original: UneditedOriginal }) {
 function NoSizeNote({ sanitized }: { sanitized: SanitizedExif | null }) {
   if (newSize(sanitized)) return null;
   return (
-    <p className="text-destructive text-sm">
-      Couldn&apos;t read the original&apos;s size, since exiftool isn&apos;t running on the backend.
-    </p>
+    <ErrorNote error="Couldn't read the original's size, since exiftool isn't running on the backend." />
   );
 }
 
@@ -129,11 +128,6 @@ const REPLACE = {
   button: "Replace original",
   note: " Replacing the original starts its crop and pixelation over, and takes it off the portfolio until it's shown again.",
 };
-
-/** Why something failed, when it did. */
-function ErrorText({ error }: { error: Error | null }) {
-  return error ? <span className="text-destructive text-sm">{error.message}</span> : null;
-}
 
 /** Uploads the chosen original, once its size is read, and says what replacing one resets. */
 function UploadButton({ original, blocked }: { original: UneditedOriginal; blocked: boolean }) {
@@ -152,7 +146,7 @@ function UploadButton({ original, blocked }: { original: UneditedOriginal; block
           <UploadIcon pending={add.isPending} />
           {words.button}
         </Button>
-        <ErrorText error={add.error} />
+        <ErrorNote error={add.error} />
       </div>
     </>
   );

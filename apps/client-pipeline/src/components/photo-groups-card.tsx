@@ -20,6 +20,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
 import { useTagPaste } from "@/components/pasted-tags";
 import { validateGroupName } from "@/lib/group-name";
+import { ErrorNote } from "@/components/error-note";
 
 /** Where an album sits, such as “In Asia › Korea”, or undefined for a top-level one. */
 function albumPlace(albums: Group[], album: Group): string | undefined {
@@ -139,7 +140,7 @@ export function PhotoGroupFields({
   const albumsId = `${idPrefix}-albums`;
   return (
     <div className="flex flex-col gap-4">
-      {organize.isError && <p className="text-destructive text-sm">{organize.error.message}</p>}
+      <ErrorNote error={organize.error} />
       <div className="flex flex-col gap-2">
         <FieldLabel htmlFor={albumsId} kind="albums" />
         <GroupCombobox
@@ -214,7 +215,7 @@ function NewGroupHint({
   return (
     <div id={id} aria-live="polite" className="text-sm">
       {pending && <p className="text-muted-foreground">Saving the new genre…</p>}
-      {problem && <p className="text-destructive">{problem}</p>}
+      <ErrorNote error={problem} />
     </div>
   );
 }

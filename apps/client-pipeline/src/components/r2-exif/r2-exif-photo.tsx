@@ -1,6 +1,7 @@
 import type { R2ExifPhoto } from "@/api/r2-exif";
 import { EditHistory } from "@/components/r2-exif/edit-history";
 import { MismatchForm } from "@/components/r2-exif/mismatch-form";
+import { ErrorNote } from "@/components/error-note";
 
 /** One photo: its name and Square Thumbnail, the fields that don't match R2, and its edits. */
 export function R2ExifPhotoRow({ photo }: { photo: R2ExifPhoto }) {
@@ -9,11 +10,7 @@ export function R2ExifPhotoRow({ photo }: { photo: R2ExifPhoto }) {
       <PhotoThumbnail photo={photo} />
       <div className="flex min-w-0 flex-1 flex-col gap-4">
         <PhotoName photo={photo} />
-        {photo.error && (
-          <p className="text-destructive text-sm">
-            Couldn&apos;t read its original&apos;s EXIF: {photo.error}
-          </p>
-        )}
+        {photo.error && <ErrorNote error={photo.error} lead="Couldn't read its original's EXIF:" />}
         {photo.mismatches.length > 0 && <MismatchForm photo={photo} />}
         {photo.edits.length > 0 && <EditHistory photo={photo} />}
       </div>

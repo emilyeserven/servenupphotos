@@ -3,6 +3,7 @@ import { CopyIcon } from "lucide-react";
 import { type NearDuplicatesResult, findNearDuplicatesMutation } from "@/api/near-duplicates";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * **Find near duplicates**: has the backend look through every saved photo and put the ones that
@@ -23,7 +24,7 @@ export function FindNearDuplicates() {
           Find near duplicates
         </Button>
       </div>
-      {find.error && <p className="text-destructive">{find.error.message}</p>}
+      <ErrorNote error={find.error} />
       {find.data && <FoundLine result={find.data} />}
     </div>
   );
