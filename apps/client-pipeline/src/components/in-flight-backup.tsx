@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { type InFlightWork, type RestoreResult, parseWork, workCount } from "@/api/backup";
 import { Button } from "@/components/ui/button";
 import { currentWork, downloadWork, restoreWork } from "@/lib/in-flight-work";
+import { askFirst } from "@/stores/confirm";
 import { useInFlightBackupStore } from "@/stores/in-flight-backup";
 import { count } from "@portfolio/lib/words";
 
@@ -21,8 +22,12 @@ function restoredLine(result: RestoreResult, edits: number): string {
 function useRestore(setMessage: (message: string) => void) {
   const queryClient = useQueryClient();
   return async (work: InFlightWork, from: string) => {
-    const question = `Restore ${count(workCount(work), "change")} from ${from}? They replace any changes waiting for Commit to the same files.`;
-    if (!window.confirm(question)) return;
+    const yes = await askFirst({
+      question: `Restore ${count(workCount(work), "change")} from ${from}?`,
+      note: "They replace any changes waiting for Commit to the same files.",
+      action: "Restore",
+    });
+    if (!yes) return;
     try {
       const result = await restoreWork(work, queryClient);
       setMessage(restoredLine(result, Object.keys(work.localEdits).length));

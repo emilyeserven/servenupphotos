@@ -6,6 +6,7 @@ import { NavBreadcrumbs } from "@/components/sidebar/nav-breadcrumbs";
 import type { RouteCrumbs } from "@/components/sidebar/route-crumbs";
 import { InFlightBackupKeeper } from "@/components/in-flight-backup-keeper";
 import { CombinedDataSync } from "@/components/combined-data-sync";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { SyncStatus } from "@/components/sync-status";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -47,6 +48,7 @@ function RootLayout() {
         <CombinedDataSync />
         <InFlightBackupKeeper />
         <SyncStatus />
+        <ConfirmDialog />
         <AppSidebar />
         {/* min-w-0 lets wide content, like a table, scroll inside the page instead of widening it. */}
         <SidebarInset className="min-w-0">

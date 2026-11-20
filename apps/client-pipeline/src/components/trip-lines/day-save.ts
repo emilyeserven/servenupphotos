@@ -9,6 +9,7 @@ import {
 import type { EditorView } from "@/components/trip-lines/editor-actions";
 import type { GapDraft } from "@/lib/trip-gaps";
 import { hasStops, keptStops, type KeptStops, lineStops } from "@/lib/trip-stops-kept";
+import { askFirst } from "@/stores/confirm";
 
 /** A line with its route removed and its trip stops kept: by hand, with nothing drawn. */
 function stopsOnly(): Pick<TripLine, "auto" | "planned" | "segments"> {
@@ -80,10 +81,15 @@ export function useLeaveGuard(day: string, dirty: boolean) {
   useBlocker({
     disabled: !dirty,
     enableBeforeUnload: () => dirty,
-    shouldBlockFn: ({ next }) => {
+    shouldBlockFn: async ({ next }) => {
       const params = next.params as { day?: string; part?: string };
       if (params.day === day && params.part !== undefined) return false;
-      return !window.confirm("Leave this day without saving? Its changes will be lost.");
+      const leave = await askFirst({
+        question: "Leave this day without saving?",
+        note: "Its changes will be lost.",
+        action: "Leave",
+      });
+      return !leave;
     },
   });
 }

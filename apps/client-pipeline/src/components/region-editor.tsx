@@ -7,6 +7,7 @@ import {
   LocalizationFields,
   useLocalizationDraft,
 } from "@/components/localization-fields";
+import { ErrorNote } from "@/components/error-note";
 import { FloatingSaveButton } from "@/components/floating-save-button";
 import { OtherNamesField } from "@/components/other-names-field";
 import { RegionIcon } from "@/components/region-icon";
@@ -15,6 +16,7 @@ import type { RegionListData } from "@/components/region-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { SavedInApp } from "@/components/waiting-for-commit";
 import { type RegionType, unrenamedCounts } from "@/lib/location-names";
 import type { CityRow, CountryRow } from "@/lib/place-cities";
 import type { RegionNode } from "@/lib/region-tree";
@@ -169,8 +171,9 @@ function RegionLocalizationForm({ node, saved, list }: RegionEditorProps) {
 /** Why saving failed, or that it saved, until something else is typed. */
 function SaveStatus({ draft }: { draft: LocalizationDraft }) {
   const { save } = draft;
-  if (save.error) return <p className="text-destructive text-sm">{save.error.message}</p>;
-  return save.isSuccess ? <p className="text-sm">Saved to the photo data pull request.</p> : null;
+  if (save.error) return <ErrorNote error={save.error} />;
+  if (!save.isSuccess) return null;
+  return <SavedInApp what="the localization" pullRequestUrl={save.data.pullRequestUrl} />;
 }
 
 /** Such as "3 photos and 1 place", leaving out a zero. */

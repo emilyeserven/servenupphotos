@@ -13,6 +13,7 @@ import {
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
 import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
+import { askFirst } from "@/stores/confirm";
 
 /** A read import: the merge to look over and the source it came from, or why it couldn't be read. */
 type ImportRead = { merge: LightroomMerge; source: string } | { error: string };
@@ -90,9 +91,13 @@ interface ImportButtonsProps {
 function ImportButtons({ canRead, onRead }: ImportButtonsProps) {
   const file = useLightroomAlbumsStore((state) => state.file);
   const clear = useLightroomAlbumsStore((state) => state.clear);
-  const forget = () => {
-    if (confirm("Forget every album, stage and note on this page? Export first to keep them."))
-      clear();
+  const forget = async () => {
+    const yes = await askFirst({
+      question: "Forget every album, stage and note on this page?",
+      note: "Export first to keep them.",
+      action: "Forget",
+    });
+    if (yes) clear();
   };
   return (
     <div className="flex flex-wrap gap-2">
