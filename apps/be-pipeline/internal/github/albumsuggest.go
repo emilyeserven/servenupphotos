@@ -97,8 +97,12 @@ type AlbumSuggestion struct {
 // albums, existing and new, and the picked photos each one gets.
 type AlbumSuggestionsPreview struct {
 	Albums []AlbumSuggestion `json:"albums"`
-	// Unknown is the photos in the answer that aren't any of the picked ones.
+	// Unknown is the photos in the answer that aren't any photo file's, which
+	// are skipped.
 	Unknown []string `json:"unknown"`
+	// Others is the photos in the answer that weren't picked, found among
+	// every photo, which the review shows after the picked ones.
+	Others []BulkTagPhoto `json:"others"`
 }
 
 // PreviewAlbumSuggestions reads answer, the LLM's JSON for the photos at paths
@@ -116,16 +120,17 @@ func (c *Client) PreviewAlbumSuggestions(ctx context.Context, gh settings.GitHub
 	if perr != nil {
 		return AlbumSuggestionsPreview{}, perr
 	}
-	photos, perr := picked(scan, paths)
+	pickedPhotos, perr := picked(scan, paths)
 	if perr != nil {
 		return AlbumSuggestionsPreview{}, perr
 	}
+	photos, unknown := answeredPhotos(scan, pickedPhotos, parsed.names())
 	n := newGroupNamer(Albums, scan.w.groups(), scan.w.entries(MetaInfo))
-	preview := AlbumSuggestionsPreview{Albums: []AlbumSuggestion{}, Unknown: []string{}}
+	preview := AlbumSuggestionsPreview{Albums: []AlbumSuggestion{}, Unknown: unknown, Others: answeredExtra(photos, len(pickedPhotos))}
 	for _, a := range parsed.Albums {
 		s := n.suggestion(a.Album, a.Description, a.Parent)
 		for _, name := range a.Photos {
-			s.Photos, preview.Unknown = addPicked(photos, strings.TrimSpace(name), s.Photos, preview.Unknown)
+			s.Photos = addPicked(photos, strings.TrimSpace(name), s.Photos)
 		}
 		preview.Albums = mergeSuggestion(preview.Albums, s)
 	}
@@ -152,14 +157,23 @@ func (n *groupNamer) existing(name string) string {
 	return ""
 }
 
-// addPicked adds the path of the picked photo named name to paths, once, or
-// name to unknown when it isn't one of photos.
-func addPicked(photos []bulkPhoto, name string, paths, unknown []string) ([]string, []string) {
+// addPicked adds the path of the photo named name to paths, once, when it's
+// one of photos.
+func addPicked(photos []bulkPhoto, name string, paths []string) []string {
 	i := slices.IndexFunc(photos, func(p bulkPhoto) bool { return p.name == name })
 	if i < 0 {
-		return paths, appendMissing(unknown, []string{name})
+		return paths
 	}
-	return appendMissing(paths, []string{photos[i].file.path}), unknown
+	return appendMissing(paths, []string{photos[i].file.path})
+}
+
+// names is the photo names the answer lists in its albums, as it wrote them.
+func (a albumAnswer) names() []string {
+	var out []string
+	for _, album := range a.Albums {
+		out = append(out, album.Photos...)
+	}
+	return out
 }
 
 // mergeSuggestion adds s to list, or its photos to the suggestion for the
