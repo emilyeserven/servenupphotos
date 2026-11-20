@@ -7,6 +7,7 @@ import { count } from "@/components/update-data-shared";
 import type { AutogroupPhoto } from "@/lib/compare-autogroup";
 import { type MissingPlace, type MissingPlaceReason, missingPlaces } from "@/lib/missing-places";
 import { useNoPlaceFoundStore } from "@/stores/no-place-found";
+import { SectionTitle } from "@/components/section-title";
 
 /** How many photos the list shows until **Show all** is pressed. */
 const SHOWN_AT_FIRST = 30;
@@ -32,7 +33,7 @@ export function MissingPlacesCheck({ photos }: { photos: AutogroupPhoto[] }) {
   const bulk = missing.filter((item) => item.reason === "hasGps").length;
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="font-medium">Places</h3>
+      <SectionTitle>Places</SectionTitle>
       <p className="text-muted-foreground max-w-prose text-sm">
         Lists the photos that aren&apos;t in a saved place yet. The ones with a GPS position can get
         theirs from Bulk Places; the rest need a place or a position on the Photo page.

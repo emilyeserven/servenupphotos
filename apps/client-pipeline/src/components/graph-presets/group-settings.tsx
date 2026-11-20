@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { canonicalJson } from "@/lib/combined";
 import { GraphControls } from "@portfolio/components/graph-builder/graph-controls";
 import type { GraphPresetFile, PresetGraph } from "@portfolio/lib/graph-presets";
+import { SectionTitle } from "@/components/section-title";
 
 /** The preset with the change made over its graph, keeping its other settings. */
 function changedPreset(preset: GraphPresetFile, change: Partial<PresetGraph>): GraphPresetFile {
@@ -68,7 +69,7 @@ export function GroupSettings({ inside }: { inside: GraphPresetFile[] }) {
   if (!first) return null;
   return (
     <section aria-label="Change every preset" className="flex flex-col gap-2 border-t pt-4">
-      <h3 className="text-sm font-medium">Change every preset in it</h3>
+      <SectionTitle>Change every preset in it</SectionTitle>
       <p className="text-muted-foreground text-sm">
         The buttons start from {first.name}'s graph. Only the settings you pick change, in all{" "}
         {inside.length} presets; each keeps its others.

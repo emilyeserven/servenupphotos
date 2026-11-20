@@ -2,13 +2,10 @@ import type { SocialPhoto } from "@/api/publish";
 import type { FieldChange, LocalEdit } from "@/stores/local-edits";
 import type { SpotlightFocus, ZoneFocus } from "@portfolio/lib/photos";
 import { SPOTLIGHT_ZONE_FOCUS } from "@/lib/photo-fields";
+import { isObject } from "@portfolio/lib/values";
 
 /** A point of a photo, as percentages of its width and height from its top left corner. */
 export type Focus = SpotlightFocus;
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
 
 function isFocus(value: unknown): value is Focus {
   return isObject(value) && typeof value.x === "number" && typeof value.y === "number";

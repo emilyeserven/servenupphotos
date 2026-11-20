@@ -10,10 +10,10 @@ import {
 } from "@/api/organize";
 import { trips } from "@/api/trips";
 import { PART_LABELS } from "@/components/trip-lines/day-page";
-import { dayTitle } from "@/components/trip-lines/day-title";
 import { NEW_TRIP_ID } from "@/components/trips/trips-panel";
 import { isDayPart } from "@/lib/trip-lines-search";
 import { useCombinedData } from "@/stores/combined-data";
+import { weekdayDate } from "@portfolio/lib/dates";
 
 /** One breadcrumb after the sidebar's pages, such as an album's name. */
 export interface Crumb {
@@ -104,7 +104,7 @@ function tripTitle(id: string, name: string | undefined): string {
 export const TripDayCrumbs: RouteCrumbs = ({ children }) => {
   const { day, part } = useParams({ from: "/trip-lines/$day/$part" });
   return children([
-    { title: dayTitle(day), link: { to: "/trip-lines/$day", params: { day } } as LinkOptions },
+    { title: weekdayDate(day), link: { to: "/trip-lines/$day", params: { day } } as LinkOptions },
     { title: isDayPart(part) ? PART_LABELS[part] : part },
   ]);
 };

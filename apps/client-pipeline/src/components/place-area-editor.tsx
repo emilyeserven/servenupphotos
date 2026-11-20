@@ -9,6 +9,7 @@ import {
 } from "@/api/place-areas";
 import { AreaSearch } from "@/components/area-search";
 import { Button } from "@/components/ui/button";
+import { SectionTitle } from "@/components/section-title";
 
 /** How many points an outline has. */
 function pointCount(area: PlaceArea): number {
@@ -29,9 +30,7 @@ export function PlaceAreaEditor({ id, name }: { id: string; name: string }) {
   const pick = ({ osm, shape }: Area) => save.mutate({ id, area: { osm, shape } }, refresh);
   return (
     <section className="flex flex-col gap-2 border-t pt-4" aria-labelledby="place-area-title">
-      <h3 id="place-area-title" className="text-sm font-medium">
-        Area on the map
-      </h3>
+      <SectionTitle id="place-area-title">Area on the map</SectionTitle>
       <p className="text-muted-foreground text-xs">
         The outline the portfolio's map shades while a visitor points at this place in its Places
         menu, and after picking it. Saved next to the place as its own file, so PLACES.json stays

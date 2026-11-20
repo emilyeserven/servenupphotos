@@ -9,10 +9,11 @@ import { fitView } from "@/lib/fit-view";
 import type { Photo } from "@/lib/photos";
 import { MONTH_SKETCH_SIZE } from "@/lib/route-sketch";
 import { cn } from "@/lib/utils";
+import { isoDate } from "@portfolio/lib/dates";
 
 /** The days the photos were taken, as TRIPLINES.geo.json writes them, earliest first. */
 function daysOf(photos: Photo[]): string[] {
-  return [...new Set(photos.map((p) => format(p.takenAt, "yyyy-MM-dd")))].toSorted();
+  return [...new Set(photos.map((p) => isoDate(p.takenAt)))].toSorted();
 }
 
 /** The days' dates, such as "Oct 1" or "Oct 1–3". */

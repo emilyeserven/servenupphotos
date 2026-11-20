@@ -18,6 +18,7 @@ import {
   stylePrompt,
   takenDay,
 } from "@/lib/style-prompt";
+import { isoDate } from "@portfolio/lib/dates";
 
 /** The Describe my style page's content, once the photo files are read. */
 export function DescribeStylePage() {
@@ -48,8 +49,7 @@ function DescribeStyle({ photos }: { photos: SocialPhoto[] }) {
   const [count, setCount] = useState(String(defaultStyleCount));
   const [seed, setSeed] = useState<number>();
   const [focus, setFocus] = useState("");
-  // en-CA writes dates as YYYY-MM-DD, in the browser's own time zone.
-  const [today] = useState(() => new Date().toLocaleDateString("en-CA"));
+  const [today] = useState(() => isoDate(new Date()));
   const picked = samplePhotos(grid.shown, styleCount(count), seed);
   const contact = useContactSheets(styleSheetPhotos(picked));
   const prompt = stylePrompt({

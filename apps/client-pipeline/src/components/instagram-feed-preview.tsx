@@ -6,7 +6,8 @@ import { type DragEvent, useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { FeedDayPicker } from "@/components/feed-day-picker";
 import { Button } from "@/components/ui/button";
-import { longDayFormat, parseIsoDate } from "@/lib/calendar";
+import { longDayFormat } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import { type FeedEntry, type FeedPhoto, feedAsOf, feedEntries } from "@/lib/social-feed";
 import type { DayPost } from "@/lib/social-post-days";
@@ -15,6 +16,7 @@ import { useDropTarget } from "@/hooks/use-drop-target";
 import { AnchorOutline } from "@/components/grid-anchor";
 import type { AnchorPlace } from "@/lib/grid-anchors";
 import { cn } from "@/lib/utils";
+import { SectionTitle } from "@/components/section-title";
 
 /** How many tiles the preview shows before **Show more**: four rows of three. */
 const PAGE = 12;
@@ -75,9 +77,9 @@ export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
   return (
     <section className="flex flex-col gap-2" aria-labelledby="social-feed-preview">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id="social-feed-preview" className="text-lg font-medium">
+        <SectionTitle as="h2" size="lg" id="social-feed-preview">
           Social Feed preview
-        </h2>
+        </SectionTitle>
         <FeedDayPicker day={asOf} today={today} onChange={setAsOf} />
       </div>
       <p className="text-muted-foreground text-sm">

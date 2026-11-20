@@ -51,5 +51,5 @@ func registerDataRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("POST /data/near-duplicates", progress.tracked("near-duplicates", handleFindNearDuplicates(d.store, d.gh, d.hashes)))
 	mux.HandleFunc("POST /data/r2-exif/preview", progress.tracked("r2-exif",
 		handlePreviewR2Exif(d.extractor, d.store, d.gh, storage.GetPhoto, exifs)))
-	mux.HandleFunc("POST /data/r2-exif/write", handleWriteR2Exif(d.extractor, d.store, d.gh, storage.GetPhoto, replaceOriginal, exifs))
+	mux.HandleFunc("POST /data/r2-exif", handleWriteR2Exif(d.extractor, d.store, d.gh, storage.GetPhoto, replaceOriginal, exifs))
 }

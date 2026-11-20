@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { moveStoredKey } from "@/lib/stored-value";
 
 /** Where the Graph page keeps whether it's wide, in the visitor's browser. */
-const STORAGE_KEY = "servenup:graph-wide";
+const STORAGE_KEY = "servenup-graph-wide";
+moveStoredKey("servenup:graph-wide", STORAGE_KEY);
 
 /** Whether the visitor last made the Graph page wide; not when it can't be read. */
 function readWide(): boolean {

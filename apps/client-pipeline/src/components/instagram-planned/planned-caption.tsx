@@ -1,6 +1,7 @@
 import { type CaptionTemplate } from "@/api/captions";
 import { CopyTextButton } from "@/components/copy-text";
 import { NoTemplates } from "@/components/generate-caption";
+import { SectionTitle } from "@/components/section-title";
 
 interface PlannedCaptionProps {
   caption: string;
@@ -23,9 +24,9 @@ export function PlannedCaption({ caption, template, written }: PlannedCaptionPro
     <section className="flex flex-col gap-2" aria-labelledby="planned-caption">
       <div className="flex items-center justify-between gap-2">
         <div className="flex flex-col">
-          <h2 id="planned-caption" className="text-sm font-medium">
+          <SectionTitle as="h2" id="planned-caption">
             Caption
-          </h2>
+          </SectionTitle>
           <p className="text-muted-foreground text-xs">{sourceNote(template, written)}</p>
         </div>
         <CopyTextButton label="Copy caption" size="lg" title="The caption" text={() => caption} />
