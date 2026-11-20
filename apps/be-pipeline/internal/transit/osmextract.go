@@ -6,6 +6,7 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -108,7 +109,9 @@ func (c *Client) downloadExtract(ctx context.Context, region osmRegion, p *progr
 	if err := os.MkdirAll(osmRailDir(), 0o750); err != nil {
 		return "", err
 	}
-	tmp, err := os.CreateTemp(osmRailDir(), region.id+"-*.osm.pbf")
+	// A region inside a country has a path for an ID, such as
+	// "us/massachusetts", and a temporary file's pattern can't hold a "/".
+	tmp, err := os.CreateTemp(osmRailDir(), strings.ReplaceAll(region.id, "/", "-")+"-*.osm.pbf")
 	if err != nil {
 		return "", err
 	}

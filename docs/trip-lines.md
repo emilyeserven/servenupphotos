@@ -597,7 +597,8 @@ choice is kept in the browser for every look-up:
   [Geofabrik](https://download.geofabrik.de), looked up the same way as Japan's rail map, for when the Overpass
   servers are too slow. The backend downloads Geofabrik's [index](https://download.geofabrik.de/technical.html) of
   its extracts once (`index-v1.json`), picks the smallest one whose outline holds both ends, such as South Korea for
-  Seoul to Busan (never a whole continent; a leg crossing a border finds none), and downloads that extract once
+  Seoul to Busan, or a US state such as Massachusetts (ID `us/massachusetts`, named from its ID when the index gives no
+  name) for a ride inside one (never a whole continent; a leg crossing a border finds none), and downloads that extract once
   (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract twice (its railway ways, then their
   points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
   them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v2/<extract>` beside the
