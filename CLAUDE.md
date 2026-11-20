@@ -36,10 +36,13 @@ A new endpoint usually touches, in order:
 
 1. `be-pipeline/internal/github` or `storage`: the logic, with a `_test.go` next to it using the package's fakes
    (`newFakeGitHub`, `newMainRepo` in `github`; `fakeBucket` in `storage`).
-2. `be-pipeline/internal/httpapi/<area>.go`: the handler, and one line in that area's `routes_<area>.go`.
+2. `be-pipeline/internal/httpapi/<area>.go`: the handler, and one line in that area's `routes_<area>.go`. The path
+   follows the route shape rules in the `add-pipeline-endpoint` skill: the method says what happens (`DELETE`, never
+   `POST …/delete`), segments are lowercase and hyphenated, and an Update Data change is `POST /data/<change>` with
+   optional `…/pick` and `…/preview` steps next to it.
 3. `client-pipeline/src/api/<area>.ts`: the response type and the query or mutation.
 4. `scripts/fixtures/<area>.mjs` (the area of the `routes_<area>.go` that registers the route): a sample answer, so `pnpm shot` can show the page. `pnpm check:fixtures`
-   (part of `pnpm check`) fails when a route has none.
+   (part of `pnpm check`) fails when a route has none, or breaks a route shape rule (`scripts/route-shapes.mjs`).
 
 The BFF relays every path on its own. Only when the backend gives the work more than 30s, add its path prefix to
 `relayTimeouts` in `be-pipeline/internal/httpapi/timeouts.go`; the BFF reads it at start-up (`docs/bff-timeouts.md`).
@@ -50,7 +53,7 @@ Everything here is fast; run the narrowest check while working and `pnpm check` 
 
 ```sh
 pnpm check                         # oxlint, oxfmt --check, typecheck, fallow, check:fixtures, check:docs (~6s); `pnpm fmt` fixes formatting
-pnpm check:fixtures                # every backend route has a fixture in scripts/fixtures/
+pnpm check:fixtures                # every backend route has a fixture in scripts/fixtures/ and follows the route shape rules
 pnpm build                         # all three TS apps (~5s); CI runs it too
 pnpm test                          # node --test: the portfolio's map-preview and both apps' src/lib (~2s); CI runs it too
 cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes ~8s

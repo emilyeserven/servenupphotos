@@ -23,7 +23,7 @@ func TestDeleteBucketImages(t *testing.T) {
 		return ""
 	}
 	body := `{"keys":["photos/a.jpg","photos/a-large.webp","notes.txt"]}`
-	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/photos/bucket/delete", strings.NewReader(body))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/photos/bucket", strings.NewReader(body))
 	rec := httptest.NewRecorder()
 	handleDeleteBucketImages(cfg, del)(rec, req)
 	if rec.Code != http.StatusOK {
@@ -51,7 +51,7 @@ func TestDeleteBucketImagesBadRequest(t *testing.T) {
 	tooMany := `{"keys":[` + strings.TrimSuffix(strings.Repeat(`"a.jpg",`, maxDeleteKeys+1), ",") + `]}`
 	for name, body := range map[string]string{"no keys": `{"keys":[]}`, "not JSON": `nope`, "too many": tooMany} {
 		t.Run(name, func(t *testing.T) {
-			req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/photos/bucket/delete", strings.NewReader(body))
+			req := httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/photos/bucket", strings.NewReader(body))
 			rec := httptest.NewRecorder()
 			handleDeleteBucketImages(cfg, del)(rec, req)
 			if rec.Code != http.StatusBadRequest {

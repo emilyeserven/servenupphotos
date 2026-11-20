@@ -51,7 +51,7 @@ in the open **Add photo data** pull request (where removing the photo in Photos 
 takes out its JSON too), in `ALLPHOTOS.json` (the portfolio would show a broken image), or when that couldn't be
 checked; the button then reads **Delete anyway**. Only R2 changes: photo data is never edited from here.
 
-Deleting sends `POST /api/photos/bucket/delete` with `{ "keys": [...] }` (at most 20) → `POST /photos/bucket/delete`,
+Deleting sends `DELETE /api/photos/bucket` with `{ "keys": [...] }` (at most 20) → `DELETE /photos/bucket`,
 which deletes each image key (an image file extension, under any prefix) and answers with `deleted` and `failed` keys,
 each failure with why. The modal closes once all are gone, lists any that weren't, and the listing is read again.
 
