@@ -65,7 +65,8 @@ and **Move back**. The mark is the photo JSON's `undecided: true`, kept as a
 [draft](drafts.md) whatever its title, so the next Commit takes it out of `ALLPHOTOS.json` and the portfolio stops
 showing it once the pull request merges. It stays in the queue until it's moved back, except that naming an untitled one
 on the Photo page takes it out too (the save clears its mark), so naming a photo set aside still publishes it. With
-drafts turned off in Settings an Undecided photo goes in `ALLPHOTOS.json` like any other.
+drafts turned off in Settings an Undecided photo goes in `ALLPHOTOS.json` like any other. The
+[Gallery](gallery.md)'s **Undecided** card sends many chosen photos here at once, published ones included.
 
 > **Frontend analogy:** it's like archiving an email: the message is still there, it just leaves the inbox view until
 > you open the Archive folder or move it back.

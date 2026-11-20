@@ -169,7 +169,10 @@ Compare page before deciding which gets posted.
 filtered ones, and an **Add albums, tags and genres** card with an album, a tag and a genre combobox. **Add to N photos**
 (`POST /api/photos/groups` with `paths`, `albums`, `tags` and `genres`) adds them to each chosen photo's `albums`, `tags` and `genres`
 after the ones it has, changing nothing else in the files, as [changes waiting for Commit](pending-changes.md), the
-way Update Data saves. It warns when a chosen photo is already in another album. Under it, a **Lower Tier** card marks the chosen photos [Lower Tier](lower-tier.md) or takes the mark off.
+way Update Data saves. It warns when a chosen photo is already in another album. Under it, an **Undecided** card sends the chosen photos to [Undecided](photos-in-flight.md#undecided) (**Send N photos to
+Undecided**) or moves them back, and a **Lower Tier** card marks them [Lower Tier](lower-tier.md) or takes the mark off.
+Both keep the change waiting for Commit straight away, and the selection stays, so a photo sent to Undecided while
+**Show → Undecided** is off leaves the list but can still be moved back.
 
 The code is in `apps/client-pipeline/src/routes/gallery.tsx` and `components/gallery/`: `gallery-files.ts` builds the
 list, `lib/gallery-show.ts` reads **Show** and the old links, `photo-sort.ts` sorts, `gallery-lightbox.tsx` is the

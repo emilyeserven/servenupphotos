@@ -9,18 +9,28 @@ import { squareImages } from "@/lib/offline-thumbnails";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import { UNDECIDED } from "@/lib/photo-fields";
 
-/** Sets or clears the photo's `undecided` mark, as a local edit until Commit. */
-function useSetUndecided() {
+/** A photo file the Undecided mark is set on. */
+interface MarkedFile {
+  path: string;
+  data?: unknown;
+}
+
+/**
+ * Sets or clears the `undecided` mark on each of the files, as a local edit until Commit, such as
+ * the Gallery's chosen photos.
+ */
+export function useSetUndecided() {
   const setField = useLocalEditsStore((s) => s.setField);
-  return (file: InFlightFileRead, undecided: boolean) =>
-    setField(UNDECIDED, [
-      {
+  return (files: MarkedFile[], undecided: boolean) =>
+    setField(
+      UNDECIDED,
+      files.map((file) => ({
         path: file.path,
         before: (file.data ?? {}) as Record<string, unknown>,
         // Left out (null) rather than false, so a photo moved back is as it was.
         value: undecided ? true : null,
-      },
-    ]);
+      })),
+    );
 }
 
 /**
@@ -52,7 +62,7 @@ export function MoveToUndecided({ file }: { file: InFlightFileRead }) {
       size="sm"
       className="text-muted-foreground"
       title="Set this photo aside until you decide on it. It stays saved, as a draft the portfolio doesn't show, even with a title."
-      onClick={() => setUndecided(file, true)}
+      onClick={() => setUndecided([file], true)}
     >
       <CircleHelpIcon />
       Undecided
@@ -158,7 +168,7 @@ function TileEdit({ path, fromGallery }: { path: string; fromGallery?: boolean }
 function MoveBack({ file }: { file: InFlightFileRead }) {
   const setUndecided = useSetUndecided();
   return (
-    <Button variant="ghost" size="sm" onClick={() => setUndecided(file, false)}>
+    <Button variant="ghost" size="sm" onClick={() => setUndecided([file], false)}>
       <Undo2Icon />
       Move back
     </Button>
