@@ -10,10 +10,12 @@ interface VisitChipsProps {
   onMove?: (visit: TripVisit, by: -1 | 1) => void;
   /** Takes a visit off the route, back to the day's Trip Stops page; left out, it can't be. */
   onOff?: (visit: TripVisit) => void;
+  /** Leaves out the icon for how each stop was reached, when a picker beside it shows that. */
+  hideWays?: boolean;
 }
 
 /** The trip stops between two photos, as small icons whose name shows on hover; nothing when none. */
-export function VisitChips({ visits, onMove, onOff }: VisitChipsProps) {
+export function VisitChips({ visits, onMove, onOff, hideWays }: VisitChipsProps) {
   if (visits.length === 0) return null;
   return (
     <span className="flex items-center gap-0.5" aria-label="Trip stops here">
@@ -21,6 +23,7 @@ export function VisitChips({ visits, onMove, onOff }: VisitChipsProps) {
         <VisitChip
           key={i}
           visit={v}
+          hideWay={hideWays}
           onMove={onMove && ((by) => onMove(v, by))}
           onOff={onOff && (() => onOff(v))}
         />
@@ -37,18 +40,19 @@ interface VisitChipProps {
   visit: TripVisit;
   onMove?: (by: -1 | 1) => void;
   onOff?: () => void;
+  hideWay?: boolean;
 }
 
 /**
  * One trip stop: its icon, named on hover, with arrows that move it and a cross that takes it off
  * shown above it while it's pointed at, so stops side by side sit close together.
  */
-function VisitChip({ visit, onMove, onOff }: VisitChipProps) {
+function VisitChip({ visit, onMove, onOff, hideWay }: VisitChipProps) {
   const Icon = VISIT_ICONS[visit.kind];
   const name = nameOf(visit);
   return (
     <span className="group/visit relative flex items-center gap-0.5">
-      <StopWayIcon visit={visit} />
+      <StopWayIcon visit={hideWay ? {} : visit} />
       <Tooltip>
         <TooltipTrigger asChild>
           <span

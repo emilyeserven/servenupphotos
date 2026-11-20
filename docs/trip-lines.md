@@ -314,10 +314,18 @@ They're saved with the line as `visits`:
 ```
 
 The photo strip on **Route** puts these places on the route too: the plus under each gap lists the day's places not on
-the route yet, and picking one puts it between those two photos (with a link to the Trip Stops page to add more). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
+the route yet, and picking one puts it between those two photos (with a link to the Trip Stops page to add more). Below
+them it lists each place already on the route, marked **again**: picking one adds a second visit there, a copy as
+**Visited again** makes, leaving the first where it is, such as a ropeway's bottom station gone up from in the morning
+and back to after lunch (`lib/stop-insert.ts`). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
-two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one spot earlier or later on the
+two photos, its name shown on hover. Before each place is the way it was reached from the point before it (its
+**Got here by**, or else the gap's), and after the last one is the gap's own way, to the next photo. Each changes on
+its own: picking **Ropeway or gondola** before the second of two stations makes just the stretch between them a
+ropeway, and changing the gap after them keeps the ways to them (a stop that went the gap's way is saved with that way
+first), so a car to a station and a walk from it stay a car and a walk. Between groups each way is a menu; in a break
+the places show no way. Pointing at that icon shows arrows that move the place one spot earlier or later on the
 route: first past the next stop between the same two photos, such as two stops before the first photo, then on one photo, landing next to the stops already there. A cross takes it off the route again. Moving one earlier from after the
 first photo, or picking it from the strip's **Start**, puts it before the first photo, as `"first": true` with no `after`, such as lunch before the first photo
 was taken: the line goes from the start spot through it to the first photo (as a via spot after the start spot), or,
@@ -541,7 +549,20 @@ rail, monorails and trams. **Change line** looks again.
 **Use this name**. It's saved as `{ "id": 0, "name": "Super HAGI", "source": "named" }`, kept drawn as it was (along
 the streets, when it was snapped), shown on the map with its name, and has no stations to pick. A **Ropeway or
 gondola** hop, such as the Shin-Kobe Ropeway up to the Nunobiki Herb Gardens, looks nothing up, since no source
-maps them as lines; it's drawn straight, as it runs, and named this way.
+maps them as lines; its button says **Name it** (**Rename** once named), and it's drawn straight, as it runs.
+
+Once named, a ropeway shows **Starts at** and **Ends at**, each **At the photo** until **On the map** is pressed and
+the map clicked where its station is (`lib/ropeway-ends.ts`, the map pick `ropeway-start:<leg key>` or
+`ropeway-end:<leg key>`). The ropeway is then drawn as a straight line from one station to the other, solid like a
+line ridden, with a walk from the photo to the station it starts at and from the station it ends at to the next
+photo, which **Snap to streets** routes like any walk to a station. Each station is named **Start station** or
+**End station** at first, renamed in its field, and moved with **Move**; **The photo** puts that end back at the photo.
+It saves as the hop's `board` and `alight` beside its named line, with a two-point `path` between them, the same
+fields a train ridden between stations uses, so the backend and the portfolio draw it as they draw any line ridden.
+Renaming the ropeway keeps its stations.
+
+> **Frontend analogy:** it's a controlled input whose value is two map clicks: the stations are state on the hop,
+> and the line on the map is derived from them, the same way a train's track is derived from its picked stations.
 
 While it looks, the hop says where it's asking, since a busy public server can take up to a minute (see
 below). When the look-up needs a map that isn't loaded yet (a rail or bus map's first download, or reading one after

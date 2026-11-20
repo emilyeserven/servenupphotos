@@ -120,3 +120,27 @@ func TestBakeHopRides(t *testing.T) {
 		t.Error("a hop with no line kept its rides")
 	}
 }
+
+func TestBakeRopewayStations(t *testing.T) {
+	spots := map[int]tripSpot{1: {ID: 1, Latitude: 34.7, Longitude: 135.19}, 2: {ID: 2, Latitude: 34.71, Longitude: 135.18}}
+	bottom := &TripPoint{Latitude: 34.701, Longitude: 135.191, Label: "Sanroku"}
+	top := &TripPoint{Latitude: 34.709, Longitude: 135.181, Label: "Sancho"}
+	seg := TripSegment{
+		Mode: ModeRopeway, Photos: []int{1, 2}, Board: bottom, Alight: top,
+		Line: &TripTransitLine{Name: "Shin-Kobe Ropeway", Source: "named"},
+		Path: [][2]float64{{135.191, 34.701}, {135.181, 34.709}},
+	}
+	if perr := trimLine(&seg, 1); perr != nil || seg.Board == nil || seg.Alight == nil || seg.Path == nil {
+		t.Fatalf("trimmed = %+v, %v", seg, perr)
+	}
+	for _, s := range []TripSegment{seg, {Mode: seg.Mode, Photos: seg.Photos, Board: bottom, Alight: top, Line: seg.Line}} {
+		fs := segmentFeatures(TripLine{Day: "2026-11-01"}, s, spots)
+		if len(fs) != 3 || fs[0].Properties.Mode != ModeWalk || fs[2].Properties.Mode != ModeWalk {
+			t.Fatalf("features = %+v", fs)
+		}
+		want := [][2]float64{{135.191, 34.701}, {135.181, 34.709}}
+		if !slices.Equal(fs[1].Geometry.Coordinates, want) || fs[1].Properties.Line != "Shin-Kobe Ropeway" {
+			t.Errorf("ride = %+v; want straight from station to station", fs[1])
+		}
+	}
+}

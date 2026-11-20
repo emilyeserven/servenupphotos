@@ -3,12 +3,16 @@ import { type LucideIcon, MapPinPlus } from "lucide-react";
 import { useState } from "react";
 import type { TripVisit } from "@/api/trip-lines";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
+import { isAgain } from "@/lib/stop-insert";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 interface VisitInsertProps {
-  /** The day's trip stops not on the route yet, from its Trip Stops page. */
+  /**
+   * The day's trip stops from its Trip Stops page to put here: the ones not on the route yet, and
+   * the ones on it already, which go on again as a second visit.
+   */
   choices: TripVisit[];
   /** Puts the trip stop on the route here. */
   onInsert: (visit: TripVisit) => void;
@@ -29,8 +33,8 @@ interface VisitInsertProps {
 }
 
 /**
- * Puts one of the day's trip stops between two photos: the ones added on the day's Trip Stops page
- * and not on the route yet, or a link there when there are none.
+ * Puts one of the day's trip stops between two photos: one added on the day's Trip Stops page and
+ * not on the route yet, or one on it already as a second visit, or a link there when there are none.
  */
 export function VisitInsert(props: VisitInsertProps) {
   const { choices, onInsert, heading, actions, trigger } = props;
@@ -68,13 +72,14 @@ export function VisitInsert(props: VisitInsertProps) {
   );
 }
 
-/** One place not on the route yet, with its kind's icon. */
+/** One place to put on the route, with its kind's icon; "again" when it's on the route already. */
 function Choice({ visit, onPick }: { visit: TripVisit; onPick: () => void }) {
   const Icon = VISIT_ICONS[visit.kind];
   return (
     <Button variant="ghost" size="sm" className="justify-start" onClick={onPick}>
       <Icon aria-hidden />
       {visit.name || "Unnamed place"}
+      {isAgain(visit) && <span className="text-muted-foreground">again</span>}
     </Button>
   );
 }

@@ -44,7 +44,7 @@ function withWay({ mode: _was, ...visit }: TripVisit, way: string): TripVisit {
 }
 
 /** A small icon before a trip stop in the photo strip for how it was reached; none for the route's way. */
-export function StopWayIcon({ visit }: { visit: TripVisit }) {
+export function StopWayIcon({ visit }: { visit: Pick<TripVisit, "mode"> }) {
   if (!visit.mode) return null;
   const { icon: Icon, label } = gapInfo(visit.mode);
   return (
