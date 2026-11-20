@@ -1,5 +1,6 @@
 import type { AlbumRow, Group } from "@/api/organize";
 import { parsePastedJson } from "@/lib/pasted-json";
+import { isObject } from "@portfolio/lib/values";
 
 /** The most cover photos an album can have. */
 export const MAX_COVERS = 5;
@@ -113,10 +114,6 @@ function parsed(text: string): unknown {
   } catch (error) {
     throw new ImportError(`That isn't JSON: ${(error as Error).message}`);
   }
-}
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /** Refuses a file that says it's something other than an album file, or a newer one. */

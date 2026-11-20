@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 import { type CombinedFile, type InFlightResponse } from "@/api/photos";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SectionTitle } from "@/components/section-title";
 
 /** ALLPHOTOS.json from the pull request's branch, or why it can't be shown. */
 export function AllPhotosPanel({ data }: { data?: InFlightResponse }) {
@@ -48,7 +49,7 @@ function AllPhotosFile({ all }: { all: CombinedFile }) {
 /** The panel's title, linked to the file on GitHub and with its count once it's read. */
 function AllPhotosHeading({ all }: { all?: CombinedFile }) {
   return (
-    <h2 className="flex flex-wrap items-baseline gap-x-2 text-sm font-medium">
+    <SectionTitle as="h2" className="flex flex-wrap items-baseline gap-x-2">
       <a
         href={all?.fileUrl}
         target="_blank"
@@ -58,7 +59,7 @@ function AllPhotosHeading({ all }: { all?: CombinedFile }) {
         ALLPHOTOS.json
       </a>
       {all && <span className="text-muted-foreground font-normal">{all.count} listed</span>}
-    </h2>
+    </SectionTitle>
   );
 }
 

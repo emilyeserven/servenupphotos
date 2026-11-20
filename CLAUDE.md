@@ -36,10 +36,13 @@ A new endpoint usually touches, in order:
 
 1. `be-pipeline/internal/github` or `storage`: the logic, with a `_test.go` next to it using the package's fakes
    (`newFakeGitHub`, `newMainRepo` in `github`; `fakeBucket` in `storage`).
-2. `be-pipeline/internal/httpapi/<area>.go`: the handler, and one line in that area's `routes_<area>.go`.
+2. `be-pipeline/internal/httpapi/<area>.go`: the handler, and one line in that area's `routes_<area>.go`. The path
+   follows the route shape rules in the `add-pipeline-endpoint` skill: the method says what happens (`DELETE`, never
+   `POST …/delete`), segments are lowercase and hyphenated, and an Update Data change is `POST /data/<change>` with
+   optional `…/pick` and `…/preview` steps next to it.
 3. `client-pipeline/src/api/<area>.ts`: the response type and the query or mutation.
 4. `scripts/fixtures/<area>.mjs` (the area of the `routes_<area>.go` that registers the route): a sample answer, so `pnpm shot` can show the page. `pnpm check:fixtures`
-   (part of `pnpm check`) fails when a route has none.
+   (part of `pnpm check`) fails when a route has none, or breaks a route shape rule (`scripts/route-shapes.mjs`).
 
 The BFF relays every path on its own. Only when the backend gives the work more than 30s, add its path prefix to
 `relayTimeouts` in `be-pipeline/internal/httpapi/timeouts.go`; the BFF reads it at start-up (`docs/bff-timeouts.md`).
@@ -50,7 +53,7 @@ Everything here is fast; run the narrowest check while working and `pnpm check` 
 
 ```sh
 pnpm check                         # oxlint, oxfmt --check, typecheck, fallow, check:fixtures, check:docs, check:counts (~6s); `pnpm fmt` fixes formatting
-pnpm check:fixtures                # every backend route has a fixture in scripts/fixtures/
+pnpm check:fixtures                # every backend route has a fixture in scripts/fixtures/ and follows the route shape rules
 pnpm build                         # all three TS apps (~5s); CI runs it too
 pnpm test                          # node --test: the portfolio's map-preview and both apps' src/lib (~2s); CI runs it too
 cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes ~8s
@@ -87,9 +90,19 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
   flyout puts `choices` (`OptionChoices`, sliders) in the left column and `checks` (checkboxes in titled `OptionGroup`s)
   in the right, stacking on a phone (a flyout with only checkboxes leaves `choices` out). Next to search and **Show filters**, it goes at the right end of that row with
   `align="end"`.
+- **Entry editors:** a page that edits one JSON file per entry (camera overrides, custom lenses, metadata groups, …)
+  ends its editor with `EntryEditorButtons` (`components/entry-buttons.tsx`), passing the save and remove
+  `mutationOptions`, `next`, `saved` and a `whyNot` function, rather than its own Save and Remove buttons. An Update
+  Data card's preview uses `ScanPreviewBody` and `SaveButton` from `components/update-data-shared.tsx`.
 - **Filter pickers:** build on `SectionPicker` and follow [Picker conventions](docs/portfolio-filters.md#picker-conventions):
   extra info behind `InfoButton` in the `aside` panel on the right, Group by and Sort as small menus left of the (i),
   grouping off by default, and no icons in choice lists.
+- **Small value and date helpers:** both apps share `apps/portfolio/src/lib/values.ts` (`isObject`, `textOf` for
+  trimmed text or "", `stringOf` for text as written or "", `clamp`) and `apps/portfolio/src/lib/dates.ts`
+  (`isoDate`, `parseIsoDate`, `shortDate` "Nov 3, 2026", `weekdayDate` "Tue, Nov 3, 2026", `dateTimeText` for a
+  moment such as an upload time). Import them (`@portfolio/lib/…` from the pipeline) instead of writing a local copy,
+  and add a new date look to `dates.ts` rather than building an `Intl.DateTimeFormat` or a `date-fns` `format` in a
+  component.
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors
@@ -99,6 +112,19 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
 - **Docs:** a change in behavior updates its `docs/<feature>.md`. A new feature gets a new `docs/` file and one line
   in the README's **Features** list (`pnpm check` fails on a doc missing from it or a link to a missing doc). Only touch the README itself for setup, commands or deployment. Docs explain
   backend ideas with a short "> **Frontend analogy:**" note, since the owner is a frontend engineer.
+- **Section titles:** a pipeline heading over a section of a page, card or panel is `SectionTitle`
+  (`components/section-title.tsx`), not a hand-styled `h2`/`h3`. `size="sm"` (the default) is a part of a card or
+  panel, `size="lg"` a section of a page or drawer; `as="h2"` sets the level without changing the look.
+- **Naming:**
+  - **color, not colour.** `colour` is only the trip line and transit line field copied from OpenStreetMap's
+    `colour` tag (in the committed trip line files) and the code that carries it. Every other field, prop and
+    variable, new ones included, says `color`.
+  - **Storage keys** are kebab-case with the app's prefix: `pipeline-…` in the pipeline, `servenup-…` in the
+    portfolio. A new stored value uses `storedValue` (`@portfolio/lib/stored-value`). Renaming a key calls
+    `moveStoredKey(old, new)` beside it so the browser keeps what it saved.
+  - **Go file names** are the feature squashed into one word (`tripstories.go`, `placeareas.go`, `albumsuggest.go`),
+    with an underscore only before a part of that feature (`triplines_route.go`, `bulktags_answer.go`,
+    `routes_<area>.go`). Tests add `_test`.
 - **Pull requests:** title is one sentence describing the change as the user sees it, such as "Show photo counts on
   the portfolio map". Squash-merged.
 

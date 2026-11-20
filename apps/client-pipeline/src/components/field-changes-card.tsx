@@ -13,13 +13,12 @@ import type { PendingSave } from "@/api/scan-changes";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
 import {
   CommitSuccess,
   FileDetails,
   invalidatePhotoReads,
-  PreviewDestination,
-  Unreadable,
+  SaveButton,
+  ScanPreviewBody,
 } from "@/components/update-data-shared";
 import { count } from "@portfolio/lib/words";
 
@@ -127,28 +126,14 @@ function PreviewBody<P extends FieldChangesPreview>({
   card,
   ...apply
 }: PreviewProps<P> & { preview: P }) {
-  if (preview.files.length === 0) {
-    return (
-      <>
-        <p className="text-sm">{card.renderUnchanged(preview)}</p>
-        <Unreadable files={preview.unreadable} />
-      </>
-    );
-  }
   return (
-    <>
-      <div className="flex flex-col gap-1 text-sm">
-        <p>
-          <strong>
-            {preview.files.length} of {card.total(preview)}
-          </strong>{" "}
-          change.
-        </p>
-        <p className="text-muted-foreground">
-          <PreviewDestination scan={preview} />
-        </p>
-      </div>
-      <Unreadable files={preview.unreadable} blocking />
+    <ScanPreviewBody
+      scan={preview}
+      changed={preview.files.length}
+      unchanged={card.renderUnchanged(preview)}
+      total={card.total(preview)}
+      headline="change"
+    >
       <ul className="flex flex-col divide-y rounded-md border text-sm">
         {preview.files.map((file) => (
           <FileDetails key={file.path} path={file.path} note={card.note(file)}>
@@ -156,12 +141,14 @@ function PreviewBody<P extends FieldChangesPreview>({
           </FileDetails>
         ))}
       </ul>
-      <ApplyButton
-        files={preview.files.length}
-        blocked={preview.unreadable.length > 0}
-        {...apply}
+      <SaveButton
+        label={`Apply to ${count(preview.files.length, "file")}`}
+        disabled={preview.unreadable.length > 0}
+        pending={apply.pending}
+        error={apply.error}
+        onClick={apply.onApply}
       />
-    </>
+    </ScanPreviewBody>
   );
 }
 
@@ -178,30 +165,6 @@ function FieldChangeList({ changes }: { changes: FieldChange[] }) {
         </div>
       ))}
     </dl>
-  );
-}
-
-function ApplyButton({
-  files,
-  blocked,
-  pending,
-  error,
-  onApply,
-}: ApplyProps & { files: number; blocked: boolean }) {
-  return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button type="button" disabled={blocked || pending} onClick={onApply}>
-        {pending ? (
-          <>
-            <Spinner />
-            Saving…
-          </>
-        ) : (
-          `Apply to ${count(files, "file")}`
-        )}
-      </Button>
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
-    </div>
   );
 }
 

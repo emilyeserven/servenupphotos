@@ -1,5 +1,6 @@
 import type { SocialPhoto } from "@/api/publish";
 import { CREATE_DATE } from "@/lib/photo-fields";
+import { textOf } from "@portfolio/lib/values";
 
 /**
  * The Instagram calendar's Focus: the filters its photo picker starts with, so picking a photo for a
@@ -30,14 +31,10 @@ export const NO_FOCUS: SocialFocus = {
   genres: [],
 };
 
-function text(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /** The custom value written on the Photo page, or else the one from EXIF. */
 export function customOr(data: Record<string, unknown>, field: string): string {
   const name = `custom${field[0]?.toUpperCase()}${field.slice(1)}`;
-  return text(data[name]) || text(data[field]);
+  return textOf(data[name]) || textOf(data[field]);
 }
 
 /** The day the photo was taken, as YYYY-MM-DD, from its custom or EXIF date; "" when it has none. */
@@ -47,7 +44,7 @@ export function takenDay(data: Record<string, unknown>): string {
 }
 
 function list(value: unknown): string[] {
-  return Array.isArray(value) ? value.map(text).filter(Boolean) : [];
+  return Array.isArray(value) ? value.map(textOf).filter(Boolean) : [];
 }
 
 /** The words typed in a Focus field as a list: split on commas, without "#" or blanks. */

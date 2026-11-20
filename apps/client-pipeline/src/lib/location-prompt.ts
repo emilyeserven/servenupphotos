@@ -3,6 +3,7 @@ import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
 import { gpsText, writtenPosition } from "@/lib/place-gps";
 import { placeCity, withParent } from "@/lib/place-hierarchy";
 import { parsePastedJson } from "@/lib/pasted-json";
+import { textOf } from "@portfolio/lib/values";
 
 /** What the location prompt tells the LLM about: what's already known of where the photo was taken. */
 export interface LocationClues {
@@ -140,11 +141,6 @@ export function jsonObject(text: string): Record<string, unknown> | null {
   }
 }
 
-/** value trimmed when it's text, or else "". */
-export function str(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /** A coordinate the LLM gave as a number or as text, rounded to six places (about 10cm), or NaN. */
 function coordinate(value: unknown): number {
   const number = typeof value === "number" || typeof value === "string" ? Number(value) : NaN;
@@ -159,13 +155,13 @@ function answerGps(answer: Record<string, unknown>): string {
   const decimal = `${coordinate(answer.latitude)}, ${coordinate(answer.longitude)}`;
   const text = writtenPosition(decimal)
     ? decimal
-    : `${str(answer.latitude)} ${str(answer.longitude)}`;
+    : `${textOf(answer.latitude)} ${textOf(answer.longitude)}`;
   return gpsText(writtenPosition(text) ?? {});
 }
 
 /** The answer's relation, when it's one of RELATIONS. */
 function answerRelation(value: unknown): string {
-  const relation = str(value).toLowerCase();
+  const relation = textOf(value).toLowerCase();
   return (RELATIONS as readonly string[]).includes(relation) ? relation : "";
 }
 
@@ -178,15 +174,15 @@ export function parseLocationAnswer(text: string): PastedLocation | null {
 /** The location in one JSON object of an LLM's answer, with "" for each field it leaves out. */
 export function readLocation(answer: Record<string, unknown>): PastedLocation {
   return {
-    place: str(answer.place),
+    place: textOf(answer.place),
     relation: answerRelation(answer.relation),
-    city: str(answer.city),
-    state: str(answer.state),
-    country: str(answer.country),
+    city: textOf(answer.city),
+    state: textOf(answer.state),
+    country: textOf(answer.country),
     gps: answerGps(answer),
     exact: answer.exact === true,
-    confidence: str(answer.confidence).toLowerCase(),
-    reasoning: str(answer.reasoning),
+    confidence: textOf(answer.confidence).toLowerCase(),
+    reasoning: textOf(answer.reasoning),
   };
 }
 

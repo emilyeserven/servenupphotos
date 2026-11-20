@@ -12,9 +12,13 @@ import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import { CommitSuccess, PreviewDestination, Unreadable } from "@/components/update-data-shared";
 import { count } from "@portfolio/lib/words";
+import {
+  CommitSuccess,
+  PreviewDestination,
+  SaveButton,
+  Unreadable,
+} from "@/components/update-data-shared";
 
 /** Trims a base URL and its trailing slashes, as the backend does. */
 function cleanBaseUrl(value: string): string {
@@ -315,19 +319,13 @@ function ApplyChange({
   onApply,
 }: Omit<PreviewResultProps, "change"> & { preview: BaseUrlPreview }) {
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button type="button" disabled={preview.unreadable.length > 0 || pending} onClick={onApply}>
-        {pending ? (
-          <>
-            <Spinner />
-            Saving…
-          </>
-        ) : (
-          `Change ${count(preview.urls, "URL")}`
-        )}
-      </Button>
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
-    </div>
+    <SaveButton
+      label={`Change ${count(preview.urls, "URL")}`}
+      disabled={preview.unreadable.length > 0}
+      pending={pending}
+      error={error}
+      onClick={onApply}
+    />
   );
 }
 

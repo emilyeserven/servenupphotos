@@ -20,6 +20,7 @@ import { TripMap } from "@/components/trips/trip-map";
 import type { TripDay } from "@/lib/trip-days";
 import { datesBetween, legsInOrder } from "@/lib/trip-legs";
 import { count } from "@portfolio/lib/words";
+import { SectionTitle } from "@/components/section-title";
 
 interface TripEditorProps {
   /** The Trip as saved, or a new one with no ID yet. */
@@ -80,7 +81,7 @@ export function TripEditor(props: TripEditorProps) {
             onChange={(labels) => setDraft({ ...typed, labels })}
           />
           <div className="flex flex-col gap-1">
-            <h3 className="text-sm font-medium">Days and legs</h3>
+            <SectionTitle>Days and legs</SectionTitle>
             <p className="text-muted-foreground text-sm">
               Optional: the ferries and flights between places that a day's line can't hold, drawn
               on the map. Add them on the day they leave; a day can have several, each from one of
