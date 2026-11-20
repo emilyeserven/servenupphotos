@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { moveStoredKey } from "@portfolio/lib/stored-value";
 
 /** Where the browser remembers whether the Gear & settings graphics pane is shown. */
-const STORAGE_KEY = "gear-settings-graphics";
+const STORAGE_KEY = "servenup-gear-settings-graphics";
+moveStoredKey("gear-settings-graphics", STORAGE_KEY);
 
 /** Whether the pane was shown last time; hidden when the browser doesn't say. */
 function storedOn(): boolean {

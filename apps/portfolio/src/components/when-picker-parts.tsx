@@ -13,12 +13,12 @@ import {
   CURRENT_LABELS,
   currentChoice,
   DAYPARTS,
-  dayOf,
   type ListKey,
   SEASONS,
   WEEKDAYS,
   WHEN_KEYS,
 } from "@portfolio/lib/when-filters";
+import { isoDate, parseIsoDate } from "@portfolio/lib/dates";
 
 /** The first and last day a portfolio photo was taken, which the calendar keeps to. */
 const FIRST_DAY = new Date(Math.min(...allPhotos.map((photo) => photo.takenAt.getTime())));
@@ -114,14 +114,9 @@ function CurrentButton({
   );
 }
 
-/** A day as YYYY-MM-DD, or undefined without one. */
-function dayText(date: Date | undefined): string | undefined {
-  return date ? dayOf(date) : undefined;
-}
-
 /** A YYYY-MM-DD day as a date, or undefined without one. */
-export function dateOf(day: string | undefined): Date | undefined {
-  return day ? new Date(`${day}T00:00`) : undefined;
+function dateOf(day: string | undefined): Date | undefined {
+  return day ? parseIsoDate(day) : undefined;
 }
 
 /**
@@ -132,7 +127,7 @@ function RangePart(props: WhenSetters) {
   const from = dateOf(props.filters.start);
   const to = dateOf(props.filters.end);
   const set = (next: { start?: Date; end?: Date }) => {
-    const days = { start: dayText(next.start), end: dayText(next.end) };
+    const days = { start: next.start && isoDate(next.start), end: next.end && isoDate(next.end) };
     setWhen(props, Object.fromEntries(Object.entries(days).filter(([, day]) => day)));
   };
   return (

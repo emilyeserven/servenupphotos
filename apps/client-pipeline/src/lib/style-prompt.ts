@@ -2,6 +2,7 @@ import type { ContactSheet, ContactSheetPhoto } from "@/api/contact-sheets";
 import type { GridFilters } from "@/components/gallery/grid-filters";
 import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { promptImageUrl } from "@/lib/tag-prompt";
+import { textOf } from "@portfolio/lib/values";
 
 /** How many photos the style prompt links until another number is chosen. */
 export const defaultStyleCount = 30;
@@ -29,12 +30,6 @@ export function styleCount(typed: string): number {
   return Number.isFinite(count) && count >= 1 ? count : defaultStyleCount;
 }
 
-/** The field's text, trimmed, or "" when it isn't text. */
-function text(data: Record<string, unknown>, field: string): string {
-  const value = data[field];
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /** The field's text values, such as a photo's genres. */
 function texts(data: Record<string, unknown>, field: string): string[] {
   const value = data[field];
@@ -43,18 +38,18 @@ function texts(data: Record<string, unknown>, field: string): string[] {
 
 /** The day the photo was taken as YYYY-MM-DD, the custom date first, or "" without one. */
 export function takenDay(data: Record<string, unknown>): string {
-  const date = text(data, "customCreateDate") || text(data, "createDate");
+  const date = textOf(data.customCreateDate) || textOf(data.createDate);
   return /^\d{4}[:-]\d{2}[:-]\d{2}/.test(date) ? date.slice(0, 10).replaceAll(":", "-") : "";
 }
 
 /** The country the photo was taken in, the custom one first, or "" without one. */
 function country(data: Record<string, unknown>): string {
-  return text(data, "customCountry") || text(data, "country");
+  return textOf(data.customCountry) || textOf(data.country);
 }
 
 /** Where the photo was taken, such as "Amsterdam, Netherlands", the custom city and country first. */
 function where(data: Record<string, unknown>): string {
-  const city = text(data, "customCity") || text(data, "city");
+  const city = textOf(data.customCity) || textOf(data.city);
   return [city, country(data)].filter(Boolean).join(", ");
 }
 
@@ -90,7 +85,7 @@ function sheetLabel(photo: StylePhoto): string {
       .split("/")
       .at(-1)
       ?.replace(/\.json$/, "") ?? photo.path;
-  return text(photo.data, "title") || name;
+  return textOf(photo.data.title) || name;
 }
 
 /** The style prompt's photos as the contact sheets show them, in the prompt's order. */
@@ -115,10 +110,10 @@ export function stylePhotoSection(
   sheets?: ContactSheet[],
 ): string {
   const { data } = photo;
-  const gear = [text(data, "camera"), text(data, "lens")].filter(Boolean).join(" with ");
+  const gear = [textOf(data.camera), textOf(data.lens)].filter(Boolean).join(" with ");
   return [
     sectionHeading(photo, place, sheets),
-    ...line("Title", text(data, "title")),
+    ...line("Title", textOf(data.title)),
     ...line("Taken", takenDay(data)),
     ...line("Where", where(data)),
     ...line("Gear", gear),

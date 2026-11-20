@@ -3,6 +3,7 @@ import { PhotoPickDialog } from "@/components/album-layout/photo-pick-dialog";
 import { photoId } from "@/lib/album-photo-order";
 import { MAX_COVERS } from "@/lib/album-layout-editor";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { SectionTitle } from "@/components/section-title";
 
 interface CoverPickerProps {
   covers: number[];
@@ -22,9 +23,9 @@ export function CoverPicker({ covers, photos, byId, onChange }: CoverPickerProps
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h3 className="font-medium">
+        <SectionTitle>
           Covers ({covers.length} of {MAX_COVERS})
-        </h3>
+        </SectionTitle>
         <p className="text-muted-foreground text-xs">
           The portfolio's Albums page shows these for the album, in this order.{" "}
           {covers.length === 0 && "With none, it shows the album's first 5 photos."}

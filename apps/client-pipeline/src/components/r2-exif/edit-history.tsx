@@ -1,4 +1,5 @@
 import { R2_EXIF_FIELD_LABELS, type R2ExifPhoto } from "@/api/r2-exif";
+import { dateTimeText } from "@portfolio/lib/dates";
 
 /** The photo's earlier writes to its original's EXIF in R2, newest first. */
 export function EditHistory({ photo }: { photo: R2ExifPhoto }) {
@@ -7,12 +8,7 @@ export function EditHistory({ photo }: { photo: R2ExifPhoto }) {
       <h3 className="text-muted-foreground text-xs font-medium">Written to R2</h3>
       {photo.edits.toReversed().map((edit) => (
         <div key={edit.date} className="flex flex-col gap-1">
-          <p className="text-muted-foreground text-xs">
-            {new Date(edit.date).toLocaleString(undefined, {
-              dateStyle: "medium",
-              timeStyle: "short",
-            })}
-          </p>
+          <p className="text-muted-foreground text-xs">{dateTimeText(edit.date)}</p>
           <ul className="flex flex-col gap-1">
             {edit.fields.map((field) => (
               <li key={field.field} className="min-w-0 break-all">

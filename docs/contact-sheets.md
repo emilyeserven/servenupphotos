@@ -82,7 +82,7 @@ anything in it. It lists each set (one press of **Make contact sheets**), newest
 sheets as small links, and their size. **Delete** removes one set, and **Delete all**, pressed twice, removes every
 set. The grid leaves contact sheets out, so they don't mix with photos.
 
-`POST /api/photos/bucket/contact-sheets/delete` takes `{ set }`, a set's folder name such as
+`DELETE /api/photos/bucket/contact-sheets` takes `{ set }`, a set's folder name such as
 `20261115-045000-1a2b3c4d`, or `""` for every set. `storage.DeleteContactSheets` lists that folder and deletes each
 object in it, and answers `{ deleted, failed: [{ key, message }] }`. Only folders inside `contact-sheets/` can be
 named, so nothing else in the bucket can be deleted this way.
