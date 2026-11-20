@@ -18,6 +18,19 @@ type RouteFunc func(ctx context.Context, mode string, points [][2]float64, by []
 // is drawn straight.
 var streetModes = map[string]bool{ModeWalk: true, ModeBus: true, ModeCar: true}
 
+// transitLikes are the modes a ModeTransit hop can be routed and drawn as
+// (TripSegment.Like): the ones that go along roads.
+var transitLikes = map[string]bool{ModeBus: true, ModeCar: true}
+
+// wayMode is the mode seg is routed and drawn as: its Like, for a transit
+// hop that rides no line or one named by hand, and else its Mode.
+func wayMode(seg TripSegment) string {
+	if seg.Mode != ModeTransit || seg.Like == "" || (seg.Line != nil && seg.Line.Source != "named") {
+		return seg.Mode
+	}
+	return seg.Like
+}
+
 // Limits on finding paths when a trip line is saved: all of a day's routes
 // together get routeTimeout, and a path keeps up to maxPathPoints points.
 const (
@@ -45,14 +58,14 @@ func routeSegments(ctx context.Context, line TripLine, spots map[int]tripSpot, r
 // routeSegment gives seg its path when it follows streets and has none, and
 // reports false when it follows streets and is left without one.
 func routeSegment(ctx context.Context, seg *TripSegment, spots map[int]tripSpot, route RouteFunc) bool {
-	if !streetModes[seg.Mode] || len(seg.Path) >= 2 {
+	if !streetModes[wayMode(*seg)] || len(seg.Path) >= 2 {
 		return true
 	}
 	if route == nil {
 		return false
 	}
 	points, _ := segmentPoints(*seg, spots)
-	path, err := route(ctx, seg.Mode, points, stretchesBy(*seg, spots))
+	path, err := route(ctx, wayMode(*seg), points, stretchesBy(*seg, spots))
 	if err != nil || len(path) < 2 || len(path) > maxPathPoints {
 		return false
 	}

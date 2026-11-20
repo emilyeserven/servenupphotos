@@ -3,8 +3,9 @@ import type { TripLegRide } from "@/api/trips";
 import type { TripPhoto } from "@/lib/trip-days";
 import { type LngLat, linePoints } from "@/lib/trip-points";
 import { walkLine } from "@/lib/station-walks";
+import { wayOf } from "@/lib/transit-like";
 
-/** What the map draws a line by: its mode, and for a hop along its line, that line's color. */
+/** What the map draws a line by: its mode (the one a transit hop borrows), and for a hop along its line, that line's color. */
 interface LineProps {
   mode: string;
   /** Whether it's a hop drawn along the track of the line it rode. */
@@ -40,7 +41,7 @@ const HOP_COLOUR = "#9333ea";
 function lineProps(segment: TripSegment, focus?: string): LineProps {
   const onLine = segment.line !== undefined && hasPath(segment);
   const faded = focus !== undefined && segment.name !== focus;
-  return { mode: segment.mode, onLine, colour: colourOf(segment), faded };
+  return { mode: wayOf(segment), onLine, colour: colourOf(segment), faded };
 }
 
 /** Whether the segment has a path to draw along. */

@@ -6,11 +6,13 @@ import type {
   TripTransitLine,
   TripVia,
   TripVisit,
+  TransitLike,
   ViaBy,
 } from "@/api/trip-lines";
 import type { TripLegRide } from "@/api/trips";
 import { walkPathsOf, walkViasOf, withStationWalks } from "@/lib/station-walks";
 import { legLinesOf, withLegLines } from "@/lib/hop-legs";
+import { legLikesOf, withLegLikes } from "@/lib/transit-like";
 import { cutAtStopWays, cutGap } from "@/lib/stop-ways";
 import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
 import { breakEndsOf, breakSpots } from "@/lib/break-ends";
@@ -65,6 +67,11 @@ export interface GapDraft {
    * hop changed to another mode leaves it out.
    */
   lines?: Record<string, HopLine>;
+  /**
+   * The mode each transit hop (of unknown kind) is routed and drawn as, such as a car along the
+   * roads, by its leg key; a hop left out is a straight dashed hop.
+   */
+  likes?: Record<string, TransitLike>;
   /**
    * The photos (by ID) that start a group of their own, such as the first photo in a new park; the
    * day's first photo always does. Each group is its own named line.
@@ -291,14 +298,14 @@ function shapingVia(s: TripSegment): TripVia[] {
 }
 
 /**
- * What makes a segment's path: its mode, points and line, but not its spots' labels, nor the via
+ * What makes a segment's path: its mode (and the one a transit hop borrows), points and line, but not its spots' labels, nor the via
  * spots of a hop with a line, so adding one doesn't drop the line's track.
  */
 export function segmentKey(s: TripSegment): string {
   const via = shapingVia(s).map((v) => [v.after ?? null, v.latitude, v.longitude, v.by ?? null]);
   const ride = [s.line?.id ?? null, at(s.board), at(s.alight)];
   return JSON.stringify([
-    s.mode,
+    s.like ? [s.mode, s.like] : s.mode,
     at(s.start),
     s.photos,
     at(s.end),
@@ -337,15 +344,13 @@ function withAreaEnds(segment: TripSegment, draft: GapDraft): TripSegment {
 
 /** The segments the gaps make between photos, taken one after the other. */
 export function segmentsOf(photos: number[], draft: GapDraft): TripSegment[] {
-  const plain = withLegLines(
-    cutAtStopWays(
-      splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
-        withAreaEnds(segment, draft),
-      ),
-      draft.visits,
+  const cut = cutAtStopWays(
+    splitAtGroups(plainSegments(photos, draft), draft.groups).map((segment) =>
+      withAreaEnds(segment, draft),
     ),
-    draft.lines,
+    draft.visits,
   );
+  const plain = withLegLikes(withLegLines(cut, draft.lines), draft.likes);
   return withNames(
     plain.map((segment) => withStationWalks(withPath(segment, draft), draft)),
     photos,
@@ -420,6 +425,7 @@ export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
     via,
     paths: pathsOf(segments),
     lines,
+    likes: legLikesOf(segments),
     ...groupsOf(segments),
     ...areaEndsOf(segments),
   };

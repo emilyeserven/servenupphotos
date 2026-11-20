@@ -64,7 +64,16 @@ export interface TripSegment {
   boardWalk?: StationWalk;
   /** Shapes the walk from `alight` to the last photo; left out, it's drawn straight. */
   alightWalk?: StationWalk;
+  /**
+   * The mode a `transit` hop is routed and drawn as, such as `car` for a hop along roads no rail or
+   * bus map has: Snap to streets routes it by road and the map draws it like that mode. Left out, it
+   * stays a straight dashed hop; it does nothing while the hop rides a line found in a source.
+   */
+  like?: TransitLike;
 }
+
+/** What a `transit` hop can be routed and drawn as: the modes that go along roads. */
+export type TransitLike = "car" | "bus";
 
 /** How a walk between a hop's photo and a station goes, such as from a bus stop around a park. */
 export interface StationWalk {
