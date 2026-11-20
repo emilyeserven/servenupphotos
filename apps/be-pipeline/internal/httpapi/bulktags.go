@@ -18,7 +18,7 @@ type bulkTagAnswer struct {
 // handleCountUntaggedPhotos says how many photo files have no tags yet, for
 // Bulk Tagging to show before anything is picked.
 func handleCountUntaggedPhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "untagged count", "could not count the photos without tags",
+	return handleBulkTags(store, "untagged count", "Couldn't count the photos without tags.",
 		func(ctx context.Context, cfg settings.GitHub, _ struct{}) (any, error) {
 			return gh.CountUntaggedPhotos(ctx, cfg)
 		})
@@ -27,7 +27,7 @@ func handleCountUntaggedPhotos(store *settings.Store, gh *github.Client) http.Ha
 // handlePickBulkTagPhotos picks up to the asked number of photos for Bulk
 // Tagging, related ones or any, leaving out the photos already shown.
 func handlePickBulkTagPhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "photo pick", "could not pick the photos",
+	return handleBulkTags(store, "photo pick", "Couldn't pick the photos.",
 		func(ctx context.Context, cfg settings.GitHub, req github.BulkTagPickOptions) (any, error) {
 			return gh.PickBulkTagPhotos(ctx, cfg, req)
 		})
@@ -36,7 +36,7 @@ func handlePickBulkTagPhotos(store *settings.Store, gh *github.Client) http.Hand
 // handlePreviewBulkTags reads the LLM's pasted answer for the picked photos
 // and says which tags each would get, without saving anything.
 func handlePreviewBulkTags(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "bulk tags answer", "could not read the answer",
+	return handleBulkTags(store, "bulk tags answer", "Couldn't read the answer.",
 		func(ctx context.Context, cfg settings.GitHub, req bulkTagAnswer) (any, error) {
 			return gh.PreviewBulkTags(ctx, cfg, req.Paths, req.Answer)
 		})
@@ -45,7 +45,7 @@ func handlePreviewBulkTags(store *settings.Store, gh *github.Client) http.Handle
 // handleApplyBulkTags makes the reviewed new tags and adds the tags to each
 // photo, as changes waiting for Commit.
 func handleApplyBulkTags(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "bulk tags", "could not save the tags",
+	return handleBulkTags(store, "bulk tags", "Couldn't save the tags.",
 		func(ctx context.Context, cfg settings.GitHub, req github.BulkTags) (any, error) {
 			return gh.ApplyBulkTags(ctx, cfg, req)
 		})
@@ -68,7 +68,7 @@ func handleBulkTagsUpTo[T any](store *settings.Store, limit int64, kind, failure
 // handlePickBulkPlacePhotos picks up to the asked number of related photos
 // without places for Bulk Places, leaving out the photos already shown.
 func handlePickBulkPlacePhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "photo pick", "could not pick the photos",
+	return handleBulkTags(store, "photo pick", "Couldn't pick the photos.",
 		func(ctx context.Context, cfg settings.GitHub, req github.BulkPlacePickOptions) (any, error) {
 			return gh.PickBulkPlacePhotos(ctx, cfg, req)
 		})
@@ -83,7 +83,7 @@ type photoNames struct {
 // handleFindPhotosByName finds the photos an LLM's answer names among every
 // photo, so Bulk Places can apply an answer to photos it didn't pick.
 func handleFindPhotosByName(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "photo names", "could not find the photos",
+	return handleBulkTags(store, "photo names", "Couldn't find the photos.",
 		func(ctx context.Context, cfg settings.GitHub, req photoNames) (any, error) {
 			return gh.FindPhotosByName(ctx, cfg, req.Names)
 		})
@@ -92,7 +92,7 @@ func handleFindPhotosByName(store *settings.Store, gh *github.Client) http.Handl
 // handleApplyBulkPlaces makes the reviewed new places and gives each photo
 // its places, as changes waiting for Commit.
 func handleApplyBulkPlaces(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "bulk places", "could not save the places",
+	return handleBulkTags(store, "bulk places", "Couldn't save the places.",
 		func(ctx context.Context, cfg settings.GitHub, req github.BulkPlaces) (any, error) {
 			return gh.ApplyBulkPlaces(ctx, cfg, req)
 		})
@@ -108,7 +108,7 @@ type pruneTagAnswer struct {
 // merge, remove and put under others, and says what each would do, without
 // saving anything.
 func handlePreviewPruneTags(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "tag pruning answer", "could not read the answer",
+	return handleBulkTags(store, "tag pruning answer", "Couldn't read the answer.",
 		func(ctx context.Context, cfg settings.GitHub, req pruneTagAnswer) (any, error) {
 			return gh.PreviewPruneTags(ctx, cfg, req.Answer)
 		})
@@ -124,7 +124,7 @@ type pruneTagsSave struct {
 // handleApplyPruneTags merges, removes and reparents the reviewed tags, as
 // changes waiting for Commit.
 func handleApplyPruneTags(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "tag pruning", "could not change the tags",
+	return handleBulkTags(store, "tag pruning", "Couldn't change the tags.",
 		func(ctx context.Context, cfg settings.GitHub, req pruneTagsSave) (any, error) {
 			return gh.ApplyPruneTags(ctx, cfg, req.PruneTags, req.Notes)
 		})
@@ -133,7 +133,7 @@ func handleApplyPruneTags(store *settings.Store, gh *github.Client) http.Handler
 // handlePickGenrePhotos picks up to the asked number of photos without
 // genres for Genre Suggestions, leaving out the photos already shown.
 func handlePickGenrePhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "photo pick", "could not pick the photos",
+	return handleBulkTags(store, "photo pick", "Couldn't pick the photos.",
 		func(ctx context.Context, cfg settings.GitHub, req github.BulkTagPickOptions) (any, error) {
 			return gh.PickGenrePhotos(ctx, cfg, req.Skip, req.Count)
 		})
@@ -142,7 +142,7 @@ func handlePickGenrePhotos(store *settings.Store, gh *github.Client) http.Handle
 // handlePreviewGenreSuggestions reads the LLM's pasted answer for the picked
 // photos and says which genres each would get, without saving anything.
 func handlePreviewGenreSuggestions(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "genre suggestions answer", "could not read the answer",
+	return handleBulkTags(store, "genre suggestions answer", "Couldn't read the answer.",
 		func(ctx context.Context, cfg settings.GitHub, req bulkTagAnswer) (any, error) {
 			return gh.PreviewGenreSuggestions(ctx, cfg, req.Paths, req.Answer)
 		})
@@ -151,7 +151,7 @@ func handlePreviewGenreSuggestions(store *settings.Store, gh *github.Client) htt
 // handleApplyGenreSuggestions makes the reviewed new genres and adds the
 // genres to each photo, as changes waiting for Commit.
 func handleApplyGenreSuggestions(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "genre suggestions", "could not save the genres",
+	return handleBulkTags(store, "genre suggestions", "Couldn't save the genres.",
 		func(ctx context.Context, cfg settings.GitHub, req github.GenreSuggestions) (any, error) {
 			return gh.ApplyGenreSuggestions(ctx, cfg, req)
 		})
@@ -160,7 +160,7 @@ func handleApplyGenreSuggestions(store *settings.Store, gh *github.Client) http.
 // handlePickAltTextPhotos picks up to the asked number of photos without alt
 // text for the Alt Text page, leaving out the photos already shown.
 func handlePickAltTextPhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "photo pick", "could not pick the photos",
+	return handleBulkTags(store, "photo pick", "Couldn't pick the photos.",
 		func(ctx context.Context, cfg settings.GitHub, req github.BulkTagPickOptions) (any, error) {
 			return gh.PickAltTextPhotos(ctx, cfg, req.Skip, req.Count)
 		})
@@ -169,7 +169,7 @@ func handlePickAltTextPhotos(store *settings.Store, gh *github.Client) http.Hand
 // handlePreviewAltText reads the LLM's pasted answer for the picked photos
 // and says the alt text each would get, without saving anything.
 func handlePreviewAltText(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "alt text answer", "could not read the answer",
+	return handleBulkTags(store, "alt text answer", "Couldn't read the answer.",
 		func(ctx context.Context, cfg settings.GitHub, req bulkTagAnswer) (any, error) {
 			return gh.PreviewAltText(ctx, cfg, req.Paths, req.Answer)
 		})
@@ -178,7 +178,7 @@ func handlePreviewAltText(store *settings.Store, gh *github.Client) http.Handler
 // handleApplyAltText writes the reviewed alt text into each photo's file, as
 // changes waiting for Commit.
 func handleApplyAltText(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "alt text", "could not save the alt text",
+	return handleBulkTags(store, "alt text", "Couldn't save the alt text.",
 		func(ctx context.Context, cfg settings.GitHub, req github.AltTexts) (any, error) {
 			return gh.ApplyAltText(ctx, cfg, req)
 		})

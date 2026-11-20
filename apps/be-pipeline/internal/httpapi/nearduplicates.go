@@ -2,7 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"errors"
 	"log/slog"
 	"net/http"
 	"os"
@@ -92,26 +91,7 @@ func photoHash(ctx context.Context, read github.HashReader, small *string) *stri
 // and puts each set of photos that look nearly the same in a compare group,
 // as changes waiting for Commit.
 func handleFindNearDuplicates(store *settings.Store, gh *github.Client, read github.HashReader) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), nearDuplicatesTimeout)
-		defer cancel()
-		result, err := gh.FindNearDuplicates(ctx, cfg, read)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("find near duplicates failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not look for near duplicates")
-			return
-		}
-		writeJSON(w, http.StatusOK, result)
-	}
+	return withGitHub(store, nearDuplicatesTimeout, "Couldn't look for near duplicates.", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+		return gh.FindNearDuplicates(ctx, cfg, read)
+	})
 }

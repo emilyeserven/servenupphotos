@@ -3,8 +3,6 @@ package httpapi
 import (
 	"context"
 	"encoding/json"
-	"errors"
-	"log/slog"
 	"net/http"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
@@ -26,32 +24,11 @@ type updateInFlightRequest struct {
 // changes waiting for Commit, which commits it to the "Add photo data" pull
 // request.
 func handleUpdateInFlight(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req updateInFlightRequest
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes)).Decode(&req); err != nil || req.Path == "" {
-			writeError(w, http.StatusBadRequest, "path and data are required")
-			return
-		}
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		updated, err := gh.Update(ctx, cfg, req.Path, req.Name, req.Data)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("update photo data failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not update photo data")
-			return
-		}
-		writeJSON(w, http.StatusOK, updated)
-	}
+	return withGitHubBody(store, publishTimeout, "photo data", "Couldn't save the photo data.",
+		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req updateInFlightRequest) (any, error) {
+			if req.Path == "" {
+				return nil, badRequest(pathMessage)
+			}
+			return gh.Update(ctx, cfg, req.Path, req.Name, req.Data)
+		})
 }

@@ -2,7 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -54,7 +53,7 @@ func handlePreviewR2Exif(extractor exif.Extractor, store *settings.Store, gh *gi
 			writeError(w, http.StatusServiceUnavailable, "exiftool isn't running, so the originals' EXIF can't be read.")
 		}
 	}
-	return withGitHub(store, r2ExifTimeout, "could not check the originals' EXIF", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, r2ExifTimeout, "Couldn't check the originals' EXIF.", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.PreviewR2Exif(ctx, cfg, exifReader(extractor, store.R2, get, cache))
 	})
 }
@@ -66,42 +65,31 @@ func handleWriteR2Exif(
 	extractor exif.Extractor, store *settings.Store, gh *github.Client,
 	get getPhotoFunc, replace replaceOriginalFunc, cache *exifCache,
 ) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		writer, ok := extractor.(exif.Writer)
-		if !ok {
-			writeError(w, http.StatusServiceUnavailable, "exiftool isn't running, so the EXIF can't be written.")
-			return
-		}
-		req, tags, ok := decodeR2ExifWrite(w, r)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), r2ExifWriteTimeout)
-		defer cancel()
-		edit := r2ExifEdit{extractor: extractor, writer: writer, get: get, replace: replace, cache: cache}
-		result, err := edit.run(ctx, store, gh, req, tags)
-		writeResult(w, result, err, "could not edit the original's EXIF")
-	}
+	return withGitHubBody(store, r2ExifWriteTimeout, "EXIF fields", "Couldn't edit the original's EXIF.",
+		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req r2ExifWriteRequest) (any, error) {
+			writer, ok := extractor.(exif.Writer)
+			if !ok {
+				return nil, &github.PublishError{Status: http.StatusServiceUnavailable, Message: "exiftool isn't running, so the EXIF can't be written. Install exiftool and restart the backend."}
+			}
+			tags, msg := checkR2ExifWrite(req)
+			if msg != "" {
+				return nil, badRequest(msg)
+			}
+			edit := r2ExifEdit{extractor: extractor, writer: writer, get: get, replace: replace, cache: cache}
+			return edit.run(ctx, store, gh, cfg, req, tags)
+		})
 }
 
-// decodeR2ExifWrite reads the request and the exiftool tags its fields
-// write, or answers why it can't be done.
-func decodeR2ExifWrite(w http.ResponseWriter, r *http.Request) (r2ExifWriteRequest, map[string]string, bool) {
-	var req r2ExifWriteRequest
-	if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes)).Decode(&req); err != nil || req.Path == "" {
-		writeError(w, http.StatusBadRequest, `expected a JSON body with a "path" and "fields"`)
-		return req, nil, false
+// checkR2ExifWrite is the exiftool tags req's fields write, or why it can't
+// be done.
+func checkR2ExifWrite(req r2ExifWriteRequest) (map[string]string, string) {
+	if req.Path == "" {
+		return nil, pathMessage
 	}
 	if !req.Confirm {
-		writeError(w, http.StatusBadRequest, "Confirm overwriting the original in R2 first.")
-		return req, nil, false
+		return nil, "Confirm overwriting the original in R2 first."
 	}
-	tags, msg := r2ExifTags(req.Fields)
-	if msg != "" {
-		writeError(w, http.StatusBadRequest, msg)
-		return req, nil, false
-	}
-	return req, tags, true
+	return r2ExifTags(req.Fields)
 }
 
 // r2ExifTags is every exiftool tag fields write, or why one can't be
@@ -143,18 +131,14 @@ type r2ExifEdit struct {
 // run downloads the photo's original, writes tags into it, checks each field
 // reads back as written, uploads it over the original and notes the edit.
 // Nothing in R2 changes until the written copy has been checked.
-func (e r2ExifEdit) run(ctx context.Context, store *settings.Store, gh *github.Client, req r2ExifWriteRequest, tags map[string]string) (any, error) {
-	ghCfg, err := store.GitHub()
-	if err != nil {
-		return nil, errSettings
-	}
+func (e r2ExifEdit) run(ctx context.Context, store *settings.Store, gh *github.Client, ghCfg settings.GitHub, req r2ExifWriteRequest, tags map[string]string) (any, error) {
 	key, err := gh.R2ExifKey(ctx, ghCfg, req.Path)
 	if err != nil {
 		return nil, err
 	}
 	r2Cfg, err := store.R2()
 	if err != nil {
-		return nil, errSettings
+		return nil, settingsFailed(err)
 	}
 	path, status, msg := downloadPhoto(ctx, r2Cfg, e.get, key)
 	if status != http.StatusOK {
@@ -176,9 +160,6 @@ func (e r2ExifEdit) run(ctx context.Context, store *settings.Store, gh *github.C
 	}
 	return result, nil
 }
-
-// errSettings is answered when the settings can't be read.
-var errSettings = errors.New("could not read settings")
 
 // writeChecked writes tags into the photo at path and reads it back, so each
 // field is known to read as written. It returns each field's edit, with the

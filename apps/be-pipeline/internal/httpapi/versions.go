@@ -18,7 +18,7 @@ import (
 func handleVersionPreview(w http.ResponseWriter, r *http.Request) {
 	v, ok := versions.Find(r.PathValue("version"))
 	if !ok {
-		writeError(w, http.StatusNotFound, "no such version")
+		writeError(w, http.StatusNotFound, noSuchVersionMessage)
 		return
 	}
 	photo, ok := receivePhoto(w, r)
@@ -30,7 +30,7 @@ func handleVersionPreview(w http.ResponseWriter, r *http.Request) {
 	f, err := os.Open(photo.path)
 	if err != nil {
 		slog.Error("open upload failed", "err", err)
-		writeError(w, http.StatusInternalServerError, "could not read photo")
+		writeError(w, http.StatusInternalServerError, "Couldn't read the photo.")
 		return
 	}
 	defer f.Close() //nolint:errcheck // read-only
@@ -41,7 +41,7 @@ func handleVersionPreview(w http.ResponseWriter, r *http.Request) {
 	}
 	if _, err := f.Seek(0, io.SeekStart); err != nil {
 		slog.Error("rewind upload failed", "err", err)
-		writeError(w, http.StatusInternalServerError, "could not read photo")
+		writeError(w, http.StatusInternalServerError, "Couldn't read the photo.")
 		return
 	}
 	img, err := versions.Decode(f)
@@ -53,7 +53,7 @@ func handleVersionPreview(w http.ResponseWriter, r *http.Request) {
 	data, err := versions.EncodeWEBP(resized, v.Quality)
 	if err != nil {
 		slog.Error("encode version failed", "version", v.Name, "err", err)
-		writeError(w, http.StatusInternalServerError, "could not make the "+v.Name+" version")
+		writeError(w, http.StatusInternalServerError, "Couldn't make the "+v.Name+" version.")
 		return
 	}
 	if jpegBytes, err := versions.JPEGSize(resized, jpegQuality); err == nil {
@@ -62,5 +62,5 @@ func handleVersionPreview(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "image/webp")
 	w.Header().Set("Content-Length", strconv.Itoa(len(data)))
-	_, _ = w.Write(data)
+	_, _ = w.Write(data) //nolint:gosec // a WEBP the backend encoded, sent as image/webp, not HTML
 }

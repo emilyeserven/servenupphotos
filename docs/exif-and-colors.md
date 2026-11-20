@@ -16,7 +16,7 @@ output: a Lightroom edit with brush or AI masks stores every brush stroke in its
 go-exiftool's default 64 KB limit. Any field longer than 2,000 characters, such as that brush mask
 (`MaskGroupBasedCorrMaskGestureDabs`), is then left out of the photo's EXIF, since nothing the pipeline shows or saves
 uses it. When a read still fails partway, the backend starts a new exiftool process, so that
-photo shows **could not read photo metadata** and the photos after it are read as usual.
+photo shows **Couldn't read the photo's metadata with exiftool.** and the photos after it are read as usual.
 
 > **Frontend analogy:** the exiftool process is like one shared `ReadableStream` reader. If one chunk is too big for
 > the buffer, the reader is left mid-stream and every later `read()` fails, so the fix is a bigger buffer plus a fresh

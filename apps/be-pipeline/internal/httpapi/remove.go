@@ -3,7 +3,6 @@ package httpapi
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"log/slog"
 	"net/http"
 
@@ -42,41 +41,27 @@ type removeResponse struct {
 // with all of its resized versions. Once the JSON is out it responds 200 even
 // if the image couldn't be deleted, saying why in "image".
 func handleRemoveInFlight(store *settings.Store, gh *github.Client, findPhotos findPhotosFunc, deletePhoto deletePhotoFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return withGitHub(store, publishTimeout, "Couldn't remove the photo data.", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
 		file := r.URL.Query().Get("path")
 		if file == "" {
-			writeError(w, http.StatusBadRequest, "path is required")
-			return
+			return nil, badRequest(pathMessage)
 		}
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
 		removed, err := gh.Remove(ctx, cfg, file)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
 		if err != nil {
-			slog.Error("remove photo data failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not remove photo data")
-			return
+			return nil, err
 		}
-
 		image, err := removeImage(r.Context(), store, findPhotos, deletePhoto, removed)
 		if err != nil {
 			slog.Error("read settings failed", "err", err)
 			image = removedImage{Message: "Couldn't read the R2 settings, so the image was left in R2."}
 		}
-		writeJSON(w, http.StatusOK, removeResponse{Path: removed.Path, Before: removed.Before, Image: image})
-	}
+		return removeResponse{Path: removed.Path, Before: removed.Before, Image: image}, nil
+	})
 }
+
+// pathMessage is the answer to a request about a photo JSON file that
+// doesn't say which.
+const pathMessage = "Say which photo JSON file this is for: its path is missing."
 
 // removeImage deletes removed's image from the R2 bucket from Settings, the
 // same image the Photos in Flight page shows for it, and its resized versions.

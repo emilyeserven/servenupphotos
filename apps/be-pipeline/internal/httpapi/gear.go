@@ -3,9 +3,7 @@ package httpapi
 import (
 	"bufio"
 	"context"
-	"errors"
 	"io"
-	"log/slog"
 	"net/http"
 	"time"
 
@@ -32,7 +30,7 @@ type gearCropFunc func(ctx context.Context, cfg settings.R2, original string, cr
 // handleSaveGear saves the body as the path's gear picture file, new or
 // replacing the one there, as a change waiting for Commit.
 func handleSaveGear(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "gear picture", "could not save the gear picture",
+	return withGitHubBody(store, publishTimeout, "gear picture", "Couldn't save the gear picture.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, gear github.Gear) (any, error) {
 			gear.ID = r.PathValue("id")
 			return gh.SaveGear(ctx, cfg, gear)
@@ -42,7 +40,7 @@ func handleSaveGear(store *settings.Store, gh *github.Client) http.HandlerFunc {
 // handleDeleteGear removes the path's gear picture file as a change waiting
 // for Commit. The picture itself stays in R2.
 func handleDeleteGear(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHub(store, publishTimeout, "could not remove the gear picture", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, publishTimeout, "Couldn't remove the gear picture.", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.DeleteGear(ctx, cfg, r.PathValue("id"))
 	})
 }
@@ -65,18 +63,16 @@ func handlePictureUpload[T any](loadR2 func() (settings.R2, error), maxBytes int
 		if !ok {
 			return
 		}
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), timeout)
-		defer cancel()
-		res, err := upload(ctx, cfg, name, body)
-		writeGearUpload(w, res, err)
+		withSettings(loadR2, timeout, func(ctx context.Context, w http.ResponseWriter, _ *http.Request, cfg settings.R2) {
+			res, err := upload(ctx, cfg, name, body)
+			writeR2Result(w, res, err, pictureUploadMessage)
+		})(w, r)
 	}
 }
+
+// pictureUploadMessage is the answer when a gear picture or self-portrait
+// couldn't be put in R2 for a reason R2 didn't give.
+const pictureUploadMessage = "Couldn't upload the picture."
 
 // gearCropRequest is the body of POST /gear/crop: the original picture's URL
 // and the part of it to keep.
@@ -89,37 +85,12 @@ type gearCropRequest struct {
 // puts it in R2 right away, responding with the crop's key and URL for the gear
 // file to point at.
 func handleCropGearImage(loadR2 func() (settings.R2, error), crop gearCropFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req gearCropRequest
-		if !decodeEntry(w, r, &req, "crop") {
-			return
-		}
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), gearUploadTimeout)
-		defer cancel()
-		res, err := crop(ctx, cfg, req.Original, req.Crop)
-		writeGearUpload(w, res, err)
-	}
-}
-
-// writeGearUpload answers with where a gear picture or self-portrait went,
-// or why it didn't.
-func writeGearUpload[T any](w http.ResponseWriter, res T, err error) {
-	var uploadErr *storage.UploadError
-	switch {
-	case errors.As(err, &uploadErr):
-		writeJSON(w, uploadErrorStatus(uploadErr), uploadErrorResponse{Message: uploadErr.Message, Cloudflare: uploadErr.Cloudflare})
-	case err != nil:
-		slog.Error("picture upload failed", "err", err)
-		writeError(w, http.StatusInternalServerError, "could not upload the picture")
-	default:
-		writeJSON(w, http.StatusOK, res)
-	}
+	return withBody("crop", maxPhotoDataBytes, func(w http.ResponseWriter, r *http.Request, req gearCropRequest) {
+		withSettings(loadR2, gearUploadTimeout, func(ctx context.Context, w http.ResponseWriter, _ *http.Request, cfg settings.R2) {
+			res, err := crop(ctx, cfg, req.Original, req.Crop)
+			writeR2Result(w, res, err, pictureUploadMessage)
+		})(w, r)
+	})
 }
 
 // receivePicture finds the "image" part of a multipart body of up to
@@ -129,13 +100,13 @@ func receivePicture(w http.ResponseWriter, r *http.Request, maxBytes int64) (str
 	r.Body = http.MaxBytesReader(w, r.Body, maxBytes)
 	mr, err := r.MultipartReader()
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "expected a multipart/form-data body")
+		writeError(w, http.StatusBadRequest, multipartMessage)
 		return "", nil, false
 	}
 	for {
 		part, err := mr.NextPart()
 		if err != nil {
-			writeError(w, http.StatusBadRequest, `missing "image" field`)
+			writeError(w, http.StatusBadRequest, "Choose a picture to send: the request has none.")
 			return "", nil, false
 		}
 		if part.FormName() != "image" {
@@ -144,7 +115,7 @@ func receivePicture(w http.ResponseWriter, r *http.Request, maxBytes int64) (str
 		body := bufio.NewReader(part)
 		head, _ := body.Peek(512)
 		if storage.GearPictureType(head) == "" {
-			writeError(w, http.StatusUnsupportedMediaType, "the picture must be a JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF")
+			writeError(w, http.StatusUnsupportedMediaType, "The picture must be a JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF.")
 			return "", nil, false
 		}
 		return part.FileName(), body, true

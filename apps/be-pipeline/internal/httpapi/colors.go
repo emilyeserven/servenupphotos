@@ -2,8 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"log/slog"
 	"net/http"
 	"os"
@@ -46,34 +44,10 @@ func handleColors(
 	store *settings.Store, get getPhotoFunc, cache *colorCache,
 	run func(context.Context, settings.GitHub, github.ColorReader, bool) (any, error),
 ) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req colorsRequest
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes)).Decode(&req); err != nil {
-			writeError(w, http.StatusBadRequest, "invalid colors body")
-			return
-		}
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), colorsTimeout)
-		defer cancel()
-		result, err := run(ctx, cfg, colorReader(store.R2, get, cache), req.Recompute)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("add photo colors failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not add the color data")
-			return
-		}
-		writeJSON(w, http.StatusOK, result)
-	}
+	return withGitHubBody(store, colorsTimeout, "Colors options", "Couldn't add the color data.",
+		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req colorsRequest) (any, error) {
+			return run(ctx, cfg, colorReader(store.R2, get, cache), req.Recompute)
+		})
 }
 
 // colorReader reads an original's colors from R2 as POST /exif reads an
