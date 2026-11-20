@@ -1,5 +1,5 @@
 // Checks that every /api route the Go backend registers has a screenshot fixture, so `pnpm shot`
-// can show every page without a backend (see CLAUDE.md, "Adding a pipeline endpoint"). A route
+// can show every page without a backend (see the `add-pipeline-endpoint` skill). A route
 // with a path parameter, such as `GET /places/{id}/area`, counts as covered by a fixture for any
 // value, such as `GET /api/places/dotonbori/area`. It also checks that every route follows the
 // route shape rules in scripts/route-shapes.mjs. Exits 1 and lists the routes without a fixture
