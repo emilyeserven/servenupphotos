@@ -8,6 +8,7 @@ import { LocalizationFillReview } from "@/components/localization-fill/localizat
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { ReadingNote } from "@/components/query-result";
 import { type LocalizationAnswer, readLocalizationAnswer } from "@/lib/localization-answer";
 import { localizationPrompt, rowsToFill } from "@/lib/localization-prompt";
 import type { LocalizationRow } from "@/lib/place-seeds";
@@ -47,7 +48,7 @@ export function LocalizationFillCard() {
       <CardContent className="flex flex-col gap-6">
         <ErrorNote error={error} />
         {pending ? (
-          <p className="text-sm">Reading photos, places and localizations…</p>
+          <ReadingNote label="Reading photos, places and localizations…" />
         ) : (
           <>
             <FillStatus toFill={toFill.length} total={rows.length} />

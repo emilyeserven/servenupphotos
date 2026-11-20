@@ -54,7 +54,7 @@ export function SectionCard({ name, sections, slug }: SectionCardProps) {
 export function WithGitHub({ render }: { render: (settings: SettingsResponse) => ReactNode }) {
   const settings = useQuery(settingsQuery);
   return (
-    <QueryResult query={settings}>
+    <QueryResult query={settings} pendingLabel="Reading settings…">
       {(data) => (data.github.repo && data.github.token.set ? render(data) : <SetUpGitHub />)}
     </QueryResult>
   );

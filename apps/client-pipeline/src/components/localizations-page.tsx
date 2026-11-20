@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ReadingNote } from "@/components/query-result";
 import type { LocalizationRow } from "@/lib/place-seeds";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { ErrorNote } from "@/components/error-note";
@@ -41,7 +42,7 @@ const TABS: { type: LocalizationType; title: string }[] = [
 function LocalizationTabs() {
   const { rows, pending, error } = useLocalizationRows();
   const drafts = useLocalizationDrafts(rows);
-  if (pending) return <p>Reading photos, places and localizations…</p>;
+  if (pending) return <ReadingNote label="Reading photos, places and localizations…" />;
   return (
     <>
       <ErrorNote error={error} />

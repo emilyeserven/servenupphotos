@@ -8,6 +8,10 @@
  * left alone; anything else that is red on purpose and isn't an error takes an
  * `oxlint-disable-next-line servenup/error-note` comment saying why.
  *
+ * `servenup/reading-label`: a read's pending words start with "Reading" and name what's read, as
+ * `QueryResult`'s `pendingLabel` and `ReadingNote`'s `label` do. It flags a `pendingLabel` or a
+ * `ReadingNote` `label` that doesn't start with "Reading", and JSX text that starts with "Loading".
+ *
  * `servenup/json-request`: the pipeline's client sends JSON through `post`, `put` and `del` in
  * `apps/client-pipeline/src/api/request.ts`, so a `content-type` key written anywhere else in the
  * client is a request built by hand. The BFF and the portfolio are left alone.
@@ -173,7 +177,54 @@ const emptyNote = {
   },
 };
 
+/**
+ * The attribute's text as written, or undefined when it isn't a string: a string's value, or a
+ * template's opening text (`Reading ${plural}…` gives "Reading "). It reads the value the way
+ * `classStrings` reads a className.
+ */
+function attributeText(value) {
+  return classStrings(value)[0];
+}
+
+/** Whether the attribute is the pending words of a read: `pendingLabel`, or `label` on `ReadingNote`. */
+function isReadingLabel(node) {
+  if (node.name.name === "pendingLabel") return true;
+  return node.name.name === "label" && elementName(node.parent) === "ReadingNote";
+}
+
+const readingLabel = {
+  meta: {
+    type: "suggestion",
+    docs: { description: "Start a read's pending words with \"Reading\" and name what's read." },
+    messages: {
+      label: 'Start this with "Reading" and name what\'s read, such as "Reading the photo JSON…".',
+      loading:
+        'Show a read with QueryResult and a pendingLabel such as "Reading the photo JSON…", not "Loading".',
+    },
+  },
+  create(context) {
+    const file = context.filename ?? context.getFilename();
+    if (UI_DIR.test(file)) return {};
+    return {
+      JSXAttribute(node) {
+        if (!isReadingLabel(node)) return;
+        const text = attributeText(node.value);
+        if (text !== undefined && !text.startsWith("Reading"))
+          context.report({ node, messageId: "label" });
+      },
+      JSXText(node) {
+        if (/^\s*Loading\b/.test(node.value)) context.report({ node, messageId: "loading" });
+      },
+    };
+  },
+};
+
 export default {
   meta: { name: "servenup" },
-  rules: { "error-note": errorNote, "json-request": jsonRequest, "empty-note": emptyNote },
+  rules: {
+    "error-note": errorNote,
+    "json-request": jsonRequest,
+    "empty-note": emptyNote,
+    "reading-label": readingLabel,
+  },
 };

@@ -2,8 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { TrophyIcon } from "lucide-react";
 import type { CompareRead } from "@/components/compare/compare-group-list";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { type CompareGroup, winnersOf } from "@/lib/compare-groups";
+import { ReadingNote } from "@/components/query-result";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 
@@ -27,7 +27,7 @@ export function CompareCard({ compare }: { compare: CompareRead }) {
 }
 
 function GroupList({ compare }: { compare: CompareRead }) {
-  if (compare.pending) return <Skeleton className="h-20 rounded-md" />;
+  if (compare.pending) return <ReadingNote label="Reading the compare groups…" />;
   if (compare.groups.length === 0) {
     return <EmptyNote>No compare groups are open.</EmptyNote>;
   }

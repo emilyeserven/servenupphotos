@@ -41,7 +41,7 @@ function SizesPage() {
       title="Manage Sizes"
       description="Every photo in the R2 bucket, its resized versions, and its Square Thumbnail with its preview. Make a missing size, or remake one from the original."
     >
-      <QueryResult query={settings} pendingLabel="Loading settings…">
+      <QueryResult query={settings} pendingLabel="Reading settings…">
         {(data) =>
           r2IsSetUp(data.r2) ? (
             <SizesCard />
@@ -116,7 +116,7 @@ function SizesCard() {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <QueryResult query={bucket} pendingLabel="Listing images in R2…">
+        <QueryResult query={bucket} pendingLabel="Reading the images in R2…">
           {() =>
             rows.length > 0 ? (
               <SizesTable rows={rows} />

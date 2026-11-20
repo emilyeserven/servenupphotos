@@ -5,6 +5,7 @@ import { isSmartAlbum, ruleCount, type SmartRules } from "@portfolio/lib/smart-a
 import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 import { type Group, organizeQuery, setAlbumRulesMutation } from "@/api/organize";
 import { GridFilterBar } from "@/components/gallery/grid-filters";
+import { QueryResult } from "@/components/query-result";
 import { PhotoTile } from "@/components/group-photo-grid";
 import { DateRules } from "@/components/smart-album/date-rules";
 import { type RuleParams, useRuleParams } from "@/components/smart-album/rule-params";
@@ -144,10 +145,27 @@ interface RuleEditorProps {
 }
 
 /** The rules being edited, the photos they match, and the buttons to save them or cancel. */
-function RuleEditor({ album, rules, save, onCancel }: RuleEditorProps) {
+function RuleEditor(props: RuleEditorProps) {
   const combined = useCombinedData();
   const tried = useMemo(() => rulePhotos(combined.data), [combined.data]);
-  if (!tried) return <p>Reading ALLPHOTOS.json…</p>;
+  return (
+    <QueryResult
+      query={{ isPending: combined.isPending, error: combined.error, data: tried }}
+      pendingLabel="Reading ALLPHOTOS.json…"
+    >
+      {(found) => <RuleFields tried={found} {...props} />}
+    </QueryResult>
+  );
+}
+
+/** The rule fields and match preview once the photos are read. */
+function RuleFields({
+  album,
+  rules,
+  save,
+  onCancel,
+  tried,
+}: RuleEditorProps & { tried: RulePhotos }) {
   const count = ruleCount(rules.draft);
   return (
     <>

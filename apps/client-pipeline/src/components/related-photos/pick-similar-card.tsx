@@ -4,7 +4,7 @@ import { PhotoChoiceGrid } from "@/components/related-photos/photo-choice-grid";
 import { PickedEditor } from "@/components/related-photos/picked-editor";
 import { savedPhotoId, photosById } from "@/components/related-photos/picks";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
+import { ReadingNote } from "@/components/query-result";
 
 /**
  * Pick by hand: choose a photo, then the photos its More like this drawer shows first, ahead of
@@ -27,7 +27,7 @@ export function PickSimilarCard() {
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         {pending ? (
-          <Spinner className="size-6" />
+          <ReadingNote label="Reading the saved photos…" />
         ) : (
           <PhotoChoiceGrid
             photos={photos}

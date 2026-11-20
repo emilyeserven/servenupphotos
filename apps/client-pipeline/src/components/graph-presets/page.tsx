@@ -13,6 +13,7 @@ import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { useCombinedData } from "@/stores/combined-data";
 import type { GraphPresetFile } from "@portfolio/lib/graph-presets";
+import { QueryResult } from "@/components/query-result";
 
 /** The Graph Presets page: the ready-made graphs and preset groups on the portfolio's Graph page. */
 export function GraphPresetsPage() {
@@ -29,9 +30,11 @@ export function GraphPresetsPage() {
 
 function Presets() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the graph presets…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <PresetChooser data={combined.data} />;
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the graph presets…">
+      {(data) => <PresetChooser data={data} />}
+    </QueryResult>
+  );
 }
 
 /** The presets and groups listed on the left, in the Graph page's order, and the chosen one edited on the right. */

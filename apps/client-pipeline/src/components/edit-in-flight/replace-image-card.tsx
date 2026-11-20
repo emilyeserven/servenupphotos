@@ -12,6 +12,7 @@ import { exifStripped, newSize, savedSize } from "@/components/edit-in-flight/re
 import { type ReplaceImage, useReplaceImage } from "@/components/edit-in-flight/use-replace-image";
 import { type Crop, type Size } from "@/lib/crop";
 import { useReplacedImageStore } from "@/stores/replaced-image";
+import { ReadingNote } from "@/components/query-result";
 import { ErrorNote } from "@/components/error-note";
 
 interface ReplaceImageCardProps {
@@ -146,13 +147,7 @@ function busy(replace: ReplaceImage): boolean {
 /** Reading the new image's EXIF, or why it couldn't be read. */
 function ReadStatus({ replace }: { replace: ReplaceImage }) {
   const { read } = replace;
-  if (read.isPending) {
-    return (
-      <p className="text-muted-foreground flex items-center gap-2 text-sm">
-        <Spinner /> Reading the new image…
-      </p>
-    );
-  }
+  if (read.isPending) return <ReadingNote label="Reading the new image…" />;
   if (read.isError) return <ErrorNote error={read.error} />;
   return <NoExifNote replace={replace} />;
 }

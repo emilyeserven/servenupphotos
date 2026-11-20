@@ -79,7 +79,7 @@ function GalleryPage() {
       title="Gallery"
       description="Every photo in the portfolio, as the next Commit will save it. Show the drafts, Undecided and Lower Tier photos to see where each would go among the published ones. Editing one saves the change to the “Add photo data” pull request."
     >
-      <QueryResult query={settings} pendingLabel="Loading settings…">
+      <QueryResult query={settings} pendingLabel="Reading settings…">
         {(data) => (data.github.repo && data.github.token.set ? <Gallery /> : <NotSetUp />)}
       </QueryResult>
     </Page>

@@ -8,6 +8,7 @@ import { OriginalComparisonCard } from "@/components/edit-in-flight/original-com
 import { OriginalFacesCards } from "@/components/edit-in-flight/original-faces-card";
 import { type Editable, type PhotoJson } from "@/components/edit-in-flight/photo-json";
 import { newSize } from "@/components/edit-in-flight/replace-image";
+import { ReadingNote } from "@/components/query-result";
 import {
   type UneditedOriginal,
   useUneditedOriginal,
@@ -108,13 +109,7 @@ function UploadSteps({ original, blocked }: { original: UneditedOriginal; blocke
 
 /** Reading the chosen JPEG, or why it couldn't be read. */
 function ReadStatus({ original: { read } }: { original: UneditedOriginal }) {
-  if (read.isPending) {
-    return (
-      <p className="text-muted-foreground flex items-center gap-2 text-sm">
-        <Spinner /> Reading the original…
-      </p>
-    );
-  }
+  if (read.isPending) return <ReadingNote label="Reading the original…" />;
   if (read.isError) return <ErrorNote error={read.error} />;
   return read.isSuccess ? <NoSizeNote sanitized={read.data.sanitized} /> : null;
 }

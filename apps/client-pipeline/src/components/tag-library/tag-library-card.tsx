@@ -5,10 +5,10 @@ import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { LibraryAnswer, useFilteredNames } from "@/components/tag-library/library-answer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
 import { downloadFile } from "@/lib/album-layout-editor";
 import { tagLibraryJson, tagLibraryPrompt } from "@/lib/tag-library-prompt";
 import { ErrorNote } from "@/components/error-note";
+import { QueryResult } from "@/components/query-result";
 import { count } from "@portfolio/lib/words";
 
 /**
@@ -54,14 +54,18 @@ interface LibraryStatusProps {
 
 /** What the read found: how many tags and photos, and the files it couldn't read. */
 function LibraryStatus({ pending, error, data }: LibraryStatusProps) {
-  if (pending) {
-    return (
-      <p className="text-muted-foreground flex items-center gap-2 text-sm">
-        <Spinner /> Reading every tag and photo…
-      </p>
-    );
-  }
-  if (!data) return <ErrorNote error={error} />;
+  return (
+    <QueryResult
+      query={{ isPending: pending, error, data }}
+      pendingLabel="Reading every tag and photo…"
+    >
+      {(read) => <LibraryCounts data={read} />}
+    </QueryResult>
+  );
+}
+
+/** How many tags and photos were read, and the files that couldn't be. */
+function LibraryCounts({ data }: { data: TagLibraryExport }) {
   return (
     <div className="flex flex-col gap-1 text-sm">
       <p>

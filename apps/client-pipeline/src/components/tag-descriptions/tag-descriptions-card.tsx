@@ -10,6 +10,7 @@ import {
 } from "@/components/tag-descriptions/tag-description-review";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ReadingNote } from "@/components/query-result";
 import { CommitSuccess } from "@/components/update-data-shared";
 import { currentPhotos } from "@/lib/group-photos";
 import { tagsToDescribe } from "@/lib/tag-description-prompt";
@@ -68,7 +69,7 @@ interface TagCountsProps {
 /** How many of the tags have no description, or why the tags can't be read. */
 function TagCounts({ loading, error, tags }: TagCountsProps) {
   if (error) return <ErrorNote error={error} />;
-  if (loading) return <p className="text-muted-foreground text-sm">Reading the tags…</p>;
+  if (loading) return <ReadingNote label="Reading the tags…" />;
   const missing = tagsToDescribe(tags, new Set()).length;
   return (
     <p className="text-muted-foreground text-sm">

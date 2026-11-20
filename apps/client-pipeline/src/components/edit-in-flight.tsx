@@ -13,7 +13,7 @@ import { PhotoGroupsCard } from "@/components/photo-groups-card";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-details";
 import { PhotoLocationCard } from "@/components/photo-location-card";
-import { QueryResult } from "@/components/query-result";
+import { QueryResult, ReadingNote } from "@/components/query-result";
 import { LowerTierCard } from "@/components/lower-tier";
 import { ReEditCard } from "@/components/re-edit-card";
 import { SocialPostsCard } from "@/components/social-posts-card";
@@ -74,7 +74,7 @@ export function EditInFlightPhoto({ path, from }: { path: string; from?: "galler
  */
 function EditFound({ inFlight, path }: { inFlight: InFlightRead; path: string }) {
   const editable = useEditable(inFlight, path);
-  if (editable === null) return <p>Reading the photo…</p>;
+  if (editable === null) return <ReadingNote label="Reading the photo…" />;
   if (typeof editable === "string") return <Problem>{editable}</Problem>;
   // Keyed by the photo's image rather than its file, which a new title can rename.
   return <EditWithSavedCrop key={editable.image.key} editable={editable} />;

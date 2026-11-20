@@ -15,6 +15,7 @@
       }
     ],
     "servenup/error-note": "warn",
+    "servenup/reading-label": "error",
     "no-alert": "error",
     "servenup/empty-note": "error",
     "servenup/json-request": "error"

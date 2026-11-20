@@ -10,6 +10,7 @@ import type { CombinedPhoto } from "@/lib/group-photos";
 import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { QueryResult } from "@/components/query-result";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 
@@ -28,9 +29,11 @@ export function CameraOverridesPage() {
 
 function Cameras() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and camera overrides…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <CameraChooser data={combined.data} />;
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photos and camera overrides…">
+      {(data) => <CameraChooser data={data} />}
+    </QueryResult>
+  );
 }
 
 /** The cameras listed on the left, and the chosen one's override edited on the right. */

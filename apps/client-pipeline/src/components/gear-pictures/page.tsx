@@ -9,6 +9,7 @@ import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
+import { QueryResult } from "@/components/query-result";
 import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The Gear Pictures page: a picture and a few words for each camera and lens. */
@@ -26,9 +27,11 @@ export function GearPicturesPage() {
 
 function Gear() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and gear pictures…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <GearChooser data={combined.data} />;
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photos and gear pictures…">
+      {(data) => <GearChooser data={data} />}
+    </QueryResult>
+  );
 }
 
 /** The chosen camera or lens: its kind and name. */

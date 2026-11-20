@@ -15,6 +15,7 @@ import { type DayPart, DAY_PARTS } from "@/lib/trip-lines-search";
 import { cn } from "@/lib/utils";
 import { useSessionData } from "@/hooks/use-session-data";
 import { weekdayDate } from "@portfolio/lib/dates";
+import { QueryResult } from "@/components/query-result";
 
 /** What each of a day's pages is called in its tabs. */
 export const PART_LABELS: Record<DayPart, string> = {
@@ -51,9 +52,11 @@ export function TripDayPage() {
 /** The day once the photos and lines are read. */
 function DayData({ day }: { day: string }) {
   const combined = useSessionData();
-  if (combined.isPending) return <p>Reading the photos and trip lines…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <DayFound data={combined.data} day={day} />;
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photos and trip lines…">
+      {(data) => <DayFound data={data} day={day} />}
+    </QueryResult>
+  );
 }
 
 /**
