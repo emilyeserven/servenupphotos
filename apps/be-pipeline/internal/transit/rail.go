@@ -63,7 +63,9 @@ func railLines(net *railNet, from, to [2]float64) []Line {
 }
 
 // railTrack is route id's track on net, the route along its lines from near
-// from to near to, with from and to added at its ends, as Track is. Two ends
+// from to near to, with from and to added at its ends, as Track is. Where its
+// lines' mapped track doesn't join the two, it crosses the gaps along other
+// track (see routeAcross). Two ends
 // nearest one point of track, such as two stations side by side, get a track
 // through that point.
 func railTrack(net *railNet, id int64, from, to [2]float64) ([][2]float64, error) {
@@ -72,6 +74,9 @@ func railTrack(net *railNet, id int64, from, to [2]float64) ([][2]float64, error
 		return nil, ErrNoTrack
 	}
 	nodes, _ := net.route(from, to, allowed)
+	if len(nodes) == 0 {
+		nodes = net.routeAcross(from, to, allowed)
+	}
 	if len(nodes) == 0 {
 		return nil, ErrNoTrack
 	}

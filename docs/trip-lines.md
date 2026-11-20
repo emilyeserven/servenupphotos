@@ -636,7 +636,9 @@ choice is kept in the browser for every look-up:
   its own name, and a name that only numbers the track, such as "Track 3", names no line: the track's names alone
   broke Boston's Red Line into pieces named "Red Line" and "Track 1", so it couldn't be followed as one line. Each
   line is shown by the English name most of its ways have; unnamed track only joins lines, so a route never lists it,
-  and a one-line route may run along it. A station belongs to each line within 300 m
+  and a one-line route may run along it. A route relation often leaves out a station's tracks or a short stretch,
+  so when a picked line's own track doesn't join the two spots, its track crosses each gap along other lines' track,
+  each meter of it counting as 4 (`offLineFactor`), as a bus's track crosses gaps between its roads. A station belongs to each line within 300 m
   of it. A route's ID holds up to 3 lines and, above them, its extract's place in the index, so its track and stops
   are looked up on the same extract. The ID stays under 2^53 so the page's JavaScript holds it exactly; with 4 lines,
   an extract far down the index, such as Massachusetts, gave IDs the page rounded off, so a picked line's stops
