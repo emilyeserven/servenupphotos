@@ -14,7 +14,8 @@
         "allow": ["**/*.css"]
       }
     ],
-    "servenup/error-note": "warn"
+    "servenup/error-note": "warn",
+    "servenup/reading-label": "error"
   },
   "ignorePatterns": ["**/dist/**", "**/routeTree.gen.ts"]
 }

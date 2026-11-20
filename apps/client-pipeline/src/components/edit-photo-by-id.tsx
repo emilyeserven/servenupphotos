@@ -37,7 +37,7 @@ function FindPhoto({ inFlight, id }: { inFlight: InFlightRead; id: number }) {
   const published = useQuery({ ...publishedPhotosQuery, enabled: path === undefined });
   if (path) return <EditInFlightPhoto path={path} />;
   return (
-    <QueryResult query={published} pendingLabel="Finding the photo's file…">
+    <QueryResult query={published} pendingLabel="Reading the photo files on the base branch…">
       {(data) => <FoundOnBase path={pathOf(data.files, id)} id={id} />}
     </QueryResult>
   );

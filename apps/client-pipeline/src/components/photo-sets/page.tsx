@@ -4,6 +4,7 @@ import { photoSetFiles } from "@/api/photo-sets";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { DecidedPhotoFiles } from "@/components/photo-files";
+import { QueryResult } from "@/components/query-result";
 import { SetChooser } from "@/components/photo-sets/set-chooser";
 import { SetEditor } from "@/components/photo-sets/set-editor";
 import type { SocialPhoto } from "@/api/publish";
@@ -42,10 +43,17 @@ function useChosenSet(sets: PhotoSet[]) {
 }
 
 function Sets({ photos }: { photos: SocialPhoto[] }) {
-  const { data, isPending } = useCombinedData();
-  const sets = photoSetFiles(data);
+  const combined = useCombinedData();
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the Photo Sets…">
+      {(data) => <SetsFound sets={photoSetFiles(data)} photos={photos} />}
+    </QueryResult>
+  );
+}
+
+/** The sets to choose from, and the chosen one's editor. */
+function SetsFound({ sets, photos }: { sets: PhotoSet[]; photos: SocialPhoto[] }) {
   const { chosen, choose } = useChosenSet(sets);
-  if (isPending) return <p>Reading the Photo Sets…</p>;
   return (
     <div className="flex flex-col gap-4">
       <SetChooser

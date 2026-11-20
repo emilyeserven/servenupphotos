@@ -50,7 +50,7 @@ export function GitHubSaveCard({ file, sanitized, groups, onSaved }: GitHubSaveC
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <QueryResult query={settings}>
+        <QueryResult query={settings} pendingLabel="Reading settings…">
           {(data) =>
             data.github.repo && data.github.token.set ? (
               <GitHubSaveForm

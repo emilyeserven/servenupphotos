@@ -9,6 +9,7 @@ import { count } from "@/components/update-data-shared";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { ReadingNote } from "@/components/query-result";
 import { type LocalizationAnswer, readLocalizationAnswer } from "@/lib/localization-answer";
 import { localizationPrompt, rowsToFill } from "@/lib/localization-prompt";
 import type { LocalizationRow } from "@/lib/place-seeds";
@@ -46,7 +47,7 @@ export function LocalizationFillCard() {
       <CardContent className="flex flex-col gap-6">
         {error && <p className="text-destructive text-sm">{error.message}</p>}
         {pending ? (
-          <p className="text-sm">Reading photos, places and localizations…</p>
+          <ReadingNote label="Reading photos, places and localizations…" />
         ) : (
           <>
             <FillStatus toFill={toFill.length} total={rows.length} />

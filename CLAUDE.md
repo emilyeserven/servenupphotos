@@ -90,6 +90,14 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
   failed. `QueryResult`, `SaveNote` and `SaveState` already use it. Don't write `text-destructive` or `{x.error.message}`
   into JSX; the `servenup/error-note` lint rule (`scripts/lint/servenup-plugin.mjs`) flags both. Red that isn't an error
   (an icon, a removed count) takes an `oxlint-disable-next-line servenup/error-note` comment saying why.
+- **Loading:** show every read with `QueryResult` (`components/query-result.tsx`): it takes a TanStack Query result or
+  a hook shaped like one (`useCombinedData`, `useSessionData`), shows `pendingLabel` while pending, `ErrorNote` when it
+  fails, and the data once it's there. The label starts with "Reading" and names the thing ("Reading the photo
+  JSON…", "Reading settings…"), never "Loading…". Where a page shows what it could read beside an error, so
+  `QueryResult` doesn't fit, use its `ReadingNote` for the pending words. `Skeleton` is only for photo tiles (a grid of
+  Square Thumbnails, Photos in Flight's placeholders); `Spinner` is only inside a button or beside an action the user
+  started, never for a read. The `servenup/reading-label` lint rule flags a label that doesn't start with "Reading" and
+  JSX text starting with "Loading".
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors

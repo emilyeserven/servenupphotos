@@ -89,7 +89,7 @@ export function GroupPage({ kind }: { kind: GroupKind }) {
 export function GitHubGate({ children }: { children: (folder: string) => ReactNode }) {
   const settings = useQuery(settingsQuery);
   return (
-    <QueryResult query={settings} pendingLabel="Loading settings…">
+    <QueryResult query={settings} pendingLabel="Reading settings…">
       {(data) =>
         data.github.repo && data.github.token.set ? (
           children(dataFolder(data.github.folder))

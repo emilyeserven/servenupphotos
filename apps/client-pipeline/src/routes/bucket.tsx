@@ -46,7 +46,7 @@ function BucketPage() {
       title="Explore Bucket"
       description="Every image in the R2 bucket, newest first. Click a stack to see its resized copies, generate JSON for a photo that isn't saved yet, or delete an image from R2. Contact sheets made for prompts have their own section."
     >
-      <QueryResult query={settings} pendingLabel="Loading settings…">
+      <QueryResult query={settings} pendingLabel="Reading settings…">
         {(data) =>
           r2IsSetUp(data.r2) ? (
             <BucketCard githubIsSetUp={Boolean(data.github.repo && data.github.token.set)} />
@@ -142,7 +142,7 @@ function BucketEmpty() {
   if (bucket.isSuccess && bucket.data.images.length > 0) return null;
   return (
     <CardContent>
-      <QueryResult query={bucket} pendingLabel="Listing images in R2…">
+      <QueryResult query={bucket} pendingLabel="Reading the images in R2…">
         {() => <p className="text-muted-foreground">No images in this bucket yet.</p>}
       </QueryResult>
     </CardContent>

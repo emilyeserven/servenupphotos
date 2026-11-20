@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { QueryResult } from "@/components/query-result";
 
 /** The User Likes page: the lists of liked photos people sent from the portfolio's My Likes page. */
 export function ViewerLikesPage() {
@@ -26,9 +27,11 @@ export function ViewerLikesPage() {
 
 function Likes() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and user likes…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <ViewerChooser data={combined.data} />;
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photos and user likes…">
+      {(data) => <ViewerChooser data={data} />}
+    </QueryResult>
+  );
 }
 
 /** The chosen person's ID, or "" for a new one. */

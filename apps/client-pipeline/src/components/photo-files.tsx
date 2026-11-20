@@ -6,7 +6,7 @@ import {
   type SocialPhoto,
   socialCalendarQuery,
 } from "@/api/publish";
-import { QueryResult } from "@/components/query-result";
+import { QueryResult, ReadingNote } from "@/components/query-result";
 import { withBaseAllPhotos } from "@/lib/combined";
 import { withoutUndecided } from "@/lib/social-schedule";
 import { useChangedPhotoFiles, useCombinedData } from "@/stores/combined-data";
@@ -31,7 +31,7 @@ export function PhotoFiles({
     [lists, error],
   );
   const files = useQuery({ ...query, select });
-  if (combined.isPending) return <p>Reading ALLPHOTOS.json…</p>;
+  if (combined.isPending) return <ReadingNote label="Reading ALLPHOTOS.json…" />;
   return (
     <QueryResult query={files} pendingLabel="Reading the photo JSON…">
       {children}

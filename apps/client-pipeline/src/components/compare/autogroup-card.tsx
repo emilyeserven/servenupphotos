@@ -6,7 +6,6 @@ import { ContactSheetsButton, useContactSheets } from "@/components/contact-shee
 import { PhotoScopeToggle } from "@/components/photo-scope-toggle";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { count } from "@/components/update-data-shared";
 import { useCompareGroups } from "@/hooks/use-compare-groups";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
@@ -21,6 +20,7 @@ import {
 } from "@/lib/compare-autogroup";
 import { readAutogroupAnswer } from "@/lib/compare-autogroup-answer";
 import type { ComparePhoto } from "@/lib/compare-groups";
+import { ReadingNote } from "@/components/query-result";
 
 /**
  * Autogroup: chooses every photo or only the drafts, copies one prompt linking all their Small
@@ -56,7 +56,7 @@ export function AutogroupCard() {
           />
         </div>
         {compare.pending ? (
-          <Skeleton className="h-40 rounded-xl" />
+          <ReadingNote label="Reading the photos…" />
         ) : (
           <AutogroupPrompt
             key={`${options.scope}-${options.withGroups}`}

@@ -7,6 +7,7 @@ import { MetaMoveButtons } from "@/components/metadata-move-buttons";
 import { MetaUncovered } from "@/components/metadata-uncovered";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
+import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,6 +16,7 @@ import { groupPhotoCount, groupTree, uncoveredValues } from "@/lib/meta-groups";
 import { fieldValues, type MetaValueCount, showRange } from "@/lib/meta-values";
 import { cn } from "@/lib/utils";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import type { CombinedData } from "@/api/photos";
 import { useCombinedData } from "@/stores/combined-data";
 
 /** The Metadata Groups page: named groups of camera, lens, focal length and other EXIF values. */
@@ -32,10 +34,17 @@ export function MetadataGroupsPage() {
 
 function MetaGroupTabs() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and metadata groups…</p>;
-  if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  const photos = shownPhotos(combined.data);
-  const groups = metaGroups(combined.data);
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the photos and metadata groups…">
+      {(data) => <FieldTabs data={data} />}
+    </QueryResult>
+  );
+}
+
+/** One tab per metadata field, each with its groups. */
+function FieldTabs({ data }: { data: CombinedData }) {
+  const photos = shownPhotos(data);
+  const groups = metaGroups(data);
   return (
     <Tabs defaultValue="camera">
       <TabsList className="h-auto flex-wrap">

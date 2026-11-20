@@ -6,7 +6,6 @@ import {
   applyTagLibraryMutation,
   tagLibraryQuery,
 } from "@/api/tag-library";
-import { ErrorText } from "@/components/bulk-tagging/pick-controls";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { useTagSave } from "@/components/prune-tags/change-list";
@@ -15,9 +14,9 @@ import { SmallTagCard } from "@/components/small-tags/small-tag-card";
 import { usePhotosById } from "@/components/small-tags/small-photos";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { CommitSuccess, count } from "@/components/update-data-shared";
 import { smallTags } from "@/lib/small-tags";
+import { QueryResult } from "@/components/query-result";
 
 /** The Small Tags page: every tag or subtag with fewer than 3 photos, to clean up one by one. */
 export function SmallTagsPage() {
@@ -34,15 +33,11 @@ export function SmallTagsPage() {
 
 function SmallTags() {
   const library = useQuery(tagLibraryQuery);
-  if (library.isPending) {
-    return (
-      <p className="text-muted-foreground flex items-center gap-2 text-sm">
-        <Spinner /> Reading every tag and photo…
-      </p>
-    );
-  }
-  if (!library.data) return <ErrorText error={library.error} />;
-  return <SmallTagList library={library.data} />;
+  return (
+    <QueryResult query={library} pendingLabel="Reading every tag and photo…">
+      {(data) => <SmallTagList library={data} />}
+    </QueryResult>
+  );
 }
 
 /** One change to save to a tag, and what to say once it's saved. */

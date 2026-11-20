@@ -4,8 +4,8 @@ import { useId, useState } from "react";
 import { type ChangelogPage, changelogQuery } from "@/api/changelog";
 import { ChangelogDayCard } from "@/components/changelog/changelog-day";
 import { type ChangelogDay, changelogDays } from "@/components/changelog/days";
-import { ErrorNote } from "@/components/error-note";
 import { Page } from "@/components/page";
+import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/changelog")({
@@ -21,16 +21,16 @@ function ChangelogView() {
       title="Changelog"
       description="What changed, from the pull requests merged into the repository in Settings, newest first."
     >
-      {query.isPending && <p>Reading the branch's commits…</p>}
-      <ErrorNote error={query.error} githubOpen />
-      {query.data && (
-        <ChangelogBody
-          pages={query.data.pages}
-          more={query.hasNextPage}
-          loading={query.isFetchingNextPage}
-          onMore={() => void query.fetchNextPage()}
-        />
-      )}
+      <QueryResult query={query} pendingLabel="Reading the branch's commits…" githubOpen>
+        {(data) => (
+          <ChangelogBody
+            pages={data.pages}
+            more={query.hasNextPage}
+            loading={query.isFetchingNextPage}
+            onMore={() => void query.fetchNextPage()}
+          />
+        )}
+      </QueryResult>
     </Page>
   );
 }
@@ -61,7 +61,7 @@ function ChangelogBody({ pages, more, loading, onMore }: ChangelogBodyProps) {
       <ChangelogDays days={days} />
       {more && (
         <Button variant="outline" className="self-center" disabled={loading} onClick={onMore}>
-          {loading ? "Loading…" : "Load older changes"}
+          {loading ? "Reading older changes…" : "Load older changes"}
         </Button>
       )}
     </>

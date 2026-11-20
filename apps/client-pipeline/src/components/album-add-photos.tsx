@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
+import { ReadingNote } from "@/components/query-result";
 
 /** Adds saved photos to an album, then reads the saved photos again and follows CI's rebuild. */
 export function useAlbumAdd() {
@@ -130,7 +131,7 @@ function PhotoChoices({ albumId, picked, disabled, onChange }: PhotoChoicesProps
     [photos, albumId],
   );
   const choices = useAddChoices(outside, search);
-  if (pending) return <Spinner className="size-6" />;
+  if (pending) return <ReadingNote label="Reading the saved photos…" />;
   const { shown } = choices;
   const toggle = (path: string) => {
     const next = new Set(picked);

@@ -29,7 +29,7 @@ function InstagramPage() {
       title="Instagram"
       description="Schedule one photo a day to post to Instagram. Changes are saved to each photo's JSON as its socialMediaPublishDate, waiting for Commit."
     >
-      <QueryResult query={settings}>
+      <QueryResult query={settings} pendingLabel="Reading settings…">
         {(data) =>
           data.github.repo && data.github.token.set ? (
             <InstagramCalendar />

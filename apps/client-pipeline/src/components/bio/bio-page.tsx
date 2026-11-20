@@ -7,6 +7,7 @@ import { PortraitUpload } from "@/components/bio/portrait-upload";
 import { PhotoDrawerToggle } from "@/components/instagram-picker/photo-drawer";
 import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import { DecidedPhotoFiles } from "@/components/photo-files";
+import { QueryResult } from "@/components/query-result";
 import { SaveState } from "@/components/save-state";
 import { useDelayedDraft } from "@/hooks/use-delayed-draft";
 import {
@@ -35,9 +36,12 @@ export function BioEditorPage() {
 
 /** The bio as the next Commit will have it, once the combined lists are read. */
 function SavedBio({ photos }: { photos: SocialPhoto[] }) {
-  const { data, isPending } = useCombinedData();
-  if (isPending) return <p>Reading the bio…</p>;
-  return <BioEditor saved={bioFile(data)} photos={photos} />;
+  const combined = useCombinedData();
+  return (
+    <QueryResult query={combined} pendingLabel="Reading the bio…">
+      {(data) => <BioEditor saved={bioFile(data)} photos={photos} />}
+    </QueryResult>
+  );
 }
 
 /** What the bio's photos do to bio, through update. */
