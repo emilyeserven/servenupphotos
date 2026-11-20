@@ -244,15 +244,16 @@ func fetchSheetImage(ctx context.Context, raw string) (image.Image, error) {
 }
 
 // deleteContactSheetsTimeout bounds deleting contact sheets: every set at
-// once can be a few hundred sheets, one request each.
+// once can be a few hundred sheets, one request each. The BFF's wait for it
+// comes from contactSheetsTimeout, which shares its path.
 const deleteContactSheetsTimeout = 2 * time.Minute
 
 // deleteSheetsFunc deletes one set of sheets, or all of them for "";
 // storage.DeleteContactSheets in production.
 type deleteSheetsFunc func(ctx context.Context, cfg settings.R2, set string) (storage.DeletedContactSheets, error)
 
-// deleteContactSheetsRequest is the body of POST
-// /photos/bucket/contact-sheets/delete.
+// deleteContactSheetsRequest is the body of DELETE
+// /photos/bucket/contact-sheets.
 type deleteContactSheetsRequest struct {
 	// Set is the folder of one set of sheets, such as
 	// 20261115-045000-1a2b3c4d, or "" for every set.

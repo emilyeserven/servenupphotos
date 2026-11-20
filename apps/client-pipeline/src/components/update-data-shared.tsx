@@ -175,6 +175,8 @@ export function ScanPreviewBody({
   scan,
   changed,
   nothing,
+  unchanged,
+  total,
   headline,
   children,
 }: {
@@ -182,7 +184,11 @@ export function ScanPreviewBody({
   /** How many files the change touches. */
   changed: number;
   /** Why there's nothing to change, after "All N photo files on <branch>". */
-  nothing: string;
+  nothing?: string;
+  /** The whole sentence when nothing changes, in place of the one nothing finishes. */
+  unchanged?: ReactNode;
+  /** The files read, such as "12 photo files"; the photo files unless given. */
+  total?: string;
   /** What happens to the changed files, after "N of M photo files". */
   headline: string;
   children: ReactNode;
@@ -191,7 +197,11 @@ export function ScanPreviewBody({
     return (
       <>
         <p className="text-sm">
-          All {count(scan.photoFiles, "photo file")} on <code>{scan.branch}</code> {nothing}.
+          {unchanged ?? (
+            <>
+              All {count(scan.photoFiles, "photo file")} on <code>{scan.branch}</code> {nothing}.
+            </>
+          )}
         </p>
         <Unreadable files={scan.unreadable} />
       </>
@@ -202,7 +212,7 @@ export function ScanPreviewBody({
       <div className="flex flex-col gap-1 text-sm">
         <p>
           <strong>
-            {changed} of {count(scan.photoFiles, "photo file")}
+            {changed} of {total ?? count(scan.photoFiles, "photo file")}
           </strong>{" "}
           {headline}.
         </p>

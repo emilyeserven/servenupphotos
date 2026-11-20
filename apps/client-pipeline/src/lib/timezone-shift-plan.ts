@@ -11,6 +11,7 @@ import {
   shiftedTime,
 } from "@/lib/timezone-shift";
 import { CUSTOM_DATE } from "@/lib/photo-fields";
+import { textOf } from "@portfolio/lib/values";
 
 /** A photo that could have been taken on the day being fixed. */
 export interface DayPhoto {
@@ -25,11 +26,6 @@ export interface DayPhoto {
   clockTime: string;
   /** The time the portfolio uses now: the custom date, or else the EXIF one. */
   currentTime: string;
-}
-
-/** A field's text, trimmed, or "" when it isn't text. */
-function textOf(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
 }
 
 const EXIF_DATE = /^\d{4}:\d{2}:\d{2} \d{2}:\d{2}/;

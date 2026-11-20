@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { DownloadIcon, ImageIcon } from "lucide-react";
 import { FallbackImage } from "@/components/fallback-image";
 import { Button } from "@/components/ui/button";
-import { parseIsoDate } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import type { PlannedPhoto } from "@/lib/instagram-planned";
 import { offlineSmallUrl } from "@/lib/offline-thumbnails";
 import { cn } from "@/lib/utils";

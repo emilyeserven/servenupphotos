@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import {
   type CaptionTemplate,
@@ -9,13 +8,11 @@ import {
 import type { CombinedData } from "@/api/photos";
 import { PlaceholderList } from "@/components/caption-templates/placeholder-list";
 import { TemplatePreview } from "@/components/caption-templates/preview";
-import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
-import { Button } from "@/components/ui/button";
+import { EntryEditorButtons } from "@/components/entry-buttons";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { STARTER_TEMPLATE } from "@/lib/caption-template";
-import { canonicalJson } from "@/lib/combined";
 import { PHOTO_BOOK_PLATFORM, socialPlatforms } from "@/lib/social-posts";
 
 const NEW: CaptionTemplate = { id: "", name: "", platform: "", template: STARTER_TEMPLATE };
@@ -78,7 +75,16 @@ export function TemplateEditor({ template, data, onSaved }: TemplateEditorProps)
               onChange={(e) => set({ template: e.target.value })}
             />
           </Field>
-          <EditorButtons next={templateOf(draft, template)} saved={template} onSaved={onSaved} />
+          <EntryEditorButtons
+            next={templateOf(draft, template)}
+            saved={template}
+            save={saveCaptionTemplateMutation}
+            remove={deleteCaptionTemplateMutation}
+            whyNot={whyNot}
+            saveLabel="Save template"
+            removeLabel="Remove template"
+            onSaved={onSaved}
+          />
         </CardContent>
       </Card>
       <TemplatePreview template={draft.template} data={data} />
@@ -123,54 +129,7 @@ function PlatformSelect({ value, onChange }: { value: string; onChange: (v: stri
   );
 }
 
-interface ButtonsProps {
-  next: CaptionTemplate;
-  saved?: CaptionTemplate;
-  onSaved: (id: string) => void;
-}
-
-/** Save, and Remove for a saved template, each saving a change waiting for Commit. */
-function EditorButtons({ next, saved, onSaved }: ButtonsProps) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <SaveButton next={next} saved={saved} onSaved={onSaved} />
-      {saved && <RemoveButton id={saved.id} />}
-    </div>
-  );
-}
-
 /** Why the typed template can't be saved, or "" when it can. */
 function whyNot(next: CaptionTemplate): string {
   return next.name === "" ? "Give it a name to save it." : "";
-}
-
-/** Whether there's nothing to save: no name, or what's saved already. */
-function cantSave(next: CaptionTemplate, saved?: CaptionTemplate): boolean {
-  return whyNot(next) !== "" || canonicalJson(next) === canonicalJson(saved ?? null);
-}
-
-function SaveButton({ next, saved, onSaved }: ButtonsProps) {
-  const save = useMutation(saveCaptionTemplateMutation);
-  return (
-    <>
-      <Button
-        disabled={cantSave(next, saved) || save.isPending}
-        onClick={() => save.mutate(next, { onSuccess: () => onSaved(next.id) })}
-      >
-        <Busy busy={save.isPending} />
-        {saved ? "Save changes" : "Save template"}
-      </Button>
-      <SaveNote error={save.error} why={whyNot(next)} />
-    </>
-  );
-}
-
-function RemoveButton({ id }: { id: string }) {
-  const remove = useMutation(deleteCaptionTemplateMutation);
-  return (
-    <RemoveEntryButton
-      label="Remove template"
-      remove={{ ...remove, mutate: () => remove.mutate(id) }}
-    />
-  );
 }

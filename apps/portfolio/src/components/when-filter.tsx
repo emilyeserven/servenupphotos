@@ -7,7 +7,6 @@ import {
   SectionPicker,
 } from "@portfolio/components/section-picker";
 import {
-  dateOf,
   type WhenProps,
   type WhenSection,
   type WhenSetters,
@@ -25,6 +24,7 @@ import {
   type WhenChoice,
   whenCount,
 } from "@portfolio/lib/when-filters";
+import { shortDate } from "@portfolio/lib/dates";
 
 /** Each kind of list's name in the picker, what several chosen are called, and its choices. */
 const KINDS: [ListKey, string, string, WhenChoice[]][] = [
@@ -46,9 +46,7 @@ function listText(chosen: string[], plural: string, choices: WhenChoice[]): stri
 
 /** A day as the list shows it, such as "Mar 1, 2024", or "Any day" for an open end. */
 function rangeDay(day: string | undefined): string {
-  const date = dateOf(day);
-  if (!date) return "Any day";
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return day ? shortDate(day) : "Any day";
 }
 
 /** What the date range is set to, such as "Mar 1, 2024 – Any day", or "Any". */

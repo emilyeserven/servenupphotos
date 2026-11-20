@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import {
@@ -12,10 +11,9 @@ import { OriginalExif } from "@/components/camera-overrides/original-exif";
 import { RuleCard } from "@/components/camera-overrides/rule-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
+import { EntryEditorButtons } from "@/components/entry-buttons";
 import { customLenses } from "@/api/lenses";
 import { overrideChanges } from "@/lib/camera-overrides";
-import { canonicalJson } from "@/lib/combined";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { useCombinedData } from "@/stores/combined-data";
 
@@ -69,7 +67,15 @@ export function OverrideEditor({ camera, override, photos }: OverrideEditorProps
             Add rule
           </Button>
           <Effect next={next} photos={photos} />
-          <EditorButtons next={next} saved={override} />
+          <EntryEditorButtons
+            next={next}
+            saved={override}
+            save={saveOverrideMutation}
+            remove={deleteOverrideMutation}
+            whyNot={problem}
+            saveLabel="Save override"
+            removeLabel="Remove override"
+          />
         </CardContent>
       </Card>
       <OriginalExif photos={photos} onUse={(rule) => setRules([...rules, rule])} />
@@ -93,53 +99,4 @@ function Effect({ next, photos }: { next: CameraOverride; photos: CombinedPhoto[
 function problem(next: CameraOverride): string {
   const empty = next.rules.findIndex((rule) => Object.keys(rule.set).length === 0);
   return empty === -1 ? "" : `Rule ${empty + 1} doesn't set any field yet.`;
-}
-
-/** Whether next is what saved already has, so there's nothing to save. */
-function isUnchanged(next: CameraOverride, saved?: CameraOverride): boolean {
-  return saved !== undefined && canonicalJson(next) === canonicalJson(saved);
-}
-
-interface ButtonsProps {
-  next: CameraOverride;
-  saved?: CameraOverride;
-}
-
-/** Save, and Remove for a saved override, each saving a change waiting for Commit. */
-function EditorButtons({ next, saved }: ButtonsProps) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <SaveButton next={next} saved={saved} />
-      {saved && <RemoveButton id={saved.id} />}
-    </div>
-  );
-}
-
-function SaveButton({ next, saved }: ButtonsProps) {
-  const save = useMutation(saveOverrideMutation);
-  const why = problem(next);
-  const blocked = isUnchanged(next, saved) || Boolean(why);
-  return (
-    <>
-      <Button disabled={blocked || save.isPending} onClick={() => save.mutate(next)}>
-        <Busy busy={save.isPending} />
-        <SaveLabel isNew={saved === undefined} />
-      </Button>
-      <SaveNote error={save.error} why={why} />
-    </>
-  );
-}
-
-function SaveLabel({ isNew }: { isNew: boolean }) {
-  return isNew ? "Save override" : "Save changes";
-}
-
-function RemoveButton({ id }: { id: string }) {
-  const remove = useMutation(deleteOverrideMutation);
-  return (
-    <RemoveEntryButton
-      label="Remove override"
-      remove={{ ...remove, mutate: () => remove.mutate(id) }}
-    />
-  );
 }

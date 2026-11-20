@@ -3,6 +3,7 @@ import { writtenPosition } from "@/lib/place-gps";
 import { customOr, takenDay } from "@/lib/social-focus";
 import { type Unsaved, dateOf } from "@/lib/social-schedule";
 import { savedSocialPosts } from "@/lib/social-posts";
+import { isObject } from "@portfolio/lib/values";
 
 /** How many photos before a day the suggestions compare against. */
 const REFERENCE_COUNT = 3;
@@ -195,10 +196,6 @@ function suggestion(photo: SocialPhoto, references: Traits[]): Suggestion {
     days: fewest(references.map((ref) => daysApart(traits, ref))),
     sharedTags: Math.max(...references.map((ref) => overlap(traits.tags, ref.tags))),
   };
-}
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /** The photo with the last change waiting for Commit or local edit made to its JSON, if any. */

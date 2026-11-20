@@ -7,7 +7,6 @@ import { trips } from "@/api/trips";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { DayEditor, type EditorPart } from "@/components/trip-lines/day-editor";
-import { dayTitle } from "@/components/trip-lines/day-title";
 import { StoryCard } from "@/components/trip-story/story-card";
 import { Button } from "@/components/ui/button";
 import { lineDays } from "@/lib/stale-trip-lines";
@@ -15,6 +14,7 @@ import { plannedDay, type TripDay } from "@/lib/trip-days";
 import { type DayPart, DAY_PARTS } from "@/lib/trip-lines-search";
 import { cn } from "@/lib/utils";
 import { useSessionData } from "@/hooks/use-session-data";
+import { weekdayDate } from "@portfolio/lib/dates";
 
 /** What each of a day's pages is called in its tabs. */
 export const PART_LABELS: Record<DayPart, string> = {
@@ -32,7 +32,7 @@ export function TripDayPage() {
   return (
     <Page
       wide
-      title={dayTitle(day)}
+      title={weekdayDate(day)}
       description="The day's route on the map, the stops along it, and the story its Trip page tells."
       action={
         <Button asChild variant="outline" size="sm">

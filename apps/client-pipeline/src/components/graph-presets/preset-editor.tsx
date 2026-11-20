@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { lastOrder, newPresetId } from "@/api/graph-presets";
-import { EditorButtons, Field, NameAndOrder } from "@/components/graph-presets/editor-parts";
+import {
+  deletePresetMutation,
+  lastOrder,
+  newPresetId,
+  savePresetMutation,
+} from "@/api/graph-presets";
+import { Field, NameAndOrder, whyNotPreset } from "@/components/graph-presets/editor-parts";
+import { EntryEditorButtons } from "@/components/entry-buttons";
 import { DescriptionField } from "@/components/graph-presets/description-field";
 import {
   fullGraph,
@@ -13,6 +19,7 @@ import { GraphControls } from "@portfolio/components/graph-builder/graph-control
 import type { GraphConfig } from "@portfolio/lib/graph-data";
 import type { GraphPresetFile, PresetGraph } from "@portfolio/lib/graph-presets";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
+import { SectionTitle } from "@/components/section-title";
 
 /** The preset as typed. */
 interface PresetDraft {
@@ -114,16 +121,20 @@ export function PresetEditor({ preset, files, onSaved }: PresetEditorProps) {
         <GroupSelect value={draft.group} files={files} onChange={(group) => set({ group })} />
         <SpotlightBox checked={draft.spotlight} onChange={(spotlight) => set({ spotlight })} />
         <section aria-label="Graph settings" className="flex flex-col gap-2">
-          <h3 className="text-sm font-medium">The graph it sets</h3>
+          <SectionTitle>The graph it sets</SectionTitle>
           <GraphControls
             config={config}
             onChange={(change) => set({ graph: presetGraph({ ...draft.graph, ...change }) })}
           />
         </section>
-        <EditorButtons
+        <EntryEditorButtons
           next={next}
           saved={preset}
-          why={next.name === "" ? "Give it a name." : ""}
+          save={savePresetMutation}
+          remove={deletePresetMutation}
+          whyNot={whyNotPreset}
+          saveLabel="Save preset"
+          removeLabel="Remove preset"
           onSaved={onSaved}
         />
       </CardContent>

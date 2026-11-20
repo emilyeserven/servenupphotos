@@ -17,7 +17,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { longDayFormat, parseIsoDate } from "@/lib/calendar";
+import { longDayFormat } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { notStoredByDay } from "@/lib/not-stored";
 import { useCombinedData } from "@/stores/combined-data";
 import { ErrorNote } from "@/components/error-note";

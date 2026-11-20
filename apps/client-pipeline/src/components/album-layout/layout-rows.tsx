@@ -8,6 +8,7 @@ import { moved, photoId } from "@/lib/album-photo-order";
 import { EMPTY_ROW, MAX_ROW_PHOTOS, emptyRow, placedIds, withRow } from "@/lib/album-layout-editor";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { ErrorNote } from "@/components/error-note";
+import { SectionTitle } from "@/components/section-title";
 
 interface LayoutRowsProps {
   layout: AlbumRow[];
@@ -30,7 +31,7 @@ export function LayoutRows({ layout, photos, byId, onChange }: LayoutRowsProps) 
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h3 className="font-medium">Rows</h3>
+        <SectionTitle>Rows</SectionTitle>
         <p className="text-muted-foreground text-xs">
           The album's page shows each row's photos side by side, as tall as each other, with its
           text above and below. <UnplacedNote count={unplaced.length} rows={layout.length} />

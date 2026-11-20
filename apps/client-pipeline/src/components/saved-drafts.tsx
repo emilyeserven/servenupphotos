@@ -17,6 +17,7 @@ import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
 import { editedData, undecidedPaths } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 import { ErrorNote } from "@/components/error-note";
+import { SectionTitle } from "@/components/section-title";
 
 interface SavedDraftsProps {
   /** Whether photos are in flight too: these drafts' Undecided panel is named after the branch to tell it apart from theirs. */
@@ -44,7 +45,9 @@ export function SavedDrafts(props: SavedDraftsProps) {
 function DraftsError({ error }: { error: Error }) {
   return (
     <section className="flex flex-col gap-1">
-      <h2 className="text-lg font-semibold">Drafts</h2>
+      <SectionTitle as="h2" size="lg">
+        Drafts
+      </SectionTitle>
       <ErrorNote error={error} lead="Couldn't read the drafts on the base branch:" />
     </section>
   );
@@ -54,7 +57,9 @@ function DraftsError({ error }: { error: Error }) {
 function NoDrafts({ branch }: { branch: string }) {
   return (
     <section className="flex flex-col gap-1">
-      <h2 className="text-lg font-semibold">Drafts on {branch}</h2>
+      <SectionTitle as="h2" size="lg">
+        Drafts on {branch}
+      </SectionTitle>
       <p className="text-muted-foreground text-sm">
         None: every photo on {branch} has a title, is in flight above, or is in Unselected Photos.
       </p>
@@ -85,7 +90,9 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
   const undecided = undecidedPaths(drafts, edits);
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">Drafts on {data.branch}</h2>
+      <SectionTitle as="h2" size="lg">
+        Drafts on {data.branch}
+      </SectionTitle>
       <p className="text-muted-foreground text-sm">
         Photos saved without a title, so the portfolio doesn&apos;t show them. Edit one to name it;
         Commit then sends it to the “Add photo data” pull request.

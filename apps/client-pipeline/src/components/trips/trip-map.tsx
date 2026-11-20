@@ -14,8 +14,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import type { Trip } from "@/api/trips";
 import { PipelineCoordinatesMenu } from "@/components/map-coordinates";
-import { dayTitle } from "@/components/trip-lines/day-title";
 import { type TripMapDays, tripMapData, tripMapPoints } from "@/lib/trip-map";
+import { weekdayDate } from "@portfolio/lib/dates";
 
 setWorkerUrl(maplibreWorkerUrl);
 
@@ -77,7 +77,7 @@ export function TripMap({ trip, ...days }: TripMapDays & { trip: Trip }) {
         {days.days.map((d, i) => (
           <Marker key={d.day} latitude={d.photos[0]!.latitude} longitude={d.photos[0]!.longitude}>
             <span
-              title={dayTitle(d.day)}
+              title={weekdayDate(d.day)}
               className="bg-foreground text-background rounded-full px-1.5 text-xs font-medium shadow"
             >
               {i + 1}

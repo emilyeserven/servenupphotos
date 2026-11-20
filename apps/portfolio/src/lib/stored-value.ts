@@ -69,3 +69,19 @@ function writeStored(key: string, value: unknown) {
     // Ignore; the value still lasts until the page is reloaded.
   }
 }
+
+/**
+ * Moves what this browser saved under an old storage key to its new one, once, so renaming a key
+ * keeps the visitor's choice. Does nothing when the new key already holds something or storage is
+ * blocked. Call it where the key is defined, before the first read.
+ */
+export function moveStoredKey(from: string, to: string) {
+  try {
+    const old = localStorage.getItem(from);
+    if (old === null) return;
+    if (localStorage.getItem(to) === null) localStorage.setItem(to, old);
+    localStorage.removeItem(from);
+  } catch {
+    // Blocked storage: there is nothing saved to move.
+  }
+}
