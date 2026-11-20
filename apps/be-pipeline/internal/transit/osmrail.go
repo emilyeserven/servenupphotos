@@ -19,14 +19,22 @@ import (
 const SourceOSMRail = "osmrail"
 
 // osmLineBits is how many bits of a route's ID on an OpenStreetMap rail map
-// hold its lines, up to 4; the bits above hold its region's place in
-// Geofabrik's index.
-const osmLineBits = 4 * routeBits
+// hold its lines, up to 3; the bits above hold its region's place in
+// Geofabrik's index. The whole ID stays under 2^53, the largest whole number
+// the page's JavaScript holds exactly: with 4 lines, a region far down the
+// index, such as us/massachusetts, made IDs the page rounded off, losing the
+// line.
+const osmLineBits = 3 * routeBits
 
 // osmRailVersion is the folder of the rail maps read as this version reads
-// them: v2 keeps which railways are high-speed. A map read by an older
-// version is downloaded and read again the first time it's used.
-const osmRailVersion = "v2"
+// them: v2 keeps which railways are high-speed, and v3 names lines by the
+// route relations their track is in, with their colors. A map read by an
+// older version is downloaded and read again the first time it's used.
+const osmRailVersion = "v3"
+
+// osmRailOldVersions are the folders of maps read by older versions, deleted
+// once the map is read again ("" is the first version's, with none).
+var osmRailOldVersions = []string{"", "v2"}
 
 // osmRailDir is OSM_RAIL_DIR, or else a folder beside the settings file, as
 // Japan's rail map's is (see mlitDir).
@@ -121,8 +129,13 @@ func writeOSMRail(ctx context.Context, region osmRegion, open func() (io.ReadClo
 	if err := writeFeatures(filepath.Join(dir, mlitSectionsFile), sections); err != nil {
 		return err
 	}
-	// The map read by an older version, which is read again for what it lacked.
-	return os.RemoveAll(filepath.Join(osmRailDir(), region.id))
+	// The maps read by older versions, which are read again for what they lacked.
+	for _, old := range osmRailOldVersions {
+		if err := os.RemoveAll(filepath.Join(osmRailDir(), old, region.id)); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // limitedWriter writes to w until left bytes are written, then fails.

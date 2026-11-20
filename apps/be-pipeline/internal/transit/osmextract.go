@@ -62,12 +62,12 @@ func (c *Client) readyOSMRegion(region osmRegion, p *progress) error {
 }
 
 // extractPasses opens the extract at path afresh for each pass the rail and
-// bus readers make over it, in their order (readOSMRail's two, then
+// bus readers make over it, in their order (readOSMRail's three, then
 // readOSMBus's three), telling p which pass it is and counting what each reads.
 func extractPasses(path string, p *progress, rail, bus bool) func() (io.ReadCloser, error) {
 	var passes []string
 	if rail {
-		passes = append(passes, "the railways", "the railways' points and the stations")
+		passes = append(passes, "the rail routes", "the railways", "the railways' points and the stations")
 	}
 	if bus {
 		passes = append(passes, "the bus routes", "the roads the bus routes run along", "the roads' points and the bus stops")
