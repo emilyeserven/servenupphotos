@@ -92,6 +92,11 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
 - **Filter pickers:** build on `SectionPicker` and follow [Picker conventions](docs/portfolio-filters.md#picker-conventions):
   extra info behind `InfoButton` in the `aside` panel on the right, Group by and Sort as small menus left of the (i),
   grouping off by default, and no icons in choice lists.
+- **Errors:** show every failure with `ErrorNote` (`components/error-note.tsx`): pass it the `Error` (or a sentence
+  written for the page) and it shows the message in red with `role="alert"`, plus GitHub's answer when a GitHub call
+  failed. `QueryResult`, `SaveNote` and `SaveState` already use it. Don't write `text-destructive` or `{x.error.message}`
+  into JSX; the `servenup/error-note` lint rule (`scripts/lint/servenup-plugin.mjs`) flags both. Red that isn't an error
+  (an icon, a removed count) takes an `oxlint-disable-next-line servenup/error-note` comment saying why.
 - **Small value and date helpers:** both apps share `apps/portfolio/src/lib/values.ts` (`isObject`, `textOf` for
   trimmed text or "", `stringOf` for text as written or "", `clamp`) and `apps/portfolio/src/lib/dates.ts`
   (`isoDate`, `parseIsoDate`, `shortDate` "Nov 3, 2026", `weekdayDate` "Tue, Nov 3, 2026", `dateTimeText` for a

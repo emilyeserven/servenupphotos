@@ -1,6 +1,8 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
+import { ErrorNote } from "@/components/error-note";
+
 interface QueryResultProps<T> {
   query: UseQueryResult<T>;
   pendingLabel?: string;
@@ -17,6 +19,6 @@ export function QueryResult<T>({
   children,
 }: QueryResultProps<T>) {
   if (query.isPending) return pending;
-  if (query.isError) return <p className="text-destructive">{query.error.message}</p>;
+  if (query.isError) return <ErrorNote error={query.error} />;
   return children(query.data);
 }
