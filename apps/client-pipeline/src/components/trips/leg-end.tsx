@@ -1,12 +1,12 @@
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 import { useState } from "react";
 import type { TripLegEnd } from "@/api/trips";
-import { dayTitle } from "@/components/trip-lines/day-title";
 import { LegStation } from "@/components/trips/leg-station";
 import { PointFields } from "@/components/trips/point-fields";
 import { StationSearch } from "@/components/trips/station-search";
 import { endSpot, ridesLegLine } from "@/lib/trip-legs";
 import type { TripPhoto } from "@/lib/trip-days";
+import { weekdayDate } from "@portfolio/lib/dates";
 
 interface LegEndFieldProps {
   /** What the end is, such as "Leaves". */
@@ -38,7 +38,7 @@ export function LegEndField(props: LegEndFieldProps) {
       >
         {dates.map((d) => (
           <option key={d} value={d}>
-            {dayTitle(d)}
+            {weekdayDate(d)}
           </option>
         ))}
       </select>

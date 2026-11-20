@@ -26,7 +26,8 @@ import {
 import type { NotStoredPost } from "@/api/not-stored";
 import { notStoredPath, withNotStoredDays } from "@/lib/not-stored";
 import { Button } from "@/components/ui/button";
-import { calendarDays, dayFormat, isoDate, longDayFormat, parseIsoDate } from "@/lib/calendar";
+import { calendarDays, dayFormat, longDayFormat } from "@/lib/calendar";
+import { isoDate, parseIsoDate } from "@portfolio/lib/dates";
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
 import {
   PHOTO_DRAG_TYPE,
@@ -45,6 +46,7 @@ import { type DayPost, instagramPostsByDay } from "@/lib/social-post-days";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import { PUBLISH_DATE } from "@/lib/photo-fields";
+import { SectionTitle } from "@/components/section-title";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -387,9 +389,9 @@ function WeekNav(props: CalendarGridProps) {
   const last = parseIsoDate(days.at(-1) ?? today);
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <h2 className="text-lg font-medium">
+      <SectionTitle as="h2" size="lg">
         {dayFormat.format(first)} – {dayFormat.format(last)}
-      </h2>
+      </SectionTitle>
       <div className="flex flex-wrap items-center gap-1">
         {weeksSelect}
         <Button

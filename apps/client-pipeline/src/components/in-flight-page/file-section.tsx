@@ -21,6 +21,7 @@ import { MoveToUndecided } from "@/components/undecided-photos";
 import { offlineSmallUrl, squareImages } from "@/lib/offline-thumbnails";
 import { savedTitle } from "@/lib/untitled-photos";
 import { cn } from "@/lib/utils";
+import { SectionTitle } from "@/components/section-title";
 
 /** One photo in flight: its title row with its marks and actions, then its image beside its JSON. */
 export function FileSection({
@@ -40,7 +41,7 @@ export function FileSection({
 }) {
   return (
     <section className="@container flex flex-col gap-2">
-      <h2 className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
+      <SectionTitle as="h2" className="flex flex-wrap items-center gap-x-2">
         <EditLink file={file} images={images} />
         <PhotoTitle file={file} />
         <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
@@ -56,7 +57,7 @@ export function FileSection({
         <ReEditButton file={file} />
         <CompareButton file={file} />
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
-      </h2>
+      </SectionTitle>
       <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <PhotoImages file={file} images={images} />
         <FileJson file={file} baseBranch={baseBranch} />

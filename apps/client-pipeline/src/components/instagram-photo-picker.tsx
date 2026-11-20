@@ -11,7 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { longDayFormat, parseIsoDate } from "@/lib/calendar";
+import { longDayFormat } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { type Unsaved, photoName } from "@/lib/social-schedule";
 
 interface PhotoPickerProps {

@@ -1,6 +1,7 @@
 import { subDays, subMonths, subYears } from "date-fns";
 import { findTimelineLabel } from "@portfolio/lib/timeline-labels";
-import { currentChoice, dayOf, type WhenFilters } from "@portfolio/lib/when-filters";
+import { currentChoice, type WhenFilters } from "@portfolio/lib/when-filters";
+import { isoDate } from "@portfolio/lib/dates";
 
 /**
  * Where each old quick range (`?range=30d`) started, counted back from today. "All time" (`all`)
@@ -37,7 +38,7 @@ function fromAbsolute(search: Record<string, unknown>): WhenFilters | undefined 
 /** The old quick range (`?range=30d`) as a date range filter from that many days ago. */
 function fromQuickRange(search: Record<string, unknown>, now: Date): WhenFilters | undefined {
   const start = RANGE_STARTS[text(search, "range") ?? ""];
-  return start ? { start: dayOf(start(now)) } : undefined;
+  return start ? { start: isoDate(start(now)) } : undefined;
 }
 
 /** The old label picker's choice (`?label=japan-2026-09-22`) as a date range filter of its days. */

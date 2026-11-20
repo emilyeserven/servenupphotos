@@ -3,6 +3,7 @@ import type { Place } from "@/api/places";
 import { savedPlaces } from "@/api/places";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { writtenPosition } from "@/lib/place-gps";
+import { textOf } from "@portfolio/lib/values";
 
 /** A photo a trip line can go through: one with an ID, a date and an exact spot. */
 export interface TripPhoto {
@@ -50,11 +51,6 @@ export interface TripDay {
 }
 
 type Position = { latitude: number; longitude: number };
-
-/** A field's text, trimmed, or "" when it isn't text. */
-function textOf(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
 
 /** When the photo was taken: its custom date, or else its EXIF one, as exiftool writes it. */
 function takenOf(photo: CombinedPhoto): string | undefined {

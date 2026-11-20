@@ -9,7 +9,7 @@ import {
   saveGearMutation,
   uploadGearImageMutation,
 } from "@/api/gear";
-import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
+import { Busy, EntryEditorButtons, SaveNote } from "@/components/entry-buttons";
 import {
   type GearPictureEditor,
   type GearPictureState,
@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { canonicalJson } from "@/lib/combined";
 
 /**
  * The file the row's camera or lens saves: its saved file with the picture and description
@@ -65,10 +64,15 @@ export function GearEditor({ row }: { row: GearRow }) {
           <span className="font-medium">Description, shown under the picture</span>
           <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
         </label>
-        <div className="flex flex-wrap items-center gap-2">
-          <SaveButton next={next} saved={row.file} />
-          <RemoveButton file={row.file} />
-        </div>
+        <EntryEditorButtons
+          next={next}
+          saved={row.file}
+          save={saveGearMutation}
+          remove={deleteGearMutation}
+          whyNot={whyNot}
+          saveLabel="Save picture"
+          removeLabel="Remove picture"
+        />
       </CardContent>
     </Card>
   );
@@ -121,42 +125,4 @@ function ImageField({ editor }: { editor: GearPictureEditor }) {
 /** Why the file can't be saved yet, or "" when it can. */
 function whyNot(next: GearFile): string {
   return `${next.image}${next.description}` === "" ? "Add a picture or a description." : "";
-}
-
-/** Whether there's nothing to save: the file is as saved, or has nothing to show. */
-function cantSave(next: GearFile, saved?: GearFile): boolean {
-  return canonicalJson(next) === canonicalJson(saved ?? null) || whyNot(next) !== "";
-}
-
-/** What the save button says: Save changes for a saved file, or Save picture for a new one. */
-const SAVE_LABELS = { saved: "Save changes", fresh: "Save picture" };
-
-function SaveButton({ next, saved }: { next: GearFile; saved?: GearFile }) {
-  const save = useMutation(saveGearMutation);
-  const why = whyNot(next);
-  return (
-    <>
-      <Button disabled={cantSave(next, saved) || save.isPending} onClick={() => save.mutate(next)}>
-        <Busy busy={save.isPending} />
-        {SAVE_LABELS[saved ? "saved" : "fresh"]}
-      </Button>
-      <SaveNote error={save.error} why={why} />
-    </>
-  );
-}
-
-/** Removes the saved file, so the portfolio goes back to the drawing; nothing before it's saved. */
-function RemoveButton({ file }: { file?: GearFile }) {
-  if (!file) return null;
-  return <SavedRemoveButton id={file.id} />;
-}
-
-function SavedRemoveButton({ id }: { id: string }) {
-  const remove = useMutation(deleteGearMutation);
-  return (
-    <RemoveEntryButton
-      label="Remove picture"
-      remove={{ ...remove, mutate: () => remove.mutate(id) }}
-    />
-  );
 }

@@ -4,6 +4,7 @@ import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { titleOf } from "@/lib/drafts";
 import { FACES } from "@/lib/photo-fields";
 import type { QualityFlag } from "@/lib/quality-flags";
+import { textOf } from "@portfolio/lib/values";
 
 /** Whether the photo has areas pixelated already, so its Small version shows blocks there. */
 function isPixelated(data: Record<string, unknown>): boolean {
@@ -69,10 +70,6 @@ interface RawFlag {
   note: string;
 }
 
-function text(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /** The answer's photos that have a name. */
 function rawFlags(parsed: unknown): RawFlag[] {
   const photos = (parsed as { photos?: unknown } | null)?.photos;
@@ -80,10 +77,10 @@ function rawFlags(parsed: unknown): RawFlag[] {
   return photos
     .map((raw) => (raw ?? {}) as Record<string, unknown>)
     .map((raw) => ({
-      photo: text(raw.photo),
-      pixelate: Array.isArray(raw.pixelate) ? raw.pixelate.map(text).filter(Boolean) : [],
-      reEdit: text(raw.reEdit),
-      note: text(raw.note),
+      photo: textOf(raw.photo),
+      pixelate: Array.isArray(raw.pixelate) ? raw.pixelate.map(textOf).filter(Boolean) : [],
+      reEdit: textOf(raw.reEdit),
+      note: textOf(raw.note),
     }))
     .filter((raw) => raw.photo !== "");
 }

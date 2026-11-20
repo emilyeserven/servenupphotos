@@ -11,13 +11,13 @@ import (
 func registerBucketRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("GET /photos/bucket", handleBucketImages(d.store.R2, storage.ListImages))
 	mux.HandleFunc("POST /photos/bucket/exif", handleBucketExif(d.extractor, d.store.R2, storage.GetPhoto, cameraOverrides(d.store, d.gh)))
-	mux.HandleFunc("POST /photos/bucket/delete", handleDeleteBucketImages(d.store.R2, storage.DeleteImage))
+	mux.HandleFunc("DELETE /photos/bucket", handleDeleteBucketImages(d.store.R2, storage.DeleteImage))
 	mux.HandleFunc("POST /photos/bucket/versions", handleRegenerateVersions(d.store.R2, storage.RegenerateVersions))
 	mux.HandleFunc("GET /photos/bucket/thumbnail-crop", handleThumbnailCrop(d.store.R2, storage.ThumbnailCrop))
 	mux.HandleFunc("GET /photos/bucket/faces", handleSavedFaces(d.store.R2, storage.SavedFaces))
 	mux.HandleFunc("POST /photos/bucket/faces/detect", handleDetectFaces(d.store.R2, storage.GetPhoto, versions.DetectFaces))
 	mux.HandleFunc("GET /photos/original", handleOriginal(d.store.R2, storage.GetPhoto))
 	mux.HandleFunc("POST /photos/bucket/contact-sheets", handleContactSheets(d.store.R2, openSheetImage(d.offline.Thumbnail), storage.UploadContactSheets, storage.EnsureContactSheetExpiry))
-	mux.HandleFunc("POST /photos/bucket/contact-sheets/delete", handleDeleteContactSheets(d.store.R2, storage.DeleteContactSheets))
+	mux.HandleFunc("DELETE /photos/bucket/contact-sheets", handleDeleteContactSheets(d.store.R2, storage.DeleteContactSheets))
 	mux.HandleFunc("POST /photos/bucket/sizes", handleImageSizes(d.store.R2, readImageSize(d.offline.Thumbnail)))
 }
