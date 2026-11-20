@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The User Likes page: the lists of liked photos people sent from the portfolio's My Likes page. */
 export function ViewerLikesPage() {
@@ -73,7 +74,7 @@ function ViewerList({ viewers, chosen, onChoose }: ViewerListProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
-        {viewers.length === 0 && <p className="text-muted-foreground text-sm">None yet.</p>}
+        {viewers.length === 0 && <EmptyNote>No viewers have sent their likes yet.</EmptyNote>}
         {viewers.map((viewer) => (
           <button
             key={viewer.id}

@@ -16,6 +16,7 @@ import { useRevealed } from "@/hooks/use-revealed";
 import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
 import { editedData, undecidedPaths } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 import { ErrorNote } from "@/components/error-note";
 import { SectionTitle } from "@/components/section-title";
 
@@ -60,9 +61,10 @@ function NoDrafts({ branch }: { branch: string }) {
       <SectionTitle as="h2" size="lg">
         Drafts on {branch}
       </SectionTitle>
-      <p className="text-muted-foreground text-sm">
-        None: every photo on {branch} has a title, is in flight above, or is in Unselected Photos.
-      </p>
+      <EmptyNote>
+        No drafts: every photo on {branch} has a title, is in flight above, or is in Unselected
+        Photos.
+      </EmptyNote>
     </section>
   );
 }
@@ -105,6 +107,7 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
       >
         <DraftSortToggle sort={sort} />
       </PhotoFilterBar>
+      {drafts.length + missing.length === 0 && <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>}
       <DraftList files={drafts.filter((file) => !undecided.has(file.path))} data={data} />
       <UndecidedQueue
         files={drafts.filter((file) => undecided.has(file.path))}

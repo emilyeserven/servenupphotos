@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { GridRow, NarrowRow } from "@/components/stat-row";
 import type { StatGroup, StatRow } from "@/lib/stat-groups";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** A row chosen in a group that narrows another, and which group it narrows. */
 export interface StatFocus {
@@ -56,9 +57,7 @@ export function StatGroupCard({
         {control}
       </div>
       <FocusChips focuses={focuses} onClearFocus={onClearFocus} />
-      {group.rows.length === 0 && (
-        <p className="text-sm text-muted-foreground">None of these photos say.</p>
-      )}
+      {group.rows.length === 0 && <EmptyNote>None of these photos say.</EmptyNote>}
       <ul className="-mr-2 flex max-h-96 flex-col gap-1 overflow-y-auto pr-2">
         {group.rows.map((row) => (
           <li key={row.label}>

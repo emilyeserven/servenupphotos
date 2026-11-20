@@ -23,7 +23,7 @@ import {
 } from "@portfolio/lib/photo-filters";
 import type { Photo } from "@portfolio/lib/photos";
 import { parseTextSearch, searchPhotos, TEXT_SEARCH_KEY } from "@portfolio/lib/text-search";
-import { cn } from "@portfolio/lib/utils";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 /** The filter count badge, here too for the views that read it with the filter bar. */
 export { FilterCount };
@@ -339,5 +339,5 @@ function GroupDropdowns({ facet, filters, setFilters }: DropdownProps) {
 /** What a view shows when its filters leave none of its photos: nothing while `count` has some. */
 export function NoMatchingPhotos({ count, className }: { count: number; className?: string }) {
   if (count > 0) return null;
-  return <p className={cn("text-muted-foreground", className)}>No photos match these filters.</p>;
+  return <EmptyNote className={className}>{NO_PHOTOS_MATCH}</EmptyNote>;
 }

@@ -100,6 +100,12 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
   failed. `QueryResult`, `SaveNote` and `SaveState` already use it. Don't write `text-destructive` or `{x.error.message}`
   into JSX; the `servenup/error-note` lint rule (`scripts/lint/servenup-plugin.mjs`) flags both. Red that isn't an error
   (an icon, a removed count) takes an `oxlint-disable-next-line servenup/error-note` comment saying why.
+- **Empty states:** a list, grid or panel with nothing in it shows `EmptyNote`
+  (`apps/portfolio/src/components/empty-note.tsx`, imported as `@portfolio/components/empty-note` in both apps), never
+  a hand-styled `<p>`. It has one look (muted, small); its `className` is for spacing only. Say what's missing in a full
+  sentence ("No albums yet.", not "None yet."), then what to do next when there is something to do. A photo list that
+  filters or search leave empty says `NO_PHOTOS_MATCH` ("No photos match these filters."). The `servenup/empty-note`
+  lint rule flags a muted `<p>` that starts "No", "None" or "Nothing".
 - **Small value and date helpers:** both apps share `apps/portfolio/src/lib/values.ts` (`isObject`, `textOf` for
   trimmed text or "", `stringOf` for text as written or "", `clamp`) and `apps/portfolio/src/lib/dates.ts`
   (`isoDate`, `parseIsoDate`, `shortDate` "Nov 3, 2026", `weekdayDate` "Tue, Nov 3, 2026", `dateTimeText` for a

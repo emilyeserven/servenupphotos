@@ -28,6 +28,7 @@ import {
   regionParentKeys,
   regionTreeRows,
 } from "@/lib/region-tree";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { ErrorNote } from "@/components/error-note";
 
 /** Everything the Places list shows, worked out from the place files and the photos. */
@@ -84,11 +85,7 @@ function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
   const [search, setSearch] = useState("");
   const [checked, setChecked] = useState<ReadonlySet<string>>(new Set());
   if (list.nodes.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        No places yet. Add one with New, or from a photo's Place field.
-      </p>
-    );
+    return <EmptyNote>No places yet. Add one with New, or from a photo's Place field.</EmptyNote>;
   }
   const rows = regionTreeRows(list.nodes, { collapsed, search });
   const toggle = (key: string) => setCollapsed(toggled(collapsed, key));
@@ -144,9 +141,7 @@ function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
           ))}
         </TableBody>
       </Table>
-      {rows.length === 0 && (
-        <p className="text-muted-foreground text-sm">Nothing is named like that.</p>
-      )}
+      {rows.length === 0 && <EmptyNote>Nothing is named like that.</EmptyNote>}
     </>
   );
 }
