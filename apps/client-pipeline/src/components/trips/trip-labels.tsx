@@ -5,6 +5,7 @@ import { LabelDays } from "@/components/trips/label-days";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { nextLabel } from "@/lib/trip-labels";
+import { SectionTitle } from "@/components/section-title";
 
 interface TripLabelsProps {
   /** The Trip as it will be saved, whose days the labels can cover. */
@@ -24,7 +25,7 @@ export function TripLabels({ trip, dates, onChange }: TripLabelsProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-1">
-        <h3 className="text-sm font-medium">Timeline labels</h3>
+        <SectionTitle>Timeline labels</SectionTitle>
         <p className="text-muted-foreground text-sm">
           Optional: names the Timeline shows in place of “{trip.name || "the Trip's name"}” on the
           days you pick, such as Korea and then Japan. A day no label covers shows the Trip's name.

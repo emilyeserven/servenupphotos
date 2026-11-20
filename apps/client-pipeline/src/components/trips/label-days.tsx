@@ -1,7 +1,7 @@
 import { format, parseISO } from "date-fns";
 import { useState } from "react";
 import type { TripLabel } from "@/api/trips";
-import { dayTitle } from "@/components/trip-lines/day-title";
+import { weekdayDate } from "@portfolio/lib/dates";
 
 /** A label's first and last days. */
 type Days = Pick<TripLabel, "start" | "end">;
@@ -62,7 +62,7 @@ export function LabelDays({ label, dates, taken, onChange }: LabelDaysProps) {
 
 /** What to click next: the last day while a first one waits, otherwise how to pick. */
 function hint(first?: string): string {
-  if (first) return `Now click its last day, or ${dayTitle(first)} again for just that day.`;
+  if (first) return `Now click its last day, or ${weekdayDate(first)} again for just that day.`;
   return "Click its first day and then its last, or shift-click to stretch the days to another.";
 }
 
@@ -94,7 +94,7 @@ function DayButton({ day, withMonth, on, taken, onClick }: DayButtonProps) {
     <button
       type="button"
       aria-pressed={on}
-      title={taken ? `${dayTitle(day)}: another label has it` : dayTitle(day)}
+      title={taken ? `${weekdayDate(day)}: another label has it` : weekdayDate(day)}
       onClick={(e) => onClick(e.shiftKey)}
       className={`${DAY_BUTTON} ${dayColors(on, taken)}`}
     >

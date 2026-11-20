@@ -2,6 +2,7 @@ import type { SocialPhoto } from "@/api/publish";
 import { CREATE_DATE } from "@/lib/photo-fields";
 import { customOr } from "@/lib/social-focus";
 import { type Unsaved, currentData, dateOf } from "@/lib/social-schedule";
+import { isObject } from "@portfolio/lib/values";
 
 /** How many photos taken before the last scheduled one the picker suggests. */
 const BEFORE_COUNT = 3;
@@ -37,10 +38,6 @@ export function takenAt(data: Record<string, unknown>): string {
   if (!match) return "";
   const [, year, month, day, hour = "00", minute = "00", second = "00"] = match;
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-}
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /** The photo's taken time, with its change waiting for Commit or local edit made over it. */

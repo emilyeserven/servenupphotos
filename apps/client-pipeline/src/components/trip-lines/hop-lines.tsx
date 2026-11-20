@@ -29,6 +29,7 @@ import {
   type RopewaySide,
   withRopeway,
 } from "@/lib/ropeway-ends";
+import { SectionTitle } from "@/components/section-title";
 
 interface HopLinesProps {
   photos: TripPhoto[];
@@ -58,7 +59,7 @@ export function HopLines({ photos, draft, segments, onChange, ...map }: HopLines
   };
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-sm font-medium">Lines ridden</h3>
+      <SectionTitle>Lines ridden</SectionTitle>
       {hops.map(({ hop, key }) => (
         <HopRow
           key={`${key}-${hop.mode}`}

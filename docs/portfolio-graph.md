@@ -141,7 +141,7 @@ in place of its star and a filled background while the graph matches it.
 
 The **Save as preset** tab lists the settings it will keep, then asks for a name; its **Save preset** button keeps the graph's settings (not its filters) as one of the visitor's own presets,
 listed under **Yours** in the picker with a × to remove it. They're kept in the browser's local storage
-(`servenup:graph-presets`, `lib/saved-graphs.ts`), so they're only on that browser; in a private window they last
+(`servenup-graph-presets`, `lib/saved-graphs.ts`), so they're only on that browser; in a private window they last
 until the page is left.
 
 > **Frontend analogy:** the site's presets are the app's built-in defaults shipped in the bundle (`GRAPHS.json`), and a

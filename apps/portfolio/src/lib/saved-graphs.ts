@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { currentType } from "@/lib/graph-data";
 import type { GraphPreset, PresetGraph } from "@/lib/graph-presets";
+import { moveStoredKey } from "@/lib/stored-value";
 
 /** Where the visitor's own presets are kept in their browser. */
-const STORAGE_KEY = "servenup:graph-presets";
+const STORAGE_KEY = "servenup-graph-presets";
+moveStoredKey("servenup:graph-presets", STORAGE_KEY);
 
 /** Whether a stored value looks like a preset this page saved. */
 function isSaved(value: unknown): value is GraphPreset {

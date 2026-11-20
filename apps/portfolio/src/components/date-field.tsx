@@ -3,11 +3,7 @@ import { useState } from "react";
 import type { Matcher } from "react-day-picker";
 import { MonthCalendar } from "@portfolio/components/month-calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
-
-/** A day as a field shows it, such as "Mar 1, 2024". */
-function fieldText(day: Date): string {
-  return day.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-}
+import { shortDate } from "@portfolio/lib/dates";
 
 /**
  * One end of a date range, such as From: a field showing its day, or "Any day" when it's open,
@@ -38,7 +34,7 @@ export function DateField({
           <PopoverTrigger className="flex min-w-0 flex-1 items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50">
             <CalendarDays className="size-4 shrink-0 text-muted-foreground" aria-hidden />
             <span className={value ? "truncate" : "truncate text-muted-foreground"}>
-              {value ? fieldText(value) : "Any day"}
+              {value ? shortDate(value) : "Any day"}
             </span>
           </PopoverTrigger>
           <PopoverContent align="start" className="w-auto p-3">

@@ -15,6 +15,7 @@ import {
 } from "@/lib/trip-fences";
 import type { GapDraft } from "@/lib/trip-gaps";
 import { cn } from "@/lib/utils";
+import { SectionTitle } from "@/components/section-title";
 
 interface FencesProps {
   day: TripDay;
@@ -33,7 +34,7 @@ export function Fences({ day, draft, onChange }: FencesProps) {
   const left = unfenced(day.loose, fences);
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-sm font-medium">Areas</h3>
+      <SectionTitle>Areas</SectionTitle>
       <FencesNote loose={day.loose.length} left={left.length} />
       {fences.map((fence, i) => (
         <FenceRow

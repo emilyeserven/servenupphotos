@@ -1,13 +1,12 @@
-import { eachDayOfInterval, format, parseISO } from "date-fns";
+import { eachDayOfInterval, parseISO } from "date-fns";
 import type { TripLeg, TripLegEnd } from "@/api/trips";
 import type { TripDay, TripPhoto } from "@/lib/trip-days";
+import { isoDate } from "@portfolio/lib/dates";
 
 /** Every day from start to end, both included, such as "2026-09-20"; none when they're backwards. */
 export function datesBetween(start: string, end: string): string[] {
   if (!start || !end || end < start) return [];
-  return eachDayOfInterval({ start: parseISO(start), end: parseISO(end) }).map((d) =>
-    format(d, "yyyy-MM-dd"),
-  );
+  return eachDayOfInterval({ start: parseISO(start), end: parseISO(end) }).map(isoDate);
 }
 
 /**

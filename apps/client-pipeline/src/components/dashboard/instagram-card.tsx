@@ -4,7 +4,8 @@ import { PhotoImage } from "@/components/instagram-picker/photo-image";
 import { PhotoFiles } from "@/components/photo-files";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSocialQueue } from "@/hooks/use-social-queue";
-import { dayFormat, parseIsoDate } from "@/lib/calendar";
+import { dayFormat } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { photoName } from "@/lib/social-schedule";
 import type { SocialQueue } from "@/lib/social-queue";
 

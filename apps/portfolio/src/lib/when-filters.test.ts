@@ -3,7 +3,6 @@ import { test } from "node:test";
 import type { Photo } from "@portfolio/lib/photos";
 import {
   currentChoice,
-  dayOf,
   hasDateRange,
   matchesWhen,
   parseWhen,
@@ -67,10 +66,6 @@ test("matches hours and weekdays on the clock where the photo was taken", () => 
   assert.equal(matchesWhen(photo, { hour: ["6"] }), false);
   assert.equal(matchesWhen(photo, { weekday: ["saturday"] }), true);
   assert.equal(matchesWhen(photo, { weekday: ["sunday"] }), false);
-});
-
-test("writes a day with zero-padded parts", () => {
-  assert.equal(dayOf(new Date(2026, 0, 5)), "2026-01-05");
 });
 
 test("finds the choice a date is in, and names a season's span", () => {

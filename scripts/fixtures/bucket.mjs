@@ -40,7 +40,7 @@ export function bucketFixtures() {
       bucket: "servenupphotos",
       images: [...contactSheetImages(), ...bucketImages()],
     },
-    "POST /api/photos/bucket/delete": ({ body }) => ({ deleted: body.keys, failed: [] }),
+    "DELETE /api/photos/bucket": ({ body }) => ({ deleted: body.keys, failed: [] }),
     // A sheet of 30 for every 30 photos asked for, in the contact-sheets/ folder R2 empties daily.
     "POST /api/photos/bucket/contact-sheets": ({ body }) => {
       const total = body?.photos?.length ?? 0;
@@ -51,7 +51,7 @@ export function bucketFixtures() {
       }));
       return { sheets, missing: [], expiryProblem: "" };
     },
-    "POST /api/photos/bucket/contact-sheets/delete": () => ({ deleted: 3, failed: [] }),
+    "DELETE /api/photos/bucket/contact-sheets": () => ({ deleted: 3, failed: [] }),
     // Mostly the house ratios (16:9 and 5:7), with every 4th photo cropped 3:2 and every 9th 4:5.
     "POST /api/photos/bucket/sizes": ({ body }) => ({
       images: (body?.urls ?? []).map((url, i) => {
