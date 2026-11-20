@@ -597,7 +597,8 @@ choice is kept in the browser for every look-up:
   [Geofabrik](https://download.geofabrik.de), looked up the same way as Japan's rail map, for when the Overpass
   servers are too slow. The backend downloads Geofabrik's [index](https://download.geofabrik.de/technical.html) of
   its extracts once (`index-v1.json`), picks the smallest one whose outline holds both ends, such as South Korea for
-  Seoul to Busan (never a whole continent; a leg crossing a border finds none), and downloads that extract once
+  Seoul to Busan, or a US state such as Massachusetts (ID `us/massachusetts`, named from its ID when the index gives no
+  name) for a ride inside one (never a whole continent; a leg crossing a border finds none), and downloads that extract once
   (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract twice (its railway ways, then their
   points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
   them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v2/<extract>` beside the
@@ -665,6 +666,15 @@ about 2 min left", a bar filled to the share downloaded or read (pulsing when th
 and where the file comes from and how long it has taken; or, once it failed, why. A look-up still waits at most 100 s
 for its map; it then answers 503 with `"loading": true`, and the page asks again by itself (`api/transit-log.ts`, up to
 40 times) instead of showing an error, so the card stays until the lines are found.
+
+Once a look-up answers, the hop or leg says what it searched, from the lines answer's `X-Transit-Searched` header (which
+the BFF passes on; `transit.Client.Searched`): "Searched OpenStreetMap's Overpass servers, asked live", or for a
+downloaded map which one and how big, and for a bus map how many routes pass near each end, such as "Searched
+OpenStreetMap's bus map of South Korea (21407 bus routes, saved in …): 38 pass within 500 m of the first end and 6
+within 500 m of the last". So "no line found" tells a map with no bus near one end (often a photo a walk from the road)
+apart from buses near both ends that are different routes (a ride with a change). An answer without the header, as
+from a backend started before it was added, which also looks a bus up on the Overpass servers whatever source the page
+asks for, says to restart the backend; so does the download card when `GET /api/transit/downloads` fails.
 
 > **Frontend analogy:** it's an upload progress bar turned around: the long job runs on the server, and the page polls
 > a cheap status endpoint with TanStack Query's `refetchInterval` while the real request is pending, then quietly

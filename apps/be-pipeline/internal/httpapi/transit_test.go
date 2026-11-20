@@ -104,6 +104,10 @@ func (f *fakeFinder) OSMBusStops(_ context.Context, _ int64) ([]transit.Stop, er
 	return []transit.Stop{{Name: "City Hall", Latitude: 37.56, Longitude: 126.97}}, f.err
 }
 
+func (f *fakeFinder) Searched(source string, _, _ [2]float64) string {
+	return "searched " + source
+}
+
 func (f *fakeFinder) Downloads() []transit.Download {
 	return f.downloads
 }
@@ -160,6 +164,11 @@ func TestOSMBusSource(t *testing.T) {
 		}
 	}
 	rec := httptest.NewRecorder()
+	transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=bus&from=0,0&to=1,1&source=osmbus", nil))
+	if got := rec.Header().Get("X-Transit-Searched"); got != "searched%20osmbus" {
+		t.Errorf("searched header = %q", got)
+	}
+	rec = httptest.NewRecorder()
 	transitMux(f).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=train&from=0,0&to=1,1&source=osmbus", nil))
 	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "only has buses") {
 		t.Errorf("train on the bus map: %d %s", rec.Code, rec.Body)

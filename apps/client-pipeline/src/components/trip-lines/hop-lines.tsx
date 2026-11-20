@@ -8,6 +8,7 @@ import { HopRideRows } from "@/components/trip-lines/hop-ride-rows";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
 import { LookupKind } from "@/components/trip-lines/lookup-kind";
 import { MapDownloads } from "@/components/trip-lines/map-downloads";
+import { SearchedNote } from "@/components/trip-lines/searched-note";
 import { NamedLine } from "@/components/trip-lines/named-line";
 import { RouteSourcePicker } from "@/components/trip-lines/route-source-picker";
 import { gapInfo } from "@/components/trip-lines/modes";
@@ -130,6 +131,7 @@ function HopRow({ hop, ends, onRide, onName }: HopRowProps) {
         </>
       )}
       <MapDownloads active={showsDownloads(lines, mutation)} />
+      <SearchedNote ask={found.lookup} source={found.source} finding={finding} lines={lines} />
       <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines, found.source)} />
     </div>
   );

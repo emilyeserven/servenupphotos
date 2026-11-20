@@ -18,15 +18,27 @@ import {
  * first look-up on a map shows what it's waiting for from the start. Nothing while none is.
  */
 export function MapDownloads({ active }: { active: boolean }) {
-  const { data } = useQuery(transitDownloadsQuery(active));
-  if (!active || !data?.length) return null;
+  const { data, error } = useQuery(transitDownloadsQuery(active));
+  if (!active) return null;
+  if (error) return <p className="text-destructive text-xs">{downloadsError(error)}</p>;
+  return <DownloadList list={data ?? []} />;
+}
+
+/** A card for each map in list; nothing while it's empty. */
+function DownloadList({ list }: { list: MapDownload[] }) {
+  if (list.length === 0) return null;
   return (
     <div className="flex flex-col gap-2" role="status" aria-live="polite">
-      {data.map((d) => (
+      {list.map((d) => (
         <MapDownloadRow key={d.map} download={d} />
       ))}
     </div>
   );
+}
+
+/** Why the page couldn't ask which maps are downloading, and what to do about it. */
+function downloadsError(error: Error): string {
+  return `Couldn't ask the backend which maps are downloading (${error.message}). If it was started before map downloads were added, restart it (pnpm dev:pipeline).`;
 }
 
 /** One map being loaded: what it's doing, how far it has got, and a bar; or why it failed. */

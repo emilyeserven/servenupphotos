@@ -64,3 +64,26 @@ func waitFor(t *testing.T, c *Client, ok func(Download) bool) Download {
 	t.Fatalf("downloads = %+v", c.Downloads())
 	return Download{}
 }
+
+// TestNestedRegionDownloads downloads a state's extract, whose ID has a "/"
+// in it as Geofabrik's US states do, and names it by its index name or, with
+// none, by its ID.
+func TestNestedRegionDownloads(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("not a pbf"))
+	}))
+	t.Cleanup(srv.Close)
+	t.Setenv("OSM_RAIL_DIR", t.TempDir())
+	region := osmRegion{id: "us/massachusetts", name: regionName("us/massachusetts"), pbf: srv.URL + "/north-america/us/massachusetts-latest.osm.pbf"}
+	if region.name != "Massachusetts" || regionName("us/new-york") != "New York" {
+		t.Errorf("names = %q, %q", region.name, regionName("us/new-york"))
+	}
+	c := &Client{HTTP: srv.Client()}
+	path, err := c.downloadExtract(context.Background(), region, nil)
+	if err != nil {
+		t.Fatalf("download: %v", err)
+	}
+	if filepath.Dir(path) != osmRailDir() || !strings.HasPrefix(filepath.Base(path), "us-massachusetts-") {
+		t.Errorf("downloaded to %s", path)
+	}
+}

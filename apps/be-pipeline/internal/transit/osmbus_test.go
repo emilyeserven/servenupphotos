@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/paulmach/osm"
@@ -127,5 +128,9 @@ func TestOSMBusLines(t *testing.T) {
 	}
 	if lines, err := c.OSMBusLines(ctx, "bus", seoulStation, busan); err != nil || len(lines) != 0 {
 		t.Errorf("Seoul to Busan = %+v, %v; no bus passes near both", lines, err)
+	}
+	searched := c.Searched(SourceOSMBus, seoulStation, busan)
+	if !strings.Contains(searched, "bus map of South Korea (2 bus routes") || !strings.Contains(searched, "2 pass within 500 m of the first end and 0 within 500 m of the last") {
+		t.Errorf("searched = %q", searched)
 	}
 }

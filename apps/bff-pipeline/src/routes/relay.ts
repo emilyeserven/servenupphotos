@@ -5,7 +5,7 @@ import { timeoutFor } from "../lib/timeouts.js";
 
 /**
  * Response headers passed on to the client: thumbnail caching, an upload's JPEG size and quality,
- * and the file name an original JPEG downloads as.
+ * the file name an original JPEG downloads as, and what a transit lines look-up searched.
  */
 const RELAY_HEADERS = [
   "cache-control",
@@ -13,6 +13,7 @@ const RELAY_HEADERS = [
   "x-jpeg-bytes",
   "x-jpeg-quality",
   "content-disposition",
+  "x-transit-searched",
 ] as const;
 
 /** Whether the request came with a body to pass on, by its headers. */

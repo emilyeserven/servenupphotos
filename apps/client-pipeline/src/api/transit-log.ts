@@ -1,5 +1,5 @@
 import { isMapLoading } from "@/api/errors";
-import { requestJson } from "@/api/request";
+import { type JsonResponse, requestJsonResponse } from "@/api/request";
 
 /** How many items an answer has, when it's a list, for the log. */
 function sizeOf(answer: unknown): string {
@@ -25,11 +25,16 @@ const MAX_LOADING_TRIES = 40;
  * is ready; the page shows the download's progress meanwhile (`transitDownloadsQuery`).
  */
 export async function transitJson<T>(url: string): Promise<T> {
+  return (await transitResponse<T>(url)).data;
+}
+
+/** Asks like `transitJson`, and gives the answer's headers with its JSON. */
+export async function transitResponse<T>(url: string): Promise<JsonResponse<T>> {
   const start = performance.now();
   console.info("[transit] asking", url);
   try {
     const answer = await askUntilReady<T>(url, start);
-    console.info("[transit]", sizeOf(answer), "in", secondsSince(start), url, answer);
+    console.info("[transit]", sizeOf(answer.data), "in", secondsSince(start), url, answer.data);
     return answer;
   } catch (error) {
     console.warn("[transit] failed after", secondsSince(start), url, error);
@@ -38,9 +43,9 @@ export async function transitJson<T>(url: string): Promise<T> {
 }
 
 /** Asks url, and again each time it stops waiting for a map still downloading, up to the limit. */
-async function askUntilReady<T>(url: string, start: number, tries = 1): Promise<T> {
+async function askUntilReady<T>(url: string, start: number, tries = 1): Promise<JsonResponse<T>> {
   try {
-    return await requestJson<T>(url);
+    return await requestJsonResponse<T>(url);
   } catch (error) {
     if (!isMapLoading(error) || tries >= MAX_LOADING_TRIES) throw error;
     console.info("[transit] map still downloading after", secondsSince(start), "asking again", url);
