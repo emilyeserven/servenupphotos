@@ -45,7 +45,9 @@ var relayTimeouts = map[string]time.Duration{
 	"/data/near-duplicates": nearDuplicatesTimeout,
 	"/publish/":             baseURLTimeout,
 	"/transit/":             transitTimeout,
-	"/bio/portrait":         photoBodyAllowance + bioUploadTimeout,
+	// Answers from memory while a rail or bus map downloads.
+	"/transit/downloads": 0,
+	"/bio/portrait":      photoBodyAllowance + bioUploadTimeout,
 }
 
 // defaultRelayTimeout is how long the backend may spend on every other path:

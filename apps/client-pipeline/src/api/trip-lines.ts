@@ -92,10 +92,11 @@ export interface TripTransitLine {
   colour?: string;
   /**
    * Where it was found: left out for OpenStreetMap, "transitland" for Transitland, "mlit" for Japan's
-   * rail map, "osmrail" for a country's OpenStreetMap rail map, or "named" for a line named by hand
-   * where no source has it, such as a local bus (its ID is 0, and it has no stops or track).
+   * rail map, "osmrail" for a country's OpenStreetMap rail map, "osmbus" for a bus route on its
+   * OpenStreetMap bus map, or "named" for a line named by hand where no source has it, such as a
+   * local bus (its ID is 0, and it has no stops or track).
    */
-  source?: "transitland" | "mlit" | "osmrail" | "named";
+  source?: "transitland" | "mlit" | "osmrail" | "osmbus" | "named";
 }
 
 /** A spot a segment's line goes through to shape it, such as a bridge crossed between two photos. */

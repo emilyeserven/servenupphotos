@@ -3,12 +3,10 @@ package transit
 import (
 	"cmp"
 	"container/heap"
-	"context"
 	"errors"
 	"math"
 	"slices"
 	"strings"
-	"sync"
 )
 
 // A rail map is a country's railways as one network (see railNet), read from
@@ -27,8 +25,8 @@ const railRouteM = 1000
 // subways apart.
 var railModes = map[string]bool{"train": true, "subway": true}
 
-// RailMapError is a rail map not being there to look in: its download failed
-// or is still running, or its files couldn't be read.
+// RailMapError is a rail or bus map not being there to look in: its download
+// failed or is still running (ErrMapLoading), or its files couldn't be read.
 type RailMapError struct {
 	// Map names the rail map, such as "Japan's rail map".
 	Map string
@@ -44,68 +42,9 @@ func (e *RailMapError) Error() string {
 // Unwrap is what went wrong.
 func (e *RailMapError) Unwrap() error { return e.Err }
 
-// errRailDownloading is a look-up not waiting for the whole download.
-var errRailDownloading = errors.New("it's still downloading, once; try again in a minute")
-
-// railNets loads each rail map once, by key, keeping it for every look-up
-// after.
-type railNets struct {
-	mu    sync.Mutex
-	loads map[string]*railLoad
-}
-
-// railLoad is one rail map: loaded, or loading until busy closes, or failed.
-type railLoad struct {
-	net  *railNet
-	busy chan struct{}
-	err  error
-}
-
-// get is the rail map named name, kept as key, loading it with load first
-// when needed. A look-up waits for the load as long as ctx allows; the load
-// goes on without it. A failed load is tried again on the next look-up.
-func (r *railNets) get(ctx context.Context, key, name string, load func() (*railNet, error)) (*railNet, error) {
-	r.mu.Lock()
-	if r.loads == nil {
-		r.loads = map[string]*railLoad{}
-	}
-	l := r.loads[key]
-	if l == nil {
-		l = &railLoad{}
-		r.loads[key] = l
-	}
-	if l.net != nil {
-		defer r.mu.Unlock()
-		return l.net, nil
-	}
-	if l.busy == nil {
-		l.busy = make(chan struct{})
-		go r.load(l, l.busy, load)
-	}
-	busy := l.busy
-	r.mu.Unlock()
-	select {
-	case <-busy:
-	case <-ctx.Done():
-		return nil, &RailMapError{Map: name, Err: errRailDownloading}
-	}
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	if l.net == nil {
-		return nil, &RailMapError{Map: name, Err: l.err}
-	}
-	return l.net, nil
-}
-
-// load runs load for l and closes done, keeping the network or why it
-// couldn't be loaded.
-func (r *railNets) load(l *railLoad, done chan struct{}, load func() (*railNet, error)) {
-	net, err := load()
-	r.mu.Lock()
-	l.net, l.err, l.busy = net, err, nil
-	r.mu.Unlock()
-	close(done)
-}
+// ErrMapLoading is a look-up not waiting for the whole download: the map is
+// still downloading or being read, which goes on without it.
+var ErrMapLoading = errors.New("it's still downloading, once; it's looked up again when it's ready")
 
 // railLines are, from net, the route along its lines from from to to, each
 // [longitude, latitude], changing lines where it has to, and then each line

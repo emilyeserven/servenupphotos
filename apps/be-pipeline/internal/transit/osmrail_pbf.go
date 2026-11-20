@@ -238,14 +238,14 @@ func railFeatureOf(line osmLine, station string, coords [][2]float64) mlitFeatur
 // the .osm.pbf file afresh for each of its two passes.
 func readOSMRail(ctx context.Context, open func() (io.ReadCloser, error)) (sections, stations []mlitFeature, err error) {
 	r := newOSMRailReader()
-	if err := scanPBF(ctx, open, false, func(o osm.Object) {
+	if err := scanPBF(ctx, open, osm.TypeWay, func(o osm.Object) {
 		if w, ok := o.(*osm.Way); ok {
 			r.addWay(w)
 		}
 	}); err != nil {
 		return nil, nil, err
 	}
-	if err := scanPBF(ctx, open, true, func(o osm.Object) {
+	if err := scanPBF(ctx, open, osm.TypeNode, func(o osm.Object) {
 		if n, ok := o.(*osm.Node); ok {
 			r.addNode(n)
 		}
@@ -256,9 +256,9 @@ func readOSMRail(ctx context.Context, open func() (io.ReadCloser, error)) (secti
 	return sections, stations, nil
 }
 
-// scanPBF passes each way of the file open opens to each, or each node when
-// nodes is set.
-func scanPBF(ctx context.Context, open func() (io.ReadCloser, error), nodes bool, each func(osm.Object)) error {
+// scanPBF passes each element of kind (osm.TypeNode, osm.TypeWay or
+// osm.TypeRelation) in the file open opens to each, skipping the others.
+func scanPBF(ctx context.Context, open func() (io.ReadCloser, error), kind osm.Type, each func(osm.Object)) error {
 	f, err := open()
 	if err != nil {
 		return err
@@ -266,8 +266,7 @@ func scanPBF(ctx context.Context, open func() (io.ReadCloser, error), nodes bool
 	defer f.Close() //nolint:errcheck // read-only
 	s := osmpbf.New(ctx, f, runtime.GOMAXPROCS(0))
 	defer s.Close() //nolint:errcheck // read-only
-	s.SkipRelations = true
-	s.SkipNodes, s.SkipWays = !nodes, nodes
+	s.SkipNodes, s.SkipWays, s.SkipRelations = kind != osm.TypeNode, kind != osm.TypeWay, kind != osm.TypeRelation
 	for s.Scan() {
 		each(s.Object())
 	}

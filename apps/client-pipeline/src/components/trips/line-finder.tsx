@@ -5,7 +5,9 @@ import { fetchTrack, type Spot, type TransitLine, transitLinesQuery } from "@/ap
 import type { TripTransitLine } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
+import { MapDownloads } from "@/components/trip-lines/map-downloads";
 import { Button } from "@/components/ui/button";
+import { lookupSource } from "@/lib/lookup-source";
 import { lineOf } from "@/lib/transit-line";
 import { useRouteSourceStore } from "@/stores/route-source";
 
@@ -24,7 +26,10 @@ interface LineFinderProps {
 function useLineFinder({ mode, ends, onLine }: LineFinderProps) {
   const [finding, setFinding] = useState(false);
   const [from, to] = ends;
-  const source = useRouteSourceStore((s) => s.source);
+  const source = lookupSource(
+    useRouteSourceStore((s) => s.source),
+    mode,
+  );
   const lines = useQuery({ ...transitLinesQuery({ mode, from, to }, source), enabled: finding });
   const ride = useMutation({
     mutationFn: (line: TransitLine) => fetchTrack(line, from, to),
@@ -34,6 +39,14 @@ function useLineFinder({ mode, ends, onLine }: LineFinderProps) {
     },
   });
   return { finding, setFinding, lines, ride };
+}
+
+/** Whether a look-up is running or failed, so the maps it waited for are shown. */
+function showsDownloads(
+  lines: { isFetching: boolean; error: Error | null },
+  ride: { isPending: boolean; error: Error | null },
+): boolean {
+  return isBusy(lines, ride) || (lines.error ?? ride.error) !== null;
 }
 
 /** Whether a look-up is running. */
@@ -56,6 +69,7 @@ export function LineFinder(props: LineFinderProps) {
         <ClearButton line={props.line} onClear={() => props.onLine()} />
       </div>
       {finding && <LineChoices lines={lines.data} disabled={busy} onPick={ride.mutate} />}
+      <MapDownloads active={showsDownloads(lines, ride)} />
       <SaveNote error={lines.error ?? ride.error} why={routeNote(finding, lines.data)} />
     </div>
   );
