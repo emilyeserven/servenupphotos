@@ -11,7 +11,7 @@
   "iso": 125,
   "focalLength": 43.9,
   "gpsPosition": "34 deg 24' 57.91\" N, 131 deg 22' 58.25\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.417617, 131.383542",
   "createDate": "2026:09:24 11:57:48",
   "customCreateDate": null,
   "placeName": "Hagi Castle",
@@ -267,5 +267,8 @@
     "peakChroma": 34.62,
     "samples": 10050
   },
-  "similarPhotos": [333, 486, 505, 511, 222, 223]
+  "similarPhotos": [333, 486, 505, 511, 222, 223],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

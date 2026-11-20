@@ -1,0 +1,11 @@
+{
+  "id": "state-station",
+  "name": "State Station",
+  "description": "",
+  "parent": "",
+  "city": "Boston",
+  "state": "Massachusetts",
+  "country": "United States of America",
+  "latitude": 42.358978,
+  "longitude": -71.057598
+}

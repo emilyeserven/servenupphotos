@@ -13,10 +13,10 @@
   "iso": 500,
   "focalLength": 35,
   "gpsPosition": "42 deg 21' 16.35\" N, 71 deg 3' 33.11\" W",
-  "customGpsPosition": null,
+  "customGpsPosition": "42.35747506029667, -71.05727362803071",
   "createDate": "2026:11:07 20:45:17",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "State Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["night", "train-station", "silhouettes", "bicycles", "pedestrians"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "state-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

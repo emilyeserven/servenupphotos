@@ -11,7 +11,7 @@
   "iso": 160,
   "focalLength": 35,
   "gpsPosition": "34 deg 53' 28.55\" N, 134 deg 39' 27.32\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.891574, 134.656821",
   "createDate": "2026:09:29 15:08:01",
   "customCreateDate": null,
   "placeName": "Engyoji Temple",
@@ -266,5 +266,8 @@
     "peakChroma": 0.01,
     "samples": 10115
   },
-  "similarPhotos": [264, 315, 111, 311, 324, 265]
+  "similarPhotos": [264, 315, 111, 311, 324, 265],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

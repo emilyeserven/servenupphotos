@@ -24540,7 +24540,7 @@
     "iso": 125,
     "focalLength": 116.1,
     "gpsPosition": "34 deg 24' 57.91\" N, 131 deg 22' 58.25\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.41696, 131.383753",
     "createDate": "2026:09:24 11:48:49",
     "customCreateDate": null,
     "placeName": "Hagi Castle",
@@ -24796,7 +24796,10 @@
       "peakChroma": 20.99,
       "samples": 10115
     },
-    "similarPhotos": [389, 504, 391, 271, 310, 309]
+    "similarPhotos": [389, 504, 391, 271, 310, 309],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Castle Sign",
@@ -24811,7 +24814,7 @@
     "iso": 1600,
     "focalLength": 135,
     "gpsPosition": "34 deg 24' 57.91\" N, 131 deg 22' 58.25\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.416926, 131.383726",
     "createDate": "2026:09:24 11:49:23",
     "customCreateDate": null,
     "placeName": "Hagi Castle",
@@ -25067,7 +25070,10 @@
       "peakChroma": 12.87,
       "samples": 10050
     },
-    "similarPhotos": [466, 390, 397, 504, 350, 389]
+    "similarPhotos": [466, 390, 397, 504, 350, 389],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Castle Ruins Torii",
@@ -25082,7 +25088,7 @@
     "iso": 125,
     "focalLength": 43.9,
     "gpsPosition": "34 deg 24' 57.91\" N, 131 deg 22' 58.25\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.417617, 131.383542",
     "createDate": "2026:09:24 11:57:48",
     "customCreateDate": null,
     "placeName": "Hagi Castle",
@@ -25338,7 +25344,10 @@
       "peakChroma": 34.62,
       "samples": 10050
     },
-    "similarPhotos": [333, 486, 505, 511, 222, 223]
+    "similarPhotos": [333, 486, 505, 511, 222, 223],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Castle Moat Stroll",
@@ -25353,7 +25362,7 @@
     "iso": 200,
     "focalLength": 88.2,
     "gpsPosition": "34 deg 24' 57.91\" N, 131 deg 22' 58.25\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.417557, 131.38253",
     "createDate": "2026:09:24 12:03:22",
     "customCreateDate": null,
     "placeName": "Hagi Castle",
@@ -25610,7 +25619,10 @@
       "samples": 9768
     },
     "similarPhotos": [393, 389, 334, 448, 489, 392],
-    "compareGroup": "Hagi Castle Moat"
+    "compareGroup": "Hagi Castle Moat",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Night Settling Over Hagi",
@@ -37695,7 +37707,7 @@
     "iso": 800,
     "focalLength": 18,
     "gpsPosition": "37 deg 34' 49.40\" N, 126 deg 59' 5.82\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "37.570262, 126.999279",
     "createDate": "2026:05:17 17:34:44",
     "customCreateDate": null,
     "placeName": "gwangjang-market",
@@ -37960,7 +37972,9 @@
       "samples": 10050
     },
     "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.\n\nShows street food; 'street-food' isn't a tag, since only 2 photos have it.",
-    "similarPhotos": [306, 302, 282, 250, 319, 304]
+    "similarPhotos": [306, 302, 282, 250, 319, 304],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Cheonggyecheon Underpass",
@@ -52444,7 +52458,7 @@
     "iso": 3200,
     "focalLength": 35,
     "gpsPosition": "42 deg 21' 22.87\" N, 71 deg 3' 26.91\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.3885, -71.118889",
     "createDate": "2026:11:07 17:45:22",
     "customCreateDate": null,
     "placeName": "Porter Square Station",
@@ -52725,7 +52739,7 @@
     "iso": 5000,
     "focalLength": 35,
     "gpsPosition": "42 deg 21' 22.87\" N, 71 deg 3' 26.91\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.3885, -71.118889",
     "createDate": "2026:11:07 17:45:33",
     "customCreateDate": null,
     "placeName": "Porter Square Station",
@@ -53007,7 +53021,7 @@
     "iso": 2500,
     "focalLength": 35,
     "gpsPosition": "42 deg 21' 22.87\" N, 71 deg 3' 26.91\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.3885, -71.118889",
     "createDate": "2026:11:07 17:46:06",
     "customCreateDate": null,
     "placeName": "Porter Square Station",
@@ -53289,7 +53303,7 @@
     "iso": 3200,
     "focalLength": 35,
     "gpsPosition": "42 deg 21' 22.87\" N, 71 deg 3' 26.91\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.3885, -71.118889",
     "createDate": "2026:11:07 17:46:45",
     "customCreateDate": null,
     "placeName": "Porter Square Station",
@@ -54951,10 +54965,10 @@
     "iso": 500,
     "focalLength": 35,
     "gpsPosition": "42 deg 21' 16.35\" N, 71 deg 3' 33.11\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.35747506029667, -71.05727362803071",
     "createDate": "2026:11:07 20:45:17",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "State Station",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -54990,7 +55004,12 @@
     "albums": [],
     "tags": ["night", "train-station", "silhouettes", "bicycles", "pedestrians"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in front of",
+        "id": "state-station"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -56583,7 +56602,7 @@
     "iso": 800,
     "focalLength": 35,
     "gpsPosition": "42 deg 21' 16.35\" N, 71 deg 3' 33.11\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.360429, -71.052736",
     "createDate": "2026:11:07 21:02:28",
     "customCreateDate": null,
     "placeName": null,
@@ -57147,7 +57166,7 @@
     "iso": 2500,
     "focalLength": 35,
     "gpsPosition": "42 deg 21' 37.06\" N, 71 deg 3' 8.40\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.360635, -71.050634",
     "createDate": "2026:11:07 21:06:57",
     "customCreateDate": null,
     "placeName": null,
@@ -57696,7 +57715,7 @@
     "iso": 8000,
     "focalLength": 35,
     "gpsPosition": "42 deg 21' 37.06\" N, 71 deg 3' 8.40\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.360676, -71.049758",
     "createDate": "2026:11:07 21:09:56",
     "customCreateDate": null,
     "placeName": null,
@@ -60420,7 +60439,7 @@
     "iso": 125,
     "focalLength": 135,
     "gpsPosition": "42 deg 21' 7.38\" N, 71 deg 3' 18.58\" W",
-    "customGpsPosition": null,
+    "customGpsPosition": "42.36120708051387, -71.07056923867202",
     "createDate": "2026:11:08 09:21:52",
     "customCreateDate": null,
     "placeName": null,
@@ -67406,7 +67425,7 @@
     "iso": 160,
     "focalLength": 35,
     "gpsPosition": "34 deg 53' 28.55\" N, 134 deg 39' 27.32\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.891574, 134.656821",
     "createDate": "2026:09:29 15:08:01",
     "customCreateDate": null,
     "placeName": "Engyoji Temple",
@@ -67661,7 +67680,10 @@
       "peakChroma": 0.01,
       "samples": 10115
     },
-    "similarPhotos": [264, 315, 111, 311, 324, 265]
+    "similarPhotos": [264, 315, 111, 311, 324, 265],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Little Railway",
@@ -67955,7 +67977,7 @@
     "iso": 320,
     "focalLength": 35,
     "gpsPosition": "34 deg 53' 28.55\" N, 134 deg 39' 27.32\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.892040, 134.655674",
     "createDate": "2026:09:29 15:14:28",
     "customCreateDate": null,
     "placeName": "Engyoji Temple",
@@ -71478,7 +71500,7 @@
     "iso": 1000,
     "focalLength": 18,
     "gpsPosition": "34 deg 53' 29.03\" N, 134 deg 39' 27.82\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.891277, 134.657747",
     "createDate": "2026:09:29 15:45:03",
     "customCreateDate": null,
     "placeName": "Engyoji Temple",
@@ -71734,7 +71756,9 @@
       "samples": 9975
     },
     "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them.",
-    "similarPhotos": [315, 309, 310, 313, 312, 384]
+    "similarPhotos": [315, 309, 310, 313, 312, 384],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "View from the Overpass",
@@ -79651,7 +79675,7 @@
     "iso": 160,
     "focalLength": 26.6,
     "gpsPosition": "34 deg 24' 46.66\" N, 131 deg 23' 40.08\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.41306752292673, 131.3937784857108",
     "createDate": "2026:09:23 12:00:58",
     "customCreateDate": null,
     "placeName": "Former Kubota Family Residence",
@@ -79912,7 +79936,9 @@
     },
     "notes": "Shows a machiya townhouse; 'machiya' isn't a tag, since only 2 photos have it.",
     "similarPhotos": [345, 346, 344, 343, 70, 73],
-    "compareGroup": "Lattice Door in Dark Room"
+    "compareGroup": "Lattice Door in Dark Room",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Enseiji Entrance",

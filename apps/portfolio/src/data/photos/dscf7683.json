@@ -11,7 +11,7 @@
   "iso": 1000,
   "focalLength": 18,
   "gpsPosition": "34 deg 53' 29.03\" N, 134 deg 39' 27.82\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.891277, 134.657747",
   "createDate": "2026:09:29 15:45:03",
   "customCreateDate": null,
   "placeName": "Engyoji Temple",
@@ -267,5 +267,7 @@
     "samples": 9975
   },
   "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them.",
-  "similarPhotos": [315, 309, 310, 313, 312, 384]
+  "similarPhotos": [315, 309, 310, 313, 312, 384],
+  "noGps": false,
+  "altText": null
 }
