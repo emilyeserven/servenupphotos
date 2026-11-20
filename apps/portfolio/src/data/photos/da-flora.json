@@ -48,7 +48,15 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["bay-windows", "apartments", "power-lines", "storefronts", "pedestrians", "cars"],
+  "tags": [
+    "bay-windows",
+    "apartments",
+    "power-lines",
+    "storefronts",
+    "pedestrians",
+    "cars",
+    "traffic-lights"
+  ],
   "genres": ["street", "architecture"],
   "places": [
     {
@@ -270,7 +278,7 @@
     "peakChroma": 26.19,
     "samples": 10050
   },
-  "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.\n\nQuality Check (pixelation): The front plate of the white Toyota at the bottom left of the intersection is visible.",
+  "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.\n\nQuality Check (pixelation): The front plate of the white Toyota at the bottom left of the intersection is visible.\n\nShows traffic lights, now tagged 'traffic-lights'.",
   "similarPhotos": [436, 429, 413, 435, 250, 373],
   "noGps": false,
   "altText": null

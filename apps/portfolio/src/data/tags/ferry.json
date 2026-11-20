@@ -1,5 +1,6 @@
 {
   "id": "ferry",
   "name": "ferry",
-  "description": ""
+  "description": "ferries and the views from on board them",
+  "parent": "boats"
 }

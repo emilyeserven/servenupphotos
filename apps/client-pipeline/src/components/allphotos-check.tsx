@@ -105,8 +105,7 @@ function Gate({ photo, children }: GateProps) {
     return (
       <>
         <Warning>
-          Couldn't check ALLPHOTOS.json, so make sure this photo isn't already in it:{" "}
-          {check.error.message}
+          {`Couldn't check ALLPHOTOS.json, so make sure this photo isn't already in it: ${check.error.message}`}
         </Warning>
         {children}
       </>
@@ -125,6 +124,7 @@ function AlreadyThere({ file, check }: { file: string; check: AllPhotosCheck }) 
   return (
     <Card className="border-destructive/50">
       <CardHeader>
+        {/* oxlint-disable-next-line servenup/error-note -- the title of a card that stops the upload */}
         <CardTitle className="text-destructive flex items-center gap-2">
           <CircleAlertIcon className="size-4" aria-hidden />
           Already in ALLPHOTOS.json

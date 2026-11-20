@@ -1,7 +1,7 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
-import { requestJson } from "@/api/request";
+import { post, requestJson } from "@/api/request";
 import type { TripLegRide } from "@/api/trips";
 
 /**
@@ -274,11 +274,7 @@ interface RoutedTripLine {
 export const routeTripLineMutation = mutationOptions({
   mutationKey: ["triplines", "route"],
   mutationFn: (line: TripLine) =>
-    requestJson<RoutedTripLine>(`/api/triplines/${encodeURIComponent(line.day)}/route`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(line),
-    }),
+    post<RoutedTripLine>(`/api/triplines/${encodeURIComponent(line.day)}/route`, line),
 });
 
 const tripLineMutations = settingMutations<TripLine>("triplines");

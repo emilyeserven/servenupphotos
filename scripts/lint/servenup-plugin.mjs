@@ -8,6 +8,10 @@
  * left alone; anything else that is red on purpose and isn't an error takes an
  * `oxlint-disable-next-line servenup/error-note` comment saying why.
  *
+ * `servenup/json-request`: the pipeline's client sends JSON through `post`, `put` and `del` in
+ * `apps/client-pipeline/src/api/request.ts`, so a `content-type` key written anywhere else in the
+ * client is a request built by hand. The BFF and the portfolio are left alone.
+ *
  * `servenup/empty-note`: an empty list, grid or panel is shown with `EmptyNote`
  * (`apps/portfolio/src/components/empty-note.tsx`), never as a hand-styled muted paragraph. It
  * flags a `<p>` with `text-muted-foreground` whose text starts "No …", "None" or "Nothing".
@@ -97,6 +101,32 @@ const errorNote = {
   },
 };
 
+const PIPELINE_CLIENT = /apps[\\/]client-pipeline[\\/]src[\\/]/;
+const REQUEST_FILE = /api[\\/]request\.ts$/;
+
+const jsonRequest = {
+  meta: {
+    type: "suggestion",
+    docs: { description: "Send JSON with post, put or del from @/api/request." },
+    messages: {
+      header:
+        "Send JSON with post, put or del from @/api/request instead of writing a content-type header.",
+    },
+  },
+  create(context) {
+    const file = context.filename ?? context.getFilename();
+    if (!PIPELINE_CLIENT.test(file) || REQUEST_FILE.test(file)) return {};
+    return {
+      Property(node) {
+        const key = node.key;
+        const name = key.type === "Identifier" ? key.name : key.value;
+        if (typeof name === "string" && name.toLowerCase() === "content-type")
+          context.report({ node: key, messageId: "header" });
+      },
+    };
+  },
+};
+
 /** Whether the text reads like an empty state: "No albums yet.", "None yet.", "Nothing to commit.". */
 function readsEmpty(text) {
   return /^(No|None|Nothing)\b/.test(text.trim());
@@ -145,5 +175,5 @@ const emptyNote = {
 
 export default {
   meta: { name: "servenup" },
-  rules: { "error-note": errorNote, "empty-note": emptyNote },
+  rules: { "error-note": errorNote, "json-request": jsonRequest, "empty-note": emptyNote },
 };

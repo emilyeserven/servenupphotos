@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["market", "storefronts", "signage", "pedestrians", "covered-street"],
+  "tags": ["market", "storefronts", "signage", "pedestrians", "covered-street", "street-food"],
   "genres": ["street"],
   "places": [
     {
@@ -275,7 +275,7 @@
     "peakChroma": 21.97,
     "samples": 10050
   },
-  "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.\n\nShows street food; 'street-food' isn't a tag, since only 2 photos have it.",
+  "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.\n\nShows street food; 'street-food' isn't a tag, since only 2 photos have it.\n\nShows street food, now tagged 'street-food'.",
   "similarPhotos": [306, 302, 282, 250, 319, 304],
   "noGps": false,
   "altText": null

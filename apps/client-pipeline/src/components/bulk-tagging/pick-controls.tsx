@@ -98,11 +98,6 @@ export function PickBar({ count, fallback, setCount, noLimit, ...buttons }: Pick
   );
 }
 
-/** What went wrong, when something did. */
-export function ErrorText({ error }: { error: Error | null }) {
-  return error && <p className="text-destructive text-sm">{error.message}</p>;
-}
-
 interface CopyPromptButtonProps {
   /** The button's text, such as "Copy the tag prompt for 5 photos". */
   label: string;

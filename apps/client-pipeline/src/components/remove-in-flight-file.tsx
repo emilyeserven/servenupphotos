@@ -10,6 +10,7 @@ import {
 } from "@/api/photos";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
 
 interface RemoveFileProps {
   file: InFlightFile;
@@ -72,7 +73,7 @@ function ConfirmRemove({ file, imageKey, onRemoved, onCancel }: ConfirmRemovePro
         Remove <span className="font-medium">{fileName(file.path)}</span> from the batch
         <ImageClause imageKey={imageKey} />? This can't be undone here.
       </p>
-      {remove.error && <p className="text-destructive">{remove.error.message}</p>}
+      <ErrorNote error={remove.error} />
       <div className="flex gap-2">
         <Button
           variant="destructive"

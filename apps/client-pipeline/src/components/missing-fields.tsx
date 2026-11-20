@@ -20,6 +20,7 @@ import {
   ScanPreviewBody,
   count,
 } from "@/components/update-data-shared";
+import { ErrorNote } from "@/components/error-note";
 
 interface MissingFieldsCardProps {
   /** Whether R2 is set up, so missing EXIF fields can be read from the originals. */
@@ -196,15 +197,16 @@ function FilesMissingFields({ files }: { files: MissingFieldsPreview["files"] })
         <FileDetails key={file.path} path={file.path} note={count(file.added.length, "field")}>
           <div className="flex flex-col gap-2 px-3 pt-1 pb-3">
             {file.exifError && (
-              <p className="text-destructive">
-                Couldn&apos;t read its EXIF, so those fields are added empty: {file.exifError}
-              </p>
+              <ErrorNote
+                error={file.exifError}
+                lead="Couldn't read its EXIF, so those fields are added empty:"
+              />
             )}
             {file.cropError && (
-              <p className="text-destructive">
-                Couldn&apos;t read its Square Thumbnail&apos;s crop, so it&apos;s added empty:{" "}
-                {file.cropError}
-              </p>
+              <ErrorNote
+                error={file.cropError}
+                lead="Couldn't read its Square Thumbnail's crop, so it's added empty:"
+              />
             )}
             <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
               {file.added.map((a) => (

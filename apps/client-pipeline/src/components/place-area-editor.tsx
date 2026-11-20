@@ -10,6 +10,7 @@ import {
 import { AreaSearch } from "@/components/area-search";
 import { Button } from "@/components/ui/button";
 import { SectionTitle } from "@/components/section-title";
+import { ErrorNote } from "@/components/error-note";
 
 /** How many points an outline has. */
 function pointCount(area: PlaceArea): number {
@@ -42,14 +43,9 @@ export function PlaceAreaEditor({ id, name }: { id: string; name: string }) {
         onRemove={() => remove.mutate(id, refresh)}
       />
       <AreaSearch initial={name} onPick={pick} />
-      <AreaError error={save.error ?? remove.error} />
+      <ErrorNote error={save.error ?? remove.error} className="text-xs" />
     </section>
   );
-}
-
-/** Why the last save or removal failed, when it did. */
-function AreaError({ error }: { error: Error | null }) {
-  return error ? <p className="text-destructive text-xs">{error.message}</p> : null;
 }
 
 interface AreaStatusProps {

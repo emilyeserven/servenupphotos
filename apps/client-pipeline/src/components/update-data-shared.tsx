@@ -6,6 +6,7 @@ import type { PendingSave } from "@/api/scan-changes";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
+import { ErrorNote } from "@/components/error-note";
 
 /** "1 file", "2 files". */
 export function count(n: number, word: string): string {
@@ -22,7 +23,7 @@ export function Unreadable({
 }) {
   if (files.length === 0) return null;
   return (
-    <div className="text-destructive flex flex-col gap-1 text-sm">
+    <ErrorNote>
       <p>
         {files.length === 1 ? "This file couldn't" : "These files couldn't"} be read
         {blocking ? ", so nothing can be changed until it's fixed:" : ":"}
@@ -34,7 +35,7 @@ export function Unreadable({
           </li>
         ))}
       </ul>
-    </div>
+    </ErrorNote>
   );
 }
 
@@ -255,7 +256,7 @@ export function SaveButton({
         )}
       </Button>
       {children}
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
+      <ErrorNote error={error} />
     </div>
   );
 }

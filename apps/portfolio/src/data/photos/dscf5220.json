@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 12:50:54",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Boston Chinatown",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["manhole-covers", "brick", "fallen-leaves", "autumn", "texture", "sidewalk"],
   "genres": ["abstract", "street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "boston-chinatown"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

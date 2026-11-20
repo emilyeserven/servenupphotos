@@ -37,6 +37,7 @@ import { placePhrase, placesJoin } from "@/lib/place-joins";
 import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * What PlaceFields edits: the photo's places, the place name kept with them, and its custom city
@@ -326,7 +327,7 @@ function PlaceRow({
         <LocalizeButton id={row.id} all={all} country={country} disabled={disabled} />
         {onRemove && <RemoveButton disabled={disabled} onRemove={onRemove} />}
       </div>
-      {shown && <p className="text-destructive text-sm">{shown}</p>}
+      <ErrorNote error={shown} />
     </div>
   );
 }

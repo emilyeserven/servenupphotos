@@ -61,6 +61,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { currentPhotos, photoCounts } from "@/lib/group-photos";
 import { useCombinedData } from "@/stores/combined-data";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import { ErrorNote } from "@/components/error-note";
 
 /** One album's or tag's page: what it is, where an album sits, and the photos in it. */
 export function GroupDetailPage({ kind, id }: { kind: GroupKind; id: string }) {
@@ -164,9 +165,7 @@ function AboutCard({ kind, group, organize }: GroupDetailProps) {
     <Card>
       <CardHeader>
         <CardTitle>About this {singular}</CardTitle>
-        {group.error && (
-          <CardDescription className="text-destructive">{group.error}</CardDescription>
-        )}
+        <ErrorNote error={group.error} />
       </CardHeader>
       <CardContent>
         <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 text-sm">
@@ -240,9 +239,11 @@ function GroupPlace({ kind, group, list }: { kind: ParentKind; group: Group; lis
 function NoParent({ kind, parent }: { kind: ParentKind; parent?: string }) {
   if (!parent) return <span className="text-muted-foreground">{PLACE_TEXT[kind].top}</span>;
   return (
-    <span className="text-destructive">
-      <code>{parent}</code>, which isn't {kind === "albums" ? "an album" : "a tag"}
-    </span>
+    <ErrorNote>
+      <span>
+        <code>{parent}</code>, which isn't {kind === "albums" ? "an album" : "a tag"}
+      </span>
+    </ErrorNote>
   );
 }
 
@@ -445,7 +446,7 @@ function ParentButtons({ changed, pending, onSave, onUndo }: ParentButtonsProps)
 
 /** What saving the parent did, or why it failed. */
 function ParentOutcome({ save, rebuild, kind }: ParentSave) {
-  if (save.isError) return <p className="text-destructive">{save.error.message}</p>;
+  if (save.isError) return <ErrorNote error={save.error} />;
   if (!save.isSuccess) return null;
   return (
     <div className="flex flex-col gap-2">

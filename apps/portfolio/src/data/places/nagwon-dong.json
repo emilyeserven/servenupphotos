@@ -1,0 +1,12 @@
+{
+  "id": "nagwon-dong",
+  "name": "Nagwon-dong",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.571808,
+  "longitude": 126.989258,
+  "exactLocation": true
+}

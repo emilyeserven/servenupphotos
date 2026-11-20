@@ -19,6 +19,7 @@ import {
   Unreadable,
   count,
 } from "@/components/update-data-shared";
+import { ErrorNote } from "@/components/error-note";
 
 /** Trims a base URL and its trailing slashes, as the backend does. */
 function cleanBaseUrl(value: string): string {
@@ -168,7 +169,7 @@ function BaseUrlForm({ scan, publicUrl }: BaseUrlFormProps) {
         </form.Field>
 
         <form.Subscribe selector={(state) => state.errorMap.onSubmit}>
-          {(error) => (error ? <p className="text-destructive text-sm">{String(error)}</p> : null)}
+          {(error) => <ErrorNote error={error ? String(error) : null} />}
         </form.Subscribe>
 
         <Button type="submit" variant="outline" className="self-start" disabled={replace.isPending}>
@@ -267,7 +268,7 @@ function UrlField(props: UrlFieldProps) {
         onChange={(event) => onChange(event.target.value)}
       />
       <p id={hintId} className="text-muted-foreground text-sm empty:hidden">
-        {error ? <span className="text-destructive">{error}</span> : hint}
+        {error ? <ErrorNote error={error} /> : hint}
       </p>
     </div>
   );

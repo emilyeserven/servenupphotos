@@ -3,10 +3,11 @@ import { useState } from "react";
 import { metaGroups } from "@/api/metainfo";
 import { organizeQuery } from "@/api/organize";
 import { previewTagLibraryMutation } from "@/api/tag-library";
-import { ErrorText, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
+import { PasteAnswer } from "@/components/bulk-tagging/pick-controls";
 import { TagLibraryReview } from "@/components/tag-library/tag-library-review";
 import { filteredNames } from "@/lib/tag-prompt";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * The names the site already filters by, for the Tag library's prompts, once the albums and tags
@@ -33,7 +34,7 @@ export function LibraryAnswer() {
         label="Review the changes"
         onReview={() => preview.mutate({ answer })}
       />
-      <ErrorText error={preview.error} />
+      <ErrorNote error={preview.error} />
       {preview.data && (
         <TagLibraryReview key={JSON.stringify(preview.data)} preview={preview.data} />
       )}

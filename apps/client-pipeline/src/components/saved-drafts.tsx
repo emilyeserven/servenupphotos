@@ -17,6 +17,7 @@ import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
 import { editedData, undecidedPaths } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
+import { ErrorNote } from "@/components/error-note";
 import { SectionTitle } from "@/components/section-title";
 
 interface SavedDraftsProps {
@@ -37,20 +38,18 @@ export function SavedDrafts(props: SavedDraftsProps) {
   const published = useQuery(publishedPhotosQuery);
   if (!useUntitledDrafts()) return null;
   if (published.isPending) return <DraftsSkeleton />;
-  if (published.isError) return <DraftsError message={published.error.message} />;
+  if (published.isError) return <DraftsError error={published.error} />;
   return <DraftsOnBase data={published.data} {...props} />;
 }
 
 /** Why the drafts on the base branch couldn't be read. */
-function DraftsError({ message }: { message: string }) {
+function DraftsError({ error }: { error: Error }) {
   return (
     <section className="flex flex-col gap-1">
       <SectionTitle as="h2" size="lg">
         Drafts
       </SectionTitle>
-      <p className="text-destructive text-sm">
-        Couldn&apos;t read the drafts on the base branch: {message}
-      </p>
+      <ErrorNote error={error} lead="Couldn't read the drafts on the base branch:" />
     </section>
   );
 }

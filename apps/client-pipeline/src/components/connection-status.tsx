@@ -1,6 +1,7 @@
 import { CheckIcon, XIcon } from "lucide-react";
 import type { ConnectionTestResult } from "@/api/settings";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
 
 /** Where a connection test stands: running, finished, or not run yet. */
 export type TestState = "pending" | ConnectionTestResult | undefined;
@@ -34,7 +35,7 @@ function ConnectionResult({ result }: { result: ConnectionTestResult }) {
     return (
       <>
         <XIcon className="text-destructive size-4 shrink-0" aria-label="Connection failed" />
-        <span className="text-destructive">{result.message}</span>
+        <ErrorNote error={result.message} />
       </>
     );
   }

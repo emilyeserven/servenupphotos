@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["buddhism", "temple", "rope", "signage", "flags"],
+  "tags": ["buddhism", "temple", "rope", "signage", "flags", "nobori"],
   "genres": ["architecture"],
   "places": [
     {
@@ -267,6 +267,6 @@
     "peakChroma": 23.02,
     "samples": 9768
   },
-  "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them.",
+  "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them.\n\nShows nobori banners, now tagged 'nobori'.",
   "similarPhotos": [378, 385, 464, 348, 349, 376]
 }

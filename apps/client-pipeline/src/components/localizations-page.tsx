@@ -16,6 +16,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { LocalizationRow } from "@/lib/place-seeds";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import { ErrorNote } from "@/components/error-note";
 
 /** The Localizations page: how each country, state, city and place is written and said where it is. */
 export function LocalizationsPage() {
@@ -43,7 +44,7 @@ function LocalizationTabs() {
   if (pending) return <p>Reading photos, places and localizations…</p>;
   return (
     <>
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
+      <ErrorNote error={error} />
       <SaveAllButton drafts={drafts} />
       <Tabs defaultValue="country">
         <TabsList>

@@ -1,0 +1,12 @@
+{
+  "id": "ikseon-dong",
+  "name": "Ikseon-dong",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.572497,
+  "longitude": 126.989914,
+  "exactLocation": true
+}

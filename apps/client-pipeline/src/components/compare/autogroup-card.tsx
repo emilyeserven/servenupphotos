@@ -22,6 +22,7 @@ import {
 import { readAutogroupAnswer } from "@/lib/compare-autogroup-answer";
 import type { ComparePhoto } from "@/lib/compare-groups";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * Autogroup: chooses every photo or only the drafts, copies one prompt linking all their Small
@@ -116,7 +117,7 @@ function AutogroupPrompt({ ask, all }: AutogroupPromptProps) {
         label="Review the changes"
         onReview={review}
       />
-      {error && <p className="text-destructive text-sm">{error}</p>}
+      <ErrorNote error={error} />
       {answer && <AutogroupReview key={reviews} answer={answer} />}
       <PhotoTiles photos={ask.loose} />
     </div>
