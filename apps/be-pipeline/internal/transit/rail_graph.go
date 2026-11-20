@@ -256,19 +256,40 @@ type railStep struct {
 }
 
 // route is the shortest way along allowed's lines (any when nil), and the
-// unnamed track joining them, from near from to near to, each change of line counting changePenaltyM more: its nodes
-// and the line of each edge between them. It may start and end on any track
-// within railRouteM of each end, so an end between two railways, such as
-// 電鉄出雲市 beside JR's 出雲市, starts on whichever one goes there. Nil when
-// there's no such way.
+// unnamed track joining them, from near from to near to, each change of line
+// counting changePenaltyM more: its nodes and the line of each edge between
+// them. It may start and end on any track within railRouteM of each end, so an
+// end between two railways, such as 電鉄出雲市 beside JR's 出雲市, starts on
+// whichever one goes there. Nil when there's no such way.
 func (n *railNet) route(from, to [2]float64, allowed map[int]bool) (nodes, lines []int) {
-	goals := n.ends(to, allowed)
+	return n.search(from, to, allowed, n.ends(from, allowed), n.ends(to, allowed), 0)
+}
+
+// offLineFactor is how many meters each meter of other lines' track counts as
+// on a route that may leave its line where the line's mapped track has a gap.
+const offLineFactor = 4
+
+// routeAcross is route along allowed's lines that may cross gaps in their
+// mapped track, start and end on any track, and ride other lines' track where
+// it must, each meter of it counting offLineFactor, as a line's own route
+// relation often leaves out a station's tracks or a short stretch. Its other
+// lines' edges are given as changeEdge.
+func (n *railNet) routeAcross(from, to [2]float64, allowed map[int]bool) []int {
+	nodes, _ := n.search(from, to, allowed, n.ends(from, nil), n.ends(to, nil), offLineFactor)
+	return nodes
+}
+
+// search is the shortest way from one of starts to one of goals, each with
+// what walking to it counts as, along allowed's lines and unnamed track, and
+// along other lines' track too, counting offLine for each meter, when offLine
+// isn't 0.
+func (n *railNet) search(from, to [2]float64, allowed map[int]bool, starts, goals map[int]float64, offLine float64) (nodes, lines []int) {
 	s := railSearch{
 		best:  map[railState]railStep{},
 		queue: &railQueue{},
-		limit: detourLimit*meters(from, to) + 4*changePenaltyM + 2*walkFactor*railRouteM,
+		limit: (detourLimit+offLine)*meters(from, to) + 4*changePenaltyM + 2*walkFactor*railRouteM,
 	}
-	for node, walk := range n.ends(from, allowed) {
+	for node, walk := range starts {
 		start := railState{node, changeEdge}
 		s.reach(start, start, walk)
 	}
@@ -284,12 +305,26 @@ func (n *railNet) route(from, to [2]float64, allowed map[int]bool) (nodes, lines
 			s.reach(arrived, it.state, it.dist+walk)
 		}
 		for _, e := range n.edges[it.state.node] {
-			if allows(allowed, e.line) || n.unnamed(e.line) {
-				s.reach(railState{e.to, e.line}, it.state, it.dist+e.meters*n.speedFactor(e.line)+n.changeCost(it.state.line, e.line))
+			if next, cost, ok := n.step(it.state.line, e, allowed, offLine); ok {
+				s.reach(next, it.state, it.dist+cost)
 			}
 		}
 	}
 	return nil, nil
+}
+
+// step is the state going along e after arriving on line prev reaches, and
+// what it counts as: along allowed's lines or unnamed track, its length and
+// any change of line; along another line's track, offLine for each meter, as
+// a changeEdge; false when offLine is 0.
+func (n *railNet) step(prev int, e railEdge, allowed map[int]bool, offLine float64) (railState, float64, bool) {
+	if allows(allowed, e.line) || n.unnamed(e.line) {
+		return railState{e.to, e.line}, e.meters*n.speedFactor(e.line) + n.changeCost(prev, e.line), true
+	}
+	if offLine > 0 {
+		return railState{e.to, changeEdge}, e.meters * offLine, true
+	}
+	return railState{}, 0, false
 }
 
 // arrived is the state of a route that has walked from its last node to its

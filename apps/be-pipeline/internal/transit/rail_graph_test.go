@@ -114,3 +114,29 @@ func TestRoutePrefersTheHighSpeedLine(t *testing.T) {
 		t.Fatalf("got %+v, %v; want the route onto 경부고속선", line, ok)
 	}
 }
+
+// TestRailTrackCrossesAGapInItsLine follows a KTX line whose route leaves out
+// the stretch through a station, crossing it on the other line's track there,
+// with the line's color.
+func TestRailTrackCrossesAGapInItsLine(t *testing.T) {
+	ktx := osmLine{name: "Gyeongbu Line KTX", operator: "Korail", kind: highSpeedKind, colour: "#1e5bb4"}
+	other := osmLine{name: "경부선", operator: "Korail", kind: 11}
+	n := newRailNet([]mlitFeature{
+		railFeatureOf(ktx, "", [][2]float64{{0, 0}, {0, 0.3}}),
+		railFeatureOf(other, "", [][2]float64{{0, 0.3}, {0.001, 0.32}, {0, 0.34}}),
+		railFeatureOf(ktx, "", [][2]float64{{0, 0.34}, {0, 1}}),
+	}, nil)
+	n.lineBits = osmLineBits
+	line := n.lineOf([]int{0})
+	if line.Colour != "#1e5bb4" {
+		t.Errorf("colour = %q", line.Colour)
+	}
+	from, to := [2]float64{0, 0}, [2]float64{0, 1}
+	track, err := railTrack(n, line.ID, from, to)
+	if err != nil || len(track) != 7 || track[3] != [2]float64{0.001, 0.32} {
+		t.Fatalf("track = %v, %v; want it across the gap", track, err)
+	}
+	if rides, err := railRides(n, line.ID, from, to); err != nil || rides != nil {
+		t.Errorf("rides = %v, %v; want none", rides, err)
+	}
+}
