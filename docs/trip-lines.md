@@ -666,6 +666,15 @@ and where the file comes from and how long it has taken; or, once it failed, why
 for its map; it then answers 503 with `"loading": true`, and the page asks again by itself (`api/transit-log.ts`, up to
 40 times) instead of showing an error, so the card stays until the lines are found.
 
+Once a look-up answers, the hop or leg says what it searched, from the lines answer's `X-Transit-Searched` header (which
+the BFF passes on; `transit.Client.Searched`): "Searched OpenStreetMap's Overpass servers, asked live", or for a
+downloaded map which one and how big, and for a bus map how many routes pass near each end, such as "Searched
+OpenStreetMap's bus map of South Korea (21407 bus routes, saved in …): 38 pass within 500 m of the first end and 6
+within 500 m of the last". So "no line found" tells a map with no bus near one end (often a photo a walk from the road)
+apart from buses near both ends that are different routes (a ride with a change). An answer without the header, as
+from a backend started before it was added, which also looks a bus up on the Overpass servers whatever source the page
+asks for, says to restart the backend; so does the download card when `GET /api/transit/downloads` fails.
+
 > **Frontend analogy:** it's an upload progress bar turned around: the long job runs on the server, and the page polls
 > a cheap status endpoint with TanStack Query's `refetchInterval` while the real request is pending, then quietly
 > retries the request if the server timed it out.

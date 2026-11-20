@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -34,6 +35,7 @@ type transitFinder interface {
 	OSMBusStops(ctx context.Context, id int64) ([]transit.Stop, error)
 	RailRides(ctx context.Context, source string, id int64, from, to [2]float64) ([]transit.RouteRide, error)
 	Downloads() []transit.Download
+	Searched(source string, from, to [2]float64) string
 }
 
 // lineSource is where the request asks for lines: ?source=transitland,
@@ -107,6 +109,10 @@ type trackAnswer struct {
 	Rides []transit.RouteRide `json:"rides,omitempty"`
 }
 
+// searchedHeader is the header of a lines answer that says what was
+// searched (see transit.Client.Searched), path-escaped so any name fits.
+const searchedHeader = "X-Transit-Searched"
+
 // handleTransitLines answers the lines of ?mode= ("train", "subway", "bus"
 // or "ferry") whose track passes near both ?from= and ?to=, each
 // "longitude,latitude", from OpenStreetMap or, with ?source=transitland,
@@ -128,6 +134,7 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 			writeOverpassError(w, "look up lines", err)
 			return
 		}
+		w.Header().Set(searchedHeader, url.PathEscape(finder.Searched(lineSource(r), from, to)))
 		writeJSON(w, http.StatusOK, lines)
 	}
 }

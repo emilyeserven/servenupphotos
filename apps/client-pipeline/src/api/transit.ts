@@ -1,6 +1,6 @@
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions, skipToken } from "@tanstack/react-query";
 import { requestJson } from "@/api/request";
-import { transitJson } from "@/api/transit-log";
+import { transitJson, transitResponse } from "@/api/transit-log";
 import type { TripTransitLine } from "@/api/trip-lines";
 
 /** A spot as [longitude, latitude]. */
@@ -55,20 +55,48 @@ function spotParams({ from, to }: Pick<HopAsk, "from" | "to">): string {
 
 /**
  * The lines of the hop's kind whose track passes near both its spots, from OpenStreetMap through
- * the Overpass API (which the backend asks at most once a second), from Transitland, or from Japan's
- * rail map.
+ * the Overpass API (which the backend asks at most once a second), from Transitland, or from a
+ * downloaded rail or bus map. What the backend says it searched is kept beside it
+ * (`transitSearchedQuery`).
  */
 export function transitLinesQuery(ask: HopAsk | undefined, source: LookupSource) {
   return queryOptions({
     queryKey: ["transit", "lines", ask, source],
     // Only run once the hop's kind is known; until then the query is turned off.
-    queryFn: () =>
-      transitJson<TransitLine[]>(
-        `/api/transit/lines?mode=${encodeURIComponent(ask!.mode)}&${spotParams(ask!)}${sourceParam(source)}`,
-      ),
+    queryFn: async ({ client }) => {
+      const url = `/api/transit/lines?mode=${encodeURIComponent(ask!.mode)}&${spotParams(ask!)}${sourceParam(source)}`;
+      const { data, headers } = await transitResponse<TransitLine[]>(url);
+      client.setQueryData(transitSearchedQuery(ask, source).queryKey, searchedOf(headers));
+      return data;
+    },
     retry: false,
     staleTime: Infinity,
   });
+}
+
+/**
+ * What the backend searched for a lines look-up, such as "OpenStreetMap's bus map of South Korea
+ * (4210 bus routes, …): 12 pass within 500 m of the first end and 0 within 500 m of the last"; ""
+ * when its answer didn't say, as a backend older than the page doesn't. Set by
+ * `transitLinesQuery`, never fetched itself.
+ */
+export function transitSearchedQuery(ask: HopAsk | undefined, source: LookupSource) {
+  return queryOptions<string>({
+    queryKey: ["transit", "searched", ask, source],
+    queryFn: skipToken,
+    staleTime: Infinity,
+  });
+}
+
+/** The answer's X-Transit-Searched header, read back from its escaping; "" with none. */
+function searchedOf(headers: Headers): string {
+  const raw = headers.get("x-transit-searched");
+  if (!raw) return "";
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
 }
 
 /** A station or stop on a line, where a hop can get on or off. */

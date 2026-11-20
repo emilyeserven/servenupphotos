@@ -101,6 +101,17 @@ func (n *busNet) passesNear(i int, p [2]float64) bool {
 	return false
 }
 
+// nearCount is how many routes' track passes within nearM of p.
+func (n *busNet) nearCount(p [2]float64) int {
+	count := 0
+	for i := range n.Routes {
+		if n.passesNear(i, p) {
+			count++
+		}
+	}
+	return count
+}
+
 // lines are the routes whose track passes within nearM of both from and to,
 // sorted by number and name, as Lines answers them.
 func (n *busNet) lines(from, to [2]float64) []Line {

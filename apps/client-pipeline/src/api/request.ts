@@ -6,10 +6,24 @@ import { type ErrorBody, apiErrorOf } from "@/api/errors";
  * call is what failed.
  */
 export async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
+  return (await requestJsonResponse<T>(url, init)).data;
+}
+
+/** A JSON answer from the pipeline's API, with the answer's headers. */
+export interface JsonResponse<T> {
+  data: T;
+  headers: Headers;
+}
+
+/** Sends a request like `requestJson`, and gives the answer's headers with its JSON. */
+export async function requestJsonResponse<T>(
+  url: string,
+  init?: RequestInit,
+): Promise<JsonResponse<T>> {
   const res = await fetch(url, init);
   const json = (await res.json().catch(() => null)) as (T & ErrorBody) | null;
   if (!res.ok) throw apiErrorOf(url, res.status, json);
-  return json as T;
+  return { data: json as T, headers: res.headers };
 }
 
 /** POSTs `body` as JSON to `url` and reads the JSON answer. */

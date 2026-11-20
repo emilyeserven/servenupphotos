@@ -71,3 +71,14 @@ func (r *mapLoads[T]) load(l *mapLoad[T], done chan struct{}, load func() (T, er
 	r.mu.Unlock()
 	close(done)
 }
+
+// peek is the map kept as key when it's loaded, without loading it.
+func (r *mapLoads[T]) peek(key string) (T, bool) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if l := r.loads[key]; l != nil && l.ready {
+		return l.net, true
+	}
+	var zero T
+	return zero, false
+}

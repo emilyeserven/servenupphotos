@@ -6,6 +6,7 @@ import type { TripTransitLine } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
 import { MapDownloads } from "@/components/trip-lines/map-downloads";
+import { SearchedNote } from "@/components/trip-lines/searched-note";
 import { Button } from "@/components/ui/button";
 import { lookupSource } from "@/lib/lookup-source";
 import { lineOf } from "@/lib/transit-line";
@@ -38,7 +39,7 @@ function useLineFinder({ mode, ends, onLine }: LineFinderProps) {
       setFinding(false);
     },
   });
-  return { finding, setFinding, lines, ride };
+  return { finding, setFinding, lines, ride, ask: { mode, from, to }, source };
 }
 
 /** Whether a look-up is running or failed, so the maps it waited for are shown. */
@@ -56,7 +57,7 @@ function isBusy(lines: { isFetching: boolean }, ride: { isPending: boolean }): b
 
 /** A ride's line and its look-up. */
 export function LineFinder(props: LineFinderProps) {
-  const { finding, setFinding, lines, ride } = useLineFinder(props);
+  const { finding, setFinding, lines, ride, ask, source } = useLineFinder(props);
   const busy = isBusy(lines, ride);
   return (
     <div className="flex flex-col gap-2">
@@ -70,6 +71,7 @@ export function LineFinder(props: LineFinderProps) {
       </div>
       {finding && <LineChoices lines={lines.data} disabled={busy} onPick={ride.mutate} />}
       <MapDownloads active={showsDownloads(lines, ride)} />
+      <SearchedNote ask={ask} source={source} finding={finding} lines={lines} />
       <SaveNote error={lines.error ?? ride.error} why={routeNote(finding, lines.data)} />
     </div>
   );
