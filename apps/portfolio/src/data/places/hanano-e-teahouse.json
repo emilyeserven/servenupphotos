@@ -1,0 +1,11 @@
+{
+  "id": "hanano-e-teahouse",
+  "name": "Hanano'e Teahouse",
+  "description": "",
+  "parent": "hagi-castle",
+  "city": "Hagi",
+  "state": "Yamaguchi",
+  "country": "Japan",
+  "latitude": 34.418545,
+  "longitude": 131.382703
+}

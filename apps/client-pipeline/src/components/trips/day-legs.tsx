@@ -142,6 +142,7 @@ function Arrivals({ legs, indexes }: { legs: TripLeg[]; indexes: number[] }) {
 function StrayLegs(props: RowsProps & { indexes: number[] }) {
   return (
     <li className="flex flex-col gap-2 p-3">
+      {/* oxlint-disable-next-line servenup/error-note -- the heading of legs to fix, not a failure */}
       <span className="text-destructive text-sm font-medium">Leaving outside the Trip's days</span>
       <Legs {...props} />
     </li>

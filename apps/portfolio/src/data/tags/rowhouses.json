@@ -1,5 +1,6 @@
 {
   "id": "rowhouses",
   "name": "rowhouses",
-  "description": ""
+  "description": "attached houses sharing side walls, built in a continuous row",
+  "parent": "houses"
 }

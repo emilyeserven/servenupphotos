@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:24 10:28:47",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hagi Castle Town",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["kawara", "ishigaki", "castle", "moat", "pine-trees"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "hagi-castle-town"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -13,7 +13,6 @@ import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
 import {
   CopyPromptButton,
-  ErrorText,
   PasteAnswer,
   PickBar,
   usePhotoPick,
@@ -24,6 +23,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { OptionCheckbox } from "@/components/update-data-shared";
 import { bulkTagPrompt } from "@/lib/bulk-tag-prompt";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * Bulk Tagging: picks up to the chosen number of photos without tags (5 at first, up to 50, or
@@ -64,7 +64,7 @@ export function BulkTaggingCard() {
           onChange={setNoLimit}
         />
         <PickBar {...bar} noLimit={noLimit} />
-        <ErrorText error={pick.error} />
+        <ErrorNote error={pick.error} />
         {pick.data && <PickedTagging key={pick.submittedAt} pick={pick.data} />}
       </CardContent>
     </Card>
@@ -87,7 +87,7 @@ function PickedTagging({ pick }: { pick: BulkTagPick }) {
         label="Review the tags"
         onReview={() => preview.mutate({ paths, answer })}
       />
-      <ErrorText error={preview.error} />
+      <ErrorNote error={preview.error} />
       {preview.data && (
         <BulkTagReview key={JSON.stringify(preview.data)} preview={preview.data} pick={pick} />
       )}

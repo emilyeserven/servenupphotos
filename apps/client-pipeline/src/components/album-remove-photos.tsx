@@ -11,6 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { albumPhotoOrder, photoId } from "@/lib/album-photo-order";
 import { type CombinedPhoto, photoIn } from "@/lib/group-photos";
 import { cn } from "@/lib/utils";
+import { ErrorNote } from "@/components/error-note";
 
 /** Takes photos out of an album, then reads the albums and the saved photos again. */
 export function useAlbumRemove() {
@@ -86,7 +87,7 @@ export function AlbumRemovePhotos({ album, photos, remove, onDone }: AlbumRemove
           Cancel
         </Button>
       </div>
-      {remove.isError && <p className="text-destructive">{remove.error.message}</p>}
+      <ErrorNote error={remove.error} />
     </div>
   );
 }

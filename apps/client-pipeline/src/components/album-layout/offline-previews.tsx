@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { offlineXSmallUrl } from "@/lib/offline-thumbnails";
+import { ErrorNote } from "@/components/error-note";
 
 /** How many X-Small versions are asked for at once. */
 const AT_ONCE = 4;
@@ -56,8 +57,9 @@ function KeepOutcome({ result }: { result?: { kept: number; failed: number } }) 
   if (result.failed === 0)
     return <p className="text-muted-foreground text-[0.625rem]">{result.kept} kept offline</p>;
   return (
-    <p className="text-destructive text-[0.625rem]">
-      {result.kept} kept, {result.failed} couldn't be downloaded
-    </p>
+    <ErrorNote
+      error={`${result.kept} kept, ${result.failed} couldn't be downloaded`}
+      className="text-[0.625rem]"
+    />
   );
 }

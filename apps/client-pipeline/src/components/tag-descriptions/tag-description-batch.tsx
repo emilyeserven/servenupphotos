@@ -13,6 +13,7 @@ import {
   readTagDescriptions,
   tagDescriptionPrompt,
 } from "@/lib/tag-description-prompt";
+import { ErrorNote } from "@/components/error-note";
 
 interface TagDescriptionBatchProps {
   /** The tags to describe this time. */
@@ -74,7 +75,7 @@ function BatchPrompt({ batch, tags, photos, save }: TagDescriptionBatchProps) {
       <Button type="button" className="self-start" disabled={answer.trim() === ""} onClick={review}>
         Review the descriptions
       </Button>
-      {error && <p className="text-destructive text-sm">{error}</p>}
+      <ErrorNote error={error} />
       {read && <TagDescriptionReview key={answer} read={read} save={save} />}
     </div>
   );

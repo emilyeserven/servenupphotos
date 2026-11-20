@@ -3,7 +3,7 @@
   "title": null,
   "comment": null,
   "altText": null,
-  "notes": null,
+  "notes": "Shows a komainu lion-dog guardian statue; 'komainu' isn't a tag, since only 1 photo has one.",
   "file": "DSCF0800.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:24 12:17:31",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Shizuki Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,9 +50,18 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["komainu", "shinto", "statues", "sculpture", "carvings"],
-  "genres": [],
-  "places": [],
+  "tags": ["shinto", "statues", "sculpture", "carvings"],
+  "genres": ["architecture"],
+  "places": [
+    {
+      "relation": "at",
+      "id": "shizuki-shrine"
+    },
+    {
+      "relation": "in",
+      "id": "hagi-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

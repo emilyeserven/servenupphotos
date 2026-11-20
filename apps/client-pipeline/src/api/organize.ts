@@ -1,7 +1,7 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { InFlightPullRequest, PublishResult } from "@/api/photos";
 import { type PendingSave, changesByFolder, photoChanges } from "@/api/scan-changes";
-import { requestJson } from "@/api/request";
+import { del, post, put, requestJson } from "@/api/request";
 
 /**
  * A way of organizing photos: albums, tags and photographic genres. Each one is one JSON file, and
@@ -125,12 +125,7 @@ export const createGroupMutation = (kind: GroupKind) =>
         return [{ kind, path, after: data }];
       },
     },
-    mutationFn: (group: NewGroup) =>
-      requestJson<PublishResult>(`/api/organize/${kind}`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(group),
-      }),
+    mutationFn: (group: NewGroup) => post<PublishResult>(`/api/organize/${kind}`, group),
   });
 
 /** The organize list with a just-made group in it, so it's named before the list is read again. */
@@ -220,11 +215,7 @@ export const setGroupParentMutation = (kind: ParentKind) =>
       changes: (result) => (result as PendingSave).changes.map((change) => ({ kind, ...change })),
     },
     mutationFn: ({ id, parent }: { id: string; parent: string | null }) =>
-      requestJson<AlbumParentResult>(`/api/organize/${kind}/${encodeURIComponent(id)}/parent`, {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ parent }),
-      }),
+      put<AlbumParentResult>(`/api/organize/${kind}/${encodeURIComponent(id)}/parent`, { parent }),
   });
 
 /** What a change to several albums did; nothing is saved when none of their files changed. */
@@ -238,12 +229,7 @@ function albumsMutation<T>(key: string, url: (vars: T) => string, body: (vars: T
   return mutationOptions({
     mutationKey: ["organize", "albums", key],
     meta: { saves: (result) => (result as AlbumsResult).files > 0, changes: albumChanges },
-    mutationFn: (vars: T) =>
-      requestJson<AlbumsResult>(url(vars), {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body(vars)),
-      }),
+    mutationFn: (vars: T) => put<AlbumsResult>(url(vars), body(vars)),
   });
 }
 
@@ -293,9 +279,7 @@ export const deleteAlbumMutation = mutationOptions({
   mutationKey: ["organize", "albums", "delete"],
   meta: { saves: true, changes: (result) => changesByFolder(result as PendingSave, "albums") },
   mutationFn: (id: string) =>
-    requestJson<DeleteAlbumResult>(`/api/organize/albums/${encodeURIComponent(id)}`, {
-      method: "DELETE",
-    }),
+    del<DeleteAlbumResult>(`/api/organize/albums/${encodeURIComponent(id)}`),
 });
 
 /** What taking photos out of an album did. */
@@ -312,11 +296,7 @@ export const removeAlbumPhotosMutation = mutationOptions({
   mutationKey: ["organize", "albums", "remove-photos"],
   meta: { saves: true, changes: (result) => changesByFolder(result as PendingSave, "albums") },
   mutationFn: ({ id, photoIds }: { id: string; photoIds: number[] }) =>
-    requestJson<RemovedPhotosResult>(`/api/organize/albums/${encodeURIComponent(id)}/photos`, {
-      method: "DELETE",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ photoIds }),
-    }),
+    del<RemovedPhotosResult>(`/api/organize/albums/${encodeURIComponent(id)}/photos`, { photoIds }),
 });
 
 /**
@@ -350,12 +330,7 @@ function tagsMutation<T>(key: string, body: (vars: T) => unknown) {
       changes: (result) =>
         (result as PendingSave).changes.map((change) => ({ kind: "tags" as const, ...change })),
     },
-    mutationFn: (vars: T) =>
-      requestJson<AlbumsResult>(`/api/organize/tags/${key}`, {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body(vars)),
-      }),
+    mutationFn: (vars: T) => put<AlbumsResult>(`/api/organize/tags/${key}`, body(vars)),
   });
 }
 
@@ -452,11 +427,7 @@ export const addPhotoGroupsMutation = mutationOptions({
   mutationKey: ["photos", "groups"],
   meta: { saves: true, changes: (result) => photoChanges(result as PhotoGroupsResult) },
   mutationFn: (add: PhotoGroups & { paths: string[] }) =>
-    requestJson<PhotoGroupsResult>("/api/photos/groups", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(add),
-    }),
+    post<PhotoGroupsResult>("/api/photos/groups", add),
 });
 
 /** The albums from `id` up through its parents, top first; it stops at a missing or repeated one. */
