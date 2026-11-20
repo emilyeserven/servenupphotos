@@ -1,0 +1,12 @@
+{
+  "id": "shizuki-shrine",
+  "name": "Shizuki Shrine",
+  "description": "",
+  "parent": "hagi-castle",
+  "city": "Hagi",
+  "state": "Yamaguchi",
+  "country": "Japan",
+  "latitude": 34.418636,
+  "longitude": 131.3831,
+  "exactLocation": true
+}

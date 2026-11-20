@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["rock-formations", "birds", "ocean", "pine-trees"],
-  "genres": [],
+  "genres": ["landscape", "wildlife"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

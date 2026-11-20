@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 12:50:07",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Jonggak Avenue of Youth",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["hangul", "signage", "storefronts", "sidewalk", "skyscrapers", "posters"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "jonggak-avenue-of-youth"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -2,5 +2,5 @@
   "id": "yatai",
   "name": "yatai",
   "description": "a small mobile Japanese food stall, common at festivals",
-  "parent": "kiosk"
+  "parent": "street-food"
 }

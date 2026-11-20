@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["kamon", "shinto", "shrine", "stairs", "wood"],
-  "genres": [],
+  "genres": ["architecture"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

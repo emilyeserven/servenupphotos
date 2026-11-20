@@ -3,7 +3,7 @@
   "comment": null,
   "id": 722,
   "altText": null,
-  "notes": null,
+  "notes": "Shows the station's turnstiles and a kiosk; 'turnstiles' and 'kiosk' aren't tags, since only 1 photo has them.",
   "file": "DSCF6046.jpg",
   "addedDate": "2026-11-15T20:42:37Z",
   "camera": "Fujifilm X-T5",
@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:11:07 17:48:52",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Porter Square Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,9 +50,18 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["train-station", "subway", "turnstiles", "kiosk", "signage"],
+  "tags": ["train-station", "subway", "signage"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "inside",
+      "id": "porter-square-station"
+    },
+    {
+      "relation": "in",
+      "id": "porter-square"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

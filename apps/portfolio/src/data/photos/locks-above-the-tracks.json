@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["padlocks", "fences", "city"],
+  "tags": ["padlocks", "fences", "city", "romance"],
   "genres": [],
   "places": [
     {
@@ -269,6 +269,6 @@
     "peakChroma": 17.23,
     "samples": 9956
   },
-  "notes": "Shows love locks; 'love-locks' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 289 (1.73:1), not the 16:9 crop for a landscape photo.",
+  "notes": "Shows love locks; 'love-locks' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 289 (1.73:1), not the 16:9 crop for a landscape photo.\n\nShows love locks, now also tagged 'romance'.",
   "similarPhotos": [13, 58, 24, 267, 27, 44]
 }
