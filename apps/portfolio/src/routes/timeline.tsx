@@ -16,7 +16,6 @@ import { labelOn } from "@/lib/timeline-labels";
 import { withOldTimelineLinks } from "@/lib/timeline-old-links";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import { hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { dayOf } from "@/lib/when-filters";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { type ColorFilters, filterByColors, parseColorFilters } from "@/lib/color-search";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
@@ -32,6 +31,7 @@ import { useRememberViewOptions } from "@/lib/view-options";
 import { cn } from "@/lib/utils";
 import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-sketch";
 import { MonthMaps, TripLinesButton, useMonthTripLines } from "@/components/timeline-month-map";
+import { isoDate } from "@/lib/dates";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
@@ -299,7 +299,7 @@ function dayFormat(dayPhotos: Photo[], pattern: string): string {
 /** The timeline label of the days the photos were taken, or "" without one. */
 function dayLabel(dayPhotos: Photo[]): string {
   const [first] = dayPhotos;
-  return first ? labelOn(dayOf(first.takenAt)) : "";
+  return first ? labelOn(isoDate(first.takenAt)) : "";
 }
 
 /** The day's timeline label beside its date; nothing without one. */

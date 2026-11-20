@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import {
   CAMERA_FILTER_KEYS,
   filterWithCamera,
@@ -14,6 +13,7 @@ import { albums as builtAlbums, type Group } from "@portfolio/lib/groups";
 import { FILTER_KEYS, filterCount, parseFilters } from "@portfolio/lib/photo-filters";
 import type { Photo } from "@portfolio/lib/photos";
 import { findTimelineLabel, type TimelineLabel } from "@portfolio/lib/timeline-labels";
+import { isoDate } from "@portfolio/lib/dates";
 
 /**
  * The rules only a Smart Album has, besides the Grid's filters: a timeline label whose days its
@@ -121,7 +121,7 @@ function inRange(day: string, { from = "", to = "9999-12-31" }: DayRange): boole
 /** Whether the photo was taken on a day the rules allow, by the clock where it was taken. */
 function matchesDays(photo: Photo, rules: SmartRules, labels?: TimelineLabel[]): boolean {
   const range = dayRange(rules, labels);
-  return range !== undefined && inRange(format(photo.takenAt, "yyyy-MM-dd"), range);
+  return range !== undefined && inRange(isoDate(photo.takenAt), range);
 }
 
 /**

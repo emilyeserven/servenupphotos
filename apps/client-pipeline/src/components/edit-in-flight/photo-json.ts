@@ -34,6 +34,7 @@ import {
 import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
 import { jsonFileName } from "@/lib/file-name";
 import { UNDECIDED } from "@/lib/photo-fields";
+import { isObject } from "@portfolio/lib/values";
 
 /**
  * A photo JSON file in the pull request, or one already in the portfolio that the pull request
@@ -103,10 +104,6 @@ function publishedProblem(file: PublishedFile): string | undefined {
     return `${file.path} is removed in the photo data pull request, so it can't be edited.`;
   }
   return fileProblem(file);
-}
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /** Whether the pull request has the file at path, so it's edited from there. */

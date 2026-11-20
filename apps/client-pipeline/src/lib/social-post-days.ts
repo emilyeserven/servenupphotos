@@ -2,6 +2,7 @@ import type { SocialPhoto } from "@/api/publish";
 import { isSetAside } from "@/lib/drafts";
 import type { FileChange } from "@/lib/optimistic";
 import { type SocialPostStatus, savedSocialPosts } from "@/lib/social-posts";
+import { isObject, textOf } from "@portfolio/lib/values";
 
 /** A photo file whose social media posts are shown, from the gallery or in flight. */
 export interface PostedPhotoFile {
@@ -28,10 +29,6 @@ export interface DayPost {
   url: string;
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 /**
  * The photo files changed since the last commit, each as its last change left it: path → its JSON,
  * or null when it was removed. Changes are in the order they were made, as the combined data store
@@ -54,14 +51,10 @@ function imageOf(data: Record<string, unknown>): string | null {
   return (url as string | undefined) ?? null;
 }
 
-function text(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /** The photo's title, or its file name without the extension, or the JSON file's name. */
 function nameOf(data: Record<string, unknown>, path: string): string {
-  const file = text(data.file).replace(/\.[^.]*$/, "");
-  return text(data.title) || file || (path.split("/").at(-1) ?? path);
+  const file = textOf(data.file).replace(/\.[^.]*$/, "");
+  return textOf(data.title) || file || (path.split("/").at(-1) ?? path);
 }
 
 function postedFile(path: string, data: Record<string, unknown>, inFlight: boolean) {

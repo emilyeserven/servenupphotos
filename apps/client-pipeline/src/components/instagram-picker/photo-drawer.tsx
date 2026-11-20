@@ -11,7 +11,8 @@ import {
 import { usePickerPhotos } from "@/components/instagram-picker/use-picker-photos";
 import { Button } from "@/components/ui/button";
 import { useDropTarget } from "@/hooks/use-drop-target";
-import { longDayFormat, parseIsoDate } from "@/lib/calendar";
+import { longDayFormat } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { PHOTO_DRAG_TYPE, type Unsaved } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
 

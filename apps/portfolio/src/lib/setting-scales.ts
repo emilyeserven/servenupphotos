@@ -1,9 +1,5 @@
 import { exposureSeconds, type RangeKey } from "@portfolio/lib/camera-filters";
-
-/** A number kept between the lowest and highest it can be. */
-function clamp(value: number, low: number, high: number): number {
-  return Math.min(high, Math.max(low, value));
-}
+import { clamp } from "@portfolio/lib/values";
 
 /**
  * How wide a lens at the focal length sees, in degrees, across a full-frame (36mm wide) sensor:

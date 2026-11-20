@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { CircleCheckIcon, ClockIcon, ExternalLinkIcon, ImageIcon } from "lucide-react";
-import { parseIsoDate } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import type { DayPost } from "@/lib/social-post-days";
 import { statusLabels } from "@/lib/social-posts";
