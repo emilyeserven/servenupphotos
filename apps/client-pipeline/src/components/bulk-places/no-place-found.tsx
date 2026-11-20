@@ -1,17 +1,18 @@
 import { SearchXIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNoPlaceFoundStore } from "@/stores/no-place-found";
+import { count } from "@portfolio/lib/words";
 
 /**
  * Says how many photos without places Bulk Places left out because an LLM found no place for them,
  * with a button that forgets them all so they're picked again; nothing when there are none.
  */
-export function NoPlaceFoundNote({ count }: { count: number }) {
+export function NoPlaceFoundNote({ count: n }: { count: number }) {
   const clear = useNoPlaceFoundStore((state) => state.clear);
-  if (count === 0) return null;
+  if (n === 0) return null;
   return (
     <>
-      {` Leaving out ${count === 1 ? "1 photo" : `${count} photos`} an LLM found no place for. `}
+      {` Leaving out ${count(n, "photo")} an LLM found no place for. `}
       <Button type="button" variant="link" className="h-auto p-0 text-sm" onClick={clear}>
         Pick them again
       </Button>

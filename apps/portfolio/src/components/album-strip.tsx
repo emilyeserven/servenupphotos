@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { coverPhotos } from "@/lib/album-layout";
 import type { Group } from "@/lib/groups";
 import { albumSpots, type ImagePhoto } from "@/lib/spotlight-zones";
+import { count } from "@/lib/words";
 
 /**
  * One album's covers, or else its first 5 photos, as a strip, in order, each at its own shape and scrolling
@@ -38,7 +39,7 @@ export function AlbumStrip({
           </Link>
         </h2>
         <p className="text-sm text-muted-foreground">
-          {album.description} {photos.length} {photos.length === 1 ? "photo" : "photos"}.
+          {album.description} {count(photos.length, "photo")}.
           <SpotsNote album={album} />
         </p>
       </div>

@@ -7,6 +7,7 @@ import type { MapPage } from "../src/lib/map-pages.ts";
 import { frameOf, IMAGE } from "../src/lib/map-preview-view.ts";
 import { markersOf, type Pin } from "./pins.ts";
 import { renderPreview, type TileSource, tileUrl } from "./render.ts";
+import { count } from "../src/lib/words.ts";
 
 /**
  * After a build, writes the map's place pages (see docs/map-link-previews.md): for each map page in
@@ -78,17 +79,12 @@ async function imageFor(page: MapPage, pins: Pin[], cartoKey: string) {
   return { png, drawn: true };
 }
 
-/** "1 photo" or "12 photos". */
-function photoCount(count: number): string {
-  return `${count} ${count === 1 ? "photo" : "photos"}`;
-}
-
 /** The page's title and description, such as "Seoul on the map" and "34 photos in Seoul." */
 function wordsFor(page: MapPage) {
-  const count = photoCount(page.photos.length);
+  const photos = count(page.photos.length, "photo");
   return page.whole
-    ? { title: "Map", description: `${count} on the map.` }
-    : { title: `${page.name} on the map`, description: `${count} in ${page.name}.` };
+    ? { title: "Map", description: `${photos} on the map.` }
+    : { title: `${page.name} on the map`, description: `${photos} in ${page.name}.` };
 }
 
 /** The page's index.html: the built one with its title and link preview tags. */

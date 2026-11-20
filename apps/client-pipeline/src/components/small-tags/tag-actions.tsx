@@ -2,8 +2,9 @@ import { useId, useState } from "react";
 import type { ActionProps } from "@/components/small-tags/small-tag-card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { SaveButton, count } from "@/components/update-data-shared";
+import { SaveButton } from "@/components/update-data-shared";
 import { type SmallTag, removalNote, removeChange, renameChange, tagId } from "@/lib/small-tags";
+import { count } from "@portfolio/lib/words";
 
 /**
  * Removes the tag from every photo and deletes its file, adding a photographer-only note to each

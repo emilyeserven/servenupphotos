@@ -6,7 +6,7 @@ import {
   publishedPhotosQuery,
   type PublishedResponse,
 } from "@/api/photos";
-import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
+import { CollapsiblePanel } from "@/components/collapsible-panel";
 import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-sort";
 import { DraftsSkeleton } from "@/components/in-flight-loading";
 import { MissingImageDrafts } from "@/components/missing-image-drafts";
@@ -18,6 +18,7 @@ import { editedData, undecidedPaths } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 import { SectionTitle } from "@/components/section-title";
 
 interface SavedDraftsProps {
@@ -146,7 +147,7 @@ function DraftList({ files, data }: { files: PublishedFile[]; data: PublishedRes
   const [revealedCount, revealedEnd] = useRevealed(files.length);
   if (files.length === 0) return null;
   return (
-    <CollapsiblePanel title="Drafts" count={countOf(files.length, "draft")} open>
+    <CollapsiblePanel title="Drafts" count={count(files.length, "draft")} open>
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
         {files.slice(0, revealedCount).map((file) => (
           <DraftTile

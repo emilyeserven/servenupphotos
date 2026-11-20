@@ -4,16 +4,13 @@ import { combinedStatusQuery, discardPending } from "@/api/photos";
 import { useCombinedDataStore } from "@/stores/combined-data";
 import { useInFlightBackupStore } from "@/stores/in-flight-backup";
 import { useLocalEditsStore } from "@/stores/local-edits";
-
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
-}
+import { count } from "@portfolio/lib/words";
 
 /** The question Discard asks first. */
 function question(localEdits: number, savedFiles: number): string {
   const parts = [
-    savedFiles > 0 && plural(savedFiles, "saved file"),
-    localEdits > 0 && `the edits to ${plural(localEdits, "image")}`,
+    savedFiles > 0 && count(savedFiles, "saved file"),
+    localEdits > 0 && `the edits to ${count(localEdits, "image")}`,
   ].filter(Boolean);
   return `Discard ${parts.join(" and ")} waiting for Commit? GitHub never saw them, so they're gone for good.`;
 }

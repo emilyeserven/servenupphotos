@@ -1,5 +1,6 @@
 import { allTimelineLabels, type TimelineLabel } from "@/lib/timeline-labels";
 import type { TripLinesMap, TripMapFeature } from "@/lib/trip-lines-map";
+import { count } from "@/lib/words";
 
 /** The ID the map's Trip tab gives the trip lines of days in no Trip. */
 export const NO_TRIP = "no-trip";
@@ -23,9 +24,8 @@ export function hiddenText(hidden: string[]): string {
 }
 
 /** A count with its noun, such as "2 days"; "" for none. */
-function counted(count: number, noun: string): string {
-  if (count === 0) return "";
-  return `${count} ${noun}${count === 1 ? "" : "s"}`;
+function counted(n: number, noun: string): string {
+  return n === 0 ? "" : count(n, noun);
 }
 
 /** A Trip whose lines the map can draw, as the Places menu's Trip tab lists it. */

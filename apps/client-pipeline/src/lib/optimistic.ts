@@ -18,6 +18,7 @@ import {
   byKind,
 } from "@/lib/data-kinds";
 import { leftOffPortfolio } from "@/lib/drafts";
+import { count } from "@portfolio/lib/words";
 
 /**
  * One file a save changed, waiting for Commit, which the combined lists won't have until it's
@@ -126,10 +127,6 @@ export function withChanges(data: CombinedData, changes: FileChange[]): Combined
   };
 }
 
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
-}
-
 /** How a file changed since the last commit, from its first and last change. */
 type NetChange = "added" | "modified" | "deleted" | undefined;
 
@@ -175,7 +172,7 @@ export interface PendingSummary extends Record<GroupKind, number> {
 }
 
 /** Counts a file that changed in the way net, if it did. */
-function count(summary: PendingSummary, kind: CombinedKind, net: NetChange) {
+function tally(summary: PendingSummary, kind: CombinedKind, net: NetChange) {
   if (!net) return;
   if (kind === "photos") summary.images[net]++;
   else summary[kind]++;
@@ -199,13 +196,13 @@ export function summarizeChanges(
   for (const [key, [first, last]] of firstAndLast(changes)) {
     const before = byKey.get(key);
     byKey.delete(key);
-    count(
+    tally(
       summary,
       first.kind,
       before ? netAfterChecked(before.change, last) : netChange(first, last),
     );
   }
-  for (const file of byKey.values()) count(summary, file.kind, file.change);
+  for (const file of byKey.values()) tally(summary, file.kind, file.change);
   return summary;
 }
 
@@ -218,8 +215,8 @@ function imageCount(summary: PendingSummary): number {
 /** The counts that aren't 0, joined with commas. */
 function nonZero(parts: [number, string][]): string {
   return parts
-    .filter(([count]) => count > 0)
-    .map(([count, word]) => plural(count, word))
+    .filter(([n]) => n > 0)
+    .map(([n, word]) => count(n, word))
     .join(", ");
 }
 

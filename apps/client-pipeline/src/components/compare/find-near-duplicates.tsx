@@ -4,6 +4,7 @@ import { type NearDuplicatesResult, findNearDuplicatesMutation } from "@/api/nea
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /**
  * **Find near duplicates**: has the backend look through every saved photo and put the ones that
@@ -38,7 +39,7 @@ function FoundLine({ result }: { result: NearDuplicatesResult }) {
     <p>
       {groups === 0
         ? `No new near duplicates among ${result.photos} photos.`
-        : `Put ${photos} photos in ${groups === 1 ? "1 compare group" : `${groups} compare groups`}, waiting for Commit.`}
+        : `Put ${photos} photos in ${count(groups, "compare group")}, waiting for Commit.`}
       {result.hashFailed > 0 &&
         ` ${result.hashFailed} couldn't be checked because their Small version couldn't be read.`}
     </p>

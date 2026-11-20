@@ -3,6 +3,7 @@ import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { LibraryAnswer, useFilteredNames } from "@/components/tag-library/library-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type SmallTag, smallTagsPrompt } from "@/lib/small-tags";
+import { count } from "@portfolio/lib/words";
 
 interface AskLlmCardProps {
   library: TagLibraryExport;
@@ -28,7 +29,7 @@ export function AskLlmCard({ library, small }: AskLlmCardProps) {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <CopyPromptButton
-          label={`Copy the prompt for ${small.length} small ${small.length === 1 ? "tag" : "tags"}`}
+          label={`Copy the prompt for ${count(small.length, "small tag")}`}
           disabled={!ready || small.length === 0}
           prompt={() => smallTagsPrompt(library, small, filtered())}
         />

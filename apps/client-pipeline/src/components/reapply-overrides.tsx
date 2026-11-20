@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { reapplyMutation, reapplyPreviewQuery } from "@/api/cameras";
 import { FieldChangesCard } from "@/components/field-changes-card";
-import { count } from "@/components/update-data-shared";
+import { count } from "@portfolio/lib/words";
 
 /** Applies the camera overrides again to every photo file, after they've changed. */
 export function ReapplyOverridesCard() {

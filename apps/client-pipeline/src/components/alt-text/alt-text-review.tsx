@@ -14,9 +14,9 @@ import {
 } from "@/components/bulk-tagging/review-parts";
 import { AltTextLength } from "@/components/photo-alt-text-field";
 import { Textarea } from "@/components/ui/textarea";
-import { count } from "@/components/update-data-shared";
 import { ALT_TEXT_MAX, type AltTextDraft, altTextsToSave, startingDrafts } from "@/lib/alt-text";
 import { withOthers } from "@/lib/answered-photos";
+import { count } from "@portfolio/lib/words";
 
 interface AltTextReviewProps {
   preview: AltTextPreview;

@@ -10,6 +10,7 @@ import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/comp
 import { Skeleton } from "@/components/ui/skeleton";
 import { type CompareGroup, photoNames, winnersOf } from "@/lib/compare-groups";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 /** Columns for a group of two, or three for a larger one, so photos sit side by side. */
 function columns(count: number): string {
@@ -59,11 +60,11 @@ function winnerText(group: CompareGroup): string {
 }
 
 function GroupHeader({ group }: { group: CompareGroup }) {
-  const count = group.photos.length;
+  const n = group.photos.length;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{count === 1 ? "1 photo" : `${count} photos`} head-to-head</CardTitle>
+        <CardTitle>{count(n, "photo")} head-to-head</CardTitle>
         <CardDescription>{winnerText(group)}</CardDescription>
         <CardAction className="flex flex-wrap justify-end gap-2">
           <BackButton />

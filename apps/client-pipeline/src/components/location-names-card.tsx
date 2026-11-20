@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { applyLocationNamesMutation, locationNamesPreviewQuery } from "@/api/data";
 import { placesQuery } from "@/api/places";
 import { FieldChangesCard } from "@/components/field-changes-card";
-import { count } from "@/components/update-data-shared";
+import { count } from "@portfolio/lib/words";
 
 /** Writes every country, state and city that's another name of one as the name that wins over it. */
 export function LocationNamesCard() {

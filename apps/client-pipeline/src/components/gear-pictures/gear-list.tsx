@@ -3,16 +3,13 @@ import type { GearKind } from "@portfolio/lib/gear-pictures";
 import type { GearRow } from "@/api/gear";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 /** The two lists, with their tab names. */
 const KINDS: [GearKind, string][] = [
   ["camera", "Cameras"],
   ["lens", "Lenses"],
 ];
-
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
-}
 
 interface GearListProps {
   kind: GearKind;
@@ -62,7 +59,7 @@ function RowNote({ row }: { row: GearRow }) {
       {row.file?.image && (
         <ImageIcon aria-label="Has a picture" className="text-foreground size-3.5" />
       )}
-      {plural(row.photos, "photo")}
+      {count(row.photos, "photo")}
     </span>
   );
 }

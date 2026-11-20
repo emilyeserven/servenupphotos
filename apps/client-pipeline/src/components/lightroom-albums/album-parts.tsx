@@ -1,8 +1,8 @@
 import { HardDriveDownloadIcon, TriangleAlertIcon } from "lucide-react";
-import { count } from "@/components/update-data-shared";
 import { cn } from "@/lib/utils";
 import { LIGHTROOM_STAGES, type LightroomAlbum, type LightroomStage } from "@/lib/lightroom-albums";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { count } from "@portfolio/lib/words";
 
 interface AlbumTitleProps {
   album: LightroomAlbum;

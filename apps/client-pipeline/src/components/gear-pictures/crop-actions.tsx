@@ -8,6 +8,7 @@ import { CropZoom } from "@/components/gear-pictures/crop-zoom";
 import type { BulkCrop, CropEntry } from "@/components/gear-pictures/use-bulk-crop";
 import { Button } from "@/components/ui/button";
 import { fitCrop, wholeCrop } from "@/lib/gear-crop";
+import { count } from "@portfolio/lib/words";
 
 /** The crop that fits the picture's gear inside the limit lines, when its gear was found. */
 const fitted = (sizes: BulkCrop["sizes"]) => (entry: CropEntry) => {
@@ -75,11 +76,6 @@ function croppedFile(entry: CropEntry, image: string): GearFile {
   return { ...entry.file, image, original: entry.original, crop: entry.crop };
 }
 
-/** "1 sized picture" or "3 sized pictures". */
-function sizedText(count: number): string {
-  return `${count} sized ${count === 1 ? "picture" : "pictures"}`;
-}
-
 /**
  * Cuts every changed crop, chosen or not, into its 200px-tall WEBP and saves its file, one after
  * another, each a change waiting for Commit.
@@ -106,7 +102,7 @@ export function SaveCrops({ bulk }: { bulk: BulkCrop }) {
         <Busy busy={run.isPending} />
         {run.isPending
           ? `Sizing ${done + 1} of ${changed.length}…`
-          : `Save ${sizedText(changed.length)}`}
+          : `Save ${count(changed.length, "sized picture")}`}
       </Button>
       <SaveNote error={run.error} why="" />
     </div>

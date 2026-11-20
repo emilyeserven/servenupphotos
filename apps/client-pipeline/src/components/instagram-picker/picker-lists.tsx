@@ -15,6 +15,7 @@ import type { Neighbors } from "@/lib/social-neighbors";
 import type { Suggestion } from "@/lib/social-suggestions";
 import { cn } from "@/lib/utils";
 import { NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 import { SectionTitle } from "@/components/section-title";
 
 /**
@@ -132,12 +133,12 @@ function placeReason({ km, samePlace }: Suggestion): string | null {
 /** How far apart in time, such as "Same day" or "5 days apart". */
 function dateReason({ days }: Suggestion): string | null {
   if (days === null) return null;
-  return days === 0 ? "Same day" : `${days.toLocaleString()} ${days === 1 ? "day" : "days"} apart`;
+  return days === 0 ? "Same day" : `${count(days, "day")} apart`;
 }
 
 function tagReason({ sharedTags }: Suggestion): string | null {
   if (sharedTags === 0) return null;
-  return `${sharedTags} ${sharedTags === 1 ? "tag" : "tags"} in common`;
+  return `${count(sharedTags, "tag")} in common`;
 }
 
 /** Why the photo is suggested, against the nearest of the photos before the day. */
