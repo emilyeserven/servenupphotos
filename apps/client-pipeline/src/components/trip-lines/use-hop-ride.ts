@@ -131,5 +131,5 @@ export function useHopRide(hop: TripSegment, ask: HopAsk | undefined, onRide: (r
   });
   const { mutation, ride } = useRide(ask, near, (r) => (onRide(r), setFinding(false)));
   useAutoPick(hop, lines.data, ride);
-  return { finding, setFinding, kind, setKind, ends, setEnds, lines, mutation, ride };
+  return { finding, setFinding, kind, setKind, ends, setEnds, lines, mutation, ride, source };
 }

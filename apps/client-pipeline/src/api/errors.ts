@@ -30,13 +30,16 @@ class ApiError extends Error {
   readonly github?: GitHubFailure;
   /** A free file name to offer instead, when the one asked for is taken. */
   readonly suggestedName?: string;
+  /** Whether it failed only because a map it needs is still downloading, so asking again works. */
+  readonly loading: boolean;
 
-  constructor(message: string, status: number, github?: GitHubFailure, suggestedName?: string) {
+  constructor(message: string, status: number, body: ErrorBody | null) {
     super(message);
     this.name = "ApiError";
     this.status = status;
-    this.github = github;
-    this.suggestedName = suggestedName;
+    this.github = body?.github;
+    this.suggestedName = body?.suggestedName;
+    this.loading = body?.loading === true;
   }
 }
 
@@ -46,12 +49,22 @@ export interface ErrorBody {
   github?: GitHubFailure;
   /** A free file name to offer instead, when the one asked for is taken. */
   suggestedName?: string;
+  /** True when a rail or bus map the look-up needs is still downloading or being read. */
+  loading?: boolean;
 }
 
 /** The error for a failed request to url, from its status and body. */
 export function apiErrorOf(url: string, status: number, body: ErrorBody | null): ApiError {
   const message = body?.message ?? `${url} responded ${status}`;
-  return new ApiError(message, status, body?.github, body?.suggestedName);
+  return new ApiError(message, status, body);
+}
+
+/**
+ * Whether error is a transit look-up that stopped waiting for a rail or bus map still downloading
+ * or being read, which goes on without it, so the same look-up can simply be asked again.
+ */
+export function isMapLoading(error: unknown): boolean {
+  return error instanceof ApiError && error.loading;
 }
 
 /** GitHub's answer carried by error, when it's an ApiError from a failed GitHub call. */

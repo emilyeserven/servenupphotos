@@ -106,8 +106,9 @@ func haveMLIT(dir string) bool {
 	return true
 }
 
-// downloadMLIT downloads the zip at url and keeps its two GeoJSON files in dir.
-func downloadMLIT(ctx context.Context, client *http.Client, url, dir string) error {
+// downloadMLIT downloads the zip at url and keeps its two GeoJSON files in dir,
+// telling p how much it has downloaded.
+func downloadMLIT(ctx context.Context, client *http.Client, url, dir string, p *progress) error {
 	if err := os.MkdirAll(dir, 0o750); err != nil {
 		return err
 	}
@@ -118,7 +119,7 @@ func downloadMLIT(ctx context.Context, client *http.Client, url, dir string) err
 	defer os.Remove(tmp.Name()) //nolint:errcheck // a leftover download
 	defer tmp.Close()           //nolint:errcheck // removed above
 	start := time.Now()
-	size, err := fetchTo(ctx, client, url, tmp)
+	size, err := fetchTo(ctx, client, url, tmp, p)
 	slog.Info("mlit rail map download", "url", url, "bytes", size, "took", time.Since(start).Round(time.Second), "err", err)
 	if err != nil {
 		return err
@@ -127,8 +128,8 @@ func downloadMLIT(ctx context.Context, client *http.Client, url, dir string) err
 }
 
 // fetchTo gets url into w, failing on any status but 200 OK, and says how many
-// bytes it got.
-func fetchTo(ctx context.Context, client *http.Client, url string, w io.Writer) (int64, error) {
+// bytes it got, telling p (when it isn't nil) how much it has got so far.
+func fetchTo(ctx context.Context, client *http.Client, url string, w io.Writer, p *progress) (int64, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil) //nolint:gosec // a download address from a setting or Geofabrik's index
 	if err != nil {
 		return 0, err
@@ -142,7 +143,8 @@ func fetchTo(ctx context.Context, client *http.Client, url string, w io.Writer) 
 	if res.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf("the server answered %s", res.Status)
 	}
-	return io.Copy(w, res.Body)
+	p.downloading(res.ContentLength)
+	return io.Copy(io.MultiWriter(w, p), res.Body)
 }
 
 // unzipMLIT keeps the zip's two GeoJSON files in dir, the UTF-8 copies when it

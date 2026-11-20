@@ -14,19 +14,20 @@ const mlitLineBits = 5 * routeBits
 
 // mlit is Japan's rail map, downloading and reading it first when needed.
 func (c *Client) mlit(ctx context.Context) (*railNet, error) {
-	return c.Rails.get(ctx, SourceMLIT, mlitName, c.readMLITNet)
+	return c.Rails.get(ctx, &c.progress, SourceMLIT, mlitName, c.readMLITNet)
 }
 
 // readMLITNet is Japan's rail map's network from its folder, downloaded there
-// first when it isn't there yet.
-func (c *Client) readMLITNet() (*railNet, error) {
+// first when it isn't there yet, telling p how far it's got.
+func (c *Client) readMLITNet(p *progress) (*railNet, error) {
 	dir := mlitDir()
 	if !haveMLIT(dir) {
 		ctx, cancel := context.WithTimeout(context.Background(), mlitDownloadTimeout)
 		defer cancel()
-		if err := downloadMLIT(ctx, c.HTTP, mlitURL(), dir); err != nil {
+		if err := downloadMLIT(ctx, c.HTTP, mlitURL(), dir, p); err != nil {
 			return nil, err
 		}
+		p.setStep(StepReading)
 	}
 	sections, stations, err := readMLIT(dir)
 	if err != nil {

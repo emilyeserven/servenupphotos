@@ -104,7 +104,15 @@ type Client struct {
 	// TLCache keeps Transitland's answers, by path; nil keeps none.
 	TLCache *memo.Cache[[]byte]
 	// Rails are the rail maps, each loaded the first time it's asked.
-	Rails railNets
+	Rails mapLoads[*railNet]
+	// Buses are OpenStreetMap's bus maps, each loaded the first time it's
+	// asked.
+	Buses mapLoads[*busNet]
+	// progress lists the maps being downloaded or read (see Downloads).
+	progress mapProgress
+	// osmExtractMu lets one OpenStreetMap extract download at a time, so a
+	// rail and a bus look-up in one country download it once.
+	osmExtractMu sync.Mutex
 	// osmIndex is Geofabrik's index of OpenStreetMap extracts, once read.
 	osmIndex   []osmRegion
 	osmIndexMu sync.Mutex

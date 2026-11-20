@@ -1,4 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
+import { requestJson } from "@/api/request";
 import { transitJson } from "@/api/transit-log";
 import type { TripTransitLine } from "@/api/trip-lines";
 
@@ -26,6 +27,12 @@ export interface TransitLine extends TripTransitLine {
  */
 export type RouteSource = "overpass" | "transitland" | "mlit" | "osmrail";
 
+/**
+ * Where one look-up goes: the source picked, or a country's OpenStreetMap bus map ("osmbus", read
+ * from the same download as its rail map) for a bus while a rail map is picked.
+ */
+export type LookupSource = RouteSource | "osmbus";
+
 /** What a hop's look-ups ask about: how it was travelled, and its first and last spots. */
 export interface HopAsk {
   mode: string;
@@ -37,7 +44,7 @@ export interface HopAsk {
  * The query string that asks Transitland or a rail map for a line from there, or nothing for
  * OpenStreetMap's Overpass servers.
  */
-function sourceParam(source: RouteSource | "named" | undefined): string {
+function sourceParam(source: LookupSource | "named" | undefined): string {
   return source && source !== "overpass" ? `&source=${source}` : "";
 }
 
@@ -51,7 +58,7 @@ function spotParams({ from, to }: Pick<HopAsk, "from" | "to">): string {
  * the Overpass API (which the backend asks at most once a second), from Transitland, or from Japan's
  * rail map.
  */
-export function transitLinesQuery(ask: HopAsk | undefined, source: RouteSource) {
+export function transitLinesQuery(ask: HopAsk | undefined, source: LookupSource) {
   return queryOptions({
     queryKey: ["transit", "lines", ask, source],
     // Only run once the hop's kind is known; until then the query is turned off.
@@ -143,4 +150,32 @@ export function fetchTrack({ id, source }: TripTransitLine, from: Spot, to: Spot
   return transitJson<Track>(
     `/api/transit/lines/${id}/track?${spotParams({ from, to })}${sourceParam(source)}`,
   );
+}
+
+/** A rail or bus map being downloaded or read, as `GET /api/transit/downloads` lists it. */
+export interface MapDownload {
+  /** The map's name, such as "OpenStreetMap's bus map of South Korea". */
+  map: string;
+  /** What it's doing: reading the copy on this computer, downloading, or reading the download. */
+  step: "opening" | "downloading" | "reading";
+  /** How much of its file has been downloaded, in bytes. */
+  bytes: number;
+  /** Its file's size in bytes; left out while it isn't known. */
+  total?: number;
+  /** How long it has been loading. */
+  seconds: number;
+}
+
+/**
+ * The rail and bus maps being downloaded or read, asked every second while active (while a look-up
+ * runs), so the page can show how far a first download has got.
+ */
+export function transitDownloadsQuery(active: boolean) {
+  return queryOptions({
+    queryKey: ["transit", "downloads"],
+    queryFn: () => requestJson<MapDownload[]>("/api/transit/downloads"),
+    enabled: active,
+    refetchInterval: active ? 1000 : false,
+    retry: false,
+  });
 }

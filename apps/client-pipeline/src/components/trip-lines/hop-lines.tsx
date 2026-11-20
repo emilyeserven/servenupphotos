@@ -1,5 +1,5 @@
 import { Search, X } from "lucide-react";
-import type { HopAsk, Spot, TransitLine } from "@/api/transit";
+import type { HopAsk, LookupSource, Spot, TransitLine } from "@/api/transit";
 import type { TripPoint, TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { HopEndsPicker } from "@/components/trip-lines/hop-ends";
@@ -7,6 +7,7 @@ import { HopStations } from "@/components/trip-lines/hop-stations";
 import { HopRideRows } from "@/components/trip-lines/hop-ride-rows";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
 import { LookupKind } from "@/components/trip-lines/lookup-kind";
+import { MapDownloads } from "@/components/trip-lines/map-downloads";
 import { NamedLine } from "@/components/trip-lines/named-line";
 import { RouteSourcePicker } from "@/components/trip-lines/route-source-picker";
 import { gapInfo } from "@/components/trip-lines/modes";
@@ -128,7 +129,8 @@ function HopRow({ hop, ends, onRide, onName }: HopRowProps) {
           <NamedLine onName={(name) => (onName(name), setFinding(false))} />
         </>
       )}
-      <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines)} />
+      <MapDownloads active={busy} />
+      <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines, found.source)} />
     </div>
   );
 }
@@ -175,13 +177,26 @@ function hasEnds({ board, alight }: HopEnds): boolean {
 }
 
 /** What the look-up is doing, or what it found when it found none. */
-function findNote(finding: boolean, lines: { isFetching: boolean; data?: TransitLine[] }): string {
+function findNote(
+  finding: boolean,
+  lines: { isFetching: boolean; data?: TransitLine[] },
+  source: LookupSource,
+): string {
   if (!finding) return "";
-  return lines.isFetching ? ASKING : noneNote(lines.data);
+  return lines.isFetching ? ASKING[source] : noneNote(lines.data);
 }
 
-/** Said while the look-up runs, since the public servers can be slow. */
-const ASKING = "Looking up lines. OpenStreetMap's servers can take up to a minute when busy.";
+/**
+ * Said while the look-up runs, by where it looks: the public servers can be slow, and a map's
+ * first look-up downloads it, which shows its own progress above.
+ */
+const ASKING: Record<LookupSource, string> = {
+  overpass: "Looking up lines on OpenStreetMap's servers, which can take up to a minute when busy.",
+  transitland: "Looking up lines on Transitland.",
+  mlit: "Looking up lines on Japan's rail map.",
+  osmrail: "Looking up lines on OpenStreetMap's rail map.",
+  osmbus: "Looking up buses on OpenStreetMap's bus map.",
+};
 
 /** Said when the look-up found no line. */
 function noneNote(lines: TransitLine[] | undefined): string {
