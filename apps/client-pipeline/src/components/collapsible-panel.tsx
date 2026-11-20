@@ -31,8 +31,3 @@ export function CollapsiblePanel({
     </details>
   );
 }
-
-/** "1 photo" or "3 photos": n with the noun, plural unless n is 1. */
-export function countOf(n: number, noun: string): string {
-  return `${n} ${n === 1 ? noun : `${noun}s`}`;
-}

@@ -15,6 +15,7 @@ import { useDropTarget } from "@/hooks/use-drop-target";
 import { AnchorOutline } from "@/components/grid-anchor";
 import type { AnchorPlace } from "@/lib/grid-anchors";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 /** How many tiles the preview shows before **Show more**: four rows of three. */
 const PAGE = 12;
@@ -82,13 +83,13 @@ export function InstagramFeedPreview(props: InstagramFeedPreviewProps) {
       </div>
       <p className="text-muted-foreground text-sm">
         Your Instagram grid as it looks at the end of {longDayFormat.format(parseIsoDate(asOf))}:{" "}
-        {feed.length} {feed.length === 1 ? "post" : "posts"}, newest first, from the calendar and
-        the Instagram posts under <strong>Social media posts</strong>, with changes not committed
-        yet. Days marked <strong>Not Stored</strong> on the calendar hold a tile of their own.
-        Photos that post on that day are ringed. The arrow buttons, or the left and right arrow
-        keys, step a day at a time. Drag a calendar photo onto another tile to swap their days. Once
-        there&apos;s a Grid Anchor, the calendar&apos;s photos are outlined in rows of 3 counted
-        from it, dark and light blue by turns, as a reference for lining up rows.
+        {count(feed.length, "post")}, newest first, from the calendar and the Instagram posts under{" "}
+        <strong>Social media posts</strong>, with changes not committed yet. Days marked{" "}
+        <strong>Not Stored</strong> on the calendar hold a tile of their own. Photos that post on
+        that day are ringed. The arrow buttons, or the left and right arrow keys, step a day at a
+        time. Drag a calendar photo onto another tile to swap their days. Once there&apos;s a Grid
+        Anchor, the calendar&apos;s photos are outlined in rows of 3 counted from it, dark and light
+        blue by turns, as a reference for lining up rows.
       </p>
       <FeedGrid
         feed={feed.slice(0, shown)}

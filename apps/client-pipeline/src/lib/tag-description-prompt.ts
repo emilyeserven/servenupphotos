@@ -1,6 +1,7 @@
 import { type Group, groupId } from "@/api/organize";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { parsePastedJson } from "@/lib/pasted-json";
+import { count } from "@portfolio/lib/words";
 
 /** How many tags with descriptions the prompt shows as examples of the style to write in. */
 const STYLE_EXAMPLES = 8;
@@ -49,7 +50,7 @@ function usageLines(id: string, photos: CombinedPhoto[]): string[] {
   if (tagged.length === 0) return ["  - No photos have it yet."];
   const others = tagged.flatMap(photoTags).filter((tag) => tag !== id);
   return [
-    `  - On ${tagged.length} photo${tagged.length === 1 ? "" : "s"}`,
+    `  - On ${count(tagged.length, "photo")}`,
     ...listLine("Taken in", mostCommon(tagged.map(photoCountry), 3)),
     ...listLine("Often with", mostCommon(others, 6)),
   ];

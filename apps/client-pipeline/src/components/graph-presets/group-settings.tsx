@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { canonicalJson } from "@/lib/combined";
 import { GraphControls } from "@portfolio/components/graph-builder/graph-controls";
 import type { GraphPresetFile, PresetGraph } from "@portfolio/lib/graph-presets";
+import { count } from "@portfolio/lib/words";
 
 /** The preset with the change made over its graph, keeping its other settings. */
 function changedPreset(preset: GraphPresetFile, change: Partial<PresetGraph>): GraphPresetFile {
@@ -136,6 +137,6 @@ function SaveRow({ presets, already, touched, saving, onSave, onClear }: SaveRow
 }
 
 /** The save button's text, such as Save 3 presets. */
-function saveText(count: number): string {
-  return `Save ${count} ${count === 1 ? "preset" : "presets"}`;
+function saveText(n: number): string {
+  return `Save ${count(n, "preset")}`;
 }

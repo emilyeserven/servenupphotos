@@ -9,6 +9,7 @@ import { useDiscardImages } from "@/hooks/use-discard-images";
 import { type ComparePhoto, comparePhotoName } from "@/lib/compare-groups";
 import { offlineImageUrl, squareImages } from "@/lib/offline-thumbnails";
 import { notChosenIn, UNSELECTED_IMAGES, type Unselected, unselectedOf } from "@/lib/unselected";
+import { count } from "@portfolio/lib/words";
 
 /**
  * Unselected Photos: the photos that weren't chosen when a compare group was finished, each with why,
@@ -30,8 +31,8 @@ export function UnselectedPhotos({
       <header>
         <h2 className="text-xl font-semibold">Unselected Photos</h2>
         <p className="text-muted-foreground text-sm">
-          {unselected.length === 1 ? "1 photo" : `${unselected.length} photos`} not chosen in a
-          compare group. Commit leaves them off the portfolio.
+          {count(unselected.length, "photo")} not chosen in a compare group. Commit leaves them off
+          the portfolio.
         </p>
       </header>
       <ul className="grid gap-4 lg:grid-cols-2">

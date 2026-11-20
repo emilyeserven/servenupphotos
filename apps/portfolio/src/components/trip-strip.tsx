@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { StripPhoto } from "@/components/album-strip";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 import { pageDates, pageTitle, type TripPage } from "@/lib/trip-pages";
+import { count } from "@/lib/words";
 
 /** How many photos stand for a Trip on the Albums page, as for an album. */
 const PREVIEW_COUNT = 5;
@@ -35,7 +36,7 @@ export function TripStrip({
           </Link>
         </h3>
         <p className="text-sm text-muted-foreground">
-          {pageDates(page)}. {photos.length} {photos.length === 1 ? "photo" : "photos"}.
+          {pageDates(page)}. {count(photos.length, "photo")}.
         </p>
       </div>
       <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-3 sm:-mx-6 sm:px-6">

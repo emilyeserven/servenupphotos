@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { type Group, deleteAlbumMutation, groupLabel, organizeQuery } from "@/api/organize";
 import { photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
 import { ConfirmDeleteCard } from "@/components/confirm-delete-card";
+import { count } from "@portfolio/lib/words";
 
 /** Deletes an album, then reads the albums and saved photos again and goes back to the Albums list. */
 function useAlbumDelete() {
@@ -72,7 +73,7 @@ function SubAlbumsLine({ album, albums }: Omit<AlbumDeleteCardProps, "photoCount
 }
 
 function movesText(n: number): string {
-  return n === 1 ? "1 album inside it moves" : `${n} albums inside it move`;
+  return count(n, "album inside it moves", "albums inside it move");
 }
 
 /** The portfolio's spotlight spots left without an album; nothing when it shows in none. */
@@ -86,9 +87,9 @@ function SpotlightLine({ zones }: { zones: string[] }) {
   );
 }
 
-function photosText(count?: number): string {
-  if (count === undefined) return "Every photo that lists it is taken out of it.";
-  if (count === 0) return "No photos list it.";
-  const photos = count === 1 ? "1 photo is" : `${count} photos are`;
+function photosText(n?: number): string {
+  if (n === undefined) return "Every photo that lists it is taken out of it.";
+  if (n === 0) return "No photos list it.";
+  const photos = count(n, "photo is", "photos are");
   return `${photos} taken out of it, keeping their other albums.`;
 }

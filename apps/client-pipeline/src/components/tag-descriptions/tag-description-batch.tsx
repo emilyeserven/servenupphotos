@@ -13,6 +13,7 @@ import {
   readTagDescriptions,
   tagDescriptionPrompt,
 } from "@/lib/tag-description-prompt";
+import { count } from "@portfolio/lib/words";
 
 interface TagDescriptionBatchProps {
   /** The tags to describe this time. */
@@ -60,7 +61,7 @@ function BatchPrompt({ batch, tags, photos, save }: TagDescriptionBatchProps) {
         ))}
       </ul>
       <CopyPromptButton
-        label={`Copy the description prompt for ${batch.length === 1 ? "1 tag" : `${batch.length} tags`}`}
+        label={`Copy the description prompt for ${count(batch.length, "tag")}`}
         disabled={false}
         prompt={() => tagDescriptionPrompt(batch, tags, photos)}
       />

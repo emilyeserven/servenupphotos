@@ -96,7 +96,7 @@ function labelsText(trip: Trip): string {
 /** "2 legs"; "No legs" with none. */
 function legsText(n: number): string {
   if (n === 0) return "No legs";
-  return n === 1 ? "1 leg" : `${n} legs`;
+  return count(n, "leg");
 }
 
 interface TripCardProps {

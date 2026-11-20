@@ -13,6 +13,7 @@ import {
   type ShownPhotoSearch,
   useShownPhoto,
 } from "@/lib/shown-photo";
+import { count } from "@/lib/words";
 
 interface LikesSearch extends ShownPhotoSearch {
   /** Set to `text` when the text to send is just the ids, for Messenger or a text message. Left out for Discord. */
@@ -67,7 +68,7 @@ function LikesPage() {
           My Likes
         </h1>
         <p className="text-sm text-muted-foreground">
-          {liked.length} {liked.length === 1 ? "photo" : "photos"}, saved in this browser
+          {count(liked.length, "photo")}, saved in this browser
         </p>
       </header>
       <div className="mx-auto w-full max-w-6xl px-1 sm:px-2">

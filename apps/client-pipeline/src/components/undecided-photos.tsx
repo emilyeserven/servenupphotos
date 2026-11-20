@@ -3,11 +3,12 @@ import { CircleHelpIcon, ImageIcon, PencilIcon, Undo2Icon } from "lucide-react";
 import type { InFlightFileRead, InFlightImages } from "@/api/photos";
 import { SeeInGallery } from "@/components/gallery/see-in-gallery";
 import { CompareButton } from "@/components/compare/compare-button";
-import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
+import { CollapsiblePanel } from "@/components/collapsible-panel";
 import { Button } from "@/components/ui/button";
 import { squareImages } from "@/lib/offline-thumbnails";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import { UNDECIDED } from "@/lib/photo-fields";
+import { count } from "@portfolio/lib/words";
 
 /** A photo file the Undecided mark is set on. */
 interface MarkedFile {
@@ -90,7 +91,7 @@ export function UndecidedQueue({
 }) {
   if (files.length === 0) return null;
   return (
-    <CollapsiblePanel title={title} count={`${countOf(files.length, "photo")} set aside`}>
+    <CollapsiblePanel title={title} count={`${count(files.length, "photo")} set aside`}>
       <p className="text-muted-foreground text-sm">
         Photos set aside. They stay saved as drafts the portfolio doesn&apos;t show, even with a
         title, and Next untitled photo skips them. Moving one back, or naming an untitled one,

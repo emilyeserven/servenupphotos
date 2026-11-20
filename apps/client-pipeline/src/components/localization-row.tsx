@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import type { LocalizationRow } from "@/lib/place-seeds";
+import { count } from "@portfolio/lib/words";
 
 /** The three fields a localization notes, as the JSON names them, with their labels. */
 export const FIELDS = [
@@ -161,7 +162,7 @@ function FieldInput({ id, field, value, disabled, onChange }: FieldInputProps) {
 }
 
 function RowName({ row }: { row: LocalizationRow }) {
-  const photos = `${row.photos} photo${row.photos === 1 ? "" : "s"}`;
+  const photos = count(row.photos, "photo");
   return (
     <div className="min-w-0 self-center">
       <div className="truncate font-medium">{row.name}</div>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { moved, photoId } from "@/lib/album-photo-order";
 import { EMPTY_ROW, MAX_ROW_PHOTOS, emptyRow, placedIds, withRow } from "@/lib/album-layout-editor";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { count } from "@portfolio/lib/words";
 
 interface LayoutRowsProps {
   layout: AlbumRow[];
@@ -56,10 +57,10 @@ export function LayoutRows({ layout, photos, byId, onChange }: LayoutRowsProps) 
 }
 
 /** How the portfolio shows the photos no row has. */
-function UnplacedNote({ count, rows }: { count: number; rows: number }) {
+function UnplacedNote({ count: n, rows }: { count: number; rows: number }) {
   if (rows === 0) return "With no rows, it shows one photo after another, in the album's order.";
-  if (count === 0) return "Every photo is in a row.";
-  const photos = count === 1 ? "1 photo isn't" : `${count} photos aren't`;
+  if (n === 0) return "Every photo is in a row.";
+  const photos = count(n, "photo isn't", "photos aren't");
   return `${photos} in a row; the page shows them after the rows, one after another.`;
 }
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { fileName } from "@/components/edit-in-flight/photo-json";
+import { count } from "@portfolio/lib/words";
 
 /** What deleting a photo did, shown on the Photo page in place of its editor. */
 export function PhotoDeleted({ result }: { result: DeletePhotoResult }) {
@@ -53,10 +54,7 @@ function OtherFiles({ paths }: { paths: string[] }) {
     return <p className="text-muted-foreground">Nothing else pointed at it.</p>;
   return (
     <div className="flex flex-col gap-1">
-      <p>
-        Took it out of {paths.length === 1 ? "1 other file" : `${paths.length} other files`}, also
-        waiting for Commit:
-      </p>
+      <p>Took it out of {count(paths.length, "other file")}, also waiting for Commit:</p>
       <ul className="text-muted-foreground list-disc pl-5 font-mono text-xs">
         {paths.map((path) => (
           <li key={path}>{path.split("/").slice(-2).join("/")}</li>

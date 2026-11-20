@@ -14,6 +14,7 @@ import {
 import { useHighlightedCode } from "@/hooks/use-highlighted-code";
 import { type DiffRow, diffLines, foldUnchanged } from "@/lib/line-diff";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 type View = "changes" | "file";
 
@@ -110,11 +111,11 @@ function DiffRowLine({
 }
 
 /** Stands in for a run of unchanged lines between hunks. */
-function FoldedLines({ count }: { count: number }) {
+function FoldedLines({ count: n }: { count: number }) {
   return (
     <CodeBlockLine className="text-muted-foreground bg-foreground/5 my-1 font-sans italic select-none">
       <LineNumber />
-      {count === 1 ? "1 unchanged line" : `${count} unchanged lines`}
+      {count(n, "unchanged line")}
     </CodeBlockLine>
   );
 }

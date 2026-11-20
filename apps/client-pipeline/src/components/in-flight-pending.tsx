@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ClockIcon } from "lucide-react";
 import type { InFlightResponse } from "@/api/photos";
 import { CommitButton } from "@/components/all-photos-rebuild";
+import { count } from "@portfolio/lib/words";
 
 /** A file on Photos in Flight: its name, linked to its page on GitHub once it's committed there. */
 export function FileLink({ fileUrl, name }: { fileUrl: string; name: string }) {
@@ -59,8 +60,8 @@ function pendingCount(data: InFlightResponse): number {
  * which opens one, or how to start.
  */
 export function NoPullRequest({ data }: { data: InFlightResponse }) {
-  const count = pendingCount(data);
-  if (count === 0) {
+  const n = pendingCount(data);
+  if (n === 0) {
     return (
       <p className="text-muted-foreground">
         No open pull request titled “Add photo data”, and nothing is waiting for Commit. Saving a
@@ -75,8 +76,8 @@ export function NoPullRequest({ data }: { data: InFlightResponse }) {
   return (
     <div className="flex flex-col items-start gap-2">
       <p className="text-amber-700 dark:text-amber-400">
-        {count === 1 ? "1 file is" : `${count} files are`} waiting for Commit, which opens the “Add
-        photo data” pull request with them. Nothing is on GitHub until then.
+        {count(n, "file is", "files are")} waiting for Commit, which opens the “Add photo data” pull
+        request with them. Nothing is on GitHub until then.
       </p>
       <CommitButton />
     </div>

@@ -9,6 +9,7 @@ import {
 import { SiteHomeLink } from "@/components/site-home-link";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
+import { count } from "@/lib/words";
 
 interface RawVsEditedSearch extends ShownPhotoSearch {
   /** How the open photo is compared. Left out for the default, the slider. */
@@ -49,8 +50,7 @@ function RawVsEditedPage() {
           Raw vs Edited
         </h1>
         <p className="text-sm text-muted-foreground">
-          {compared.length} {compared.length === 1 ? "photo" : "photos"} next to the unedited
-          original, straight from the camera
+          {count(compared.length, "photo")} next to the unedited original, straight from the camera
         </p>
       </header>
       <div className="mx-auto w-full max-w-6xl px-1 sm:px-2">

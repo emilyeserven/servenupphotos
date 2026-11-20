@@ -60,6 +60,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { currentPhotos, photoCounts } from "@/lib/group-photos";
 import { useCombinedData } from "@/stores/combined-data";
+import { count } from "@portfolio/lib/words";
 
 /** One album's or tag's page: what it is, where an album sits, and the photos in it. */
 export function GroupDetailPage({ kind, id }: { kind: GroupKind; id: string }) {
@@ -316,9 +317,9 @@ function SubAlbumRow({ album, depth, count }: { album: Group; depth: number; cou
   );
 }
 
-function photoCountText(count?: number): string {
-  if (count === undefined) return "…";
-  return count === 1 ? "1 photo" : `${count} photos`;
+function photoCountText(n?: number): string {
+  if (n === undefined) return "…";
+  return count(n, "photo");
 }
 
 function GroupLink({ kind, group }: { kind: ParentKind; group: Group }) {

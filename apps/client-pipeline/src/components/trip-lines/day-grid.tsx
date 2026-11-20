@@ -5,6 +5,7 @@ import { LinePreview } from "@/components/trip-lines/line-preview";
 import type { TripDay } from "@/lib/trip-days";
 import { type DayFilter, useTripLinesSearch } from "@/lib/trip-lines-search";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 /**
  * Whether a day's line is marked by hand, marked by hand but out of date with the day's photos,
@@ -160,7 +161,7 @@ function previewNote(line: TripLine | undefined): string {
 /** A planned day's note: no photos yet, and how many trip stops it has. */
 function plannedNote(line: TripLine): string {
   const stops = line.visits?.length ?? 0;
-  return `Planned: no photos yet, ${stops} trip ${stops === 1 ? "stop" : "stops"}`;
+  return `Planned: no photos yet, ${count(stops, "trip stop")}`;
 }
 
 /** Whether the line has segments to draw, by hand or as last worked out automatically. */

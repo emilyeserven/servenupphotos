@@ -196,7 +196,7 @@ function ChoiceTile({ photo, picked, disabled, onToggle }: ChoiceTileProps) {
 function otherAlbumsText(photo: SavedPhoto): string {
   const where = photo.published ? "" : "In the batch · ";
   const n = photo.albums.length;
-  return `${where}${n === 0 ? "No albums" : `${n} ${n === 1 ? "album" : "albums"}`}`;
+  return `${where}${n === 0 ? "No albums" : count(n, "album")}`;
 }
 
 /** What adding photos to the album did, under its photos. */

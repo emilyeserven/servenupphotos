@@ -4,6 +4,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { formatValue, type Measure, type ScatterData, type ScatterPoint } from "@/lib/graph-data";
 import type { GraphPick } from "@/lib/graph-pick";
 import { cn } from "@/lib/utils";
+import { count } from "@/lib/words";
 
 /** How many x values fit before their names are written sideways. */
 const UPRIGHT_LABELS = 8;
@@ -153,7 +154,7 @@ const PICKED_CLASS = { true: "ring-2 ring-foreground", false: "opacity-35" };
  * such as "12 photos, 8.5% of 2024's".
  */
 function cellText(cell: Pick<ScatterPoint, "count" | "value">, measure: Measure, outOf: string) {
-  const photos = `${cell.count.toLocaleString()} ${cell.count === 1 ? "photo" : "photos"}`;
+  const photos = count(cell.count, "photo");
   if (measure === "count") return photos;
   return `${photos}, ${formatValue(cell.value, measure)} of ${outOf}'s`;
 }

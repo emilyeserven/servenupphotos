@@ -1,12 +1,13 @@
 import { useState } from "react";
 import type { InFlightGroupFile, InFlightGroups, InFlightResponse } from "@/api/photos";
-import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
+import { CollapsiblePanel } from "@/components/collapsible-panel";
 import { fileName } from "@/components/in-flight-checks";
 import { AllPhotosMark, FileJson } from "@/components/in-flight-file-json";
 import { FileLink, FileStatus } from "@/components/in-flight-pending";
 import { GROUP_KINDS, KIND_INFO } from "@/lib/data-kinds";
 import { lineChanges } from "@/lib/json-changes";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 interface GroupFilesProps {
   title: string;
@@ -25,7 +26,7 @@ interface GroupFilesProps {
 function GroupFiles({ title, groups, ...props }: GroupFilesProps) {
   if (groups.files.length === 0) return null;
   return (
-    <CollapsiblePanel title={title} count={countOf(groups.files.length, "file")}>
+    <CollapsiblePanel title={title} count={count(groups.files.length, "file")}>
       <GroupPanels groups={groups} {...props} />
     </CollapsiblePanel>
   );

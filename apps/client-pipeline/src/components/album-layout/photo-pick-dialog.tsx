@@ -15,6 +15,7 @@ import {
 import { photoId } from "@/lib/album-photo-order";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 interface PhotoPickDialogProps {
   /** The button's text, such as "Add photos". */
@@ -75,9 +76,9 @@ export function PhotoPickDialog({
   );
 }
 
-function pickText(count: number): string {
-  if (count === 0) return "Pick photos";
-  return count === 1 ? "Add 1 photo" : `Add ${count} photos`;
+function pickText(picked: number): string {
+  if (picked === 0) return "Pick photos";
+  return `Add ${count(picked, "photo")}`;
 }
 
 interface PickGridProps {

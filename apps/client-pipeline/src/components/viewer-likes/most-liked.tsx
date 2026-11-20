@@ -3,6 +3,7 @@ import { type ViewerLikes, likeCounts } from "@/api/viewer-likes";
 import type { CombinedData } from "@/api/photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { shownPhotos } from "@/lib/place-seeds";
+import { count } from "@portfolio/lib/words";
 
 /** How many of the most liked photos are listed. */
 const SHOWN = 30;
@@ -71,26 +72,26 @@ function LikesSummary({
   photos: number;
   missing: number;
 }) {
-  const people = viewers.length === 1 ? "1 person" : `${viewers.length} people`;
+  const people = count(viewers.length, "person", "people");
   const note =
     missing > 0 ? ` ${missing} liked IDs don't match a saved photo, so they're left out.` : "";
   return (
     <>
-      {photos} {photos === 1 ? "photo" : "photos"} liked by {people}, each counted once per person.
+      {count(photos, "photo")} liked by {people}, each counted once per person.
       {note}
     </>
   );
 }
 
 /** A heart and how many people liked the photo. */
-export function LikeCount({ count }: { count: number }) {
+export function LikeCount({ count: n }: { count: number }) {
   return (
     <span
       className="text-muted-foreground flex shrink-0 items-center gap-1 text-xs"
-      title={`${count} ${count === 1 ? "like" : "likes"}`}
+      title={count(n, "like")}
     >
       <HeartIcon className="size-3.5 fill-rose-500 text-rose-500" aria-hidden />
-      {count}
+      {n}
     </span>
   );
 }

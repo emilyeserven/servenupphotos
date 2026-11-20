@@ -20,6 +20,7 @@ import {
   socialPlatforms,
   statusLabels,
 } from "@/lib/social-posts";
+import { count } from "@portfolio/lib/words";
 
 interface SocialPostsCardProps {
   value: SocialPostDraft[];
@@ -233,13 +234,9 @@ function SocialPostFields({
 
 /** How many hashtags the field holds, once it holds any. */
 function HashtagCount({ typed }: { typed: string }) {
-  const count = parseHashtags(typed).length;
-  if (count === 0) return null;
-  return (
-    <p className="text-muted-foreground text-xs">
-      {count} {count === 1 ? "hashtag" : "hashtags"}
-    </p>
-  );
+  const n = parseHashtags(typed).length;
+  if (n === 0) return null;
+  return <p className="text-muted-foreground text-xs">{count(n, "hashtag")}</p>;
 }
 
 interface FieldProps {

@@ -6,7 +6,7 @@ import {
   publishedPhotosQuery,
   type PublishedResponse,
 } from "@/api/photos";
-import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
+import { CollapsiblePanel } from "@/components/collapsible-panel";
 import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-sort";
 import { DraftsSkeleton } from "@/components/in-flight-loading";
 import { MissingImageDrafts } from "@/components/missing-image-drafts";
@@ -16,6 +16,7 @@ import { useRevealed } from "@/hooks/use-revealed";
 import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
 import { editedData, undecidedPaths } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
+import { count } from "@portfolio/lib/words";
 
 interface SavedDraftsProps {
   /** Whether photos are in flight too: these drafts' Undecided panel is named after the branch to tell it apart from theirs. */
@@ -137,7 +138,7 @@ function DraftList({ files, data }: { files: PublishedFile[]; data: PublishedRes
   const [revealedCount, revealedEnd] = useRevealed(files.length);
   if (files.length === 0) return null;
   return (
-    <CollapsiblePanel title="Drafts" count={countOf(files.length, "draft")} open>
+    <CollapsiblePanel title="Drafts" count={count(files.length, "draft")} open>
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
         {files.slice(0, revealedCount).map((file) => (
           <DraftTile

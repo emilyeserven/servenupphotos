@@ -10,6 +10,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cropStyle, moveCrop, wholeCrop } from "@/lib/gear-crop";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 /** A checkerboard, so a transparent background shows as one. */
 const CHECKER = {
@@ -226,12 +227,12 @@ function PickMarks({ editing, changed }: { editing: boolean; changed: boolean })
 }
 
 /** A note on the pictures saved before originals were kept, which can't be sized. */
-function MissingNote({ count }: { count: number }) {
-  if (count === 0) return null;
+function MissingNote({ count: n }: { count: number }) {
+  if (n === 0) return null;
   return (
     <p className="text-muted-foreground mt-2 text-xs">
-      {count} {count === 1 ? "picture was" : "pictures were"} saved before originals were kept and
-      can't be sized from full size; upload {count === 1 ? "it" : "them"} again to size.
+      {count(n, "picture was", "pictures were")} saved before originals were kept and can't be sized
+      from full size; upload {n === 1 ? "it" : "them"} again to size.
     </p>
   );
 }

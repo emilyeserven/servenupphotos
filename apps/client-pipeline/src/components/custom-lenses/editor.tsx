@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
 import { Textarea } from "@/components/ui/textarea";
 import { canonicalJson } from "@/lib/combined";
+import { count } from "@portfolio/lib/words";
 
 /** The lens as typed, its numbers still text. */
 interface LensDraft {
@@ -126,7 +127,7 @@ function Usage({ lens, photos }: { lens?: CustomLens; photos: number }) {
   if (!lens) return <>Pick it on the Photo page once it&apos;s saved.</>;
   return (
     <>
-      {photos} saved {photos === 1 ? "photo has" : "photos have"} it. Changes reach them through
+      {count(photos, "saved photo")} {photos === 1 ? "has" : "have"} it. Changes reach them through
       Update Data&apos;s camera overrides, or the Photo page.
     </>
   );
