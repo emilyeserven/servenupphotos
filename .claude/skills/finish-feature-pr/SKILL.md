@@ -18,27 +18,20 @@ cd apps/be-pipeline && golangci-lint run     # when Go changed
 pnpm --filter @servenup/portfolio test       # when apps/portfolio/map-preview changed
 ```
 
-- `pnpm fmt` fixes formatting. `fallow` fails on dead exports, duplicated code and functions with cyclomatic
-  complexity over 4 (every `?:`, `??`, `?.`, `&&` and `||` counts): split the function, don't add an ignore.
+- `pnpm fmt` fixes formatting. `fallow` fails on dead exports, duplicated code and functions with cyclomatic complexity over 4 (every `?:`, `??`, `?.`, `&&` and `||` counts): split the function, don't add an ignore.
 - Never edit `apps/client-pipeline/src/routeTree.gen.ts` or `components/ui` by hand; Vite regenerates the first.
 
 ## 2. Conventions
 
-- Every exported function, type and field has a doc comment in plain sentences saying what it is or does, in
-  the user's words ("the photo data pull request", "Square Thumbnail"), at the density of the file around it.
-- Go errors are `writeError(w, status, message)` with a message a user can read; GitHub errors the user should
-  see are `*github.PublishError`.
-- New UI went into a new component file rather than growing `in-flight.tsx`, `instagram-calendar.tsx`,
-  `organize-page.tsx` or `group-detail.tsx`.
-- A pipeline mutation that saves a change waiting for Commit has `meta: { saves: true }`; a new `/api` route has
-  a fixture in `scripts/fixtures/<area>.mjs`.
+- Every exported function, type and field has a doc comment in plain sentences saying what it is or does, in the user's words ("the photo data pull request", "Square Thumbnail"), at the density of the file around it.
+- Go errors are `writeError(w, status, message)` with a message a user can read; GitHub errors the user should see are `*github.PublishError`.
+- New UI went into a new component file rather than growing `in-flight.tsx`, `instagram-calendar.tsx`, `organize-page.tsx` or `group-detail.tsx`.
+- A pipeline mutation that saves a change waiting for Commit has `meta: { saves: true }`; a new `/api` route has a fixture in `scripts/fixtures/<area>.mjs`.
 
 ## 3. Docs
 
 - A change in behavior updates its `docs/<feature>.md`.
-- A new feature gets a new `docs/<feature>.md` that starts with its title, a blank line, then a sentence saying
-  what the feature is and where it lives. No list names the docs. Backend ideas get a short
-  "> **Frontend analogy:**" note.
+- A new feature gets a new `docs/<feature>.md` that starts with its title, a blank line, then a sentence saying what the feature is and where it lives. No list names the docs. Backend ideas get a short "> **Frontend analogy:**" note.
 - Touch the README itself only for setup, commands or deployment.
 
 ## 4. Screenshots
@@ -58,9 +51,6 @@ pnpm shot pipeline /albums --fixtures mine.mjs     # export default (fixtures) =
 
 ## 5. The pull request
 
-- Title: one sentence describing the change as the user sees it, such as "Show photo counts on the portfolio
-  map". Pull requests are squash-merged, so the title becomes the commit on `main`.
-- Body: what changed and why, the screenshots, and what was checked, ending with the attribution lines the
-  session gave you, when it gave any.
-- Only the pipeline's Commit writes photo data to GitHub: a pull request from here never adds to the
-  **Add photo data** pull request or changes `apps/portfolio/src/data`.
+- Title: one sentence describing the change as the user sees it, such as "Show photo counts on the portfolio map". Pull requests are squash-merged, so the title becomes the commit on `main`.
+- Body: what changed and why, the screenshots, and what was checked, ending with the attribution lines the session gave you, when it gave any.
+- Only the pipeline's Commit writes photo data to GitHub: a pull request from here never adds to the **Add photo data** pull request or changes `apps/portfolio/src/data`.

@@ -1,4 +1,4 @@
-// Checks that every docs/<name>.md says what it is about at its top: a `# Title` on the first line,
+// Checks that every doc in docs/, and in a folder of it such as docs/trip-lines/, says what it is about at its top: a `# Title` on the first line,
 // a blank line, then a sentence that says what the feature is (`.claude/rules/docs.md`). The docs
 // folder is its own index, so a new doc edits no shared list. Exits 1 and lists each problem.
 import { readdir, readFile } from "node:fs/promises";
@@ -18,7 +18,10 @@ function problems(name, text) {
   return [];
 }
 
-const names = (await readdir(path.join(root, "docs"))).filter((n) => n.endsWith(".md"));
+const entries = await readdir(path.join(root, "docs"), { recursive: true, withFileTypes: true });
+const names = entries
+  .filter((e) => e.isFile() && e.name.endsWith(".md"))
+  .map((e) => path.relative(path.join(root, "docs"), path.join(e.parentPath, e.name)));
 const found = (
   await Promise.all(
     names.map(async (name) =>

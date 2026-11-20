@@ -1,86 +1,46 @@
 # Photo Viewer
 
-Clicking a photo on the portfolio's Grid (any view), Timeline or Map opens it in the photo viewer, a full-window overlay
-with the photo as large as fits, its title, comment, settings, camera, date and place above it.
+Clicking a photo on the portfolio's Grid (any view), Timeline or Map opens it in the photo viewer, a full-window overlay with the photo as large as fits, its title, comment, settings, camera, date and place above it.
 
-The open photo is kept in the URL by its ID (`?photo=12`, the `id` in its JSON; see
-[Photo data](data-model.md#photo-ids)), so a link opens the page with that photo showing, next to the page's filters and
-settings. Moving to another photo and closing the viewer replace the URL rather than adding to the history, so **Back**
-leaves the page. The menu's links to the other views don't carry it. A photo opened from a link on the Map has no
-neighbors, as the group it was opened from isn't in the URL.
+The open photo is kept in the URL by its ID (`?photo=12`, the `id` in its JSON; see [Photo data](data-model.md#photo-ids)), so a link opens the page with that photo showing, next to the page's filters and settings. Moving to another photo and closing the viewer replace the URL rather than adding to the history, so **Back** leaves the page. The menu's links to the other views don't carry it. A photo opened from a link on the Map has no neighbors, as the group it was opened from isn't in the URL.
 
-For a photo the Map can place, from its EXIF GPS position or one of its places, **View on map**, at the bottom of the tooltip that hovering its place shows, opens
-the Map centered on it (`/map?lat=…&lng=…&zoom=…`), at zoom 17, a few streets around it, or zoom 15 when its position
-comes from a place and is only near where it was taken. The location, album and tag filters go along; the viewer closes.
-On the Map itself, the map flies there. It's `ViewOnMapLink` in `apps/portfolio/src/components/view-on-map-link.tsx`.
+For a photo the Map can place, from its EXIF GPS position or one of its places, **View on map**, at the bottom of the tooltip that hovering its place shows, opens the Map centered on it (`/map?lat=…&lng=…&zoom=…`), at zoom 17, a few streets around it, or zoom 15 when its position comes from a place and is only near where it was taken. The location, album and tag filters go along; the viewer closes. On the Map itself, the map flies there. It's `ViewOnMapLink` in `apps/portfolio/src/components/view-on-map-link.tsx`.
 
-> **Frontend analogy:** the open photo is router state, not component state: `useShownPhoto` in
-> `apps/portfolio/src/lib/shown-photo.ts` reads `?photo=` with `useSearch` and sets it with `navigate`, like a modal
-> route.
+> **Frontend analogy:** the open photo is router state, not component state: `useShownPhoto` in `apps/portfolio/src/lib/shown-photo.ts` reads `?photo=` with `useSearch` and sets it with `navigate`, like a modal route.
 
-The **‹** and **›** buttons over the photo's left and right edges, which show while the pointer is over the photo, the **Left** and **Right** arrow keys, and swiping the photo right or left on a touch screen, move to the previous and next
-photo in the order the page shows them (touch screens have swiping instead of the buttons), with where the photo is among them (such as "3 / 20") beside the close button.
-They stop at the first and last photo rather than going round. Photos without resized versions in R2 are skipped.
-A swipe is a quick one-finger move of at least 50px that's mostly sideways, so scrolling up or down, pinch-zooming, and
-panning around a pinch-zoomed page don't change the photo.
+The **‹** and **›** buttons over the photo's left and right edges, which show while the pointer is over the photo, the **Left** and **Right** arrow keys, and swiping the photo right or left on a touch screen, move to the previous and next photo in the order the page shows them (touch screens have swiping instead of the buttons), with where the photo is among them (such as "3 / 20") beside the close button. They stop at the first and last photo rather than going round. Photos without resized versions in R2 are skipped. A swipe is a quick one-finger move of at least 50px that's mostly sideways, so scrolling up or down, pinch-zooming, and panning around a pinch-zoomed page don't change the photo.
 
-To see the whole photo with nothing over or around it, the **eye** button beside the close button (or the **H** key)
-hides the details, the count and the ‹ › buttons, and the photo grows to fill the window. Only the eye button and **H**
-hide them: tapping the photo while they're shown does nothing, as a double tap likes it (see
-[Portfolio Likes](portfolio-likes.md)). Clicking or tapping the photo, or pressing **H** again, brings them back. The
-arrow keys, swiping and **Esc** keep working while they're hidden, and the viewer opens with them shown each time.
+To see the whole photo with nothing over or around it, the **eye** button beside the close button (or the **H** key) hides the details, the count and the ‹ › buttons, and the photo grows to fill the window. Only the eye button and **H** hide them: tapping the photo while they're shown does nothing, as a double tap likes it (see [Portfolio Likes](portfolio-likes.md)). Clicking or tapping the photo, or pressing **H** again, brings them back. The arrow keys, swiping and **Esc** keep working while they're hidden, and the viewer opens with them shown each time.
 
 The **heart** button, left of the eye button, likes the photo or takes the like back.
 
-The **Related** button, left of the link button, opens the **More like this** drawer of related photos; see
-[More Like This](more-like-this.md).
+The **Related** button, left of the link button, opens the **More like this** drawer of related photos; see [More Like This](more-like-this.md).
 
-On a photo whose unedited original is shown on the portfolio, a **split square** button between Related and the link
-button opens it on the Raw vs Edited page, next to its original; see [Unedited originals](unedited-originals.md).
+On a photo whose unedited original is shown on the portfolio, a **split square** button between Related and the link button opens it on the Raw vs Edited page, next to its original; see [Unedited originals](unedited-originals.md).
 
-| Page         | The photos it moves through                                                                                              |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| Grid         | Every photo, in the chosen sort (newest or oldest first)                                                                 |
-| Timeline     | The photos in the chosen time range, newest first, as listed                                                             |
-| Grid's Table | Every row, in the table's current sort                                                                                   |
-| Map          | The photos of the group whose grid it was opened from, oldest first; a photo opened from its own marker has no neighbors |
+| Page | The photos it moves through |
+| --- | --- |
+| Grid | Every photo, in the chosen sort (newest or oldest first) |
+| Timeline | The photos in the chosen time range, newest first, as listed |
+| Grid's Table | Every row, in the table's current sort |
+| Map | The photos of the group whose grid it was opened from, oldest first; a photo opened from its own marker has no neighbors |
 
-> **Frontend analogy:** the viewer doesn't know about sorting or filters. Each page hands it the same array it renders
-> from, like passing a list's `items` to a carousel, and the viewer finds the open photo in it by id.
+> **Frontend analogy:** the viewer doesn't know about sorting or filters. Each page hands it the same array it renders from, like passing a list's `items` to a carousel, and the viewer finds the open photo in it by id.
 
 Each page passes `photos` and `onShow` to `PhotoLightbox` in `apps/portfolio/src/components/photo-lightbox.tsx`.
 
 ## Sharing a photo
 
-The **link** button beside the eye button copies the photo's own link, `https://servenupphotos.net/photos/<id>/`. Shared
-on social media or in a chat, it shows the photo as the link's preview, with its title, and its comment (cut to 200
-characters) or else where it was taken as the description. The link also carries the page it was copied from and that
-page's settings, such as `/photos/512/?from=%2Ftimeline&thumbs=large`, so opening it shows the photo on that page with
-those settings (`/timeline?thumbs=large&photo=512`). A link without them, like the ones in My Likes, opens the photo
-on the Grid. The page's own address, `/timeline?…&photo=512`, still opens the photo but previews as the plain site.
+The **link** button beside the eye button copies the photo's own link, `https://servenupphotos.net/photos/<id>/`. Shared on social media or in a chat, it shows the photo as the link's preview, with its title, and its comment (cut to 200 characters) or else where it was taken as the description. The link also carries the page it was copied from and that page's settings, such as `/photos/512/?from=%2Ftimeline&thumbs=large`, so opening it shows the photo on that page with those settings (`/timeline?thumbs=large&photo=512`). A link without them, like the ones in My Likes, opens the photo on the Grid. The page's own address, `/timeline?…&photo=512`, still opens the photo but previews as the plain site.
 
-> **Frontend analogy:** GitHub Pages picks the file by the path alone and ignores everything after the `?`, so the
-> settings ride along in the search without changing which page, and which preview, the bots get. It's
-> `photoShareUrl` and `photoReturnHref` in `apps/portfolio/src/lib/photo-share.ts`.
+> **Frontend analogy:** GitHub Pages picks the file by the path alone and ignores everything after the `?`, so the settings ride along in the search without changing which page, and which preview, the bots get. It's `photoShareUrl` and `photoReturnHref` in `apps/portfolio/src/lib/photo-share.ts`.
 
-The preview uses the photo's Medium version (1200px on its longest edge) as `og:image`, with `twitter:card` set to
-`summary_large_image` so X shows it full width ([Open Graph protocol](https://ogp.me/),
-[X's summary card with large image](https://developer.x.com/en/docs/x-for-websites/cards/overview/summary-card-with-large-image)).
-After each build, `photoPreviewPages` in `apps/portfolio/photo-previews.ts` writes `dist/photos/<id>/index.html` for
-every photo in the committed `ALLPHOTOS.json`: the built `index.html` with those tags. In the app,
-`routes/photos.$id.tsx` redirects to `/grid?photo=<id>`.
+The preview uses the photo's Medium version (1200px on its longest edge) as `og:image`, with `twitter:card` set to `summary_large_image` so X shows it full width ([Open Graph protocol](https://ogp.me/), [X's summary card with large image](https://developer.x.com/en/docs/x-for-websites/cards/overview/summary-card-with-large-image)). After each build, `photoPreviewPages` in `apps/portfolio/photo-previews.ts` writes `dist/photos/<id>/index.html` for every photo in the committed `ALLPHOTOS.json`: the built `index.html` with those tags. In the app, `routes/photos.$id.tsx` redirects to `/grid?photo=<id>`.
 
-> **Frontend analogy:** link previews are made by bots that read a page's HTML but never run its JavaScript, so tags
-> that React adds after load are invisible to them. Writing one HTML file per photo at build time is static site
-> generation for just the `<head>`; the rest of each file is the same SPA shell, so it still boots the app.
+> **Frontend analogy:** link previews are made by bots that read a page's HTML but never run its JavaScript, so tags that React adds after load are invisible to them. Writing one HTML file per photo at build time is static site generation for just the `<head>`; the rest of each file is the same SPA shell, so it still boots the app.
 
 ## Image loading
 
-Every thumbnail on the portfolio (Grid tiles and their blurred placeholders, Timeline, Table, the Map's markers and
-group grids) uses `loading="lazy"`, so the browser fetches it only when it scrolls near the screen. The viewer's photo
-is the opposite: it's what the visitor just asked to see, so it loads straight away with `fetchPriority="high"`, over
-its blurred preview. The pipeline's lists of photos (Gallery, Photos in Flight, the bucket and the pickers) are lazy
-too; a page's one big photo, like the photo being read on the EXIF page, isn't.
+Every thumbnail on the portfolio (Grid tiles and their blurred placeholders, Timeline, Table, the Map's markers and group grids) uses `loading="lazy"`, so the browser fetches it only when it scrolls near the screen. The viewer's photo is the opposite: it's what the visitor just asked to see, so it loads straight away with `fetchPriority="high"`, over its blurred preview. The pipeline's lists of photos (Gallery, Photos in Flight, the bucket and the pickers) are lazy too; a page's one big photo, like the photo being read on the EXIF page, isn't.
 
-> **Frontend analogy:** `loading="lazy"` is a built-in `IntersectionObserver` for images, and `fetchPriority` is like
-> moving a request to the front of the network queue.
+> **Frontend analogy:** `loading="lazy"` is a built-in `IntersectionObserver` for images, and `fetchPriority` is like moving a request to the front of the network queue.

@@ -1,20 +1,12 @@
 # Graph Presets
 
-`/graph-presets`, under **Configuration** in the sidebar, makes the ready-made graphs over the portfolio's
-[Graph](portfolio-graph.md) page, such as a photo dot graph of **Aperture**, and **preset groups**. The Graph page's
-**Presets** button opens a picker with the groups on the left, such as **When**, and the chosen group's presets, such as
-**Seasons by year** and **Time of day**, on the right as tiles, each with a small drawing of its graph and its
-description; presets in no group are listed together as **Other**. A
-**spotlight** preset also shows as its own button above Presets and Adjust Graph.
+`/graph-presets`, under **Configuration** in the sidebar, makes the ready-made graphs over the portfolio's [Graph](portfolio-graph.md) page, such as a photo dot graph of **Aperture**, and **preset groups**. The Graph page's **Presets** button opens a picker with the groups on the left, such as **When**, and the chosen group's presets, such as **Seasons by year** and **Time of day**, on the right as tiles, each with a small drawing of its graph and its description; presets in no group are listed together as **Other**. A **spotlight** preset also shows as its own button above Presets and Adjust Graph.
 
-> **Frontend analogy:** a preset is a saved `Partial<GraphConfig>` that the Graph page spreads over its state when its
-> button is clicked, like a saved filter in a table. A group is only a heading the presets point to by ID, like a
-> `<optgroup>` turned into a menu button.
+> **Frontend analogy:** a preset is a saved `Partial<GraphConfig>` that the Graph page spreads over its state when its button is clicked, like a saved filter in a table. A group is only a heading the presets point to by ID, like a `<optgroup>` turned into a menu button.
 
 ## The file
 
-Each preset and each group is one file, `graphs/<id>.json`, and **Commit** combines them into `graphs/GRAPHS.json` the
-way it combines the [Trips](trips.md) into `TIMELINE.json`:
+Each preset and each group is one file, `graphs/<id>.json`, and **Commit** combines them into `graphs/GRAPHS.json` the way it combines the [Trips](trips.md) into `TIMELINE.json`:
 
 ```json
 {
@@ -42,54 +34,27 @@ way it combines the [Trips](trips.md) into `TIMELINE.json`:
 ```
 
 - **`kind`** is `preset` or `group`. A group has no `group`, `graph` or `description`.
-- **`description`** is the one line under a preset's tile in the Graph page's Presets, saying what it shows, such as
-  "Which months of each year have the most photos." Left out when it has none; the tile then says the graph's type
-  and axes, such as "Heatmap of Month by Year". Saving trims it and fails past 200 characters.
-- **`order`** places it in the row, lowest first, ties by name. A preset in a group is ordered among that group's
-  presets, and a group among the presets in no group.
-- **`group`** is the ID of the group a preset is in; left out, the preset is listed under **Other**. A preset whose
-  group isn't there is listed there too.
-- **`spotlight`** is `true` for a preset shown as its own button above the Graph page's Presets and Adjust Graph; left
-  out when it isn't. A group never has it.
-- **`graph`** holds the Graph page's settings by the names in `GraphConfig` (`lib/graph-data.ts`): `type` (bar, line,
-  pie, scatter, heatmap or photos; an old `dot` reads as photos), `x` and `y` (stat IDs, such as `aperture`, `year` or `daypart`), `measure` (count or percent),
-  `split` (a stat ID or "" for none), `stacked`, `sort` (group, reverse or count), `limit` (0 for all), and the
-  Range group's parts, each left out when it's off: `xFrom` and `xTo` (x values by name, such as `"f/2"`), `yFrom`
-  and `yTo` (a scatterplot's or heatmap's y values by name), `yMin` and `yMax` (where a bar or line graph's y axis starts and
-  ends), `minPhotos` (how many photos an x value needs), `hideZeros`, and `xBucket` and `yBucket` (how many of an axis's values each bucket puts together, such as `2`), and `xWidth` and `yWidth` (how wide a camera setting's even ranges are, in stops or mm, such as `1`). Saving fails when `yMin` is above `yMax`, or a bucket size or width is below 0. A preset
-  never sets the filters; the visitor's stay as they are.
-- The ID is made from the name when it's first saved (with `-2` and so on after it when that's taken) and kept when
-  it's renamed.
+- **`description`** is the one line under a preset's tile in the Graph page's Presets, saying what it shows, such as "Which months of each year have the most photos." Left out when it has none; the tile then says the graph's type and axes, such as "Heatmap of Month by Year". Saving trims it and fails past 200 characters.
+- **`order`** places it in the row, lowest first, ties by name. A preset in a group is ordered among that group's presets, and a group among the presets in no group.
+- **`group`** is the ID of the group a preset is in; left out, the preset is listed under **Other**. A preset whose group isn't there is listed there too.
+- **`spotlight`** is `true` for a preset shown as its own button above the Graph page's Presets and Adjust Graph; left out when it isn't. A group never has it.
+- **`graph`** holds the Graph page's settings by the names in `GraphConfig` (`lib/graph-data.ts`): `type` (bar, line, pie, scatter, heatmap or photos; an old `dot` reads as photos), `x` and `y` (stat IDs, such as `aperture`, `year` or `daypart`), `measure` (count or percent), `split` (a stat ID or "" for none), `stacked`, `sort` (group, reverse or count), `limit` (0 for all), and the Range group's parts, each left out when it's off: `xFrom` and `xTo` (x values by name, such as `"f/2"`), `yFrom` and `yTo` (a scatterplot's or heatmap's y values by name), `yMin` and `yMax` (where a bar or line graph's y axis starts and ends), `minPhotos` (how many photos an x value needs), `hideZeros`, and `xBucket` and `yBucket` (how many of an axis's values each bucket puts together, such as `2`), and `xWidth` and `yWidth` (how wide a camera setting's even ranges are, in stops or mm, such as `1`). Saving fails when `yMin` is above `yMax`, or a bucket size or width is below 0. A preset never sets the filters; the visitor's stay as they are.
+- The ID is made from the name when it's first saved (with `-2` and so on after it when that's taken) and kept when it's renamed.
 
 Saving checks that a preset's group is a saved group, and removing a group fails while presets are still in it.
 
-> **Frontend analogy:** the backend's `GraphPreset` struct (`internal/github/graphpresets.go`) is the file's type, like
-> `GraphPresetFile` in `lib/graph-presets.ts`. Its `omitempty` fields, such as `description`, work like optional props
-> left `undefined`: an empty one isn't written to the file at all.
+> **Frontend analogy:** the backend's `GraphPreset` struct (`internal/github/graphpresets.go`) is the file's type, like `GraphPresetFile` in `lib/graph-presets.ts`. Its `omitempty` fields, such as `description`, work like optional props left `undefined`: an empty one isn't written to the file at all.
 
 ## The page
 
-The left side lists the presets and groups in the Graph page's order, each group with its presets indented under it,
-and **New preset** and **New group** under them. The right side edits the chosen one:
+The left side lists the presets and groups in the Graph page's order, each group with its presets indented under it, and **New preset** and **New group** under them. The right side edits the chosen one:
 
-- A **preset** has its name, its order, its **Description** (the line under its tile on the Graph page; left empty,
-  the tile words one from its settings), its **Group** (or **None, listed under Other**), **Spotlight**, and the graph it sets, picked with
-  the same dropdowns as the Graph page's Adjust Graph box, **Axes** first (imported from the portfolio, so a stat added to the Numbers
-  page shows up here too, and the **Graph type** list marks the type that suits the axes, counted from every photo).
-- A **group** has its name and order, and says which presets are in it. A group with no presets isn't shown on the
-  Graph page, and **Remove group** waits until its presets are moved out.
-- A group with presets also has **Change every preset in it**: the same **Axes**, **Graph type** and **Range** buttons,
-  starting from its first preset's graph, for changing a setting in all its presets at once, such as making them all
-  pie charts. Only the settings picked there change (listed under the buttons with what they'll be); each preset keeps
-  its others. **Save N presets** saves each preset that the change makes different, one after another, the same way
-  its own **Save** would, and says which presets have those settings already. **Start over** drops the picks.
+- A **preset** has its name, its order, its **Description** (the line under its tile on the Graph page; left empty, the tile words one from its settings), its **Group** (or **None, listed under Other**), **Spotlight**, and the graph it sets, picked with the same dropdowns as the Graph page's Adjust Graph box, **Axes** first (imported from the portfolio, so a stat added to the Numbers page shows up here too, and the **Graph type** list marks the type that suits the axes, counted from every photo).
+- A **group** has its name and order, and says which presets are in it. A group with no presets isn't shown on the Graph page, and **Remove group** waits until its presets are moved out.
+- A group with presets also has **Change every preset in it**: the same **Axes**, **Graph type** and **Range** buttons, starting from its first preset's graph, for changing a setting in all its presets at once, such as making them all pie charts. Only the settings picked there change (listed under the buttons with what they'll be); each preset keeps its others. **Save N presets** saves each preset that the change makes different, one after another, the same way its own **Save** would, and says which presets have those settings already. **Start over** drops the picks.
 
-  > **Frontend analogy:** it's a bulk edit, like selecting rows in a table and setting one column: the picks are a
-  > `Partial<GraphConfig>` spread over each preset's graph, `{ ...preset.graph, ...picked }`, then one `PUT` per preset.
+  > **Frontend analogy:** it's a bulk edit, like selecting rows in a table and setting one column: the picks are a `Partial<GraphConfig>` spread over each preset's graph, `{ ...preset.graph, ...picked }`, then one `PUT` per preset.
 
-**Save** (`PUT /api/graphs/<id>` → `PUT /graphs/{id}`) and **Remove** (`DELETE /api/graphs/<id>` → `DELETE
-/graphs/{id}`) keep the file as a [change waiting for Commit](pending-changes.md), counted by the sync button as a graph
-preset. The page reads them from the [combined data store](combined-data-store.md)'s `GRAPHS.json` with those changes
-made over it, so a saved preset shows at once. Photos in Flight lists the files under **Graph presets**.
+**Save** (`PUT /api/graphs/<id>` → `PUT /graphs/{id}`) and **Remove** (`DELETE /api/graphs/<id>` → `DELETE /graphs/{id}`) keep the file as a [change waiting for Commit](pending-changes.md), counted by the sync button as a graph preset. The page reads them from the [combined data store](combined-data-store.md)'s `GRAPHS.json` with those changes made over it, so a saved preset shows at once. Photos in Flight lists the files under **Graph presets**.
 
 Locally, `pnpm photos:local` also makes `GRAPHS.local.json`, which the portfolio uses in place of the committed file.
