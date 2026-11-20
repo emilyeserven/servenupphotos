@@ -10,6 +10,7 @@ import {
   pixelationPrompt,
   readPixelationAnswer,
 } from "@/lib/pixelation-prompt";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * The flagged photos as rows of the list to flag, each with the photo as it is now in `photos`, so
@@ -57,7 +58,7 @@ export function PixelationCheck({ photos }: { photos: AutogroupPhoto[] }) {
         label="Review the flagged photos"
         onReview={review}
       />
-      {error && <p className="text-destructive text-sm">{error}</p>}
+      <ErrorNote error={error} />
       {answer && <AnswerView key={reviews} answer={answer} photos={photos} />}
     </section>
   );

@@ -12,6 +12,7 @@ import {
   readLightroomAlbums,
 } from "@/lib/lightroom-albums";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { ErrorNote } from "@/components/error-note";
 
 /** A read import: the merge to look over and the source it came from, or why it couldn't be read. */
 type ImportRead = { merge: LightroomMerge; source: string } | { error: string };
@@ -130,7 +131,7 @@ function ImportReview({ read, onDone }: ImportReviewProps) {
   const replace = useLightroomAlbumsStore((state) => state.replace);
   const navigate = useNavigate();
   if (!read) return null;
-  if ("error" in read) return <p className="text-destructive text-sm">{read.error}</p>;
+  if ("error" in read) return <ErrorNote error={read.error} />;
   const { merge, source } = read;
   const use = () => {
     replace(source, merge.items);

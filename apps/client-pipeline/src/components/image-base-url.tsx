@@ -19,6 +19,7 @@ import {
   Unreadable,
   count,
 } from "@/components/update-data-shared";
+import { ErrorNote } from "@/components/error-note";
 
 /** Trims a base URL and its trailing slashes, as the backend does. */
 function cleanBaseUrl(value: string): string {
@@ -267,7 +268,7 @@ function UrlField(props: UrlFieldProps) {
         onChange={(event) => onChange(event.target.value)}
       />
       <p id={hintId} className="text-muted-foreground text-sm empty:hidden">
-        {error ? <span className="text-destructive">{error}</span> : hint}
+        {error ? <ErrorNote error={error} /> : hint}
       </p>
     </div>
   );
@@ -330,7 +331,7 @@ function ApplyChange({
           `Change ${count(preview.urls, "URL")}`
         )}
       </Button>
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
+      <ErrorNote error={error} />
     </div>
   );
 }

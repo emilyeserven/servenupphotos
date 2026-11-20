@@ -8,6 +8,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { count } from "@/components/update-data-shared";
 import { type AspectCheck, checkAspectRatios } from "@/lib/aspect-ratio";
 import type { AutogroupPhoto } from "@/lib/compare-autogroup";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * The aspect ratio check: measures every chosen photo's Small version on the backend and lists
@@ -33,7 +34,7 @@ export function AspectRatioCheck({ photos }: { photos: AutogroupPhoto[] }) {
         disabled={urls.length === 0}
         onClick={() => measure.mutate({ urls })}
       />
-      {measure.error && <p className="text-destructive text-sm">{measure.error.message}</p>}
+      <ErrorNote error={measure.error} />
       {result && <AspectResult result={result} />}
     </section>
   );

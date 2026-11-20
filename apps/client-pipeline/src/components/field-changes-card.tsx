@@ -22,6 +22,7 @@ import {
   Unreadable,
   count,
 } from "@/components/update-data-shared";
+import { ErrorNote } from "@/components/error-note";
 
 /** One file a field change previews, with the top-level fields it rewrites. */
 interface ChangedFile {
@@ -200,7 +201,7 @@ function ApplyButton({
           `Apply to ${count(files, "file")}`
         )}
       </Button>
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
+      <ErrorNote error={error} />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {
   type UneditedOriginal,
   useUneditedOriginal,
 } from "@/components/edit-in-flight/use-unedited-original";
+import { ErrorNote } from "@/components/error-note";
 
 interface UneditedOriginalCardsProps {
   editable: Editable;
@@ -114,7 +115,7 @@ function ReadStatus({ original: { read } }: { original: UneditedOriginal }) {
       </p>
     );
   }
-  if (read.isError) return <p className="text-destructive text-sm">{read.error.message}</p>;
+  if (read.isError) return <ErrorNote error={read.error} />;
   return read.isSuccess ? <NoSizeNote sanitized={read.data.sanitized} /> : null;
 }
 
@@ -137,7 +138,7 @@ const REPLACE = {
 
 /** Why something failed, when it did. */
 function ErrorText({ error }: { error: Error | null }) {
-  return error ? <span className="text-destructive text-sm">{error.message}</span> : null;
+  return <ErrorNote error={error} />;
 }
 
 /** Uploads the chosen original, once its size is read, and says what replacing one resets. */

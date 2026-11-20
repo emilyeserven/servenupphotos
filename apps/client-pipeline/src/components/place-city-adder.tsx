@@ -6,6 +6,7 @@ import { PlaceCityField } from "@/components/place-city-field";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cityOfPlace } from "@/lib/place-cities";
+import { ErrorNote } from "@/components/error-note";
 
 /** The city and country the photo shows, offered as a place's. */
 interface PhotoRegion {
@@ -79,7 +80,7 @@ function UsePhotoCity({ place, region, disabled }: UsePhotoCityProps) {
         {save.isPending ? <Spinner /> : <Building2Icon />}
         Use {region.city} as {place.name}'s city
       </Button>
-      {save.error && <p className="text-destructive text-xs">{save.error.message}</p>}
+      <ErrorNote error={save.error} className="text-xs" />
     </div>
   );
 }
@@ -135,7 +136,7 @@ function PlaceCityForm({ place, places, region, onClose }: PlaceCityFormProps) {
         help="Photos given this place take this city and its country. It starts as the city this photo shows."
         onChange={(city, country) => setChosen((c) => ({ city, country: country || c.country }))}
       />
-      {save.error && <p className="text-destructive text-xs">{save.error.message}</p>}
+      <ErrorNote error={save.error} className="text-xs" />
       <div className="flex flex-wrap gap-2">
         <Button
           type="button"

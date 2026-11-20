@@ -4,6 +4,7 @@ import { useState } from "react";
 import { type Area, areasQuery } from "@/api/areas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ErrorNote } from "@/components/error-note";
 
 /** Finds an area on OpenStreetMap by name or Wikidata ID, and adds the one picked. */
 export function AreaSearch({ initial, onPick }: { initial: string; onPick: (area: Area) => void }) {
@@ -75,7 +76,7 @@ interface AreaResultsProps {
 
 /** The areas found, each added by clicking it, or why there are none. */
 function AreaResults({ asked, found, onPick }: AreaResultsProps) {
-  if (found.error) return <p className="text-destructive text-xs">{found.error.message}</p>;
+  if (found.error) return <ErrorNote error={found.error} className="text-xs" />;
   const areas = asked ? found.data : undefined;
   return areas ? <AreaList areas={areas} onPick={onPick} /> : null;
 }

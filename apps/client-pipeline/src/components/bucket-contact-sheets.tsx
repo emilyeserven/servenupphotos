@@ -15,6 +15,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { count } from "@/components/update-data-shared";
 import { type ContactSheetSet, contactSheetSets } from "@/lib/contact-sheets";
+import { ErrorNote } from "@/components/error-note";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
 
@@ -140,7 +141,7 @@ function SheetSetRow({ set, remove }: { set: ContactSheetSet<BucketImage>; remov
 /** Why the last delete failed, or which sheets it couldn't delete. */
 function DeleteProblems({ remove }: { remove: DeleteSheets }) {
   const text = problemText(remove.error, remove.data);
-  return text ? <p className="text-destructive text-sm">{text}</p> : null;
+  return <ErrorNote error={text} />;
 }
 
 /** Why the last delete failed, or else which sheets it couldn't delete, or "". */

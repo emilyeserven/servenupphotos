@@ -9,6 +9,7 @@ import {
 } from "@/api/place-areas";
 import { AreaSearch } from "@/components/area-search";
 import { Button } from "@/components/ui/button";
+import { ErrorNote } from "@/components/error-note";
 
 /** How many points an outline has. */
 function pointCount(area: PlaceArea): number {
@@ -50,7 +51,7 @@ export function PlaceAreaEditor({ id, name }: { id: string; name: string }) {
 
 /** Why the last save or removal failed, when it did. */
 function AreaError({ error }: { error: Error | null }) {
-  return error ? <p className="text-destructive text-xs">{error.message}</p> : null;
+  return <ErrorNote error={error} className="text-xs" />;
 }
 
 interface AreaStatusProps {

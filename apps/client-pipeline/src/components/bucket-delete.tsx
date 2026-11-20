@@ -19,6 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
 
 interface DeleteImageProps {
   image: BucketImage;
@@ -169,7 +170,7 @@ function DeleteOutcome({
   error: Error | null;
   result?: DeleteBucketImagesResult;
 }) {
-  if (error) return <p className="text-destructive">{error.message}</p>;
+  if (error) return <ErrorNote error={error} />;
   if (!result?.failed.length) return null;
   return (
     <ul className="text-destructive flex flex-col gap-1">

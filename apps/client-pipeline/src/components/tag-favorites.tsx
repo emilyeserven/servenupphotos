@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { ErrorNote } from "@/components/error-note";
 
 /** Saves whether tags are favorites, reading the tags again after. */
 function useFavoriteSave() {
@@ -47,7 +48,7 @@ function StarButton({ tag }: { tag: Group }) {
       >
         <StarIcon aria-hidden className={cn(favorite && FILLED_STAR)} />
       </Button>
-      {save.isError && <span className="text-destructive text-xs">{save.error.message}</span>}
+      <ErrorNote error={save.error} className="text-xs" />
     </span>
   );
 }
