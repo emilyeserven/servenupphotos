@@ -92,6 +92,9 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
 - **Filter pickers:** build on `SectionPicker` and follow [Picker conventions](docs/portfolio-filters.md#picker-conventions):
   extra info behind `InfoButton` in the `aside` panel on the right, Group by and Sort as small menus left of the (i),
   grouping off by default, and no icons in choice lists.
+- **Trip line styles:** every map or sketch of trip lines takes its color, width and dashes from `tripLineStyle` in
+  `@portfolio/lib/map-theme` (MapLibre paint via `tripLinePaint`, SVG via `tripLineStroke`), never its own numbers
+  ([Line styles](docs/trip-lines.md#line-styles)).
 - **Errors:** show every failure with `ErrorNote` (`components/error-note.tsx`): pass it the `Error` (or a sentence
   written for the page) and it shows the message in red with `role="alert"`, plus GitHub's answer when a GitHub call
   failed. `QueryResult`, `SaveNote` and `SaveState` already use it. Don't write `text-destructive` or `{x.error.message}`
