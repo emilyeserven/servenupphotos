@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["facade", "windows", "trees", "cars", "power-lines", "twilight"],
+  "tags": ["facade", "windows", "trees", "cars", "power-lines", "twilight", "traffic-lights"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,6 +261,6 @@
     "peakChroma": 9.31,
     "samples": 9694
   },
-  "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.",
+  "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.\n\nShows traffic lights, now tagged 'traffic-lights'.",
   "similarPhotos": [373, 372, 430, 409, 408, 412]
 }

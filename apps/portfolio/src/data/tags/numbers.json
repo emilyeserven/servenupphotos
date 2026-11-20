@@ -1,5 +1,6 @@
 {
   "id": "numbers",
   "name": "numbers",
-  "description": ""
+  "description": "painted, printed or stenciled numbers on signs, machines and surfaces",
+  "parent": "typography"
 }

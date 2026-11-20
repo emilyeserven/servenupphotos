@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["shells", "stones", "beach", "sand"],
+  "tags": ["shells", "stones", "beach", "sand", "insects"],
   "genres": [],
   "places": [
     {
@@ -269,6 +269,6 @@
     "peakChroma": 9.15,
     "samples": 10112
   },
-  "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 306 (1.63:1), not the 16:9 crop for a landscape photo.",
+  "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 306 (1.63:1), not the 16:9 crop for a landscape photo.\n\nShows an insect, now tagged 'insects'.",
   "similarPhotos": [140, 142, 147, 144, 141, 145]
 }

@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:25 13:00:44",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Higashi-Hagi Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["footbridges", "train-station", "interior", "symmetry", "windows", "wood"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "abstract"],
+  "places": [
+    {
+      "relation": "inside",
+      "id": "higashi-hagi-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,
