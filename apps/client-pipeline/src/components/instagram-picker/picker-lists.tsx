@@ -14,6 +14,7 @@ import { isFocused } from "@/lib/social-focus";
 import type { Neighbors } from "@/lib/social-neighbors";
 import type { Suggestion } from "@/lib/social-suggestions";
 import { cn } from "@/lib/utils";
+import { NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 import { SectionTitle } from "@/components/section-title";
 
@@ -245,7 +246,7 @@ function emptyMessage({ focused, searching, hidingScheduled }: PickerPhotos): st
 
 /** What an empty list of choices says. */
 function noChoices(searching: boolean, hidingScheduled: boolean): string {
-  if (searching) return hidingScheduled ? "No unscheduled photos match." : "No photos match.";
+  if (searching) return hidingScheduled ? "No unscheduled photos match." : NO_PHOTOS_MATCH;
   return hidingScheduled ? "Every photo is already scheduled." : "There are no photo files yet.";
 }
 

@@ -16,6 +16,7 @@ import { useDropTarget } from "@/hooks/use-drop-target";
 import { AnchorOutline } from "@/components/grid-anchor";
 import type { AnchorPlace } from "@/lib/grid-anchors";
 import { cn } from "@/lib/utils";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 import { SectionTitle } from "@/components/section-title";
 
@@ -123,9 +124,9 @@ interface FeedGridProps {
 function FeedGrid({ feed, asOf, today, byDay, onDropPhoto, places }: FeedGridProps) {
   if (feed.length === 0) {
     return (
-      <p className="text-muted-foreground rounded-md border border-dashed p-4 text-center text-sm">
+      <EmptyNote className="rounded-md border border-dashed p-4 text-center">
         Nothing is on Instagram by this day.
-      </p>
+      </EmptyNote>
     );
   }
   return (

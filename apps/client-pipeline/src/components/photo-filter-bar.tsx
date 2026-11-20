@@ -178,11 +178,8 @@ export function FilterResult({
   );
 }
 
-/** "Showing N of M photos", or a warning that none match. */
+/** "Showing N of M photos". The list under the bar says when none match, so this doesn't too. */
 function ResultText({ shown, total }: { shown: number; total: number }) {
-  if (shown === 0) {
-    return <span className="text-amber-700 dark:text-amber-400">No photos match the filters</span>;
-  }
   return (
     <span className="text-muted-foreground">
       Showing {shown} of {count(total, "photo")}

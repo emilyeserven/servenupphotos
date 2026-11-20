@@ -4,8 +4,6 @@ import (
 	"cmp"
 	"context"
 	"encoding/json"
-	"errors"
-	"log/slog"
 	"net/http"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
@@ -15,26 +13,9 @@ import (
 // handleOrganize lists the albums and tags on GitHub, on the base branch and
 // in the open photo data pull request, without changing anything.
 func handleOrganize(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.Organize(ctx, cfg)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("read albums and tags failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read albums and tags")
-			return
-		}
-		writeJSON(w, http.StatusOK, result)
-	}
+	return withGitHub(store, publishTimeout, "Couldn't read the albums and tags.", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+		return gh.Organize(ctx, cfg)
+	})
 }
 
 // handleCreateGroup saves a new album, tag or genre, by the path's kind
@@ -43,31 +24,13 @@ func handleCreateGroup(store *settings.Store, gh *github.Client) http.HandlerFun
 	return func(w http.ResponseWriter, r *http.Request) {
 		kind, ok := github.KindByFolder(r.PathValue("kind"))
 		if !ok {
-			writeError(w, http.StatusNotFound, "kind must be albums, tags or genres")
+			writeError(w, http.StatusNotFound, "There's no such kind of group: use albums, tags or genres.")
 			return
 		}
-		var group github.NewGroup
-		if !decodeEntry(w, r, &group, kind.Name) {
-			return
-		}
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.CreateGroup(ctx, cfg, kind, group)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("create "+kind.Name+" failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not save the "+kind.Name)
-			return
-		}
-		writeJSON(w, http.StatusOK, result)
+		withGitHubBody(store, publishTimeout, kind.Name, "Couldn't save the "+kind.Name+".",
+			func(ctx context.Context, _ *http.Request, cfg settings.GitHub, group github.NewGroup) (any, error) {
+				return gh.CreateGroup(ctx, cfg, kind, group)
+			})(w, r)
 	}
 }
 
@@ -78,30 +41,26 @@ func handleSetGroupParent(store *settings.Store, gh *github.Client) http.Handler
 	return func(w http.ResponseWriter, r *http.Request) {
 		kind, ok := github.KindByFolder(r.PathValue("kind"))
 		if !ok || !github.HasParents(kind) {
-			writeError(w, http.StatusNotFound, "only albums and tags have a parent")
+			writeError(w, http.StatusNotFound, "Only albums and tags have a parent.")
 			return
 		}
-		var req struct {
-			Parent *string `json:"parent"`
-		}
-		if !decodeEntry(w, r, &req, "parent") {
-			return
-		}
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.SetGroupParent(ctx, cfg, kind, r.PathValue("id"), *cmp.Or(req.Parent, new(string)))
-		writeResult(w, result, err, "could not save the parent")
+		withGitHubBody(store, publishTimeout, "parent", "Couldn't save the parent.",
+			func(ctx context.Context, r *http.Request, cfg settings.GitHub, req groupParentRequest) (any, error) {
+				return gh.SetGroupParent(ctx, cfg, kind, r.PathValue("id"), *cmp.Or(req.Parent, new(string)))
+			})(w, r)
 	}
+}
+
+// groupParentRequest is the body of a parent change: the new parent's ID, or
+// empty or null for the top level.
+type groupParentRequest struct {
+	Parent *string `json:"parent"`
 }
 
 // handleAddPhotoGroups adds the body's albums and tags to the body's photo
 // files, as one commit in the photo data pull request.
 func handleAddPhotoGroups(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, baseURLTimeout, "albums and tags", "could not save the albums and tags",
+	return withGitHubBody(store, baseURLTimeout, "albums and tags", "Couldn't save the albums and tags.",
 		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req github.PhotoGroups) (any, error) {
 			return gh.AddPhotoGroups(ctx, cfg, req)
 		})
@@ -115,7 +74,7 @@ type idsBody struct {
 // handleSetAlbumOrder gives each album in the body's ids its place there, 1
 // first, as a change waiting for Commit.
 func handleSetAlbumOrder(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "album order", "could not save the albums' order",
+	return withGitHubBody(store, publishTimeout, "album order", "Couldn't save the albums' order.",
 		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req idsBody) (any, error) {
 			return gh.SetAlbumOrder(ctx, cfg, req.IDs)
 		})
@@ -125,7 +84,7 @@ func handleSetAlbumOrder(store *settings.Store, gh *github.Client) http.HandlerF
 // the portfolio shows them, as the path's album's photo order, a change
 // waiting for Commit. An empty list puts its photos back in the default order.
 func handleSetAlbumPhotoOrder(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "photo order", "could not save the album's photo order",
+	return withGitHubBody(store, publishTimeout, "photo order", "Couldn't save the album's photo order.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, req albumPhotosBody) (any, error) {
 			return gh.SetAlbumPhotoOrder(ctx, cfg, r.PathValue("id"), req.PhotoIDs)
 		})
@@ -139,7 +98,7 @@ const maxAlbumLayoutBytes = 1 << 20
 // photos and its rows of photos with Markdown text above and below each, as
 // the path's album's, a change waiting for Commit.
 func handleSetAlbumLayout(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBodyUpTo(store, publishTimeout, "album layout", maxAlbumLayoutBytes, "could not save the album's layout",
+	return withGitHubBodyUpTo(store, publishTimeout, "album layout", maxAlbumLayoutBytes, "Couldn't save the album's layout.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, req github.AlbumLayout) (any, error) {
 			return gh.SetAlbumLayout(ctx, cfg, r.PathValue("id"), req)
 		})
@@ -148,7 +107,7 @@ func handleSetAlbumLayout(store *settings.Store, gh *github.Client) http.Handler
 // handleNormalizeTagNames names every tag in lowercase kebab-case, its ID, as
 // changes waiting for Commit.
 func handleNormalizeTagNames(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHub(store, publishTimeout, "could not rename the tags", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, publishTimeout, "Couldn't rename the tags.", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.NormalizeTagNames(ctx, cfg)
 	})
 }
@@ -162,10 +121,10 @@ type tagDescriptionsBody struct {
 // handleSetTagDescriptions saves the body's descriptions, by tag ID, as those
 // tags' descriptions, as changes waiting for Commit.
 func handleSetTagDescriptions(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "tag descriptions", "could not save the tag descriptions",
+	return withGitHubBody(store, publishTimeout, "tag descriptions", "Couldn't save the tag descriptions.",
 		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req tagDescriptionsBody) (any, error) {
 			if len(req.Descriptions) == 0 {
-				return nil, badRequest("invalid tag descriptions body")
+				return nil, badRequest("Give at least one tag a description to save.")
 			}
 			return gh.SetTagDescriptions(ctx, cfg, req.Descriptions)
 		})
@@ -180,10 +139,10 @@ type tagFavoritesBody struct {
 // handleSetTagFavorites saves whether each tag in the body's favorites, by
 // tag ID, is a favorite tag, as changes waiting for Commit.
 func handleSetTagFavorites(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "favorite tags", "could not save the favorite tags",
+	return withGitHubBody(store, publishTimeout, "favorite tags", "Couldn't save the favorite tags.",
 		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req tagFavoritesBody) (any, error) {
 			if len(req.Favorites) == 0 {
-				return nil, badRequest("invalid favorite tags body")
+				return nil, badRequest("Pick at least one tag to mark or unmark as a favorite.")
 			}
 			return gh.SetTagFavorites(ctx, cfg, req.Favorites)
 		})
@@ -201,7 +160,7 @@ type spotlightAlbumBody struct {
 // the body's orientation ("screen", "none", or missing to keep the spot's),
 // as a change waiting for Commit.
 func handleSetSpotlightAlbum(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "spotlight album", "could not save the spot's album",
+	return withGitHubBody(store, publishTimeout, "spotlight album", "Couldn't save the spot's album.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, req spotlightAlbumBody) (any, error) {
 			return gh.SetSpotlightAlbum(ctx, cfg, r.PathValue("zone"), *cmp.Or(req.Album, new(string)), req.Orientation)
 		})
@@ -216,10 +175,10 @@ type albumHiddenBody struct {
 // handleSetAlbumHidden saves whether the portfolio hides the path's album,
 // from the body's hidden, as a change waiting for Commit.
 func handleSetAlbumHidden(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "album visibility", "could not save the album's visibility",
+	return withGitHubBody(store, publishTimeout, "album visibility", "Couldn't save the album's visibility.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, req albumHiddenBody) (any, error) {
 			if req.Hidden == nil {
-				return nil, badRequest("invalid album visibility body")
+				return nil, badRequest("Say whether to hide the album: the request has no \"hidden\".")
 			}
 			return gh.SetAlbumHidden(ctx, cfg, r.PathValue("id"), *req.Hidden)
 		})
@@ -234,7 +193,7 @@ type albumRulesBody struct {
 // Album rules, or makes it an album of chosen photos again when they're
 // empty or null, as a change waiting for Commit.
 func handleSetAlbumRules(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "Smart Album rules", "could not save the Smart Album's rules",
+	return withGitHubBody(store, publishTimeout, "Smart Album rules", "Couldn't save the Smart Album's rules.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, req albumRulesBody) (any, error) {
 			return gh.SetAlbumRules(ctx, cfg, r.PathValue("id"), req.Rules)
 		})

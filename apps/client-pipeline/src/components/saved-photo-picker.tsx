@@ -8,6 +8,7 @@ import { type InFlightFileRead, photosInFlightQuery, publishedPhotosQuery } from
 import { photoName } from "@/components/gallery/published-file";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 /** A saved photo to pick: one in the photo data pull request, or one already in the portfolio. */
 export interface SavedPhoto {
@@ -86,7 +87,7 @@ export function SavedPhotoPicker({ onPicked }: { onPicked?: () => void }) {
     <div className="flex flex-col gap-3">
       <SavedPhotoSearch value={search} onChange={setSearch} />
       {shown.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No saved photos match.</p>
+        <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>
       ) : (
         <ul className="grid max-h-[50dvh] grid-cols-3 gap-2 overflow-y-auto sm:grid-cols-4">
           {shown.map((photo) => (

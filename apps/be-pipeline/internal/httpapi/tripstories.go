@@ -12,7 +12,7 @@ import (
 // portfolio's Trip page, new or replacing the one there, as a change waiting
 // for Commit.
 func handleSaveTripStory(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBodyUpTo(store, publishTimeout, "story", maxTripLineBytes, "could not save the story",
+	return withGitHubBodyUpTo(store, publishTimeout, "story", maxTripLineBytes, "Couldn't save the story.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, story github.TripStory) (any, error) {
 			story.ID = r.PathValue("id")
 			return gh.SaveTripStory(ctx, cfg, story)
@@ -22,7 +22,7 @@ func handleSaveTripStory(store *settings.Store, gh *github.Client) http.HandlerF
 // handleDeleteTripStory removes the path's day's story as a change waiting
 // for Commit.
 func handleDeleteTripStory(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHub(store, publishTimeout, "could not remove the story", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, publishTimeout, "Couldn't remove the story.", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.DeleteTripStory(ctx, cfg, r.PathValue("id"))
 	})
 }

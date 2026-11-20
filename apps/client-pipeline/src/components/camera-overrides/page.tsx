@@ -10,6 +10,7 @@ import type { CombinedPhoto } from "@/lib/group-photos";
 import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 
 /** The Camera Overrides page: what to write instead of each camera's EXIF values. */
@@ -49,7 +50,7 @@ function CameraChooser({ data }: { data: CombinedData }) {
 /** The editor for the chosen camera, keyed by it so each starts from its saved rules. */
 function ChosenCamera({ row, photos }: { row?: CameraRow; photos: CombinedPhoto[] }) {
   if (!row) {
-    return <p className="text-muted-foreground text-sm">No photo has a camera in its EXIF yet.</p>;
+    return <EmptyNote>No photo has a camera in its EXIF yet.</EmptyNote>;
   }
   return (
     <OverrideEditor

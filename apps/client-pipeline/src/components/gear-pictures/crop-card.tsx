@@ -10,6 +10,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cropStyle, moveCrop, wholeCrop } from "@/lib/gear-crop";
 import { cn } from "@/lib/utils";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 
 /** A checkerboard, so a transparent background shows as one. */
@@ -47,7 +48,7 @@ export function GearCropCard({ kind, files }: { kind: GearKind; files: GearFile[
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {bulk.entries.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No picture to size yet.</p>
+          <EmptyNote>No picture to size yet.</EmptyNote>
         ) : (
           <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
             <div className="flex flex-col gap-3">

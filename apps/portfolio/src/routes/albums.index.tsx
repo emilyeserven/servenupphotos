@@ -11,6 +11,7 @@ import { TripStrip } from "@/components/trip-strip";
 import { photos as allPhotos } from "@/lib/photos";
 import { shownPhotos, storyDays, type TripPage, tripPages } from "@/lib/trip-pages";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 export const Route = createFileRoute("/albums/")({
   validateSearch: (search: Record<string, unknown>): ShownPhotoSearch => parseShownPhoto(search),
@@ -61,7 +62,7 @@ function AlbumsView() {
         </p>
       </header>
       {strips.length === 0 && trips.length === 0 && (
-        <p className="text-muted-foreground">No albums have photos yet.</p>
+        <EmptyNote>No albums have photos yet.</EmptyNote>
       )}
       {strips.map(({ album, parent, photos }) => (
         <AlbumStrip key={album.id} album={album} parent={parent} photos={photos} onOpen={show} />

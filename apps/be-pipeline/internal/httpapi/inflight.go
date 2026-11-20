@@ -2,8 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"errors"
-	"log/slog"
 	"net/http"
 	"time"
 
@@ -40,40 +38,20 @@ type inFlightResponse struct {
 // anything. With ?refresh=1 it asks GitHub where the pull request stands
 // even if it did a moment ago.
 func handlePhotosInFlight(store *settings.Store, gh *github.Client, findPhotos findPhotosFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, err := store.GitHub()
+	return withGitHub(store, publishTimeout, "Couldn't read the photos in flight.", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+		if err := refreshIfAsked(ctx, r, gh, cfg); err != nil {
+			return nil, err
+		}
+		result, err := gh.InFlight(ctx, cfg)
 		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
+			return nil, err
 		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		var result github.InFlightResult
-		err = refreshIfAsked(ctx, r, gh, cfg)
-		if err == nil {
-			result, err = gh.InFlight(ctx, cfg)
-		}
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("read photos in flight failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read photos in flight")
-			return
-		}
-
 		images, err := findImages(r.Context(), store, findPhotos, result.Files)
 		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
+			return nil, settingsFailed(err)
 		}
-		writeJSON(w, http.StatusOK, inFlightResponse{InFlightResult: result, Images: images})
-	}
+		return inFlightResponse{InFlightResult: result, Images: images}, nil
+	})
 }
 
 // findImages looks up each file's photo in the R2 bucket from Settings.

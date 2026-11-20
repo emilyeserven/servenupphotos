@@ -20,6 +20,7 @@ import {
   socialPlatforms,
   statusLabels,
 } from "@/lib/social-posts";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 
 interface SocialPostsCardProps {
@@ -61,7 +62,7 @@ export function SocialPostsCard({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <CalendarNote date={calendarDate} />
-        {value.length === 0 && <p className="text-muted-foreground text-sm">No posts yet.</p>}
+        {value.length === 0 && <EmptyNote>No posts yet.</EmptyNote>}
         {value.map((post, index) => (
           <SocialPostFields
             key={post.id}

@@ -30,6 +30,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { type PhotoMarks, usePhotoMarks } from "@/hooks/use-photo-marks";
 import { isContactSheetKey } from "@/lib/contact-sheets";
 import { cn } from "@/lib/utils";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 import { dateTimeText } from "@portfolio/lib/dates";
 
@@ -145,7 +146,7 @@ function BucketEmpty() {
   return (
     <CardContent>
       <QueryResult query={bucket} pendingLabel="Listing images in R2…">
-        {() => <p className="text-muted-foreground">No images in this bucket yet.</p>}
+        {() => <EmptyNote>No images in this bucket yet.</EmptyNote>}
       </QueryResult>
     </CardContent>
   );

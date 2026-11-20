@@ -11,6 +11,7 @@ import { organizeQuery } from "@/api/organize";
 import type { PendingSave } from "@/api/scan-changes";
 import { CommitSuccess, SaveButton, invalidatePhotoReads } from "@/components/update-data-shared";
 import { photoTagKey } from "@/lib/bulk-tags";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 
 /**
@@ -146,7 +147,7 @@ export function PlannedPhoto({ plan, title, noun, ...boxes }: PlannedPhotoProps)
         <code>{plan.name}</code>
         {title && <span className="text-muted-foreground"> · {title}</span>}
       </p>
-      {plan.add.length === 0 && <p className="text-muted-foreground">No {noun} to add.</p>}
+      {plan.add.length === 0 && <EmptyNote>No {noun} to add.</EmptyNote>}
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         {plan.add.map((id) => (
           <PlannedBox key={id} id={id} path={plan.path} {...boxes} />

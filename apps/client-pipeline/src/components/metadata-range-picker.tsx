@@ -4,6 +4,7 @@ import { FieldLabel } from "@/components/field-label";
 import { STANDARD_STOPS } from "@/lib/meta-stops";
 import { Input } from "@/components/ui/input";
 import { type MetaValueCount, metaNumber, showRange, showValue, valuesIn } from "@/lib/meta-values";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 
 interface MetaRangePickerProps {
@@ -245,9 +246,7 @@ function EndText({ label, info, value, onChange }: EndInputProps) {
 /** The values the photos have in the range, each with how many photos have it. */
 function InRange({ info, inside }: { info: MetaFieldInfo; inside: MetaValueCount[] }) {
   if (inside.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">No photo has a {info.one} in this range yet.</p>
-    );
+    return <EmptyNote>No photo has a {info.one} in this range yet.</EmptyNote>;
   }
   return (
     <ul className="flex flex-wrap gap-1.5" aria-label="In the range">

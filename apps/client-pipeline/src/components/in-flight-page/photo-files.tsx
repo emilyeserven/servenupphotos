@@ -16,6 +16,7 @@ import { UndecidedQueue } from "@/components/undecided-photos";
 import { useRevealed } from "@/hooks/use-revealed";
 import { undecidedPaths } from "@/lib/undecided";
 import { useLocalEditsStore } from "@/stores/local-edits";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 /**
  * The photo files that pass the filters, in the chosen sort (by default the ones without a title
@@ -54,6 +55,7 @@ export function PhotoFiles({
       <PhotoFilterBar filters={filters} shown={files.length} total={shown.files.length}>
         <InFlightSortToggle sort={sort} />
       </PhotoFilterBar>
+      {files.length === 0 && <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>}
       <UndecidedQueue
         files={files.filter((file) => undecided.has(file.path))}
         images={shown.images}

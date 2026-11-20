@@ -15,6 +15,7 @@
       }
     ],
     "servenup/error-note": "warn",
+    "servenup/empty-note": "error",
     "servenup/json-request": "error"
   },
   "ignorePatterns": ["**/dist/**", "**/routeTree.gen.ts"]

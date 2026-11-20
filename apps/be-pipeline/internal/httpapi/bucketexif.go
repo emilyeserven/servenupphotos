@@ -2,7 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"io"
 	"log/slog"
@@ -27,36 +26,38 @@ type getPhotoFunc func(ctx context.Context, cfg settings.R2, key string) (io.Rea
 // the bucket can get its photo data without being uploaded again. The file
 // name is the one the key keeps.
 func handleBucketExif(extractor exif.Extractor, r2 func() (settings.R2, error), get getPhotoFunc, overrides overridesFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var body struct {
-			Key string `json:"key"`
-		}
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxFieldBytes)).Decode(&body); err != nil || body.Key == "" {
-			writeError(w, http.StatusBadRequest, `expected a JSON body with a "key"`)
+	return withBody(`photo's key`, maxFieldBytes, func(w http.ResponseWriter, r *http.Request, body bucketKeyRequest) {
+		if body.Key == "" {
+			writeError(w, http.StatusBadRequest, keyMessage)
 			return
 		}
-		cfg, err := r2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
+		withSettings(r2, getPhotoTimeout, func(ctx context.Context, w http.ResponseWriter, r *http.Request, cfg settings.R2) {
+			path, status, msg := downloadPhoto(ctx, cfg, get, body.Key)
+			if status != http.StatusOK {
+				writeError(w, status, msg)
+				return
+			}
+			defer os.Remove(path) //nolint:errcheck // best-effort cleanup
 
-		path, status, msg := downloadPhoto(r.Context(), cfg, get, body.Key)
-		if status != http.StatusOK {
-			writeError(w, status, msg)
-			return
-		}
-		defer os.Remove(path) //nolint:errcheck // best-effort cleanup
-
-		res, status, msg := analyzePhoto(extractor, path, storage.OriginalName(body.Key), overrides.read(r.Context()))
-		if status != http.StatusOK {
-			writeError(w, status, msg)
-			return
-		}
-		writeJSON(w, http.StatusOK, res)
-	}
+			res, status, msg := analyzePhoto(extractor, path, storage.OriginalName(body.Key), overrides.read(r.Context()))
+			if status != http.StatusOK {
+				writeError(w, status, msg)
+				return
+			}
+			writeJSON(w, http.StatusOK, res)
+		})(w, r)
+	})
 }
+
+// bucketKeyRequest is the body of a request about one photo in R2.
+type bucketKeyRequest struct {
+	// Key is the original JPEG's object key.
+	Key string `json:"key"`
+}
+
+// keyMessage is the answer to a request about a photo in R2 that doesn't
+// say which.
+const keyMessage = "Say which photo in R2 this is for: its key is missing."
 
 // downloadPhoto saves the JPEG at key to a temp file the caller removes. On
 // failure it returns the status and message to send.
@@ -95,7 +96,7 @@ func getPhotoError(err error) (int, string) {
 		return http.StatusBadGateway, gerr.Message
 	default:
 		slog.Error("get photo failed", "err", err)
-		return http.StatusInternalServerError, "could not read the photo from R2"
+		return http.StatusInternalServerError, "Couldn't read the photo from R2."
 	}
 }
 
@@ -103,15 +104,15 @@ func getPhotoError(err error) (int, string) {
 func checkSavedJPEG(path string) (int, string) {
 	f, err := os.Open(path) //nolint:gosec // path comes from os.CreateTemp
 	if err != nil {
-		return http.StatusInternalServerError, "could not read the photo"
+		return http.StatusInternalServerError, "Couldn't read the photo."
 	}
 	defer f.Close() //nolint:errcheck // read-only
 	info, err := f.Stat()
 	if err != nil {
-		return http.StatusInternalServerError, "could not read the photo"
+		return http.StatusInternalServerError, "Couldn't read the photo."
 	}
 	if info.Size() > maxUploadBytes {
-		return http.StatusRequestEntityTooLarge, "photo is too large"
+		return http.StatusRequestEntityTooLarge, photoTooLargeMessage
 	}
 	head := make([]byte, 512)
 	n, _ := io.ReadFull(f, head)
@@ -125,31 +126,11 @@ func checkSavedJPEG(path string) (int, string) {
 // base branch from Settings and on the photo data pull request, which pages
 // keep until they're committed again. It only reads from GitHub.
 func handleCombined(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		var result github.CombinedResult
-		err = refreshIfAsked(ctx, r, gh, cfg)
-		if err == nil {
-			result, err = gh.Combined(ctx, cfg)
-		}
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("read combined photo data failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json")
-			return
-		}
-		writeJSON(w, http.StatusOK, result)
-	}
+	return withGitHub(store, publishTimeout, "Couldn't read ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json.",
+		func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+			if err := refreshIfAsked(ctx, r, gh, cfg); err != nil {
+				return nil, err
+			}
+			return gh.Combined(ctx, cfg)
+		})
 }

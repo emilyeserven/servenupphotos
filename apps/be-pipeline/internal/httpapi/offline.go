@@ -25,17 +25,8 @@ const warmTimeout = 15 * time.Minute
 // copy doesn't have it yet. So pages show it whether or not the internet can
 // be reached, once it has been downloaded.
 func handleThumbnail(store *settings.Store, kept *offline.Copy) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		raw := r.URL.Query().Get("url")
-		cfg, err := store.R2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), thumbnailTimeout)
-		defer cancel()
-		path, err := kept.Thumbnail(ctx, cfg, raw)
+	return withSettings(store.R2, thumbnailTimeout, func(ctx context.Context, w http.ResponseWriter, r *http.Request, cfg settings.R2) {
+		path, err := kept.Thumbnail(ctx, cfg, r.URL.Query().Get("url"))
 		if err != nil {
 			writeThumbnailError(w, err)
 			return
@@ -44,7 +35,7 @@ func handleThumbnail(store *settings.Store, kept *offline.Copy) http.HandlerFunc
 		// A remade Square Thumbnail gets a new URL (its crop mark), so a day is safe.
 		w.Header().Set("Cache-Control", "private, max-age=86400")
 		http.ServeFile(w, r, path) //nolint:gosec // a file in the offline folder, named from a key IsThumbnailKey allowed and a hash
-	}
+	})
 }
 
 // writeThumbnailError says why a thumbnail couldn't be served.
@@ -59,7 +50,7 @@ func writeThumbnailError(w http.ResponseWriter, err error) {
 		writeError(w, http.StatusBadGateway, "That thumbnail isn't kept offline yet, and R2 couldn't be reached: "+gerr.Message)
 	default:
 		slog.Error("offline thumbnail failed", "err", err)
-		writeError(w, http.StatusInternalServerError, "could not keep the thumbnail offline")
+		writeError(w, http.StatusInternalServerError, "Couldn't keep the thumbnail offline.")
 	}
 }
 
