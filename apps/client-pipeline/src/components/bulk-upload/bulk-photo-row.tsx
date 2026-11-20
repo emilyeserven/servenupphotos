@@ -23,6 +23,7 @@ import {
   hasSameName,
 } from "@/lib/bulk-upload";
 import { useBulkUploadStore } from "@/stores/bulk-upload";
+import { ErrorNote } from "@/components/error-note";
 
 /** What each step in progress says it's doing. */
 const WORKING: Partial<Record<BulkStep, string>> = {
@@ -147,8 +148,8 @@ function Failed({ photo }: { photo: BulkPhoto }) {
   const other = photo.sameName?.[0];
   return (
     <>
-      <Line icon={<CircleAlertIcon />} className="text-destructive">
-        {photo.error}
+      <Line icon={<CircleAlertIcon className="text-destructive" />} className="">
+        <ErrorNote error={photo.error} />
       </Line>
       {other && (
         <p className="text-muted-foreground text-sm">

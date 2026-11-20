@@ -43,14 +43,9 @@ export function PlaceAreaEditor({ id, name }: { id: string; name: string }) {
         onRemove={() => remove.mutate(id, refresh)}
       />
       <AreaSearch initial={name} onPick={pick} />
-      <AreaError error={save.error ?? remove.error} />
+      <ErrorNote error={save.error ?? remove.error} className="text-xs" />
     </section>
   );
-}
-
-/** Why the last save or removal failed, when it did. */
-function AreaError({ error }: { error: Error | null }) {
-  return <ErrorNote error={error} className="text-xs" />;
 }
 
 interface AreaStatusProps {

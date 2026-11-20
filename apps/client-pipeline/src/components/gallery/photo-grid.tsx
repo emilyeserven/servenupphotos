@@ -272,6 +272,7 @@ function InFlightMark({ status }: { status?: string }) {
   return (
     <Link
       to="/in-flight"
+      // oxlint-disable-next-line servenup/error-note -- red marks a photo the pull request removes
       className={cn(
         "flex w-fit items-center gap-1 text-xs underline-offset-4 hover:underline",
         status === "removed" ? "text-destructive" : "text-amber-700 dark:text-amber-400",

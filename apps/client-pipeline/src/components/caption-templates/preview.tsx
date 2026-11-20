@@ -10,6 +10,7 @@ import {
 import { type CombinedPhoto, photoText } from "@/lib/group-photos";
 import { shownPhotos } from "@/lib/place-seeds";
 import { FILE, TITLE } from "@/lib/photo-fields";
+import { ErrorNote } from "@/components/error-note";
 
 /** A photo's name in the preview's list: its title, or else its file. */
 function photoLabel(photo: CombinedPhoto, index: number): string {
@@ -72,9 +73,8 @@ function PhotoSelect({ photos, index, onChange }: PhotoSelectProps) {
 function UnknownNote({ names }: { names: string[] }) {
   if (names.length === 0) return null;
   return (
-    <p className="text-destructive text-sm">
-      No photo field is called {names.map((name) => `{${name}}`).join(", ")}, so{" "}
-      {names.length === 1 ? "it's" : "they're"} left empty.
-    </p>
+    <ErrorNote
+      error={`No photo field is called ${names.map((name) => `{${name}}`).join(", ")}, so ${names.length === 1 ? "it's" : "they're"} left empty.`}
+    />
   );
 }

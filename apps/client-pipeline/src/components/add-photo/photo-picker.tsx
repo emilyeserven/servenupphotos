@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { useObjectUrl } from "@/hooks/use-object-url";
 import { usePendingPhotoStore } from "@/stores/pending-photo";
+import { ErrorNote } from "@/components/error-note";
 
 const JPEG_TYPES = ["image/jpeg", "image/pjpeg"];
 
@@ -111,9 +112,7 @@ function PhotoField({ name, error, pending, onChange, onBlur }: PhotoFieldProps)
         <PhotoPreview src={previewUrl} disabled={pending} onClick={() => input.current?.click()} />
       )}
       <PhotoHint id={hintId} chosen={chosen} />
-      <p id={errorId} className="text-destructive text-sm empty:hidden">
-        {error}
-      </p>
+      <ErrorNote id={errorId} error={error} />
     </div>
   );
 }

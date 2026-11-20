@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { AlertCircle, Check } from "lucide-react";
+import { AlertCircleIcon, Check } from "lucide-react";
 import { type MapDownload, transitDownloadsQuery } from "@/api/transit";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -21,7 +21,7 @@ import { ErrorNote } from "@/components/error-note";
 export function MapDownloads({ active, failure }: MapDownloadsProps) {
   const { data, error } = useQuery(transitDownloadsQuery(active));
   if (!active) return null;
-  if (error) return <p className="text-destructive text-xs">{downloadsError(error)}</p>;
+  if (error) return <ErrorNote error={downloadsError(error)} className="text-xs" />;
   return <DownloadList list={(data ?? []).filter((d) => concerns(d, failure))} />;
 }
 
@@ -105,7 +105,7 @@ function sourceLine(d: MapDownload): string {
 
 /** A spinner while it works, or a warning once it failed. */
 function StepIcon({ failed }: { failed: boolean }) {
-  if (failed) return <AlertCircle aria-hidden className="text-destructive size-4 shrink-0" />;
+  if (failed) return <AlertCircleIcon aria-hidden className="text-destructive size-4 shrink-0" />;
   return <Spinner className="size-4 shrink-0" />;
 }
 
