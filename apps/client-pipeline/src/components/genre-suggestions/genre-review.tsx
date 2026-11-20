@@ -6,11 +6,8 @@ import {
   applyGenreSuggestionsMutation,
 } from "@/api/genre-suggestions";
 import { organizeQuery } from "@/api/organize";
-import {
-  SaveReviewed,
-  UnknownPhotos,
-  useReviewedSave,
-} from "@/components/bulk-tagging/review-parts";
+import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
+import { UnknownPhotos } from "@/components/paste-answer";
 import { type GenreOption, PhotoGenreRow } from "@/components/genre-suggestions/photo-genre-row";
 import { toggled } from "@/lib/bulk-tags";
 import { type GenreChoices, NO_GENRE_CHOICES, genresToSave } from "@/lib/genre-suggestions";

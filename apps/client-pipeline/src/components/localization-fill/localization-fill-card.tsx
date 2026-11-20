@@ -5,14 +5,14 @@ import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { bulkTagCount, PickCount } from "@/components/bulk-tagging/pick-count";
 import { useLocalizationRows } from "@/components/localization-drafts";
 import { LocalizationFillReview } from "@/components/localization-fill/localization-fill-review";
-import { Button } from "@/components/ui/button";
+import { ErrorNote } from "@/components/error-note";
+import { PasteAnswer } from "@/components/paste-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { ReadingNote } from "@/components/query-result";
-import { type LocalizationAnswer, readLocalizationAnswer } from "@/lib/localization-answer";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
+import { readLocalizationAnswer } from "@/lib/localization-answer";
 import { localizationPrompt, rowsToFill } from "@/lib/localization-prompt";
 import type { LocalizationRow } from "@/lib/place-seeds";
-import { ErrorNote } from "@/components/error-note";
+import { ReadingNote } from "@/components/query-result";
 import { count } from "@portfolio/lib/words";
 
 /** How many names a prompt asks about until another number is chosen. */
@@ -66,7 +66,9 @@ export function LocalizationFillCard() {
                 onCopied={setAsked}
               />
             </div>
-            {asked.length > 0 && <PasteAnswer key={asked.join()} asked={askedRows(rows, asked)} />}
+            {asked.length > 0 && (
+              <LocalizationAnswerBox key={asked.join()} asked={askedRows(rows, asked)} />
+            )}
           </>
         )}
       </CardContent>
@@ -116,38 +118,22 @@ function CopyNamesPrompt({ rows, places, onCopied }: CopyNamesPromptProps) {
 }
 
 /** The box to paste the LLM's answer into, and the names it gives to check and save. */
-function PasteAnswer({ asked }: { asked: LocalizationRow[] }) {
-  const [answer, setAnswer] = useState("");
-  const [read, setRead] = useState<{ answer?: LocalizationAnswer; error?: string }>({});
-  const review = () => {
-    try {
-      setRead({
-        answer: readLocalizationAnswer(
-          answer,
-          asked.map((row) => row.id),
-        ),
-      });
-    } catch (error) {
-      setRead({ error: (error as Error).message });
-    }
-  };
+function LocalizationAnswerBox({ asked }: { asked: LocalizationRow[] }) {
+  const pasted = usePastedAnswer((answer) =>
+    readLocalizationAnswer(
+      answer,
+      asked.map((row) => row.id),
+    ),
+  );
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
         The prompt asks about {asked.map((row) => row.name).join(", ")}.
       </p>
-      <Textarea
-        aria-label="The LLM's answer"
-        placeholder="Paste the LLM's JSON answer here"
-        className="max-h-64 min-h-32 font-mono text-xs"
-        value={answer}
-        onChange={(event) => setAnswer(event.target.value)}
-      />
-      <Button type="button" className="self-start" disabled={!answer.trim()} onClick={review}>
-        Review the names
-      </Button>
-      <ErrorNote error={read.error} />
-      {read.answer && <LocalizationFillReview key={answer} rows={asked} answer={read.answer} />}
+      <PasteAnswer pasted={pasted} label="Review the names" />
+      {pasted.answer && (
+        <LocalizationFillReview key={pasted.reviews} rows={asked} answer={pasted.answer} />
+      )}
     </div>
   );
 }

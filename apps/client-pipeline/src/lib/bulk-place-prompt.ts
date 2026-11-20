@@ -2,12 +2,12 @@ import type { BulkTagPhoto } from "@/api/bulk-tags";
 import type { ContactSheet } from "@/api/contact-sheets";
 import type { Place } from "@/api/places";
 import { photoBasics, sheetsBlock } from "@/lib/bulk-tag-prompt";
+import { readPastedList } from "@/lib/pasted-json";
 import {
   type PastedLocation,
   PLACE_NAME_RULES,
   POSITION_RULES,
   describePlace,
-  jsonObject,
   listed,
   readLocation,
 } from "@/lib/location-prompt";
@@ -104,9 +104,10 @@ function readPhoto(value: unknown): PastedPhotoPlace | null {
   };
 }
 
-/** Each photo in the LLM's answer, or null when it has no JSON object with a list of photos. */
-export function parseBulkPlaceAnswer(text: string): PastedPhotoPlace[] | null {
-  const photos = jsonObject(text)?.photos;
-  if (!Array.isArray(photos)) return null;
-  return photos.flatMap((value) => readPhoto(value) ?? []);
+/**
+ * Each photo in the LLM's answer. Throws a sentence a user can read when it has no JSON object with
+ * a list of photos.
+ */
+export function parseBulkPlaceAnswer(text: string): PastedPhotoPlace[] {
+  return readPastedList(text, "photos").flatMap((value) => readPhoto(value) ?? []);
 }

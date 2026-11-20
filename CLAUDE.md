@@ -131,6 +131,11 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
   moment such as an upload time). Import them (`@portfolio/lib/…` from the pipeline) instead of writing a local copy,
   and add a new date look to `dates.ts` rather than building an `Intl.DateTimeFormat` or a `date-fns` `format` in a
   component.
+- **Pasted LLM answers:** every box that takes an LLM's answer is `PasteAnswer` (`components/paste-answer.tsx`) with
+  its state from `usePastedAnswer`, and its review is keyed by `pasted.reviews`. Read the answer with
+  `readPastedObject` / `readPastedList` (`lib/pasted-json.ts`) or Go's `parseLLMAnswer`, never `JSON.parse` (lint
+  bans `parsePastedJson` elsewhere); match names in it with `matchName` (same rule in TS and Go); list names that
+  match no photo with `UnknownPhotos` ([Pasting the answer](docs/copy-prompts.md#pasting-the-answer)).
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors

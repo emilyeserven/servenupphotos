@@ -1,6 +1,6 @@
 import { type Group, groupId } from "@/api/organize";
 import type { CombinedPhoto } from "@/lib/group-photos";
-import { parsePastedJson } from "@/lib/pasted-json";
+import { matchName, readPastedList } from "@/lib/pasted-json";
 import { count } from "@portfolio/lib/words";
 
 /** How many tags with descriptions the prompt shows as examples of the style to write in. */
@@ -133,26 +133,17 @@ function isAnswerEntry(value: unknown): value is AnswerEntry {
   return typeof entry?.tag === "string" && typeof entry.description === "string";
 }
 
-/** The answer's JSON object, from its first `{` to its last `}`, so words or a code block around it are fine. */
+/** The answer's "descriptions", each with a tag and a description. */
 function answerEntries(answer: string): AnswerEntry[] {
-  const json = answer.slice(answer.indexOf("{"), answer.lastIndexOf("}") + 1);
-  let parsed: unknown;
-  try {
-    parsed = parsePastedJson(json);
-  } catch {
-    throw new Error("The answer has no JSON object in it that can be read.");
-  }
-  const list = (parsed as { descriptions?: unknown } | null)?.descriptions;
-  if (!Array.isArray(list)) throw new Error('The answer\'s JSON has no "descriptions" list.');
-  return list.filter(isAnswerEntry);
+  return readPastedList(answer, "descriptions").filter(isAnswerEntry);
 }
 
-/** The tag a name in the answer means: by its ID or name, ignoring case, or by the ID made from it. */
+/** The tag a name in the answer means: by its ID or name with `matchName`, or by the ID made from it. */
 function findTag(tags: Group[], name: string): Group | undefined {
-  const wanted = name.trim().toLowerCase();
+  const wanted = matchName(name);
   const id = groupId(name);
   return tags.find(
-    (tag) => tag.id === wanted || tag.name.toLowerCase() === wanted || tag.id === id,
+    (tag) => matchName(tag.id) === wanted || matchName(tag.name) === wanted || tag.id === id,
   );
 }
 

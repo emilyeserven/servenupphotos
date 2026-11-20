@@ -2,13 +2,12 @@ import {
   type AutogroupAsk,
   type AutogroupPhoto,
   type ExistingGroup,
-  answerObject as jsonObject,
   answerablePhotos,
   existingGroups,
-  lookupName,
   photoFinder,
 } from "@/lib/compare-autogroup";
 import { type ComparePhoto, compareGroupOf, comparePhotoName } from "@/lib/compare-groups";
+import { nameFinder, readPastedObject } from "@/lib/pasted-json";
 import { textOf } from "@portfolio/lib/values";
 
 /** A group the LLM suggested making, or photos it suggested adding to a group there is. */
@@ -46,11 +45,11 @@ export interface AutogroupAnswer {
 
 /** The answer's JSON object, which has to have at least one of the lists the prompt asks for. */
 function answerObject(answer: string): Record<string, unknown> {
-  const lists = jsonObject(answer) as Record<string, unknown> | null;
-  if (!["groups", "merge", "remove"].some((key) => Array.isArray(lists?.[key]))) {
+  const lists = readPastedObject(answer);
+  if (!["groups", "merge", "remove"].some((key) => Array.isArray(lists[key]))) {
     throw new Error('The answer\'s JSON has no "groups", "merge" or "remove" list.');
   }
-  return lists as Record<string, unknown>;
+  return lists;
 }
 
 /** The answer's list under key, each entry as an object, or none. */
@@ -66,10 +65,9 @@ function texts(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
 }
 
-/** Looks a group there is up by the name the answer gave, ignoring case and quotes. */
+/** Looks a group there is up by the name the answer gave, with `matchName`. */
 function groupFinder(groups: ExistingGroup[]): (name: string) => ExistingGroup | undefined {
-  const byName = new Map(groups.map((group) => [lookupName(group.name), group]));
-  return (name) => byName.get(lookupName(name));
+  return nameFinder(groups, (group) => [group.name]);
 }
 
 /** What reading the answer has found so far: the photos placed and the names it didn't know. */

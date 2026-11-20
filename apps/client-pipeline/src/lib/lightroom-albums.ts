@@ -1,7 +1,7 @@
 import screenshotsPrompt from "@/lib/lightroom-albums-prompt.md?raw";
 import recordingPrompt from "@/lib/lightroom-albums-recording-prompt.md?raw";
 import { insertAlbum, keepMove } from "@/lib/lightroom-tree";
-import { parsePastedJson } from "@/lib/pasted-json";
+import { readPastedObject } from "@/lib/pasted-json";
 import { stringOf } from "@portfolio/lib/values";
 
 /** How the album panel is captured for the LLM: overlapping screenshots, or a screen recording scrolling through it. */
@@ -89,18 +89,6 @@ export interface LightroomAlbumsFile {
   items: LightroomItem[];
 }
 
-/** The JSON object in pasted text, from its first `{` to its last `}`, so a code block or words around it are fine. */
-function jsonObject(input: string): Record<string, unknown> {
-  const start = input.indexOf("{");
-  const end = input.lastIndexOf("}");
-  if (start < 0 || end < start) throw new Error("There's no JSON object in it.");
-  try {
-    return parsePastedJson(input.slice(start, end + 1)) as Record<string, unknown>;
-  } catch {
-    throw new Error("The JSON couldn't be read. Check it's the whole answer or file.");
-  }
-}
-
 function count(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
@@ -182,8 +170,8 @@ function readItems(value: unknown, parent: string): LightroomItem[] {
  * shape. Throws an error a person can read when there's no tree in it.
  */
 export function readLightroomAlbums(input: string): LightroomAlbumsFile {
-  const raw = jsonObject(input);
-  if (!Array.isArray(raw.items)) throw new Error(`The JSON has no "items" list.`);
+  const raw = readPastedObject(input);
+  if (!Array.isArray(raw.items)) throw new Error(`The answer's JSON has no "items" list.`);
   const items = readItems(raw.items, "");
   if (items.length === 0) throw new Error("The list has no folders or albums in it.");
   return { source: stringOf(raw.source) || "unknown", updatedAt: new Date().toISOString(), items };

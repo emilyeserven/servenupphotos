@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import {
   type BulkPlacePick,
   findPhotosByNameMutation,
@@ -10,17 +9,14 @@ import { type Place, placesQuery, readEntries } from "@/api/places";
 import { BulkPlaceReview } from "@/components/bulk-places/bulk-place-review";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
-import {
-  CopyPromptButton,
-  PasteAnswer,
-  PickBar,
-  usePhotoPick,
-} from "@/components/bulk-tagging/pick-controls";
+import { CopyPromptButton, PickBar, usePhotoPick } from "@/components/bulk-tagging/pick-controls";
+import { PasteAnswer } from "@/components/paste-answer";
 import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { bulkPlacePrompt, parseBulkPlaceAnswer } from "@/lib/bulk-place-prompt";
 import { noPlacePaths, reviewBulkPlaces, unpickedNames } from "@/lib/bulk-places";
 import { NoPlaceFoundNote } from "@/components/bulk-places/no-place-found";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { useNoPlaceFoundStore } from "@/stores/no-place-found";
 import { ErrorNote } from "@/components/error-note";
 
@@ -57,40 +53,21 @@ export function BulkPlacesCard() {
   );
 }
 
-/** The pasted answer's photos, read, and the names it gives that aren't any of the picked photos. */
-function pastedAnswer(answer: string, pick: BulkPlacePick) {
+/**
+ * The review the pasted answer makes for the picked photos and the ones it names that weren't
+ * picked, which `find` looks up among every photo, so an answer for another batch still applies to
+ * the photos it names. Throws a sentence a user can read when the answer can't be read.
+ */
+async function readPlaces(
+  answer: string,
+  pick: BulkPlacePick,
+  places: Place[],
+  find: (names: string[]) => Promise<{ photos: BulkTagPhoto[] }>,
+) {
   const pasted = parseBulkPlaceAnswer(answer);
-  return { pasted, unpicked: pasted ? unpickedNames(pick.photos, pasted) : [] };
-}
-
-/**
- * The review the pasted answer makes for the picked photos and `others`, the ones it names that
- * weren't picked, or null when it has no list of photos.
- */
-function readAnswer(answer: string, pick: BulkPlacePick, places: Place[], others: BulkTagPhoto[]) {
-  const { pasted } = pastedAnswer(answer, pick);
-  return { review: pasted && reviewBulkPlaces(pick.photos, pasted, places, others) };
-}
-
-/**
- * Reads the pasted answer into its review, first finding the photos it names that weren't picked
- * among every photo, so an answer for another batch still applies to the photos it names.
- */
-function useReadAnswer(pick: BulkPlacePick, places: Place[]) {
-  const find = useMutation(findPhotosByNameMutation);
-  const [read, setRead] = useState<ReturnType<typeof readAnswer>>();
-  const remember = useNoPlaceFoundStore((state) => state.add);
-  const done = (answer: string, others: BulkTagPhoto[]) => {
-    const next = readAnswer(answer, pick, places, others);
-    if (next.review) remember(noPlacePaths(next.review));
-    setRead(next);
-  };
-  const review = (answer: string) => {
-    const { unpicked } = pastedAnswer(answer, pick);
-    if (unpicked.length === 0) return done(answer, []);
-    find.mutate(unpicked, { onSuccess: (found) => done(answer, found.photos) });
-  };
-  return { read, review, find };
+  const unpicked = unpickedNames(pick.photos, pasted);
+  const others = unpicked.length > 0 ? (await find(unpicked)).photos : [];
+  return reviewBulkPlaces(pick.photos, pasted, places, others);
 }
 
 /** The picked photos, their prompt, the box to paste the answer into, and its review. */
@@ -126,27 +103,17 @@ interface PlacesAnswerProps {
 
 /** The box to paste the answer into, and its review. */
 function PlacesAnswer({ pick, places, loading }: PlacesAnswerProps) {
-  const [answer, setAnswer] = useState("");
-  const { read, review, find } = useReadAnswer(pick, places);
+  const find = useMutation(findPhotosByNameMutation);
+  const remember = useNoPlaceFoundStore((state) => state.add);
+  const pasted = usePastedAnswer(async (answer) => {
+    const review = await readPlaces(answer, pick, places, find.mutateAsync);
+    remember(noPlacePaths(review));
+    return review;
+  });
   return (
     <>
-      <PasteAnswer
-        value={answer}
-        onChange={setAnswer}
-        pending={loading || find.isPending}
-        label="Review the places"
-        onReview={() => review(answer)}
-      />
-      <ErrorNote error={find.error} />
-      {read && <ReadAnswer read={read} />}
+      <PasteAnswer pasted={pasted} label="Review the places" disabled={loading} />
+      {pasted.answer && <BulkPlaceReview key={pasted.reviews} review={pasted.answer} />}
     </>
   );
-}
-
-/** The review the answer makes, or that it can't be read. */
-function ReadAnswer({ read }: { read: ReturnType<typeof readAnswer> }) {
-  if (!read.review) {
-    return <ErrorNote error="The answer has no JSON object with a list of photos to read." />;
-  }
-  return <BulkPlaceReview key={JSON.stringify(read.review)} review={read.review} />;
 }

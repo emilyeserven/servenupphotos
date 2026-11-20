@@ -70,3 +70,18 @@ func TestFindPhotosByName(t *testing.T) {
 		t.Errorf("Unknown = %v, want zzz", got.Unknown)
 	}
 }
+
+func TestPreviewBulkTagsMatchesNamesWithMatchName(t *testing.T) {
+	_, c := bulkTagRepo(t, map[string]string{"a.json": `{"tags":[]}`, "b.json": `{"tags":[]}`})
+	answer := `{"photos":[{"photo":"A.JSON","tags":["temple"]},{"photo":"“b”","tags":["lanterns"]}]}`
+	got, err := c.PreviewBulkTags(t.Context(), baseURLSettings, []string{photosDir + "a.json"}, answer)
+	if err != nil {
+		t.Fatalf("PreviewBulkTags() error = %v", err)
+	}
+	if len(got.Photos) != 2 || !slices.Equal(got.Photos[0].Add, []string{"temple"}) || !slices.Equal(got.Photos[1].Add, []string{"lanterns"}) {
+		t.Errorf("Photos = %+v, want temple on a and lanterns on b", got.Photos)
+	}
+	if len(got.Unknown) != 0 {
+		t.Errorf("Unknown = %v, want none", got.Unknown)
+	}
+}

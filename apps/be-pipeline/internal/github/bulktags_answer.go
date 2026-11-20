@@ -313,7 +313,7 @@ func pickedUpTo(scan baseURLScan, paths []string, limit int) ([]bulkPhoto, *Publ
 func (n *groupNamer) plan(p bulkPhoto, answer bulkTagAnswer, defs map[string]BulkTagNew) BulkTagPhotoPlan {
 	var names []string
 	for _, a := range answer.Photos {
-		if strings.TrimSpace(a.Photo) == p.name {
+		if sameName(a.Photo, p.name) {
 			names = append(names, a.Tags...)
 		}
 	}

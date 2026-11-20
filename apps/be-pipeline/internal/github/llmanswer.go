@@ -18,12 +18,40 @@ import (
 func parseLLMAnswer(text string, answer any) *PublishError {
 	start, end := strings.Index(text, "{"), strings.LastIndex(text, "}")
 	if start < 0 || end < start {
-		return publishErr(http.StatusBadRequest, "Paste the LLM's whole answer: the JSON object it wrote, from { to }.")
+		return publishErr(http.StatusBadRequest, unreadableAnswer)
 	}
 	if err := unmarshalPasted(text[start:end+1], answer); err != nil {
 		return publishErr(http.StatusBadRequest, "The answer isn't the JSON the prompt asks for (%v). Ask the LLM to answer with only that JSON.", err)
 	}
 	return nil
+}
+
+// unreadableAnswer is what every answer box says when the pasted text has no
+// JSON object in it. The browser's readPastedObject (lib/pasted-json.ts)
+// says the same.
+const unreadableAnswer = "The answer has no JSON object that can be read. Paste the LLM's whole answer, from { to }, or ask it to answer with only the JSON."
+
+// quotesAround is the quotes, straight or curly, an answer sometimes leaves
+// around a name.
+const quotesAround = "\"'\u201c\u201d\u2018\u2019"
+
+// matchName is a name as an LLM's answer gave it, made ready for matching to
+// a photo: trimmed, without quotes around it or a ".json" ending, in lower
+// case, so "IMG_1.JSON" matches the photo img_1. Every lookup of a photo by a
+// name in a pasted answer compares with it; the browser's matchName
+// (lib/pasted-json.ts) does the same.
+func matchName(name string) string {
+	clean := strings.TrimSpace(strings.Trim(strings.TrimSpace(name), quotesAround))
+	if strings.HasSuffix(strings.ToLower(clean), ".json") {
+		clean = clean[:len(clean)-len(".json")]
+	}
+	return strings.ToLower(clean)
+}
+
+// sameName reports whether name, as an answer gave it, names the photo
+// called photo, matching both with matchName.
+func sameName(name, photo string) bool {
+	return matchName(name) == matchName(photo)
 }
 
 // straightQuotes makes every curly double quote (“ ”) straight ("), leaving

@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import {
   type GenrePick,
   pickGenrePhotosMutation,
@@ -8,17 +7,14 @@ import {
 import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
-import {
-  CopyPromptButton,
-  PasteAnswer,
-  PickBar,
-  usePhotoPick,
-} from "@/components/bulk-tagging/pick-controls";
+import { CopyPromptButton, PickBar, usePhotoPick } from "@/components/bulk-tagging/pick-controls";
 import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
 import { GenreReview } from "@/components/genre-suggestions/genre-review";
+import { PasteAnswer } from "@/components/paste-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { genrePrompt } from "@/lib/genre-prompt";
 import { ErrorNote } from "@/components/error-note";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 
 /** How many photos Genre Suggestions picks until another number is chosen: a whole batch. */
 const defaultGenreCount = 50;
@@ -52,9 +48,9 @@ export function GenreSuggestionsCard() {
 
 /** The picked photos, their prompt, the box to paste the answer into, and its review. */
 function PickedGenres({ pick }: { pick: GenrePick }) {
-  const [answer, setAnswer] = useState("");
   const paths = pick.photos.map((photo) => photo.path);
   const preview = useMutation(previewGenreSuggestionsMutation);
+  const pasted = usePastedAnswer((answer) => preview.mutateAsync({ paths, answer }));
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
@@ -62,17 +58,8 @@ function PickedGenres({ pick }: { pick: GenrePick }) {
       </p>
       <PickedPhotos photos={pick.photos} />
       <CopyGenrePromptButton pick={pick} />
-      <PasteAnswer
-        value={answer}
-        onChange={setAnswer}
-        pending={preview.isPending}
-        label="Review the genres"
-        onReview={() => preview.mutate({ paths, answer })}
-      />
-      <ErrorNote error={preview.error} />
-      {preview.data && (
-        <GenreReview key={JSON.stringify(preview.data)} preview={preview.data} pick={pick} />
-      )}
+      <PasteAnswer pasted={pasted} label="Review the genres" />
+      {pasted.answer && <GenreReview key={pasted.reviews} preview={pasted.answer} pick={pick} />}
     </div>
   );
 }

@@ -160,7 +160,7 @@ func (n *groupNamer) existing(name string) string {
 // addPicked adds the path of the photo named name to paths, once, when it's
 // one of photos.
 func addPicked(photos []bulkPhoto, name string, paths []string) []string {
-	i := slices.IndexFunc(photos, func(p bulkPhoto) bool { return p.name == name })
+	i := slices.IndexFunc(photos, func(p bulkPhoto) bool { return sameName(name, p.name) })
 	if i < 0 {
 		return paths
 	}

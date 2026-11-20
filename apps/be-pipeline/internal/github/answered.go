@@ -18,11 +18,10 @@ func answeredPhotos(scan baseURLScan, photos []bulkPhoto, names []string) (all [
 	all = slices.Clone(photos)
 	unknown = []string{}
 	for _, name := range names {
-		trimmed := strings.TrimSpace(name)
-		if trimmed == "" || slices.ContainsFunc(all, func(p bulkPhoto) bool { return p.name == trimmed }) {
+		if matchName(name) == "" || slices.ContainsFunc(all, func(p bulkPhoto) bool { return sameName(name, p.name) }) {
 			continue
 		}
-		if p, ok := photoNamed(scan, trimmed); ok {
+		if p, ok := photoNamed(scan, name); ok {
 			all = append(all, p)
 		} else {
 			unknown = appendMissing(unknown, []string{name})
@@ -31,10 +30,11 @@ func answeredPhotos(scan baseURLScan, photos []bulkPhoto, names []string) (all [
 	return all, unknown
 }
 
-// photoNamed is the readable photo file whose name, without ".json", is name.
+// photoNamed is the readable photo file whose name, without ".json", is
+// name, matched with matchName.
 func photoNamed(scan baseURLScan, name string) (bulkPhoto, bool) {
 	i := slices.IndexFunc(scan.files, func(f photoFile) bool {
-		return f.err == "" && strings.TrimSuffix(path.Base(f.path), path.Ext(f.path)) == name
+		return f.err == "" && sameName(name, strings.TrimSuffix(path.Base(f.path), path.Ext(f.path)))
 	})
 	if i < 0 {
 		return bulkPhoto{}, false

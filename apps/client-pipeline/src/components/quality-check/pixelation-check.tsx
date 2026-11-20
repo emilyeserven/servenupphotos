@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { CopyPromptButton, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
+import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
+import { PasteAnswer, UnknownPhotos } from "@/components/paste-answer";
 import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
 import { type FlagItem, FlagList } from "@/components/quality-check/flag-list";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
@@ -11,7 +12,6 @@ import {
 } from "@/lib/pixelation-prompt";
 import { count } from "@portfolio/lib/words";
 import { SectionTitle } from "@/components/section-title";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * The flagged photos as rows of the list to flag, each with the photo as it is now in `photos`, so
@@ -47,9 +47,7 @@ function withEvery(photos: AutogroupPhoto[], every: AutogroupPhoto[]): Autogroup
  */
 export function PixelationCheck({ photos, every }: PixelationCheckProps) {
   const answerable = useMemo(() => withEvery(photos, every), [photos, every]);
-  const { typed, setTyped, answer, error, reviews, review } = usePastedAnswer((text) =>
-    readPixelationAnswer(text, answerable),
-  );
+  const pasted = usePastedAnswer((text) => readPixelationAnswer(text, answerable));
   const sheetPhotos = useMemo(() => autogroupSheetPhotos(photos), [photos]);
   const contact = useContactSheets(sheetPhotos);
   return (
@@ -66,15 +64,10 @@ export function PixelationCheck({ photos, every }: PixelationCheckProps) {
         disabled={photos.length === 0 || contact.pending}
         prompt={() => pixelationPrompt(photos, contact.sheets)}
       />
-      <PasteAnswer
-        value={typed}
-        onChange={setTyped}
-        pending={false}
-        label="Review the flagged photos"
-        onReview={review}
-      />
-      <ErrorNote error={error} />
-      {answer && <AnswerView key={reviews} answer={answer} photos={answerable} />}
+      <PasteAnswer pasted={pasted} label="Review the flagged photos" />
+      {pasted.answer && (
+        <AnswerView key={pasted.reviews} answer={pasted.answer} photos={answerable} />
+      )}
     </section>
   );
 }
@@ -91,11 +84,9 @@ function AnswerView({ answer, photos }: { answer: PixelationAnswer; photos: Auto
       {answer.flagged.length > 0 && (
         <FlagList items={flagItems(answer, photos)} linkLabel="Pixelate faces" />
       )}
-      {answer.unknown.length > 0 && (
-        <p className="text-muted-foreground text-sm">
-          Skipped, since they aren&apos;t photos: {answer.unknown.join(", ")}.
-        </p>
-      )}
+      <div className="text-sm">
+        <UnknownPhotos names={answer.unknown} noun="flags" />
+      </div>
     </>
   );
 }
