@@ -42,9 +42,9 @@ func (r *mapLoads[T]) get(ctx context.Context, prog *mapProgress, key, name stri
 	if l.busy == nil {
 		l.busy = make(chan struct{})
 		go r.load(l, l.busy, func() (T, error) {
-			p := prog.begin(key, name)
-			defer prog.end(key)
-			return load(p)
+			net, err := load(prog.begin(key, name))
+			prog.end(key, err)
+			return net, err
 		})
 	}
 	busy := l.busy

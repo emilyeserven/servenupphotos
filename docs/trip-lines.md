@@ -639,19 +639,32 @@ those.
 ### Download progress
 
 The rail and bus maps take minutes to download and read the first time, and seconds to read again after each start of
-the pipeline, so the backend lists each map being loaded and how far it has got
-(`be-pipeline/internal/transit/progress.go`): its name, its step (`opening` a copy already on this computer,
-`downloading`, or `reading` the download), the bytes downloaded and the file's size (from its `Content-Length`), and
-how long it has taken. Geofabrik's list of extracts is listed the same way while it downloads.
+the pipeline, so the backend lists each map being loaded, what it's doing and how far it has got, and logs each step
+(`map load` in the backend's terminal; `be-pipeline/internal/transit/progress.go`). The steps, in order:
 
-- `GET /api/transit/downloads` answers that list, from memory, such as
-  `[{ "map": "OpenStreetMap's bus map of South Korea", "step": "downloading", "bytes": 125829120, "total": 325058560, "seconds": 45 }]`.
+- `checking`: looking for a copy saved on this computer, which is then read (`reading`) with no download.
+- `waiting`: another OpenStreetMap extract is downloading; one downloads at a time.
+- `connecting`: the request for the file is sent and the server hasn't answered yet.
+- `downloading`: the bytes so far, the file's size (its `Content-Length`) and the speed.
+- `reading`: each pass over the extract (2 for railways, 3 for bus routes, so 5 when a country's first look-up reads
+  both), with the bytes of the extract that pass has read, such as "Reading the bus routes (pass 3 of 5 over the 312 MB
+  extract)".
+- `saving`: writing what was read, such as "Saving 4210 bus routes along 52011 roads to …".
+- `failed`: why, such as "downloading California's extract failed: couldn't reach download.geofabrik.de: …". A failed
+  load stays listed for 5 minutes so the page can still show it.
 
-While a hop's or a leg's look-up runs, the page asks it every second (`transitDownloadsQuery`) and shows a card for each
-map (`components/trip-lines/map-downloads.tsx`): what it's doing, a bar filled to the share downloaded (pulsing while
-it reads, or when the size isn't known), and what happens next. A look-up still waits at most 100 s for its map; it
-then answers 503 with `"loading": true`, and the page asks again by itself (`api/transit-log.ts`, up to 40 times)
-instead of showing an error, so the card stays until the lines are found.
+Geofabrik's list of extracts is listed the same way while it downloads.
+
+- `GET /api/transit/downloads` answers that list, from memory: each map's `map`, `step`, `detail` (what it's doing in a
+  sentence), `url`, `bytes`, `total`, `rate` (bytes a second), `seconds` (the whole load), `stepSeconds` and `error`.
+
+While a hop's or a leg's look-up runs, or after it failed, the page asks it every second (`transitDownloadsQuery`) and
+shows a card for each map (`components/trip-lines/map-downloads.tsx`): its title ("Downloading OpenStreetMap's bus map
+of California"), the stages Connect, Download, Read and Save with the ones done ticked, "412 MB of 1180 MB · 6.4 MB/s ·
+about 2 min left", a bar filled to the share downloaded or read (pulsing when that can't be told), the step's sentence,
+and where the file comes from and how long it has taken; or, once it failed, why. A look-up still waits at most 100 s
+for its map; it then answers 503 with `"loading": true`, and the page asks again by itself (`api/transit-log.ts`, up to
+40 times) instead of showing an error, so the card stays until the lines are found.
 
 > **Frontend analogy:** it's an upload progress bar turned around: the long job runs on the server, and the page polls
 > a cheap status endpoint with TanStack Query's `refetchInterval` while the real request is pending, then quietly

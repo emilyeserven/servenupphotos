@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"os"
@@ -87,6 +88,7 @@ func (c *Client) readOSMRegion(region osmRegion, p *progress) (*railNet, error) 
 			return nil, err
 		}
 	}
+	p.setStep(StepReading, "Reading the rail map saved in "+dir)
 	sections, stations, err := readMLIT(dir)
 	if err != nil {
 		return nil, err
@@ -101,13 +103,14 @@ func osmRailMapDir(region osmRegion) string {
 
 // writeOSMRail reads the railways and stations of the extract open opens and
 // keeps them in dir as GeoJSON.
-func writeOSMRail(ctx context.Context, region osmRegion, open func() (io.ReadCloser, error), dir string) error {
+func writeOSMRail(ctx context.Context, region osmRegion, open func() (io.ReadCloser, error), dir string, p *progress) error {
 	start := time.Now()
 	sections, stations, err := readOSMRail(ctx, open)
 	slog.Info("osm rail extract read", "region", region.id, "sections", len(sections), "stations", len(stations), "took", time.Since(start).Round(time.Second), "err", err)
 	if err != nil {
 		return err
 	}
+	p.setStep(StepSaving, fmt.Sprintf("Saving %d stretches of railway and %d stations to %s", len(sections), len(stations), dir))
 	if err := os.MkdirAll(dir, 0o750); err != nil {
 		return err
 	}

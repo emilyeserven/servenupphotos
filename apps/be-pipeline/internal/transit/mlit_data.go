@@ -124,6 +124,7 @@ func downloadMLIT(ctx context.Context, client *http.Client, url, dir string, p *
 	if err != nil {
 		return err
 	}
+	p.setStep(StepSaving, "Unzipping its railways and stations into "+dir)
 	return unzipMLIT(tmp, size, dir)
 }
 
@@ -135,16 +136,21 @@ func fetchTo(ctx context.Context, client *http.Client, url string, w io.Writer, 
 		return 0, err
 	}
 	req.Header.Set("User-Agent", "servenupphotos-pipeline")
+	p.connecting(url)
 	res, err := client.Do(req) //nolint:gosec // a download address from a setting or Geofabrik's index
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("couldn't reach %s: %w", hostOf(url), err)
 	}
 	defer res.Body.Close() //nolint:errcheck // read-only body
 	if res.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf("the server answered %s", res.Status)
+		return 0, fmt.Errorf("%s answered %s for %s", hostOf(url), res.Status, url)
 	}
 	p.downloading(res.ContentLength)
-	return io.Copy(io.MultiWriter(w, p), res.Body)
+	n, err := io.Copy(io.MultiWriter(w, p), res.Body)
+	if err != nil {
+		return n, fmt.Errorf("the download from %s stopped after %s: %w", hostOf(url), sizeText(n), err)
+	}
+	return n, nil
 }
 
 // unzipMLIT keeps the zip's two GeoJSON files in dir, the UTF-8 copies when it

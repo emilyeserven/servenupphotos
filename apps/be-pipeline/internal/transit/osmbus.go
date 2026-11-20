@@ -158,13 +158,14 @@ func haveBusMap(dir string) bool {
 
 // writeOSMBus reads the bus routes of the extract open opens and keeps them
 // in dir.
-func writeOSMBus(ctx context.Context, region osmRegion, open func() (io.ReadCloser, error), dir string) error {
+func writeOSMBus(ctx context.Context, region osmRegion, open func() (io.ReadCloser, error), dir string, p *progress) error {
 	start := time.Now()
 	m, err := readOSMBus(ctx, open)
 	slog.Info("osm bus extract read", "region", region.id, "routes", len(m.Routes), "ways", len(m.Ways), "took", time.Since(start).Round(time.Second), "err", err)
 	if err != nil {
 		return err
 	}
+	p.setStep(StepSaving, fmt.Sprintf("Saving %d bus routes along %d roads to %s", len(m.Routes), len(m.Ways), dir))
 	if err := os.MkdirAll(dir, 0o750); err != nil {
 		return err
 	}
@@ -229,6 +230,7 @@ func (c *Client) osmRegionBus(ctx context.Context, regions []osmRegion, i int) (
 				return nil, err
 			}
 		}
+		p.setStep(StepReading, "Reading the bus map saved in "+dir)
 		m, err := readBusMap(filepath.Join(dir, osmBusFile))
 		if err != nil {
 			return nil, err

@@ -18,7 +18,7 @@ func TestFetchToCountsProgress(t *testing.T) {
 	t.Cleanup(srv.Close)
 	var m mapProgress
 	p := m.begin("k", "Japan's rail map")
-	if got := m.list(); len(got) != 1 || got[0].Step != StepOpening {
+	if got := m.list(); len(got) != 1 || got[0].Step != StepChecking {
 		t.Fatalf("before = %+v", got)
 	}
 	if _, err := fetchTo(context.Background(), srv.Client(), srv.URL, io.Discard, p); err != nil {
@@ -28,7 +28,7 @@ func TestFetchToCountsProgress(t *testing.T) {
 	if len(got) != 1 || got[0].Step != StepDownloading || got[0].Bytes != 1000 || got[0].Total != 1000 || got[0].Map != "Japan's rail map" {
 		t.Errorf("after = %+v", got)
 	}
-	m.end("k")
+	m.end("k", nil)
 	if got := m.list(); len(got) != 0 {
 		t.Errorf("ended = %+v", got)
 	}
@@ -38,7 +38,7 @@ func TestMapLoadsListsWhileLoading(t *testing.T) {
 	c := &Client{}
 	release := make(chan struct{})
 	load := func(p *progress) (*busNet, error) {
-		p.setStep(StepReading)
+		p.setStep(StepReading, "Reading")
 		<-release
 		return &busNet{}, nil
 	}

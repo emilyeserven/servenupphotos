@@ -1,12 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { Download } from "lucide-react";
+import { AlertCircle, Check } from "lucide-react";
 import { type MapDownload, transitDownloadsQuery } from "@/api/transit";
-import { downloadDetail, downloadNote, downloadShare, downloadTitle } from "@/lib/map-download";
+import { Spinner } from "@/components/ui/spinner";
+import {
+  clockText,
+  DOWNLOAD_STAGES,
+  downloadDetail,
+  downloadShare,
+  downloadTitle,
+  sourceText,
+  stageState,
+} from "@/lib/map-download";
 
 /**
- * The rail and bus maps being downloaded or read while a look-up runs (active), each with a
- * progress bar, so a first look-up on a map shows what it's waiting for from the start. Nothing
- * while none is.
+ * The rail and bus maps being downloaded or read while a look-up runs or after it failed (active),
+ * each with its stages, what it's doing now, a progress bar and where the file comes from, so a
+ * first look-up on a map shows what it's waiting for from the start. Nothing while none is.
  */
 export function MapDownloads({ active }: { active: boolean }) {
   const { data } = useQuery(transitDownloadsQuery(active));
@@ -20,20 +29,82 @@ export function MapDownloads({ active }: { active: boolean }) {
   );
 }
 
-/** One map being loaded: what it's doing, how far it has got, and a bar. */
+/** One map being loaded: what it's doing, how far it has got, and a bar; or why it failed. */
 function MapDownloadRow({ download }: { download: MapDownload }) {
+  const failed = download.step === "failed";
   return (
     <div className="bg-muted/40 flex flex-col gap-1.5 rounded-md border p-2 text-sm">
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-        <Download aria-hidden className="text-muted-foreground size-4 shrink-0" />
-        <span className="font-medium">{downloadTitle(download)}</span>
+      <RowTitle download={download} failed={failed} />
+      {download.url && <Stages download={download} />}
+      {failed ? (
+        <p className="text-destructive text-xs">{download.error}</p>
+      ) : (
+        <>
+          <ProgressBar share={downloadShare(download)} label={downloadTitle(download)} />
+          <p className="text-muted-foreground text-xs">{download.detail}</p>
+        </>
+      )}
+      <p className="text-muted-foreground text-xs">{sourceLine(download)}</p>
+    </div>
+  );
+}
+
+/** The row's icon and title, and how far it has got on the right while it works. */
+function RowTitle({ download, failed }: { download: MapDownload; failed: boolean }) {
+  return (
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+      <StepIcon failed={failed} />
+      <span className="font-medium">{downloadTitle(download)}</span>
+      {!failed && (
         <span className="text-muted-foreground ml-auto tabular-nums">
           {downloadDetail(download)}
         </span>
-      </div>
-      <ProgressBar share={downloadShare(download)} label={downloadTitle(download)} />
-      <p className="text-muted-foreground text-xs">{downloadNote(download.step)}</p>
+      )}
     </div>
+  );
+}
+
+/** Where the file comes from and how long the load has taken in all. */
+function sourceLine(d: MapDownload): string {
+  const from = sourceText(d.url);
+  const took =
+    d.step === "failed"
+      ? `Stopped after ${clockText(d.seconds)}`
+      : `Started ${clockText(d.seconds)} ago`;
+  return from ? `From ${from} · ${took}` : took;
+}
+
+/** A spinner while it works, or a warning once it failed. */
+function StepIcon({ failed }: { failed: boolean }) {
+  if (failed) return <AlertCircle aria-hidden className="text-destructive size-4 shrink-0" />;
+  return <Spinner className="size-4 shrink-0" />;
+}
+
+/** The stages of a download in order, each done, running or still to come. */
+function Stages({ download }: { download: MapDownload }) {
+  return (
+    <ol className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs">
+      {DOWNLOAD_STAGES.map(({ step, label }) => {
+        const state = stageState(step, download.step);
+        return (
+          <li
+            key={step}
+            className={
+              state === "now"
+                ? "text-foreground flex items-center gap-1 font-medium"
+                : "flex items-center gap-1"
+            }
+          >
+            {state === "done" ? (
+              <Check aria-hidden className="size-3" />
+            ) : (
+              <span className="size-3" />
+            )}
+            {label}
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 

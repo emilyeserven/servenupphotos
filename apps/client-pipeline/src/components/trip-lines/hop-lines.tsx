@@ -129,7 +129,7 @@ function HopRow({ hop, ends, onRide, onName }: HopRowProps) {
           <NamedLine onName={(name) => (onName(name), setFinding(false))} />
         </>
       )}
-      <MapDownloads active={busy} />
+      <MapDownloads active={showsDownloads(lines, mutation)} />
       <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines, found.source)} />
     </div>
   );
@@ -144,6 +144,11 @@ interface Pending {
 /** Whether the lines are being found or a ride's track fetched. */
 function busyOf(lines: Pending, ride: Pending): boolean {
   return Boolean(lines.isFetching || ride.isPending);
+}
+
+/** Whether the look-ups are running or failed, so the maps they waited for are shown. */
+function showsDownloads(lines: Pending, ride: Pending): boolean {
+  return busyOf(lines, ride) || errorOf(lines, ride) !== null;
 }
 
 /** Why finding lines or riding one failed, if either did. */

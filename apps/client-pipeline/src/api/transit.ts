@@ -152,18 +152,39 @@ export function fetchTrack({ id, source }: TripTransitLine, from: Spot, to: Spot
   );
 }
 
-/** A rail or bus map being downloaded or read, as `GET /api/transit/downloads` lists it. */
+/** What loading a map is doing, in the order a first download goes through them. */
+export type MapLoadStep =
+  | "checking"
+  | "waiting"
+  | "connecting"
+  | "downloading"
+  | "reading"
+  | "saving"
+  | "failed";
+
+/**
+ * A rail or bus map being downloaded or read, or one that failed lately, as
+ * `GET /api/transit/downloads` lists it.
+ */
 export interface MapDownload {
   /** The map's name, such as "OpenStreetMap's bus map of South Korea". */
   map: string;
-  /** What it's doing: reading the copy on this computer, downloading, or reading the download. */
-  step: "opening" | "downloading" | "reading";
-  /** How much of its file has been downloaded, in bytes. */
+  step: MapLoadStep;
+  /** What it's doing, in a sentence, such as "Reading the bus routes (pass 3 of 5 over the 312 MB extract)". */
+  detail: string;
+  /** The file being downloaded, once it's asked for. */
+  url?: string;
+  /** How much of the file has been downloaded, or read while reading, in bytes. */
   bytes: number;
-  /** Its file's size in bytes; left out while it isn't known. */
+  /** The file's size in bytes; left out while it isn't known. */
   total?: number;
-  /** How long it has been loading. */
+  /** How fast the step has gone so far, in bytes a second. */
+  rate?: number;
+  /** How long the whole load, and its step, have taken so far. */
   seconds: number;
+  stepSeconds: number;
+  /** Why it failed, when step is "failed". */
+  error?: string;
 }
 
 /**

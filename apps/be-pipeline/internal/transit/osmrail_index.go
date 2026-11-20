@@ -185,10 +185,11 @@ func (c *Client) downloadIndex(ctx context.Context, path string) ([]byte, error)
 		return nil, err
 	}
 	p := c.progress.begin(geofabrikIndexFile, "OpenStreetMap's list of extracts")
-	defer c.progress.end(geofabrikIndexFile)
 	var buf bytes.Buffer
 	url := cmp.Or(strings.TrimSpace(os.Getenv("GEOFABRIK_INDEX_URL")), DefaultGeofabrikIndexURL)
-	if _, err := fetchTo(ctx, c.HTTP, url, &buf, p); err != nil {
+	_, err := fetchTo(ctx, c.HTTP, url, &buf, p)
+	c.progress.end(geofabrikIndexFile, err)
+	if err != nil {
 		return nil, err
 	}
 	if err := os.WriteFile(path, buf.Bytes(), 0o600); err != nil {

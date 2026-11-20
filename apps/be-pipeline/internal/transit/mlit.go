@@ -27,8 +27,8 @@ func (c *Client) readMLITNet(p *progress) (*railNet, error) {
 		if err := downloadMLIT(ctx, c.HTTP, mlitURL(), dir, p); err != nil {
 			return nil, err
 		}
-		p.setStep(StepReading)
 	}
+	p.setStep(StepReading, "Reading the rail map saved in "+dir)
 	sections, stations, err := readMLIT(dir)
 	if err != nil {
 		return nil, err
