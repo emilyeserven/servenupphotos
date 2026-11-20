@@ -135,3 +135,12 @@ the left by name (their `name`, or else their file name) with how many lines eac
 its diff counts them; every line is added for a new file), and on the right the selected file's JSON, with what it
 changes against the base branch and a check mark when it's an entry of `ALLALBUMS.json`, `ALLTAGS.json`, `ALLGENRES.json`,
 `PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json`, `LENSES.json`, `TIMELINE.json` or `LIKES.json` at the same head, and the pull request summary counts them.
+
+The diff skips the lines a file's start and end share, then finds the fewest lines to remove and add (Myers'
+algorithm), so a big file such as `TRIPLINES.geo.json` changed in a few places costs little. When the changed middle
+would take more than 2,000 removed and added lines, the diff gives up on the shortest one and shows that whole middle as
+removed, then added, so its counts can run high for a file rewritten all over.
+
+> **Frontend analogy:** the old diff filled a table with one cell for every pair of old and new lines, like rendering
+> a grid of `rows × columns` cells; for a 60,000-line file against an 89,000-line one that's billions of cells, which is
+> what ran the page out of memory. The new one only walks the changed part, like a virtualized list.

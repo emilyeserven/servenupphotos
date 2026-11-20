@@ -11,51 +11,144 @@ export interface DiffLine {
 export type DiffRow = DiffLine | { kind: "folded"; count: number };
 
 /**
- * The length of the longest common subsequence of before[i:] and after[j:], or -1 past either end,
- * so a finished side always loses to the other.
+ * The most edits the diff looks for before it gives up on a shortest diff and shows the changed
+ * middle as removed, then added. Its memory grows with the square of this, so a file changed all
+ * over (such as a regenerated TRIPLINES.geo.json) can't run the browser out of memory.
  */
-function lcsTable(before: string[], after: string[]): (i: number, j: number) => number {
-  const width = after.length + 1;
-  const lengths = new Uint32Array((before.length + 1) * width);
-  const lcs = (i: number, j: number) =>
-    i > before.length || j > after.length ? -1 : (lengths[i * width + j] ?? 0);
-  for (let i = before.length - 1; i >= 0; i--) {
-    for (let j = after.length - 1; j >= 0; j--) {
-      lengths[i * width + j] =
-        before[i] === after[j] ? lcs(i + 1, j + 1) + 1 : Math.max(lcs(i + 1, j), lcs(i, j + 1));
+const MAX_EDITS = 2000;
+
+type Kind = DiffLine["kind"];
+
+/** How many lines from the start, and then from the end, before and after share. */
+function commonEnds(before: string[], after: string[]): [number, number] {
+  const shorter = Math.min(before.length, after.length);
+  let start = 0;
+  while (start < shorter && before[start] === after[start]) start++;
+  let end = 0;
+  while (
+    end < shorter - start &&
+    before[before.length - 1 - end] === after[after.length - 1 - end]
+  ) {
+    end++;
+  }
+  return [start, end];
+}
+
+/** Whether diagonal k is reached from k + 1 by adding a line, rather than from k - 1 by removing one. */
+function fromAbove(at: (k: number) => number, k: number, d: number): boolean {
+  return k === -d || (k !== d && at(k - 1) < at(k + 1));
+}
+
+/** How far x gets along diagonal k (y = x - k) while the lines on both sides are equal. */
+function slide(before: string[], after: string[], x: number, k: number): number {
+  let end = x;
+  while (end < before.length && end - k < after.length && before[end] === after[end - k]) end++;
+  return end;
+}
+
+/**
+ * One round of Myers' search: moves each diagonal of v (diagonal k at index k + offset) one more
+ * edit along, then down any run of equal lines. True once a diagonal reaches the end of both.
+ */
+function searchStep(before: string[], after: string[], v: Int32Array, offset: number, d: number) {
+  const at = (k: number) => v[offset + k]!;
+  for (let k = -d; k <= d; k += 2) {
+    const x = slide(before, after, fromAbove(at, k, d) ? at(k + 1) : at(k - 1) + 1, k);
+    v[offset + k] = x;
+    if (x >= before.length && x - k >= after.length) return true;
+  }
+  return false;
+}
+
+/**
+ * Myers' shortest edit search: the furthest point on each diagonal before each round, as one array
+ * per edit count (diagonal k at index k + d + 1). Undefined past MAX_EDITS.
+ */
+function editTrace(before: string[], after: string[]): Int32Array[] | undefined {
+  const offset = before.length + after.length + 1;
+  const v = new Int32Array(2 * offset + 1);
+  const trace: Int32Array[] = [];
+  for (let d = 0; d <= Math.min(offset - 1, MAX_EDITS); d++) {
+    trace.push(v.slice(offset - d - 1, offset + d + 2));
+    if (searchStep(before, after, v, offset, d)) return trace;
+  }
+  return undefined;
+}
+
+/** The edits of a shortest diff, from Myers' trace, walked back from the end. */
+function editsFromTrace(trace: Int32Array[], n: number, m: number): Kind[] {
+  const kinds: Kind[] = [];
+  let x = n;
+  let y = m;
+  for (let d = trace.length - 1; d >= 0; d--) {
+    const v = trace[d]!;
+    const at = (k: number) => v[k + d + 1]!;
+    const k = x - y;
+    const prevK = fromAbove(at, k, d) ? k + 1 : k - 1;
+    const prevX = at(prevK);
+    const prevY = prevX - prevK;
+    for (; x > prevX && y > prevY; x--, y--) kinds.push("same");
+    if (d > 0) kinds.push(x === prevX ? "added" : "removed");
+    x = prevX;
+    y = prevY;
+  }
+  return kinds.toReversed();
+}
+
+/** Each run of changes with its removed lines first, as a unified diff shows them. */
+function removedFirst(kinds: Kind[]): Kind[] {
+  const out: Kind[] = [];
+  let removed = 0;
+  let added = 0;
+  const flush = () => {
+    out.push(...Array<Kind>(removed).fill("removed"), ...Array<Kind>(added).fill("added"));
+    removed = 0;
+    added = 0;
+  };
+  for (const kind of kinds) {
+    if (kind === "removed") removed++;
+    else if (kind === "added") added++;
+    else {
+      flush();
+      out.push(kind);
     }
   }
-  return lcs;
+  flush();
+  return out;
 }
 
-/** What the diff does at before[i] and after[j]: removing first, as a unified diff does. */
-function nextKind(
-  before: string[],
-  after: string[],
-  i: number,
-  j: number,
-  lcs: (i: number, j: number) => number,
-): DiffLine["kind"] {
-  if (i < before.length && before[i] === after[j]) return "same";
-  return lcs(i + 1, j) >= lcs(i, j + 1) ? "removed" : "added";
-}
-
-// How far each kind moves along the old and new lines.
-const STEPS = { same: [1, 1], removed: [1, 0], added: [0, 1] } as const;
-
-/** The lines that turn `before` into `after`, by their longest common subsequence. */
-export function diffLines(before: string[], after: string[]): DiffLine[] {
-  const lcs = lcsTable(before, after);
-  const lines: DiffLine[] = [];
-  let i = 0;
-  let j = 0;
-  // Neither side moves past its end, so this ends when both are done.
-  while (i + j < before.length + after.length) {
-    const kind = nextKind(before, after, i, j, lcs);
-    lines.push({ kind, index: kind === "removed" ? i : j });
-    i += STEPS[kind][0];
-    j += STEPS[kind][1];
+/** The edits that turn before into after: a shortest diff, or remove all then add all past MAX_EDITS. */
+function edits(before: string[], after: string[]): Kind[] {
+  const trace = editTrace(before, after);
+  if (!trace) {
+    return [
+      ...Array<Kind>(before.length).fill("removed"),
+      ...Array<Kind>(after.length).fill("added"),
+    ];
   }
+  return removedFirst(editsFromTrace(trace, before.length, after.length));
+}
+
+/**
+ * The lines that turn `before` into `after`: a shortest diff (Myers' algorithm) of the lines
+ * between their shared start and end, so its time and memory grow with the number of changed
+ * lines rather than the file's length.
+ */
+export function diffLines(before: string[], after: string[]): DiffLine[] {
+  const [start, end] = commonEnds(before, after);
+  const lines: DiffLine[] = [];
+  for (let index = 0; index < start; index++) lines.push({ kind: "same", index });
+  let i = start;
+  let j = start;
+  for (const kind of edits(
+    before.slice(start, before.length - end),
+    after.slice(start, after.length - end),
+  )) {
+    lines.push({ kind, index: kind === "removed" ? i : j });
+    if (kind !== "added") i++;
+    if (kind !== "removed") j++;
+  }
+  for (; j < after.length; j++) lines.push({ kind: "same", index: j });
   return lines;
 }
 
