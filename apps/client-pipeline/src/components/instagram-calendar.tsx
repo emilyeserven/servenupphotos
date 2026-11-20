@@ -46,6 +46,7 @@ import { type DayPost, instagramPostsByDay } from "@/lib/social-post-days";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import { PUBLISH_DATE } from "@/lib/photo-fields";
+import { SectionTitle } from "@/components/section-title";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -388,9 +389,9 @@ function WeekNav(props: CalendarGridProps) {
   const last = parseIsoDate(days.at(-1) ?? today);
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <h2 className="text-lg font-medium">
+      <SectionTitle as="h2" size="lg">
         {dayFormat.format(first)} – {dayFormat.format(last)}
-      </h2>
+      </SectionTitle>
       <div className="flex flex-wrap items-center gap-1">
         {weeksSelect}
         <Button

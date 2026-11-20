@@ -14,6 +14,7 @@ import { isFocused } from "@/lib/social-focus";
 import type { Neighbors } from "@/lib/social-neighbors";
 import type { Suggestion } from "@/lib/social-suggestions";
 import { cn } from "@/lib/utils";
+import { SectionTitle } from "@/components/section-title";
 
 /**
  * Whether the lists are in the calendar's photo drawer: 3 photos wide at every size, and each
@@ -262,7 +263,7 @@ function PickerChoices({ picker, current, unsaved, onPick }: PickerChoicesProps)
   }
   return (
     <section className="flex flex-col gap-2" aria-label="All photos">
-      {picker.titled && <h3 className="text-sm font-medium">All photos</h3>}
+      {picker.titled && <SectionTitle>All photos</SectionTitle>}
       <ul className={grid}>
         {picker.choices.map((photo) => (
           <li key={photo.path}>

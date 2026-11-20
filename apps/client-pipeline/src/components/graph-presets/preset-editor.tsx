@@ -19,6 +19,7 @@ import { GraphControls } from "@portfolio/components/graph-builder/graph-control
 import type { GraphConfig } from "@portfolio/lib/graph-data";
 import type { GraphPresetFile, PresetGraph } from "@portfolio/lib/graph-presets";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
+import { SectionTitle } from "@/components/section-title";
 
 /** The preset as typed. */
 interface PresetDraft {
@@ -120,7 +121,7 @@ export function PresetEditor({ preset, files, onSaved }: PresetEditorProps) {
         <GroupSelect value={draft.group} files={files} onChange={(group) => set({ group })} />
         <SpotlightBox checked={draft.spotlight} onChange={(spotlight) => set({ spotlight })} />
         <section aria-label="Graph settings" className="flex flex-col gap-2">
-          <h3 className="text-sm font-medium">The graph it sets</h3>
+          <SectionTitle>The graph it sets</SectionTitle>
           <GraphControls
             config={config}
             onChange={(change) => set({ graph: presetGraph({ ...draft.graph, ...change }) })}
