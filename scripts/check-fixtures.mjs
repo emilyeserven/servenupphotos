@@ -1,12 +1,15 @@
 // Checks that every /api route the Go backend registers has a screenshot fixture, so `pnpm shot`
 // can show every page without a backend (see CLAUDE.md, "Adding a pipeline endpoint"). A route
 // with a path parameter, such as `GET /places/{id}/area`, counts as covered by a fixture for any
-// value, such as `GET /api/places/dotonbori/area`. Exits 1 and lists the routes without one.
+// value, such as `GET /api/places/dotonbori/area`. It also checks that every route follows the
+// route shape rules in scripts/route-shapes.mjs. Exits 1 and lists the routes without a fixture
+// and the routes that break a rule.
 //
 // The routes are read from the `mux.HandleFunc("METHOD /path", …)` lines in
 // apps/be-pipeline/internal/httpapi; the fixtures from scripts/fixtures (merged by scripts/screenshot-fixtures.mjs).
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
+import { routeShapeProblems } from "./route-shapes.mjs";
 import { defaultFixtures } from "./screenshot-fixtures.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
@@ -57,11 +60,13 @@ function routePattern(route) {
   return new RegExp(`^${method} /api${escaped}$`);
 }
 
+const routes = await backendRoutes();
 const fixtureKeys = Object.keys(defaultFixtures());
-const missing = (await backendRoutes()).filter(
+const missing = routes.filter(
   (route) =>
     !WITHOUT_FIXTURE.has(route) && !fixtureKeys.some((key) => routePattern(route).test(key)),
 );
+const misshapen = routeShapeProblems(routes);
 
 if (missing.length > 0) {
   console.error("These backend routes have no fixture in scripts/fixtures/<area>.mjs:");
@@ -69,6 +74,12 @@ if (missing.length > 0) {
   console.error(
     "Add one for each (or list it in WITHOUT_FIXTURE in scripts/check-fixtures.mjs if `pnpm shot` can never need it).",
   );
-  process.exit(1);
 }
-console.log(`Every backend route has a screenshot fixture (${fixtureKeys.length} fixtures).`);
+if (misshapen.length > 0) {
+  console.error("These backend routes break the route shape rules (add-pipeline-endpoint skill):");
+  for (const problem of misshapen) console.error(`  ${problem}`);
+}
+if (missing.length > 0 || misshapen.length > 0) process.exit(1);
+console.log(
+  `Every backend route has a screenshot fixture (${fixtureKeys.length} fixtures) and follows the route shape rules.`,
+);

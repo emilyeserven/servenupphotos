@@ -149,7 +149,7 @@ func TestDeleteContactSheetsHandler(t *testing.T) {
 	}
 	h := handleDeleteContactSheets(cfg, del)
 	for body, want := range map[string]int{`{"set":""}`: http.StatusOK, `{"set":"20261115-045000-1a2b"}`: http.StatusOK, `{"set":"bad"}`: http.StatusBadRequest, `nope`: http.StatusBadRequest} {
-		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/photos/bucket/contact-sheets/delete", strings.NewReader(body))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/photos/bucket/contact-sheets", strings.NewReader(body))
 		rec := httptest.NewRecorder()
 		h(rec, req)
 		if rec.Code != want {

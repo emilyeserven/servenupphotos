@@ -1,4 +1,4 @@
-import { isoDate, parseIsoDate } from "@/lib/calendar";
+import { isoDate, parseIsoDate } from "@portfolio/lib/dates";
 import { notStoredPath } from "@/lib/not-stored";
 import type { DayPost } from "@/lib/social-post-days";
 import type { SocialPostStatus } from "@/lib/social-posts";

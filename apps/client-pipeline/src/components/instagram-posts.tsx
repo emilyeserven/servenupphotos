@@ -1,12 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { CircleCheckIcon, ClockIcon, ExternalLinkIcon, ImageIcon } from "lucide-react";
-import { parseIsoDate } from "@/lib/calendar";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import type { DayPost } from "@/lib/social-post-days";
 import { statusLabels } from "@/lib/social-posts";
 import { type DatedPost, type PostTab, postsByTab } from "@/lib/social-post-tabs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { SectionTitle } from "@/components/section-title";
 
 const dayFormat = new Intl.DateTimeFormat(undefined, {
   weekday: "short",
@@ -97,9 +98,9 @@ export function InstagramPosts({ postsByDay, today }: InstagramPostsProps) {
   const tabs = postsByTab(postsByDay, today);
   return (
     <section className="flex flex-col gap-2" aria-labelledby="instagram-posts">
-      <h2 id="instagram-posts" className="text-lg font-medium">
+      <SectionTitle as="h2" size="lg" id="instagram-posts">
         Instagram posts
-      </h2>
+      </SectionTitle>
       <p className="text-muted-foreground text-sm">
         Posts saved on each photo&apos;s page under <strong>Social media posts</strong>, from the
         Gallery and from photos in flight, including changes not committed yet.

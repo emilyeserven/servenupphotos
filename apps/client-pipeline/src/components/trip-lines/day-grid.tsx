@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import type { TripLine } from "@/api/trip-lines";
-import { dayTitle } from "@/components/trip-lines/day-title";
 import { LinePreview } from "@/components/trip-lines/line-preview";
 import type { TripDay } from "@/lib/trip-days";
 import { type DayFilter, useTripLinesSearch } from "@/lib/trip-lines-search";
 import { cn } from "@/lib/utils";
+import { weekdayDate } from "@portfolio/lib/dates";
 
 /**
  * Whether a day's line is marked by hand, marked by hand but out of date with the day's photos,
@@ -124,7 +124,7 @@ function DayCard({ day, line, status }: DayCardProps) {
       className="hover:bg-muted/50 flex h-full flex-col gap-2 rounded-lg border p-3 text-sm"
     >
       <span className="flex items-baseline justify-between gap-2">
-        <span className="truncate font-medium">{dayTitle(day.day)}</span>
+        <span className="truncate font-medium">{weekdayDate(day.day)}</span>
         <span className={cn("shrink-0 text-xs", STATUS_CLASS[status])}>{status}</span>
       </span>
       <span className="text-muted-foreground text-xs">

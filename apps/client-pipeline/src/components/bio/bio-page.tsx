@@ -20,6 +20,7 @@ import {
   sitePhotosIn,
 } from "@/lib/bio";
 import { useCombinedData } from "@/stores/combined-data";
+import { SectionTitle } from "@/components/section-title";
 
 /** What the photo drawer says beside the bio. */
 const BIO_DRAWER_WORDS = {
@@ -72,7 +73,9 @@ function BioEditor({ saved, photos }: { saved: Bio; photos: SocialPhoto[] }) {
         <section className="flex flex-col gap-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex flex-col gap-0.5">
-              <h2 className="font-semibold">Photos</h2>
+              <SectionTitle as="h2" size="lg">
+                Photos
+              </SectionTitle>
               <p className="text-muted-foreground text-sm">
                 Drag the photos into the order the bio shows them, or move one with its arrows.
                 Self-portraits are only on the bio; portfolio photos stay where they are on the rest

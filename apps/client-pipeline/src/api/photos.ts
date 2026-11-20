@@ -366,8 +366,7 @@ export interface DeleteBucketImagesResult {
  */
 export const deleteBucketImagesMutation = mutationOptions({
   mutationKey: ["photos", "bucket", "delete"],
-  mutationFn: (keys: string[]) =>
-    post<DeleteBucketImagesResult>("/api/photos/bucket/delete", { keys }),
+  mutationFn: (keys: string[]) => del<DeleteBucketImagesResult>("/api/photos/bucket", { keys }),
 });
 
 /**

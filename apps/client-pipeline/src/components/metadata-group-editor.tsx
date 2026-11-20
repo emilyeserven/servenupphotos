@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   deleteMetaGroupMutation,
@@ -14,12 +13,10 @@ import { MetaParentField } from "@/components/metadata-parent-field";
 import { MetaRangePicker, rangeStops } from "@/components/metadata-range-picker";
 import { MetaUncovered } from "@/components/metadata-uncovered";
 import { MetaValuePicker } from "@/components/metadata-value-picker";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Busy, RemoveEntryButton } from "@/components/entry-buttons";
+import { EntryEditorButtons } from "@/components/entry-buttons";
 import { Textarea } from "@/components/ui/textarea";
-import { canonicalJson } from "@/lib/combined";
 import { uncoveredValues } from "@/lib/meta-groups";
 import type { MetaValueCount } from "@/lib/meta-values";
 
@@ -111,11 +108,6 @@ function problem(next: MetaGroup, groups: MetaGroup[]): string {
   return taken ? `There's already a group named “${taken.name}”.` : rangeProblem(next.range);
 }
 
-/** The ID of the group a save wrote, from its file name. */
-function savedId(result: { path: string }): string {
-  return result.path.replace(/^.*\//, "").replace(/\.json$/, "");
-}
-
 /** Edits one metadata group's name, description and values, and saves or removes it. */
 export function MetaGroupEditor(props: MetaGroupEditorProps) {
   const { info, group, values } = props;
@@ -136,7 +128,17 @@ export function MetaGroupEditor(props: MetaGroupEditorProps) {
         />
         <ValuesField {...props} draft={draft} onChange={setDraft} />
         <SubgroupGaps {...props} />
-        <EditorButtons {...props} next={drafted(info, group, draft, props.groups)} />
+        <EntryEditorButtons
+          next={drafted(info, group, draft, props.groups)}
+          saved={group}
+          save={saveMetaGroupMutation}
+          remove={deleteMetaGroupMutation}
+          whyNot={(next) => problem(next, props.groups)}
+          saveLabel="Save group"
+          removeLabel="Remove group"
+          onSaved={props.onSaved}
+          onRemoved={props.onRemoved}
+        />
       </CardContent>
     </Card>
   );
@@ -223,67 +225,5 @@ function TextFields({ info, draft, onChange }: TextFieldsProps) {
         />
       </div>
     </>
-  );
-}
-
-/** Whether next is what group already has, so there's nothing to save. */
-function isUnchanged(next: MetaGroup, group: MetaGroup | undefined): boolean {
-  return group !== undefined && canonicalJson(next) === canonicalJson(group);
-}
-
-type ButtonsProps = MetaGroupEditorProps & { next: MetaGroup };
-
-/** Save, and Remove for a saved group, each saving a change waiting for Commit. */
-function EditorButtons(props: ButtonsProps) {
-  const { group, onRemoved } = props;
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <SaveButton {...props} />
-      {group && <RemoveButton id={group.id} onRemoved={onRemoved} />}
-    </div>
-  );
-}
-
-function SaveButton({ group, groups, next, onSaved }: ButtonsProps) {
-  const save = useMutation({ ...saveMetaGroupMutation, onSuccess: (r) => onSaved(savedId(r)) });
-  const why = problem(next, groups);
-  const blocked = Boolean(why) || isUnchanged(next, group);
-  return (
-    <>
-      <Button disabled={blocked || save.isPending} onClick={() => save.mutate(next)}>
-        <Busy busy={save.isPending} />
-        <SaveLabel isNew={group === undefined} />
-      </Button>
-      <SaveNote error={save.error} why={next.name ? why : ""} />
-    </>
-  );
-}
-
-function SaveLabel({ isNew }: { isNew: boolean }) {
-  return isNew ? "Save group" : "Save changes";
-}
-
-/** Why the last save failed, or else why the group can't be saved yet. */
-function SaveNote({ error, why }: { error: Error | null; why: string }) {
-  return error ? <Note text={error.message} error /> : <Note text={why} error={false} />;
-}
-
-function RemoveButton({ id, onRemoved }: { id: string; onRemoved: () => void }) {
-  const remove = useMutation({ ...deleteMetaGroupMutation, onSuccess: onRemoved });
-  return (
-    <RemoveEntryButton
-      label="Remove group"
-      remove={{ ...remove, mutate: () => remove.mutate(id) }}
-    />
-  );
-}
-
-/** Why the group can't be saved, or why a save failed, beside the buttons. */
-function Note({ text, error }: { text: string; error: boolean }) {
-  if (!text) return null;
-  return (
-    <span className={error ? "text-destructive text-sm" : "text-muted-foreground text-sm"}>
-      {text}
-    </span>
   );
 }

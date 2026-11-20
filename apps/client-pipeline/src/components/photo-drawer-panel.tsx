@@ -10,6 +10,7 @@ import { useDropTarget } from "@/hooks/use-drop-target";
 import { takenDay } from "@/lib/social-focus";
 import { photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
+import { SectionTitle } from "@/components/section-title";
 
 /** The words a page's photo drawer uses for what it adds photos to. */
 interface DrawerWords {
@@ -94,7 +95,9 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-col gap-0.5">
-          <h2 className="font-semibold">Photos</h2>
+          <SectionTitle as="h2" size="lg">
+            Photos
+          </SectionTitle>
           <p className="text-muted-foreground text-xs">{words.help}</p>
         </div>
         <Button variant="ghost" size="icon" aria-label="Close photo drawer" onClick={onClose}>

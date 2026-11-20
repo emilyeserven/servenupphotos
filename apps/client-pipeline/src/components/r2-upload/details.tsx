@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { uploadNameProblem } from "@/lib/file-name";
+import { dateTimeText } from "@portfolio/lib/dates";
 
 interface R2DetailsProps {
   r2: R2Upload;
@@ -169,8 +170,6 @@ function suggestedUploadName(error: UploadError, photo: File): string {
   return error.suggestedName ?? `${photo.name.replace(/\.[^.]*$/, "")}-2`;
 }
 
-const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
-
 /** A photo already in the bucket, linking to its public URL, with its key and upload time. */
 function ExistingPhoto({ image }: { image: BucketImage }) {
   const [failed, setFailed] = useState(false);
@@ -196,9 +195,7 @@ function ExistingPhoto({ image }: { image: BucketImage }) {
         <span className="truncate font-mono" title={image.key}>
           {image.key}
         </span>
-        <span className="text-muted-foreground">
-          Uploaded {dateFormat.format(new Date(image.modified))}
-        </span>
+        <span className="text-muted-foreground">Uploaded {dateTimeText(image.modified)}</span>
       </figcaption>
     </figure>
   );

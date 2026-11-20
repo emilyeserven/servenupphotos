@@ -1,4 +1,5 @@
 import type { Size } from "@/lib/crop";
+import { clamp } from "@portfolio/lib/values";
 
 /** A box pixelates all of itself; a circle only the circle (an oval when it isn't square) that fits in it. */
 export type FaceShape = "box" | "circle";
@@ -63,10 +64,6 @@ const MIN_SIDE = 16;
 export interface BoxCorner {
   dx: 1 | -1;
   dy: 1 | -1;
-}
-
-function clamp(value: number, low: number, high: number): number {
-  return Math.min(Math.max(value, low), high);
 }
 
 /** How many pixels of the photo each block covers, so `blocks` of them span the longer side. */
