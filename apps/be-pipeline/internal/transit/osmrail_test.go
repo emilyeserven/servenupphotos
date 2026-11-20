@@ -99,6 +99,18 @@ func koreaRail() *osmRailReader {
 	return r
 }
 
+func TestOSMRailKeepsHighSpeedLines(t *testing.T) {
+	r := newOSMRailReader()
+	fast := way("rail", "경부고속선", "", 1, 2)
+	fast.Tags = append(fast.Tags, osm.Tag{Key: "highspeed", Value: "yes"})
+	r.addWay(fast)
+	r.addWay(way("rail", "경부선", "", 1, 2))
+	lines := r.lines()
+	if lines["경부고속선"].kind != highSpeedKind || lines["경부선"].kind != 11 {
+		t.Errorf("lines = %+v", lines)
+	}
+}
+
 func TestOSMRailFeatures(t *testing.T) {
 	sections, stations := koreaRail().features()
 	if len(sections) != 5 {
@@ -127,7 +139,7 @@ func TestOSMRailLines(t *testing.T) {
 		t.Fatal(err)
 	}
 	sections, stations := koreaRail().features()
-	region := filepath.Join(dir, "south-korea")
+	region := filepath.Join(dir, osmRailVersion, "south-korea")
 	if err := os.MkdirAll(region, 0o750); err != nil {
 		t.Fatal(err)
 	}

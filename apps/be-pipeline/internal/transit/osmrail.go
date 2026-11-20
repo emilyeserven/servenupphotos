@@ -34,6 +34,11 @@ const maxOSMExtractBytes = 2 << 30
 // errExtractTooBig is an extract larger than maxOSMExtractBytes.
 var errExtractTooBig = fmt.Errorf("its OpenStreetMap extract is over %d GB, too large to download", maxOSMExtractBytes>>30)
 
+// osmRailVersion is the folder of the rail maps read as this version reads
+// them: v2 keeps which railways are high-speed. A map read by an older
+// version is downloaded and read again the first time it's used.
+const osmRailVersion = "v2"
+
 // osmRailDir is OSM_RAIL_DIR, or else a folder beside the settings file, as
 // Japan's rail map's is (see mlitDir).
 func osmRailDir() string {
@@ -87,11 +92,13 @@ func (c *Client) osmRailByID(ctx context.Context, id int64) (*railNet, error) {
 // readOSMRegion is region's network from its folder, downloaded and read from
 // its extract there first when it isn't there yet.
 func (c *Client) readOSMRegion(region osmRegion) (*railNet, error) {
-	dir := filepath.Join(osmRailDir(), region.id)
+	dir := filepath.Join(osmRailDir(), osmRailVersion, region.id)
 	if !haveMLIT(dir) {
 		if err := c.downloadOSMRegion(region, dir); err != nil {
 			return nil, err
 		}
+		// The map read by an older version, which is read again for what it lacked.
+		_ = os.RemoveAll(filepath.Join(osmRailDir(), region.id))
 	}
 	sections, stations, err := readMLIT(dir)
 	if err != nil {

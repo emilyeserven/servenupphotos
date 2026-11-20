@@ -97,8 +97,14 @@ function keptVia({ after, ...v }: TripVia, photos: number[]): TripVia {
   return after !== undefined && photos.includes(after) ? { after, ...v } : v;
 }
 
-/** The modes whose hops can name the line they rode. */
-export const LINE_MODES: ReadonlySet<string> = new Set(["train", "subway", "bus", "transit"]);
+/** The modes whose hops can name the line they rode; a ropeway's is only named by hand. */
+export const LINE_MODES: ReadonlySet<string> = new Set([
+  "train",
+  "subway",
+  "bus",
+  "transit",
+  "ropeway",
+]);
 
 /**
  * Whether the stretch into item i+1 ends there: the way travelled changes after it, or it's a trip

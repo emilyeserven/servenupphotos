@@ -9,7 +9,15 @@ import type { TripLegRide } from "@/api/trips";
  * a straight dashed line from the first point to the last. `transit` is a hop whose kind isn't
  * known, as the automatic line marks one.
  */
-export type TripMode = "walk" | "train" | "subway" | "bus" | "car" | "transit" | "wander";
+export type TripMode =
+  | "walk"
+  | "train"
+  | "subway"
+  | "bus"
+  | "car"
+  | "transit"
+  | "wander"
+  | "ropeway";
 
 /** A spot on a trip line with no photo, such as the hotel a day starts from. */
 export interface TripPoint {
@@ -84,9 +92,10 @@ export interface TripTransitLine {
   colour?: string;
   /**
    * Where it was found: left out for OpenStreetMap, "transitland" for Transitland, "mlit" for Japan's
-   * rail map, "osmrail" for a country's OpenStreetMap rail map.
+   * rail map, "osmrail" for a country's OpenStreetMap rail map, or "named" for a line named by hand
+   * where no source has it, such as a local bus (its ID is 0, and it has no stops or track).
    */
-  source?: "transitland" | "mlit" | "osmrail";
+  source?: "transitland" | "mlit" | "osmrail" | "named";
 }
 
 /** A spot a segment's line goes through to shape it, such as a bridge crossed between two photos. */
