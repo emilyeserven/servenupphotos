@@ -96,7 +96,7 @@ export const writeR2ExifMutation = mutationOptions({
   mutationKey: ["data", "r2-exif", "write"],
   meta: { saves: true, changes: (result) => photoChanges(result as R2ExifResult) },
   mutationFn: (body: { path: string; fields: R2ExifFieldValue[] }) =>
-    post<R2ExifResult>("/api/data/r2-exif/write", { ...body, confirm: true }),
+    post<R2ExifResult>("/api/data/r2-exif", { ...body, confirm: true }),
 });
 
 /** Each field's name on the page. */

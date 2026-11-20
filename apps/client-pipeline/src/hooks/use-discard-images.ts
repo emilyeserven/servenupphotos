@@ -24,7 +24,7 @@ function errorMessage(error: unknown): string {
 
 /**
  * Deletes unselected photos' images from R2, one photo at a time, through Explore Bucket's delete
- * (`POST /api/photos/bucket/delete`): with `small`, the original and the versions bigger than Small,
+ * (`DELETE /api/photos/bucket`): with `small`, the original and the versions bigger than Small,
  * and with `deleted`, every version and thumbnail too. Only R2 changes; the photo JSON says what's
  * left. Resolves with the photos that couldn't be done.
  */
