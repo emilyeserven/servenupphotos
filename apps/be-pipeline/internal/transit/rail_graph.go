@@ -36,6 +36,8 @@ type railLine struct {
 	name     string
 	operator string
 	kind     int
+	// colour is the line's color, such as "#da291c"; "" when unknown.
+	colour string
 }
 
 // railEdge joins a node to the next one along line, or to a station of the
@@ -103,7 +105,7 @@ func (n *railNet) lineID(ids map[[2]string]int, f mlitFeature) int {
 	}
 	kind, _ := f.Properties.Type.Int64()
 	ids[key] = len(n.lines)
-	n.lines = append(n.lines, railLine{f.Properties.Line, f.Properties.Operator, int(kind)})
+	n.lines = append(n.lines, railLine{f.Properties.Line, f.Properties.Operator, int(kind), f.Properties.Colour})
 	return len(n.lines) - 1
 }
 
@@ -253,8 +255,8 @@ type railStep struct {
 	prev railState
 }
 
-// route is the shortest way along allowed's lines (any when nil) from near
-// from to near to, each change of line counting changePenaltyM more: its nodes
+// route is the shortest way along allowed's lines (any when nil), and the
+// unnamed track joining them, from near from to near to, each change of line counting changePenaltyM more: its nodes
 // and the line of each edge between them. It may start and end on any track
 // within railRouteM of each end, so an end between two railways, such as
 // 電鉄出雲市 beside JR's 出雲市, starts on whichever one goes there. Nil when
@@ -282,7 +284,7 @@ func (n *railNet) route(from, to [2]float64, allowed map[int]bool) (nodes, lines
 			s.reach(arrived, it.state, it.dist+walk)
 		}
 		for _, e := range n.edges[it.state.node] {
-			if allows(allowed, e.line) {
+			if allows(allowed, e.line) || n.unnamed(e.line) {
 				s.reach(railState{e.to, e.line}, it.state, it.dist+e.meters*n.speedFactor(e.line)+n.changeCost(it.state.line, e.line))
 			}
 		}

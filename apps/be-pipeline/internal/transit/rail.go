@@ -133,8 +133,8 @@ func (n *railNet) linesNearBoth(from, to [2]float64) []Line {
 }
 
 // lineOf is lines ridden one after another as a Line, named by their names
-// joined with arrows, such as "山陽線 → 山陰線", with its ID holding them and
-// the network's own part of the ID.
+// joined with arrows, such as "山陽線 → 山陰線", in the first one's color, with
+// its ID holding them and the network's own part of the ID.
 func (n *railNet) lineOf(lines []int) Line {
 	names := make([]string, 0, len(lines))
 	var operators []string
@@ -147,6 +147,7 @@ func (n *railNet) lineOf(lines []int) Line {
 	return Line{
 		ID: n.idBase | routeID(lines), Name: strings.Join(names, " → "), Kind: railKind(n.lines[lines[0]].kind),
 		From: strings.Join(strings.Fields(strings.Join(operators, " ")), " "), Source: n.source,
+		Colour: n.lines[lines[0]].colour,
 	}
 }
 

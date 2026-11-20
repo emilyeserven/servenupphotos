@@ -65,6 +65,9 @@ type mlitFeature struct {
 		Operator string `json:"N02_004"`
 		// Station is a station's name, such as "東萩"; "" on a section.
 		Station string `json:"N02_005"`
+		// Colour is the line's color as a hex code, such as "#da291c", from
+		// OpenStreetMap's route relations; "" on Japan's rail map.
+		Colour string `json:"colour,omitempty"`
 	} `json:"properties"`
 	Geometry tlGeometry `json:"geometry"`
 }

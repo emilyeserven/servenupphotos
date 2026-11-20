@@ -599,17 +599,27 @@ choice is kept in the browser for every look-up:
   its extracts once (`index-v1.json`), picks the smallest one whose outline holds both ends, such as South Korea for
   Seoul to Busan, or a US state such as Massachusetts (ID `us/massachusetts`, named from its ID when the index gives no
   name) for a ride inside one (never a whole continent; a leg crossing a border finds none), and downloads that extract once
-  (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract twice (its railway ways, then their
-  points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
-  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v2/<extract>` beside the
+  (`.osm.pbf`, hundreds of megabytes; none over 2 GB). It reads the extract three times (its rail route relations, then its railway
+  ways, then their points and the stations), keeps railways, light rail, subways and monorails but not yards or sidings, and writes
+  them as the same two GeoJSON files as Japan's rail map in `OSM_RAIL_DIR` or else `osm-rail/v3/<extract>` beside the
   settings file, then deletes the extract. Railways tagged `highspeed=yes` are kept as high-speed track, and a route
   counts each meter of it as 0.6 m (`highSpeedFactor`), so Seoul to Busan takes the KTX's 경부고속선 rather than the
   slower 경부선 beside it, which is a little shorter once the change onto the high-speed line is counted. A map read
-  before high-speed track was kept (in `osm-rail/<extract>`) is downloaded and read again the first time it's used,
-  and the old folder removed. A line is the ways of one name, shown by the English name most of its
-  ways have; unnamed track only joins lines, so a route never lists it. A station belongs to each line within 300 m
-  of it. A route's ID holds up to 4 lines and, above them, its extract's place in the index, so its track and stops
-  are looked up on the same extract (`be-pipeline/internal/transit/osmrail.go`, `osmrail_index.go`,
+  by an older version (in `osm-rail/<extract>` or `osm-rail/v2/<extract>`) is downloaded and read again the first time
+  it's used, and the old folder removed. A line is named by the
+  [route relations](https://wiki.openstreetmap.org/wiki/Relation:route) (`route=train`, `subway`, `light_rail` or
+  `monorail`) whose track it is: their
+  [route master](https://wiki.openstreetmap.org/wiki/Relation:route_master)'s name, such as **Red Line** for the
+  routes to Ashmont and to Braintree, or else the route's name less its direction ("Red Line: Alewife => Ashmont"), in
+  the relation's `colour`. Track several lines run along belongs to each. Only track in no route relation is named by
+  its own name, and a name that only numbers the track, such as "Track 3", names no line: the track's names alone
+  broke Boston's Red Line into pieces named "Red Line" and "Track 1", so it couldn't be followed as one line. Each
+  line is shown by the English name most of its ways have; unnamed track only joins lines, so a route never lists it,
+  and a one-line route may run along it. A station belongs to each line within 300 m
+  of it. A route's ID holds up to 3 lines and, above them, its extract's place in the index, so its track and stops
+  are looked up on the same extract. The ID stays under 2^53 so the page's JavaScript holds it exactly; with 4 lines,
+  an extract far down the index, such as Massachusetts, gave IDs the page rounded off, so a picked line's stops
+  couldn't be found (`be-pipeline/internal/transit/osmrail.go`, `osmrail_index.go`,
   `osmrail_pbf.go`). The data is © OpenStreetMap contributors, under the
   [ODbL](https://www.openstreetmap.org/copyright).
 - **Bus map (OpenStreetMap)**, used for a bus while either rail map is picked (the menu calls the OpenStreetMap one

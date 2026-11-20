@@ -45,7 +45,7 @@ func TestExtractDownloadProgress(t *testing.T) {
 	}
 	piece <- struct{}{}
 	d = waitFor(t, c, func(d Download) bool { return d.Step == StepFailed })
-	if !strings.Contains(d.Error, "reading the railways from South Korea's extract failed") || !strings.Contains(d.Detail, "pass 1 of 5 over the 2 KB extract") {
+	if !strings.Contains(d.Error, "reading the railways from South Korea's extract failed") || !strings.Contains(d.Detail, "pass 1 of 6 over the 2 KB extract") {
 		t.Errorf("failed = %+v", d)
 	}
 }
