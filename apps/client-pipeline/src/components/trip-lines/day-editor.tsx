@@ -32,6 +32,7 @@ import { viasInRouteOrder } from "@/lib/via-order";
 import { useTripDaySearch } from "@/lib/trip-lines-search";
 import { isAreaPick, withAreaEnd } from "@/lib/trip-wander";
 import { isBreakPick, withBreakEnd } from "@/lib/break-ends";
+import { isRopewayPick, withRopewayEnd } from "@/lib/ropeway-ends";
 import { MapTools, type MapPick } from "@/components/trip-lines/route-tools";
 import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
 import { keptStops, type KeptStops, withStopVias } from "@/lib/trip-stops-kept";
@@ -304,21 +305,38 @@ function DayMap({ view, shown, ...props }: DayMapProps) {
   );
 }
 
+/** The day's drawn line, which a click on the map is placed on. */
+interface Drawn {
+  segments: TripSegment[];
+  photos: TripPhoto[];
+}
+
 /** The draft with the clicked point placed as picking says, or else as a via point. */
 function picked(
   draft: GapDraft,
   picking: MapPick | undefined,
   point: TripPoint,
-  via: () => GapDraft,
+  drawn: Drawn,
 ): GapDraft {
   if (picking === "visit") return withVisit(draft, newVisit(point));
-  return pickedAt(draft, picking, point) ?? (picking ? { ...draft, [picking]: point } : via());
+  const placed = pickedAt(draft, picking, point, drawn);
+  if (placed) return placed;
+  return picking
+    ? { ...draft, [picking]: point }
+    : withVia(draft, drawn.segments, drawn.photos, point);
 }
 
-/** The draft with an area's entrance or exit, or a break's end or start, set to point, if that's what's picked. */
-function pickedAt(draft: GapDraft, picking: MapPick | undefined, point: TripPoint) {
+/**
+ * The draft with an area's entrance or exit, a break's end or start, or a ropeway's station set to
+ * point, if that's what's picked.
+ */
+function pickedAt(draft: GapDraft, picking: MapPick | undefined, point: TripPoint, drawn: Drawn) {
   if (isAreaPick(picking)) return withAreaEnd(draft, picking, point);
   if (isBreakPick(picking)) return withBreakEnd(draft, picking, point);
+  if (isRopewayPick(picking)) {
+    const spots = new Map(drawn.photos.map((p) => [p.id, p]));
+    return withRopewayEnd(draft, drawn.segments, spots, picking, point);
+  }
   return undefined;
 }
 
@@ -348,7 +366,7 @@ function HandMap(props: HandMapProps) {
   const { picking, onPicking } = props;
   const [addingVia, setAddingVia] = useState(false);
   const pick = (point: TripPoint) => {
-    onChange(picked(draft, picking, point, () => withVia(draft, segments, day.photos, point)));
+    onChange(picked(draft, picking, point, { segments, photos: day.photos }));
     onPicking(undefined);
   };
   return (

@@ -10,9 +10,13 @@ import type { TripDay } from "@/lib/trip-days";
 import type { GapDraft } from "@/lib/trip-gaps";
 import { type AreaPick, isAreaPick } from "@/lib/trip-wander";
 import type { BreakPick } from "@/lib/break-ends";
+import type { RopewayPick } from "@/lib/ropeway-ends";
 
-/** What a click on the map places: the day's start or end spot, a break's, or a trip stop. */
-export type MapPick = EndKey | "visit" | AreaPick | BreakPick;
+/**
+ * What a click on the map places: the day's start or end spot, a break's, a trip stop, or a
+ * ropeway's station.
+ */
+export type MapPick = EndKey | "visit" | AreaPick | BreakPick | RopewayPick;
 
 /** The entrance or exit of an area wandered being picked, if that's what is. */
 function areaPicking(picking: MapPick | undefined): AreaPick | undefined {
@@ -67,7 +71,14 @@ function RouteTools(props: RouteToolsProps) {
         onAddingVia={props.onAddingVia}
       />
       <ViaList day={day} draft={draft} segments={segments} onChange={onChange} />
-      <HopLines photos={day.photos} draft={draft} segments={segments} onChange={onChange} />
+      <HopLines
+        photos={day.photos}
+        draft={draft}
+        segments={segments}
+        onChange={onChange}
+        picking={picking}
+        onPicking={onPicking}
+      />
       <AreaEnds
         ids={day.photos.map((p) => p.id)}
         draft={draft}

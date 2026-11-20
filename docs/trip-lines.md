@@ -541,7 +541,20 @@ rail, monorails and trams. **Change line** looks again.
 **Use this name**. It's saved as `{ "id": 0, "name": "Super HAGI", "source": "named" }`, kept drawn as it was (along
 the streets, when it was snapped), shown on the map with its name, and has no stations to pick. A **Ropeway or
 gondola** hop, such as the Shin-Kobe Ropeway up to the Nunobiki Herb Gardens, looks nothing up, since no source
-maps them as lines; it's drawn straight, as it runs, and named this way.
+maps them as lines; its button says **Name it** (**Rename** once named), and it's drawn straight, as it runs.
+
+Once named, a ropeway shows **Starts at** and **Ends at**, each **At the photo** until **On the map** is pressed and
+the map clicked where its station is (`lib/ropeway-ends.ts`, the map pick `ropeway-start:<leg key>` or
+`ropeway-end:<leg key>`). The ropeway is then drawn as a straight line from one station to the other, solid like a
+line ridden, with a walk from the photo to the station it starts at and from the station it ends at to the next
+photo, which **Snap to streets** routes like any walk to a station. Each station is named **Start station** or
+**End station** at first, renamed in its field, and moved with **Move**; **The photo** puts that end back at the photo.
+It saves as the hop's `board` and `alight` beside its named line, with a two-point `path` between them, the same
+fields a train ridden between stations uses, so the backend and the portfolio draw it as they draw any line ridden.
+Renaming the ropeway keeps its stations.
+
+> **Frontend analogy:** it's a controlled input whose value is two map clicks: the stations are state on the hop,
+> and the line on the map is derived from them, the same way a train's track is derived from its picked stations.
 
 While it looks, the hop says it's asking OpenStreetMap, since a busy public server can take up to a minute (see
 below). When nothing is found, often because a photo was a walk from the line (say the beach, 15 minutes from the end

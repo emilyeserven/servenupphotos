@@ -1,4 +1,4 @@
-import { Search, X } from "lucide-react";
+import { PenLine, Search, X } from "lucide-react";
 import type { HopAsk, Spot, TransitLine } from "@/api/transit";
 import type { TripPoint, TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
@@ -8,6 +8,7 @@ import { HopRideRows } from "@/components/trip-lines/hop-ride-rows";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
 import { LookupKind } from "@/components/trip-lines/lookup-kind";
 import { NamedLine } from "@/components/trip-lines/named-line";
+import { RopewayStations } from "@/components/trip-lines/ropeway-stations";
 import { RouteSourcePicker } from "@/components/trip-lines/route-source-picker";
 import { gapInfo } from "@/components/trip-lines/modes";
 import { type HopEnds, useHopRide } from "@/components/trip-lines/use-hop-ride";
@@ -17,12 +18,22 @@ import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap, GapDraft } from "@/lib/trip-gaps";
 import { legKeys } from "@/lib/hop-legs";
 import { isNamedLine, ridesLine, withHopLine, withNamedLine } from "@/lib/trip-hop-lines";
+import {
+  type RopewayPick,
+  type RopewayRide,
+  ropewayPick,
+  type RopewaySide,
+  withRopeway,
+} from "@/lib/ropeway-ends";
 
 interface HopLinesProps {
   photos: TripPhoto[];
   draft: GapDraft;
   segments: TripSegment[];
   onChange: (draft: GapDraft) => void;
+  /** What a click on the map places now, if anything; a ropeway's stations are placed this way. */
+  picking?: string;
+  onPicking: (picking: RopewayPick | undefined) => void;
 }
 
 /**
@@ -30,11 +41,17 @@ interface HopLinesProps {
  * on it: Find lines looks up the ones OpenStreetMap maps near
  * both of its ends, and picking one draws the hop along its track, in its color.
  */
-export function HopLines({ photos, draft, segments, onChange }: HopLinesProps) {
+export function HopLines({ photos, draft, segments, onChange, ...map }: HopLinesProps) {
   const keys = legKeys(segments);
   const hops = segments.flatMap((s, i) => (ridesLine(s) ? [{ hop: s, key: keys[i]! }] : []));
   if (hops.length === 0) return null;
   const byId = new Map(photos.map((p, i) => [p.id, { photo: p, n: i + 1 }]));
+  const spots = new Map(photos.map((p) => [p.id, p]));
+  // A ropeway hop with its name or a station changed; it keeps the others.
+  const ropeway = (hop: TripSegment, key: string, change: Partial<RopewayRide>) => {
+    const { line, board, alight } = { ...hop, ...change };
+    if (line) onChange(withRopeway(draft, hop, key, spots, { line, board, alight }));
+  };
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-sm font-medium">Lines ridden</h3>
@@ -44,11 +61,33 @@ export function HopLines({ photos, draft, segments, onChange }: HopLinesProps) {
           hop={hop}
           ends={legEnds(hop, byId)}
           onRide={(ride) => onChange(withHopLine(draft, hop, key, ride))}
-          onName={(name) => onChange(withNamedLine(draft, hop, key, name))}
+          onName={(name) =>
+            hop.mode === "ropeway"
+              ? ropeway(hop, key, { line: { id: 0, name: name.trim(), source: "named" } })
+              : onChange(withNamedLine(draft, hop, key, name))
+          }
+          stations={{
+            picking: pickingSide(map.picking, key),
+            onPicking: (side) => map.onPicking(side && ropewayPick(side, key)),
+            onStation: (side, station) => ropeway(hop, key, { [FIELDS[side]]: station }),
+          }}
         />
       ))}
     </div>
   );
+}
+
+/** An example name for a line named by hand, by the hop's mode, where it isn't a bus's. */
+const NAME_EXAMPLES: Partial<Record<string, string>> = { ropeway: "Shin-Kobe Ropeway" };
+
+/** Where each side's station is kept on the hop. */
+const FIELDS = { start: "board", end: "alight" } as const;
+
+/** The side of the ropeway hop with leg key `key` whose station the map is waiting for, if either. */
+function pickingSide(picking: string | undefined, key: string): RopewaySide | undefined {
+  if (picking === ropewayPick("start", key)) return "start";
+  if (picking === ropewayPick("end", key)) return "end";
+  return undefined;
 }
 
 /** One end of a leg: a photo with its number on the map, or a spot with no photo, such as a trip stop. */
@@ -79,6 +118,11 @@ interface HopRowProps {
   onRide: (ride?: Ride) => void;
   /** Names the line by hand, for one no source has. */
   onName: (name: string) => void;
+  /** A ropeway's stations: which is being placed on the map, and placing or renaming one. */
+  stations: Pick<
+    React.ComponentProps<typeof RopewayStations>,
+    "picking" | "onPicking" | "onStation"
+  >;
 }
 
 /**
@@ -86,7 +130,7 @@ interface HopRowProps {
  * pick from, looked up at once while it has no line. When none is found near the photos, stations
  * can be picked to look near instead.
  */
-function HopRow({ hop, ends, onRide, onName }: HopRowProps) {
+function HopRow({ hop, ends, onRide, onName, stations }: HopRowProps) {
   const ask = askOf(hop, ends);
   const found = useHopRide(hop, ask, onRide);
   const { finding, setFinding, kind, setKind, lines, mutation, ride } = found;
@@ -98,7 +142,7 @@ function HopRow({ hop, ends, onRide, onName }: HopRowProps) {
           {hopTitle(ends)} by {gapInfo(hop.mode as Gap).label.toLowerCase()}:
         </span>
         <LineBadge line={hop.line} />
-        <RouteSourcePicker />
+        <HopSource mode={hop.mode} />
         <HopButtons
           hop={hop}
           busy={busy}
@@ -107,6 +151,7 @@ function HopRow({ hop, ends, onRide, onName }: HopRowProps) {
         />
       </div>
       <HopRideRows hop={hop} />
+      <RopewayStations hop={hop} {...stations} />
       {hop.line && !isNamedLine(hop.line) && (
         <HopStations
           hop={{ ...hop, line: hop.line }}
@@ -125,7 +170,10 @@ function HopRow({ hop, ends, onRide, onName }: HopRowProps) {
         <>
           <LookupKind mode={hop.mode} kind={kind} disabled={busy} onKind={setKind} />
           <LineChoices lines={lines.data} onPick={ride} disabled={busy} />
-          <NamedLine onName={(name) => (onName(name), setFinding(false))} />
+          <NamedLine
+            placeholder={NAME_EXAMPLES[hop.mode]}
+            onName={(name) => (onName(name), setFinding(false))}
+          />
         </>
       )}
       <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines)} />
@@ -192,6 +240,22 @@ function noneNote(lines: TransitLine[] | undefined): string {
 const NONE_FOUND =
   "No line of this kind found within 500 m of both ends. If a photo was a walk from the station, pick the station above and it looks again; otherwise the hop stays a straight dashed line.";
 
+/** The button's icon: a pen for a ropeway, which is named, and else a magnifier, since lines are found. */
+function FindIcon({ mode }: { mode: string }) {
+  return mode === "ropeway" ? <PenLine aria-hidden /> : <Search aria-hidden />;
+}
+
+/** What the button that finds or names the hop's line says: a ropeway is only named by hand. */
+function buttonLabel(hop: TripSegment): string {
+  if (hop.mode === "ropeway") return hop.line ? "Rename" : "Name it";
+  return hop.line ? "Change line" : "Find lines";
+}
+
+/** Where the hop's lines are looked up; none for a ropeway, which is only named by hand. */
+function HopSource({ mode }: { mode: string }) {
+  return mode === "ropeway" ? null : <RouteSourcePicker />;
+}
+
 interface HopButtonsProps {
   hop: TripSegment;
   busy: boolean;
@@ -204,8 +268,8 @@ function HopButtons({ hop, busy, onFind, onClear }: HopButtonsProps) {
   return (
     <>
       <Button variant="outline" size="sm" disabled={busy} onClick={onFind}>
-        {busy ? <Busy busy /> : <Search aria-hidden />}
-        {hop.line ? "Change line" : "Find lines"}
+        {busy ? <Busy busy /> : <FindIcon mode={hop.mode} />}
+        {buttonLabel(hop)}
       </Button>
       {hop.line && (
         <Button variant="ghost" size="sm" onClick={onClear}>

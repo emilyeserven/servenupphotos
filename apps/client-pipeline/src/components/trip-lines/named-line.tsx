@@ -7,7 +7,14 @@ import { Input } from "@/components/ui/input";
  * Names the line a hop rode by hand, for one no source has, such as a local bus: a name field and a
  * button that uses it.
  */
-export function NamedLine({ onName }: { onName: (name: string) => void }) {
+export function NamedLine({
+  placeholder = "Super HAGI",
+  onName,
+}: {
+  /** An example name, such as "Super HAGI" for a bus. */
+  placeholder?: string;
+  onName: (name: string) => void;
+}) {
   const [name, setName] = useState("");
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +25,7 @@ export function NamedLine({ onName }: { onName: (name: string) => void }) {
       <span className="text-muted-foreground">Or name it yourself:</span>
       <Input
         value={name}
-        placeholder="Super HAGI"
+        placeholder={placeholder}
         aria-label="The line's name"
         className="h-8 w-48"
         onChange={(e) => setName(e.target.value)}
