@@ -29,8 +29,10 @@ export interface GenreSuggestionsPreview {
   /** Each picked photo, with the genre IDs to add in `add`. */
   photos: BulkTagPhotoPlan[];
   newGenres: GenreNew[];
-  /** Photos the answer names that aren't any of the picked ones. */
+  /** Photos the answer names that aren't any photo, which are skipped. */
   unknown: string[];
+  /** Photos the answer names that weren't picked, found among every photo; the review shows them too. */
+  others: BulkTagPhoto[];
 }
 
 /** What Genre Suggestions saves once reviewed: the new genres to make and the genres to add to each photo. */

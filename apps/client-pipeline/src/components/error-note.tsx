@@ -2,24 +2,39 @@ import { type GitHubFailure, githubFailureOf } from "@/api/errors";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { cn } from "@/lib/utils";
 
+/** What went wrong: an Error from a failed request or read, or a sentence written for the page. */
+type ErrorLike = Error | string;
+
+interface ErrorNoteProps {
+  /** What failed. Nothing is shown when it's null, undefined or an empty string. */
+  error: ErrorLike | null | undefined;
+  /** Whether GitHub's answer starts open, as on the Commit button where it's what to read next. */
+  githubOpen?: boolean;
+  /** Extra classes, such as `text-xs` beside small buttons or a grid column. */
+  className?: string;
+}
+
 /**
- * Why Commit failed: the message, and when a GitHub call failed, what GitHub answered, open, so
- * the failing step, the request and GitHub's own errors can be read and copied.
+ * The one way the pipeline shows that something failed: the message in red, announced to screen
+ * readers, and when a GitHub call failed, GitHub's own answer under it (the failing step, the
+ * request and GitHub's errors) so it can be read and copied.
  */
-export function CommitError({ error, className }: { error: Error; className?: string }) {
+export function ErrorNote({ error, githubOpen = false, className }: ErrorNoteProps) {
+  if (!error) return null;
+  const message = typeof error === "string" ? error : error.message;
   const github = githubFailureOf(error);
   return (
-    <span className={cn("flex min-w-0 flex-col items-start gap-2", className)}>
-      <span className="text-destructive">{error.message}</span>
-      {github && <GitHubFailureDetails failure={github} />}
+    <span role="alert" className={cn("flex min-w-0 flex-col items-start gap-2 text-sm", className)}>
+      <span className="text-destructive">{message}</span>
+      {github && <GitHubFailureDetails failure={github} open={githubOpen} />}
     </span>
   );
 }
 
 /** GitHub's answer to the call that failed, as a summary and the whole answer as JSON. */
-function GitHubFailureDetails({ failure }: { failure: GitHubFailure }) {
+function GitHubFailureDetails({ failure, open }: { failure: GitHubFailure; open: boolean }) {
   return (
-    <details open className="w-full min-w-0 text-sm">
+    <details open={open} className="w-full min-w-0 text-sm">
       <summary className="text-muted-foreground cursor-pointer">GitHub&apos;s answer</summary>
       <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
         {failureRows(failure).map(([label, value]) => (
