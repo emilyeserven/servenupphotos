@@ -20,8 +20,8 @@ interface RopewayStationsProps extends StationPickProps {
 
 /**
  * Where a ropeway or gondola started and ended, each placed by clicking the map: it's drawn as a
- * straight line between them, with a walk to and from the photos. "At the photo" runs right from or to
- * it.
+ * straight line between them, with a walk to and from the photos. "At the photo or stop" runs right
+ * from or to the hop's own end.
  */
 export function RopewayStations({ hop, ...props }: RopewayStationsProps) {
   if (!isRopeway(hop)) return null;
@@ -81,9 +81,12 @@ interface StationNameProps {
   onStation: (station: TripPoint | undefined) => void;
 }
 
-/** A station's name to change and a way back to the photo, or "At the photo" when none is placed. */
+/**
+ * A station's name to change and a way back to the hop's own end (a photo or a trip stop), or "At
+ * the photo or stop" when none is placed.
+ */
 function StationName({ title, station, onStation }: StationNameProps) {
-  if (!station) return <span className="text-muted-foreground flex-1">At the photo</span>;
+  if (!station) return <span className="text-muted-foreground flex-1">At the photo or stop</span>;
   return (
     <>
       <Input
@@ -96,11 +99,11 @@ function StationName({ title, station, onStation }: StationNameProps) {
       <Button
         variant="ghost"
         size="sm"
-        title="Start or end at the photo instead"
+        title="Start or end right at the photo or trip stop instead"
         onClick={() => onStation(undefined)}
       >
         <X aria-hidden />
-        The photo
+        Clear
       </Button>
     </>
   );

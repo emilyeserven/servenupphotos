@@ -10,19 +10,22 @@ export interface GapPickerProps {
   /** The gap's index; -1 for the way from the day's start to its first photo, END_GAP from the last photo to its end. */
   index: number;
   onGap?: (index: number, gap: Gap) => void;
+  /** What screen readers call it; the photos it's between when left out. */
+  name?: string;
   /** The ways it can be changed to; every gap when left out. */
   choices?: typeof GAPS;
 }
 
-/** What the gap at index is between, for screen readers. */
-function gapName(index: number): string {
+/** What the gap at index is between, for screen readers, unless it's given a name of its own. */
+function gapName(index: number, name?: string): string {
+  if (name) return name;
   if (index === -1) return "From the start to photo 1";
   if (index === END_GAP) return "From the last photo to the end";
   return `Between photos ${index + 1} and ${index + 2}`;
 }
 
 /** What happened between two photos: an icon, and a menu to change it when the strip can. */
-export function GapPicker({ gap, index, onGap, choices = GAPS }: GapPickerProps) {
+export function GapPicker({ gap, index, name, onGap, choices = GAPS }: GapPickerProps) {
   const { icon: Icon, label } = gapInfo(gap);
   return (
     <label
@@ -37,7 +40,7 @@ export function GapPicker({ gap, index, onGap, choices = GAPS }: GapPickerProps)
       <span className="sr-only">{label}</span>
       {onGap && (
         <select
-          aria-label={gapName(index)}
+          aria-label={gapName(index, name)}
           className="absolute inset-0 cursor-pointer opacity-0"
           value={gap}
           onChange={(e) => onGap(index, e.target.value as Gap)}

@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Flag, Play, Plus, Scissors } from "lucide-re
 import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
 import { END_GAPS, GapPicker, type GapPickerProps } from "@/components/trip-lines/gap-picker";
+import { type OnStopWay, StopsWithWays } from "@/components/trip-lines/stop-way-picker";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
 import {
   EndChip,
@@ -15,7 +16,8 @@ import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { type StripVia, ViaChips } from "@/components/trip-lines/via-list";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap } from "@/lib/trip-gaps";
-import { firstStops, offRoute, visitsAfter } from "@/lib/trip-visits";
+import { firstStops, visitsAfter } from "@/lib/trip-visits";
+import { insertChoices } from "@/lib/stop-insert";
 import { cn } from "@/lib/utils";
 
 interface PhotoStripProps {
@@ -40,6 +42,8 @@ interface PhotoStripProps {
   onInsertFirst?: (visit: TripVisit) => void;
   /** Takes a trip stop off the route; left out, they can't be taken off. */
   onOffVisit?: (visit: TripVisit) => void;
+  /** Changes how a trip stop between two photos was reached; left out, the ways only show. */
+  onStopWay?: OnStopWay;
   /** The day's trip stops; the ones put on the route show between their two photos. */
   visits?: TripVisit[];
   /** The via points by the photo they show before, numbered as on the map; left out, none show. */
@@ -69,7 +73,7 @@ interface PhotoStripProps {
 /** The day's photos in the order they were taken, with what happened between each two. */
 export function PhotoStrip(props: PhotoStripProps) {
   const { photos, visits, vias, offset = 0, endsDay = true, ...rest } = props;
-  const choices = offRoute(visits);
+  const choices = insertChoices(visits);
   // Relative, so screen-reader labels (absolutely placed) scroll with the strip instead of widening the page.
   return (
     <ol
@@ -167,13 +171,19 @@ function StripItem(props: StripItemProps) {
  */
 function Between(props: StripItemProps & { i: number }) {
   const { photo, prev, gaps, onGap, onSplit, i } = props;
-  const chips = <StopsHere {...props} />;
-  if (!gaps || !prev) return chips;
+  if (!gaps || !prev) return <StopsHere {...props} />;
   const picker = { gap: gapBefore(gaps, i), index: i - 1, onGap };
   return (
     <>
-      <PlacesVisited shown={hasStops(props)} {...picker}>
-        {chips}
+      <PlacesVisited shown={hasStops(props)}>
+        <ViaChips vias={props.viasBefore} />
+        <StopsWithWays
+          visits={props.before}
+          gap={picker.gap}
+          onWay={props.onStopWay}
+          onMove={props.onMoveVisit}
+          onOff={props.onOffVisit}
+        />
       </PlacesVisited>
       <GapColumn
         {...picker}
@@ -235,7 +245,7 @@ function StopsHere({ before, viasBefore, onMoveVisit, onOffVisit }: StripItemPro
   );
 }
 
-interface PlacesVisitedProps extends GapPickerProps {
+interface PlacesVisitedProps {
   /** Whether any trip stops or via points are between the two photos. */
   shown: boolean;
   /** The places' icons. */
@@ -243,17 +253,15 @@ interface PlacesVisitedProps extends GapPickerProps {
 }
 
 /**
- * The trip stops and via points between two photos, after the way there, raised by the height of the cut row
- * under the gap after them so the two ways and the places line up; nothing when none were visited.
+ * The via points and trip stops between two photos, each stop after the way it was reached, raised
+ * by the height of the cut row under the gap after them so the ways and the places line up; nothing
+ * when none were visited.
  */
-function PlacesVisited({ shown, children, ...picker }: PlacesVisitedProps) {
+function PlacesVisited({ shown, children }: PlacesVisitedProps) {
   if (!shown) return null;
   return (
     <div className="flex flex-col gap-1">
-      <span className="flex items-center gap-1">
-        <GapPicker {...picker} />
-        {children}
-      </span>
+      <span className="flex items-center gap-1">{children}</span>
       <span className="h-[18px]" aria-hidden />
     </div>
   );

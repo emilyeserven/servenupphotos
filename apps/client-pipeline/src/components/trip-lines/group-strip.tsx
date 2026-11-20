@@ -6,21 +6,15 @@ import { GroupAreaButton } from "@/components/trip-lines/group-area-button";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
 import type { StripEnds } from "@/components/trip-lines/strip-ends";
 import type { StripVia } from "@/components/trip-lines/via-list";
-import { VisitChips } from "@/components/trip-lines/visit-chips";
+import { StopsWithWays } from "@/components/trip-lines/stop-way-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { TripPhoto } from "@/lib/trip-days";
-import { type Gap, type GapDraft, withGap } from "@/lib/trip-gaps";
+import type { Gap, GapDraft } from "@/lib/trip-gaps";
+import { insertChoices, insertedVisit, withGapKeepingStops, withStopWay } from "@/lib/stop-insert";
 import { type PhotoGroup, photoGroups, withGroupName, withGroupStart } from "@/lib/trip-groups";
-import {
-  firstStops,
-  firstVisit,
-  movedVisit,
-  offRoute,
-  placedVisit,
-  visitsAfter,
-} from "@/lib/trip-visits";
+import { firstStops, movedVisit, placedVisit, visitsAfter } from "@/lib/trip-visits";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { isWandered, withWandered } from "@/lib/trip-wander";
 
@@ -128,16 +122,20 @@ function GroupGap(props: GroupGapProps) {
   const a = photos[group.start - 1];
   return (
     <div className={gapClass(stacked)}>
-      {before.length > 0 && (
-        <PhotoStripGap draft={draft} index={group.start - 1} onChange={onChange} />
-      )}
-      <VisitChips visits={before} onMove={onMoveVisit} onOff={props.onOffVisit} />
-      <PhotoStripGap draft={draft} index={group.start - 1} onChange={onChange} />
+      <StopsWithWays
+        visits={before}
+        gap={draft.gaps[group.start - 1] ?? "break"}
+        onWay={(visit, way) => onChange(withStopWay(draft, visit, way))}
+        onMove={onMoveVisit}
+        onOff={props.onOffVisit}
+        menus
+      />
+      <PhotoStripGap draft={draft} index={group.start - 1} stops={before} onChange={onChange} />
       <GapBreakSpots {...props} />
       {a && (
         <VisitInsert
-          choices={offRoute(draft.visits)}
-          onInsert={(visit) => onChange(placedVisit(draft, visit, a.id))}
+          choices={insertChoices(draft.visits)}
+          onInsert={(visit) => onChange(insertedVisit(draft, visit, { after: a.id }))}
           icon={Plus}
           className="text-muted-foreground hover:text-foreground"
         />
@@ -171,14 +169,20 @@ function gapClass(stacked: boolean): string {
   );
 }
 
-/** The gap picker between the last photo of one group and the first of the next. */
+/**
+ * The gap picker between the last photo of one group and the first of the next: the way after the
+ * trip stops between them, if any, which changes without changing the ways to them.
+ */
 function PhotoStripGap({
   draft,
   index,
+  stops,
   onChange,
 }: {
   draft: GapDraft;
   index: number;
+  /** The trip stops between the two groups. */
+  stops: TripVisit[];
   onChange: (d: GapDraft) => void;
 }) {
   return (
@@ -186,7 +190,7 @@ function PhotoStripGap({
       aria-label={`Between photos ${index + 1} and ${index + 2}`}
       className="border-input bg-background h-8 rounded-md border px-1 text-xs"
       value={draft.gaps[index]}
-      onChange={(e) => onChange(withGap(draft, index, e.target.value as GapDraft["gaps"][number]))}
+      onChange={(e) => onChange(withGapKeepingStops(draft, stops, index, e.target.value as Gap))}
     >
       {GAP_LABELS.map(([gap, label]) => (
         <option key={gap} value={gap}>
@@ -245,6 +249,15 @@ function startGapShown(draft: GapDraft): Gap | undefined {
   return draft.startGap ?? "walk";
 }
 
+/**
+ * The draft with the gap at index i (or the way from the day's start or to its end) changed, the
+ * ways to the trip stops in it kept as they were.
+ */
+function gapChanged(draft: GapDraft, photos: TripPhoto[], i: number, gap: Gap): GapDraft {
+  const stops = i >= 0 ? visitsAfter(draft.visits, photos[i]?.id) : [];
+  return withGapKeepingStops(draft, stops, i, gap);
+}
+
 /** One group: its name, how many photos, collapsing and showing it alone, and its photos. */
 function GroupBox(props: GroupBoxProps) {
   const { group, photos, draft, onChange, onHover, collapsed } = props;
@@ -256,13 +269,14 @@ function GroupBox(props: GroupBoxProps) {
           photos={photos.slice(group.start, group.end)}
           offset={group.start}
           gaps={draft.gaps}
-          onGap={(i, gap) => onChange(withGap(draft, i, gap))}
+          onGap={(i, gap) => onChange(gapChanged(draft, photos, i, gap))}
+          onStopWay={(visit, way) => onChange(withStopWay(draft, visit, way))}
           onHover={onHover}
           onSplit={(id) => onChange(withGroupStart(draft, id, true))}
           onMove={props.onMove}
           onMoveVisit={props.onMoveVisit}
-          onInsertVisit={(after, visit) => onChange(placedVisit(draft, visit, after))}
-          onInsertFirst={(visit) => onChange(firstVisit(draft, visit))}
+          onInsertVisit={(after, visit) => onChange(insertedVisit(draft, visit, { after }))}
+          onInsertFirst={(visit) => onChange(insertedVisit(draft, visit, { first: true }))}
           onOffVisit={props.onOffVisit}
           visits={draft.visits}
           vias={props.vias}
