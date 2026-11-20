@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { PanelRightCloseIcon, PanelRightOpenIcon } from "lucide-react";
 import { type InFlightResponse } from "@/api/photos";
 import { CommitButton } from "@/components/all-photos-rebuild";
-import { CommitError } from "@/components/commit-error";
+import { ErrorNote } from "@/components/error-note";
 import { FileChecks } from "@/components/in-flight-checks";
 import { PullRequestSummarySkeleton } from "@/components/in-flight-loading";
 import { NoPullRequest } from "@/components/in-flight-pending";
@@ -96,7 +96,7 @@ function SyncSummary() {
       </span>
     );
   }
-  if (sync.commitError) return <CommitError error={sync.commitError} />;
+  if (sync.commitError) return <ErrorNote error={sync.commitError} githubOpen />;
   if (!sync.unsynced) return <span className="text-muted-foreground">Up to date</span>;
   return (
     <span className="flex flex-col items-start gap-2">

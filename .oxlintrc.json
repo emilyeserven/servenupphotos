@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "react", "import", "unicorn", "oxc"],
+  "jsPlugins": ["./scripts/lint/servenup-plugin.mjs"],
   "categories": {
     "correctness": "error",
     "suspicious": "warn"
@@ -12,7 +13,8 @@
       {
         "allow": ["**/*.css"]
       }
-    ]
+    ],
+    "servenup/error-note": "warn"
   },
   "ignorePatterns": ["**/dist/**", "**/routeTree.gen.ts"],
   "jsPlugins": ["./scripts/oxlint/request-helpers.mjs"],

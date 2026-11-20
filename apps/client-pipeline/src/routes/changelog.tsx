@@ -4,7 +4,7 @@ import { useId, useState } from "react";
 import { type ChangelogPage, changelogQuery } from "@/api/changelog";
 import { ChangelogDayCard } from "@/components/changelog/changelog-day";
 import { type ChangelogDay, changelogDays } from "@/components/changelog/days";
-import { CommitError } from "@/components/commit-error";
+import { ErrorNote } from "@/components/error-note";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 
@@ -22,7 +22,7 @@ function ChangelogView() {
       description="What changed, from the pull requests merged into the repository in Settings, newest first."
     >
       {query.isPending && <p>Reading the branch's commits…</p>}
-      {query.isError && <CommitError error={query.error} />}
+      <ErrorNote error={query.error} githubOpen />
       {query.data && (
         <ChangelogBody
           pages={query.data.pages}
