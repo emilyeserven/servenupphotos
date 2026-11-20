@@ -137,7 +137,7 @@ function PlacesAnswer({ pick, places, loading }: PlacesAnswerProps) {
         label="Review the places"
         onReview={() => review(answer)}
       />
-      <ErrorText error={find.error} />
+      <ErrorNote error={find.error} />
       {read && <ReadAnswer read={read} />}
     </>
   );
