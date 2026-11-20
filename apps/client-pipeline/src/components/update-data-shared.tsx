@@ -6,11 +6,7 @@ import type { PendingSave } from "@/api/scan-changes";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
-
-/** "1 file", "2 files". */
-export function count(n: number, word: string): string {
-  return `${n} ${n === 1 ? word : `${word}s`}`;
-}
+import { count } from "@portfolio/lib/words";
 
 /** Photo files that couldn't be read; while there are any, nothing can be changed. */
 export function Unreadable({

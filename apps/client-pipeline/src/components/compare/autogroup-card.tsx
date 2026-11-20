@@ -7,7 +7,6 @@ import { PhotoScopeToggle } from "@/components/photo-scope-toggle";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { count } from "@/components/update-data-shared";
 import { useCompareGroups } from "@/hooks/use-compare-groups";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import {
@@ -21,6 +20,7 @@ import {
 } from "@/lib/compare-autogroup";
 import { readAutogroupAnswer } from "@/lib/compare-autogroup-answer";
 import type { ComparePhoto } from "@/lib/compare-groups";
+import { count } from "@portfolio/lib/words";
 
 /**
  * Autogroup: chooses every photo or only the drafts, copies one prompt linking all their Small

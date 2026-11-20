@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { type AlbumImport, type AlbumLayout, readAlbumImport } from "@/lib/album-layout-editor";
+import { count } from "@portfolio/lib/words";
 
 interface AlbumImportDialogProps {
   album: Group;
@@ -105,8 +106,4 @@ function ImportOutcome({ read }: { read?: AlbumImport }) {
       ))}
     </div>
   );
-}
-
-function count(n: number, word: string): string {
-  return `${n} ${word}${n === 1 ? "" : "s"}`;
 }

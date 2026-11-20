@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { shownPhotos } from "@/lib/place-seeds";
 import { lineDays } from "@/lib/stale-trip-lines";
+import { count } from "@portfolio/lib/words";
 
 /** The ID in a Trip page's URL for a new Trip, not saved yet. */
 export const NEW_TRIP_ID = "new";
@@ -98,11 +99,6 @@ function legsText(n: number): string {
   return n === 1 ? "1 leg" : `${n} legs`;
 }
 
-/** "53 photos". */
-function photosText(n: number): string {
-  return n === 1 ? "1 photo" : `${n} photos`;
-}
-
 interface TripCardProps {
   trip: Trip;
   photos: number;
@@ -146,7 +142,7 @@ function TripCardBody({ trip, photos, legacy, dayLines }: Omit<TripCardProps, "p
         <CardDescription className="flex flex-col gap-0.5">
           <span>{dayRange(trip.start, trip.end)}</span>
           <span>
-            {photosText(photos)} · {legsText(trip.legs.length)}
+            {count(photos, "photo")} · {legsText(trip.legs.length)}
           </span>
           {trip.labels.length > 0 && <span>{labelsText(trip)}</span>}
           {legacy && (

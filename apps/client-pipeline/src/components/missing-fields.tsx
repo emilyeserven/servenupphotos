@@ -18,8 +18,8 @@ import {
   OptionCheckbox,
   SaveButton,
   ScanPreviewBody,
-  count,
 } from "@/components/update-data-shared";
+import { count } from "@portfolio/lib/words";
 
 interface MissingFieldsCardProps {
   /** Whether R2 is set up, so missing EXIF fields can be read from the originals. */

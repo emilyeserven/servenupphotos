@@ -21,7 +21,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
-import { count } from "@/components/update-data-shared";
+import { count } from "@portfolio/lib/words";
 
 interface ConfirmWriteProps {
   photo: R2ExifPhoto;

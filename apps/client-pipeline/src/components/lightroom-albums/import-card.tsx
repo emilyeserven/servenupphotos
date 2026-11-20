@@ -4,7 +4,6 @@ import { type ChangeEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { count } from "@/components/update-data-shared";
 import { downloadFile } from "@/lib/album-layout-editor";
 import {
   type LightroomMerge,
@@ -12,6 +11,7 @@ import {
   readLightroomAlbums,
 } from "@/lib/lightroom-albums";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { count } from "@portfolio/lib/words";
 
 /** A read import: the merge to look over and the source it came from, or why it couldn't be read. */
 type ImportRead = { merge: LightroomMerge; source: string } | { error: string };

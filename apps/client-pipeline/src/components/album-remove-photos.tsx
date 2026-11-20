@@ -11,6 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { albumPhotoOrder, photoId } from "@/lib/album-photo-order";
 import { type CombinedPhoto, photoIn } from "@/lib/group-photos";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 /** Takes photos out of an album, then reads the albums and the saved photos again. */
 export function useAlbumRemove() {
@@ -91,13 +92,9 @@ export function AlbumRemovePhotos({ album, photos, remove, onDone }: AlbumRemove
   );
 }
 
-function removeText(count: number): string {
-  if (count === 0) return "Pick photos";
-  return `Remove ${photoCount(count)}`;
-}
-
-function photoCount(n: number): string {
-  return n === 1 ? "1 photo" : `${n} photos`;
+function removeText(picked: number): string {
+  if (picked === 0) return "Pick photos";
+  return `Remove ${count(picked, "photo")}`;
 }
 
 interface RemoveTileProps {
@@ -157,7 +154,7 @@ export function AlbumRemoveOutcome({ remove }: { remove: AlbumRemove }) {
       <p className="flex items-start gap-2">
         <CheckIcon className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
         <span>
-          Removed {photoCount(remove.data.photos)} from the album in the app.{" "}
+          Removed {count(remove.data.photos, "photo")} from the album in the app.{" "}
           <WaitingForCommit pullRequestUrl={remove.data.pullRequestUrl} what="The changes" />
         </span>
       </p>

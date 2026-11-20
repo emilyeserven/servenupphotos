@@ -5,7 +5,6 @@ import { AlbumTree, FolderButtons } from "@/components/lightroom-albums/folder-t
 import { Segmented } from "@/components/lightroom-albums/segmented";
 import { SearchBox } from "@/components/search-box";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { count } from "@/components/update-data-shared";
 import {
   LIGHTROOM_STAGES,
   type LightroomAlbum,
@@ -16,6 +15,7 @@ import {
 import { filterTree, matchesSearch } from "@/lib/lightroom-filter";
 import { cn } from "@/lib/utils";
 import { type LightroomView, useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { count } from "@portfolio/lib/words";
 
 /** Which albums the tree shows: every album, the ones without a stage, or the ones at one stage. */
 type StageFilter = "all" | "none" | LightroomStage;

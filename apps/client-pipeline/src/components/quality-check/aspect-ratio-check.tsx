@@ -5,9 +5,9 @@ import { imageSizesMutation } from "@/api/image-sizes";
 import { FlagList } from "@/components/quality-check/flag-list";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { count } from "@/components/update-data-shared";
 import { type AspectCheck, checkAspectRatios } from "@/lib/aspect-ratio";
 import type { AutogroupPhoto } from "@/lib/compare-autogroup";
+import { count } from "@portfolio/lib/words";
 
 /**
  * The aspect ratio check: measures every chosen photo's Small version on the backend and lists

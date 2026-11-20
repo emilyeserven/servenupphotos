@@ -16,8 +16,9 @@ import { usePhotosById } from "@/components/small-tags/small-photos";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { CommitSuccess, count } from "@/components/update-data-shared";
+import { CommitSuccess } from "@/components/update-data-shared";
 import { smallTags } from "@/lib/small-tags";
+import { count } from "@portfolio/lib/words";
 
 /** The Small Tags page: every tag or subtag with fewer than 3 photos, to clean up one by one. */
 export function SmallTagsPage() {

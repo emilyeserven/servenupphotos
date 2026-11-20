@@ -7,7 +7,7 @@ import {
   UnknownPhotos,
   useReviewedSave,
 } from "@/components/bulk-tagging/review-parts";
-import { count } from "@/components/update-data-shared";
+
 import { outlineAsks, PlaceOutlines } from "@/components/bulk-places/place-outlines";
 import { NoPlaceFound } from "@/components/bulk-places/no-place-found";
 import {
@@ -21,6 +21,7 @@ import {
 } from "@/lib/bulk-places";
 import { promptImageUrl } from "@/lib/tag-prompt";
 import { tileImageUrl } from "@/lib/offline-thumbnails";
+import { count } from "@portfolio/lib/words";
 
 /** The paths of the photos that start ticked: those with a place the LLM isn't unsure of. */
 function firstTicked(review: BulkPlacesReview): Set<string> {

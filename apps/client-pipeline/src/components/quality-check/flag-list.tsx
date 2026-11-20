@@ -2,12 +2,12 @@ import { CheckIcon, RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
 import { PhotoLink, PhotoName } from "@/components/quality-check/photo-parts";
 import { Button } from "@/components/ui/button";
-import { count } from "@/components/update-data-shared";
 import type { AutogroupPhoto } from "@/lib/compare-autogroup";
 import { titleOf } from "@/lib/drafts";
 import { NOTES, RE_EDIT } from "@/lib/photo-fields";
 import { type QualityFlag, alreadyFlagged, flaggedNotes, flaggedReEdit } from "@/lib/quality-flags";
 import { useLocalEditsStore } from "@/stores/local-edits";
+import { count } from "@portfolio/lib/words";
 
 /** A photo that failed a Quality Check, with what failed and the re-edit flag it gets. */
 export interface FlagItem {

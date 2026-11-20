@@ -13,12 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  CommitSuccess,
-  PreviewDestination,
-  Unreadable,
-  count,
-} from "@/components/update-data-shared";
+import { CommitSuccess, PreviewDestination, Unreadable } from "@/components/update-data-shared";
+import { count } from "@portfolio/lib/words";
 
 /** Trims a base URL and its trailing slashes, as the backend does. */
 function cleanBaseUrl(value: string): string {

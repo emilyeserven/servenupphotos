@@ -6,7 +6,6 @@ import { RemoveAlbumButton } from "@/components/lightroom-albums/remove-album";
 import { RemoveFolderButton } from "@/components/lightroom-albums/remove-folder";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { count } from "@/components/update-data-shared";
 import {
   type LightroomAlbum,
   type LightroomFolder,
@@ -16,6 +15,7 @@ import {
 import { folderPaths } from "@/lib/lightroom-tree";
 import { cn } from "@/lib/utils";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { count } from "@portfolio/lib/words";
 
 /** The path that opens and closes the No Parent group, which no real folder can have. */
 const NO_PARENT = "\u0000no-parent";

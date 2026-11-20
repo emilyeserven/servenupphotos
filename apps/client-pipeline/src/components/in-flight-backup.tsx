@@ -5,17 +5,14 @@ import { type InFlightWork, type RestoreResult, parseWork, workCount } from "@/a
 import { Button } from "@/components/ui/button";
 import { currentWork, downloadWork, restoreWork } from "@/lib/in-flight-work";
 import { useInFlightBackupStore } from "@/stores/in-flight-backup";
-
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
-}
+import { count } from "@portfolio/lib/words";
 
 /** What a restore did, in a line. */
 function restoredLine(result: RestoreResult, edits: number): string {
   const parts = [
-    `${plural(result.restored, "file")} restored`,
+    `${count(result.restored, "file")} restored`,
     result.unchanged > 0 && `${result.unchanged} already as saved`,
-    edits > 0 && `${plural(edits, "browser edit")} added`,
+    edits > 0 && `${count(edits, "browser edit")} added`,
   ].filter(Boolean);
   return `${parts.join(", ")}.`;
 }
@@ -24,7 +21,7 @@ function restoredLine(result: RestoreResult, edits: number): string {
 function useRestore(setMessage: (message: string) => void) {
   const queryClient = useQueryClient();
   return async (work: InFlightWork, from: string) => {
-    const question = `Restore ${plural(workCount(work), "change")} from ${from}? They replace any changes waiting for Commit to the same files.`;
+    const question = `Restore ${count(workCount(work), "change")} from ${from}? They replace any changes waiting for Commit to the same files.`;
     if (!window.confirm(question)) return;
     try {
       const result = await restoreWork(work, queryClient);
@@ -96,7 +93,7 @@ function BrowserCopy({ onRestore }: { onRestore: (work: InFlightWork) => void })
     <div className="bg-muted/50 flex items-center gap-2 rounded-md px-2 py-1.5 text-xs">
       <HistoryIcon className="text-muted-foreground size-4 shrink-0" aria-hidden />
       <span className="mr-auto">
-        Kept in this browser while offline: {plural(workCount(backup), "change")}, {when}
+        Kept in this browser while offline: {count(workCount(backup), "change")}, {when}
       </span>
       <button
         type="button"

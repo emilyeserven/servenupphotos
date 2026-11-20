@@ -7,8 +7,8 @@ import { RemoveTag, RenameTag } from "@/components/small-tags/tag-actions";
 import { ErrorText } from "@/components/bulk-tagging/pick-controls";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { count } from "@/components/update-data-shared";
 import type { SmallTag } from "@/lib/small-tags";
+import { count } from "@portfolio/lib/words";
 
 /** What can be done to a small tag, one at a time. */
 const ACTIONS = [

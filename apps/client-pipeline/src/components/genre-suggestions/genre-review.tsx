@@ -12,9 +12,9 @@ import {
   useReviewedSave,
 } from "@/components/bulk-tagging/review-parts";
 import { type GenreOption, PhotoGenreRow } from "@/components/genre-suggestions/photo-genre-row";
-import { count } from "@/components/update-data-shared";
 import { toggled } from "@/lib/bulk-tags";
 import { type GenreChoices, NO_GENRE_CHOICES, genresToSave } from "@/lib/genre-suggestions";
+import { count } from "@portfolio/lib/words";
 
 interface GenreReviewProps {
   preview: GenreSuggestionsPreview;

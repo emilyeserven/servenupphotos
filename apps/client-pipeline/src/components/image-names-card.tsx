@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { type ImageRename, imageNamesPreviewQuery, renameImagesMutation } from "@/api/image-names";
 import { FieldChangesCard } from "@/components/field-changes-card";
-import { count } from "@/components/update-data-shared";
+import { count } from "@portfolio/lib/words";
 
 /** The new name stem beside a renamed photo's file, shortened to fit on one line. */
 function newName(file: ImageRename): string {

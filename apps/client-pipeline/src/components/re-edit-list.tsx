@@ -4,10 +4,10 @@ import { ReadProblems } from "@/components/compare/compare-group-list";
 import { PhotoRow } from "@/components/quality-check/photo-parts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { count } from "@/components/update-data-shared";
 import { useCompareGroups } from "@/hooks/use-compare-groups";
 import { type AutogroupPhoto, autogroupPhotos } from "@/lib/compare-autogroup";
 import { type MarkedPhoto, markedPhotos } from "@/lib/re-edit";
+import { count } from "@portfolio/lib/words";
 
 /**
  * The Re-edit page's list: every photo marked for re-editing, from the Gallery and Photos in
