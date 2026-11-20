@@ -161,10 +161,7 @@ function ReadStatus({ replace }: { replace: ReplaceImage }) {
 function NoExifNote({ replace }: { replace: ReplaceImage }) {
   if (replace.read.data?.sanitized !== null) return null;
   return (
-    <p className="text-destructive text-sm">
-      Couldn&apos;t read the new image&apos;s size, since exiftool isn&apos;t running on the
-      backend.
-    </p>
+    <ErrorNote error="Couldn't read the new image's size, since exiftool isn't running on the backend." />
   );
 }
 
@@ -279,13 +276,8 @@ function ExifHelp({ sanitized }: { sanitized: SanitizedExif }) {
 
 /** Why replacing failed, and whether the new image got as far as R2. */
 function ReplaceError({ replace }: { replace: ReplaceImage }) {
-  const { error } = replace.replace;
-  if (!error) return null;
-  const where = replace.uploadedOnly ? "The new image is in R2, but saving the JSON failed: " : "";
-  return (
-    <span className="text-destructive text-sm">
-      {where}
-      {error.message}
-    </span>
-  );
+  const lead = replace.uploadedOnly
+    ? "The new image is in R2, but saving the JSON failed:"
+    : undefined;
+  return <ErrorNote error={replace.replace.error} lead={lead} />;
 }

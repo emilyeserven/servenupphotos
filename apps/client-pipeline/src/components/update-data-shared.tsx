@@ -23,7 +23,7 @@ export function Unreadable({
 }) {
   if (files.length === 0) return null;
   return (
-    <div className="text-destructive flex flex-col gap-1 text-sm">
+    <ErrorNote>
       <p>
         {files.length === 1 ? "This file couldn't" : "These files couldn't"} be read
         {blocking ? ", so nothing can be changed until it's fixed:" : ":"}
@@ -35,7 +35,7 @@ export function Unreadable({
           </li>
         ))}
       </ul>
-    </div>
+    </ErrorNote>
   );
 }
 

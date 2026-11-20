@@ -15,6 +15,7 @@ import { untitledLosers } from "@/hooks/use-compare-groups";
 import type { DiscardFailure } from "@/hooks/use-discard-images";
 import { useFinishGroup } from "@/hooks/use-finish-group";
 import { type CompareGroup, losersOf, photoNames, winnersOf } from "@/lib/compare-groups";
+import { ErrorNote } from "@/components/error-note";
 
 /** What finishing does to the winners, or that there are none. */
 function winnerNote(group: CompareGroup): string {
@@ -130,10 +131,7 @@ function DeleteFailures({
   return (
     <>
       <div className="flex flex-col gap-2 text-sm">
-        <p className="text-destructive">
-          Not everything could be deleted from R2. Try again, or finish anyway, which marks these as
-          still in R2 so Unselected Photos can delete them later:
-        </p>
+        <ErrorNote error="Not everything could be deleted from R2. Try again, or finish anyway, which marks these as still in R2 so Unselected Photos can delete them later:" />
         <ul className="flex list-disc flex-col gap-1 pl-5">
           {failures.map((failure) => (
             <li key={failure.path}>

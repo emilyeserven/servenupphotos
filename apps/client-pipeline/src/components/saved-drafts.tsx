@@ -16,6 +16,7 @@ import { useRevealed } from "@/hooks/use-revealed";
 import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
 import { editedData, undecidedPaths } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
+import { ErrorNote } from "@/components/error-note";
 
 interface SavedDraftsProps {
   /** Whether photos are in flight too: these drafts' Undecided panel is named after the branch to tell it apart from theirs. */
@@ -35,18 +36,16 @@ export function SavedDrafts(props: SavedDraftsProps) {
   const published = useQuery(publishedPhotosQuery);
   if (!useUntitledDrafts()) return null;
   if (published.isPending) return <DraftsSkeleton />;
-  if (published.isError) return <DraftsError message={published.error.message} />;
+  if (published.isError) return <DraftsError error={published.error} />;
   return <DraftsOnBase data={published.data} {...props} />;
 }
 
 /** Why the drafts on the base branch couldn't be read. */
-function DraftsError({ message }: { message: string }) {
+function DraftsError({ error }: { error: Error }) {
   return (
     <section className="flex flex-col gap-1">
       <h2 className="text-lg font-semibold">Drafts</h2>
-      <p className="text-destructive text-sm">
-        Couldn&apos;t read the drafts on the base branch: {message}
-      </p>
+      <ErrorNote error={error} lead="Couldn't read the drafts on the base branch:" />
     </section>
   );
 }

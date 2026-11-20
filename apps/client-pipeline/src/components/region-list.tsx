@@ -28,6 +28,7 @@ import {
   regionParentKeys,
   regionTreeRows,
 } from "@/lib/region-tree";
+import { ErrorNote } from "@/components/error-note";
 
 /** Everything the Places list shows, worked out from the place files and the photos. */
 export interface RegionListData {
@@ -196,11 +197,7 @@ function ExpandButtons({ parents, collapsed, onChange, disabled }: ExpandButtons
 function UnreadableFiles({ files }: { files: PlacesResponse["places"] }) {
   return files
     .filter((file) => file.error)
-    .map((file) => (
-      <p key={file.path} className="text-destructive text-sm">
-        {file.path}: {file.error}
-      </p>
-    ));
+    .map((file) => <ErrorNote key={file.path} error={`${file.path}: ${file.error}`} />);
 }
 
 /** A city only photos show, which no place is in yet. */

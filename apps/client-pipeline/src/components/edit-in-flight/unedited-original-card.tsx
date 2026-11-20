@@ -123,9 +123,7 @@ function ReadStatus({ original: { read } }: { original: UneditedOriginal }) {
 function NoSizeNote({ sanitized }: { sanitized: SanitizedExif | null }) {
   if (newSize(sanitized)) return null;
   return (
-    <p className="text-destructive text-sm">
-      Couldn&apos;t read the original&apos;s size, since exiftool isn&apos;t running on the backend.
-    </p>
+    <ErrorNote error="Couldn't read the original's size, since exiftool isn't running on the backend." />
   );
 }
 
@@ -135,11 +133,6 @@ const REPLACE = {
   button: "Replace original",
   note: " Replacing the original starts its crop and pixelation over, and takes it off the portfolio until it's shown again.",
 };
-
-/** Why something failed, when it did. */
-function ErrorText({ error }: { error: Error | null }) {
-  return <ErrorNote error={error} />;
-}
 
 /** Uploads the chosen original, once its size is read, and says what replacing one resets. */
 function UploadButton({ original, blocked }: { original: UneditedOriginal; blocked: boolean }) {
@@ -158,7 +151,7 @@ function UploadButton({ original, blocked }: { original: UneditedOriginal; block
           <UploadIcon pending={add.isPending} />
           {words.button}
         </Button>
-        <ErrorText error={add.error} />
+        <ErrorNote error={add.error} />
       </div>
     </>
   );

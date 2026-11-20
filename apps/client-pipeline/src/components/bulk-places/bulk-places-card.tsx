@@ -7,7 +7,6 @@ import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
 import {
   CopyPromptButton,
-  ErrorText,
   PasteAnswer,
   PickBar,
   usePhotoPick,
@@ -18,6 +17,7 @@ import { bulkPlacePrompt, parseBulkPlaceAnswer } from "@/lib/bulk-place-prompt";
 import { noPlacePaths, reviewBulkPlaces } from "@/lib/bulk-places";
 import { NoPlaceFoundNote } from "@/components/bulk-places/no-place-found";
 import { useNoPlaceFoundStore } from "@/stores/no-place-found";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * Bulk Places: picks up to the chosen number of related photos without places, copies one prompt
@@ -44,7 +44,7 @@ export function BulkPlacesCard() {
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <PickBar {...bar} />
-        <ErrorText error={pick.error} />
+        <ErrorNote error={pick.error} />
         {pick.data && <PickedPlaces key={pick.submittedAt} pick={pick.data} />}
       </CardContent>
     </Card>
@@ -98,11 +98,7 @@ function PickedPlaces({ pick }: { pick: BulkPlacePick }) {
 /** The review the answer makes, or that it can't be read. */
 function ReadAnswer({ read }: { read: ReturnType<typeof readAnswer> }) {
   if (!read.review) {
-    return (
-      <p className="text-destructive text-sm">
-        The answer has no JSON object with a list of photos to read.
-      </p>
-    );
+    return <ErrorNote error="The answer has no JSON object with a list of photos to read." />;
   }
   return <BulkPlaceReview key={JSON.stringify(read.review)} review={read.review} />;
 }

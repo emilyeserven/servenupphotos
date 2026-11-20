@@ -164,9 +164,7 @@ function AboutCard({ kind, group, organize }: GroupDetailProps) {
     <Card>
       <CardHeader>
         <CardTitle>About this {singular}</CardTitle>
-        {group.error && (
-          <CardDescription className="text-destructive">{group.error}</CardDescription>
-        )}
+        <ErrorNote error={group.error} />
       </CardHeader>
       <CardContent>
         <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 text-sm">
@@ -240,9 +238,11 @@ function GroupPlace({ kind, group, list }: { kind: ParentKind; group: Group; lis
 function NoParent({ kind, parent }: { kind: ParentKind; parent?: string }) {
   if (!parent) return <span className="text-muted-foreground">{PLACE_TEXT[kind].top}</span>;
   return (
-    <span className="text-destructive">
-      <code>{parent}</code>, which isn't {kind === "albums" ? "an album" : "a tag"}
-    </span>
+    <ErrorNote>
+      <span>
+        <code>{parent}</code>, which isn't {kind === "albums" ? "an album" : "a tag"}
+      </span>
+    </ErrorNote>
   );
 }
 

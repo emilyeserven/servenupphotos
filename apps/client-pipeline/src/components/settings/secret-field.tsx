@@ -8,6 +8,7 @@ import {
 } from "@/components/settings/use-settings-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ErrorNote } from "@/components/error-note";
 
 interface SettingsSecretProps {
   form: SettingsForm;
@@ -82,9 +83,7 @@ function SecretField({ id, label, help, status, draft, error, onChange }: Secret
           onChange={onChange}
         />
       )}
-      <p id={errorId} className="text-destructive text-sm empty:hidden">
-        {error}
-      </p>
+      <ErrorNote id={errorId} error={error} />
     </div>
   );
 }

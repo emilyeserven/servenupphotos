@@ -45,6 +45,7 @@ import { type DayPost, instagramPostsByDay } from "@/lib/social-post-days";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import { PUBLISH_DATE } from "@/lib/photo-fields";
+import { ErrorNote } from "@/components/error-note";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -316,10 +317,9 @@ function AllPhotosName({ calendar: { allPhotos } }: { calendar: SocialCalendar }
 function Unreadable({ calendar: { unreadable } }: { calendar: SocialCalendar }) {
   if (unreadable.length === 0) return null;
   return (
-    <p className="text-destructive">
-      {count(unreadable.length, "photo file")} couldn&apos;t be read, so nothing can be committed:{" "}
-      {unreadable.map((f) => `${f.path} (${f.error})`).join(", ")}
-    </p>
+    <ErrorNote
+      error={`${count(unreadable.length, "photo file")} couldn't be read, so nothing can be committed: ${unreadable.map((f) => `${f.path} (${f.error})`).join(", ")}`}
+    />
   );
 }
 

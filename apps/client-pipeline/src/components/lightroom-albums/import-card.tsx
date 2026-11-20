@@ -162,7 +162,7 @@ function ImportReview({ read, onDone }: ImportReviewProps) {
 function DroppedAlbums({ merge }: { merge: LightroomMerge }) {
   if (merge.dropped.length === 0) return null;
   return (
-    <div className="text-destructive">
+    <ErrorNote>
       <p>
         {count(merge.dropped.length, "album")} with a stage or notes{" "}
         {merge.dropped.length === 1 ? "isn't" : "aren't"} in the new list and will be dropped:
@@ -172,6 +172,6 @@ function DroppedAlbums({ merge }: { merge: LightroomMerge }) {
           <li key={album.path}>{album.path}</li>
         ))}
       </ul>
-    </div>
+    </ErrorNote>
   );
 }

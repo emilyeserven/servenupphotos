@@ -17,7 +17,7 @@ import { MetaValuePicker } from "@/components/metadata-value-picker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Busy, RemoveEntryButton } from "@/components/entry-buttons";
+import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
 import { Textarea } from "@/components/ui/textarea";
 import { canonicalJson } from "@/lib/combined";
 import { uncoveredValues } from "@/lib/meta-groups";
@@ -263,11 +263,6 @@ function SaveLabel({ isNew }: { isNew: boolean }) {
   return isNew ? "Save group" : "Save changes";
 }
 
-/** Why the last save failed, or else why the group can't be saved yet. */
-function SaveNote({ error, why }: { error: Error | null; why: string }) {
-  return error ? <Note text={error.message} error /> : <Note text={why} error={false} />;
-}
-
 function RemoveButton({ id, onRemoved }: { id: string; onRemoved: () => void }) {
   const remove = useMutation({ ...deleteMetaGroupMutation, onSuccess: onRemoved });
   return (
@@ -275,15 +270,5 @@ function RemoveButton({ id, onRemoved }: { id: string; onRemoved: () => void }) 
       label="Remove group"
       remove={{ ...remove, mutate: () => remove.mutate(id) }}
     />
-  );
-}
-
-/** Why the group can't be saved, or why a save failed, beside the buttons. */
-function Note({ text, error }: { text: string; error: boolean }) {
-  if (!text) return null;
-  return (
-    <span className={error ? "text-destructive text-sm" : "text-muted-foreground text-sm"}>
-      {text}
-    </span>
   );
 }

@@ -7,6 +7,7 @@ import { PointFields } from "@/components/trips/point-fields";
 import { StationSearch } from "@/components/trips/station-search";
 import { endSpot, ridesLegLine } from "@/lib/trip-legs";
 import type { TripPhoto } from "@/lib/trip-days";
+import { ErrorNote } from "@/components/error-note";
 
 interface LegEndFieldProps {
   /** What the end is, such as "Leaves". */
@@ -113,7 +114,7 @@ interface PhotoNoteProps {
 
 function PhotoNote({ photo, photoWord, named }: PhotoNoteProps) {
   if (!photo)
-    return <p className="text-destructive text-xs">No photo with an exact spot on this day.</p>;
+    return <ErrorNote error="No photo with an exact spot on this day." className="text-xs" />;
   if (named) return null;
   return (
     <p className="text-muted-foreground text-xs">
