@@ -117,18 +117,18 @@ export function AutogroupReview({ answer }: { answer: AutogroupAnswer }) {
   );
 }
 
-/** The photo and group names in the answer that aren't in the prompt, so they were left out. */
+/** The photo and group names in the answer that aren't any photo's or group's, so they were skipped. */
 function UnknownNames({ answer }: { answer: AutogroupAnswer }) {
   const lines = [
-    answer.unknown.length > 0 && `photos that aren't in the prompt: ${answer.unknown.join(", ")}`,
+    answer.unknown.length > 0 && `names that aren't photos: ${answer.unknown.join(", ")}`,
     answer.unknownGroups.length > 0 &&
-      `groups that aren't in the prompt: ${answer.unknownGroups.join(", ")}`,
+      `names that aren't compare groups: ${answer.unknownGroups.join(", ")}`,
   ].filter(Boolean);
   if (lines.length === 0) return null;
   return (
     <div className="flex flex-col gap-1 text-amber-700 dark:text-amber-400">
       {lines.map((line) => (
-        <p key={String(line)}>Left out {line}</p>
+        <p key={String(line)}>Skipped {line}</p>
       ))}
     </div>
   );

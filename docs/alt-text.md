@@ -55,7 +55,8 @@ to 50 photos with one LLM prompt, the way [Genre suggestions](update-data.md#gen
 3. Paste the answer and **Review the alt text** (`POST /api/data/alt-text/preview`, which saves nothing). The review
    shows each picked photo's thumbnail next to its alt text in a box you can edit, with its length, and the alt text it
    replaces when it had some. A photo is ticked once it has text; untick any you don't want. Photos the answer names
-   that weren't picked are listed and left out.
+   that weren't picked are found and reviewed after the picked ones, and names that aren't any photo's are listed and
+   skipped ([Photos outside the batch](copy-prompts.md#photos-outside-the-batch)).
 4. **Save alt text for N photos** (`POST /api/data/alt-text`, `{ photos: [{ path, altText }] }`) writes each ticked
    photo's `altText`, leaving every other byte of its file as it was, in one save of
    [changes waiting for Commit](pending-changes.md). Nothing is saved when a photo can't be read or its alt text is

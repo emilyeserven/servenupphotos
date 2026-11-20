@@ -162,6 +162,14 @@ export function bulkTagPick(count = 5, any = false) {
   };
 }
 
+/** The photos a pasted answer names, found among every photo, and the names that aren't any photo's. */
+export function photosByName(names) {
+  const all = bulkTagPick(headPhotos.length, true).photos;
+  const photos = all.filter((photo) => names.includes(photo.name));
+  const unknown = names.filter((name) => !all.some((photo) => photo.name === name));
+  return { photos, unknown };
+}
+
 /** The Bulk Tagging pick a request asks for: its `count` and `any`, or 40 photos with `all` (No limit). */
 export function bulkTagPickFor({ count, any, all } = {}) {
   return bulkTagPick(all ? 40 : count, any);

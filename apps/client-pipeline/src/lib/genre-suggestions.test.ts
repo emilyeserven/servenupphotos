@@ -21,6 +21,7 @@ const preview: GenreSuggestionsPreview = {
   photos: [plan("a", ["street", "night"]), plan("b", [])],
   newGenres: [{ id: "night", name: "Night", description: "After dark." }],
   unknown: [],
+  others: [],
 };
 
 describe("genresToSave", () => {

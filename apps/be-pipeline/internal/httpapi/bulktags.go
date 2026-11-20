@@ -74,6 +74,21 @@ func handlePickBulkPlacePhotos(store *settings.Store, gh *github.Client) http.Ha
 		})
 }
 
+// photoNames is the body of a photos-by-name lookup: the photo names an LLM's
+// answer gives.
+type photoNames struct {
+	Names []string `json:"names"`
+}
+
+// handleFindPhotosByName finds the photos an LLM's answer names among every
+// photo, so Bulk Places can apply an answer to photos it didn't pick.
+func handleFindPhotosByName(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "photo names", "could not find the photos",
+		func(ctx context.Context, cfg settings.GitHub, req photoNames) (any, error) {
+			return gh.FindPhotosByName(ctx, cfg, req.Names)
+		})
+}
+
 // handleApplyBulkPlaces makes the reviewed new places and gives each photo
 // its places, as changes waiting for Commit.
 func handleApplyBulkPlaces(store *settings.Store, gh *github.Client) http.HandlerFunc {

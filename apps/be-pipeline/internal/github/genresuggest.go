@@ -95,8 +95,12 @@ type GenreSuggestionsPreview struct {
 	// Photos lists, for each picked photo, the genre IDs to add in Add.
 	Photos    []BulkTagPhotoPlan `json:"photos"`
 	NewGenres []GenreNew         `json:"newGenres"`
-	// Unknown is the photos in the answer that aren't any of the picked ones.
+	// Unknown is the photos in the answer that aren't any photo file's, which
+	// are skipped.
 	Unknown []string `json:"unknown"`
+	// Others is the photos in the answer that weren't picked, found among
+	// every photo, which the review shows after the picked ones.
+	Others []BulkTagPhoto `json:"others"`
 }
 
 // PreviewGenreSuggestions reads answer, the LLM's JSON for the photos at
@@ -114,17 +118,17 @@ func (c *Client) PreviewGenreSuggestions(ctx context.Context, gh settings.GitHub
 	if perr != nil {
 		return GenreSuggestionsPreview{}, perr
 	}
-	photos, perr := picked(scan, paths)
+	pickedPhotos, perr := picked(scan, paths)
 	if perr != nil {
 		return GenreSuggestionsPreview{}, perr
 	}
+	photos, unknown := answeredPhotos(scan, pickedPhotos, parsed.names())
 	g := genrePlanner{n: newGroupNamer(Genres, scan.w.groups(), scan.w.entries(MetaInfo)), descriptions: genreDescriptions(parsed)}
-	preview := GenreSuggestionsPreview{Photos: []BulkTagPhotoPlan{}, NewGenres: []GenreNew{}, Unknown: []string{}}
+	preview := GenreSuggestionsPreview{Photos: []BulkTagPhotoPlan{}, NewGenres: []GenreNew{}, Unknown: unknown, Others: answeredExtra(photos, len(pickedPhotos))}
 	for _, p := range photos {
 		preview.Photos = append(preview.Photos, g.plan(p, parsed))
 	}
 	preview.NewGenres = append(preview.NewGenres, g.fresh...)
-	preview.Unknown = unknownPhotos(photos, parsed.names())
 	return preview, nil
 }
 

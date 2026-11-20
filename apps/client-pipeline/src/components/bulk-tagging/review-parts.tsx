@@ -75,18 +75,51 @@ export function pickedTitle(photos: BulkTagPhoto[], path: string): string {
 }
 
 interface UnknownPhotosProps {
+  /** The names in the answer that aren't any photo's. */
   names: string[];
+  /** The photos in the answer that weren't picked, which the review shows too. */
+  others?: { name: string }[];
   /** What the answer gives each photo, such as "tags". */
   noun: string;
 }
 
-/** Says which photos the answer named that weren't picked, when it named any. */
-export function UnknownPhotos({ names, noun }: UnknownPhotosProps) {
-  if (names.length === 0) return null;
+/** The names as a list in quotes, such as “a”, “b”. */
+function quoted(names: string[]): string {
+  return names.map((name) => `“${name}”`).join(", ");
+}
+
+/**
+ * Says which photos the answer names that weren't picked, which the review shows after the picked
+ * ones, and which names it skipped because they aren't any photo's.
+ */
+export function UnknownPhotos({ names, others = [], noun }: UnknownPhotosProps) {
+  if (names.length === 0 && others.length === 0) return null;
   return (
-    <p className="text-muted-foreground">
-      Left out the answer&apos;s {noun} for {names.map((name) => `“${name}”`).join(", ")}, which{" "}
-      {names.length === 1 ? "isn’t one" : "aren’t any"} of the picked photos.
+    <div className="text-muted-foreground flex flex-col gap-1">
+      <OtherPhotos names={others.map((photo) => photo.name)} noun={noun} />
+      <SkippedPhotos names={names} noun={noun} />
+    </div>
+  );
+}
+
+/** Says the review also shows the answer's photos that weren't picked, when there are any. */
+function OtherPhotos({ names, noun }: { names: string[]; noun: string }) {
+  if (names.length === 0) return null;
+  const were = names.length === 1 ? "wasn’t" : "weren’t";
+  return (
+    <p>
+      Also showing the answer&apos;s {noun} for {quoted(names)}, which {were} picked.
+    </p>
+  );
+}
+
+/** Says which names in the answer were skipped because they aren't photos, when there are any. */
+function SkippedPhotos({ names, noun }: { names: string[]; noun: string }) {
+  if (names.length === 0) return null;
+  const what = names.length === 1 ? "isn’t a photo" : "aren’t photos";
+  return (
+    <p>
+      Skipped the answer&apos;s {noun} for {quoted(names)}, which {what}.
     </p>
   );
 }
