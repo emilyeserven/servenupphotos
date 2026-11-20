@@ -30,6 +30,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { type PhotoMarks, usePhotoMarks } from "@/hooks/use-photo-marks";
 import { isContactSheetKey } from "@/lib/contact-sheets";
 import { cn } from "@/lib/utils";
+import { dateTimeText } from "@portfolio/lib/dates";
 
 export const Route = createFileRoute("/bucket")({
   component: BucketPage,
@@ -310,8 +311,6 @@ function imageCount(count: number): string {
 }
 
 const sizeFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
-const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
-
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${sizeFormat.format(bytes / 1024)} KB`;
@@ -470,7 +469,7 @@ function TileCaption({ image }: { image: BucketImage }) {
         {image.key}
       </a>
       <span className="text-muted-foreground">
-        {formatSize(image.size)} · {dateFormat.format(new Date(image.modified))}
+        {formatSize(image.size)} · {dateTimeText(image.modified)}
       </span>
     </figcaption>
   );

@@ -55,7 +55,7 @@ says why.
 Every field starts unticked. Make the change in Lightroom, then tick the field's **Done in Lightroom** box; only
 ticked fields are written. Each shows the value it will write, which can be changed first to match what Lightroom has.
 **Write N fields to R2…** opens a confirm step listing them, and only **Overwrite in R2** there writes anything
-(`POST /api/data/r2-exif/write` with `"confirm": true` and `"lightroom": true` on each field; the backend refuses the
+(`POST /api/data/r2-exif` with `"confirm": true` and `"lightroom": true` on each field; the backend refuses the
 request without them). The backend then (`handleWriteR2Exif` in `httpapi/r2exif.go`):
 
 1. Reads the photo file for its `images.key`, and checks each value (`exif.EditTags`: a date as `2016:12:24 06:07:39`,

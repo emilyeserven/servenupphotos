@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { lastOrder, newPresetId } from "@/api/graph-presets";
-import { EditorButtons, NameAndOrder } from "@/components/graph-presets/editor-parts";
+import {
+  deletePresetMutation,
+  lastOrder,
+  newPresetId,
+  savePresetMutation,
+} from "@/api/graph-presets";
+import { NameAndOrder, whyNotPreset } from "@/components/graph-presets/editor-parts";
+import { EntryEditorButtons } from "@/components/entry-buttons";
 import { GroupSettings } from "@/components/graph-presets/group-settings";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { GraphPresetFile } from "@portfolio/lib/graph-presets";
@@ -62,10 +68,14 @@ export function GroupEditor({ group, files, onSaved }: GroupEditorProps) {
           onChange={(part) => setDraft({ ...draft, ...part })}
         />
         <p className="text-muted-foreground text-sm">{insideNote(inside)}</p>
-        <EditorButtons
+        <EntryEditorButtons
           next={next}
           saved={group}
-          why={next.name === "" ? "Give it a name." : ""}
+          save={savePresetMutation}
+          remove={deletePresetMutation}
+          whyNot={whyNotPreset}
+          saveLabel="Save group"
+          removeLabel="Remove group"
           whyKeep={inside.length > 0 ? "Move its presets out of it first." : ""}
           onSaved={onSaved}
         />

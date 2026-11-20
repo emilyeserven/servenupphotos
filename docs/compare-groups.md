@@ -83,7 +83,7 @@ it asks what happens to the photos that didn't win:
 - **Leave them as they are**, optionally setting the untitled ones aside as Undecided (checked by default). Photos with a
   title stay on the portfolio or in flight.
 
-Deleting happens at once, through Explore Bucket's delete (`POST /api/photos/bucket/delete`), one photo at a time, so it
+Deleting happens at once, through Explore Bucket's delete (`DELETE /api/photos/bucket`), one photo at a time, so it
 needs the internet. When any of a photo's files can't be deleted, the dialog lists which and why, and **Finish anyway**
 moves it to Unselected Photos as still in R2, from where it can be deleted again, while **Try again** deletes
 those photos' files once more. Once deleting starts, the dialog can't be closed without finishing, since the losers

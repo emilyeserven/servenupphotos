@@ -137,7 +137,7 @@ export function dataFixtures() {
       unreadable: [],
       photos: r2ExifPhotos(),
     }),
-    "POST /api/data/r2-exif/write": ({ body }) => ({
+    "POST /api/data/r2-exif": ({ body }) => ({
       ...pendingSave(),
       edits: [
         {

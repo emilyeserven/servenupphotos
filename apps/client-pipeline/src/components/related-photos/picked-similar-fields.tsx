@@ -6,6 +6,7 @@ import { MAX_PICKS, type Pick, savedPhotoId } from "@/components/related-photos/
 import { PickedRow } from "@/components/related-photos/picked-row";
 import { SimilarTile } from "@/components/related-photos/similar-tile";
 import { Button } from "@/components/ui/button";
+import { SectionTitle } from "@/components/section-title";
 
 interface PickedSimilarFieldsProps {
   /** The ID of the photo the picks are for, which can't be picked itself. */
@@ -43,18 +44,18 @@ export function PickedSimilarFields({
   return (
     <div className="flex flex-col gap-6">
       <section className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium">
+        <SectionTitle>
           Picked by hand, shown first ({picked.length} of {MAX_PICKS})
-        </h3>
+        </SectionTitle>
         <PickedRow picks={picks} byId={byId} onChange={onChange} />
         {children}
       </section>
       <section className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium">Found by Find related photos</h3>
+        <SectionTitle>Found by Find related photos</SectionTitle>
         <FoundRow found={found} picked={picked} byId={byId} onPick={add} />
       </section>
       <section className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium">Pick any other photo</h3>
+        <SectionTitle>Pick any other photo</SectionTitle>
         <OtherPhotos self={self} picked={picked} photos={photos} onPick={add} />
       </section>
     </div>

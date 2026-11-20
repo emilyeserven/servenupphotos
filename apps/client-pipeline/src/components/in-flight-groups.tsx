@@ -7,6 +7,7 @@ import { FileLink, FileStatus } from "@/components/in-flight-pending";
 import { GROUP_KINDS, KIND_INFO } from "@/lib/data-kinds";
 import { lineChanges } from "@/lib/json-changes";
 import { cn } from "@/lib/utils";
+import { SectionTitle } from "@/components/section-title";
 
 interface GroupFilesProps {
   title: string;
@@ -121,11 +122,11 @@ function SelectedFile({
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-2">
-      <h3 className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
+      <SectionTitle className="flex flex-wrap items-center gap-x-2">
         <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
         <FileStatus status={file.status} pending={file.pending} />
         <AllPhotosMark inAllPhotos={file.inAll} rebuilding={rebuilding} allFile={allFile} />
-      </h3>
+      </SectionTitle>
       <FileJson file={file} baseBranch={baseBranch} />
     </div>
   );

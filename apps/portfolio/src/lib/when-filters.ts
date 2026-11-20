@@ -1,4 +1,5 @@
 import type { Photo } from "@portfolio/lib/photos";
+import { isoDate } from "@portfolio/lib/dates";
 
 /**
  * The "when" filters that take any number of choices of one kind, in any year: seasons, months,
@@ -201,19 +202,9 @@ function matchesList(photo: Photo, key: ListKey, values: string[] | undefined): 
   return LIST_CHOICES[key].some((choice) => values.includes(choice.value) && choice.matches(photo));
 }
 
-/** Two digits, such as "05". */
-function pad(number: number): string {
-  return String(number).padStart(2, "0");
-}
-
-/** The day of a date as YYYY-MM-DD, by the clock where the photo was taken. */
-export function dayOf(date: Date): string {
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-}
-
 /** Whether the photo was taken from the first day to the last, both included; a missing end is open. */
 function matchesDates(photo: Photo, { start = "", end = "9999-12-31" }: WhenFilters): boolean {
-  const day = dayOf(photo.takenAt);
+  const day = isoDate(photo.takenAt);
   return day >= start && day <= end;
 }
 

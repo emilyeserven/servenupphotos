@@ -1,5 +1,6 @@
 import type { Fields } from "@/components/localization-row";
 import { parsePastedJson } from "@/lib/pasted-json";
+import { textOf } from "@portfolio/lib/values";
 
 /** What an LLM's answer to the localization prompt says, matched to the names it was asked about. */
 export interface LocalizationAnswer {
@@ -28,16 +29,12 @@ function answerEntries(answer: string): unknown[] {
   return entries;
 }
 
-function text(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /** One entry of the answer as fields, trimmed, with anything that isn't text read as "". */
 function entryFields(entry: Record<string, unknown>): Fields {
   return {
-    romanization: text(entry.romanization),
-    pronunciation: text(entry.pronunciation),
-    localScript: text(entry.localScript),
+    romanization: textOf(entry.romanization),
+    pronunciation: textOf(entry.pronunciation),
+    localScript: textOf(entry.localScript),
   };
 }
 
@@ -54,7 +51,7 @@ export function readLocalizationAnswer(answer: string, asked: string[]): Localiz
 
 /** Keeps one entry's fields when it's of a name asked about, or else notes its ID. */
 function addEntry(result: LocalizationAnswer, entry: Record<string, unknown>, asked: string[]) {
-  const id = text(entry?.id);
+  const id = textOf(entry?.id);
   if (asked.includes(id)) result.fields[id] = entryFields(entry);
   else if (id) result.unknown.push(id);
 }
