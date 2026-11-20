@@ -1,3 +1,4 @@
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -8,7 +9,7 @@ export function Busy({ busy }: { busy: boolean }) {
 
 /** Why the last save failed, or else why the file can't be saved yet, beside the buttons. */
 export function SaveNote({ error, why }: { error: Error | null; why: string }) {
-  if (error) return <span className="text-destructive text-sm">{error.message}</span>;
+  if (error) return <ErrorNote error={error} />;
   return why ? <span className="text-muted-foreground text-sm">{why}</span> : null;
 }
 
