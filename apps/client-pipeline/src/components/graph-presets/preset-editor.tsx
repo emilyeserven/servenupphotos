@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { lastOrder, newPresetId } from "@/api/graph-presets";
-import { EditorButtons, Field, NameAndOrder } from "@/components/graph-presets/editor-parts";
+import {
+  deletePresetMutation,
+  lastOrder,
+  newPresetId,
+  savePresetMutation,
+} from "@/api/graph-presets";
+import { Field, NameAndOrder, whyNotPreset } from "@/components/graph-presets/editor-parts";
+import { EntryEditorButtons } from "@/components/entry-buttons";
 import { DescriptionField } from "@/components/graph-presets/description-field";
 import {
   fullGraph,
@@ -120,10 +126,14 @@ export function PresetEditor({ preset, files, onSaved }: PresetEditorProps) {
             onChange={(change) => set({ graph: presetGraph({ ...draft.graph, ...change }) })}
           />
         </section>
-        <EditorButtons
+        <EntryEditorButtons
           next={next}
           saved={preset}
-          why={next.name === "" ? "Give it a name." : ""}
+          save={savePresetMutation}
+          remove={deletePresetMutation}
+          whyNot={whyNotPreset}
+          saveLabel="Save preset"
+          removeLabel="Remove preset"
           onSaved={onSaved}
         />
       </CardContent>
