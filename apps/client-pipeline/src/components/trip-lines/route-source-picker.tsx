@@ -7,14 +7,15 @@ const SOURCES: { value: RouteSource; label: string }[] = [
   { value: "overpass", label: "OpenStreetMap" },
   { value: "transitland", label: "Transitland" },
   { value: "mlit", label: "Japan rail map" },
-  { value: "osmrail", label: "Rail map (OpenStreetMap)" },
+  { value: "osmrail", label: "Rail and bus map (OpenStreetMap)" },
 ];
 
 /**
  * Where Find lines and Look up route look: OpenStreetMap, through its often busy Overpass servers;
  * Transitland, from the timetables transit agencies publish, which needs TRANSITLAND_API_KEY; or
  * Japan's rail map (MLIT's railway data); or another country's railways from OpenStreetMap. Both rail
- * maps are downloaded once and read on this computer.
+ * maps are downloaded once and read on this computer; while either is picked, a bus is looked up on
+ * the country's OpenStreetMap bus map, read from the same download.
  * The choice is kept for every look-up.
  */
 export function RouteSourcePicker() {
@@ -24,7 +25,7 @@ export function RouteSourcePicker() {
       choices={SOURCES}
       value={source}
       label="Look lines up on"
-      hint="OpenStreetMap's servers are often busy; Transitland needs a free API key in .env; the rail maps download once, then find routes with changes of line: Japan's from MLIT, other countries' from OpenStreetMap."
+      hint="OpenStreetMap's servers are often busy; Transitland needs a free API key in .env; the rail maps download once, then find routes with changes of line: Japan's from MLIT, other countries' from OpenStreetMap. While either is picked, buses are looked up on OpenStreetMap's bus map, downloaded once with the country's railways."
       onChange={setSource}
     />
   );

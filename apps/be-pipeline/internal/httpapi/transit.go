@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -29,15 +30,21 @@ type transitFinder interface {
 	OSMRailLines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
 	OSMRailTrack(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
 	OSMRailStops(ctx context.Context, id int64) ([]transit.Stop, error)
+	OSMBusLines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
+	OSMBusTrack(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
+	OSMBusStops(ctx context.Context, id int64) ([]transit.Stop, error)
 	RailRides(ctx context.Context, source string, id int64, from, to [2]float64) ([]transit.RouteRide, error)
+	Downloads() []transit.Download
+	Searched(source string, from, to [2]float64) string
 }
 
 // lineSource is where the request asks for lines: ?source=transitland,
 // ?source=mlit for Japan's rail map, ?source=osmrail for a country's
-// OpenStreetMap rail map, or else OpenStreetMap's Overpass servers ("").
+// OpenStreetMap rail map, ?source=osmbus for its bus map, or else
+// OpenStreetMap's Overpass servers ("").
 func lineSource(r *http.Request) string {
 	switch src := r.URL.Query().Get("source"); src {
-	case transit.SourceTransitland, transit.SourceMLIT, transit.SourceOSMRail:
+	case transit.SourceTransitland, transit.SourceMLIT, transit.SourceOSMRail, transit.SourceOSMBus:
 		return src
 	}
 	return ""
@@ -52,6 +59,8 @@ func linesSource(finder transitFinder, r *http.Request) func(context.Context, st
 		return finder.MLITLines
 	case transit.SourceOSMRail:
 		return finder.OSMRailLines
+	case transit.SourceOSMBus:
+		return finder.OSMBusLines
 	}
 	return finder.Lines
 }
@@ -65,6 +74,8 @@ func trackSource(finder transitFinder, r *http.Request) func(context.Context, in
 		return finder.MLITTrack
 	case transit.SourceOSMRail:
 		return finder.OSMRailTrack
+	case transit.SourceOSMBus:
+		return finder.OSMBusTrack
 	}
 	return finder.Track
 }
@@ -78,6 +89,8 @@ func stopsSource(finder transitFinder, r *http.Request) func(context.Context, in
 		return finder.MLITStops
 	case transit.SourceOSMRail:
 		return finder.OSMRailStops
+	case transit.SourceOSMBus:
+		return finder.OSMBusStops
 	}
 	return finder.Stops
 }
@@ -96,6 +109,10 @@ type trackAnswer struct {
 	Rides []transit.RouteRide `json:"rides,omitempty"`
 }
 
+// searchedHeader is the header of a lines answer that says what was
+// searched (see transit.Client.Searched), path-escaped so any name fits.
+const searchedHeader = "X-Transit-Searched"
+
 // handleTransitLines answers the lines of ?mode= ("train", "subway", "bus"
 // or "ferry") whose track passes near both ?from= and ?to=, each
 // "longitude,latitude", from OpenStreetMap or, with ?source=transitland,
@@ -110,15 +127,28 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 		defer cancel()
 		lines, err := linesSource(finder, r)(ctx, r.URL.Query().Get("mode"), from, to)
 		if errors.Is(err, transit.ErrNoKind) {
-			writeError(w, http.StatusBadRequest, "Pick whether the hop was a train, subway, bus or ferry to find its lines.")
+			writeError(w, http.StatusBadRequest, noKindMessage(lineSource(r)))
 			return
 		}
 		if err != nil {
 			writeOverpassError(w, "look up lines", err)
 			return
 		}
+		w.Header().Set(searchedHeader, url.PathEscape(finder.Searched(lineSource(r), from, to)))
 		writeJSON(w, http.StatusOK, lines)
 	}
+}
+
+// noKindMessage says why source found no lines of the hop's kind: the rail
+// maps have only trains and subways, and other sources need the kind picked.
+func noKindMessage(source string) string {
+	switch source {
+	case transit.SourceMLIT, transit.SourceOSMRail:
+		return "The rail maps only have trains and subways. For a bus, look lines up on OpenStreetMap's bus map, OpenStreetMap or Transitland, or name the line yourself."
+	case transit.SourceOSMBus:
+		return "OpenStreetMap's bus map only has buses. For a train or subway, look lines up on a rail map, OpenStreetMap or Transitland."
+	}
+	return "Pick whether the hop was a train, subway, bus or ferry to find its lines, or name the line yourself."
 }
 
 // handleTransitStations answers the ?mode= stations or stops ("train",
@@ -184,6 +214,15 @@ func handleTransitStops(finder transitFinder) http.HandlerFunc {
 	}
 }
 
+// handleTransitDownloads answers the rail and bus maps being downloaded or
+// read now, each with how far it has got, which the page shows while a
+// look-up waits for one.
+func handleTransitDownloads(finder transitFinder) http.HandlerFunc {
+	return func(w http.ResponseWriter, _ *http.Request) {
+		writeJSON(w, http.StatusOK, finder.Downloads())
+	}
+}
+
 // lineID reads the path's {id}, writing an error when it isn't a line's ID.
 func lineID(w http.ResponseWriter, r *http.Request) (int64, bool) {
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
@@ -220,12 +259,22 @@ func handleTransitTrack(finder transitFinder) http.HandlerFunc {
 func writeTrack(w http.ResponseWriter, track trackAnswer, err error) {
 	switch {
 	case errors.Is(err, transit.ErrNoTrack):
-		writeError(w, http.StatusUnprocessableEntity, "That line's mapped track doesn't join those two spots. Try another line or direction.")
+		writeError(w, http.StatusUnprocessableEntity, noTrackMessage(err))
 	case err != nil:
 		writeOverpassError(w, "get the line's track", err)
 	default:
 		writeJSON(w, http.StatusOK, track)
 	}
+}
+
+// noTrackMessage says why a line's track couldn't be followed between two
+// spots, with how far off they were when the look-up says.
+func noTrackMessage(err error) string {
+	const base = "That line's mapped track doesn't join those two spots"
+	if detail := strings.TrimPrefix(err.Error(), transit.ErrNoTrack.Error()+": "); detail != err.Error() {
+		return base + ": " + detail + ". Try another line or direction, or pick the stops it got on and off at."
+	}
+	return base + ". Try another line or direction."
 }
 
 // writeOverpassError answers a failed look-up of what, such as "look up
@@ -289,6 +338,8 @@ func writeTransitlandError(w http.ResponseWriter, err error) bool {
 		writeError(w, http.StatusServiceUnavailable, "Transitland needs an API key: get a free one at transit.land, add TRANSITLAND_API_KEY=<key> to the repo's .env, and restart the backend. Or look it up on OpenStreetMap instead.")
 	case errors.As(err, new(*transit.TransitlandError)):
 		writeError(w, http.StatusBadGateway, err.Error()+". Try again, or look it up on OpenStreetMap instead.")
+	case errors.Is(err, transit.ErrMapLoading):
+		writeJSON(w, http.StatusServiceUnavailable, map[string]any{"message": err.Error() + ".", "loading": true})
 	case errors.As(err, new(*transit.RailMapError)):
 		writeError(w, http.StatusServiceUnavailable, err.Error()+".")
 	default:

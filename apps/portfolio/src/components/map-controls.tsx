@@ -20,7 +20,8 @@ import { useShownArea } from "@/lib/place-areas";
 
 /**
  * The map's controls under its title: **Places**, which moves the map to a place and shades its
- * area while it's pointed at and once it's picked, when it has one (see place-areas.ts), the zoom-out button, the display options, then
+ * area while it's pointed at and once it's picked, when it has one (see place-areas.ts), and in its
+ * Trip tab shows or hides each Trip's trip lines, the zoom-out button, the display options, then
  * **More filters** (Groups, When and Visuals), **View in grid**, **Nearest here**, **Browse** and **Copy link**. The map's
  * key, in its bottom left corner, is drawn from here too, as it explains the shaded place area.
  */
@@ -64,11 +65,18 @@ export function MapControls({
             onGoTo(photos);
           }}
           onHover={area.hover}
+          display={display}
+          onDisplayChange={onDisplayChange}
         />
       }
     >
       <PlaceAreaLayer {...area.shown} />
-      <TripLinesLayer photos={drawn} show={display.tripLines} flow={display.tripFlow} />
+      <TripLinesLayer
+        photos={drawn}
+        show={display.tripLines}
+        flow={display.tripFlow}
+        hidden={display.hiddenTrips}
+      />
       <MapLegend photos={drawn} display={display} area={area.shown} />
       <MapDisplayOptions display={display} onChange={onDisplayChange} />
       <MoreFilterControls

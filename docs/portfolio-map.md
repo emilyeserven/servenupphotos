@@ -69,7 +69,9 @@ Over the top left corner, beside the title on wider screens and under it on phon
 (`components/map-controls.tsx`). On phones, **More filters**, **View in grid**, **Nearest here** and **Browse** are just their icons, so the row
 fits without covering the map:
 
-- **Places** comes first, with the icon button beside it that zooms back out to every photo. It opens the same columns as
+- **Places** comes first, with the icon button beside it that zooms back out to every photo. Its menu has two tabs down
+  the left, like **Groups**: **Country** and **Trip**. **Trip** shows or hides each Trip's
+  [trip lines](#showing-or-hiding-a-trips-lines). **Country** opens the same columns as
   the [Places filter](portfolio-filters.md#places), without checkboxes, and it doesn't filter: picking a place (one with
   nothing in it, or **All of** at the top of a column, such as **All of Japan**) closes them and moves the map to that
   place's photos, the one place at a time, the way the
@@ -145,7 +147,9 @@ pipeline's Commit bakes (see [Trip lines](trip-lines.md#the-baked-map-triplinesg
 draws them (`lib/trip-lines-map.ts`):
 
 - Walks are solid blue (lighter in dark mode).
-- A hop along the bus, subway or train line it rode is solid in that line's color.
+- A hop along the bus, subway or train line it rode is solid in that line's color, or a deep blue (`tripColors().ride`)
+  when the line has no color of its own, such as one from Japan's rail map: a feature with a `line` name is a ride
+  even without a `colour`.
 - A drive (`car`, such as a big jump the automatic line marks) is a solid light blue line, next to walks' darker blue. Only hops by public transit with no line picked are dashed.
 - Where a line runs over an earlier one, such as walking a street one way and driving it back, the later one is
   drawn about 6 px to its side, in the next free lane, so both show. Lines are compared on a grid of about 30 m, and
@@ -159,7 +163,7 @@ draws them (`lib/trip-lines-map.ts`):
 
 - A [Trip](trips.md)'s ferry is a line of teal dots, and its flight a dashed pink arc. A leg shows with
   the photos of either the day it left or the day it arrived. The Timeline's route sketches leave legs out.
-- Any other hop is dashed purple.
+- Any other hop, with no line picked, is dashed purple.
 - Trip stops aren't drawn: they show on the [Trip pages](trip-pages.md#trip-stops), with their casual photos.
 - Areas that photos without an exact spot were taken in are shaded light blue, like a place's area.
 
@@ -169,6 +173,25 @@ credits OpenStreetMap's contributors, which covers them.
 
 > **Frontend analogy:** the map reads a build artifact. The pipeline compiles each day's line into one GeoJSON file at
 > Commit, and the portfolio only renders it, the way a static site renders prebuilt JSON instead of calling an API.
+
+### Showing or hiding a Trip's lines
+
+The **Trip** tab of **Places** (`components/map-trip-toggles.tsx`, `lib/map-trips.ts`) lists the
+[Trips](trips.md) with trip lines on the days of the photos on the map, newest first, each with its days and a checkbox,
+and **Days in no trip** last when any of those days has lines but no Trip covers it. A line belongs to the Trip whose
+dates cover its day, and a leg between days (a train or flight from one day's end to the next) to the Trip it names.
+Unticking a Trip takes all its lines, legs and areas off the map and out of the key; **Show all** and **Hide all** set
+every one at once. The arrow beside a Trip opens a checkbox for each of its days with lines (`components/map-trip-row.tsx`),
+so one day can be hidden on its own; a leg between days counts as the day it arrived. The Trip's checkbox is half ticked
+while any of its days are hidden, and its days can't be changed while the whole Trip is hidden. The tab's name says how
+many Trips and days are hidden, such as "1 trip, 2 days hidden", with a dot while any are. The choice is kept with the
+display options in this browser (`hiddenTrips` in `lib/map-display.ts`, holding Trip IDs and `day:2026-09-22` entries), but their **Reset to defaults** leaves it.
+While **Show trip lines** is off, the tab says so above the list, with a **Turn on** button.
+
+> **Frontend analogy:** it's a per-item visibility filter applied in a `useMemo` before the GeoJSON goes to the map's
+> `<Source>`, like filtering a list's rows before rendering them, rather than toggling each layer's style.
+
+The other lines on the map, the shading and the photos stay as they are.
 
 ## Copy coordinates
 

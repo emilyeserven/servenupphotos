@@ -1,6 +1,6 @@
 import { Flag, MapPin } from "lucide-react";
 import type { TripPoint, TripVisit } from "@/api/trip-lines";
-import { type EndKey, SpotLabel } from "@/components/trip-lines/end-spots";
+import { type EndKey, SpotLabel, type SpotPick } from "@/components/trip-lines/end-spots";
 import { END_GAPS, GapPicker } from "@/components/trip-lines/gap-picker";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
@@ -16,10 +16,10 @@ export interface StripEnds {
   end?: TripPoint;
   /** Sets the start or end spot, or removes it with undefined. */
   onSpot: (which: EndKey, spot: TripPoint | undefined) => void;
-  /** Starts picking the start or end spot on the map. */
-  onPick: (which: EndKey) => void;
+  /** Starts picking the start or end spot, or a break's, on the map. */
+  onPick: (which: SpotPick) => void;
   /** The spot the map is waiting to have picked, if any. */
-  picking?: EndKey;
+  picking?: SpotPick;
 }
 
 interface EndChipProps {
@@ -146,7 +146,7 @@ interface SpotChoiceProps {
 }
 
 /** The spot with no photo in the chip's menu: its label and removing it, or picking it on the map. */
-function SpotChoice({ spot, onSpot, onPick }: SpotChoiceProps) {
+export function SpotChoice({ spot, onSpot, onPick }: SpotChoiceProps) {
   return (
     <div className="flex flex-col gap-1 border-b pb-2">
       <p className="text-muted-foreground px-1 text-xs">A spot with no photo, such as the hotel</p>

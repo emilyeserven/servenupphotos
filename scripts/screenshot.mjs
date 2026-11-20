@@ -128,7 +128,10 @@ async function fixtureResult(fixture, url, request) {
   return fixture({ url, body: requestBody(request) });
 }
 
-/** A fixture's answer as { status, body }; a plain result is a 200 with it as the body. */
+/**
+ * A fixture's answer as { status, body, headers }; a plain result is a 200 with it as the body.
+ * headers, such as { "x-transit-searched": "…" }, are optional.
+ */
 async function fixtureAnswer(fixture, url, request) {
   const result = await fixtureResult(fixture, url, request);
   return typeof result?.status === "number" ? result : { status: 200, body: result };
@@ -148,8 +151,8 @@ async function answerApi(route, fixtures, sizes) {
     console.warn(`No fixture for ${key}; answering 501. Add one with --fixtures.`);
     return route.fulfill({ status: 501, json: { message: `No screenshot fixture for ${key}` } });
   }
-  const { status, body } = await fixtureAnswer(fixtures[key], url, request);
-  return route.fulfill({ status, json: body });
+  const { status, body, headers } = await fixtureAnswer(fixtures[key], url, request);
+  return route.fulfill({ status, json: body, headers });
 }
 
 const VERSION_NAME =
@@ -206,11 +209,26 @@ const isPhotoHost = (url) =>
 const isMapStyle = (url) =>
   url.hostname === "basemaps.cartocdn.com" && url.pathname.endsWith("style.json");
 
-/** Answers a request outside the app: photos and the map style are made up, the rest dropped. */
+const isRasterTile = (url) =>
+  url.hostname.endsWith("basemaps.cartocdn.com") && url.pathname.endsWith(".png");
+
+/** A plain basemap tile: the blank map's color with a faint grid, light or dark. */
+function placeholderTile(dark) {
+  const [fill, line] = dark ? ["#262626", "#333333"] : ["#e5e7eb", "#d1d5db"];
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="${fill}"/><path d="M0 128H256M128 0V256" stroke="${line}"/></svg>`;
+}
+
+/** Answers a request outside the app: photos, the map style and its tiles are made up, the rest dropped. */
 function answerOutside(route, sizes) {
   const url = new URL(route.request().url());
   if (isPhotoHost(url)) {
     return route.fulfill({ contentType: "image/svg+xml", body: placeholderImage(url.href, sizes) });
+  }
+  if (isRasterTile(url)) {
+    return route.fulfill({
+      contentType: "image/svg+xml",
+      body: placeholderTile(url.pathname.includes("dark")),
+    });
   }
   if (isMapStyle(url)) {
     return route.fulfill({ json: blankMapStyle(url.pathname.includes("dark")) });

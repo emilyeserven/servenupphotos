@@ -97,3 +97,20 @@ func TestRailRidesOneLine(t *testing.T) {
 		t.Errorf("got %v, %v; want none for one line", rides, err)
 	}
 }
+
+func TestRoutePrefersTheHighSpeedLine(t *testing.T) {
+	slow := osmLine{name: "경부선", operator: "Korail", kind: 11}
+	fast := osmLine{name: "경부고속선", operator: "Korail", kind: highSpeedKind}
+	// The high-speed line leaves the old line just out of the station and runs
+	// a little longer than it to the same end, so only its speed makes it worth
+	// the change of line.
+	n := newRailNet([]mlitFeature{
+		railFeatureOf(slow, "", [][2]float64{{0, 0}, {0, 0.05}, {0, 1}}),
+		railFeatureOf(fast, "", [][2]float64{{0, 0.05}, {0.02, 0.5}, {0, 1}}),
+	}, nil)
+	n.lineBits = osmLineBits
+	line, ok := n.routeLine([2]float64{0, 0}, [2]float64{0, 1})
+	if !ok || line.Name != "경부선 → 경부고속선" {
+		t.Fatalf("got %+v, %v; want the route onto 경부고속선", line, ok)
+	}
+}

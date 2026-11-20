@@ -27,10 +27,14 @@ const (
 	// it run to the area's entrance and from its exit (TripSegment.To and
 	// From) when those are set.
 	ModeWander = "wander"
+	// ModeRopeway is a ropeway, gondola or cable car, such as the Shin-Kobe
+	// Ropeway up to the Nunobiki Herb Gardens: drawn straight, as it runs,
+	// and named by hand, since no source looked in has its line.
+	ModeRopeway = "ropeway"
 )
 
 // tripModes are the modes a segment can have.
-var tripModes = []string{ModeWalk, ModeTrain, ModeSubway, ModeBus, ModeCar, ModeTransit, ModeWander}
+var tripModes = []string{ModeWalk, ModeTrain, ModeSubway, ModeBus, ModeCar, ModeTransit, ModeWander, ModeRopeway}
 
 // TripPoint is a spot on a trip line with no photo, such as the hotel a day
 // starts from.

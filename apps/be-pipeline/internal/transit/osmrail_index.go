@@ -43,6 +43,17 @@ type osmRegion struct {
 	box [4]float64
 }
 
+// regionName is a name for a region from its ID when the index gives none,
+// such as "Massachusetts" for "us/massachusetts".
+func regionName(id string) string {
+	last := id[strings.LastIndex(id, "/")+1:]
+	words := strings.Fields(strings.ReplaceAll(last, "-", " "))
+	for i, w := range words {
+		words[i] = strings.ToUpper(w[:1]) + w[1:]
+	}
+	return strings.Join(words, " ")
+}
+
 // geofabrikIndex reads Geofabrik's index of regions, keeping only those within
 // a larger one: a continent alone would be gigabytes.
 func geofabrikIndex(body []byte) ([]osmRegion, error) {
@@ -69,7 +80,7 @@ func geofabrikIndex(body []byte) ([]osmRegion, error) {
 		if p.Parent == "" || p.URLs.PBF == "" || len(polygons) == 0 {
 			continue
 		}
-		out = append(out, osmRegion{id: p.ID, name: cmp.Or(p.Name, p.ID), pbf: p.URLs.PBF, polygons: polygons, box: boxOf(polygons)})
+		out = append(out, osmRegion{id: p.ID, name: cmp.Or(p.Name, regionName(p.ID)), pbf: p.URLs.PBF, polygons: polygons, box: boxOf(polygons)})
 	}
 	return out, nil
 }
@@ -184,9 +195,12 @@ func (c *Client) downloadIndex(ctx context.Context, path string) ([]byte, error)
 	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
 		return nil, err
 	}
+	p := c.progress.begin(geofabrikIndexFile, "OpenStreetMap's list of extracts")
 	var buf bytes.Buffer
 	url := cmp.Or(strings.TrimSpace(os.Getenv("GEOFABRIK_INDEX_URL")), DefaultGeofabrikIndexURL)
-	if _, err := fetchTo(ctx, c.HTTP, url, &buf); err != nil {
+	_, err := fetchTo(ctx, c.HTTP, url, &buf, p)
+	c.progress.end(geofabrikIndexFile, err)
+	if err != nil {
 		return nil, err
 	}
 	if err := os.WriteFile(path, buf.Bytes(), 0o600); err != nil {

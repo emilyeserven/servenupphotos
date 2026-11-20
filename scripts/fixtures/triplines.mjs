@@ -88,6 +88,7 @@ export function triplinesFixtures() {
       ],
     },
     "POST /api/triplines/2026-10-01/route": snapped,
+    "GET /api/basemap": { cartoKey: "sample-key" },
     "GET /api/areas": [
       {
         name: "Upper East Side",
@@ -134,6 +135,8 @@ export function triplinesFixtures() {
       { name: "南海難波", nameEn: "Nankai Namba", latitude: 34.6627, longitude: 135.5018, km: 0.8 },
     ],
     "GET /api/transit/lines/1/track": curvedTrack,
+    // No rail or bus map downloading; a screenshot of one can pass its own list.
+    "GET /api/transit/downloads": [],
     "DELETE /api/triplines/2026-10-01": () => ({
       ...pendingSave(),
       path: `${FOLDER}/triplines/2026-10-01.json`,

@@ -49,6 +49,11 @@ export function againVisit({
   return place;
 }
 
+/** Whether the stop has any of its own localized names written: romanization, pronunciation or local script. */
+export function hasStopNames({ romanization, pronunciation, localScript }: TripVisit): boolean {
+  return [romanization, pronunciation, localScript].some((name) => (name ?? "").trim() !== "");
+}
+
 /** The draft with visit i changed, or removed for null. */
 export function changedVisit(draft: GapDraft, i: number, visit: TripVisit | null): GapDraft {
   return changedItem(draft, "visits", i, visit);

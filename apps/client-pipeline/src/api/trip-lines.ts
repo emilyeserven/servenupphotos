@@ -9,7 +9,15 @@ import type { TripLegRide } from "@/api/trips";
  * a straight dashed line from the first point to the last. `transit` is a hop whose kind isn't
  * known, as the automatic line marks one.
  */
-export type TripMode = "walk" | "train" | "subway" | "bus" | "car" | "transit" | "wander";
+export type TripMode =
+  | "walk"
+  | "train"
+  | "subway"
+  | "bus"
+  | "car"
+  | "transit"
+  | "wander"
+  | "ropeway";
 
 /** A spot on a trip line with no photo, such as the hotel a day starts from. */
 export interface TripPoint {
@@ -84,9 +92,11 @@ export interface TripTransitLine {
   colour?: string;
   /**
    * Where it was found: left out for OpenStreetMap, "transitland" for Transitland, "mlit" for Japan's
-   * rail map, "osmrail" for a country's OpenStreetMap rail map.
+   * rail map, "osmrail" for a country's OpenStreetMap rail map, "osmbus" for a bus route on its
+   * OpenStreetMap bus map, or "named" for a line named by hand where no source has it, such as a
+   * local bus (its ID is 0, and it has no stops or track).
    */
-  source?: "transitland" | "mlit" | "osmrail";
+  source?: "transitland" | "mlit" | "osmrail" | "osmbus" | "named";
 }
 
 /** A spot a segment's line goes through to shape it, such as a bridge crossed between two photos. */
@@ -191,6 +201,12 @@ export interface TripVisit {
    * so it shows only with the place on its day's Trip page.
    */
   photos?: number[];
+  /** Its name in Latin letters, such as "Ichiran Dōtonbori-ten"; left out when not written. */
+  romanization?: string;
+  /** How its local script is read, such as furigana: "いちらん どうとんぼりてん". */
+  pronunciation?: string;
+  /** Its name in its own script, such as "一蘭 道頓堀店". */
+  localScript?: string;
 }
 
 function isTripLine(value: unknown): value is TripLine {
@@ -211,6 +227,19 @@ export function tripLines(data: CombinedData): Map<string, TripLine> {
       .map((line) => [line.day, line]),
   );
 }
+
+/** What the pages need to draw CARTO's basemap tiles themselves. */
+interface Basemap {
+  /** CARTO_KEY from the repo's .env, which CARTO's raster tiles need; "" when it isn't set. */
+  cartoKey: string;
+}
+
+/** The CARTO API key for basemap tiles, read once: it only changes when the backend restarts. */
+export const basemapQuery = queryOptions({
+  queryKey: ["basemap"],
+  queryFn: () => requestJson<Basemap>("/api/basemap"),
+  staleTime: Number.POSITIVE_INFINITY,
+});
 
 /** The automatic line of a day, as the next Commit would draw it from the photos then. */
 export function autoTripLineQuery(day: string) {
