@@ -5,6 +5,7 @@ import type { PhotoSet } from "@portfolio/lib/photo-sets";
 import { deletePhotoSetMutation, photoSetId, savePhotoSetMutation } from "@/api/photo-sets";
 import { NewEntryForm } from "@/components/new-entry-form";
 import { Button } from "@/components/ui/button";
+import { askFirst } from "@/stores/confirm";
 
 interface SetChooserProps {
   sets: PhotoSet[];
@@ -84,9 +85,13 @@ function DeleteSetButton({ set, onDeleted }: { set: PhotoSet; onDeleted: () => v
     <Button
       variant="ghost"
       disabled={remove.isPending}
-      onClick={() => {
-        if (window.confirm(`Remove the Photo Set “${set.name}”? Its photos stay as they are.`))
-          remove.mutate(set.id, { onSuccess: onDeleted });
+      onClick={async () => {
+        const yes = await askFirst({
+          question: `Remove the Photo Set “${set.name}”?`,
+          note: "Its photos stay as they are.",
+          action: "Remove set",
+        });
+        if (yes) remove.mutate(set.id, { onSuccess: onDeleted });
       }}
     >
       <Trash2Icon />

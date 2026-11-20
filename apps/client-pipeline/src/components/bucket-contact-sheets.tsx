@@ -13,8 +13,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { count } from "@/components/update-data-shared";
 import { type ContactSheetSet, contactSheetSets } from "@/lib/contact-sheets";
+import { count } from "@portfolio/lib/words";
 import { dateTimeText } from "@portfolio/lib/dates";
 import { ErrorNote } from "@/components/error-note";
 

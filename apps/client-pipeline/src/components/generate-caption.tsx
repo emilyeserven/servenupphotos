@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { captionLists, captionValues, fillCaption } from "@/lib/caption-template";
 import { parseHashtags, type SocialPostDraft } from "@/lib/social-posts";
 import { useCombinedData } from "@/stores/combined-data";
+import { askFirst } from "@/stores/confirm";
 
 interface GenerateCaptionProps {
   post: SocialPostDraft;
@@ -27,11 +28,11 @@ export function GenerateCaption({ post, photo, disabled, onGenerate }: GenerateC
   const template =
     templates.find((t) => t.id === picked) ?? defaultCaptionTemplate(templates, post.platform);
   if (!template) return <NoTemplates />;
-  const generate = () => {
+  const generate = async () => {
     const values = captionValues(photo, captionLists(data), parseHashtags(post.hashtags));
     const caption = fillCaption(template.template, values);
-    if (post.caption.trim() && !window.confirm("Replace the caption with the generated one?"))
-      return;
+    const ask = { question: "Replace the caption with the generated one?", action: "Replace" };
+    if (post.caption.trim() && !(await askFirst(ask))) return;
     onGenerate(caption);
   };
   return (
@@ -49,7 +50,7 @@ export function GenerateCaption({ post, photo, disabled, onGenerate }: GenerateC
           </option>
         ))}
       </select>
-      <Button variant="outline" size="sm" disabled={disabled} onClick={generate}>
+      <Button variant="outline" size="sm" disabled={disabled} onClick={() => void generate()}>
         <WandSparklesIcon />
         Generate
       </Button>

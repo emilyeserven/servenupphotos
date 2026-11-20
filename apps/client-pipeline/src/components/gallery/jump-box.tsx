@@ -2,9 +2,9 @@ import { ChevronDownIcon, LocateFixedIcon } from "lucide-react";
 import { useState } from "react";
 import type { GalleryFile } from "@/components/gallery/gallery-files";
 import { KIND_MARKS } from "@/components/gallery/kind-mark";
-import { countOf } from "@/components/collapsible-panel";
 import { tileImageUrl } from "@/lib/offline-thumbnails";
 import { cn } from "@/lib/utils";
+import { count } from "@portfolio/lib/words";
 
 /**
  * A box floating at the bottom right listing every draft and Undecided photo, in the page's sort,
@@ -37,7 +37,7 @@ export function JumpBox({
       >
         <LocateFixedIcon className="text-muted-foreground size-4" aria-hidden />
         <span className="flex-1 font-medium">Drafts and Undecided</span>
-        <span className="text-muted-foreground text-xs">{countOf(entries.length, "photo")}</span>
+        <span className="text-muted-foreground text-xs">{count(entries.length, "photo")}</span>
         <ChevronDownIcon className={cn("size-4 transition-transform", open || "rotate-180")} />
       </button>
       {open && (

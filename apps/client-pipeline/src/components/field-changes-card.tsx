@@ -19,8 +19,8 @@ import {
   invalidatePhotoReads,
   SaveButton,
   ScanPreviewBody,
-  count,
 } from "@/components/update-data-shared";
+import { count } from "@portfolio/lib/words";
 
 /** One file a field change previews, with the top-level fields it rewrites. */
 interface ChangedFile {

@@ -26,6 +26,7 @@ import {
   useCombinedData,
   useCombinedDataStore,
 } from "@/stores/combined-data";
+import { count } from "@portfolio/lib/words";
 
 /** What each photo problem says, and the page that fixes it. */
 const PROBLEMS: Record<PhotoProblem, { label: string; fix: (first: string) => ReactNode }> = {
@@ -131,10 +132,6 @@ function AllClear() {
   );
 }
 
-function photos(count: number): string {
-  return count === 1 ? "1 photo" : `${count} photos`;
-}
-
 /** One photo problem's row: how many photos have it, and where to fix it. */
 function problemRow(found: ProblemCount): AttentionRow {
   const { label, fix } = PROBLEMS[found.problem];
@@ -144,7 +141,7 @@ function problemRow(found: ProblemCount): AttentionRow {
     label,
     labelText: label,
     count: found.count,
-    countText: photos(found.count),
+    countText: count(found.count, "photo"),
     fix: fix(found.first),
   };
 }
@@ -154,7 +151,7 @@ function problemRow(found: ProblemCount): AttentionRow {
  * more days need one. Planned posts don't count until they're marked scheduled.
  */
 function instagramRow(scheduledDays: number, short: number): AttentionRow {
-  const days = scheduledDays === 1 ? "1 day" : `${scheduledDays} days`;
+  const days = count(scheduledDays, "day");
   const label =
     scheduledDays === 0
       ? "Nothing is scheduled on Instagram for today"
@@ -171,7 +168,7 @@ function instagramRow(scheduledDays: number, short: number): AttentionRow {
     ),
     labelText: label,
     count: short,
-    countText: short === 1 ? "1 day to schedule" : `${short} days to schedule`,
+    countText: `${count(short, "day")} to schedule`,
     fix: (
       <FixLink>
         <Link to="/instagram">Instagram calendar</Link>
@@ -199,14 +196,14 @@ function tripLinesRow(stale: StaleTripLine[]): AttentionRow {
     urgency: TRIP_LINES_URGENCY,
     label: (
       <span
-        title={`${photos(missing)} not on their day's line, such as ones added since it was marked.`}
+        title={`${count(missing, "photo")} not on their day's line, such as ones added since it was marked.`}
       >
         {label}
       </span>
     ),
     labelText: label,
     count: stale.length,
-    countText: stale.length === 1 ? "1 day" : `${stale.length} days`,
+    countText: count(stale.length, "day"),
     fix: (
       <FixLink>
         <Link to="/trip-lines" search={{ show: "out-of-date" }}>

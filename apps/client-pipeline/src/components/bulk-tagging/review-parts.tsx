@@ -9,14 +9,10 @@ import type { ReactNode } from "react";
 import type { BulkTagPhoto, BulkTagPhotoPlan } from "@/api/bulk-tags";
 import { organizeQuery } from "@/api/organize";
 import type { PendingSave } from "@/api/scan-changes";
-import {
-  CommitSuccess,
-  SaveButton,
-  count,
-  invalidatePhotoReads,
-} from "@/components/update-data-shared";
+import { CommitSuccess, SaveButton, invalidatePhotoReads } from "@/components/update-data-shared";
 import { photoTagKey } from "@/lib/bulk-tags";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 /**
  * A save of a reviewed answer that refreshes the photo reads and `refresh` once it's done: the

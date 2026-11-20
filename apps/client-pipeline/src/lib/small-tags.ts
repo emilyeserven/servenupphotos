@@ -6,6 +6,7 @@ import type {
   TagLibraryTag,
 } from "@/api/tag-library";
 import { fewPhotosLine, tagLibraryPrompt } from "@/lib/tag-library-prompt";
+import { count } from "@portfolio/lib/words";
 
 /** A tag with fewer photos than a tag should have, with what the Small Tags page shows of it. */
 export interface SmallTag extends TagLibraryTag {
@@ -129,7 +130,7 @@ interface SmallTagChange {
 export function removeChange(small: SmallTag, note: string): SmallTagChange {
   const text = note.trim();
   const noted = text === "" ? [] : small.tagged;
-  const photos = noted.length === 1 ? "1 photo" : `${noted.length} photos`;
+  const photos = count(noted.length, "photo");
   const said = noted.length > 0 ? ` and added a note to ${photos}` : "";
   return {
     change: {

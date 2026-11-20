@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toggled } from "@/lib/bulk-tags";
 import { type TagDefinition, type TagToMake, tagsToMake } from "@/lib/tag-prompt";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 interface NewTagsProps {
   /** The new tags' IDs, in lowercase kebab-case. */
@@ -166,8 +167,8 @@ function MadeLine({ ids }: { ids: string[] }) {
   return <p className="text-muted-foreground">Made and added {ids.join(", ")}.</p>;
 }
 
-function makeLabel(count: number): string {
-  return count === 1 ? "Make 1 new tag and add it" : `Make ${count} new tags and add them`;
+function makeLabel(tags: number): string {
+  return `Make ${count(tags, "new tag")} and add ${tags === 1 ? "it" : "them"}`;
 }
 
 /**

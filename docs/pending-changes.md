@@ -10,6 +10,32 @@ in the sync button's panel at the top right. Uploads to R2 still happen right aw
 > value at once (the [combined data store](combined-data-store.md) makes it over the lists), but nothing goes over the
 > network until you press Submit, and then everything goes in one request.
 
+### What a page says after a save
+
+Every page says the same thing once a save is done, so nothing reads as if it's already on GitHub:
+
+- A page that saves as you type (Bio, a Photo Set, a photo book) shows **Saving…**, then **Saved for Commit**, beside
+  its title (`SaveState`).
+- A page saved with a button says what it saved "in the app", then **It waits for Commit, which sends it to the open
+  pull request** (or **opens the "Add photo data" pull request** when none is open), with a check beside it
+  (`SavedInApp`, or `WaitingForCommit` at the end of a longer sentence). The Region and Place editors, a photo's
+  hand-picked related photos and **Find related photos** say it this way too.
+- A button on a row of many, such as a localization row or a queued photo, can turn to **Saved** instead, since a
+  sentence on every row would crowd the list.
+
+### Asking first
+
+Anything that loses or replaces work asks first in the app's own dialog (`askFirst` in `stores/confirm.ts`, shown by
+`ConfirmDialog` at the root), with the question as its title, what happens to what goes with it under that, **Cancel**
+and a button named for what it does (**Discard**, **Remove set**, **Leave**). Closing it any other way is Cancel. A
+delete that runs while the dialog stays open, listing what goes with it, uses `ConfirmDeleteCard`
+([Delete album](albums-and-tags.md), [Delete photo](delete-photo.md)). The browser's own `confirm()`, `alert()` and
+`prompt()` aren't used; oxlint's `no-alert` rule fails on them.
+
+> **Frontend analogy:** `askFirst` is `window.confirm` as a promise: `if (!(await askFirst({...}))) return;`. One
+> dialog mounted at the root answers it, like a toast host, so a click handler or a router blocker can ask without
+> holding dialog state of its own.
+
 ## Where they're kept
 
 The Go backend keeps them in `pending-changes.json` next to the settings file (in the settings folder, `0600`), keyed

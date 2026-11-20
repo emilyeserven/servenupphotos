@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Spinner } from "@/components/ui/spinner";
 import { fileData, selectProblem } from "@/components/gallery/published-file";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 interface BulkGroupsCardProps {
   files: PublishedFile[];
@@ -75,16 +76,12 @@ export function BulkGroupsCard({
           onClick={() => add.mutate({ paths: chosen.map((file) => file.path), ...groups })}
         >
           {add.isPending && <Spinner />}
-          Add to {photoCount(chosen.length)}
+          Add to {count(chosen.length, "photo")}
         </Button>
         <BulkOutcome add={add} rebuild={rebuild} />
       </CardContent>
     </Card>
   );
-}
-
-function photoCount(n: number): string {
-  return n === 1 ? "1 photo" : `${n} photos`;
 }
 
 function canAdd(pending: boolean, chosen: number, groups: PhotoGroups): boolean {
@@ -121,7 +118,7 @@ function SelectionBar({ chosen, shown, selection, onSelectionChange }: Selection
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="font-medium" aria-live="polite">
-        {photoCount(chosen)} chosen
+        {count(chosen, "photo")} chosen
       </span>
       <Button
         variant="outline"
@@ -147,18 +144,18 @@ function SelectionBar({ chosen, shown, selection, onSelectionChange }: Selection
 function alreadyInAlbum(chosen: PublishedFile[], adding: string[]): ReactNode {
   const count = chosen.filter((file) => hasOtherAlbum(file, adding)).length;
   if (adding.length === 0 || count === 0) return undefined;
-  return <AlreadyInAlbum count={count} />;
+  return <AlreadyInAlbum photos={count} />;
 }
 
 function hasOtherAlbum(file: PublishedFile, adding: string[]): boolean {
   return savedGroups(fileData(file)).albums.some((id) => !adding.includes(id));
 }
 
-function AlreadyInAlbum({ count }: { count: number }) {
+function AlreadyInAlbum({ photos }: { photos: number }) {
   return (
     <Warning>
-      {photoCount(count)} you chose {count === 1 ? "is" : "are"} already in an album, so this puts{" "}
-      {count === 1 ? "it" : "them"} in more than one.
+      {count(photos, "photo")} you chose {photos === 1 ? "is" : "are"} already in an album, so this
+      puts {photos === 1 ? "it" : "them"} in more than one.
     </Warning>
   );
 }
@@ -173,7 +170,7 @@ function BulkOutcome({ add, rebuild }: BulkAdd) {
       <p className="flex items-start gap-2">
         <CheckIcon className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
         <span>
-          Added them to {photoCount(result.files)} in the app.{" "}
+          Added them to {count(result.files, "photo")} in the app.{" "}
           <WaitingForCommit pullRequestUrl={result.pullRequestUrl} what="The changes" />
         </span>
       </p>

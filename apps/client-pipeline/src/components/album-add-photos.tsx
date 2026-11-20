@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { ReadingNote } from "@/components/query-result";
 import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** Adds saved photos to an album, then reads the saved photos again and follows CI's rebuild. */
 export function useAlbumAdd() {
@@ -93,7 +94,7 @@ export function AlbumAddPhotos({ album, add }: AlbumAddPhotosProps) {
         <ErrorNote error={add.error} />
         <DialogFooter className="bg-popover sticky -bottom-4 -mx-4 -mb-4 items-center border-t px-4 py-3">
           <span className="text-muted-foreground mr-auto text-sm" aria-live="polite">
-            {photoCount(picked.size)} picked
+            {count(picked.size, "photo")} picked
           </span>
           <Button disabled={picked.size === 0 || add.isPending} onClick={save}>
             {add.isPending && <Spinner />}
@@ -105,13 +106,9 @@ export function AlbumAddPhotos({ album, add }: AlbumAddPhotosProps) {
   );
 }
 
-function addText(count: number): string {
-  if (count === 0) return "Pick photos";
-  return `Add ${photoCount(count)}`;
-}
-
-function photoCount(n: number): string {
-  return n === 1 ? "1 photo" : `${n} photos`;
+function addText(picked: number): string {
+  if (picked === 0) return "Pick photos";
+  return `Add ${count(picked, "photo")}`;
 }
 
 interface PhotoChoicesProps {
@@ -202,7 +199,7 @@ function ChoiceTile({ photo, picked, disabled, onToggle }: ChoiceTileProps) {
 function otherAlbumsText(photo: SavedPhoto): string {
   const where = photo.published ? "" : "In the batch · ";
   const n = photo.albums.length;
-  return `${where}${n === 0 ? "No albums" : `${n} ${n === 1 ? "album" : "albums"}`}`;
+  return `${where}${n === 0 ? "No albums" : count(n, "album")}`;
 }
 
 /** What adding photos to the album did, under its photos. */
@@ -213,7 +210,7 @@ export function AlbumAddOutcome({ add, rebuild }: AlbumAdd) {
       <p className="flex items-start gap-2">
         <CheckIcon className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
         <span>
-          Added {photoCount(add.data.files)} to the album in the app.{" "}
+          Added {count(add.data.files, "photo")} to the album in the app.{" "}
           <WaitingForCommit pullRequestUrl={add.data.pullRequestUrl} what="The changes" />
         </span>
       </p>

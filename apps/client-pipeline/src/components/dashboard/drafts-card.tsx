@@ -8,6 +8,7 @@ import type { CompareRead } from "@/components/compare/compare-group-list";
 import type { ComparePhoto } from "@/lib/compare-groups";
 import { isCasual, isSetAside, isUnselected, titleOf, useUntitledDrafts } from "@/lib/drafts";
 import { photoId } from "@/lib/unselected";
+import { count } from "@portfolio/lib/words";
 
 /** How the card picks its 3 drafts. */
 type DraftPick = "random" | "newest" | "oldest";
@@ -90,10 +91,10 @@ export function DraftsCard({ compare }: { compare: CompareRead }) {
 }
 
 /** How many drafts there are, not on the portfolio until they're named. */
-function draftCount(count: number, pending: boolean): string {
+function draftCount(n: number, pending: boolean): string {
   if (pending) return "Reading the photos…";
-  if (count === 0) return "No drafts right now.";
-  return `${count === 1 ? "1 draft" : `${count} drafts`}, not on the portfolio until named.`;
+  if (n === 0) return "No drafts right now.";
+  return `${count(n, "draft")}, not on the portfolio until named.`;
 }
 
 function DraftTiles({ pending, drafts }: { pending: boolean; drafts: ComparePhoto[] }) {

@@ -19,6 +19,7 @@ import type { CombinedPhoto } from "@/lib/group-photos";
 import type { CombinedData } from "@/api/photos";
 import { useCombinedData } from "@/stores/combined-data";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 /** The Metadata Groups page: named groups of camera, lens, focal length and other EXIF values. */
 export function MetadataGroupsPage() {
@@ -166,14 +167,10 @@ interface GroupRowProps {
   onChoose: () => void;
 }
 
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
-}
-
 /** How many values the group lists, or how many groups are in it when it lists none. */
 function listed(group: MetaGroup, subgroups: number): string {
   const values = group.values.length;
-  return values === 0 && subgroups > 0 ? plural(subgroups, "group") : plural(values, "value");
+  return values === 0 && subgroups > 0 ? count(subgroups, "group") : count(values, "value");
 }
 
 /** What the group covers: its range, such as "10–24 mm", or how many values or groups it has. */
@@ -204,7 +201,7 @@ function GroupRow(props: GroupRowProps) {
       >
         <GroupName name={group.name} nested={depth > 0} />
         <span className="text-muted-foreground shrink-0 text-right text-xs">
-          {coverage(props.info, group, props.subgroups)}, {plural(props.photos, "photo")}
+          {coverage(props.info, group, props.subgroups)}, {count(props.photos, "photo")}
           <NotInSubgroups subgroups={props.subgroups} uncovered={props.uncovered} />
         </span>
       </button>

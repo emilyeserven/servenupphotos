@@ -2,20 +2,18 @@ import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { combinedStatusQuery, discardPending } from "@/api/photos";
 import { useCombinedDataStore } from "@/stores/combined-data";
+import { askFirst } from "@/stores/confirm";
 import { useInFlightBackupStore } from "@/stores/in-flight-backup";
 import { useLocalEditsStore } from "@/stores/local-edits";
-
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
-}
+import { count } from "@portfolio/lib/words";
 
 /** The question Discard asks first. */
 function question(localEdits: number, savedFiles: number): string {
   const parts = [
-    savedFiles > 0 && plural(savedFiles, "saved file"),
-    localEdits > 0 && `the edits to ${plural(localEdits, "image")}`,
+    savedFiles > 0 && count(savedFiles, "saved file"),
+    localEdits > 0 && `the edits to ${count(localEdits, "image")}`,
   ].filter(Boolean);
-  return `Discard ${parts.join(" and ")} waiting for Commit? GitHub never saw them, so they're gone for good.`;
+  return `Discard ${parts.join(" and ")} waiting for Commit?`;
 }
 
 /** Drops the changes the backend keeps, then has every page read its data again without them. */
@@ -52,7 +50,12 @@ export function DiscardButton({
   const [error, setError] = useState<string>();
   if (localEdits + savedFiles === 0) return null;
   const discard = async () => {
-    if (!window.confirm(question(localEdits, savedFiles))) return;
+    const yes = await askFirst({
+      question: question(localEdits, savedFiles),
+      note: "GitHub never saw them, so they're gone for good.",
+      action: "Discard",
+    });
+    if (!yes) return;
     discardEdits();
     // Discarded for good, so the browser's copy goes too.
     useInFlightBackupStore.getState().clear();

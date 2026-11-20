@@ -13,16 +13,12 @@ import {
 } from "@/lib/place-cities";
 import { shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
-
-/** The count with its noun, such as "1 place" or "3 places". */
-function counted(count: number, noun: string): string {
-  return `${count} ${noun}${count === 1 ? "" : "s"}`;
-}
+import { count } from "@portfolio/lib/words";
 
 /** How a city, state or country is known: from places, or else inferred from photos, or else only added. */
 export function usedBy(row: { places: number; photos: number }): string {
-  if (row.places > 0) return counted(row.places, "place");
-  return row.photos > 0 ? `Inferred from ${counted(row.photos, "photo")}` : "No photos yet";
+  if (row.places > 0) return count(row.places, "place");
+  return row.photos > 0 ? `Inferred from ${count(row.photos, "photo")}` : "No photos yet";
 }
 
 function cityOption(city: CityRow): ComboboxOption {

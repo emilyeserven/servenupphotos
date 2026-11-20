@@ -2,6 +2,7 @@ import type { ComponentProps } from "react";
 import { GridTiles, type ImagePhoto } from "@/components/photo-tiles";
 import type { Point } from "@/lib/distance";
 import { distanceBands } from "@/lib/distance-bands";
+import { count } from "@/lib/words";
 
 /**
  * The Grid's tiles sorted by Distance and grouped by nearby distances (**Group by distance**):
@@ -20,7 +21,7 @@ export function DistanceBandTiles({
           <h2 className="mx-auto flex w-full max-w-6xl items-baseline gap-3 px-1 sm:px-2">
             <span className="text-xl font-semibold tracking-tight">{band.label}</span>
             <span className="text-sm text-muted-foreground">
-              {band.photos.length} {band.photos.length === 1 ? "photo" : "photos"}
+              {count(band.photos.length, "photo")}
             </span>
           </h2>
           <GridTiles {...tileProps} photos={band.photos} />

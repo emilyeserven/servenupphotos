@@ -3,17 +3,13 @@ import type { ReactNode } from "react";
 import type { Place } from "@/api/places";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { gpsSource, gpsText } from "@/lib/place-gps";
+import { count } from "@portfolio/lib/words";
 
 interface PlaceGpsCellProps {
   place: Place;
   places: Place[];
   /** How many photos listing the place can't go on the map, for want of a GPS position. */
   unmapped: number;
-}
-
-/** The count with its noun, such as "1 photo" or "3 photos". */
-function photosText(count: number): string {
-  return `${count} photo${count === 1 ? "" : "s"}`;
 }
 
 /**
@@ -43,7 +39,7 @@ export function PlaceGpsCell({ place, places, unmapped }: PlaceGpsCellProps) {
 function MissingGps({ photos }: { photos: number }) {
   return (
     <GpsIcon
-      label={`${photosText(photos)} with this place have no GPS position in their EXIF. Give the place one so they show on the portfolio's map.`}
+      label={`${count(photos, "photo")} with this place have no GPS position in their EXIF. Give the place one so they show on the portfolio's map.`}
     >
       <CircleAlertIcon className="text-amber-600 dark:text-amber-400" />
     </GpsIcon>

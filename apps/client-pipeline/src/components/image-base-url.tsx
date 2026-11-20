@@ -12,12 +12,12 @@ import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { count } from "@portfolio/lib/words";
 import {
   CommitSuccess,
   PreviewDestination,
   SaveButton,
   Unreadable,
-  count,
 } from "@/components/update-data-shared";
 import { ErrorNote } from "@/components/error-note";
 

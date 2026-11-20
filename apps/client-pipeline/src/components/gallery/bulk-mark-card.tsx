@@ -1,10 +1,10 @@
 import { CheckIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import type { PublishedFile } from "@/api/photos";
-import { countOf } from "@/components/collapsible-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { selectProblem } from "@/components/gallery/published-file";
+import { count } from "@portfolio/lib/words";
 
 /** What a Gallery card that puts a mark on the chosen photos, or takes it off, says and does. */
 export interface BulkMarkCardProps {
@@ -40,7 +40,7 @@ export function BulkMarkCard(props: BulkMarkCardProps) {
   const chosen = props.files.filter(
     (file) => props.selection.has(file.path) && !selectProblem(file),
   );
-  const photos = countOf(chosen.length, "photo");
+  const photos = count(chosen.length, "photo");
   const set = (marked: boolean) => {
     props.setMark(chosen, marked);
     setDone(`${props.doneMessage(marked, photos)} The change waits for Commit.`);

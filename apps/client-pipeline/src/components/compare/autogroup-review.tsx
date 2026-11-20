@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { MergeRow, RemovalRow, SuggestionRow } from "@/components/compare/autogroup-changes";
 import { Button } from "@/components/ui/button";
-import { count } from "@/components/update-data-shared";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
 import { type AutogroupAnswer, changeCount } from "@/lib/compare-autogroup-answer";
+import { count } from "@portfolio/lib/words";
 
 /** The key a change is left out by: its kind and name, or its place for a combination. */
 const keys = {

@@ -11,9 +11,9 @@ import {
 import type { BulkTagPhoto } from "@/api/bulk-tags";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { count } from "@/components/update-data-shared";
 import { pickedSheetPhotos } from "@/lib/bulk-tag-prompt";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** The contact sheets for a prompt's photos, and how to make them. */
 export interface ContactSheetsState {

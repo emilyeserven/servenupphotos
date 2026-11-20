@@ -25,6 +25,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import { count } from "@portfolio/lib/words";
 
 export const Route = createFileRoute("/sizes")({
   component: SizesPage,
@@ -131,13 +132,13 @@ function SizesCard() {
 
 /** How many photos there are and how many sizes they're missing. */
 function sizesSummary(rows: PhotoRow[]): string {
-  const photos = rows.length === 1 ? "1 photo" : `${rows.length} photos`;
+  const photos = count(rows.length, "photo");
   const missing = rows.reduce(
     (sum, row) => sum + PUBLISHED.filter((v) => !row.versions[v.name]).length,
     0,
   );
   if (missing === 0) return `${photos}, every size made.`;
-  return `${photos}, ${missing === 1 ? "1 size" : `${missing} sizes`} not made yet.`;
+  return `${photos}, ${count(missing, "size")} not made yet.`;
 }
 
 /** A size's column heading: its longest edge, or both edges for the square ones. */

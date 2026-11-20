@@ -161,8 +161,8 @@ function NewGroupCard(props: NewGroupCardProps) {
       <CardHeader>
         <CardTitle>New {singular}</CardTitle>
         <CardDescription>
-          Saves the {singular} as one JSON file in the open photo data pull request, or opens a new
-          one. Its name and ID can't be used by another album, tag or genre.
+          Saves the {singular} as one JSON file in the app, waiting for Commit. Its name and ID
+          can't be used by another album, tag or genre.
         </CardDescription>
       </CardHeader>
       <CardContent>

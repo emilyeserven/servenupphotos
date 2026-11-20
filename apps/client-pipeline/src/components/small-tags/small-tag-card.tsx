@@ -6,9 +6,9 @@ import { type PhotosById, TaggedPhotos } from "@/components/small-tags/small-pho
 import { RemoveTag, RenameTag } from "@/components/small-tags/tag-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { count } from "@/components/update-data-shared";
 import type { SmallTag } from "@/lib/small-tags";
 import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** What can be done to a small tag, one at a time. */
 const ACTIONS = [

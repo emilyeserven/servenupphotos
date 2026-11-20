@@ -52,7 +52,7 @@ The BFF relays every path on its own. Only when the backend gives the work more 
 Everything here is fast; run the narrowest check while working and `pnpm check` before pushing.
 
 ```sh
-pnpm check                         # oxlint, oxfmt --check, typecheck, fallow, check:fixtures, check:docs (~6s); `pnpm fmt` fixes formatting
+pnpm check                         # oxlint, oxfmt --check, typecheck, fallow, check:fixtures, check:docs, check:counts (~6s); `pnpm fmt` fixes formatting
 pnpm check:fixtures                # every backend route has a fixture in scripts/fixtures/ and follows the route shape rules
 pnpm build                         # all three TS apps (~5s); CI runs it too
 pnpm test                          # node --test: the portfolio's map-preview and both apps' src/lib (~2s); CI runs it too
@@ -80,6 +80,11 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
   already near 600 to 700 lines. The Gallery's and the photo editor's parts live in `components/gallery/` and
   `components/edit-in-flight/`. Put new UI in a new component file and import it, rather than
   growing them.
+- **Counting words:** write "1 photo, 3 photos" with `count(n, "photo")` from `@portfolio/lib/words`
+  (`apps/portfolio/src/lib/words.ts`; `@/lib/words` inside the portfolio), passing the plural when it isn't
+  the noun with an "s", such as `count(n, "person", "people")`. No local `plural` or `photoCount` helpers and no
+  inline `n === 1 ? "photo" : "photos"`; `pnpm check:counts` fails on those. An inline `=== 1 ?` is still fine
+  for a verb ("is" or "are") or for wording one differently from many ("the photo" or "3 photos").
 - **Display options:** every portfolio view's display options use `ViewOptionsButton`
   (`components/view-options-button.tsx`): a **Display Options** button (eye and words; the Map alone is eye only) whose
   flyout puts `choices` (`OptionChoices`, sliders) in the left column and `checks` (checkboxes in titled `OptionGroup`s)
@@ -108,6 +113,12 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
   Square Thumbnails, Photos in Flight's placeholders); `Spinner` is only inside a button or beside an action the user
   started, never for a read. The `servenup/reading-label` lint rule flags a label that doesn't start with "Reading" and
   JSX text starting with "Loading".
+- **Saved and asking first:** after a save, say it waits for Commit, never that it's on GitHub or in the pull request:
+  `SaveState` ("Saving…", "Saved for Commit") on a page that saves as you type, and `SavedInApp` (or a sentence ending
+  in `WaitingForCommit`, `components/waiting-for-commit.tsx`) after a button save. Ask before losing or replacing work
+  with `await askFirst({ question, note, action })` (`stores/confirm.ts`), or `ConfirmDeleteCard` for a delete that
+  runs inside its dialog; never `window.confirm`, `alert` or `prompt` (oxlint `no-alert`). See
+  [What a page says after a save](docs/pending-changes.md#what-a-page-says-after-a-save).
 - **Empty states:** a list, grid or panel with nothing in it shows `EmptyNote`
   (`apps/portfolio/src/components/empty-note.tsx`, imported as `@portfolio/components/empty-note` in both apps), never
   a hand-styled `<p>`. It has one look (muted, small); its `className` is for spacing only. Say what's missing in a full

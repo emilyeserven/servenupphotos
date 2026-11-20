@@ -5,11 +5,11 @@ import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { LibraryAnswer, useFilteredNames } from "@/components/tag-library/library-answer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { count } from "@/components/update-data-shared";
 import { downloadFile } from "@/lib/album-layout-editor";
 import { tagLibraryJson, tagLibraryPrompt } from "@/lib/tag-library-prompt";
-import { QueryResult } from "@/components/query-result";
 import { ErrorNote } from "@/components/error-note";
+import { QueryResult } from "@/components/query-result";
+import { count } from "@portfolio/lib/words";
 
 /**
  * Tag library: reads every tag and every photo with its tags, copies them into one prompt (or
