@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { type SecretStatus } from "@/api/settings";
+import { ErrorNote } from "@/components/error-note";
 import { type SectionConfig } from "@/components/settings/sections";
 import {
   type SecretDraft,
@@ -8,7 +9,6 @@ import {
 } from "@/components/settings/use-settings-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ErrorNote } from "@/components/error-note";
 
 interface SettingsSecretProps {
   form: SettingsForm;

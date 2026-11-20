@@ -7,13 +7,13 @@ import type { SanitizedExif } from "@/api/exif";
 import type { PhotoGroups } from "@/api/organize";
 import { type PhotoData, type PublishResult, publishPhotoMutation } from "@/api/photos";
 import { type SettingsResponse, dataFolder, githubIsSetUp, settingsQuery } from "@/api/settings";
+import { ErrorNote } from "@/components/error-note";
 import { FloatingFlyout } from "@/components/floating-flyout";
 import { PublishSuccess } from "@/components/github-save";
 import { RenameForm } from "@/components/rename-prompt";
 import { Spinner } from "@/components/ui/spinner";
 import { jsonFileName, jsonNameProblem } from "@/lib/file-name";
 import { photoData } from "@/lib/photo-data";
-import { ErrorNote } from "@/components/error-note";
 
 type Publish = UseMutationResult<PublishResult, Error, PhotoData>;
 

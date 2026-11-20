@@ -9,16 +9,17 @@ import {
   GraphDisplayContext,
   GraphDisplayOptions,
 } from "@/components/graph-builder/graph-display";
-import { GraphTabs } from "@/components/graph-builder/graph-tabs";
 import { GraphPickContext } from "@/components/graph-builder/graph-pick-context";
 import { SpotlightPresets } from "@/components/graph-builder/graph-presets";
+import { GraphTable, ScatterTable } from "@/components/graph-builder/graph-table";
+import { GraphTabs } from "@/components/graph-builder/graph-tabs";
 import { HeatmapGraph } from "@/components/graph-builder/heatmap-graph";
 import { PhotoDotsGraph } from "@/components/graph-builder/photo-dots-graph";
 import { PickedPhotos } from "@/components/graph-builder/picked-photos";
 import { ScatterGraph } from "@/components/graph-builder/scatter-graph";
 import { TypeButtons } from "@/components/graph-builder/type-buttons";
-import { GraphTable, ScatterTable } from "@/components/graph-builder/graph-table";
 import { TypeNudge, useTypeFits, useTypeNudge } from "@/components/graph-builder/type-suggestion";
+import { Button } from "@/components/ui/button";
 import {
   type GraphConfig,
   type GraphData,
@@ -28,10 +29,9 @@ import {
   scatterData,
   statById,
 } from "@/lib/graph-data";
-import { Button } from "@/components/ui/button";
 import { shownMeasure } from "@/lib/graph-measure";
-import { type GraphPick, samePick } from "@/lib/graph-pick";
 import { photoDots } from "@/lib/graph-photo-dots";
+import { type GraphPick, samePick } from "@/lib/graph-pick";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 import { cn } from "@/lib/utils";

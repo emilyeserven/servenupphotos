@@ -7,21 +7,25 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { FloatingHeader } from "@/components/floating-header";
-import { MapControls } from "@/components/map-controls";
-import { CoordinatesMenu } from "@/components/map-coordinates-menu";
-import { MAP_POPUP } from "@/components/map-popup";
 import {
   ClusterCloseButton,
   ClusterGrid,
   ClusterSheet,
   type OpenCluster,
 } from "@/components/map-cluster";
+import { MapControls } from "@/components/map-controls";
+import { CoordinatesMenu } from "@/components/map-coordinates-menu";
+import { type ClusterMarkerData, MapMarkerView } from "@/components/map-marker-view";
+import { MapPhotoSources } from "@/components/map-photo-sources";
+import { MAP_POPUP } from "@/components/map-popup";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { mapViewOf } from "@/components/view-on-map-link";
-import { type ClusterMarkerData, MapMarkerView } from "@/components/map-marker-view";
-import { MapPhotoSources } from "@/components/map-photo-sources";
 import { isPhotoSource } from "@/lib/map-country-groups";
+import { clusterRadius, type MapDisplay, PIN_PIXELS, useMapDisplay } from "@/lib/map-display";
+import { fadeTo } from "@/lib/map-fade";
+import { photosInView } from "@/lib/map-grid-link";
+import { type MapMarker, markersInView, photosInCluster } from "@/lib/map-markers";
 import {
   type MapPhotos,
   type PlacedPhoto,
@@ -29,10 +33,6 @@ import {
   placedById,
   useMapPhotos,
 } from "@/lib/map-photos";
-import { clusterRadius, type MapDisplay, PIN_PIXELS, useMapDisplay } from "@/lib/map-display";
-import { fadeTo } from "@/lib/map-fade";
-import { photosInView } from "@/lib/map-grid-link";
-import { type MapMarker, markersInView, photosInCluster } from "@/lib/map-markers";
 import { MAP_STYLES, useIsDark } from "@/lib/map-theme";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
 import {
@@ -43,9 +43,9 @@ import {
 } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
-import { parseVisualFilters, type VisualSearch } from "@/lib/visual-filters";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
+import { parseVisualFilters, type VisualSearch } from "@/lib/visual-filters";
 
 /**
  * The map's search: the shared filters, Visuals' filters, the open photo and where the map is

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SectionsLayout } from "@/components/update-data/sections-layout";
 import { updateDataSections } from "@/components/update-data/sections";
+import { SectionsLayout } from "@/components/update-data/sections-layout";
 
 export const Route = createFileRoute("/update-data")({
   component: UpdateDataPage,

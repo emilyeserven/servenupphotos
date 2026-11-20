@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
 import { sameCrop } from "@/lib/gear-crop";
+import type { GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
 
 /** A picture in the Crops card: its file, the original crops are cut from, and its crop now. */
 export interface CropEntry {

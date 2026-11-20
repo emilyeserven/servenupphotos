@@ -3,9 +3,9 @@ import { type LucideIcon, MapPinPlus } from "lucide-react";
 import { useState } from "react";
 import type { TripVisit } from "@/api/trip-lines";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
-import { isAgain } from "@/lib/stop-insert";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { isAgain } from "@/lib/stop-insert";
 import { cn } from "@/lib/utils";
 
 interface VisitInsertProps {

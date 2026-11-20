@@ -9,18 +9,18 @@ import { metaGroups } from "@/api/metainfo";
 import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
 import { BulkTagReview } from "@/components/bulk-tagging/bulk-tag-review";
-import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
-import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
 import { CopyPromptButton, PickBar, usePhotoPick } from "@/components/bulk-tagging/pick-controls";
-import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
+import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
+import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { UntaggedCount } from "@/components/bulk-tagging/untagged-count";
+import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
+import { ErrorNote } from "@/components/error-note";
 import { PasteAnswer } from "@/components/paste-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { OptionCheckbox } from "@/components/update-data-shared";
-import { bulkTagPrompt } from "@/lib/bulk-tag-prompt";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
+import { bulkTagPrompt } from "@/lib/bulk-tag-prompt";
 import { useCombinedData } from "@/stores/combined-data";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * Bulk Tagging: picks up to the chosen number of photos without tags (5 at first, up to 50, or

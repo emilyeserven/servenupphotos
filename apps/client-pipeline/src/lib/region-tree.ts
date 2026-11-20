@@ -1,5 +1,6 @@
 import type { Place } from "@/api/places";
 import { type LocationNames, winningName } from "@/lib/location-names";
+import { placeChain } from "@/lib/place-chain";
 import {
   type CityRow,
   type CountryRow,
@@ -8,7 +9,6 @@ import {
   regionKey,
   stateOfPlace,
 } from "@/lib/place-cities";
-import { placeChain } from "@/lib/place-chain";
 
 /** What a row of the Places list is: a country, a city in it, or a place in a city or another place. */
 export type RegionKind = "country" | "state" | "city" | "place";

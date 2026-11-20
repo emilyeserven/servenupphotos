@@ -3,11 +3,11 @@ import { Link } from "@tanstack/react-router";
 import { ImageOffIcon, SearchIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { savedGroups } from "@/api/organize";
-import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import { type InFlightFileRead, photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
 import { photoName } from "@/components/gallery/published-file";
-import { Input } from "@/components/ui/input";
 import { ReadingNote } from "@/components/query-result";
+import { Input } from "@/components/ui/input";
+import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 /** A saved photo to pick: one in the photo data pull request, or one already in the portfolio. */

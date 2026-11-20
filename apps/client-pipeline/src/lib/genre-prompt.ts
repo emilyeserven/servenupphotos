@@ -1,6 +1,6 @@
 import type { BulkTagPhoto } from "@/api/bulk-tags";
-import { type Group, albumTree } from "@/api/organize";
 import type { ContactSheet } from "@/api/contact-sheets";
+import { type Group, albumTree } from "@/api/organize";
 import type { Place } from "@/api/places";
 import { photoWithTags as photoSection, sheetsBlock } from "@/lib/bulk-tag-prompt";
 

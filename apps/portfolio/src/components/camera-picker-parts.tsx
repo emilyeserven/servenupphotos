@@ -1,7 +1,4 @@
 import { type ReactNode, useState } from "react";
-import { EquipmentInfoPane } from "@portfolio/components/equipment-info-pane";
-import { EquipmentList } from "@portfolio/components/equipment-list";
-import { InfoButton } from "@portfolio/components/info-button";
 import type {
   CameraPickerProps,
   CameraSection,
@@ -13,9 +10,12 @@ import {
   RANGE_VALUES,
   writeSetting,
 } from "@portfolio/components/camera-ranges";
+import { EquipmentInfoPane } from "@portfolio/components/equipment-info-pane";
+import { EquipmentList } from "@portfolio/components/equipment-list";
+import { InfoButton } from "@portfolio/components/info-button";
 import { RangeFilter } from "@portfolio/components/range-filter";
-import { SettingIllustration } from "@portfolio/components/setting-graphics";
 import { RangePresetList } from "@portfolio/components/range-presets";
+import { SettingIllustration } from "@portfolio/components/setting-graphics";
 import { type EquipmentKey, parseRange, type RangeKey } from "@portfolio/lib/camera-filters";
 import { equipmentChoices } from "@portfolio/lib/camera-picker";
 import type { FilterOption } from "@portfolio/lib/filter-options";

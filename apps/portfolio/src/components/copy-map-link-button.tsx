@@ -1,5 +1,5 @@
-import type { LngLatBounds } from "maplibre-gl";
 import { CheckIcon, LinkIcon } from "lucide-react";
+import type { LngLatBounds } from "maplibre-gl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { mapPageFor } from "@/lib/map-pages";

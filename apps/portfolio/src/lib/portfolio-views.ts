@@ -1,5 +1,4 @@
 import type { LucideIcon } from "lucide-react";
-import { shownOriginals } from "virtual:shown-originals";
 import {
   BookImage,
   CalendarClock,
@@ -13,6 +12,7 @@ import {
   SquareSplitHorizontal,
   Tags,
 } from "lucide-react";
+import { shownOriginals } from "virtual:shown-originals";
 
 export interface PortfolioView {
   to:

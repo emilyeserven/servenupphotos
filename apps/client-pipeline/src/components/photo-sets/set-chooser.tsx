@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
-import type { PhotoSet } from "@portfolio/lib/photo-sets";
 import { deletePhotoSetMutation, photoSetId, savePhotoSetMutation } from "@/api/photo-sets";
 import { NewEntryForm } from "@/components/new-entry-form";
 import { Button } from "@/components/ui/button";
 import { askFirst } from "@/stores/confirm";
+import type { PhotoSet } from "@portfolio/lib/photo-sets";
 
 interface SetChooserProps {
   sets: PhotoSet[];

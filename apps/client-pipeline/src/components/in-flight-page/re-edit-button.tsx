@@ -7,11 +7,11 @@ import {
   publishedPhotosQuery,
   updateInFlightMutation,
 } from "@/api/photos";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { type ReEditDraft, savedReEdit, withReEdit } from "@/lib/re-edit";
-import { ErrorNote } from "@/components/error-note";
 
 /** Whether the photo can be marked: its JSON was read and it isn't being removed. */
 function canReEdit(file: InFlightFileRead): boolean {

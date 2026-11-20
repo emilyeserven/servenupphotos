@@ -17,21 +17,20 @@ import {
 } from "@/api/organize";
 import { type PublishResult, photosInFlightQuery } from "@/api/photos";
 import { dataFolder, settingsQuery } from "@/api/settings";
+import { AlbumMoveButtons } from "@/components/album-move-buttons";
+import { HiddenMark } from "@/components/album-visibility-card";
 import {
   AllPhotosRebuild,
   type RebuildWatch,
   useAllPhotosRebuild,
 } from "@/components/all-photos-rebuild";
-import { AlbumMoveButtons } from "@/components/album-move-buttons";
-import { HiddenMark } from "@/components/album-visibility-card";
-import { SmartMark } from "@/components/smart-album/smart-album-card";
-import { WaitingForCommit } from "@/components/waiting-for-commit";
-import { GroupCombobox } from "@/components/photo-groups-card";
-import { TagNamesCard } from "@/components/tag-names-card";
-import { FavoriteTagButton, FavoriteTagsCard } from "@/components/tag-favorites";
-import { validateGroupName } from "@/lib/group-name";
+import { ErrorNote } from "@/components/error-note";
 import { Page } from "@/components/page";
+import { GroupCombobox } from "@/components/photo-groups-card";
 import { QueryResult } from "@/components/query-result";
+import { SmartMark } from "@/components/smart-album/smart-album-card";
+import { FavoriteTagButton, FavoriteTagsCard } from "@/components/tag-favorites";
+import { TagNamesCard } from "@/components/tag-names-card";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -51,10 +50,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
+import { validateGroupName } from "@/lib/group-name";
 import { currentPhotos, photoCounts } from "@/lib/group-photos";
 import { useCombinedData } from "@/stores/combined-data";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { ErrorNote } from "@/components/error-note";
 
 const PAGES: Record<GroupKind, { title: string; description: string }> = {
   albums: {

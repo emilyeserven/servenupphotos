@@ -1,9 +1,9 @@
 import { CalendarIcon } from "lucide-react";
-import { FieldSection } from "@/components/field-section";
+import { DateTimePicker } from "@/components/date-time-picker";
 import { FieldLabel } from "@/components/field-label";
+import { FieldSection } from "@/components/field-section";
 import { Button } from "@/components/ui/button";
 import { dateFromFileName, fromInputValue, inputValue, readableDate } from "@/lib/photo-date";
-import { DateTimePicker } from "@/components/date-time-picker";
 
 /** How to fill in the custom date, shown beside its title. */
 const HELP =

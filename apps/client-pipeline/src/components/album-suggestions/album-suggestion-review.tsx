@@ -8,11 +8,11 @@ import {
 import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
 import { UnknownPhotos } from "@/components/paste-answer";
 import { type AlbumChoices, albumSuggestionsToSave } from "@/lib/album-suggestions";
-import { NO_CHOICES, photoTagKey, toggled } from "@/lib/bulk-tags";
-import { promptImageUrl } from "@/lib/tag-prompt";
-import { tileImageUrl } from "@/lib/offline-thumbnails";
-import { EmptyNote } from "@portfolio/components/empty-note";
 import { withOthers } from "@/lib/answered-photos";
+import { NO_CHOICES, photoTagKey, toggled } from "@/lib/bulk-tags";
+import { tileImageUrl } from "@/lib/offline-thumbnails";
+import { promptImageUrl } from "@/lib/tag-prompt";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 
 interface AlbumSuggestionReviewProps {

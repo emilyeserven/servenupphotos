@@ -2,23 +2,24 @@ import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { CalendarClock, ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
-import { PhotoComment } from "@/components/photo-comment";
 import { CameraFilterBar } from "@/components/camera-filters";
+import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { TechnicalInfo } from "@/components/technical-info";
 import { TimelineDisplayOptions } from "@/components/timeline-display-options";
+import { MonthMaps, TripLinesButton, useMonthTripLines } from "@/components/timeline-month-map";
+import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-sketch";
 import { TimelineScrubber } from "@/components/timeline-scrubber";
-import { photos, type Photo, type PhotoImage } from "@/lib/photos";
-import { labelOn } from "@/lib/timeline-labels";
-import { withOldTimelineLinks } from "@/lib/timeline-old-links";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
-import { hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { type ColorFilters, filterByColors, parseColorFilters } from "@/lib/color-search";
+import { isoDate } from "@/lib/dates";
+import { hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
+import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import {
   parseTimelineDisplay,
   resolveTimelineDisplay,
@@ -27,12 +28,11 @@ import {
   type TimelineDisplay,
   type TimelineDisplaySearch,
 } from "@/lib/timeline-display";
-import { useRememberViewOptions } from "@/lib/view-options";
+import { labelOn } from "@/lib/timeline-labels";
+import { withOldTimelineLinks } from "@/lib/timeline-old-links";
 import { cn } from "@/lib/utils";
-import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-sketch";
-import { MonthMaps, TripLinesButton, useMonthTripLines } from "@/components/timeline-month-map";
+import { useRememberViewOptions } from "@/lib/view-options";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { isoDate } from "@/lib/dates";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };

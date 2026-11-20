@@ -12,6 +12,7 @@ import {
   type WhenSetters,
   WhenPickerPart,
 } from "@portfolio/components/when-picker-parts";
+import { shortDate } from "@portfolio/lib/dates";
 import { type PhotoFilters, withoutFilters } from "@portfolio/lib/photo-filters";
 import {
   DAYPARTS,
@@ -24,7 +25,6 @@ import {
   type WhenChoice,
   whenCount,
 } from "@portfolio/lib/when-filters";
-import { shortDate } from "@portfolio/lib/dates";
 
 /** Each kind of list's name in the picker, what several chosen are called, and its choices. */
 const KINDS: [ListKey, string, string, WhenChoice[]][] = [

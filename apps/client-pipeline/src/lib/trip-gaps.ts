@@ -10,12 +10,12 @@ import type {
   ViaBy,
 } from "@/api/trip-lines";
 import type { TripLegRide } from "@/api/trips";
-import { walkPathsOf, walkViasOf, withStationWalks } from "@/lib/station-walks";
-import { legLinesOf, withLegLines } from "@/lib/hop-legs";
-import { legLikesOf, withLegLikes } from "@/lib/transit-like";
-import { cutAtStopWays, cutGap } from "@/lib/stop-ways";
-import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
 import { breakEndsOf, breakSpots } from "@/lib/break-ends";
+import { legLinesOf, withLegLines } from "@/lib/hop-legs";
+import { walkPathsOf, walkViasOf, withStationWalks } from "@/lib/station-walks";
+import { cutAtStopWays, cutGap } from "@/lib/stop-ways";
+import { legLikesOf, withLegLikes } from "@/lib/transit-like";
+import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
 
 /**
  * What happened between two photos taken one after the other: kept walking, a break (the line

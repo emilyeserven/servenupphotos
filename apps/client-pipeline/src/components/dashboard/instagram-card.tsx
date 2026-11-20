@@ -5,9 +5,9 @@ import { PhotoFiles } from "@/components/photo-files";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSocialQueue } from "@/hooks/use-social-queue";
 import { dayFormat } from "@/lib/calendar";
-import { parseIsoDate } from "@portfolio/lib/dates";
-import { photoName } from "@/lib/social-schedule";
 import type { SocialQueue } from "@/lib/social-queue";
+import { photoName } from "@/lib/social-schedule";
+import { parseIsoDate } from "@portfolio/lib/dates";
 import { count } from "@portfolio/lib/words";
 
 /** How many of the next scheduled photos the card shows. */

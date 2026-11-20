@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { albumAncestry, type Group, organizeQuery, setAlbumHiddenMutation } from "@/api/organize";
-import { SavedInApp } from "@/components/waiting-for-commit";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
+import { SavedInApp } from "@/components/waiting-for-commit";
 
 /**
  * Shows or hides the album on the portfolio. A hidden album, and every album inside it, isn't on

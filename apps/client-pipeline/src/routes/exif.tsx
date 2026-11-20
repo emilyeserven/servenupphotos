@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { exifMutation } from "@/api/exif";
 import { NO_GROUPS } from "@/api/organize";
 import { NewPhotoActions, TitleAction, UploadSteps } from "@/components/add-photo/photo-actions";
@@ -9,8 +10,9 @@ import { ResultsColumn } from "@/components/add-photo/results-column";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import { ChangePhotoButton } from "@/components/choose-photo-dialog";
 import { EditInFlightPhoto } from "@/components/edit-in-flight";
-import { type PhotoSection, photoSectionSearch } from "@/components/edit-in-flight/photo-sections";
 import { withNewLens } from "@/components/edit-in-flight/lens-edit";
+import { PhotoDeleted } from "@/components/edit-in-flight/photo-deleted";
+import { type PhotoSection, photoSectionSearch } from "@/components/edit-in-flight/photo-sections";
 import { useLensSettings } from "@/components/edit-in-flight/use-edit";
 import { EditPhotoById, photoIdSearch } from "@/components/edit-photo-by-id";
 import { Page } from "@/components/page";
@@ -19,10 +21,8 @@ import { useR2Upload } from "@/components/r2-upload/use-r2-upload";
 import type { Crop } from "@/lib/crop";
 import type { LensChoice } from "@/lib/custom-lens";
 import { withImages } from "@/lib/photo-images";
-import { PhotoDeleted } from "@/components/edit-in-flight/photo-deleted";
 import { useDeletedPhotoStore } from "@/stores/deleted-photo";
 import { useTabSubject } from "@/stores/tab-title";
-import { useEffect } from "react";
 
 interface PhotoSearch {
   /**

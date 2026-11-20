@@ -14,16 +14,18 @@ import {
   savePlaceMutation,
 } from "@/api/places";
 import type { LocationPrompt } from "@/components/edit-in-flight/location-prompt";
-import { Button } from "@/components/ui/button";
-import { type ComboboxOption } from "@/components/ui/combobox";
-import { Input } from "@/components/ui/input";
+import { ErrorNote } from "@/components/error-note";
 import { PhotoGpsStatus } from "@/components/photo-gps-status";
 import { PlaceCityAdders } from "@/components/place-city-adder";
 import { PlaceGpsAdders } from "@/components/place-gps-adder";
 import { PlacesJoinWord } from "@/components/place-join-fields";
 import { PlaceLocalizationDialog } from "@/components/place-localization-dialog";
 import { type PlaceMenu, PlaceScopeNote, usePlaceScope } from "@/components/place-scope";
+import { Button } from "@/components/ui/button";
+import { type ComboboxOption } from "@/components/ui/combobox";
+import { Input } from "@/components/ui/input";
 import { SingleCombobox } from "@/components/ui/single-combobox";
+import { inferredName, inferredOptions, inferredPlaces } from "@/lib/inferred-places";
 import {
   isUnitedStates,
   placeCity,
@@ -32,12 +34,10 @@ import {
   unrelatedPair,
   withParent,
 } from "@/lib/place-hierarchy";
-import { inferredName, inferredOptions, inferredPlaces } from "@/lib/inferred-places";
 import { placePhrase, placesJoin } from "@/lib/place-joins";
 import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * What PlaceFields edits: the photo's places, the place name kept with them, and its custom city

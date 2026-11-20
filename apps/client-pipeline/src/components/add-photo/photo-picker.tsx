@@ -3,11 +3,11 @@ import { Link } from "@tanstack/react-router";
 import { RefreshCwIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import type { ExifMutation } from "@/components/add-photo/photo-state";
+import { ErrorNote } from "@/components/error-note";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useObjectUrl } from "@/hooks/use-object-url";
 import { usePendingPhotoStore } from "@/stores/pending-photo";
-import { ErrorNote } from "@/components/error-note";
 
 const JPEG_TYPES = ["image/jpeg", "image/pjpeg"];
 

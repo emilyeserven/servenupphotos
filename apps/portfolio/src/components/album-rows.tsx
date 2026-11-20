@@ -2,9 +2,9 @@ import type { CSSProperties } from "react";
 import Markdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import { FittedPhoto } from "@/components/fitted-photo";
-import { cn } from "@/lib/utils";
 import type { ShownRow } from "@/lib/album-layout";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
+import { cn } from "@/lib/utils";
 
 /** Markdown's headings, lists, links, code and quotes, which Tailwind's reset strips, sized for reading. */
 const PROSE =

@@ -1,7 +1,7 @@
 import { type UseMutationOptions, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { CopyTextButton } from "@/components/copy-text";
 import { PickCount, bulkTagCount } from "@/components/bulk-tagging/pick-count";
+import { CopyTextButton } from "@/components/copy-text";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 

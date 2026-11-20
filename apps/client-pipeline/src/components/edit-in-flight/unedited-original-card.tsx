@@ -1,19 +1,19 @@
 import { ImageUpIcon } from "lucide-react";
 import type { SanitizedExif } from "@/api/exif";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { OriginalComparisonCard } from "@/components/edit-in-flight/original-comparison-card";
 import { OriginalFacesCards } from "@/components/edit-in-flight/original-faces-card";
 import { type Editable, type PhotoJson } from "@/components/edit-in-flight/photo-json";
 import { newSize } from "@/components/edit-in-flight/replace-image";
-import { ReadingNote } from "@/components/query-result";
 import {
   type UneditedOriginal,
   useUneditedOriginal,
 } from "@/components/edit-in-flight/use-unedited-original";
 import { ErrorNote } from "@/components/error-note";
+import { ReadingNote } from "@/components/query-result";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 interface UneditedOriginalCardsProps {
   editable: Editable;

@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { parseCameraFilters } from "@/lib/camera-filters";
 import { parseFilters } from "@/lib/photo-filters";
-import { parseTextSearch } from "@/lib/text-search";
 import { mainViews, minorViews, type PortfolioView } from "@/lib/portfolio-views";
+import { parseTextSearch } from "@/lib/text-search";
 import { cn } from "@/lib/utils";
 import { rememberedViewOptions } from "@/lib/view-options";
 

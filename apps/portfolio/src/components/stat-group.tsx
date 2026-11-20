@@ -3,8 +3,8 @@ import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { GridRow, NarrowRow } from "@/components/stat-row";
 import type { StatGroup, StatRow } from "@/lib/stat-groups";
-import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@/lib/words";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** A row chosen in a group that narrows another, and which group it narrows. */
 export interface StatFocus {

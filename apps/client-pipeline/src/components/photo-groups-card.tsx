@@ -17,11 +17,11 @@ import {
   withNewGroup,
 } from "@/api/organize";
 import { photosInFlightQuery } from "@/api/photos";
+import { ErrorNote } from "@/components/error-note";
+import { useTagPaste } from "@/components/pasted-tags";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
-import { useTagPaste } from "@/components/pasted-tags";
 import { validateGroupName } from "@/lib/group-name";
-import { ErrorNote } from "@/components/error-note";
 
 /** Where an album sits, such as “In Asia › Korea”, or undefined for a top-level one. */
 function albumPlace(albums: Group[], album: Group, lead = "In"): string | undefined {

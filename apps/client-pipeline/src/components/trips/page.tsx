@@ -1,17 +1,17 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import type { CombinedData } from "@/api/photos";
+import { tripLines } from "@/api/trip-lines";
 import { legacyTripIds, photosBetween, type Trip, trips } from "@/api/trips";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
-import { tripLines } from "@/api/trip-lines";
+import { QueryResult } from "@/components/query-result";
 import { TripEditor } from "@/components/trips/trip-editor";
 import { NEW_TRIP_ID } from "@/components/trips/trips-panel";
 import { Button } from "@/components/ui/button";
+import { useSessionData } from "@/hooks/use-session-data";
 import { shownPhotos } from "@/lib/place-seeds";
 import { lineDays } from "@/lib/stale-trip-lines";
-import { useSessionData } from "@/hooks/use-session-data";
-import { QueryResult } from "@/components/query-result";
 
 /** A new Trip with no name, days or legs yet. */
 const NEW_TRIP: Trip = { id: "", name: "", start: "", end: "", legs: [], labels: [] };

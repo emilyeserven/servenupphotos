@@ -2,11 +2,11 @@ import { MutationCache, QueryClient, QueryClientProvider } from "@tanstack/react
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { pageFade } from "@portfolio/lib/page-fade";
 import { cachedFile, type FileChange } from "@/lib/optimistic";
 import { useCombinedDataStore } from "@/stores/combined-data";
 import { type FileMove, useLocalEditsStore } from "@/stores/local-edits";
 import { syncTheme } from "@/stores/theme";
+import { pageFade } from "@portfolio/lib/page-fade";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 

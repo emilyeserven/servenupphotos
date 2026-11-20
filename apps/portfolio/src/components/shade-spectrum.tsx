@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import type { ColorDisplay } from "@/lib/color-display";
 import { PinBoard, type BoardLook } from "@/components/pin-board";
-import type { KeepInside, WheelPoint } from "@/lib/color-wheel";
+import type { ColorDisplay } from "@/lib/color-display";
 import type { ChartUp } from "@/lib/color-display";
 import { type VividMeasure, vividnessOf } from "@/lib/color-sort";
+import type { KeepInside, WheelPoint } from "@/lib/color-wheel";
 import { graysOf, type LightnessRange } from "@/lib/lightness-range";
 import type { PhotoImage } from "@/lib/photos";
 

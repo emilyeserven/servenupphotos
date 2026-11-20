@@ -1,5 +1,4 @@
 import { type UseMutationResult, useMutation, useQuery } from "@tanstack/react-query";
-import { type ReactNode, useRef, useState } from "react";
 import {
   EyeIcon,
   EyeOffIcon,
@@ -8,9 +7,11 @@ import {
   ScanFaceIcon,
   ShieldOffIcon,
 } from "lucide-react";
+import { type ReactNode, useRef, useState } from "react";
 import { detectFacesMutation, savedFacesQuery } from "@/api/faces";
 import type { Editable } from "@/components/edit-in-flight/photo-json";
 import type { Edit, Save } from "@/components/edit-in-flight/use-edit";
+import { ErrorNote } from "@/components/error-note";
 import { FaceList } from "@/components/face-pixelation/face-list";
 import { FacePreview, type PreviewHandle } from "@/components/face-pixelation/face-preview";
 import {
@@ -26,7 +27,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Spinner } from "@/components/ui/spinner";
 import type { FaceBox } from "@/lib/face-boxes";
 import { facesFromJson } from "@/lib/face-json";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 interface FacePixelationCardProps {

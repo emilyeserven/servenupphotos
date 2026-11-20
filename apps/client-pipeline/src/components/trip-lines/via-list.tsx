@@ -1,10 +1,11 @@
 import { ArrowDown, ArrowUp, ListOrdered, X } from "lucide-react";
 import type { TripSegment } from "@/api/trip-lines";
+import { ViaBySelect } from "@/components/trip-lines/via-by-select";
 import { Button } from "@/components/ui/button";
+import { type WalkEnd, walkOfKey } from "@/lib/station-walks";
 import type { TripDay } from "@/lib/trip-days";
 import type { GapDraft, ViaKey } from "@/lib/trip-gaps";
 import { movedVia } from "@/lib/trip-points";
-import { type WalkEnd, walkOfKey } from "@/lib/station-walks";
 import {
   canMove,
   movedInRoute,
@@ -14,7 +15,6 @@ import {
   walkViaKeys,
 } from "@/lib/via-order";
 import { sharedBy, viaInWalkingOrder, viaOutOfOrder, withViaBy } from "@/lib/via-tidy";
-import { ViaBySelect } from "@/components/trip-lines/via-by-select";
 
 interface ViaListProps {
   day: TripDay;

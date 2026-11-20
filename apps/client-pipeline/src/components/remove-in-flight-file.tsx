@@ -8,9 +8,9 @@ import {
   bucketImagesQuery,
   removeInFlightMutation,
 } from "@/api/photos";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
 
 interface RemoveFileProps {
   file: InFlightFile;

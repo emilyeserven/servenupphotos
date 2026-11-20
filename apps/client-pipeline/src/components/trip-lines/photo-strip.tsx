@@ -1,23 +1,23 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Flag, Play, Plus, Scissors } from "lucide-react";
-import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
+import { photoName, squareUrl } from "@/components/group-photo-grid";
 import { END_GAPS, GapPicker, type GapPickerProps } from "@/components/trip-lines/gap-picker";
 import { type OnStopWay, StopsWithWays } from "@/components/trip-lines/stop-way-picker";
-import { VisitChips } from "@/components/trip-lines/visit-chips";
 import {
   EndChip,
   StripEnd,
   type StripEnds,
   withoutChipStop,
 } from "@/components/trip-lines/strip-ends";
-import { Button } from "@/components/ui/button";
-import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { type StripVia, ViaChips } from "@/components/trip-lines/via-list";
+import { VisitChips } from "@/components/trip-lines/visit-chips";
+import { VisitInsert } from "@/components/trip-lines/visit-insert";
+import { Button } from "@/components/ui/button";
+import { insertChoices } from "@/lib/stop-insert";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap } from "@/lib/trip-gaps";
 import { firstStops, visitsAfter } from "@/lib/trip-visits";
-import { insertChoices } from "@/lib/stop-insert";
 import { cn } from "@/lib/utils";
 
 interface PhotoStripProps {

@@ -1,6 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
-import { post } from "@/api/request";
 import type { BulkTagPhoto, BulkTagPhotoPlan } from "@/api/bulk-tags";
+import { post } from "@/api/request";
 import type { PendingSave } from "@/api/scan-changes";
 
 /** Up to the chosen number of photos without genres, in file name order, to suggest genres for together. */

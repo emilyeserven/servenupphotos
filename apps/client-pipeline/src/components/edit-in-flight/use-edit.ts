@@ -12,12 +12,11 @@ import {
 } from "@/api/photos";
 import { regenerateVersionsMutation, thumbnailCropQuery } from "@/api/versions";
 import { useAllPhotosRebuild } from "@/components/all-photos-rebuild";
-import { useLeaveUndecided } from "@/components/undecided-photos";
-import { savedDetails } from "@/components/photo-details";
-import { type Crop } from "@/lib/crop";
-import { savedReEditDraft } from "@/lib/re-edit";
-import { savedPicks } from "@/components/related-photos/picks";
-import { savedSocialPosts } from "@/lib/social-posts";
+import {
+  type LensEdit,
+  type LensSettings,
+  lensEditFields,
+} from "@/components/edit-in-flight/lens-edit";
 import {
   type Editable,
   type PhotoJson,
@@ -36,12 +35,13 @@ import {
   squareUrls,
   withSquares,
 } from "@/components/edit-in-flight/photo-json";
-import {
-  type LensEdit,
-  type LensSettings,
-  lensEditFields,
-} from "@/components/edit-in-flight/lens-edit";
+import { savedDetails } from "@/components/photo-details";
+import { savedPicks } from "@/components/related-photos/picks";
+import { useLeaveUndecided } from "@/components/undecided-photos";
+import { type Crop } from "@/lib/crop";
 import { savedLensChoice } from "@/lib/custom-lens";
+import { savedReEditDraft } from "@/lib/re-edit";
+import { savedSocialPosts } from "@/lib/social-posts";
 import { useCombinedData } from "@/stores/combined-data";
 
 /** A saved photo's lens edit before anything is changed. */

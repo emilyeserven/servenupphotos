@@ -1,7 +1,7 @@
-import { allTimelineLabels, type TimelineLabel } from "@portfolio/lib/timeline-labels";
+import { DatePicker } from "@/components/date-picker";
 import type { RuleParams } from "@/components/smart-album/rule-params";
 import { SingleCombobox } from "@/components/ui/single-combobox";
-import { DatePicker } from "@/components/date-picker";
+import { allTimelineLabels, type TimelineLabel } from "@portfolio/lib/timeline-labels";
 
 /** The text of a rule, or "" when it isn't set. */
 function textRule(value: unknown): string {

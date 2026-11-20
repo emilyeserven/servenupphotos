@@ -4,6 +4,7 @@ import { type ReactNode, useState } from "react";
 import type { GroupKind } from "@/api/organize";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { QueryResult } from "@/components/query-result";
+import { albumPhotoOrder } from "@/lib/album-photo-order";
 import {
   type CombinedPhoto,
   currentPhotos,
@@ -11,10 +12,9 @@ import {
   photoIn,
   photoText,
 } from "@/lib/group-photos";
-import { albumPhotoOrder } from "@/lib/album-photo-order";
 import { squareImages, tileImageUrl } from "@/lib/offline-thumbnails";
-import { useCombinedData } from "@/stores/combined-data";
 import { FILE, TITLE } from "@/lib/photo-fields";
+import { useCombinedData } from "@/stores/combined-data";
 import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** ALLPHOTOS.json from the combined data store, and its photos listing any of ids under kind. */

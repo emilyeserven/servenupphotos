@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeftIcon, CheckIcon } from "lucide-react";
 import type { DeletePhotoResult } from "@/api/photos";
+import { fileName } from "@/components/edit-in-flight/photo-json";
 import { ImageOutcome, VersionsNotice } from "@/components/remove-in-flight-file";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
-import { fileName } from "@/components/edit-in-flight/photo-json";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 

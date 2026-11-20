@@ -4,13 +4,13 @@ import type { CombinedData } from "@/api/photos";
 import { OverrideEditor } from "@/components/camera-overrides/editor";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
+import { QueryResult } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type CameraRow, cameraPhotos, cameraRows } from "@/lib/camera-overrides";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
-import { QueryResult } from "@/components/query-result";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 

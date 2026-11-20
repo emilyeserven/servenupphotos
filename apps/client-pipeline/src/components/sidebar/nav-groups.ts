@@ -39,8 +39,8 @@ import {
   TagsIcon,
   UserRoundIcon,
 } from "lucide-react";
-import type { FileRoutesByTo } from "@/routeTree.gen";
 import { tagTools, updateDataSections } from "@/components/update-data/sections";
+import type { FileRoutesByTo } from "@/routeTree.gen";
 
 /** A page in the sidebar, with the icon it has when collapsed. */
 export interface NavPage {

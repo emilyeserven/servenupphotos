@@ -1,10 +1,10 @@
 import { RotateCcwIcon, Trash2Icon } from "lucide-react";
+import { ErrorNote } from "@/components/error-note";
 import type { FaceEditorState } from "@/components/face-pixelation/use-face-editor";
 import type { PixelateSave } from "@/components/face-pixelation/use-pixelate-save";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import type { FaceBox } from "@/lib/face-boxes";
-import { ErrorNote } from "@/components/error-note";
 
 interface PixelateActionsProps {
   editor: FaceEditorState;

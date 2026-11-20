@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import type { CompareRead } from "@/components/compare/compare-group-list";
 import { DashboardPhotoTile } from "@/components/dashboard/photo-tile";
 import { Segmented } from "@/components/lightroom-albums/segmented";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { CompareRead } from "@/components/compare/compare-group-list";
 import type { ComparePhoto } from "@/lib/compare-groups";
 import { isCasual, isSetAside, isUnselected, titleOf, useUntitledDrafts } from "@/lib/drafts";
 import { photoId } from "@/lib/unselected";

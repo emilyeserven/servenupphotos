@@ -1,9 +1,9 @@
 import { CheckIcon, CircleDashedIcon } from "lucide-react";
 import type { BaseFile } from "@/api/photos";
+import { ErrorNote } from "@/components/error-note";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { JsonDiffBlock } from "@/components/json-diff-block";
 import { cn } from "@/lib/utils";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * A file's JSON from the pull request, with what it changes against the base branch when the pull

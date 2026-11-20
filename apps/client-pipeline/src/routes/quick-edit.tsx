@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { ErrorNote } from "@/components/error-note";
 import { Page } from "@/components/page";
 import { QUICK_EDIT_HELP, QuickEditForm } from "@/components/quick-edit-button";
 import { quickEditTarget } from "@/lib/quick-edit";
-import { ErrorNote } from "@/components/error-note";
 
 /** The `/quick-edit` page's search: the portfolio link to edit, as the Chrome extension sends it. */
 interface QuickEditSearch {

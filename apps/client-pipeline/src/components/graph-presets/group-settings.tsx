@@ -4,12 +4,12 @@ import { savePresetMutation } from "@/api/graph-presets";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { changeLines } from "@/components/graph-presets/group-change-lines";
 import { fullGraph, presetChange, savedGraph } from "@/components/graph-presets/preset-graph";
+import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { canonicalJson } from "@/lib/combined";
 import { GraphControls } from "@portfolio/components/graph-builder/graph-controls";
 import type { GraphPresetFile, PresetGraph } from "@portfolio/lib/graph-presets";
 import { count } from "@portfolio/lib/words";
-import { SectionTitle } from "@/components/section-title";
 
 /** The preset with the change made over its graph, keeping its other settings. */
 function changedPreset(preset: GraphPresetFile, change: Partial<PresetGraph>): GraphPresetFile {

@@ -1,19 +1,19 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Palette } from "lucide-react";
+import { ColorDisplayOptions } from "@/components/color-display-options";
 import { type ColorLayout, ColorLayoutControl } from "@/components/color-layout-control";
 import { ColorViewFilters } from "@/components/color-view-filters";
-import { FloatingHeader } from "@/components/floating-header";
 import { ColorWheel } from "@/components/color-wheel";
-import { ColorDisplayOptions } from "@/components/color-display-options";
+import { FloatingHeader } from "@/components/floating-header";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ShadeSpectrum } from "@/components/shade-spectrum";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { colorDisplay, type ColorDisplaySearch, parseColorDisplay } from "@/lib/color-display";
 import { type ColorFilters, parseColorFilters, vividEnough } from "@/lib/color-search";
-import { isBlackAndWhite } from "@/lib/photo-colors";
-import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import type { VividMeasure } from "@/lib/color-sort";
 import { lightnessExtent } from "@/lib/lightness-range";
+import { isBlackAndWhite } from "@/lib/photo-colors";
+import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useRememberViewOptions } from "@/lib/view-options";
 

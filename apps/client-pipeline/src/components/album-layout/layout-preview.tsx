@@ -4,11 +4,11 @@ import remarkBreaks from "remark-breaks";
 import type { AlbumRow } from "@/api/organize";
 import { OfflinePreviewsButton } from "@/components/album-layout/offline-previews";
 import { MARKDOWN_CLASSES } from "@/components/photo-details";
-import { photoId } from "@/lib/album-photo-order";
+import { SectionTitle } from "@/components/section-title";
 import type { AlbumLayout } from "@/lib/album-layout-editor";
+import { photoId } from "@/lib/album-photo-order";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { offlineXSmallUrl } from "@/lib/offline-thumbnails";
-import { SectionTitle } from "@/components/section-title";
 
 /** Keeps each line break written, as the portfolio shows it. */
 const MARKDOWN_PLUGINS = [remarkBreaks];

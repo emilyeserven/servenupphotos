@@ -11,8 +11,8 @@ import {
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { PlaceEditor } from "@/components/place-editor";
-import { type AddedRegionKind, RegionAdder } from "@/components/region-adder";
 import { QueryResult } from "@/components/query-result";
+import { type AddedRegionKind, RegionAdder } from "@/components/region-adder";
 import { RegionEditor } from "@/components/region-editor";
 import { RegionList, type RegionListData } from "@/components/region-list";
 import { locationNames } from "@/lib/location-names";

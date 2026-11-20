@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
-import { moveStoredKey, storedValue } from "@portfolio/lib/stored-value";
-import type { CropLimits } from "@/lib/gear-crop";
 import { Input } from "@/components/ui/input";
+import type { CropLimits } from "@/lib/gear-crop";
+import { moveStoredKey, storedValue } from "@portfolio/lib/stored-value";
 
 /** A side of the crop frame. */
 type Side = "top" | "bottom" | "left" | "right";

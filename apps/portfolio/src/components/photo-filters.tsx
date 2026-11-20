@@ -2,13 +2,14 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
 import { ClearableTrigger, SwapOut } from "@portfolio/components/clearable-trigger";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 import { FilterCount } from "@portfolio/components/filter-count";
 import { GroupPicker } from "@portfolio/components/group-picker";
 import { MoreFilters } from "@portfolio/components/more-filters";
 import { PhotoSearchBox } from "@portfolio/components/photo-search-box";
 import { PlacesFilter } from "@portfolio/components/places-filter";
-import { WhenFilter } from "@portfolio/components/when-filter";
 import { Button } from "@portfolio/components/ui/button";
+import { WhenFilter } from "@portfolio/components/when-filter";
 import { locationOptions } from "@portfolio/lib/filter-options";
 import {
   FILTER_KEYS,
@@ -23,7 +24,6 @@ import {
 } from "@portfolio/lib/photo-filters";
 import type { Photo } from "@portfolio/lib/photos";
 import { parseTextSearch, searchPhotos, TEXT_SEARCH_KEY } from "@portfolio/lib/text-search";
-import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 /** The filter count badge, here too for the views that read it with the filter bar. */
 export { FilterCount };

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { type GridFilters, parseGridFilters } from "@/components/gallery/grid-filters";
 import { BioEditorPage } from "@/components/bio/bio-page";
+import { type GridFilters, parseGridFilters } from "@/components/gallery/grid-filters";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 

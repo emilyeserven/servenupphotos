@@ -2,10 +2,10 @@ import { useMutation } from "@tanstack/react-query";
 import { ImagePlusIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { uploadBioPortraitMutation } from "@/api/bio";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import type { BioPortrait } from "@/lib/bio";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * The button that uploads self-portraits, one or more at once, each put in R2 right away as its two

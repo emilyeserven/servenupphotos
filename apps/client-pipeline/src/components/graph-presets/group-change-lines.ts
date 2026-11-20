@@ -1,9 +1,9 @@
+import type { GraphKey } from "@/components/graph-presets/preset-graph";
 import { graphTypeName } from "@portfolio/components/graph-builder/graph-type-picker";
 import { statById } from "@portfolio/lib/graph-data";
 import { measureName } from "@portfolio/lib/graph-measure";
 import { orderName } from "@portfolio/lib/graph-order";
 import type { PresetGraph } from "@portfolio/lib/graph-presets";
-import type { GraphKey } from "@/components/graph-presets/preset-graph";
 
 /** A setting's name, and what a value of it reads as on the graph it's in. */
 type SettingText = [string, (graph: PresetGraph) => string];

@@ -7,8 +7,8 @@ import { InstagramCard } from "@/components/dashboard/instagram-card";
 import { NeedsAttentionCard } from "@/components/dashboard/needs-attention-card";
 import { NextUpAlbumsCard } from "@/components/dashboard/next-up-albums-card";
 import { SiteSpotlightCard } from "@/components/dashboard/site-spotlight-card";
-import { fixedCrumbs } from "@/components/sidebar/route-crumbs";
 import { Page } from "@/components/page";
+import { fixedCrumbs } from "@/components/sidebar/route-crumbs";
 import { useCompareGroups } from "@/hooks/use-compare-groups";
 
 export const Route = createFileRoute("/")({

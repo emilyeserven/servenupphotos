@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { GitPullRequestArrowIcon } from "lucide-react";
-import type { InFlightImages } from "@/api/photos";
 import {
   type GroupKind,
   type OrganizeResponse,
@@ -9,24 +8,25 @@ import {
   organizeQuery,
   savedGroups,
 } from "@/api/organize";
+import type { InFlightImages } from "@/api/photos";
 import { CompareButton } from "@/components/compare/compare-button";
 import { UnselectedMark } from "@/components/compare/unselected-mark";
 import { DraftMark } from "@/components/draft-mark";
-import { ReEditMark } from "@/components/re-edit-card";
-import { LowerTierMark } from "@/components/lower-tier";
-import { PlaceGpsMark } from "@/components/gallery/place-filter";
-import { LikesMark, useLikeCounts } from "@/components/viewer-likes/likes-mark";
-import { useRevealed } from "@/hooks/use-revealed";
-import { cn } from "@/lib/utils";
 import type { GalleryFile } from "@/components/gallery/gallery-files";
 import { EditButton, tileId } from "@/components/gallery/kind-mark";
-import { SquareTile } from "@/components/gallery/square-tile";
+import { PlaceGpsMark } from "@/components/gallery/place-filter";
 import {
   type Selection,
   fileData,
   fileName,
   selectProblem,
 } from "@/components/gallery/published-file";
+import { SquareTile } from "@/components/gallery/square-tile";
+import { LowerTierMark } from "@/components/lower-tier";
+import { ReEditMark } from "@/components/re-edit-card";
+import { LikesMark, useLikeCounts } from "@/components/viewer-likes/likes-mark";
+import { useRevealed } from "@/hooks/use-revealed";
+import { cn } from "@/lib/utils";
 import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 interface PhotoGridProps {

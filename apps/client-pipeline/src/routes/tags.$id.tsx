@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { TagCrumbs } from "@/components/sidebar/route-crumbs";
 import { GroupDetailPage } from "@/components/group-detail";
+import { TagCrumbs } from "@/components/sidebar/route-crumbs";
 
 export const Route = createFileRoute("/tags/$id")({
   component: TagDetailPage,

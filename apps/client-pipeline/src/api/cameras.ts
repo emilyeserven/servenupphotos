@@ -2,8 +2,8 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { ScannedPhotos } from "@/api/data";
 import { settingEntries, settingMutations } from "@/api/data-files";
 import { entryId } from "@/api/places";
-import { type PendingSave, photoChanges } from "@/api/scan-changes";
 import { post } from "@/api/request";
+import { type PendingSave, photoChanges } from "@/api/scan-changes";
 
 /**
  * A photo field a camera override can set: the ones read from EXIF, except the photo's size, and

@@ -1,8 +1,8 @@
 import { Minus, Plus } from "lucide-react";
 import type { BulkCrop } from "@/components/gear-pictures/use-bulk-crop";
-import type { GearCrop } from "@portfolio/lib/gear-pictures";
 import { Button } from "@/components/ui/button";
 import { wholeCrop, zoomCrop, zoomOf } from "@/lib/gear-crop";
+import type { GearCrop } from "@portfolio/lib/gear-pictures";
 
 /** How much one press of − or + zooms, as a power of two. */
 const ZOOM_STEP = 0.1;

@@ -1,5 +1,5 @@
-import type { PhotoSet } from "@portfolio/lib/photo-sets";
 import type { SocialPhoto } from "@/api/publish";
+import type { PhotoSet } from "@portfolio/lib/photo-sets";
 
 /** A photo file's ID, or undefined for one without a numeric ID yet. */
 export function photoIdOf(photo: Pick<SocialPhoto, "data">): number | undefined {

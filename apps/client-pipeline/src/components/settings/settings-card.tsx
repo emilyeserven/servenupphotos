@@ -1,5 +1,5 @@
-import { type SectionConfig } from "@/components/settings/sections";
 import { SettingsSecret } from "@/components/settings/secret-field";
+import { type SectionConfig } from "@/components/settings/sections";
 import { SettingsActions } from "@/components/settings/settings-actions";
 import { SettingsFields } from "@/components/settings/settings-fields";
 import {

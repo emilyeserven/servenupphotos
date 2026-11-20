@@ -11,6 +11,7 @@ import { AlbumImportDialog } from "@/components/album-layout/album-import-dialog
 import { CoverPicker } from "@/components/album-layout/cover-picker";
 import { LayoutPreview } from "@/components/album-layout/layout-preview";
 import { LayoutRows } from "@/components/album-layout/layout-rows";
+import { ErrorNote } from "@/components/error-note";
 import { useGroupPhotos } from "@/components/group-photo-grid";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,7 +34,6 @@ import {
 } from "@/lib/album-layout-editor";
 import { albumPhotoOrder, photoId } from "@/lib/album-photo-order";
 import type { CombinedPhoto } from "@/lib/group-photos";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * An album's cover photos and its rows of photos with Markdown text above and below each, as the

@@ -1,6 +1,7 @@
 import { useIsMutating } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { LocalizationType } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
 import { FloatingAction } from "@/components/floating-actions";
 import {
   type LocalizationDrafts as Drafts,
@@ -10,14 +11,13 @@ import {
 import { LocalizationRowForms } from "@/components/localization-row";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
+import { ReadingNote } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ReadingNote } from "@/components/query-result";
 import type { LocalizationRow } from "@/lib/place-seeds";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { ErrorNote } from "@/components/error-note";
 
 /** The Localizations page: how each country, state, city and place is written and said where it is. */
 export function LocalizationsPage() {

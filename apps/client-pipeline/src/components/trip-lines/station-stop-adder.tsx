@@ -1,10 +1,10 @@
-import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 import { TrainFront } from "lucide-react";
 import { useState } from "react";
 import type { TripPoint, TripVisit } from "@/api/trip-lines";
 import { StationSearch } from "@/components/trips/station-search";
 import { Button } from "@/components/ui/button";
 import { stationVisit } from "@/lib/trip-visits";
+import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 
 /** The kinds of station that can be looked for, as the menu lists them. */
 const STATION_MODES = [

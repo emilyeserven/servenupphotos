@@ -1,7 +1,7 @@
 import type { R2ExifPhoto } from "@/api/r2-exif";
+import { ErrorNote } from "@/components/error-note";
 import { EditHistory } from "@/components/r2-exif/edit-history";
 import { MismatchForm } from "@/components/r2-exif/mismatch-form";
-import { ErrorNote } from "@/components/error-note";
 
 /** One photo: its name and Square Thumbnail, the fields that don't match R2, and its edits. */
 export function R2ExifPhotoRow({ photo }: { photo: R2ExifPhoto }) {

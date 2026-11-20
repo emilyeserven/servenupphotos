@@ -1,11 +1,9 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { CameraPicker } from "@portfolio/components/camera-picker";
+import { type OwnFilters, PhotoFilterBar } from "@portfolio/components/photo-filters";
 import { VisualsPicker } from "@portfolio/components/visuals-picker";
 import type { BlockerSource } from "@portfolio/lib/camera-blockers";
-import { type OwnFilters, PhotoFilterBar } from "@portfolio/components/photo-filters";
-import type { Photo } from "@portfolio/lib/photos";
-import { filterPhotos, parseFilters } from "@portfolio/lib/photo-filters";
 import {
   CAMERA_FILTER_KEYS,
   filterByCamera,
@@ -17,6 +15,8 @@ import {
   colorFilterCount,
   parseColorFilters,
 } from "@portfolio/lib/color-search";
+import { filterPhotos, parseFilters } from "@portfolio/lib/photo-filters";
+import type { Photo } from "@portfolio/lib/photos";
 import { parseTextSearch, searchPhotos } from "@portfolio/lib/text-search";
 
 /** Sets some of the camera filters in the URL, keeping everything else. */

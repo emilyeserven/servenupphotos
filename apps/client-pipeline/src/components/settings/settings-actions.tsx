@@ -1,11 +1,11 @@
 import { type UseMutationResult } from "@tanstack/react-query";
 import { type ConnectionTestResult, type SettingsResponse } from "@/api/settings";
 import { ConnectionStatus, toTestState } from "@/components/connection-status";
+import { ErrorNote } from "@/components/error-note";
 import { type SectionConfig } from "@/components/settings/sections";
 import { type FormValues, type SettingsForm } from "@/components/settings/use-settings-form";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
 
 interface SettingsActionsProps {
   form: SettingsForm;

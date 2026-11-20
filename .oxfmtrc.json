@@ -2,6 +2,10 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "printWidth": 100,
   "proseWrap": "never",
+  "sortImports": {
+    "internalPattern": ["@/", "@portfolio/"],
+    "newlinesBetween": false
+  },
   "ignorePatterns": ["**/routeTree.gen.ts", "pnpm-lock.yaml", "**/testdata/**"],
   "overrides": [
     {

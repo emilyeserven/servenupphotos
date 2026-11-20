@@ -1,7 +1,7 @@
 import { XIcon } from "lucide-react";
 import { MoveArrows } from "@/components/move-arrows";
-import { type SavedPhoto, SavedPhotoSquare } from "@/components/saved-photo-picker";
 import { MAX_PICK_NOTE, type Pick } from "@/components/related-photos/picks";
+import { type SavedPhoto, SavedPhotoSquare } from "@/components/saved-photo-picker";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { moved } from "@/lib/album-photo-order";

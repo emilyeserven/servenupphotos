@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import type { TripLine } from "@/api/trip-lines";
 import {
   deleteTripMutation,
   overlappingTrip,
@@ -8,19 +9,18 @@ import {
   tripId,
 } from "@/api/trips";
 import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
-import { dayRange } from "@/components/trips/day-range";
+import { SectionTitle } from "@/components/section-title";
 import { DayLegs } from "@/components/trips/day-legs";
+import { dayRange } from "@/components/trips/day-range";
 import { TripFields } from "@/components/trips/trip-fields";
 import { TripLabels } from "@/components/trips/trip-labels";
-import { labelsProblem } from "@/lib/trip-labels";
+import { TripMap } from "@/components/trips/trip-map";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { TripLine } from "@/api/trip-lines";
-import { TripMap } from "@/components/trips/trip-map";
 import type { TripDay } from "@/lib/trip-days";
+import { labelsProblem } from "@/lib/trip-labels";
 import { datesBetween, legsInOrder } from "@/lib/trip-legs";
 import { count } from "@portfolio/lib/words";
-import { SectionTitle } from "@/components/section-title";
 
 interface TripEditorProps {
   /** The Trip as saved, or a new one with no ID yet. */

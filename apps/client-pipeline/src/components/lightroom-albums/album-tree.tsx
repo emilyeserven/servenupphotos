@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { AlbumBoard } from "@/components/lightroom-albums/album-board";
 import { AddAlbumButton } from "@/components/lightroom-albums/add-album";
+import { AlbumBoard } from "@/components/lightroom-albums/album-board";
 import { AlbumTree, FolderButtons } from "@/components/lightroom-albums/folder-tree";
 import { Segmented } from "@/components/lightroom-albums/segmented";
 import { SearchBox } from "@/components/search-box";

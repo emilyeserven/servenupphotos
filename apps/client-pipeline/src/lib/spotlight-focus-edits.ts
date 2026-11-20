@@ -1,7 +1,7 @@
 import type { SocialPhoto } from "@/api/publish";
+import { SPOTLIGHT_ZONE_FOCUS } from "@/lib/photo-fields";
 import type { FieldChange, LocalEdit } from "@/stores/local-edits";
 import type { SpotlightFocus, ZoneFocus } from "@portfolio/lib/photos";
-import { SPOTLIGHT_ZONE_FOCUS } from "@/lib/photo-fields";
 import { isObject } from "@portfolio/lib/values";
 
 /** A point of a photo, as percentages of its width and height from its top left corner. */

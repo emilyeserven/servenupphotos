@@ -1,8 +1,8 @@
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ErrorNote } from "@/components/error-note";
 
 interface NewEntryFormProps {
   /** The name box's label, such as "New book's name". */

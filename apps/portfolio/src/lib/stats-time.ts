@@ -1,3 +1,4 @@
+import type { Photo } from "@portfolio/lib/photos";
 import {
   type Bucket,
   bucketGroup,
@@ -5,7 +6,6 @@ import {
   type StatGroup,
   tally,
 } from "@portfolio/lib/stat-groups";
-import type { Photo } from "@portfolio/lib/photos";
 import {
   type Daypart,
   DAYPARTS,

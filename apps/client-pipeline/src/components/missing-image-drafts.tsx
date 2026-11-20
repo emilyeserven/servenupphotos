@@ -1,8 +1,8 @@
 import { ArchiveXIcon } from "lucide-react";
 import type { InFlightImages, PublishedFile } from "@/api/photos";
 import { CollapsiblePanel } from "@/components/collapsible-panel";
-import { DraftTile } from "@/components/undecided-photos";
 import { Button } from "@/components/ui/button";
+import { DraftTile } from "@/components/undecided-photos";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
 import { count } from "@portfolio/lib/words";
 
