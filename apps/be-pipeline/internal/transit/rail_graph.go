@@ -41,11 +41,13 @@ type railLine struct {
 }
 
 // railEdge joins a node to the next one along line, or to a station of the
-// same name on another line when line is changeEdge.
+// same name on another line when line is changeEdge; fast on high-speed
+// track.
 type railEdge struct {
 	to     int
 	meters float64
 	line   int
+	fast   bool
 }
 
 // railStation is a station on a line, at the node of that line nearest it.
@@ -81,7 +83,7 @@ func newRailNet(sections, stations []mlitFeature) *railNet {
 	for _, f := range sections {
 		line := n.lineID(ids, f)
 		for _, part := range f.Geometry.lines() {
-			lineNodes[line] = append(lineNodes[line], n.addPart(part, line)...)
+			lineNodes[line] = append(lineNodes[line], n.addPart(part, line, f.Properties.HighSpeed)...)
 		}
 	}
 	for _, f := range stations {
@@ -109,14 +111,15 @@ func (n *railNet) lineID(ids map[[2]string]int, f mlitFeature) int {
 	return len(n.lines) - 1
 }
 
-// addPart adds part's points as nodes joined along line, and says which.
-func (n *railNet) addPart(part [][2]float64, line int) []int {
+// addPart adds part's points as nodes joined along line, on high-speed track
+// when fast, and says which.
+func (n *railNet) addPart(part [][2]float64, line int, fast bool) []int {
 	nodes := make([]int, 0, len(part))
 	prev := -1
 	for _, p := range part {
 		node := n.node(p)
 		if prev >= 0 && prev != node {
-			n.join(prev, node, line)
+			n.join(prev, node, line, fast)
 		}
 		nodes = append(nodes, node)
 		prev = node
@@ -140,10 +143,10 @@ func (n *railNet) node(p [2]float64) int {
 }
 
 // join adds the edge between a and b, both ways.
-func (n *railNet) join(a, b, line int) {
+func (n *railNet) join(a, b, line int, fast bool) {
 	d := meters(n.points[a], n.points[b])
-	n.edges[a] = append(n.edges[a], railEdge{b, d, line})
-	n.edges[b] = append(n.edges[b], railEdge{a, d, line})
+	n.edges[a] = append(n.edges[a], railEdge{b, d, line, fast})
+	n.edges[b] = append(n.edges[b], railEdge{a, d, line, fast})
 }
 
 // joinStations joins each two stations of one name on different lines within
@@ -157,7 +160,7 @@ func (n *railNet) joinStations() {
 		for i, a := range same {
 			for _, b := range same[i+1:] {
 				if a.line != b.line && a.node != b.node && meters(n.points[a.node], n.points[b.node]) <= changeWalkM {
-					n.join(a.node, b.node, changeEdge)
+					n.join(a.node, b.node, changeEdge, false)
 				}
 			}
 		}
@@ -319,7 +322,7 @@ func (n *railNet) search(from, to [2]float64, allowed map[int]bool, starts, goal
 // a changeEdge; false when offLine is 0.
 func (n *railNet) step(prev int, e railEdge, allowed map[int]bool, offLine float64) (railState, float64, bool) {
 	if allows(allowed, e.line) || n.unnamed(e.line) {
-		return railState{e.to, e.line}, e.meters*n.speedFactor(e.line) + n.changeCost(prev, e.line), true
+		return railState{e.to, e.line}, e.meters*speedFactor(e) + n.changeCost(prev, e.line), true
 	}
 	if offLine > 0 {
 		return railState{e.to, changeEdge}, e.meters * offLine, true
@@ -362,10 +365,12 @@ func (s *railSearch) reach(next, prev railState, dist float64) {
 // is a little shorter once a change of line is counted.
 const highSpeedFactor = 0.6
 
-// speedFactor is how much of each meter along line a route counts: less on
-// a high-speed line.
-func (n *railNet) speedFactor(line int) float64 {
-	if line >= 0 && n.lines[line].kind == highSpeedKind {
+// speedFactor is how much of each meter along e a route counts: less on
+// high-speed track. It goes by the track, not the line, since one line, such
+// as the Gyeongbu Line KTX, can run along both the high-speed line and the
+// older one beside it.
+func speedFactor(e railEdge) float64 {
+	if e.fast {
 		return highSpeedFactor
 	}
 	return 1

@@ -68,6 +68,10 @@ type mlitFeature struct {
 		// Colour is the line's color as a hex code, such as "#da291c", from
 		// OpenStreetMap's route relations; "" on Japan's rail map.
 		Colour string `json:"colour,omitempty"`
+		// HighSpeed is whether this section is high-speed track, which a
+		// route prefers (see speedFactor), even on a line that also runs
+		// along slower track, as the Gyeongbu Line KTX does.
+		HighSpeed bool `json:"highspeed,omitempty"`
 	} `json:"properties"`
 	Geometry tlGeometry `json:"geometry"`
 }
