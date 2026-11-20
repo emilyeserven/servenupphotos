@@ -134,3 +134,30 @@ func TestOSMBusLines(t *testing.T) {
 		t.Errorf("searched = %q", searched)
 	}
 }
+
+func TestBusTrackFollowsUnjoinedRoads(t *testing.T) {
+	// Three roads east, listed in order but the middle one drawn backwards,
+	// with a gap of a few meters before the last, as a route missing a short
+	// road is.
+	m := busMap{
+		Ways: [][][2]float64{
+			{{127.000, 37.5}, {127.001, 37.5}},
+			{{127.002, 37.5}, {127.001, 37.5}},
+			{{127.00205, 37.5}, {127.003, 37.5}},
+		},
+		Routes: []busRoute{{ID: 1, Ways: []int{0, 1, 2}}},
+	}
+	n := newBusNet(m, 0)
+	from, to := [2]float64{127.0001, 37.5001}, [2]float64{127.0029, 37.5001}
+	path, err := n.track(m.Routes[0], from, to)
+	if err != nil || len(path) != 7 || path[1] != m.Ways[0][0] || path[5] != m.Ways[2][1] {
+		t.Errorf("east = %v, %v", path, err)
+	}
+	back, err := n.track(m.Routes[0], to, from)
+	if err != nil || len(back) != 7 || back[1] != m.Ways[2][1] {
+		t.Errorf("west = %v, %v", back, err)
+	}
+	if _, err := n.track(m.Routes[0], from, [2]float64{127.1, 37.5}); !errors.Is(err, ErrNoTrack) || !strings.Contains(err.Error(), "the last 8.") {
+		t.Errorf("far end: err = %v", err)
+	}
+}

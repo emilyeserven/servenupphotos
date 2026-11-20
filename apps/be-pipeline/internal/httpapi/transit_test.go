@@ -3,6 +3,7 @@ package httpapi
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -338,5 +339,15 @@ func TestTransitSlow(t *testing.T) {
 	transitMux(&fakeFinder{err: slow}).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=subway&from=1,2&to=3,4", nil))
 	if rec.Code != http.StatusServiceUnavailable || !strings.Contains(rec.Body.String(), "the last, maps.mail.ru, took too long to answer). Try again in a minute.") {
 		t.Errorf("slow: %d %s", rec.Code, rec.Body)
+	}
+}
+
+func TestNoTrackMessage(t *testing.T) {
+	far := fmt.Errorf("%w: the first spot is 2.4 km from the route's mapped roads", transit.ErrNoTrack)
+	if got := noTrackMessage(far); !strings.Contains(got, "doesn't join those two spots: the first spot is 2.4 km") {
+		t.Errorf("far = %q", got)
+	}
+	if got := noTrackMessage(transit.ErrNoTrack); got != "That line's mapped track doesn't join those two spots. Try another line or direction." {
+		t.Errorf("plain = %q", got)
 	}
 }

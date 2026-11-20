@@ -130,7 +130,7 @@ function HopRow({ hop, ends, onRide, onName }: HopRowProps) {
           <NamedLine onName={(name) => (onName(name), setFinding(false))} />
         </>
       )}
-      <MapDownloads active={showsDownloads(lines, mutation)} />
+      <MapDownloads active={showsDownloads(lines, mutation)} failure={errorOf(lines, mutation)} />
       <SearchedNote ask={found.lookup} source={found.source} finding={finding} lines={lines} />
       <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines, found.source)} />
     </div>

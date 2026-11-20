@@ -50,6 +50,11 @@ function showsDownloads(
   return isBusy(lines, ride) || (lines.error ?? ride.error) !== null;
 }
 
+/** Why finding lines or riding one failed, if either did. */
+function failureOf(lines: { error: Error | null }, ride: { error: Error | null }): Error | null {
+  return lines.error ?? ride.error;
+}
+
 /** Whether a look-up is running. */
 function isBusy(lines: { isFetching: boolean }, ride: { isPending: boolean }): boolean {
   return lines.isFetching || ride.isPending;
@@ -70,9 +75,9 @@ export function LineFinder(props: LineFinderProps) {
         <ClearButton line={props.line} onClear={() => props.onLine()} />
       </div>
       {finding && <LineChoices lines={lines.data} disabled={busy} onPick={ride.mutate} />}
-      <MapDownloads active={showsDownloads(lines, ride)} />
+      <MapDownloads active={showsDownloads(lines, ride)} failure={failureOf(lines, ride)} />
       <SearchedNote ask={ask} source={source} finding={finding} lines={lines} />
-      <SaveNote error={lines.error ?? ride.error} why={routeNote(finding, lines.data)} />
+      <SaveNote error={failureOf(lines, ride)} why={routeNote(finding, lines.data)} />
     </div>
   );
 }

@@ -17,11 +17,27 @@ import {
  * each with its stages, what it's doing now, a progress bar and where the file comes from, so a
  * first look-up on a map shows what it's waiting for from the start. Nothing while none is.
  */
-export function MapDownloads({ active }: { active: boolean }) {
+export function MapDownloads({ active, failure }: MapDownloadsProps) {
   const { data, error } = useQuery(transitDownloadsQuery(active));
   if (!active) return null;
   if (error) return <p className="text-destructive text-xs">{downloadsError(error)}</p>;
-  return <DownloadList list={data ?? []} />;
+  return <DownloadList list={(data ?? []).filter((d) => concerns(d, failure))} />;
+}
+
+interface MapDownloadsProps {
+  /** Whether a look-up is running or failed, so the maps it waits for are worth showing. */
+  active: boolean;
+  /** Why the look-up failed, if it did. */
+  failure?: Error | null;
+}
+
+/**
+ * Whether d is about this look-up: any map still loading is, but a failed one only when the
+ * look-up failed naming it, so another map's failure, such as a different country's from a minute
+ * ago, isn't shown under this one.
+ */
+function concerns(d: MapDownload, failure: Error | null | undefined): boolean {
+  return d.step !== "failed" || Boolean(failure?.message.includes(d.map));
 }
 
 /** A card for each map in list; nothing while it's empty. */
