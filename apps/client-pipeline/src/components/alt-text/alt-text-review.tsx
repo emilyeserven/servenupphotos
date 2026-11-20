@@ -6,12 +6,8 @@ import {
   applyAltTextMutation,
 } from "@/api/alt-text";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
-import {
-  SaveReviewed,
-  UnknownPhotos,
-  pickedTitle,
-  useReviewedSave,
-} from "@/components/bulk-tagging/review-parts";
+import { SaveReviewed, pickedTitle, useReviewedSave } from "@/components/bulk-tagging/review-parts";
+import { UnknownPhotos } from "@/components/paste-answer";
 import { AltTextLength } from "@/components/photo-alt-text-field";
 import { Textarea } from "@/components/ui/textarea";
 import { ALT_TEXT_MAX, type AltTextDraft, altTextsToSave, startingDrafts } from "@/lib/alt-text";

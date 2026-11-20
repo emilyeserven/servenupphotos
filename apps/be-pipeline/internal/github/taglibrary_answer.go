@@ -145,7 +145,7 @@ type libraryLookup struct {
 func newLibraryLookup(l *tagLibrarian, scan baseURLScan) libraryLookup {
 	out := libraryLookup{tags: newTagLookup(l.tags), photos: map[string]string{}}
 	for p, name := range photoNames(scan) {
-		out.photos[name], out.photos[name+".json"] = p, p
+		out.photos[matchName(name)] = p
 	}
 	return out
 }
@@ -166,7 +166,7 @@ func (lk libraryLookup) newID(name string) string {
 // it's no photo, so the review says so.
 func (lk libraryLookup) photo(name string) string {
 	clean := strings.TrimSpace(name)
-	if p, ok := lk.photos[clean]; ok {
+	if p, ok := lk.photos[matchName(clean)]; ok {
 		return p
 	}
 	return clean

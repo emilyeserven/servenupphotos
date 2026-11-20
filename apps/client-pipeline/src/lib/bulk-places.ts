@@ -4,6 +4,7 @@ import { type PhotoPlace, type Place, entryId } from "@/api/places";
 import type { PastedPhotoPlace } from "@/lib/bulk-place-prompt";
 import { type MapSearch, googleMapsUrl, placeSearch } from "@/lib/google-maps";
 import { findPlace, newPlace } from "@/lib/location-prompt";
+import { matchName } from "@/lib/pasted-json";
 import { gpsText, writtenPosition } from "@/lib/place-gps";
 import { placeCity, withParent } from "@/lib/place-hierarchy";
 
@@ -93,12 +94,12 @@ function photoPlan(photo: BulkTagPhoto, pasted: PastedPhotoPlace | undefined, al
   return place ? { ...none, ...placed(photo, pasted?.relation ?? "", place, all) } : none;
 }
 
-/** The photo names the answer gives that aren't any of the photos, each once, as it wrote them. */
+/** The photo names the answer gives that aren't any of the photos (by `matchName`), each once, as it wrote them. */
 export function unpickedNames(photos: BulkTagPhoto[], answer: PastedPhotoPlace[]): string[] {
-  const names = new Set(photos.map((photo) => photo.name.toLowerCase()));
+  const names = new Set(photos.map((photo) => matchName(photo.name)));
   const missing = answer
     .map((pasted) => pasted.photo)
-    .filter((name) => !names.has(name.toLowerCase()));
+    .filter((name) => !names.has(matchName(name)));
   return [...new Set(missing)];
 }
 
@@ -115,11 +116,11 @@ export function reviewBulkPlaces(
 ): BulkPlacesReview {
   const made = newPlaces(answer, places);
   const all = [...places, ...made];
-  const byName = new Map(answer.map((pasted) => [pasted.photo.toLowerCase(), pasted]));
+  const byName = new Map(answer.map((pasted) => [matchName(pasted.photo), pasted]));
   const extra = others.filter((photo) => !picked.some((p) => p.path === photo.path));
   const photos = [...picked, ...extra];
   return {
-    plans: photos.map((photo) => photoPlan(photo, byName.get(photo.name.toLowerCase()), all)),
+    plans: photos.map((photo) => photoPlan(photo, byName.get(matchName(photo.name)), all)),
     newPlaces: made,
     unknown: unpickedNames(photos, answer),
     others: extra,

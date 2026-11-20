@@ -1,5 +1,6 @@
 import type { ContactSheet } from "@/api/contact-sheets";
-import { type AutogroupPhoto, answerObject, photoFinder } from "@/lib/compare-autogroup";
+import { type AutogroupPhoto, photoFinder } from "@/lib/compare-autogroup";
+import { readPastedList } from "@/lib/pasted-json";
 import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { titleOf } from "@/lib/drafts";
 import { FACES } from "@/lib/photo-fields";
@@ -71,10 +72,8 @@ interface RawFlag {
 }
 
 /** The answer's photos that have a name. */
-function rawFlags(parsed: unknown): RawFlag[] {
-  const photos = (parsed as { photos?: unknown } | null)?.photos;
-  if (!Array.isArray(photos)) throw new Error('The answer\'s JSON has no "photos" list.');
-  return photos
+function rawFlags(answer: string): RawFlag[] {
+  return readPastedList(answer, "photos")
     .map((raw) => (raw ?? {}) as Record<string, unknown>)
     .map((raw) => ({
       photo: textOf(raw.photo),
@@ -105,7 +104,7 @@ export function readPixelationAnswer(answer: string, photos: AutogroupPhoto[]): 
   const seen = new Set<string>();
   const unknown = new Set<string>();
   const flagged: PixelationFlag[] = [];
-  for (const raw of rawFlags(answerObject(answer))) {
+  for (const raw of rawFlags(answer)) {
     const entry = find(raw.photo);
     if (!entry) unknown.add(raw.photo);
     else if (!seen.has(entry.key)) {

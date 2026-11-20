@@ -164,7 +164,7 @@ type genrePlanner struct {
 func (g *genrePlanner) plan(p bulkPhoto, answer genreAnswer) BulkTagPhotoPlan {
 	var names []string
 	for _, a := range answer.Photos {
-		if strings.TrimSpace(a.Photo) == p.name {
+		if sameName(a.Photo, p.name) {
 			names = append(names, a.Genres...)
 		}
 	}

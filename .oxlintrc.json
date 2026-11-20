@@ -20,5 +20,33 @@
     "servenup/empty-note": "error",
     "servenup/json-request": "error"
   },
-  "ignorePatterns": ["**/dist/**", "**/routeTree.gen.ts"]
+  "ignorePatterns": ["**/dist/**", "**/routeTree.gen.ts"],
+  "overrides": [
+    {
+      "files": ["apps/client-pipeline/src/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "@/lib/pasted-json",
+                "importNames": ["parsePastedJson"],
+                "message": "Read a pasted LLM answer with readPastedObject or readPastedList, so every answer box finds the JSON and says the same thing when it can't (CLAUDE.md, Pasted LLM answers)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "apps/client-pipeline/src/api/viewer-likes.ts",
+        "apps/client-pipeline/src/lib/pasted-json.test.ts"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ]
 }

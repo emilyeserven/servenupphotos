@@ -2,7 +2,7 @@ import { type Place, type PhotoPlace, entryId, RELATIONS } from "@/api/places";
 import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
 import { gpsText, writtenPosition } from "@/lib/place-gps";
 import { placeCity, withParent } from "@/lib/place-hierarchy";
-import { parsePastedJson } from "@/lib/pasted-json";
+import { readPastedObject } from "@/lib/pasted-json";
 import { textOf } from "@portfolio/lib/values";
 
 /** What the location prompt tells the LLM about: what's already known of where the photo was taken. */
@@ -128,19 +128,6 @@ export interface PastedLocation {
   reasoning: string;
 }
 
-/** The JSON object in the answer, from its first { to its last }, which skips a code fence or words around it. */
-export function jsonObject(text: string): Record<string, unknown> | null {
-  const json = text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1);
-  try {
-    const value: unknown = parsePastedJson(json);
-    return typeof value === "object" && !Array.isArray(value)
-      ? (value as Record<string, unknown>)
-      : null;
-  } catch {
-    return null;
-  }
-}
-
 /** A coordinate the LLM gave as a number or as text, rounded to six places (about 10cm), or NaN. */
 function coordinate(value: unknown): number {
   const number = typeof value === "number" || typeof value === "string" ? Number(value) : NaN;
@@ -165,10 +152,9 @@ function answerRelation(value: unknown): string {
   return (RELATIONS as readonly string[]).includes(relation) ? relation : "";
 }
 
-/** The location in the LLM's answer, or null when it has no JSON object to read. */
-export function parseLocationAnswer(text: string): PastedLocation | null {
-  const answer = jsonObject(text);
-  return answer && readLocation(answer);
+/** The location in the LLM's answer. Throws a sentence a user can read when it has no JSON object to read. */
+export function parseLocationAnswer(text: string): PastedLocation {
+  return readLocation(readPastedObject(text));
 }
 
 /** The location in one JSON object of an LLM's answer, with "" for each field it leaves out. */

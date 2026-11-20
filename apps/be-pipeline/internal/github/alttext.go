@@ -90,7 +90,7 @@ func (a altTextAnswer) names() []string {
 // when it has none.
 func (a altTextAnswer) textFor(name string) string {
 	for _, p := range a.Photos {
-		if strings.TrimSpace(p.Photo) == name && strings.TrimSpace(p.AltText) != "" {
+		if sameName(p.Photo, name) && strings.TrimSpace(p.AltText) != "" {
 			return strings.TrimSpace(p.AltText)
 		}
 	}

@@ -35,3 +35,14 @@ func TestParseLLMAnswerNotJSON(t *testing.T) {
 		t.Error("parseLLMAnswer read an answer that isn't JSON")
 	}
 }
+
+func TestMatchName(t *testing.T) {
+	for _, name := range []string{"img_1", " IMG_1 ", "IMG_1.JSON", `"img_1.json"`, "“IMG_1”", "'img_1'"} {
+		if got := matchName(name); got != "img_1" {
+			t.Errorf("matchName(%q) = %q, want img_1", name, got)
+		}
+	}
+	if sameName("img_10", "img_1") {
+		t.Error("sameName matched img_10 to img_1")
+	}
+}

@@ -1,5 +1,5 @@
 import type { AlbumRow, Group } from "@/api/organize";
-import { parsePastedJson } from "@/lib/pasted-json";
+import { readPastedObject } from "@/lib/pasted-json";
 import { isObject } from "@portfolio/lib/values";
 
 /** The most cover photos an album can have. */
@@ -99,8 +99,6 @@ export function readAlbumImport(text: string, album: Group, inAlbum: Set<number>
 /** The parsed album file, refusing text that isn't one. */
 function albumFile(text: string): Record<string, unknown> {
   const file = parsed(text);
-  if (!isObject(file))
-    throw new ImportError("An album file is a JSON object, with { … } around it.");
   checkFormat(file);
   if (file.covers === undefined && file.layout === undefined) {
     throw new ImportError("It has no covers or layout to use.");
@@ -108,11 +106,12 @@ function albumFile(text: string): Record<string, unknown> {
   return file;
 }
 
-function parsed(text: string): unknown {
+/** The JSON object in the pasted text, which may be inside a code block or have words around it. */
+function parsed(text: string): Record<string, unknown> {
   try {
-    return parsePastedJson(text);
+    return readPastedObject(text);
   } catch (error) {
-    throw new ImportError(`That isn't JSON: ${(error as Error).message}`);
+    throw new ImportError((error as Error).message);
   }
 }
 

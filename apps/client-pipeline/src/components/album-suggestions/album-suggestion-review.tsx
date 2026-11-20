@@ -5,12 +5,8 @@ import {
   type AlbumSuggestionsPreview,
   applyAlbumSuggestionsMutation,
 } from "@/api/album-suggestions";
-import {
-  SaveReviewed,
-  UnknownPhotos,
-  useReviewedSave,
-} from "@/components/bulk-tagging/review-parts";
-
+import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
+import { UnknownPhotos } from "@/components/paste-answer";
 import { type AlbumChoices, albumSuggestionsToSave } from "@/lib/album-suggestions";
 import { NO_CHOICES, photoTagKey, toggled } from "@/lib/bulk-tags";
 import { promptImageUrl } from "@/lib/tag-prompt";

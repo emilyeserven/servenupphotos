@@ -1,7 +1,8 @@
 import { useId, useMemo, useState } from "react";
 import { AutogroupReview } from "@/components/compare/autogroup-review";
 import { ReadProblems } from "@/components/compare/compare-group-list";
-import { CopyPromptButton, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
+import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
+import { PasteAnswer } from "@/components/paste-answer";
 import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
 import { PhotoScopeToggle } from "@/components/photo-scope-toggle";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
@@ -21,7 +22,6 @@ import { readAutogroupAnswer } from "@/lib/compare-autogroup-answer";
 import type { ComparePhoto } from "@/lib/compare-groups";
 import { ReadingNote } from "@/components/query-result";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /**
@@ -104,21 +104,12 @@ interface AutogroupPromptProps {
 /** The photos asked about, their prompt, the box to paste the answer into, and the review of it. */
 function AutogroupPrompt({ ask, all }: AutogroupPromptProps) {
   // Each review starts fresh, so changes left out of the last one aren't left out of the next.
-  const { typed, setTyped, answer, error, reviews, review } = usePastedAnswer((text) =>
-    readAutogroupAnswer(text, ask, all),
-  );
+  const pasted = usePastedAnswer((text) => readAutogroupAnswer(text, ask, all));
   return (
     <div className="flex flex-col gap-4">
       <CopyAutogroupPrompt ask={ask} />
-      <PasteAnswer
-        value={typed}
-        onChange={setTyped}
-        pending={false}
-        label="Review the changes"
-        onReview={review}
-      />
-      <ErrorNote error={error} />
-      {answer && <AutogroupReview key={reviews} answer={answer} />}
+      <PasteAnswer pasted={pasted} label="Review the changes" />
+      {pasted.answer && <AutogroupReview key={pasted.reviews} answer={pasted.answer} />}
       <PhotoTiles photos={ask.loose} />
     </div>
   );

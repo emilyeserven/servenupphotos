@@ -4,7 +4,7 @@ import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
 import type { ContactSheet, ContactSheetPhoto } from "@/api/contact-sheets";
 import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { promptImageUrl } from "@/lib/tag-prompt";
-import { parsePastedJson } from "@/lib/pasted-json";
+import { nameFinder } from "@/lib/pasted-json";
 
 /** Which photos Autogroup asks about: every photo, or only the drafts. */
 export type AutogroupScope = "all" | "drafts";
@@ -263,35 +263,9 @@ ${answerShape(groups)}
 - Leave a list empty when there's nothing for it.`;
 }
 
-/** The JSON object in the answer, from its first `{` to its last `}`, so a code fence or a sentence around it is fine. */
-export function answerObject(answer: string): unknown {
-  const start = answer.indexOf("{");
-  const end = answer.lastIndexOf("}");
-  if (start === -1 || end <= start) throw new Error("The answer has no JSON object in it.");
-  try {
-    return parsePastedJson(answer.slice(start, end + 1));
-  } catch {
-    throw new Error("The answer's JSON couldn't be read. Paste the whole answer, from { to }.");
-  }
-}
-
-/** A name as the answer gave it, for looking up: no quotes, `.json` ending or case. */
-export function lookupName(name: string): string {
-  return name
-    .trim()
-    .replace(/^["']|["']$/g, "")
-    .replace(/\.json$/i, "")
-    .toLowerCase();
-}
-
-/** Looks a photo up by the name the answer gave, its JSON file's name or its original file's name. */
+/** Looks a photo up by the name the answer gave, its JSON file's name or its original file's name, with `matchName`. */
 export function photoFinder(
   photos: AutogroupPhoto[],
 ): (name: string) => AutogroupPhoto | undefined {
-  const byKey = new Map<string, AutogroupPhoto>();
-  for (const entry of photos) {
-    byKey.set(entry.key.toLowerCase(), entry);
-    byKey.set(entry.photo.file.photoName.toLowerCase(), entry);
-  }
-  return (name) => byKey.get(lookupName(name));
+  return nameFinder(photos, (entry) => [entry.key, entry.photo.file.photoName]);
 }

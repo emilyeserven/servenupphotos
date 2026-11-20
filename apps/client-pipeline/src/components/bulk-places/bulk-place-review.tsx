@@ -2,12 +2,8 @@ import { ExternalLinkIcon } from "lucide-react";
 import { useState } from "react";
 import { applyBulkPlacesMutation } from "@/api/bulk-places";
 import { type Place, placesQuery } from "@/api/places";
-import {
-  SaveReviewed,
-  UnknownPhotos,
-  useReviewedSave,
-} from "@/components/bulk-tagging/review-parts";
-
+import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
+import { UnknownPhotos } from "@/components/paste-answer";
 import { outlineAsks, PlaceOutlines } from "@/components/bulk-places/place-outlines";
 import { NoPlaceFound } from "@/components/bulk-places/no-place-found";
 import {

@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import {
   type AltTextPick,
   pickAltTextPhotosMutation,
@@ -8,15 +7,12 @@ import {
 import { placesQuery, readEntries } from "@/api/places";
 import { AltTextReview } from "@/components/alt-text/alt-text-review";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
-import {
-  CopyPromptButton,
-  PasteAnswer,
-  PickBar,
-  usePhotoPick,
-} from "@/components/bulk-tagging/pick-controls";
+import { CopyPromptButton, PickBar, usePhotoPick } from "@/components/bulk-tagging/pick-controls";
+import { PasteAnswer } from "@/components/paste-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { altTextPrompt } from "@/lib/alt-text-prompt";
 import { ErrorNote } from "@/components/error-note";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 
 /** How many photos the Alt Text page picks until another number is chosen. */
 const defaultAltTextCount = 20;
@@ -50,10 +46,10 @@ export function AltTextCard() {
 
 /** The picked photos, their prompt, the box to paste the answer into, and its review. */
 function PickedAltText({ pick }: { pick: AltTextPick }) {
-  const [answer, setAnswer] = useState("");
   const places = useQuery(placesQuery);
   const preview = useMutation(previewAltTextMutation);
   const paths = pick.photos.map((photo) => photo.path);
+  const pasted = usePastedAnswer((answer) => preview.mutateAsync({ paths, answer }));
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
@@ -65,17 +61,8 @@ function PickedAltText({ pick }: { pick: AltTextPick }) {
         disabled={false}
         prompt={() => altTextPrompt(pick.photos, readEntries(places.data?.places))}
       />
-      <PasteAnswer
-        value={answer}
-        onChange={setAnswer}
-        pending={preview.isPending}
-        label="Review the alt text"
-        onReview={() => preview.mutate({ paths, answer })}
-      />
-      <ErrorNote error={preview.error} />
-      {preview.data && (
-        <AltTextReview key={JSON.stringify(preview.data)} preview={preview.data} pick={pick} />
-      )}
+      <PasteAnswer pasted={pasted} label="Review the alt text" />
+      {pasted.answer && <AltTextReview key={pasted.reviews} preview={pasted.answer} pick={pick} />}
     </div>
   );
 }
