@@ -142,7 +142,9 @@ lists each change with a box to leave it out:
   group's when it gives none), keeping its winners.
 - A new group, or photos to **add to the group there is**, with any photo it moves out of another group.
 
-Photo and group names that aren't in the prompt are listed and skipped, a photo named twice stays in its first group,
+A photo or group the answer names that isn't in the prompt is still found among every photo (leaving out
+unselected ones) and every compare group, so an answer written for another prompt still applies; names that aren't any
+photo's or group's are listed and skipped, a photo named twice stays in its first group,
 a group left with fewer than 2 photos, counting the ones in it already, is dropped, a group is combined at most once,
 and a group being combined isn't also removed. **Make … changes to compare groups** makes the removals, then the
 combinations, then the new groups and additions, so a photo the answer moves out of a removed group still ends up where

@@ -57,8 +57,10 @@ export interface BulkTagNew {
 export interface BulkTagsPreview {
   photos: BulkTagPhotoPlan[];
   newTags: BulkTagNew[];
-  /** Photos the answer names that aren't any of the picked ones. */
+  /** Photos the answer names that aren't any photo, which are skipped. */
   unknown: string[];
+  /** Photos the answer names that weren't picked, found among every photo; the review shows them too. */
+  others: BulkTagPhoto[];
 }
 
 /** What Bulk Tagging saves once reviewed: the new tags to make and the tags to add to each photo. */

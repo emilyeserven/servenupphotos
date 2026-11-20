@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"slices"
 	"strings"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
@@ -113,8 +112,12 @@ type AltTextSuggestion struct {
 // picked photo gets.
 type AltTextPreview struct {
 	Photos []AltTextSuggestion `json:"photos"`
-	// Unknown is the photos in the answer that aren't any of the picked ones.
+	// Unknown is the photos in the answer that aren't any photo file's, which
+	// are skipped.
 	Unknown []string `json:"unknown"`
+	// Others is the photos in the answer that weren't picked, found among
+	// every photo, which the review shows after the picked ones.
+	Others []BulkTagPhoto `json:"others"`
 }
 
 // PreviewAltText reads answer, the LLM's JSON for the photos at paths (as
@@ -132,11 +135,12 @@ func (c *Client) PreviewAltText(ctx context.Context, gh settings.GitHub, paths [
 	if perr != nil {
 		return AltTextPreview{}, perr
 	}
-	photos, perr := picked(scan, paths)
+	pickedPhotos, perr := picked(scan, paths)
 	if perr != nil {
 		return AltTextPreview{}, perr
 	}
-	preview := AltTextPreview{Photos: []AltTextSuggestion{}, Unknown: unknownPhotos(photos, parsed.names())}
+	photos, unknown := answeredPhotos(scan, pickedPhotos, parsed.names())
+	preview := AltTextPreview{Photos: []AltTextSuggestion{}, Unknown: unknown, Others: answeredExtra(photos, len(pickedPhotos))}
 	for _, p := range photos {
 		preview.Photos = append(preview.Photos, AltTextSuggestion{
 			Path: p.file.path, Name: p.name, AltText: parsed.textFor(p.name), Current: photoAltText(p.file.content),
@@ -244,15 +248,4 @@ func checkAltText(path, text string) *PublishError {
 		return publishErr(http.StatusBadRequest, "%s's alt text is %d characters, more than %d. Shorten it, so nothing was changed.", path, n, maxAltTextLength)
 	}
 	return nil
-}
-
-// unknownPhotos is the names in an answer that aren't any of photos.
-func unknownPhotos(photos []bulkPhoto, names []string) []string {
-	out := []string{}
-	for _, name := range names {
-		if !slices.ContainsFunc(photos, func(p bulkPhoto) bool { return p.name == strings.TrimSpace(name) }) {
-			out = append(out, name)
-		}
-	}
-	return out
 }
