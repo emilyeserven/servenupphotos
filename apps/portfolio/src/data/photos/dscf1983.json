@@ -3,7 +3,7 @@
   "comment": null,
   "id": 578,
   "altText": null,
-  "notes": "Shows street food at a rainy night market; 'street-food' was removed as a tag, since only 2 photos have it.",
+  "notes": "Shows street food at a rainy night market; 'street-food' was removed as a tag, since only 2 photos have it.\n\nShows street food, now tagged 'street-food'.",
   "file": "DSCF1983.jpg",
   "addedDate": "2026-11-15T20:51:59Z",
   "camera": "Fujifilm X-T5",
@@ -50,7 +50,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["market", "rain", "umbrellas", "reflections", "pedestrians", "neon", "night"],
+  "tags": [
+    "market",
+    "rain",
+    "umbrellas",
+    "reflections",
+    "pedestrians",
+    "neon",
+    "night",
+    "street-food"
+  ],
   "genres": ["street"],
   "places": [
     {

@@ -3,6 +3,7 @@ import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { type Group, groupLabel, organizeQuery, setAlbumOrderMutation } from "@/api/organize";
 import { Button } from "@/components/ui/button";
 import { movedAlbumOrder } from "@/lib/album-order";
+import { ErrorNote } from "@/components/error-note";
 
 interface AlbumMoveButtonsProps {
   album: Group;
@@ -49,7 +50,7 @@ function MoveButtons({ album, albums }: Required<AlbumMoveButtonsProps>) {
       >
         <ArrowDownIcon aria-hidden />
       </Button>
-      {save.isError && <span className="text-destructive text-xs">{save.error.message}</span>}
+      <ErrorNote error={save.error} className="text-xs" />
     </span>
   );
 }

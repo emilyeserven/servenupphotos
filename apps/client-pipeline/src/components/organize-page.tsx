@@ -55,6 +55,7 @@ import {
 } from "@/components/ui/table";
 import { currentPhotos, photoCounts } from "@/lib/group-photos";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 
 const PAGES: Record<GroupKind, { title: string; description: string }> = {
   albums: {
@@ -286,7 +287,7 @@ function NewGroupForm({
         </form.Field>
       )}
 
-      {create.isError && <p className="text-destructive text-sm">{create.error.message}</p>}
+      <ErrorNote error={create.error} />
 
       <form.Subscribe selector={(state) => state.canSubmit}>
         {(canSubmit) => (
@@ -356,7 +357,7 @@ function FormField({
       {children}
       {(error || hint) && (
         <p id={`${id}-hint`} className="text-muted-foreground text-sm">
-          {error ? <span className="text-destructive">{error}</span> : hint}
+          {error ? <ErrorNote error={error} /> : hint}
         </p>
       )}
     </div>
@@ -552,7 +553,7 @@ function GroupName({ kind, group }: { kind: GroupKind; group: Group }) {
 
 /** Why the file couldn't be read, or else its description, if any. */
 function GroupNote({ group }: { group: Group }) {
-  if (group.error) return <p className="text-destructive text-xs">{group.error}</p>;
+  if (group.error) return <ErrorNote error={group.error} className="text-xs" />;
   if (!group.description) return null;
   return <p className="text-muted-foreground text-xs">{group.description}</p>;
 }

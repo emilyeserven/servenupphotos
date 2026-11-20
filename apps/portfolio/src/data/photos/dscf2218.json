@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["trains", "platform", "train-station", "signage"],
-  "genres": [],
+  "genres": ["transportation"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

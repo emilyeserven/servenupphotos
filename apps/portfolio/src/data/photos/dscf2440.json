@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["road", "crosswalk", "power-lines", "signage", "cars", "mountains"],
+  "tags": ["road", "crosswalk", "power-lines", "signage", "cars", "mountains", "dogs"],
   "genres": ["street"],
   "places": [
     {
@@ -268,7 +268,7 @@
     "samples": 9975
   },
   "undecided": true,
-  "notes": "Shows a dog and roadwork; 'dogs' and 'roadwork' aren't tags, since only 2 photos have each.",
+  "notes": "Shows a dog and roadwork; 'dogs' and 'roadwork' aren't tags, since only 2 photos have each.\n\nShows a dog, now tagged 'dogs'; 'roadwork' still isn't a tag.",
   "similarPhotos": [407, 409, 444, 494, 412, 436],
   "compareGroup": "Outer Richmond Street Downhill"
 }

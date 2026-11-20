@@ -5,6 +5,7 @@ import { uploadBioPortraitMutation } from "@/api/bio";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import type { BioPortrait } from "@/lib/bio";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * The button that uploads self-portraits, one or more at once, each put in R2 right away as its two
@@ -44,7 +45,7 @@ export function PortraitUpload({ onUploaded }: { onUploaded: (portrait: BioPortr
         {left > 0 ? <Spinner /> : <ImagePlusIcon aria-hidden />}
         {left > 0 ? `Uploading ${left}…` : "Upload self-portraits"}
       </Button>
-      {upload.isError && <p className="text-destructive text-xs">{upload.error.message}</p>}
+      <ErrorNote error={upload.error} className="text-xs" />
     </div>
   );
 }

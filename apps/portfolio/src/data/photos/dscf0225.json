@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:24 10:03:16",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hagi Sightseeing Boat Pier",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["nobori", "flags", "river", "path", "fences"],
-  "genres": [],
-  "places": [],
+  "genres": ["street"],
+  "places": [
+    {
+      "relation": "at",
+      "id": "hagi-sightseeing-boat-pier"
+    },
+    {
+      "relation": "in",
+      "id": "hagi-castle-town"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -5,6 +5,7 @@ import { SavedInApp } from "@/components/waiting-for-commit";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * Shows or hides the album on the portfolio. A hidden album, and every album inside it, isn't on
@@ -67,7 +68,7 @@ function VisibilityButton({
 
 /** What saving did, or why it failed. */
 function VisibilityOutcome({ save }: { save: ReturnType<typeof useHiddenSave> }) {
-  if (save.isError) return <p className="text-destructive">{save.error.message}</p>;
+  if (save.isError) return <ErrorNote error={save.error} />;
   if (!save.data?.files) return null;
   return <SavedInApp what="the change" pullRequestUrl={save.data.pullRequestUrl} />;
 }

@@ -3,7 +3,7 @@ import type { ExifResponse, SanitizedExif } from "@/api/exif";
 import type { NearDuplicates } from "@/api/near-duplicates";
 import type { PhotoPlace } from "@/api/places";
 import { type PendingSave, type ScanChange, changesByKind, photoChanges } from "@/api/scan-changes";
-import { requestJson } from "@/api/request";
+import { del, post, put, requestJson } from "@/api/request";
 import type { CombinedKind, GroupKind } from "@/lib/data-kinds";
 
 /** A photo's data to save as `<folder>/<name>.json` in the GitHub repository from Settings. */
@@ -45,12 +45,7 @@ export const publishPhotoMutation = mutationOptions({
       return [{ kind: "photos", path: saved.path, after: saved.data }, ...photoChanges(saved)];
     },
   },
-  mutationFn: (photo: PhotoData) =>
-    requestJson<PublishResult>("/api/photos/github", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(photo),
-    }),
+  mutationFn: (photo: PhotoData) => post<PublishResult>("/api/photos/github", photo),
 });
 
 /** The open "Add photo data" pull request. */
@@ -247,11 +242,7 @@ export const updateInFlightMutation = mutationOptions({
     },
   },
   mutationFn: (file: { path: string; data: unknown; name?: string }) =>
-    requestJson<UpdateResult>("/api/photos/in-flight", {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(file),
-    }),
+    put<UpdateResult>("/api/photos/in-flight", file),
 });
 
 /** One photo JSON file on the base branch, a photo already in the portfolio. */
@@ -313,9 +304,7 @@ export const removeInFlightMutation = mutationOptions({
     ],
   },
   mutationFn: (path: string) =>
-    requestJson<RemoveResult>(`/api/photos/in-flight?${new URLSearchParams({ path })}`, {
-      method: "DELETE",
-    }),
+    del<RemoveResult>(`/api/photos/in-flight?${new URLSearchParams({ path })}`),
 });
 
 /**
@@ -340,9 +329,7 @@ export const deletePhotoMutation = mutationOptions({
   mutationKey: ["photos", "delete"],
   meta: { saves: true, changes: (result) => changesByKind(result as DeletePhotoResult) },
   mutationFn: (path: string) =>
-    requestJson<DeletePhotoResult>(`/api/photos/saved?${new URLSearchParams({ path })}`, {
-      method: "DELETE",
-    }),
+    del<DeletePhotoResult>(`/api/photos/saved?${new URLSearchParams({ path })}`),
 });
 
 /** One image object in the R2 bucket. */
@@ -379,12 +366,7 @@ export interface DeleteBucketImagesResult {
  */
 export const deleteBucketImagesMutation = mutationOptions({
   mutationKey: ["photos", "bucket", "delete"],
-  mutationFn: (keys: string[]) =>
-    requestJson<DeleteBucketImagesResult>("/api/photos/bucket", {
-      method: "DELETE",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ keys }),
-    }),
+  mutationFn: (keys: string[]) => del<DeleteBucketImagesResult>("/api/photos/bucket", { keys }),
 });
 
 /**
@@ -455,11 +437,7 @@ export interface FieldEdit {
  * GitHub's photo data.
  */
 export function commitCombined(edits: FieldEdit[]): Promise<CombinedCommit> {
-  return requestJson<CombinedCommit>("/api/photos/combined", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ edits }),
-  });
+  return post<CombinedCommit>("/api/photos/combined", { edits });
 }
 
 /** How many changes waiting for Commit were dropped. */
@@ -469,11 +447,7 @@ interface DiscardResult {
 
 /** Drops every change waiting for Commit. Nothing on GitHub or in R2 changes. */
 export function discardPending(): Promise<DiscardResult> {
-  return requestJson<DiscardResult>("/api/photos/pending", {
-    method: "DELETE",
-    headers: { "content-type": "application/json" },
-    body: "{}",
-  });
+  return del<DiscardResult>("/api/photos/pending", {});
 }
 
 /** What makes a photo the same as an ALLPHOTOS.json entry: all three fields exactly equal. */
@@ -519,12 +493,7 @@ export interface AllPhotosCheck {
 export const pullRequestCheckQuery = (photo: PhotoIdentity) =>
   queryOptions({
     queryKey: ["photos", "all-photos", "check", photo],
-    queryFn: () =>
-      requestJson<Omit<AllPhotosCheck, "path">>("/api/photos/all-photos/check", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(photo),
-      }),
+    queryFn: () => post<Omit<AllPhotosCheck, "path">>("/api/photos/all-photos/check", photo),
     retry: false,
     staleTime: 0,
   });
@@ -532,10 +501,5 @@ export const pullRequestCheckQuery = (photo: PhotoIdentity) =>
 /** Reads the EXIF and colors of an original already in R2, as the Add Photo page does for an upload. */
 export const bucketExifMutation = mutationOptions({
   mutationKey: ["photos", "bucket", "exif"],
-  mutationFn: (key: string) =>
-    requestJson<ExifResponse>("/api/photos/bucket/exif", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ key }),
-    }),
+  mutationFn: (key: string) => post<ExifResponse>("/api/photos/bucket/exif", { key }),
 });

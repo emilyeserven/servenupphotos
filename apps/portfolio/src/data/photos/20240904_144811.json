@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["mushrooms", "fungi", "moss", "forest", "hiking-trail"],
+  "tags": ["mushrooms", "fungi", "moss", "forest", "hiking-trail", "roots"],
   "genres": ["nature", "macro"],
   "places": [
     {
@@ -266,7 +266,7 @@
     "peakChroma": 54.01,
     "samples": 9975
   },
-  "notes": "Shows tree roots; 'roots' isn't a tag, since only 1 photo has them.",
+  "notes": "Shows tree roots; 'roots' isn't a tag, since only 1 photo has them.\n\nShows tree roots, now tagged 'roots'.",
   "similarPhotos": [287, 8, 114, 91, 85, 92],
   "compareGroup": "Tiny Mushroom in Moss"
 }

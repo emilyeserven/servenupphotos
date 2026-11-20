@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["sando", "toro", "shinto", "pine-trees", "path", "bridges"],
-  "genres": [],
+  "genres": ["architecture", "landscape"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
 
 /** The delete a card's button asks about, as a mutation's state and how to start it. */
 interface PendingDelete {
@@ -76,7 +77,7 @@ export function ConfirmDeleteCard({
               <DialogDescription>{note}</DialogDescription>
             </DialogHeader>
             {children}
-            {remove.error && <p className="text-destructive text-sm">{remove.error.message}</p>}
+            <ErrorNote error={remove.error} />
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline" disabled={remove.isPending}>

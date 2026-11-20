@@ -3,6 +3,7 @@ import type { BaseFile } from "@/api/photos";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { JsonDiffBlock } from "@/components/json-diff-block";
 import { cn } from "@/lib/utils";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * A file's JSON from the pull request, with what it changes against the base branch when the pull
@@ -15,7 +16,7 @@ export function FileJson({
   file: BaseFile & { path: string; data?: unknown; error?: string };
   baseBranch?: string;
 }) {
-  if (file.error) return <p className="text-destructive text-sm">{file.error}</p>;
+  if (file.error) return <ErrorNote error={file.error} />;
   if (file.base !== undefined) {
     return (
       <JsonDiffBlock value={file.data} base={file.base} title={file.path} baseBranch={baseBranch} />

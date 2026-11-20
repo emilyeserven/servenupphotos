@@ -45,6 +45,11 @@
     "description": ""
   },
   {
+    "id": "transportation",
+    "name": "Transportation",
+    "description": "Photos centered on vehicles such as trains, buses and boats, and the journeys they make."
+  },
+  {
     "id": "wildlife",
     "name": "Wildlife",
     "description": "Photos of animals, from birds in the city to creatures in the wild."

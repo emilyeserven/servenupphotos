@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["storefronts", "umbrellas", "autumn", "signage", "repetition"],
+  "tags": ["storefronts", "umbrellas", "autumn", "signage", "repetition", "pumpkins"],
   "genres": [],
   "places": [
     {
@@ -269,6 +269,6 @@
     "peakChroma": 48.12,
     "samples": 9727
   },
-  "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 257 (1.95:1), not the 16:9 crop for a landscape photo.",
+  "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 257 (1.95:1), not the 16:9 crop for a landscape photo.\n\nShows pumpkins, now tagged 'pumpkins'; 'produce' still isn't a tag.",
   "similarPhotos": [17, 250, 469, 437, 438, 282]
 }

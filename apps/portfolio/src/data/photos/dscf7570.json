@@ -3,7 +3,7 @@
   "comment": null,
   "id": 653,
   "altText": null,
-  "notes": null,
+  "notes": "Shows books on library shelves; 'books' and 'bookshelves' aren't tags, since only 1 photo has them.",
   "file": "DSCF7570.jpg",
   "addedDate": "2026-11-15T17:10:45Z",
   "camera": "Fujifilm X-T5",
@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["library", "books", "bookshelves", "interior"],
+  "tags": ["library", "interior"],
   "genres": [],
   "places": [
     {

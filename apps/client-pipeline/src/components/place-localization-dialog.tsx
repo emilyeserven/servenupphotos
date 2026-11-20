@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * A button that opens a dialog to write how the place is written and said where it is, saved as
@@ -88,7 +89,7 @@ function LocalizationForm({ place, onSaved }: { place: Place; onSaved: () => voi
           />
         </div>
       ))}
-      {save.error && <p className="text-destructive text-sm">{save.error.message}</p>}
+      <ErrorNote error={save.error} />
       <DialogFooter>
         <Button type="submit" disabled={empty || save.isPending}>
           {save.isPending && <Spinner />}

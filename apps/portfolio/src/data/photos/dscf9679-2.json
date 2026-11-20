@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["washitsu", "tatami", "shoji", "interior", "koshi"],
+  "tags": ["washitsu", "tatami", "shoji", "interior", "koshi", "machiya"],
   "genres": [],
   "places": [
     {
@@ -270,7 +270,7 @@
     "peakChroma": 0.01,
     "samples": 9975
   },
-  "notes": "Shows a byobu folding screen in a machiya townhouse; 'byobu' and 'machiya' aren't tags, since only 1–2 photos have them.",
+  "notes": "Shows a byobu folding screen in a machiya townhouse; 'byobu' and 'machiya' aren't tags, since only 1–2 photos have them.\n\nShows a machiya townhouse interior, now tagged 'machiya'.",
   "similarPhotos": [344, 343, 347, 346, 378, 381],
   "compareGroup": "Lattice Door in Dark Room"
 }

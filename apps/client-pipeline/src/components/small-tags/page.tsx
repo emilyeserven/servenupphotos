@@ -6,7 +6,6 @@ import {
   applyTagLibraryMutation,
   tagLibraryQuery,
 } from "@/api/tag-library";
-import { ErrorText } from "@/components/bulk-tagging/pick-controls";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { useTagSave } from "@/components/prune-tags/change-list";
@@ -18,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { CommitSuccess, count } from "@/components/update-data-shared";
 import { smallTags } from "@/lib/small-tags";
+import { ErrorNote } from "@/components/error-note";
 
 /** The Small Tags page: every tag or subtag with fewer than 3 photos, to clean up one by one. */
 export function SmallTagsPage() {
@@ -41,7 +41,7 @@ function SmallTags() {
       </p>
     );
   }
-  if (!library.data) return <ErrorText error={library.error} />;
+  if (!library.data) return <ErrorNote error={library.error} />;
   return <SmallTagList library={library.data} />;
 }
 

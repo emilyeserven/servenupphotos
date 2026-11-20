@@ -5,6 +5,7 @@ import { photosInFlightQuery } from "@/api/photos";
 import { Button } from "@/components/ui/button";
 import { toggled } from "@/lib/bulk-tags";
 import { type TagDefinition, type TagToMake, tagsToMake } from "@/lib/tag-prompt";
+import { ErrorNote } from "@/components/error-note";
 
 interface NewTagsProps {
   /** The new tags' IDs, in lowercase kebab-case. */
@@ -63,7 +64,7 @@ export function NewTags({ names, definitions, existing, onCreated, disabled }: N
           )
         }
       />
-      {create.isError && <p className="text-destructive">{create.error.message}</p>}
+      <ErrorNote error={create.error} />
     </div>
   );
 }

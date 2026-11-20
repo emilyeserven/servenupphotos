@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { type ReEditDraft, savedReEdit, withReEdit } from "@/lib/re-edit";
+import { ErrorNote } from "@/components/error-note";
 
 /** Whether the photo can be marked: its JSON was read and it isn't being removed. */
 function canReEdit(file: InFlightFileRead): boolean {
@@ -141,7 +142,7 @@ function ReEditForm({
 function FormActions({ save, marked }: { save: SaveReEdit; marked: boolean }) {
   return (
     <>
-      {save.error && <p className="text-destructive text-sm">{save.error.message}</p>}
+      <ErrorNote error={save.error} />
       <div className="flex flex-wrap justify-end gap-2">
         {marked && (
           <Button
