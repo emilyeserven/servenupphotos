@@ -1,4 +1,5 @@
 import type { Fields } from "@/components/localization-row";
+import { parsePastedJson } from "@/lib/pasted-json";
 
 /** What an LLM's answer to the localization prompt says, matched to the names it was asked about. */
 export interface LocalizationAnswer {
@@ -14,7 +15,7 @@ function answerObject(answer: string): unknown {
   const end = answer.lastIndexOf("}");
   if (start < 0 || end < start) throw new Error("The answer has no JSON object in it.");
   try {
-    return JSON.parse(answer.slice(start, end + 1));
+    return parsePastedJson(answer.slice(start, end + 1));
   } catch {
     throw new Error("The answer's JSON couldn't be read. Check it's the whole answer.");
   }

@@ -2,6 +2,7 @@ import { type Place, type PhotoPlace, entryId, RELATIONS } from "@/api/places";
 import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
 import { gpsText, writtenPosition } from "@/lib/place-gps";
 import { placeCity, withParent } from "@/lib/place-hierarchy";
+import { parsePastedJson } from "@/lib/pasted-json";
 
 /** What the location prompt tells the LLM about: what's already known of where the photo was taken. */
 export interface LocationClues {
@@ -130,7 +131,7 @@ export interface PastedLocation {
 export function jsonObject(text: string): Record<string, unknown> | null {
   const json = text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1);
   try {
-    const value: unknown = JSON.parse(json);
+    const value: unknown = parsePastedJson(json);
     return typeof value === "object" && !Array.isArray(value)
       ? (value as Record<string, unknown>)
       : null;

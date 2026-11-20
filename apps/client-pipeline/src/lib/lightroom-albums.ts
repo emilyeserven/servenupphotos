@@ -1,6 +1,7 @@
 import screenshotsPrompt from "@/lib/lightroom-albums-prompt.md?raw";
 import recordingPrompt from "@/lib/lightroom-albums-recording-prompt.md?raw";
 import { insertAlbum, keepMove } from "@/lib/lightroom-tree";
+import { parsePastedJson } from "@/lib/pasted-json";
 
 /** How the album panel is captured for the LLM: overlapping screenshots, or a screen recording scrolling through it. */
 export type LightroomCapture = "screenshots" | "recording";
@@ -93,7 +94,7 @@ function jsonObject(input: string): Record<string, unknown> {
   const end = input.lastIndexOf("}");
   if (start < 0 || end < start) throw new Error("There's no JSON object in it.");
   try {
-    return JSON.parse(input.slice(start, end + 1)) as Record<string, unknown>;
+    return parsePastedJson(input.slice(start, end + 1)) as Record<string, unknown>;
   } catch {
     throw new Error("The JSON couldn't be read. Check it's the whole answer or file.");
   }

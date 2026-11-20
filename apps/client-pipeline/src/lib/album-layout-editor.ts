@@ -1,4 +1,5 @@
 import type { AlbumRow, Group } from "@/api/organize";
+import { parsePastedJson } from "@/lib/pasted-json";
 
 /** The most cover photos an album can have. */
 export const MAX_COVERS = 5;
@@ -108,7 +109,7 @@ function albumFile(text: string): Record<string, unknown> {
 
 function parsed(text: string): unknown {
   try {
-    return JSON.parse(text);
+    return parsePastedJson(text);
   } catch (error) {
     throw new ImportError(`That isn't JSON: ${(error as Error).message}`);
   }

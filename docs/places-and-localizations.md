@@ -272,7 +272,8 @@ with any LLM that can see images (`lib/location-prompt.ts`). It has:
 ```
 
 Once it's copied, a field under the **Place** label takes the LLM's answer, and **Read answer** reads the JSON from its first `{` to its last
-`}`, so a code fence or words around it don't matter. It shows the confidence and reasoning, then each field where the
+`}`, so a code fence or words around it don't matter, and curly double quotes (“ ”) copied from a chat app
+are read as straight ones ([Pasting the answer](copy-prompts.md#pasting-the-answer)). It shows the confidence and reasoning, then each field where the
 answer says something new, with what the photo shows there now (its custom value, else the EXIF one, else the city
 and country its places give it) and a checkbox, ticked when the photo has nothing there yet:
 
