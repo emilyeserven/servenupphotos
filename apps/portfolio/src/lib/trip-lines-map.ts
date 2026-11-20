@@ -1,8 +1,8 @@
-import { format } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import type { PlacedPhoto } from "@/lib/map-photos";
 import { withoutTrips } from "@/lib/map-trips";
 import { withLanes } from "@/lib/trip-lanes";
+import { isoDate } from "@portfolio/lib/dates";
 
 /**
  * One feature of TRIPLINES.geo.json, which the pipeline's Commit bakes: a segment of a day's trip
@@ -64,7 +64,7 @@ function onDays(map: TripLinesMap, days: Set<string>): TripLinesMap {
 
 /** The days the photos were taken, as TRIPLINES.geo.json writes them. */
 function daysOf(photos: PlacedPhoto[]): Set<string> {
-  return new Set(photos.map((p) => format(p.takenAt, "yyyy-MM-dd")));
+  return new Set(photos.map((p) => isoDate(p.takenAt)));
 }
 
 /**

@@ -8,6 +8,7 @@ import {
 import type { CombinedData } from "@/api/photos";
 import { type CombinedPhoto, currentPhotos } from "@/lib/group-photos";
 import { photoGpsSource } from "@/lib/photo-map";
+import { textOf } from "@portfolio/lib/values";
 
 /** One country, city or place to localize, with how many photos list it. */
 export interface LocalizationRow {
@@ -21,16 +22,12 @@ export interface LocalizationRow {
   saved?: Localization;
 }
 
-function text(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /** The city or country a photo shows: the custom one written on the Photo page, or else its EXIF one. */
 export function shownField(photo: CombinedPhoto, field: "city" | "state" | "country"): string {
   const custom = { city: photo.customCity, state: photo.customState, country: photo.customCountry }[
     field
   ];
-  return text(custom) || text(photo[field]);
+  return textOf(custom) || textOf(photo[field]);
 }
 
 /** How many photos list each place, by ID. */
