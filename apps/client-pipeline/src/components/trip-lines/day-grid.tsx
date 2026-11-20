@@ -5,6 +5,7 @@ import { LinePreview } from "@/components/trip-lines/line-preview";
 import type { TripDay } from "@/lib/trip-days";
 import { type DayFilter, useTripLinesSearch } from "@/lib/trip-lines-search";
 import { cn } from "@/lib/utils";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /**
  * Whether a day's line is marked by hand, marked by hand but out of date with the day's photos,
@@ -87,7 +88,7 @@ export function DayGrid({ days, lines, stale }: DayGridProps) {
           </button>
         ))}
       </div>
-      {shown.length === 0 && <p className="text-muted-foreground text-sm">None.</p>}
+      {shown.length === 0 && <EmptyNote>No days have this status.</EmptyNote>}
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {shown.map((d) => (
           <li key={d.day}>

@@ -55,6 +55,7 @@ import {
 } from "@/components/ui/table";
 import { currentPhotos, photoCounts } from "@/lib/group-photos";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 const PAGES: Record<GroupKind, { title: string; description: string }> = {
   albums: {
@@ -424,7 +425,7 @@ function GroupListCard({
         <QueryResult query={organize} pendingLabel={`Reading ${plural}…`}>
           {(data) =>
             data[kind].length === 0 ? (
-              <p className="text-muted-foreground text-sm">No {plural} yet.</p>
+              <EmptyNote>No {plural} yet.</EmptyNote>
             ) : (
               <GroupTable
                 kind={kind}

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { type GraphPresetFile, type PresetItem, presetRow } from "@portfolio/lib/graph-presets";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** What a new preset is chosen as, before it's saved. */
 export const NEW_PRESET = ":new-preset";
@@ -31,7 +32,7 @@ export function PresetList({ files, chosen, onChoose }: PresetListProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
-        {row.length === 0 && <p className="text-muted-foreground text-sm">None yet.</p>}
+        {row.length === 0 && <EmptyNote>No presets yet.</EmptyNote>}
         {row.map((item) => (
           <RowEntry key={entryKey(item)} item={item} chosen={chosen} onChoose={onChoose} />
         ))}
@@ -66,7 +67,7 @@ function RowEntry({ item, chosen, onChoose }: RowEntryProps) {
       <ListButton id={item.id} name={item.name} group chosen={chosen} onChoose={onChoose} />
       <div className="ml-4 flex flex-col gap-1 border-l pl-2">
         {item.presets.length === 0 && (
-          <p className="text-muted-foreground px-2 py-1 text-xs">No presets in it yet.</p>
+          <EmptyNote className="px-2 py-1">No presets in it yet.</EmptyNote>
         )}
         {item.presets.map(({ id, name }) => (
           <ListButton key={id} id={id} name={name} chosen={chosen} onChoose={onChoose} />

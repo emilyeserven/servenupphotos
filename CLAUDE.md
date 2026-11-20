@@ -85,6 +85,11 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
 - **Filter pickers:** build on `SectionPicker` and follow [Picker conventions](docs/portfolio-filters.md#picker-conventions):
   extra info behind `InfoButton` in the `aside` panel on the right, Group by and Sort as small menus left of the (i),
   grouping off by default, and no icons in choice lists.
+- **Empty states:** a list, grid or panel with nothing in it shows `EmptyNote`
+  (`apps/portfolio/src/components/empty-note.tsx`, imported as `@portfolio/components/empty-note` in both apps), never
+  a hand-styled `<p>`. It has one look (muted, small); its `className` is for spacing only. Say what's missing in a full
+  sentence ("No albums yet.", not "None yet."), then what to do next when there is something to do. A photo list that
+  filters or search leave empty says `NO_PHOTOS_MATCH` ("No photos match these filters.").
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors

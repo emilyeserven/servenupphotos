@@ -35,6 +35,7 @@ import { photoDots } from "@/lib/graph-photo-dots";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 import { cn } from "@/lib/utils";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 /** Whether the graph or its numbers as a table show. */
 type View = "graph" | "table";
@@ -159,11 +160,7 @@ function GraphArea({
   onChange: ConfigChange;
 }) {
   if (list.length === 0) {
-    return (
-      <p className="py-16 text-center text-sm text-muted-foreground">
-        No photos are left by these filters.
-      </p>
-    );
+    return <EmptyNote className="py-16 text-center">{NO_PHOTOS_MATCH}</EmptyNote>;
   }
   const body = <GraphBody list={list} config={config} view={view} />;
   if (view === "table") return body;

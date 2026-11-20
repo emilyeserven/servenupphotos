@@ -6,6 +6,7 @@ import {
   SavedPhotoSquare,
 } from "@/components/saved-photo-picker";
 import { cn } from "@/lib/utils";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 interface PhotoChoiceGridProps {
   photos: readonly SavedPhoto[];
@@ -24,7 +25,7 @@ export function PhotoChoiceGrid({ photos, chosen, disabled, onChoose }: PhotoCho
     <div className="flex flex-col gap-3">
       <SavedPhotoSearch value={search} onChange={setSearch} />
       {shown.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No saved photos match.</p>
+        <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>
       ) : (
         <ul className="grid max-h-72 grid-cols-4 gap-2 overflow-y-auto p-1 sm:grid-cols-6 lg:grid-cols-8">
           {shown.map((photo) => (

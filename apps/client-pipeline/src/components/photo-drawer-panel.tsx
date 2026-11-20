@@ -10,6 +10,7 @@ import { useDropTarget } from "@/hooks/use-drop-target";
 import { takenDay } from "@/lib/social-focus";
 import { photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 /** The words a page's photo drawer uses for what it adds photos to. */
 interface DrawerWords {
@@ -142,7 +143,7 @@ function DrawerPhotos(props: {
 }) {
   const { photos, used, onPick, dragType, usedBadge } = props;
   if (photos.length === 0) {
-    return <p className="text-muted-foreground py-6 text-center text-sm">No photos match.</p>;
+    return <EmptyNote className="py-6 text-center">{NO_PHOTOS_MATCH}</EmptyNote>;
   }
   return (
     <ul className="grid grid-cols-3 gap-2" aria-label="Photos to add">

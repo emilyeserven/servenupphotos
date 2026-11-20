@@ -9,6 +9,7 @@ import {
 import { SiteHomeLink } from "@/components/site-home-link";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 interface RawVsEditedSearch extends ShownPhotoSearch {
   /** How the open photo is compared. Left out for the default, the slider. */
@@ -95,9 +96,9 @@ function OpenComparison({ photo, mode }: { photo: ComparedPhoto; mode: Compariso
 function ComparedList() {
   if (compared.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+      <EmptyNote className="rounded-lg border border-dashed p-6 text-center">
         No photos are shown next to their originals yet.
-      </p>
+      </EmptyNote>
     );
   }
   return (

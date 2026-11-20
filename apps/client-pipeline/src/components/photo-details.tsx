@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useUntitledDrafts } from "@/lib/drafts";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** Spacing and list, link, code and quote styles for rendered Markdown, which Tailwind's reset strips. */
 export const MARKDOWN_CLASSES = [
@@ -324,7 +325,7 @@ function CommentField({ value, disabled, onChange }: CommentFieldProps) {
                 </Markdown>
               </div>
             ) : (
-              <p className="text-muted-foreground text-sm">Nothing to preview yet.</p>
+              <EmptyNote>Nothing to preview yet.</EmptyNote>
             )}
           </div>
         </TabsContent>

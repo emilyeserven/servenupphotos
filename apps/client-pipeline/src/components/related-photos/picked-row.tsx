@@ -5,6 +5,7 @@ import { MAX_PICK_NOTE, type Pick } from "@/components/related-photos/picks";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { moved } from "@/lib/album-photo-order";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 interface PickedRowProps {
   picks: Pick[];
@@ -18,11 +19,7 @@ interface PickedRowProps {
  */
 export function PickedRow({ picks, byId, onChange }: PickedRowProps) {
   if (picks.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        None yet: the drawer shows only the photos found below.
-      </p>
-    );
+    return <EmptyNote>None yet: the drawer shows only the photos found below.</EmptyNote>;
   }
   const replace = (place: number, pick: Pick) =>
     onChange(picks.map((other, i) => (i === place ? pick : other)));

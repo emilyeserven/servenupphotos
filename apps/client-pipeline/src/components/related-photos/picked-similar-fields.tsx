@@ -6,6 +6,7 @@ import { MAX_PICKS, type Pick, savedPhotoId } from "@/components/related-photos/
 import { PickedRow } from "@/components/related-photos/picked-row";
 import { SimilarTile } from "@/components/related-photos/similar-tile";
 import { Button } from "@/components/ui/button";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 interface PickedSimilarFieldsProps {
   /** The ID of the photo the picks are for, which can't be picked itself. */
@@ -110,9 +111,7 @@ function FoundRow({
   });
   if (found.length === 0) {
     return (
-      <p className="text-muted-foreground text-sm">
-        None saved yet. Run Find related photos on the Related Photos page.
-      </p>
+      <EmptyNote>None saved yet. Run Find related photos on the Related Photos page.</EmptyNote>
     );
   }
   return (

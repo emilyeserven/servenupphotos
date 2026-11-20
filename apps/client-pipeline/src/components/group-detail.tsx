@@ -60,6 +60,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { currentPhotos, photoCounts } from "@/lib/group-photos";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** One album's or tag's page: what it is, where an album sits, and the photos in it. */
 export function GroupDetailPage({ kind, id }: { kind: GroupKind; id: string }) {
@@ -261,7 +262,7 @@ function SubAlbumsCard({ album, albums }: { album: Group; albums: Group[] }) {
       </CardHeader>
       <CardContent className="text-sm">
         {rows.length === 0 ? (
-          <p className="text-muted-foreground">None yet.</p>
+          <EmptyNote>No sub-albums yet.</EmptyNote>
         ) : (
           <ul className="flex flex-col divide-y">
             {rows.map(({ group, depth }) => (

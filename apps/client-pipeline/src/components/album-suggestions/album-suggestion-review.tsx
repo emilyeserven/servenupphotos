@@ -15,6 +15,7 @@ import { type AlbumChoices, albumSuggestionsToSave } from "@/lib/album-suggestio
 import { NO_CHOICES, photoTagKey, toggled } from "@/lib/bulk-tags";
 import { promptImageUrl } from "@/lib/tag-prompt";
 import { tileImageUrl } from "@/lib/offline-thumbnails";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 interface AlbumSuggestionReviewProps {
   preview: AlbumSuggestionsPreview;
@@ -149,7 +150,7 @@ function ParentToggle({
 /** The picked photos to put in the album, each of which can be unticked. */
 function AlbumPhotos({ album, pick, choices, onChange, disabled }: SuggestedAlbumProps) {
   if (album.photos.length === 0) {
-    return <p className="text-muted-foreground ml-6">No picked photos to put in it.</p>;
+    return <EmptyNote className="ml-6">No picked photos to put in it.</EmptyNote>;
   }
   return (
     <ul className="ml-6 flex flex-wrap gap-3">

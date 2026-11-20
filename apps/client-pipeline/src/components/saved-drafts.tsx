@@ -16,6 +16,7 @@ import { useRevealed } from "@/hooks/use-revealed";
 import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
 import { editedData, undecidedPaths } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 
 interface SavedDraftsProps {
   /** Whether photos are in flight too: these drafts' Undecided panel is named after the branch to tell it apart from theirs. */
@@ -56,9 +57,9 @@ function NoDrafts({ branch }: { branch: string }) {
   return (
     <section className="flex flex-col gap-1">
       <h2 className="text-lg font-semibold">Drafts on {branch}</h2>
-      <p className="text-muted-foreground text-sm">
-        None: every photo on {branch} has a title, is in flight above, or is in Unselected Photos.
-      </p>
+      <EmptyNote>
+        No drafts: every photo on {branch} has a title, is in flight above, or is in Unselected Photos.
+      </EmptyNote>
     </section>
   );
 }
@@ -99,6 +100,7 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
       >
         <DraftSortToggle sort={sort} />
       </PhotoFilterBar>
+      {drafts.length + missing.length === 0 && <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>}
       <DraftList files={drafts.filter((file) => !undecided.has(file.path))} data={data} />
       <UndecidedQueue
         files={drafts.filter((file) => undecided.has(file.path))}

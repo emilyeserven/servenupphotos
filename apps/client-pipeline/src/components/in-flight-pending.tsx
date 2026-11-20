@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ClockIcon } from "lucide-react";
 import type { InFlightResponse } from "@/api/photos";
 import { CommitButton } from "@/components/all-photos-rebuild";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** A file on Photos in Flight: its name, linked to its page on GitHub once it's committed there. */
 export function FileLink({ fileUrl, name }: { fileUrl: string; name: string }) {
@@ -62,14 +63,14 @@ export function NoPullRequest({ data }: { data: InFlightResponse }) {
   const count = pendingCount(data);
   if (count === 0) {
     return (
-      <p className="text-muted-foreground">
+      <EmptyNote>
         No open pull request titled “Add photo data”, and nothing is waiting for Commit. Saving a
         photo from{" "}
         <Link to="/exif" className="text-foreground underline underline-offset-4">
           Photo
         </Link>{" "}
         keeps it here until you commit.
-      </p>
+      </EmptyNote>
     );
   }
   return (
