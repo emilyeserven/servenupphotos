@@ -38,7 +38,7 @@ func TestBucketExif(t *testing.T) {
 		{"gone", `{"key":"photos/a.jpg"}`, serve(nil, &storage.GetError{Message: "isn't in the bucket", NotFound: true}), http.StatusNotFound, "isn't in the bucket"},
 		{"refused", `{"key":"photos/a.jpg"}`, serve(nil, &storage.GetError{Message: "isn't allowed"}), http.StatusBadGateway, "isn't allowed"},
 		{"not a jpeg", `{"key":"photos/a.jpg"}`, serve([]byte("\x89PNG\r\n\x1a\n"), nil), http.StatusUnsupportedMediaType, "isn't a JPEG"},
-		{"undecodable", `{"key":"photos/a.jpg"}`, serve(truncatedJPEG, nil), http.StatusUnprocessableEntity, "could not decode"},
+		{"undecodable", `{"key":"photos/a.jpg"}`, serve(truncatedJPEG, nil), http.StatusUnprocessableEntity, "Couldn't read the photo's pixels"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

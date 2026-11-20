@@ -8,6 +8,7 @@ import { useCompareGroups } from "@/hooks/use-compare-groups";
 import { type AutogroupPhoto, autogroupPhotos } from "@/lib/compare-autogroup";
 import { type MarkedPhoto, markedPhotos } from "@/lib/re-edit";
 import { ReadingNote } from "@/components/query-result";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /**
  * The Re-edit page's list: every photo marked for re-editing, from the Gallery and Photos in
@@ -49,13 +50,13 @@ export function ReEditList() {
 function MarkedList({ marked }: { marked: MarkedPhoto<AutogroupPhoto>[] }) {
   if (marked.length === 0) {
     return (
-      <p className="text-muted-foreground text-sm">
+      <EmptyNote>
         No photos are marked for re-editing. Mark one with <strong>Re-edit</strong> in{" "}
         <Link to="/in-flight" className="underline">
           Photos in Flight
         </Link>
         , or run Quality Check.
-      </p>
+      </EmptyNote>
     );
   }
   return (
@@ -82,7 +83,7 @@ function MarkedRow({ item }: { item: MarkedPhoto<AutogroupPhoto> }) {
 
 /** Why the photo needs editing again, or a faint note that no reason was given. */
 function Reason({ reason }: { reason: string }) {
-  if (!reason) return <p className="text-muted-foreground">No reason given</p>;
+  if (!reason) return <EmptyNote>No reason given</EmptyNote>;
   return <p>{reason}</p>;
 }
 

@@ -28,6 +28,7 @@ import { gridSearch } from "@/lib/graph-pick-grid";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass, SELECT_CLASS } from "@/lib/segmented-control";
 import { useShownPhoto } from "@/lib/shown-photo";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /**
  * The photos of the value picked on the graph, under it: in groups that open and close when the
@@ -109,7 +110,7 @@ export function PickedPhotos({
 /** The picked photos: in groups that open and close, or as one set of thumbnails. */
 function PickedBody({ groups, grouped, onOpen, ...open }: GroupsProps & { grouped: boolean }) {
   if (groups.length === 0 || groups[0]!.photos.length === 0) {
-    return <p className="text-sm text-muted-foreground">No photos are in this value.</p>;
+    return <EmptyNote>No photos are in this value.</EmptyNote>;
   }
   if (!grouped) return <PickedThumbnails photos={groups[0]!.photos} onOpen={onOpen} />;
   return <PickedGroups groups={groups} onOpen={onOpen} {...open} />;

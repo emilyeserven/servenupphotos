@@ -163,7 +163,6 @@ function Gallery() {
             total={all.length}
             images={reads.read?.images ?? data.images}
             shown={files.shown}
-            filter={filter}
             selection={selection.selected}
             onToggle={selection.toggle}
             highlight={files.search.photo}

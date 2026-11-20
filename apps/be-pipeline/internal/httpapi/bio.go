@@ -17,7 +17,7 @@ const bioUploadTimeout = 60 * time.Second
 // handleSaveBio saves the body as the bio file, as a change waiting for
 // Commit.
 func handleSaveBio(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "bio", "could not save the bio",
+	return withGitHubBody(store, publishTimeout, "bio", "Couldn't save the bio.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, bio github.Bio) (any, error) {
 			bio.ID = r.PathValue("id")
 			return gh.SaveBio(ctx, cfg, bio)

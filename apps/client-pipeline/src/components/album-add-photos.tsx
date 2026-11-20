@@ -25,6 +25,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { ReadingNote } from "@/components/query-result";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 import { ErrorNote } from "@/components/error-note";
 
 /** Adds saved photos to an album, then reads the saved photos again and follows CI's rebuild. */
@@ -145,7 +146,7 @@ function PhotoChoices({ albumId, picked, disabled, onChange }: PhotoChoicesProps
       <SavedPhotoSearch value={search} onChange={setSearch} />
       <AddPhotoFilters choices={choices} />
       {shown.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No saved photos match.</p>
+        <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>
       ) : (
         <ul className="grid max-h-[50dvh] grid-cols-3 gap-2 overflow-y-auto p-1 sm:grid-cols-5">
           {shown.map((photo) => (

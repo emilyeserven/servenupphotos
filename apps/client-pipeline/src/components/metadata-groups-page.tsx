@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import type { CombinedData } from "@/api/photos";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The Metadata Groups page: named groups of camera, lens, focal length and other EXIF values. */
 export function MetadataGroupsPage() {
@@ -117,9 +118,7 @@ function GroupList({ info, groups, values, chosen, onChoose }: GroupListProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
-        {groups.length === 0 && (
-          <p className="text-muted-foreground text-sm">No {info.one} groups yet.</p>
-        )}
+        {groups.length === 0 && <EmptyNote>No {info.one} groups yet.</EmptyNote>}
         {groupTree(groups).map(({ group, depth }) => (
           <GroupRow
             key={group.id}

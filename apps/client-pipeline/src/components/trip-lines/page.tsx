@@ -10,6 +10,7 @@ import { lineDays, staleTripLines } from "@/lib/stale-trip-lines";
 import { useTripLinesSearch } from "@/lib/trip-lines-search";
 import { useSessionData } from "@/hooks/use-session-data";
 import { QueryResult } from "@/components/query-result";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The Trip Lines page: each day's route, drawn on the portfolio's map. */
 export function TripLinesPage() {
@@ -70,11 +71,7 @@ function DayCards({ data }: { data: CombinedData }) {
 function DayList({ data }: { data: CombinedData }) {
   const days = lineDays(data);
   if (days.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        No day has two or more photos at two or more exact spots yet.
-      </p>
-    );
+    return <EmptyNote>No day has two or more photos at two or more exact spots yet.</EmptyNote>;
   }
   const stale = new Set(staleTripLines(data).map((s) => s.day));
   return <DayGrid days={days} lines={tripLines(data)} stale={stale} />;

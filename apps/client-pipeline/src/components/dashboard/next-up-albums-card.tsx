@@ -10,6 +10,7 @@ import {
   topOverall,
 } from "@/lib/lightroom-next-up";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** Which Next up list the card shows: "overall", or a stage's name, or "none" for no stage. */
 type Pick = "overall" | "none" | LightroomStage;
@@ -87,12 +88,12 @@ function StagePicker({ value, onChange }: { value: Pick; onChange: (pick: Pick) 
 
 function NoList() {
   return (
-    <p className="text-muted-foreground text-sm">
+    <EmptyNote>
       No albums yet.{" "}
       <Link to="/lightroom-albums/import" className="text-foreground underline underline-offset-4">
         Import your Lightroom albums
       </Link>{" "}
       to get suggestions.
-    </p>
+    </EmptyNote>
   );
 }

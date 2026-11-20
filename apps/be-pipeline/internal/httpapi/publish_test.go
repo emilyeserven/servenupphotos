@@ -18,7 +18,7 @@ func TestPublishPhoto(t *testing.T) {
 		status int
 		want   string
 	}{
-		{"invalid body", `{"unknown":1}`, http.StatusBadRequest, `invalid photo data body: json: unknown field \"unknown\"`},
+		{"invalid body", `{"unknown":1}`, http.StatusBadRequest, `(json: unknown field \"unknown\")`},
 		{"no GPS on purpose", `{"name":"DSC0001","file":"DSC0001.jpg","sanitized":{},"noGps":true}`, http.StatusBadRequest, "Settings first"},
 		{"not set up", `{"name":"DSC0001","file":"DSC0001.jpg","sanitized":{}}`, http.StatusBadRequest, "Settings first"},
 	}
@@ -42,7 +42,7 @@ func TestAllPhotosCheck(t *testing.T) {
 		status int
 		want   string
 	}{
-		{"invalid body", `not json`, http.StatusBadRequest, "invalid photo body"},
+		{"invalid body", `not json`, http.StatusBadRequest, "Couldn't read the photo sent"},
 		{"no file", `{"gpsPosition":null}`, http.StatusBadRequest, "file is required"},
 		{"not set up", `{"file":"DSC0001.jpg","gpsPosition":null,"createDate":null}`, http.StatusBadRequest, "Settings first"},
 	}

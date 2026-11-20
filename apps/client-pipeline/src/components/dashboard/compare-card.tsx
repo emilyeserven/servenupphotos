@@ -4,6 +4,7 @@ import type { CompareRead } from "@/components/compare/compare-group-list";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type CompareGroup, winnersOf } from "@/lib/compare-groups";
 import { ReadingNote } from "@/components/query-result";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The compare groups still open, each linked to its head-to-head view. */
 export function CompareCard({ compare }: { compare: CompareRead }) {
@@ -27,7 +28,7 @@ export function CompareCard({ compare }: { compare: CompareRead }) {
 function GroupList({ compare }: { compare: CompareRead }) {
   if (compare.pending) return <ReadingNote label="Reading the compare groups…" />;
   if (compare.groups.length === 0) {
-    return <p className="text-muted-foreground text-sm">No compare groups are open.</p>;
+    return <EmptyNote>No compare groups are open.</EmptyNote>;
   }
   return (
     <ul className="flex flex-col gap-1.5">

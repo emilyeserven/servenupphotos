@@ -15,6 +15,7 @@ import { albumPhotoOrder } from "@/lib/album-photo-order";
 import { squareImages, tileImageUrl } from "@/lib/offline-thumbnails";
 import { useCombinedData } from "@/stores/combined-data";
 import { FILE, TITLE } from "@/lib/photo-fields";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** ALLPHOTOS.json from the combined data store, and its photos listing any of ids under kind. */
 export function useGroupPhotos(kind: GroupKind, ids: ReadonlySet<string>) {
@@ -66,13 +67,13 @@ export function GroupPhotoGrid({
 
 function NoPhotos() {
   return (
-    <p className="text-muted-foreground">
+    <EmptyNote>
       No photos yet. Add them on the{" "}
       <Link to="/gallery" className="text-foreground underline underline-offset-4">
         Gallery
       </Link>{" "}
       or a photo's page.
-    </p>
+    </EmptyNote>
   );
 }
 

@@ -91,7 +91,7 @@ func analyzePhoto(extractor exif.Extractor, path, name string, overrides github.
 	if extractor != nil {
 		if res.Exif, err = extractor.Extract(path); err != nil {
 			slog.Error("exif extraction failed", "err", err)
-			return res, http.StatusInternalServerError, "could not read photo metadata"
+			return res, http.StatusInternalServerError, "Couldn't read the photo's metadata with exiftool."
 		}
 		sanitized := overrides.Apply(exif.Sanitize(res.Exif))
 		res.Sanitized = &sanitized
@@ -99,7 +99,7 @@ func analyzePhoto(extractor exif.Extractor, path, name string, overrides github.
 
 	if res.Colors, err = analyzeColors(path); err != nil {
 		slog.Warn("color analysis failed", "err", err)
-		return res, http.StatusUnprocessableEntity, "could not decode photo"
+		return res, http.StatusUnprocessableEntity, "Couldn't read the photo's pixels. Check that it opens as a JPEG."
 	}
 	return res, http.StatusOK, ""
 }

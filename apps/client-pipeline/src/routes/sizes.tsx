@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 export const Route = createFileRoute("/sizes")({
   component: SizesPage,
@@ -119,7 +120,7 @@ function SizesCard() {
             rows.length > 0 ? (
               <SizesTable rows={rows} />
             ) : (
-              <p className="text-muted-foreground">No uploaded photos in this bucket yet.</p>
+              <EmptyNote>No uploaded photos in this bucket yet.</EmptyNote>
             )
           }
         </QueryResult>

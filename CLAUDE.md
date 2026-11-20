@@ -92,6 +92,9 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
 - **Filter pickers:** build on `SectionPicker` and follow [Picker conventions](docs/portfolio-filters.md#picker-conventions):
   extra info behind `InfoButton` in the `aside` panel on the right, Group by and Sort as small menus left of the (i),
   grouping off by default, and no icons in choice lists.
+- **Trip line styles:** every map or sketch of trip lines takes its color, width and dashes from `tripLineStyle` in
+  `@portfolio/lib/map-theme` (MapLibre paint via `tripLinePaint`, SVG via `tripLineStroke`), never its own numbers
+  ([Line styles](docs/trip-lines.md#line-styles)).
 - **Errors:** show every failure with `ErrorNote` (`components/error-note.tsx`): pass it the `Error` (or a sentence
   written for the page) and it shows the message in red with `role="alert"`, plus GitHub's answer when a GitHub call
   failed. `QueryResult`, `SaveNote` and `SaveState` already use it. Don't write `text-destructive` or `{x.error.message}`
@@ -105,6 +108,12 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
   Square Thumbnails, Photos in Flight's placeholders); `Spinner` is only inside a button or beside an action the user
   started, never for a read. The `servenup/reading-label` lint rule flags a label that doesn't start with "Reading" and
   JSX text starting with "Loading".
+- **Empty states:** a list, grid or panel with nothing in it shows `EmptyNote`
+  (`apps/portfolio/src/components/empty-note.tsx`, imported as `@portfolio/components/empty-note` in both apps), never
+  a hand-styled `<p>`. It has one look (muted, small); its `className` is for spacing only. Say what's missing in a full
+  sentence ("No albums yet.", not "None yet."), then what to do next when there is something to do. A photo list that
+  filters or search leave empty says `NO_PHOTOS_MATCH` ("No photos match these filters."). The `servenup/empty-note`
+  lint rule flags a muted `<p>` that starts "No", "None" or "Nothing".
 - **Small value and date helpers:** both apps share `apps/portfolio/src/lib/values.ts` (`isObject`, `textOf` for
   trimmed text or "", `stringOf` for text as written or "", `clamp`) and `apps/portfolio/src/lib/dates.ts`
   (`isoDate`, `parseIsoDate`, `shortDate` "Nov 3, 2026", `weekdayDate` "Tue, Nov 3, 2026", `dateTimeText` for a
@@ -116,7 +125,13 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors
   the user should see come back as `*github.PublishError`. A handler that reads or changes photo data on GitHub is
   `withGitHub` (or `withGitHubBody`, which decodes the body first) in `httpapi/respond.go`, which reads the settings,
-  opens the timeout context and answers with `writeResult`.
+  opens the timeout context and answers with `writeResult`. One that needs other settings, such as R2's, is
+  `withSettings(store.R2, timeout, …)` and usually answers with `writeR2Result`; one with a JSON body wraps it in
+  `withBody`. Request bodies are read only in `respond.go` (golangci-lint's `forbidigo` refuses `json.NewDecoder`
+  elsewhere in `httpapi`), with unknown fields refused. Every message a user reads is a sentence with a capital and a
+  full stop that says what to do next where there is something to do ("Couldn't save the tags.", "Pick the images to
+  delete first."); `messages_test.go` checks the ones passed to these helpers. A name in the URL path that doesn't
+  exist is a 404, a bad value in the body or query a 400.
 - **Docs:** a change in behavior updates its `docs/<feature>.md`. A new feature gets a new `docs/` file and one line
   in the README's **Features** list (`pnpm check` fails on a doc missing from it or a link to a missing doc). Only touch the README itself for setup, commands or deployment. Docs explain
   backend ideas with a short "> **Frontend analogy:**" note, since the owner is a frontend engineer.

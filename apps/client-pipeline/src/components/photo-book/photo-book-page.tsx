@@ -27,6 +27,7 @@ import {
   setTitle,
 } from "@/lib/photo-book";
 import { useCombinedData } from "@/stores/combined-data";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** What the photo drawer says beside the book. */
 const BOOK_DRAWER_WORDS = {
@@ -115,9 +116,7 @@ function BookEditor({ saved, photos }: { saved: PhotoBook; photos: SocialPhoto[]
           </div>
         </div>
         {book.pages.length === 0 && (
-          <p className="text-muted-foreground text-sm">
-            No pages yet. Add one to start laying out the book.
-          </p>
+          <EmptyNote>No pages yet. Add one to start laying out the book.</EmptyNote>
         )}
         <div className="grid gap-x-1 gap-y-6 2xl:grid-cols-2">
           {book.pages.map((page, index) => (

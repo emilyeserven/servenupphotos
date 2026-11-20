@@ -43,7 +43,7 @@ func TestUpload(t *testing.T) {
 		{"same name suggestion", photo, "", &storage.UploadError{Message: "already has", SameName: []storage.BucketImage{{Key: "photos/a-img-0001.jpg"}}, SuggestedName: "img-0001-2"}, http.StatusConflict, `"suggestedName":"img-0001-2"`},
 		{"unreadable", photo, "", &storage.UploadError{Message: "Couldn't read this JPEG", NotAPhoto: true}, http.StatusUnprocessableEntity, "Couldn't read this JPEG"},
 		{"rejected", photo, "", &storage.UploadError{Message: "no bucket", Cloudflare: &storage.CloudflareResponse{Status: 404, Code: "NoSuchBucket"}}, http.StatusBadGateway, `"cloudflare":{"status":404,"code":"NoSuchBucket"`},
-		{"other failure", photo, "", errors.New("disk on fire"), http.StatusInternalServerError, "could not upload photo"},
+		{"other failure", photo, "", errors.New("disk on fire"), http.StatusInternalServerError, "Couldn't upload the photo."},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

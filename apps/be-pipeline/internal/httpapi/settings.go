@@ -2,7 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
 	"log/slog"
 	"net/http"
 	"time"
@@ -22,10 +21,8 @@ const connectionTestTimeout = 10 * time.Second
 // only as set / not set, never returned.
 func handleGetSettings(store *settings.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, _ *http.Request) {
-		pub, err := store.Get()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
+		pub, ok := loadSettings(w, store.Get)
+		if !ok {
 			return
 		}
 		writeJSON(w, http.StatusOK, pub)
@@ -34,19 +31,15 @@ func handleGetSettings(store *settings.Store) http.HandlerFunc {
 
 // handleUpdateSettings decodes an update of type U and applies it with save.
 func handleUpdateSettings[U any](save func(U) (settings.Public, error)) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		update, ok := decodeSettings[U](w, r)
-		if !ok {
-			return
-		}
+	return withBody("settings", maxSettingsBytes, func(w http.ResponseWriter, _ *http.Request, update U) {
 		pub, err := save(update)
 		if err != nil {
 			slog.Error("save settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not save settings")
+			writeError(w, http.StatusInternalServerError, "Couldn't save the settings. Check that the backend can write to its settings folder.")
 			return
 		}
 		writeJSON(w, http.StatusOK, pub)
-	}
+	})
 }
 
 // handleTestSettings checks a settings update of type U against the remote
@@ -56,31 +49,10 @@ func handleTestSettings[U, S any](
 	resolve func(U) (S, error),
 	check func(context.Context, S) storage.CheckResult,
 ) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		update, ok := decodeSettings[U](w, r)
-		if !ok {
-			return
-		}
-		cfg, err := resolve(update)
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), connectionTestTimeout)
-		defer cancel()
-		writeJSON(w, http.StatusOK, check(ctx, cfg))
-	}
-}
-
-// decodeSettings reads a settings body of type U, writing a 400 if it is invalid.
-func decodeSettings[U any](w http.ResponseWriter, r *http.Request) (U, bool) {
-	var update U
-	dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxSettingsBytes))
-	dec.DisallowUnknownFields()
-	if err := dec.Decode(&update); err != nil {
-		writeError(w, http.StatusBadRequest, "invalid settings body")
-		return update, false
-	}
-	return update, true
+	return withBody("settings", maxSettingsBytes, func(w http.ResponseWriter, r *http.Request, update U) {
+		load := func() (S, error) { return resolve(update) }
+		withSettings(load, connectionTestTimeout, func(ctx context.Context, w http.ResponseWriter, _ *http.Request, cfg S) {
+			writeJSON(w, http.StatusOK, check(ctx, cfg))
+		})(w, r)
+	})
 }

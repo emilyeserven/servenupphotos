@@ -7,6 +7,7 @@ import { type ChangelogDay, changelogDays } from "@/components/changelog/days";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 export const Route = createFileRoute("/changelog")({
   component: ChangelogView,
@@ -107,6 +108,6 @@ function PhotoDataToggle({
 
 /** A card for each day, or a note when no changes are left to show. */
 function ChangelogDays({ days }: { days: ChangelogDay[] }) {
-  if (days.length === 0) return <p className="text-muted-foreground text-sm">No changes yet.</p>;
+  if (days.length === 0) return <EmptyNote>No changes yet.</EmptyNote>;
   return days.map((day) => <ChangelogDayCard key={day.day} day={day} />);
 }

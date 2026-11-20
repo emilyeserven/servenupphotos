@@ -24,13 +24,19 @@ type receivedPhoto struct {
 	fields map[string]string
 }
 
+// multipartMessage is the answer to an upload that isn't a multipart form.
+const multipartMessage = "Send the file as a multipart/form-data upload."
+
+// photoTooLargeMessage is the answer to a photo bigger than maxUploadBytes.
+const photoTooLargeMessage = "The photo is too large: it can be up to 50 MB."
+
 // receivePhoto saves the JPEG in the "photo" field of a multipart form to a
 // temp file. On failure it writes the error response and returns false.
 func receivePhoto(w http.ResponseWriter, r *http.Request) (receivedPhoto, bool) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadBytes)
 	mr, err := r.MultipartReader()
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "expected a multipart/form-data body")
+		writeError(w, http.StatusBadRequest, multipartMessage)
 		return receivedPhoto{}, false
 	}
 
@@ -40,10 +46,10 @@ func receivePhoto(w http.ResponseWriter, r *http.Request) (receivedPhoto, bool) 
 		part, err := mr.NextPart()
 		if err != nil {
 			if isTooBig(err) {
-				writeError(w, http.StatusRequestEntityTooLarge, "photo is too large")
+				writeError(w, http.StatusRequestEntityTooLarge, photoTooLargeMessage)
 				return receivedPhoto{}, false
 			}
-			writeError(w, http.StatusBadRequest, `missing "photo" field`)
+			writeError(w, http.StatusBadRequest, "Choose a photo to send: the request has none.")
 			return receivedPhoto{}, false
 		}
 		if part.FormName() != "photo" {
@@ -57,7 +63,7 @@ func receivePhoto(w http.ResponseWriter, r *http.Request) (receivedPhoto, bool) 
 		body := bufio.NewReader(part)
 		head, _ := body.Peek(512)
 		if http.DetectContentType(head) != "image/jpeg" {
-			writeError(w, http.StatusUnsupportedMediaType, "photo must be a JPEG")
+			writeError(w, http.StatusUnsupportedMediaType, "The photo must be a JPEG.")
 			return receivedPhoto{}, false
 		}
 
@@ -66,11 +72,11 @@ func receivePhoto(w http.ResponseWriter, r *http.Request) (receivedPhoto, bool) 
 		path, err := saveTemp(body)
 		if err != nil {
 			if isTooBig(err) {
-				writeError(w, http.StatusRequestEntityTooLarge, "photo is too large")
+				writeError(w, http.StatusRequestEntityTooLarge, photoTooLargeMessage)
 				return receivedPhoto{}, false
 			}
 			slog.Error("saving upload failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not save photo")
+			writeError(w, http.StatusInternalServerError, "Couldn't save the photo.")
 			return receivedPhoto{}, false
 		}
 		return receivedPhoto{name: part.FileName(), path: path, fields: fields}, true

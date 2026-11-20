@@ -5,6 +5,7 @@ import remarkBreaks from "remark-breaks";
 import { MARKDOWN_CLASSES } from "@/components/photo-details";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** Keeps each line break written, as the portfolio shows it. */
 const MARKDOWN_PLUGINS = [remarkBreaks];
@@ -57,7 +58,7 @@ export function MarkdownField({
 }
 
 function MarkdownPreview({ text }: { text: string }) {
-  if (!text.trim()) return <p className="text-muted-foreground min-h-10 py-2 text-xs">No text.</p>;
+  if (!text.trim()) return <EmptyNote className="min-h-10 py-2">No text.</EmptyNote>;
   return (
     <div className={`${MARKDOWN_CLASSES} bg-muted/40 min-h-10 rounded-md border px-2 py-2`}>
       <Markdown remarkPlugins={MARKDOWN_PLUGINS}>{text}</Markdown>

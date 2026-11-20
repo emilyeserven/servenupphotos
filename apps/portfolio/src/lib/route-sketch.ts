@@ -11,6 +11,10 @@ export interface SketchFeature {
     feature?: string;
     mode?: string;
     colour?: string;
+    /** The name of the transit line a hop rode, when one was picked. */
+    line?: string;
+    /** Whether a hop is drawn as a ride on its line; left out, it is when it has a line's name or color. */
+    onLine?: boolean;
     /** The Trip a leg between days is part of; a sketch leaves legs out. */
     trip?: string;
     lane?: number;
@@ -49,6 +53,8 @@ export interface SketchLine {
   points: string;
   mode?: string;
   colour?: string;
+  /** Whether it's a hop along a transit line that was picked, drawn solid like on the Map. */
+  onLine: boolean;
 }
 
 /** A day's route fitted into the sketch: its lines and the places visited as dots. */
@@ -169,6 +175,7 @@ export function routeSketch(
       ),
       mode: line.properties.mode,
       colour: line.properties.colour,
+      onLine: line.properties.onLine ?? Boolean(line.properties.line || line.properties.colour),
     })),
     visits: take(visits.length),
     bounds: geoBounds(raw),
