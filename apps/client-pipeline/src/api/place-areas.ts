@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { requestJson } from "@/api/request";
+import { del, put, requestJson } from "@/api/request";
 import type { AreaShape } from "@/api/trip-lines";
 
 /** The outline of the area a place covers, such as a park, which the portfolio's map shades. */
@@ -29,11 +29,7 @@ export const savePlaceAreaMutation = mutationOptions({
   scope: { id: "photo-data-entries" },
   meta: { saves: (result) => (result as PlaceAreaResult).changed },
   mutationFn: ({ id, area }: { id: string; area: PlaceArea }) =>
-    requestJson<PlaceAreaResult>(`/api/places/${encodeURIComponent(id)}/area`, {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(area),
-    }),
+    put<PlaceAreaResult>(`/api/places/${encodeURIComponent(id)}/area`, area),
 });
 
 /** Removes a place's area, as a change waiting for Commit. */
@@ -41,8 +37,5 @@ export const deletePlaceAreaMutation = mutationOptions({
   mutationKey: ["place-area", "delete"],
   scope: { id: "photo-data-entries" },
   meta: { saves: true },
-  mutationFn: (id: string) =>
-    requestJson<PlaceAreaResult>(`/api/places/${encodeURIComponent(id)}/area`, {
-      method: "DELETE",
-    }),
+  mutationFn: (id: string) => del<PlaceAreaResult>(`/api/places/${encodeURIComponent(id)}/area`),
 });

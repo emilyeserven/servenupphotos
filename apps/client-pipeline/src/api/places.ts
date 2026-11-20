@@ -1,7 +1,7 @@
 import { mutationOptions, type QueryClient, queryOptions } from "@tanstack/react-query";
 import { groupId } from "@/api/organize";
 import type { InFlightPullRequest } from "@/api/photos";
-import { requestJson } from "@/api/request";
+import { put, requestJson } from "@/api/request";
 import type { FileChange } from "@/lib/optimistic";
 
 /** A place file: somewhere photos are taken, more exactly than a city, such as Gyeongbokgung Palace. */
@@ -130,11 +130,7 @@ function saveEntryMutation<T extends { id: string }>(kind: EntryKind) {
       changes: (result) => entryChange(kind, result as EntryResult<T>),
     },
     mutationFn: (entry: T) =>
-      requestJson<EntryResult<T>>(`/api/${kind}/${encodeURIComponent(entry.id)}`, {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(entry),
-      }),
+      put<EntryResult<T>>(`/api/${kind}/${encodeURIComponent(entry.id)}`, entry),
   });
 }
 

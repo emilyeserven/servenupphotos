@@ -14,5 +14,20 @@
       }
     ]
   },
-  "ignorePatterns": ["**/dist/**", "**/routeTree.gen.ts"]
+  "ignorePatterns": ["**/dist/**", "**/routeTree.gen.ts"],
+  "jsPlugins": ["./scripts/oxlint/request-helpers.mjs"],
+  "overrides": [
+    {
+      "files": ["apps/client-pipeline/src/**/*.{ts,tsx}"],
+      "rules": {
+        "request-helpers/no-hand-built-json-request": "error"
+      }
+    },
+    {
+      "files": ["apps/client-pipeline/src/api/request.ts"],
+      "rules": {
+        "request-helpers/no-hand-built-json-request": "off"
+      }
+    }
+  ]
 }
