@@ -2,8 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"errors"
-	"log/slog"
 	"net/http"
 	"strconv"
 
@@ -15,31 +13,11 @@ import (
 // branch of the GitHub repository from Settings, newest first, without merge
 // commits. The page is the "page" query parameter, from 1.
 func handleChangelog(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return withGitHub(store, publishTimeout, "Couldn't read the Changelog.", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
 		page, err := strconv.Atoi(r.URL.Query().Get("page"))
 		if err != nil || page < 1 {
 			page = 1
 		}
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		log, err := gh.Changelog(ctx, cfg, page)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("read changelog failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read the changelog")
-			return
-		}
-		writeJSON(w, http.StatusOK, log)
-	}
+		return gh.Changelog(ctx, cfg, page)
+	})
 }

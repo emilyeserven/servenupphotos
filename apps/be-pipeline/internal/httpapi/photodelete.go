@@ -28,27 +28,19 @@ type deletePhotoResponse struct {
 // Once the JSON is saved it responds 200 even if an image couldn't be
 // deleted, saying why in "image" or "original".
 func handleDeletePhoto(store *settings.Store, gh *github.Client, findPhotos findPhotosFunc, deletePhoto deletePhotoFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return withGitHub(store, publishTimeout, "Couldn't delete the photo.", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
 		file := r.URL.Query().Get("path")
 		if file == "" {
-			writeError(w, http.StatusBadRequest, "path is required")
-			return
+			return nil, badRequest(pathMessage)
 		}
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
 		deleted, err := gh.DeletePhoto(ctx, cfg, file)
 		if err != nil {
-			writeResult(w, nil, err, "could not delete the photo")
-			return
+			return nil, err
 		}
 		resp := deletePhotoResponse{DeletedPhoto: deleted}
 		resp.Image, resp.Original = deletedImages(r.Context(), store, findPhotos, deletePhoto, deleted)
-		writeJSON(w, http.StatusOK, resp)
-	}
+		return resp, nil
+	})
 }
 
 // deletedImages deletes deleted's image and its versions from R2, then its

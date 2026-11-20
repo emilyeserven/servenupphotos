@@ -2,7 +2,6 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -81,41 +80,17 @@ func handleBackfill(
 	extractor exif.Extractor, store *settings.Store, get getPhotoFunc, readCrop thumbnailCropFunc, cache *exifCache,
 	run func(context.Context, settings.GitHub, github.Readers) (any, error),
 ) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req backfillRequest
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes)).Decode(&req); err != nil {
-			writeError(w, http.StatusBadRequest, "invalid backfill body")
-			return
-		}
-		cfg, err := store.GitHub()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		var read github.Readers
-		if req.ReadExif && extractor != nil {
-			read.Exif = exifReader(extractor, store.R2, get, cache)
-		}
-		if req.ReadExif {
-			read.Crop = cropReader(store.R2, readCrop)
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), backfillTimeout)
-		defer cancel()
-		result, err := run(ctx, cfg, read)
-		var perr *github.PublishError
-		if errors.As(err, &perr) {
-			writePublishError(w, perr)
-			return
-		}
-		if err != nil {
-			slog.Error("add missing photo fields failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not add the missing fields")
-			return
-		}
-		writeJSON(w, http.StatusOK, result)
-	}
+	return withGitHubBody(store, backfillTimeout, "Missing fields options", "Couldn't add the missing fields.",
+		func(ctx context.Context, _ *http.Request, cfg settings.GitHub, req backfillRequest) (any, error) {
+			var read github.Readers
+			if req.ReadExif && extractor != nil {
+				read.Exif = exifReader(extractor, store.R2, get, cache)
+			}
+			if req.ReadExif {
+				read.Crop = cropReader(store.R2, readCrop)
+			}
+			return run(ctx, cfg, read)
+		})
 }
 
 // exifReader reads an original's EXIF from R2 as POST /photos/bucket/exif

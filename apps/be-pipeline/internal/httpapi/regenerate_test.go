@@ -31,14 +31,14 @@ func TestRegenerateVersionsHandler(t *testing.T) {
 		{"some", `{"key":"photos/k.jpg","versions":["small"]}`, nil, http.StatusOK, `"small":{"key":"photos/k-small.webp"`, []string{"small"}},
 		{"every version", `{"key":"photos/k.jpg"}`, nil, http.StatusOK, `"key":"photos/k.jpg"`, every},
 		{"thumbnail", `{"key":"photos/k.jpg","versions":["thumbnail"]}`, nil, http.StatusOK, `"key":"photos/k.jpg"`, []string{"thumbnail"}},
-		{"no key", `{}`, nil, http.StatusBadRequest, "key is required", nil},
-		{"bad crop", `{"key":"photos/k.jpg","versions":["thumbnail"],"crop":{"x":0,"y":0,"size":0}}`, nil, http.StatusBadRequest, "crop needs a size", nil},
+		{"no key", `{}`, nil, http.StatusBadRequest, "its key is missing", nil},
+		{"bad crop", `{"key":"photos/k.jpg","versions":["thumbnail"],"crop":{"x":0,"y":0,"size":0}}`, nil, http.StatusBadRequest, "Give the crop a size", nil},
 		{"bad face", `{"key":"photos/k.jpg","faces":[{"x":0,"y":0,"width":10,"height":10,"blocks":1}]}`, nil, http.StatusBadRequest, "blocks", nil},
-		{"unknown version", `{"key":"photos/k.jpg","versions":["huge"]}`, nil, http.StatusBadRequest, "no such version", nil},
+		{"unknown version", `{"key":"photos/k.jpg","versions":["huge"]}`, nil, http.StatusBadRequest, "no resized version by that name", nil},
 		{"gone", `{"key":"photos/k.jpg"}`, &storage.UploadError{Message: "isn't in the bucket anymore", NotFound: true}, http.StatusNotFound, "anymore", every},
 		{"not set up", `{"key":"photos/k.jpg"}`, &storage.UploadError{Message: "Fill in Bucket first.", NotConfigured: true}, http.StatusBadRequest, "Fill in Bucket", every},
 		{"rejected", `{"key":"photos/k.jpg"}`, &storage.UploadError{Message: "no bucket", Cloudflare: &storage.CloudflareResponse{Status: 404}}, http.StatusBadGateway, `"cloudflare":{"status":404`, every},
-		{"other failure", `{"key":"photos/k.jpg"}`, errors.New("disk on fire"), http.StatusInternalServerError, "could not make", every},
+		{"other failure", `{"key":"photos/k.jpg"}`, errors.New("disk on fire"), http.StatusInternalServerError, "Couldn't make", every},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -118,9 +118,9 @@ func TestThumbnailCropHandler(t *testing.T) {
 	}{
 		{"saved", "?key=photos/k.jpg", &versions.Crop{X: 1, Y: 2, Size: 300}, nil, http.StatusOK, `"crop":{"x":1,"y":2,"size":300}`},
 		{"middle", "?key=photos/k.jpg", nil, nil, http.StatusOK, `"crop":null`},
-		{"no key", "", nil, nil, http.StatusBadRequest, "key is required"},
+		{"no key", "", nil, nil, http.StatusBadRequest, "its key is missing"},
 		{"not a pipeline photo", "?key=k.jpg", nil, &storage.UploadError{Message: "Only photos", NotFound: true}, http.StatusNotFound, "Only photos"},
-		{"other failure", "?key=photos/k.jpg", nil, errors.New("disk on fire"), http.StatusInternalServerError, "could not read"},
+		{"other failure", "?key=photos/k.jpg", nil, errors.New("disk on fire"), http.StatusInternalServerError, "Couldn't read"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

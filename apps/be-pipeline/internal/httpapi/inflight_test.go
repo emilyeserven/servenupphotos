@@ -112,7 +112,7 @@ func TestRemoveInFlightNeedsPath(t *testing.T) {
 	req := httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/photos/in-flight", nil)
 	rec := httptest.NewRecorder()
 	router.ServeHTTP(rec, req)
-	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "path is required") {
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "its path is missing") {
 		t.Errorf("status = %d, body %s; want 400 asking for a path", rec.Code, rec.Body)
 	}
 }
@@ -134,8 +134,8 @@ func TestUpdateInFlight(t *testing.T) {
 		status int
 		want   string
 	}{
-		{"no path", `{"data":{}}`, http.StatusBadRequest, "path and data are required"},
-		{"not JSON", `nope`, http.StatusBadRequest, "path and data are required"},
+		{"no path", `{"data":{}}`, http.StatusBadRequest, "photo JSON file"},
+		{"not JSON", `nope`, http.StatusBadRequest, "Couldn't read the photo data sent"},
 		{"not set up", `{"path":"apps/portfolio/src/data/a.json","data":{}}`, http.StatusBadRequest, "Settings first"},
 	}
 	for _, tt := range tests {
@@ -159,7 +159,7 @@ func TestCreateGroupRoute(t *testing.T) {
 		want       string
 	}{
 		{"/organize/folders", `{"id":"a","name":"A"}`, http.StatusNotFound, "tags or genres"},
-		{"/organize/albums", `{"id":"a","name":"A","extra":1}`, http.StatusBadRequest, "invalid album body"},
+		{"/organize/albums", `{"id":"a","name":"A","extra":1}`, http.StatusBadRequest, "Couldn't read the album sent"},
 		{"/organize/tags", `{"id":"a","name":"a"}`, http.StatusBadRequest, "Settings first"},
 	}
 	for _, tt := range tests {

@@ -11,7 +11,7 @@ import (
 // handleSaveGraphPreset saves the body as the path's graph preset or preset
 // group, new or replacing the one there, as a change waiting for Commit.
 func handleSaveGraphPreset(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHubBody(store, publishTimeout, "graph preset", "could not save the graph preset",
+	return withGitHubBody(store, publishTimeout, "graph preset", "Couldn't save the graph preset.",
 		func(ctx context.Context, r *http.Request, cfg settings.GitHub, preset github.GraphPreset) (any, error) {
 			preset.ID = r.PathValue("id")
 			return gh.SaveGraphPreset(ctx, cfg, preset)
@@ -21,7 +21,7 @@ func handleSaveGraphPreset(store *settings.Store, gh *github.Client) http.Handle
 // handleDeleteGraphPreset removes the path's graph preset or preset group as
 // a change waiting for Commit.
 func handleDeleteGraphPreset(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return withGitHub(store, publishTimeout, "could not remove the graph preset", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+	return withGitHub(store, publishTimeout, "Couldn't remove the graph preset.", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
 		return gh.DeleteGraphPreset(ctx, cfg, r.PathValue("id"))
 	})
 }

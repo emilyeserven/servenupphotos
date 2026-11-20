@@ -68,30 +68,20 @@ type imageSizesResponse struct {
 // aspect ratios. Nothing is saved.
 func handleImageSizes(loadR2 func() (settings.R2, error), read imageSizeFunc) http.HandlerFunc {
 	cache := newKeyCache[imageSize]()
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req imageSizesRequest
-		if !decodeEntryUpTo(w, r, &req, "Small versions to measure", 4<<20) {
-			return
-		}
+	return withBody("Small versions to measure", 4<<20, func(w http.ResponseWriter, r *http.Request, req imageSizesRequest) {
 		if len(req.URLs) == 0 || len(req.URLs) > maxImageSizeURLs {
 			writeError(w, http.StatusBadRequest, fmt.Sprintf("Send 1 to %d Small versions to measure.", maxImageSizeURLs))
 			return
 		}
-		cfg, err := loadR2()
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), imageSizesTimeout)
-		defer cancel()
-		images := measureImages(ctx, cfg, req.URLs, read, cache)
-		if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-			writeError(w, http.StatusGatewayTimeout, "Measuring the Small versions took too long. Try again: the ones read so far are kept.")
-			return
-		}
-		writeJSON(w, http.StatusOK, imageSizesResponse{Images: images})
-	}
+		withSettings(loadR2, imageSizesTimeout, func(ctx context.Context, w http.ResponseWriter, _ *http.Request, cfg settings.R2) {
+			images := measureImages(ctx, cfg, req.URLs, read, cache)
+			if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+				writeError(w, http.StatusGatewayTimeout, "Measuring the Small versions took too long. Try again: the ones read so far are kept.")
+				return
+			}
+			writeJSON(w, http.StatusOK, imageSizesResponse{Images: images})
+		})(w, r)
+	})
 }
 
 // measureImages measures urls, sizeReaders at a time, through cache.

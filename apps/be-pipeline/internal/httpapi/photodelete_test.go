@@ -19,7 +19,7 @@ func TestDeletePhotoNeedsPath(t *testing.T) {
 	req := httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/photos/saved", nil)
 	rec := httptest.NewRecorder()
 	router.ServeHTTP(rec, req)
-	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "path is required") {
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "its path is missing") {
 		t.Errorf("status = %d, body %s; want 400 asking for a path", rec.Code, rec.Body)
 	}
 }
