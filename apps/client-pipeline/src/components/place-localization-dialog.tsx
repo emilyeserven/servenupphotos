@@ -45,8 +45,8 @@ export function PlaceLocalizationDialog({ place, disabled }: { place: Place; dis
         <DialogHeader>
           <DialogTitle>Localize {place.name}</DialogTitle>
           <DialogDescription>
-            How it's written and said where it is. Saved as its localization in the photo data pull
-            request, as on the Localizations page.
+            How it's written and said where it is. Saved as its localization in the app, waiting for
+            Commit, as on the Localizations page.
           </DialogDescription>
         </DialogHeader>
         {open && <LocalizationForm place={place} onSaved={() => setOpen(false)} />}

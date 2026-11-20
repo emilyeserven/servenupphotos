@@ -5,6 +5,7 @@ import { ErrorText } from "@/components/bulk-tagging/pick-controls";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 
 /**
  * Find Related Photos: has the backend compare every photo with every other and save each one's
@@ -32,8 +33,8 @@ export function FindSimilarCard() {
         <ErrorText error={find.error} />
         {find.data && (
           <p className="text-sm">
-            Saved new related photos on {find.data.photos} of {find.data.photoFiles} photos, waiting
-            for Commit.
+            Saved new related photos on {find.data.photos} of {find.data.photoFiles} photos in the
+            app. <WaitingForCommit pullRequestUrl={find.data.pullRequestUrl} what="They" />
           </p>
         )}
       </CardContent>

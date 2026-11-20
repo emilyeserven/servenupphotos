@@ -15,6 +15,7 @@ import {
 } from "@/components/related-photos/picks";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { SavedInApp } from "@/components/waiting-for-commit";
 
 interface PickedEditorProps {
   photo: SavedPhoto;
@@ -51,10 +52,10 @@ function SavePicks({ photo, picks }: { photo: SavedPhoto; picks: Pick[] }) {
           disabled={!changed}
           onClick={() => save.mutate({ path: photo.path, ...pickFields(picks) })}
         />
-        {save.isSuccess && !changed && (
-          <span className="text-muted-foreground text-sm">Saved, waiting for Commit.</span>
-        )}
       </div>
+      {save.isSuccess && !changed && (
+        <SavedInApp what="the picks" pullRequestUrl={save.data.pullRequestUrl} />
+      )}
       <ErrorText error={save.error} />
     </>
   );

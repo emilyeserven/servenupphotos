@@ -90,6 +90,12 @@ React components (`.tsx`) can't be tested this way. Tests assert behavior with s
   failed. `QueryResult`, `SaveNote` and `SaveState` already use it. Don't write `text-destructive` or `{x.error.message}`
   into JSX; the `servenup/error-note` lint rule (`scripts/lint/servenup-plugin.mjs`) flags both. Red that isn't an error
   (an icon, a removed count) takes an `oxlint-disable-next-line servenup/error-note` comment saying why.
+- **Saved and asking first:** after a save, say it waits for Commit, never that it's on GitHub or in the pull request:
+  `SaveState` ("Saving…", "Saved for Commit") on a page that saves as you type, and `SavedInApp` (or a sentence ending
+  in `WaitingForCommit`, `components/waiting-for-commit.tsx`) after a button save. Ask before losing or replacing work
+  with `await askFirst({ question, note, action })` (`stores/confirm.ts`), or `ConfirmDeleteCard` for a delete that
+  runs inside its dialog; never `window.confirm`, `alert` or `prompt` (oxlint `no-alert`). See
+  [What a page says after a save](docs/pending-changes.md#what-a-page-says-after-a-save).
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors

@@ -7,6 +7,7 @@ import {
   type Place,
   savePlaceMutation,
 } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
 import { FieldLabel } from "@/components/field-label";
 import { FloatingSaveButton } from "@/components/floating-save-button";
 import { PlaceAreaEditor } from "@/components/place-area-editor";
@@ -33,6 +34,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
+import { SavedInApp } from "@/components/waiting-for-commit";
 import { useState } from "react";
 import { decimalGps, gpsText, parseGps } from "@/lib/place-gps";
 import { parentOptions } from "@/lib/place-bulk";
@@ -166,7 +168,7 @@ function isSaving(form: PlaceForm, localization: LocalizationDraft): boolean {
   return form.save.isPending || localization.save.isPending;
 }
 
-/** Saves the place when it's changed, and its localization when that is, each as its own commit. */
+/** Saves the place when it's changed, and its localization when that is, each as its own file. */
 function saveBoth(form: PlaceForm, localization: LocalizationDraft) {
   const { id, name } = form.next;
   if (form.changed) form.save.mutate(form.next);
@@ -330,7 +332,7 @@ function PlaceEditorHeader({ folder, place, id }: PlaceEditorHeaderProps) {
       </CardTitle>
       <CardDescription>
         Saves the place as <code className="break-all">{`${folder}/places/${id || "…"}.json`}</code>{" "}
-        in the open photo data pull request, or opens a new one.
+        in the app, waiting for Commit.
       </CardDescription>
       {place && (
         <CardAction>
@@ -393,26 +395,22 @@ function CloseButton({ label, onDone }: { label: string; onDone: () => void }) {
 /** What saving did, why it failed, or why the place can't be saved yet. */
 function FormStatus({ form, localization }: { form: PlaceForm; localization: LocalizationDraft }) {
   const error = formError(form, localization);
-  if (error) return <p className="text-destructive text-sm">{error}</p>;
-  if (!isSaved(form, localization)) return null;
-  return (
-    <p className="text-sm">
-      Saved to the photo data pull request. Commit from the button at the top right to add it to
-      PLACES.json.
-    </p>
-  );
+  if (error) return <ErrorNote error={error} />;
+  const saved = savedResult(form, localization);
+  return saved ? <SavedInApp what="the place" pullRequestUrl={saved.pullRequestUrl} /> : null;
 }
 
-/** Whether a save finished and nothing has been typed since. */
-function isSaved(form: PlaceForm, localization: LocalizationDraft): boolean {
-  const done = form.save.isSuccess || localization.save.isSuccess;
-  return done && !isSaving(form, localization);
+/** What the last finished save answered, while nothing has been typed since. */
+function savedResult(form: PlaceForm, localization: LocalizationDraft) {
+  if (isSaving(form, localization)) return undefined;
+  if (form.save.isSuccess) return form.save.data;
+  return localization.save.isSuccess ? localization.save.data : undefined;
 }
 
 /** Why saving failed, or once a name is typed, why the place can't be saved. */
-function formError(form: PlaceForm, localization: LocalizationDraft): string | undefined {
+function formError(form: PlaceForm, localization: LocalizationDraft): Error | string | undefined {
   const failed = form.save.error ?? localization.save.error;
-  if (failed) return failed.message;
+  if (failed) return failed;
   return form.draft.name ? form.problem : undefined;
 }
 
