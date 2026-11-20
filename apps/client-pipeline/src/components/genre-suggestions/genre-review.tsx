@@ -14,6 +14,7 @@ import {
 import { type GenreOption, PhotoGenreRow } from "@/components/genre-suggestions/photo-genre-row";
 import { toggled } from "@/lib/bulk-tags";
 import { type GenreChoices, NO_GENRE_CHOICES, genresToSave } from "@/lib/genre-suggestions";
+import { withOthers } from "@/lib/answered-photos";
 import { count } from "@portfolio/lib/words";
 
 interface GenreReviewProps {
@@ -26,13 +27,14 @@ interface GenreReviewProps {
  * next to a dropdown per suggested genre, which can pick another genre or none, then a button that
  * saves them.
  */
-export function GenreReview({ preview, pick }: GenreReviewProps) {
+export function GenreReview({ preview, pick: picked }: GenreReviewProps) {
+  const pick = withOthers(picked, preview.others);
   const [choices, setChoices] = useState<GenreChoices>(NO_GENRE_CHOICES);
   const apply = useReviewedSave(applyGenreSuggestionsMutation);
   const busy = apply.isPending || apply.isSuccess;
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownPhotos names={preview.unknown} noun="genres" />
+      <UnknownPhotos names={preview.unknown} others={preview.others} noun="genres" />
       {/* Once saved, the new genres are made, so only what was saved is left to say. */}
       {!apply.isSuccess && (
         <NewGenreList preview={preview} choices={choices} onChange={setChoices} disabled={busy} />

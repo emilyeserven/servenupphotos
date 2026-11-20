@@ -48,7 +48,7 @@ export function BulkPlaceReview({ review }: { review: BulkPlacesReview }) {
   const fresh = new Set(review.newPlaces.map((place) => place.id));
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownPhotos names={review.unknown} noun="places" />
+      <UnknownPhotos names={review.unknown} others={review.others} noun="places" />
       {/* Once saved, the new places are made, so only what was saved is left to say. */}
       {!apply.isSuccess && <NewPlaceList places={save.newPlaces} names={review.names} />}
       <ul className="flex flex-col gap-3">

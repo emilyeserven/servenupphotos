@@ -25,15 +25,29 @@ function flagItems(answer: PixelationAnswer, photos: AutogroupPhoto[]): FlagItem
   }));
 }
 
+interface PixelationCheckProps {
+  /** The chosen photos, which the prompt asks about. */
+  photos: AutogroupPhoto[];
+  /** Every photo that can be checked, so an answer can name photos the prompt didn't ask about. */
+  every: AutogroupPhoto[];
+}
+
+/** The chosen photos, then every other photo, each once. */
+function withEvery(photos: AutogroupPhoto[], every: AutogroupPhoto[]): AutogroupPhoto[] {
+  const keys = new Set(photos.map((entry) => entry.key));
+  return [...photos, ...every.filter((entry) => !keys.has(entry.key))];
+}
+
 /**
  * The pixelation check: copies one prompt linking every chosen photo (and their contact sheets)
  * asking an LLM which show readable license plates or recognizable faces, then reads its JSON
- * answer into a list of photos to flag for re-edit, each linked to the Photo page's face
+ * answer into a list of photos to flag for re-edit (any photo it names, not only the chosen ones), each linked to the Photo page's face
  * pixelation.
  */
-export function PixelationCheck({ photos }: { photos: AutogroupPhoto[] }) {
+export function PixelationCheck({ photos, every }: PixelationCheckProps) {
+  const answerable = useMemo(() => withEvery(photos, every), [photos, every]);
   const { typed, setTyped, answer, error, reviews, review } = usePastedAnswer((text) =>
-    readPixelationAnswer(text, photos),
+    readPixelationAnswer(text, answerable),
   );
   const sheetPhotos = useMemo(() => autogroupSheetPhotos(photos), [photos]);
   const contact = useContactSheets(sheetPhotos);
@@ -59,7 +73,7 @@ export function PixelationCheck({ photos }: { photos: AutogroupPhoto[] }) {
         onReview={review}
       />
       {error && <p className="text-destructive text-sm">{error}</p>}
-      {answer && <AnswerView key={reviews} answer={answer} photos={photos} />}
+      {answer && <AnswerView key={reviews} answer={answer} photos={answerable} />}
     </section>
   );
 }
@@ -78,7 +92,7 @@ function AnswerView({ answer, photos }: { answer: PixelationAnswer; photos: Auto
       )}
       {answer.unknown.length > 0 && (
         <p className="text-muted-foreground text-sm">
-          Left out, since they aren&apos;t photos in the prompt: {answer.unknown.join(", ")}.
+          Skipped, since they aren&apos;t photos: {answer.unknown.join(", ")}.
         </p>
       )}
     </>

@@ -15,6 +15,7 @@ import {
 import { AltTextLength } from "@/components/photo-alt-text-field";
 import { Textarea } from "@/components/ui/textarea";
 import { ALT_TEXT_MAX, type AltTextDraft, altTextsToSave, startingDrafts } from "@/lib/alt-text";
+import { withOthers } from "@/lib/answered-photos";
 import { count } from "@portfolio/lib/words";
 
 interface AltTextReviewProps {
@@ -26,7 +27,8 @@ interface AltTextReviewProps {
  * The review of the LLM's answer: each photo next to its alt text, which can be edited or unticked,
  * then a button that saves the ticked ones.
  */
-export function AltTextReview({ preview, pick }: AltTextReviewProps) {
+export function AltTextReview({ preview, pick: picked }: AltTextReviewProps) {
+  const pick = withOthers(picked, preview.others);
   const [drafts, setDrafts] = useState(() => startingDrafts(preview.photos));
   const apply = useReviewedSave(applyAltTextMutation);
   const busy = apply.isPending || apply.isSuccess;
@@ -34,7 +36,7 @@ export function AltTextReview({ preview, pick }: AltTextReviewProps) {
     setDrafts((all) => ({ ...all, [path]: draft }));
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownPhotos names={preview.unknown} noun="alt text" />
+      <UnknownPhotos names={preview.unknown} others={preview.others} noun="alt text" />
       <ul className="flex flex-col gap-3">
         {preview.photos.map((suggestion) => (
           <AltTextRow
