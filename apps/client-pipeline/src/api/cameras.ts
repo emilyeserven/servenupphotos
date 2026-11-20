@@ -3,7 +3,7 @@ import type { ScannedPhotos } from "@/api/data";
 import { settingEntries, settingMutations } from "@/api/data-files";
 import { entryId } from "@/api/places";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
-import { requestJson } from "@/api/request";
+import { post } from "@/api/request";
 
 /**
  * A photo field a camera override can set: the ones read from EXIF, except the photo's size, and
@@ -124,18 +124,10 @@ interface ReapplyResult extends PendingSave {
   fields: number;
 }
 
-function post<T>(url: string) {
-  return requestJson<T>(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: "{}",
-  });
-}
-
 /** Reads every photo file and previews applying the camera overrides to it again. */
 export const reapplyPreviewQuery = queryOptions({
   queryKey: ["data", "camera-overrides"],
-  queryFn: () => post<ReapplyPreview>("/api/data/camera-overrides/preview"),
+  queryFn: () => post<ReapplyPreview>("/api/data/camera-overrides/preview", {}),
   retry: false,
   refetchOnWindowFocus: false,
   staleTime: 0,
@@ -145,5 +137,5 @@ export const reapplyPreviewQuery = queryOptions({
 export const reapplyMutation = mutationOptions({
   mutationKey: ["data", "camera-overrides", "apply"],
   meta: { saves: true, changes: (result) => photoChanges(result as ReapplyResult) },
-  mutationFn: () => post<ReapplyResult>("/api/data/camera-overrides"),
+  mutationFn: () => post<ReapplyResult>("/api/data/camera-overrides", {}),
 });

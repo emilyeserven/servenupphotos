@@ -10,13 +10,13 @@ import { AltTextReview } from "@/components/alt-text/alt-text-review";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import {
   CopyPromptButton,
-  ErrorText,
   PasteAnswer,
   PickBar,
   usePhotoPick,
 } from "@/components/bulk-tagging/pick-controls";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { altTextPrompt } from "@/lib/alt-text-prompt";
+import { ErrorNote } from "@/components/error-note";
 
 /** How many photos the Alt Text page picks until another number is chosen. */
 const defaultAltTextCount = 20;
@@ -41,7 +41,7 @@ export function AltTextCard() {
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <PickBar {...bar} />
-        <ErrorText error={pick.error} />
+        <ErrorNote error={pick.error} />
         {pick.data && <PickedAltText key={pick.submittedAt} pick={pick.data} />}
       </CardContent>
     </Card>
@@ -72,7 +72,7 @@ function PickedAltText({ pick }: { pick: AltTextPick }) {
         label="Review the alt text"
         onReview={() => preview.mutate({ paths, answer })}
       />
-      <ErrorText error={preview.error} />
+      <ErrorNote error={preview.error} />
       {preview.data && (
         <AltTextReview key={JSON.stringify(preview.data)} preview={preview.data} pick={pick} />
       )}

@@ -4,13 +4,14 @@ import { metaGroups } from "@/api/metainfo";
 import { organizeQuery } from "@/api/organize";
 import { previewPruneTagsMutation } from "@/api/prune-tags";
 import { tagLibraryQuery } from "@/api/tag-library";
-import { CopyPromptButton, ErrorText, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
+import { CopyPromptButton, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
 import { PruneTagReview } from "@/components/prune-tags/prune-tag-review";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { currentPhotos, photoCounts } from "@/lib/group-photos";
 import { pruneTagPrompt } from "@/lib/prune-tag-prompt";
 import { fewPhotoTagLines } from "@/lib/tag-library-prompt";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * Tag pruning: copies a prompt listing every tag with its parent, description and photo count, and
@@ -40,7 +41,7 @@ export function PruneTagsCard() {
           label="Review the changes"
           onReview={() => preview.mutate({ answer })}
         />
-        <ErrorText error={preview.error} />
+        <ErrorNote error={preview.error} />
         {preview.data && (
           <PruneTagReview key={JSON.stringify(preview.data)} preview={preview.data} />
         )}

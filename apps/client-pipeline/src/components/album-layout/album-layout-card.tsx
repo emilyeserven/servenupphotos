@@ -151,7 +151,7 @@ function LayoutSaveBar({ album, draft, save, onUndo }: LayoutSaveBarProps) {
 
 function BlockedNote({ show }: { show: boolean }) {
   if (!show) return null;
-  return <span className="text-destructive text-xs">Give every row photos or text first.</span>;
+  return <ErrorNote error="Give every row photos or text first." className="text-xs" />;
 }
 
 function UndoButton({

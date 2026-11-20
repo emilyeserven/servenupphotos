@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ErrorNote } from "@/components/error-note";
 
 interface RenameFormProps {
   /** The input's id, unique on the page. */
@@ -99,11 +100,7 @@ function RenameField({ id, extension, value, error, onChange, onBlur }: RenameFi
         />
         <span className="text-muted-foreground text-sm">{extension}</span>
       </div>
-      {error && (
-        <p id={`${id}-error`} className="text-destructive text-sm">
-          {error}
-        </p>
-      )}
+      <ErrorNote id={`${id}-error`} error={error} />
     </div>
   );
 }

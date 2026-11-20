@@ -173,12 +173,14 @@ function DeleteOutcome({
   if (error) return <ErrorNote error={error} />;
   if (!result?.failed.length) return null;
   return (
-    <ul className="text-destructive flex flex-col gap-1">
-      {result.failed.map((failed) => (
-        <li key={failed.key}>
-          <span className="font-mono text-xs break-all">{failed.key}</span>: {failed.message}
-        </li>
-      ))}
-    </ul>
+    <ErrorNote>
+      <ul className="flex flex-col gap-1">
+        {result.failed.map((failed) => (
+          <li key={failed.key}>
+            <span className="font-mono text-xs break-all">{failed.key}</span>: {failed.message}
+          </li>
+        ))}
+      </ul>
+    </ErrorNote>
   );
 }

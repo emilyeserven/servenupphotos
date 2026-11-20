@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { requestJson } from "@/api/request";
+import { post, put, requestJson } from "@/api/request";
 
 /** All the client ever learns about a stored secret. */
 export interface SecretStatus {
@@ -61,18 +61,10 @@ export interface ConnectionTestResult {
 export type SettingsBody = Record<string, string | boolean | undefined>;
 
 export function saveSettings(section: SettingsSection, body: SettingsBody) {
-  return requestJson<SettingsResponse>(`/api/settings/${section}`, {
-    method: "PUT",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  return put<SettingsResponse>(`/api/settings/${section}`, body);
 }
 
 /** Checks unsaved settings; a kept (`undefined`) secret is filled in from the stored one. */
 export function testSettings(section: SettingsSection, body: SettingsBody) {
-  return requestJson<ConnectionTestResult>(`/api/settings/${section}/test`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  return post<ConnectionTestResult>(`/api/settings/${section}/test`, body);
 }

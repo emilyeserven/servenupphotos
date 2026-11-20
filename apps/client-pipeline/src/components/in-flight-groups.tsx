@@ -100,6 +100,7 @@ function GroupFileButton({
 /** "+3 −1" for the lines the file adds and removes, or "!" when it couldn't be read. */
 function LineCounts({ file }: { file: InFlightGroupFile }) {
   const changes = lineChanges(file);
+  // oxlint-disable-next-line servenup/error-note -- a one-character mark beside the file name
   if (!changes) return <span className="text-destructive font-mono text-xs">!</span>;
   return (
     <span className="flex shrink-0 gap-1 font-mono text-xs">

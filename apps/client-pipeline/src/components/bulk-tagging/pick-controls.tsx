@@ -5,7 +5,6 @@ import { PickCount, bulkTagCount } from "@/components/bulk-tagging/pick-count";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { ErrorNote } from "@/components/error-note";
 
 interface PickButtonsProps {
   /** Whether photos have been picked already, so the next pick leaves them out. */
@@ -97,11 +96,6 @@ export function PickBar({ count, fallback, setCount, noLimit, ...buttons }: Pick
       <PickButtons {...buttons} />
     </div>
   );
-}
-
-/** What went wrong, when something did. */
-export function ErrorText({ error }: { error: Error | null }) {
-  return <ErrorNote error={error} />;
 }
 
 interface CopyPromptButtonProps {

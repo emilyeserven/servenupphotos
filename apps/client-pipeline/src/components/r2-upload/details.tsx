@@ -132,6 +132,7 @@ function SameNamePrompt({ error, photo, onUpload }: SameNamePromptProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1 text-sm">
+        {/* oxlint-disable-next-line servenup/error-note -- the question's heading, not shown as a failure */}
         <p className="font-medium">{error.message}</p>
         <p className="text-muted-foreground">
           Photos in Flight finds photos by name, so two photos named {photo.name} can show the wrong

@@ -97,9 +97,7 @@ function PasteLocation({ clues, onChange, disabled }: PasteLocationProps) {
         Read answer
       </Button>
       {pasted === null && (
-        <p className="text-destructive text-sm">
-          There&apos;s no JSON object in that answer. Paste all of it, from {"{"} to {"}"}.
-        </p>
+        <ErrorNote error="There's no JSON object in that answer. Paste all of it, from { to }." />
       )}
       {pasted && (
         <PastedAnswer

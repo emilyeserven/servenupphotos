@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { moved, photoId } from "@/lib/album-photo-order";
 import { EMPTY_ROW, MAX_ROW_PHOTOS, emptyRow, placedIds, withRow } from "@/lib/album-layout-editor";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 import { SectionTitle } from "@/components/section-title";
 
@@ -168,7 +169,7 @@ function RowHeader({ place, last, empty, onMove, onRemove }: RowHeaderProps) {
   return (
     <div className="flex items-center gap-1">
       <span className="text-sm font-medium">Row {n}</span>
-      {empty && <span className="text-destructive text-xs">needs photos or text</span>}
+      {empty && <ErrorNote error="needs photos or text" className="text-xs" />}
       <Button
         size="icon-sm"
         variant="ghost"

@@ -20,6 +20,7 @@ import {
   SaveButton,
   ScanPreviewBody,
 } from "@/components/update-data-shared";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 interface PhotoColorsCardProps {
@@ -160,9 +161,10 @@ function ColorFiles({ files }: { files: ColorFile[] }) {
             {file.colors ? (
               <ColorData colors={file.colors} />
             ) : (
-              <p className="text-destructive">
-                Couldn&apos;t read its colors, so it&apos;s left as it is: {file.error}
-              </p>
+              <ErrorNote
+                error={file.error ?? "the backend gave no reason."}
+                lead="Couldn't read its colors, so it's left as it is:"
+              />
             )}
           </div>
         </FileDetails>

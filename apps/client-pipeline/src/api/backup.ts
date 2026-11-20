@@ -1,4 +1,4 @@
-import { requestJson } from "@/api/request";
+import { post, requestJson } from "@/api/request";
 import type { LocalEdit } from "@/stores/local-edits";
 
 /** One data file waiting for Commit: its data as saved, or `deleted` when the change removes it. */
@@ -41,11 +41,7 @@ export function exportPending(): Promise<InFlightBackup> {
 /** Keeps the files in backup as changes waiting for Commit, as saves would. */
 export function importPending(backup: InFlightBackup): Promise<RestoreResult> {
   const { version, repo, exported, files } = backup;
-  return requestJson<RestoreResult>("/api/photos/pending", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ version, repo, exported, files }),
-  });
+  return post<RestoreResult>("/api/photos/pending", { version, repo, exported, files });
 }
 
 /** How many changes work holds: the files waiting for Commit and the photos with browser-only edits. */

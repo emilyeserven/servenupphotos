@@ -66,6 +66,7 @@ export function JsonDiffBlock({
         ) : (
           <>
             <span className="text-emerald-700 dark:text-emerald-400">+{added}</span>{" "}
+            {/* oxlint-disable-next-line servenup/error-note -- the count of removed lines */}
             <span className="text-destructive">−{removed}</span> against {baseBranch}
           </>
         )}

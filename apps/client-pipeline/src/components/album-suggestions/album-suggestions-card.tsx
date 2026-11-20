@@ -12,7 +12,6 @@ import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
 import {
   CopyPromptButton,
-  ErrorText,
   PasteAnswer,
   PickBar,
   usePhotoPick,
@@ -21,6 +20,7 @@ import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { albumPrompt } from "@/lib/album-prompt";
 import { useCombinedData } from "@/stores/combined-data";
+import { ErrorNote } from "@/components/error-note";
 
 /**
  * Album Suggestions: picks up to the chosen number of related photos without an album (5 at first,
@@ -43,7 +43,7 @@ export function AlbumSuggestionsCard() {
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <PickBar {...bar} />
-        <ErrorText error={pick.error} />
+        <ErrorNote error={pick.error} />
         {pick.data && <PickedAlbums key={pick.submittedAt} pick={pick.data} />}
       </CardContent>
     </Card>
@@ -69,7 +69,7 @@ function PickedAlbums({ pick }: { pick: AlbumPick }) {
         pending={preview.isPending}
         onReview={() => preview.mutate({ paths, answer })}
       />
-      <ErrorText error={preview.error} />
+      <ErrorNote error={preview.error} />
       {preview.data && (
         <AlbumSuggestionReview
           key={JSON.stringify(preview.data)}

@@ -9,6 +9,7 @@ import { useDiscardImages } from "@/hooks/use-discard-images";
 import { type ComparePhoto, comparePhotoName } from "@/lib/compare-groups";
 import { offlineImageUrl, squareImages } from "@/lib/offline-thumbnails";
 import { notChosenIn, UNSELECTED_IMAGES, type Unselected, unselectedOf } from "@/lib/unselected";
+import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 import { SectionTitle } from "@/components/section-title";
 
@@ -230,12 +231,7 @@ function DeleteMoreButton({
         {busy ? <Spinner /> : <Trash2Icon />}
         {look.label}
       </Button>
-      <DeleteError error={error} />
+      <ErrorNote error={error} className="w-full text-xs" />
     </>
   );
-}
-
-function DeleteError({ error }: { error?: string }) {
-  if (!error) return null;
-  return <p className="text-destructive w-full text-xs">{error}</p>;
 }
