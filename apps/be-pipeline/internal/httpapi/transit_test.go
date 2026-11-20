@@ -2,8 +2,8 @@ package httpapi
 
 import (
 	"context"
-	"fmt"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
