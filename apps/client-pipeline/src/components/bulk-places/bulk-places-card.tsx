@@ -1,6 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { type BulkPlacePick, pickBulkPlacePhotosMutation } from "@/api/bulk-places";
+import {
+  type BulkPlacePick,
+  findPhotosByNameMutation,
+  pickBulkPlacePhotosMutation,
+} from "@/api/bulk-places";
+import type { BulkTagPhoto } from "@/api/bulk-tags";
 import { type Place, placesQuery, readEntries } from "@/api/places";
 import { BulkPlaceReview } from "@/components/bulk-places/bulk-place-review";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
@@ -15,7 +20,7 @@ import {
 import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { bulkPlacePrompt, parseBulkPlaceAnswer } from "@/lib/bulk-place-prompt";
-import { noPlacePaths, reviewBulkPlaces } from "@/lib/bulk-places";
+import { noPlacePaths, reviewBulkPlaces, unpickedNames } from "@/lib/bulk-places";
 import { NoPlaceFoundNote } from "@/components/bulk-places/no-place-found";
 import { useNoPlaceFoundStore } from "@/stores/no-place-found";
 
@@ -38,8 +43,9 @@ export function BulkPlacesCard() {
           then the ones that share its city or country, genres or date. Copy one prompt for all of
           them into a chat with an LLM, which finds each photo&apos;s place on Google Maps (or Naver
           Map or Kakao Map in South Korea), paste its JSON answer back, and review the places before
-          they&apos;re saved, waiting for Commit. Photos the LLM finds no place for are remembered
-          in this browser and not picked again.
+          they&apos;re saved, waiting for Commit. An answer can name any photo, not only the picked
+          ones: the others are found and reviewed too. Photos the LLM finds no place for are
+          remembered in this browser and not picked again.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
@@ -51,25 +57,47 @@ export function BulkPlacesCard() {
   );
 }
 
-/** The review the pasted answer makes, or null when it has no list of photos. */
-function readAnswer(answer: string, pick: BulkPlacePick, places: Place[]) {
+/** The pasted answer's photos, read, and the names it gives that aren't any of the picked photos. */
+function pastedAnswer(answer: string, pick: BulkPlacePick) {
   const pasted = parseBulkPlaceAnswer(answer);
-  return { review: pasted && reviewBulkPlaces(pick.photos, pasted, places) };
+  return { pasted, unpicked: pasted ? unpickedNames(pick.photos, pasted) : [] };
+}
+
+/**
+ * The review the pasted answer makes for the picked photos and `others`, the ones it names that
+ * weren't picked, or null when it has no list of photos.
+ */
+function readAnswer(answer: string, pick: BulkPlacePick, places: Place[], others: BulkTagPhoto[]) {
+  const { pasted } = pastedAnswer(answer, pick);
+  return { review: pasted && reviewBulkPlaces(pick.photos, pasted, places, others) };
+}
+
+/**
+ * Reads the pasted answer into its review, first finding the photos it names that weren't picked
+ * among every photo, so an answer for another batch still applies to the photos it names.
+ */
+function useReadAnswer(pick: BulkPlacePick, places: Place[]) {
+  const find = useMutation(findPhotosByNameMutation);
+  const [read, setRead] = useState<ReturnType<typeof readAnswer>>();
+  const remember = useNoPlaceFoundStore((state) => state.add);
+  const done = (answer: string, others: BulkTagPhoto[]) => {
+    const next = readAnswer(answer, pick, places, others);
+    if (next.review) remember(noPlacePaths(next.review));
+    setRead(next);
+  };
+  const review = (answer: string) => {
+    const { unpicked } = pastedAnswer(answer, pick);
+    if (unpicked.length === 0) return done(answer, []);
+    find.mutate(unpicked, { onSuccess: (found) => done(answer, found.photos) });
+  };
+  return { read, review, find };
 }
 
 /** The picked photos, their prompt, the box to paste the answer into, and its review. */
 function PickedPlaces({ pick }: { pick: BulkPlacePick }) {
   const places = useQuery(placesQuery);
   const all = readEntries(places.data?.places);
-  const [answer, setAnswer] = useState("");
-  const [read, setRead] = useState<ReturnType<typeof readAnswer>>();
-  const remember = useNoPlaceFoundStore((state) => state.add);
   const contact = usePickedContactSheets(pick.photos);
-  const review = () => {
-    const next = readAnswer(answer, pick, all);
-    if (next.review) remember(noPlacePaths(next.review));
-    setRead(next);
-  };
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
@@ -83,15 +111,35 @@ function PickedPlaces({ pick }: { pick: BulkPlacePick }) {
         disabled={!places.data || contact.pending}
         prompt={() => bulkPlacePrompt(pick.photos, all, contact.sheets)}
       />
+      <PlacesAnswer pick={pick} places={all} loading={!places.data} />
+    </div>
+  );
+}
+
+interface PlacesAnswerProps {
+  pick: BulkPlacePick;
+  /** Every place there is now. */
+  places: Place[];
+  /** True while the places are still loading. */
+  loading: boolean;
+}
+
+/** The box to paste the answer into, and its review. */
+function PlacesAnswer({ pick, places, loading }: PlacesAnswerProps) {
+  const [answer, setAnswer] = useState("");
+  const { read, review, find } = useReadAnswer(pick, places);
+  return (
+    <>
       <PasteAnswer
         value={answer}
         onChange={setAnswer}
-        pending={!places.data}
+        pending={loading || find.isPending}
         label="Review the places"
-        onReview={review}
+        onReview={() => review(answer)}
       />
+      <ErrorText error={find.error} />
       {read && <ReadAnswer read={read} />}
-    </div>
+    </>
   );
 }
 

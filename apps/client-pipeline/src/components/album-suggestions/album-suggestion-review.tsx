@@ -16,6 +16,7 @@ import { NO_CHOICES, photoTagKey, toggled } from "@/lib/bulk-tags";
 import { promptImageUrl } from "@/lib/tag-prompt";
 import { tileImageUrl } from "@/lib/offline-thumbnails";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import { withOthers } from "@/lib/answered-photos";
 
 interface AlbumSuggestionReviewProps {
   preview: AlbumSuggestionsPreview;
@@ -26,14 +27,15 @@ interface AlbumSuggestionReviewProps {
  * The review of the LLM's answer: each album it names, existing or new, with the picked photos to
  * put in it, any of which can be unticked, then a button that saves the rest.
  */
-export function AlbumSuggestionReview({ preview, pick }: AlbumSuggestionReviewProps) {
+export function AlbumSuggestionReview({ preview, pick: picked }: AlbumSuggestionReviewProps) {
+  const pick = withOthers(picked, preview.others);
   const [choices, setChoices] = useState<AlbumChoices>(NO_CHOICES);
   const apply = useReviewedSave(applyAlbumSuggestionsMutation);
   const busy = apply.isPending || apply.isSuccess;
   const save = albumSuggestionsToSave(preview, choices);
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownPhotos names={preview.unknown} noun="albums" />
+      <UnknownPhotos names={preview.unknown} others={preview.others} noun="albums" />
       <ul className="flex flex-col gap-3">
         {preview.albums.map((album) => (
           <SuggestedAlbum

@@ -126,12 +126,29 @@ export interface AutogroupAsk {
  */
 export function autogroupAsk(photos: ComparePhoto[], options: AutogroupOptions): AutogroupAsk {
   const loose = autogroupPhotos(photos, { scope: options.scope, skipGrouped: true });
-  if (!options.withGroups) return { loose, groups: [] };
-  const groups = compareGroups(photos).map((group) => ({
+  return { loose, groups: options.withGroups ? existingGroups(photos) : [] };
+}
+
+/** Every compare group there is among the photos, each with its photos, oldest first. */
+export function existingGroups(photos: ComparePhoto[]): ExistingGroup[] {
+  return compareGroups(photos).map((group) => ({
     name: group.name,
     photos: group.photos.map(asPromptPhoto).toSorted(byTaken),
   }));
-  return { loose, groups };
+}
+
+/**
+ * Every photo an answer can name, as the prompt would show it: the ones in the prompt, then every
+ * other photo that isn't unselected, so an answer written for another prompt still applies.
+ */
+export function answerablePhotos(ask: AutogroupAsk, photos: ComparePhoto[]): AutogroupPhoto[] {
+  const asked = askedPhotos(ask);
+  const keys = new Set(asked.map((entry) => entry.key));
+  const others = photos
+    .filter((photo) => !isUnselected(photo.data))
+    .map(asPromptPhoto)
+    .filter((entry) => !keys.has(entry.key));
+  return [...asked, ...others];
 }
 
 /** The photos the prompt links, in its order: the ones in no group, then each group's with an image. */
