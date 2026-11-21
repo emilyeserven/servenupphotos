@@ -68132,10 +68132,10 @@
     "customGpsPosition": "35.219762, 129.049922",
     "createDate": "2026:09:20 13:36:56",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Seokbulsa Temple",
+    "customCity": "Busan",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "South Korea",
     "country": null,
     "state": null,
     "city": null,
@@ -68168,7 +68168,12 @@
     "albums": [],
     "tags": ["buddhism", "statues", "rock-formations", "stones"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "seokbulsa-temple"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
