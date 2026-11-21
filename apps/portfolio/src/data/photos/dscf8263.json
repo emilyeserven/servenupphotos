@@ -1,11 +1,11 @@
 {
-  "id": 936,
-  "title": null,
+  "title": "The Bridge from the Ferry",
   "comment": null,
+  "id": 936,
   "altText": null,
   "notes": null,
   "file": "DSCF8263.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T00:51:33Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/bcf26023edef-dscf8263-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/bcf26023edef-dscf8263-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/bcf26023edef-dscf8263-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/bcf26023edef-dscf8263-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bcf26023edef-dscf8263-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/bcf26023edef-dscf8263-thumbnail.webp?crop=0,644,4886",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bcf26023edef-dscf8263-thumbnailpreview.webp?crop=0,644,4886",
     "thumbnailcrop": {
       "x": 0,
-      "y": 977,
+      "y": 644,
       "size": 4886,
       "outputSize": 500
     }
