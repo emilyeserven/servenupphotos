@@ -1,4 +1,5 @@
 import type { BulkTagPhoto, BulkTagPhotoPlan } from "@/api/bulk-tags";
+import { type Group, savedGroups } from "@/api/organize";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
 import { PlanNotes } from "@/components/bulk-tagging/review-parts";
 import {
@@ -25,6 +26,11 @@ interface PhotoGenreRowProps {
   choices: GenreChoices;
   onChange: (choices: GenreChoices) => void;
   disabled: boolean;
+  /**
+   * Every genre there is, when the photo's genres are being reassigned, to show the ones it has
+   * now; undefined when genres are only added.
+   */
+  genres?: Group[];
 }
 
 /**
@@ -38,12 +44,14 @@ export function PhotoGenreRow({
   choices,
   onChange,
   disabled,
+  genres,
 }: PhotoGenreRowProps) {
   return (
     <li className="flex gap-3 rounded-md border p-3">
       <RowImage plan={plan} photo={photo} />
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <RowHeading plan={plan} photo={photo} />
+        {genres && <GenresNow photo={photo} genres={genres} />}
         {genreSlots(plan).map((suggested, slot) => (
           <GenreSelect
             // The dropdowns never change order, so their place is a steady key.
@@ -59,6 +67,17 @@ export function PhotoGenreRow({
         <PlanNotes plan={plan} />
       </div>
     </li>
+  );
+}
+
+/** The genres a photo has now, which the ones picked below replace. */
+function GenresNow({ photo, genres }: { photo: BulkTagPhoto | undefined; genres: Group[] }) {
+  const ids = savedGroups(photo?.data).genres;
+  const names = ids.map((id) => genres.find((g) => g.id === id)?.name || id);
+  return (
+    <p className="text-muted-foreground">
+      Now: {names.length > 0 ? names.join(", ") : "no genres"}. The genres below replace these.
+    </p>
   );
 }
 

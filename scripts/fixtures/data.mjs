@@ -106,8 +106,9 @@ export function dataFixtures() {
       edited: 3,
       photos: 12,
     }),
-    "POST /api/data/genre-suggestions/pick": ({ body }) => genrePick(body?.count),
-    "POST /api/data/genre-suggestions/preview": () => genreSuggestionsPreview(),
+    "POST /api/data/genre-suggestions/pick": ({ body }) => genrePick(body?.count, body?.reassign),
+    "POST /api/data/genre-suggestions/preview": ({ body }) =>
+      genreSuggestionsPreview(body?.reassign),
     "POST /api/data/genre-suggestions": () => ({ ...pendingSave(), newGenres: 1, photos: 6 }),
     "POST /api/data/alt-text/pick": ({ body }) => altTextPick(body?.count),
     "POST /api/data/alt-text/preview": () => altTextPreview(),

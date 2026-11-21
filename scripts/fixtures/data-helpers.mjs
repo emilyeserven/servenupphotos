@@ -352,35 +352,63 @@ export function tagLibraryPreview() {
 }
 
 /** Up to `count` photos without genres that Genre Suggestions picked. */
-export function genrePick(count = 50) {
+export function genrePick(count = 50, reassign = false) {
   const pick = bulkTagPick(Math.min(count, 6));
   return {
     ...pick,
     withoutGenres: 18,
-    photos: pick.photos.map((photo) => ({ ...photo, related: [] })),
+    matching: reassign ? 140 : 18,
+    photos: pick.photos.map((photo, i) => ({
+      ...photo,
+      related: [],
+      data: reassign
+        ? { ...photo.data, genres: i % 2 ? ["architecture", "street"] : ["architecture"] }
+        : photo.data,
+    })),
   };
 }
 
-/** What reading a pasted Genre Suggestions answer finds for the picked photos. */
-export function genreSuggestionsPreview() {
-  const photos = genrePick().photos.map(({ path, name }, i) => ({
+/**
+ * What reading a pasted Genre Suggestions answer finds for the picked photos; reassigning, it moves
+ * them into a new subgenre under Architecture.
+ */
+export function genreSuggestionsPreview(reassign = false) {
+  const genres = reassign
+    ? [
+        ["traditional-architecture"],
+        ["traditional-architecture", "street"],
+        ["architecture"],
+        ["traditional-architecture"],
+        ["architecture", "street"],
+        ["traditional-architecture"],
+      ]
+    : [["street", "night"], ["architecture"], ["street"], ["macro"], ["night"], ["street"]];
+  const photos = genrePick(50, reassign).photos.map(({ path, name }, i) => ({
     path,
     name,
-    add: [["street", "night"], ["architecture"], ["street"], ["macro"], ["night"], ["street"]][i],
+    add: genres[i],
     already: [],
-    skipped: i === 1 ? [{ name: "temple", reason: "a tag has that name" }] : [],
+    skipped: i === 1 && !reassign ? [{ name: "temple", reason: "a tag has that name" }] : [],
   }));
-  return {
-    photos,
-    newGenres: [
-      {
-        id: "night",
-        name: "Night",
-        description: "Photos taken after dark, lit by streetlights, signs or the moon.",
-      },
-    ],
-    unknown: [],
-  };
+  const newGenres = reassign
+    ? [
+        {
+          id: "traditional-architecture",
+          name: "Traditional architecture",
+          description:
+            "Temples, shrines and old wooden houses built in a place's own long-standing style.",
+          parent: "architecture",
+        },
+      ]
+    : [
+        {
+          id: "night",
+          name: "Night",
+          description: "Photos taken after dark, lit by streetlights, signs or the moon.",
+          parent: "",
+        },
+      ];
+  return { photos, newGenres, unknown: [] };
 }
 
 /** The photos the Alt Text page picks: Bulk Tagging's pick, as photos without alt text. */

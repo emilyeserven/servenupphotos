@@ -141,3 +141,17 @@ export function genreTreeProblem(draft: GenreTreeEntry[]): string {
   }
   return "";
 }
+
+/** A genre as a choice in a dropdown: its ID, and its name indented by how deep it sits. */
+export interface GenreChoice {
+  id: string;
+  label: string;
+}
+
+/** The readable genres as dropdown choices, each subgenre after its genre and indented under it. */
+export function genreChoices(genres: Group[]): GenreChoice[] {
+  return albumTree(genres.filter((genre) => !genre.error)).map(({ group, depth }) => ({
+    id: group.id,
+    label: `${"\u00a0\u00a0".repeat(depth)}${group.name || group.id}`,
+  }));
+}

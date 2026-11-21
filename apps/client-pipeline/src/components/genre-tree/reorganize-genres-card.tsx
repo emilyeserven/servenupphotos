@@ -1,4 +1,5 @@
 import { type UseMutationResult, useMutation, useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   type GenreTreeEntry,
@@ -38,7 +39,12 @@ export function ReorganizeGenresCard() {
           Rename a genre, move it up or down, or put it under a broader genre as a subgenre, such as
           Traditional architecture under Architecture. Filtering by a genre on the portfolio shows
           its subgenres' photos too. Nothing changes until you save, and IDs stay the same, so every
-          photo keeps its genres.
+          photo keeps its genres. To have an LLM suggest new subgenres and move photos into them,
+          use{" "}
+          <Link to="/genre-suggestions" className="text-foreground underline underline-offset-4">
+            Genre Suggestions
+          </Link>{" "}
+          with <span className="text-foreground">Photos with genres</span>.
         </CardDescription>
       </CardHeader>
       <CardContent>

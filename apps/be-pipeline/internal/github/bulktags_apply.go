@@ -55,6 +55,8 @@ func (c *Client) ApplyBulkTags(ctx context.Context, gh settings.GitHub, bulk Bul
 type photoAdds struct {
 	path string
 	ids  []string
+	// replace makes ids the photo's groups of the kind, instead of adding them.
+	replace bool
 }
 
 // groupsSaved is what saveGroupsOnPhotos saved.
@@ -192,7 +194,7 @@ func groupedPhoto(scan baseURLScan, kind Kind, known []Group, p photoAdds) (*Sca
 		return nil, perr
 	}
 	before := photos[0].file.content
-	after, err := withGroups(before, photoGroupsOf(kind, p.ids))
+	after, err := withPhotoGroups(before, kind, p)
 	if err != nil {
 		return nil, publishErr(http.StatusConflict, "%s: %s, so nothing was changed.", p.path, err)
 	}
@@ -200,6 +202,16 @@ func groupedPhoto(scan baseURLScan, kind Kind, known []Group, p photoAdds) (*Sca
 		return nil, nil
 	}
 	return &ScanChange{Path: p.path, Before: before, After: after}, nil
+}
+
+// withPhotoGroups is content, a photo file, with p's IDs added to its groups
+// of kind, or with p.replace as its groups of kind.
+func withPhotoGroups(content []byte, kind Kind, p photoAdds) ([]byte, error) {
+	if !p.replace {
+		return withGroups(content, photoGroupsOf(kind, p.ids))
+	}
+	value, _ := json.Marshal(slices.Clone(p.ids))
+	return setTopLevelList(content, kind.Folder, value)
 }
 
 // photoGroupsOf is ids as the albums, tags or genres of kind to add.
