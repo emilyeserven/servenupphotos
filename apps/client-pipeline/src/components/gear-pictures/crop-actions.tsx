@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import type { GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
 import { cropGearImageMutation, saveGearMutation } from "@/api/gear";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { cropLimits } from "@/components/gear-pictures/crop-limits";
@@ -8,6 +7,7 @@ import { CropZoom } from "@/components/gear-pictures/crop-zoom";
 import type { BulkCrop, CropEntry } from "@/components/gear-pictures/use-bulk-crop";
 import { Button } from "@/components/ui/button";
 import { fitCrop, wholeCrop } from "@/lib/gear-crop";
+import type { GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
 import { count } from "@portfolio/lib/words";
 
 /** The crop that fits the picture's gear inside the limit lines, when its gear was found. */

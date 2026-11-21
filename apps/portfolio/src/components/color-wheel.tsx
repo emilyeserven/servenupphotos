@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import type { ColorDisplay } from "@/lib/color-display";
 import { PinBoard, type BoardLook } from "@/components/pin-board";
+import type { ColorDisplay } from "@/lib/color-display";
 import { type VividMeasure, vividnessOf } from "@/lib/color-sort";
 import { hueAngle, keepInWheel, WHEEL_BACKGROUND, wheelPoint } from "@/lib/color-wheel";
 import type { ColorShare } from "@/lib/photo-colors";

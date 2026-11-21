@@ -1,10 +1,10 @@
 import { CalendarClock, Grid3x3, MapPin } from "lucide-react";
 import { type CSSProperties, useLayoutEffect, useRef, useState } from "react";
-import { type Size, objectPosition } from "@portfolio/lib/spotlight-focus";
-import type { Focus } from "@/lib/spotlight-focus-edits";
-import { cn } from "@/lib/utils";
 import { FallbackImage } from "@/components/fallback-image";
 import { offlineSmallUrl } from "@/lib/offline-thumbnails";
+import type { Focus } from "@/lib/spotlight-focus-edits";
+import { cn } from "@/lib/utils";
+import { type Size, objectPosition } from "@portfolio/lib/spotlight-focus";
 
 /** What a spotlight preview shows: one photo, as the portfolio's homepage would. */
 export interface PreviewPhoto {

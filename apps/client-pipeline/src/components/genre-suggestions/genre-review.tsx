@@ -7,11 +7,11 @@ import {
 } from "@/api/genre-suggestions";
 import { organizeQuery } from "@/api/organize";
 import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
-import { UnknownPhotos } from "@/components/paste-answer";
 import { type GenreOption, PhotoGenreRow } from "@/components/genre-suggestions/photo-genre-row";
+import { UnknownPhotos } from "@/components/paste-answer";
+import { withOthers } from "@/lib/answered-photos";
 import { toggled } from "@/lib/bulk-tags";
 import { type GenreChoices, NO_GENRE_CHOICES, genresToSave } from "@/lib/genre-suggestions";
-import { withOthers } from "@/lib/answered-photos";
 import { count } from "@portfolio/lib/words";
 
 interface GenreReviewProps {

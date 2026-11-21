@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { TripSegment } from "@/api/trip-lines";
-import { draftOf, segmentsOf, walkingDraft, withGap } from "@/lib/trip-gaps";
 import { wayOf, withLegLike } from "@/lib/transit-like";
+import { draftOf, segmentsOf, walkingDraft, withGap } from "@/lib/trip-gaps";
 
 test("a transit hop drawn like a car keeps it through saving, and goes back to transit", () => {
   const draft = withLegLike(withGap(walkingDraft([1, 2]), 0, "transit"), "1", "car");

@@ -2,11 +2,11 @@ import type { ExifResponse, SanitizedExif } from "@/api/exif";
 import type { PhotoGroups } from "@/api/organize";
 import type { ExifMutation } from "@/components/add-photo/photo-state";
 import { ColorData, RawColorData } from "@/components/color-data";
+import { ErrorNote } from "@/components/error-note";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ErrorNote } from "@/components/error-note";
 
 interface ExifResultProps {
   mutation: ExifMutation;

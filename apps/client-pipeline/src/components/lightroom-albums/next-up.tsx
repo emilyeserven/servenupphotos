@@ -1,5 +1,6 @@
 import { AlbumTitle } from "@/components/lightroom-albums/album-parts";
 import { Segmented } from "@/components/lightroom-albums/segmented";
+import { SectionTitle } from "@/components/section-title";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type LightroomAlbum, albumFolder, allAlbums } from "@/lib/lightroom-albums";
 import {
@@ -10,7 +11,6 @@ import {
 } from "@/lib/lightroom-next-up";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { SectionTitle } from "@/components/section-title";
 
 const CONNECTIONS: { value: LightroomConnection; label: string }[] = [
   { value: "online", label: "Online" },

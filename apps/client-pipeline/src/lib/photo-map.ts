@@ -1,7 +1,7 @@
-import { photoGps } from "@portfolio/lib/photo-gps";
 import { type Place, savedPlaces } from "@/api/places";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { gpsSource } from "@/lib/place-gps";
+import { photoGps } from "@portfolio/lib/photo-gps";
 
 /**
  * Whether the photo has its own GPS position the portfolio can read: in its EXIF, or a custom one

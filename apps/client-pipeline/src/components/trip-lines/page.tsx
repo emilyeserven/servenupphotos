@@ -2,14 +2,14 @@ import type { CombinedData } from "@/api/photos";
 import { tripLines } from "@/api/trip-lines";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
+import { QueryResult } from "@/components/query-result";
 import { DayGrid } from "@/components/trip-lines/day-grid";
 import { PlanDay } from "@/components/trip-lines/plan-day";
 import { TripsPanel } from "@/components/trips/trips-panel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSessionData } from "@/hooks/use-session-data";
 import { lineDays, staleTripLines } from "@/lib/stale-trip-lines";
 import { useTripLinesSearch } from "@/lib/trip-lines-search";
-import { useSessionData } from "@/hooks/use-session-data";
-import { QueryResult } from "@/components/query-result";
 import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** The Trip Lines page: each day's route, drawn on the portfolio's map. */

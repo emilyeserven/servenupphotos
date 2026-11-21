@@ -1,7 +1,7 @@
 import { CheckIcon, XIcon } from "lucide-react";
 import type { ConnectionTestResult } from "@/api/settings";
-import { Spinner } from "@/components/ui/spinner";
 import { ErrorNote } from "@/components/error-note";
+import { Spinner } from "@/components/ui/spinner";
 
 /** Where a connection test stands: running, finished, or not run yet. */
 export type TestState = "pending" | ConnectionTestResult | undefined;

@@ -6,8 +6,8 @@ import {
   publishedPhotosQuery,
 } from "@/api/photos";
 import { EditInFlightPhoto } from "@/components/edit-in-flight";
-import { QueryResult } from "@/components/query-result";
 import { ErrorNote } from "@/components/error-note";
+import { QueryResult } from "@/components/query-result";
 
 /** The Photo page's `?photo=`: the ID of a photo to edit, for pages that know a photo only by ID. */
 export function photoIdSearch(search: Record<string, unknown>): { photo?: number } {

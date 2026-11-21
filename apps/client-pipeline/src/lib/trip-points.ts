@@ -1,6 +1,6 @@
 import type { TripPoint, TripSegment, TripVia } from "@/api/trip-lines";
-import type { TripPhoto } from "@/lib/trip-days";
 import { type WalkEnd, walkKey } from "@/lib/station-walks";
+import type { TripPhoto } from "@/lib/trip-days";
 import type { GapDraft, ViaKey } from "@/lib/trip-gaps";
 
 /** A point as [longitude, latitude], as GeoJSON writes it. */

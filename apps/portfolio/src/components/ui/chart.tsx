@@ -1,6 +1,5 @@
 import type * as React from "react";
 import * as RechartsPrimitive from "recharts";
-
 import { cn } from "@/lib/utils";
 
 // Trimmed-down shadcn/ui chart: a responsive container that exposes each series' color as a

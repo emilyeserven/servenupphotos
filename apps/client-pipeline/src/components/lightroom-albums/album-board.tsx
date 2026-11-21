@@ -1,6 +1,7 @@
 import { type DragEvent, useState } from "react";
 import { AlbumTitle, StageSelect } from "@/components/lightroom-albums/album-parts";
 import { RemoveAlbumButton } from "@/components/lightroom-albums/remove-album";
+import { SectionTitle } from "@/components/section-title";
 import {
   LIGHTROOM_STAGES,
   type LightroomAlbum,
@@ -9,7 +10,6 @@ import {
 } from "@/lib/lightroom-albums";
 import { cn } from "@/lib/utils";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
-import { SectionTitle } from "@/components/section-title";
 
 /** The drag's data type, carrying the dragged album's path. */
 const ALBUM_PATH = "application/x-lightroom-album-path";

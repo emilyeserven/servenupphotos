@@ -4,19 +4,19 @@ import {
   pickAlbumPhotosMutation,
   previewAlbumSuggestionsMutation,
 } from "@/api/album-suggestions";
-import { AlbumSuggestionReview } from "@/components/album-suggestions/album-suggestion-review";
-import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { metaGroups } from "@/api/metainfo";
 import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
+import { AlbumSuggestionReview } from "@/components/album-suggestions/album-suggestion-review";
 import { CopyPromptButton, PickBar, usePhotoPick } from "@/components/bulk-tagging/pick-controls";
 import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
+import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
+import { ErrorNote } from "@/components/error-note";
 import { PasteAnswer } from "@/components/paste-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { albumPrompt } from "@/lib/album-prompt";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
+import { albumPrompt } from "@/lib/album-prompt";
 import { useCombinedData } from "@/stores/combined-data";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * Album Suggestions: picks up to the chosen number of related photos without an album (5 at first,

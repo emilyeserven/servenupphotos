@@ -1,10 +1,10 @@
-import { type ComparePhoto, compareGroupOf, compareGroups, isWinner } from "@/lib/compare-groups";
-import { isDraft, isUnselected, titleOf } from "@/lib/drafts";
-import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
 import type { ContactSheet, ContactSheetPhoto } from "@/api/contact-sheets";
+import { type ComparePhoto, compareGroupOf, compareGroups, isWinner } from "@/lib/compare-groups";
 import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
-import { promptImageUrl } from "@/lib/tag-prompt";
+import { isDraft, isUnselected, titleOf } from "@/lib/drafts";
 import { nameFinder } from "@/lib/pasted-json";
+import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
+import { promptImageUrl } from "@/lib/tag-prompt";
 
 /** Which photos Autogroup asks about: every photo, or only the drafts. */
 export type AutogroupScope = "all" | "drafts";

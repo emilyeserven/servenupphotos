@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { TagLibraryPhotoInfo } from "@/api/tag-library";
-import type { ActionProps } from "@/components/small-tags/small-tag-card";
 import { PickablePhoto } from "@/components/small-tags/small-photos";
+import type { ActionProps } from "@/components/small-tags/small-tag-card";
 import { Input } from "@/components/ui/input";
 import { SaveButton } from "@/components/update-data-shared";
 import { type SmallTag, emptyLibrary } from "@/lib/small-tags";

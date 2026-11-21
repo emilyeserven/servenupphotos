@@ -1,21 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Grid3x3, Table } from "lucide-react";
+import { CameraFilterBar } from "@/components/camera-filters";
 import { ColorOrderControls } from "@/components/color-order-controls";
+import { DistanceBandTiles } from "@/components/distance-band-tiles";
+import { DistanceFromControl } from "@/components/distance-from-control";
 import { GridSortControl } from "@/components/grid-sort-control";
 import { GridViewOptions } from "@/components/grid-view-options";
-import { GridTiles, type ImagePhoto, type TileMode } from "@/components/photo-tiles";
-import { PhotoTable } from "@/components/photo-table";
-import { CameraFilterBar } from "@/components/camera-filters";
 import { NoMatchingPhotos } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
+import { PhotoTable } from "@/components/photo-table";
+import { GridTiles, type ImagePhoto, type TileMode } from "@/components/photo-tiles";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { TILE_SHAPES, type ViewChoice, ViewSwitcher } from "@/components/view-switcher";
-import { photos, type Photo } from "@/lib/photos";
-import type { Point } from "@/lib/distance";
-import { DEFAULT_NEAR, nearPoint, parseNear, photoDistanceText } from "@/lib/distance-sort";
-import { DistanceFromControl } from "@/components/distance-from-control";
-import { DistanceBandTiles } from "@/components/distance-band-tiles";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import {
   type ColorFilters,
@@ -25,6 +22,9 @@ import {
   parseColorOrder,
 } from "@/lib/color-search";
 import type { ColorSort } from "@/lib/color-sort";
+import type { Point } from "@/lib/distance";
+import { DEFAULT_NEAR, nearPoint, parseNear, photoDistanceText } from "@/lib/distance-sort";
+import { type GridSize, naturalSize, parseGridSize, squareSize, tableSize } from "@/lib/grid-size";
 import {
   defaultOrder,
   type GridColorSpec,
@@ -32,11 +32,11 @@ import {
   parseDateOrder,
   sortGrid,
 } from "@/lib/grid-sort";
-import { type GridSize, naturalSize, parseGridSize, squareSize, tableSize } from "@/lib/grid-size";
-import { parseTableSearch, type TableSearch } from "@/lib/table-search";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { parseTextSearch, searchPhotos } from "@/lib/text-search";
+import { photos, type Photo } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
+import { parseTableSearch, type TableSearch } from "@/lib/table-search";
+import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { useRememberViewOptions } from "@/lib/view-options";
 
 /** How the Grid shows its photos: as tiles of either shape, or as a table. */

@@ -1,8 +1,8 @@
 import { useForm } from "@tanstack/react-form";
 import type { ReactNode } from "react";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ErrorNote } from "@/components/error-note";
 
 interface RenameFormProps {
   /** The input's id, unique on the page. */

@@ -1,6 +1,8 @@
 import { ImageOffIcon, Trash2Icon, Undo2Icon } from "lucide-react";
 import { useState } from "react";
 import { UnselectedWinners } from "@/components/compare/unselected-winners";
+import { ErrorNote } from "@/components/error-note";
+import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,9 +11,7 @@ import { useDiscardImages } from "@/hooks/use-discard-images";
 import { type ComparePhoto, comparePhotoName } from "@/lib/compare-groups";
 import { offlineImageUrl, squareImages } from "@/lib/offline-thumbnails";
 import { notChosenIn, UNSELECTED_IMAGES, type Unselected, unselectedOf } from "@/lib/unselected";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
-import { SectionTitle } from "@/components/section-title";
 
 /**
  * Unselected Photos: the photos that weren't chosen when a compare group was finished, each with why,

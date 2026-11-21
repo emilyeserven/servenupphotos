@@ -1,8 +1,8 @@
 import { type ReactNode } from "react";
 import { type CombinedFile, type InFlightResponse } from "@/api/photos";
 import { JsonCodeBlock } from "@/components/json-code-block";
-import { Skeleton } from "@/components/ui/skeleton";
 import { SectionTitle } from "@/components/section-title";
+import { Skeleton } from "@/components/ui/skeleton";
 
 /** ALLPHOTOS.json from the pull request's branch, or why it can't be shown. */
 export function AllPhotosPanel({ data }: { data?: InFlightResponse }) {

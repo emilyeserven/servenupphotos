@@ -1,8 +1,8 @@
 import { mutationOptions } from "@tanstack/react-query";
 import type { BulkTagPhoto } from "@/api/bulk-tags";
 import { locationChanges } from "@/api/data";
-import { post } from "@/api/request";
 import type { PhotoPlace, Place } from "@/api/places";
+import { post } from "@/api/request";
 import type { PendingSave } from "@/api/scan-changes";
 
 /** Up to the chosen number of related photos without places: one, then the ones most like it. */

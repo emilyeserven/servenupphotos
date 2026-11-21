@@ -10,6 +10,7 @@ import {
   winnersOf,
 } from "@/lib/compare-groups";
 import { titleOf } from "@/lib/drafts";
+import { COMPARE_GROUP, COMPARE_WINNER, UNDECIDED, UNSELECTED } from "@/lib/photo-fields";
 import {
   type Unselected,
   type UnselectedImages,
@@ -18,7 +19,6 @@ import {
   today,
 } from "@/lib/unselected";
 import { type FieldChange, useLocalEditsStore } from "@/stores/local-edits";
-import { COMPARE_GROUP, COMPARE_WINNER, UNDECIDED, UNSELECTED } from "@/lib/photo-fields";
 
 /** The error messages of the reads that failed. */
 function readProblems(...errors: (Error | null)[]): string[] {

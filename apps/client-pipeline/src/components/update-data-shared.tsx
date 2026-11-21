@@ -3,10 +3,10 @@ import { ExternalLinkIcon } from "lucide-react";
 import { type ReactNode, useId } from "react";
 import type { ScannedPhotos } from "@/api/data";
 import type { PendingSave } from "@/api/scan-changes";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** Photo files that couldn't be read; while there are any, nothing can be changed. */

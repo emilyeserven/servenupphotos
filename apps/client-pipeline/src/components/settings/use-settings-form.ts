@@ -1,5 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { connectionQueryKey } from "@/api/connections";
 import {
   type SecretStatus,
   type SecretUpdate,
@@ -9,7 +10,6 @@ import {
   saveSettings,
   settingsQuery,
 } from "@/api/settings";
-import { connectionQueryKey } from "@/api/connections";
 import { type SectionConfig } from "@/components/settings/sections";
 import { useCombinedDataStore } from "@/stores/combined-data";
 

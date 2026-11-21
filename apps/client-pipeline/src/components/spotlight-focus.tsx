@@ -3,6 +3,7 @@ import { HeaderPreview } from "@/components/header-preview";
 import { SpotlightPlacement } from "@/components/spotlight-placement";
 import { SpotlightPreview } from "@/components/spotlight-preview";
 import { Button } from "@/components/ui/button";
+import { SPOTLIGHT_ZONE_FOCUS } from "@/lib/photo-fields";
 import type { SpotlightZone } from "@/lib/site-spotlight";
 import {
   type Focus,
@@ -15,7 +16,6 @@ import {
 import { previewOf } from "@/lib/spotlight-preview";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import type { ZoneFocus } from "@portfolio/lib/photos";
-import { SPOTLIGHT_ZONE_FOCUS } from "@/lib/photo-fields";
 
 /**
  * The photo's focus point in the zone: where to click on it to keep that part in view when the

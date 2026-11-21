@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { useSavedPhotos } from "@/components/saved-photo-picker";
+import { ReadingNote } from "@/components/query-result";
 import { PhotoChoiceGrid } from "@/components/related-photos/photo-choice-grid";
 import { PickedEditor } from "@/components/related-photos/picked-editor";
 import { savedPhotoId, photosById } from "@/components/related-photos/picks";
+import { useSavedPhotos } from "@/components/saved-photo-picker";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ReadingNote } from "@/components/query-result";
 
 /**
  * Pick by hand: choose a photo, then the photos its More like this drawer shows first, ahead of

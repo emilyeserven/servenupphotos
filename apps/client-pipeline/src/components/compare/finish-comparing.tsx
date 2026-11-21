@@ -1,6 +1,7 @@
 import { FlagIcon } from "lucide-react";
 import { useState } from "react";
 import { LosersOptions, type LosersForm } from "@/components/compare/losers-options";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,7 +16,6 @@ import { untitledLosers } from "@/hooks/use-compare-groups";
 import type { DiscardFailure } from "@/hooks/use-discard-images";
 import { useFinishGroup } from "@/hooks/use-finish-group";
 import { type CompareGroup, losersOf, photoNames, winnersOf } from "@/lib/compare-groups";
-import { ErrorNote } from "@/components/error-note";
 
 /** What finishing does to the winners, or that there are none. */
 function winnerNote(group: CompareGroup): string {

@@ -1,6 +1,6 @@
-import { isCasual } from "@/lib/drafts";
 import type { Place } from "@/api/places";
 import { savedPlaces } from "@/api/places";
+import { isCasual } from "@/lib/drafts";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { writtenPosition } from "@/lib/place-gps";
 import { textOf } from "@portfolio/lib/values";

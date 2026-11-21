@@ -12,8 +12,8 @@ import {
   useReviewedSave,
 } from "@/components/bulk-tagging/review-parts";
 import { UnknownPhotos } from "@/components/paste-answer";
-import { type BulkTagChoices, NO_CHOICES, bulkTagsToSave, toggled } from "@/lib/bulk-tags";
 import { withOthers } from "@/lib/answered-photos";
+import { type BulkTagChoices, NO_CHOICES, bulkTagsToSave, toggled } from "@/lib/bulk-tags";
 import { count } from "@portfolio/lib/words";
 
 interface BulkTagReviewProps {

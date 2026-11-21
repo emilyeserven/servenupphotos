@@ -1,6 +1,6 @@
 import { Page } from "@/components/page";
-import { WithGitHub } from "@/components/update-data/sections-layout";
 import { tagTools } from "@/components/update-data/sections";
+import { WithGitHub } from "@/components/update-data/sections-layout";
 
 /** One tag tool's page, such as Bulk tagging: its card under its title, once GitHub is set up. */
 export function TagToolPage({ slug }: { slug: string }) {

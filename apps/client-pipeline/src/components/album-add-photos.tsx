@@ -5,13 +5,14 @@ import { type Group, addPhotoGroupsMutation, groupLabel } from "@/api/organize";
 import { photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
 import { AddPhotoFilters, useAddChoices } from "@/components/album-add-filters";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
+import { ErrorNote } from "@/components/error-note";
+import { ReadingNote } from "@/components/query-result";
 import {
   type SavedPhoto,
   SavedPhotoSearch,
   SavedPhotoSquare,
   useSavedPhotos,
 } from "@/components/saved-photo-picker";
-import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,10 +24,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { cn } from "@/lib/utils";
-import { ReadingNote } from "@/components/query-result";
 import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** Adds saved photos to an album, then reads the saved photos again and follows CI's rebuild. */

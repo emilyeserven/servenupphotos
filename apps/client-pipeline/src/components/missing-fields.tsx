@@ -7,6 +7,7 @@ import {
   addMissingFieldsMutation,
   missingFieldsQuery,
 } from "@/api/data";
+import { ErrorNote } from "@/components/error-note";
 import { QueryResult } from "@/components/query-result";
 import { ReadProgressView } from "@/components/read-progress";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,6 @@ import {
   SaveButton,
   ScanPreviewBody,
 } from "@/components/update-data-shared";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 interface MissingFieldsCardProps {

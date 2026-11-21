@@ -1,6 +1,6 @@
-import type { GraphPresetFile } from "@portfolio/lib/graph-presets";
 import { settingEntries, settingMutations } from "@/api/data-files";
 import { entryId } from "@/api/places";
+import type { GraphPresetFile } from "@portfolio/lib/graph-presets";
 
 function isPresetFile(value: unknown): value is GraphPresetFile {
   const file = value as Partial<GraphPresetFile> | null;

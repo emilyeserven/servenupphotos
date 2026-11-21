@@ -4,11 +4,11 @@ import { CollapsiblePanel } from "@/components/collapsible-panel";
 import { fileName } from "@/components/in-flight-checks";
 import { AllPhotosMark, FileJson } from "@/components/in-flight-file-json";
 import { FileLink, FileStatus } from "@/components/in-flight-pending";
+import { SectionTitle } from "@/components/section-title";
 import { GROUP_KINDS, KIND_INFO } from "@/lib/data-kinds";
 import { lineChanges } from "@/lib/json-changes";
 import { cn } from "@/lib/utils";
 import { count } from "@portfolio/lib/words";
-import { SectionTitle } from "@/components/section-title";
 
 interface GroupFilesProps {
   title: string;

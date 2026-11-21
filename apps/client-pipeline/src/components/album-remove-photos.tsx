@@ -4,14 +4,14 @@ import { useState } from "react";
 import { type Group, organizeQuery, removeAlbumPhotosMutation } from "@/api/organize";
 import { photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
 import { AllPhotosRebuild } from "@/components/all-photos-rebuild";
+import { ErrorNote } from "@/components/error-note";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
-import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { albumPhotoOrder, photoId } from "@/lib/album-photo-order";
 import { type CombinedPhoto, photoIn } from "@/lib/group-photos";
 import { cn } from "@/lib/utils";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** Takes photos out of an album, then reads the albums and the saved photos again. */

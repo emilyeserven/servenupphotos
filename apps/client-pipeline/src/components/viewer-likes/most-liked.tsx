@@ -1,6 +1,6 @@
 import { HeartIcon } from "lucide-react";
-import { type ViewerLikes, likeCounts } from "@/api/viewer-likes";
 import type { CombinedData } from "@/api/photos";
+import { type ViewerLikes, likeCounts } from "@/api/viewer-likes";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { shownPhotos } from "@/lib/place-seeds";
 import { EmptyNote } from "@portfolio/components/empty-note";

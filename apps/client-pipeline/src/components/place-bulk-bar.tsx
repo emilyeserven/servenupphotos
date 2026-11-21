@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { optimisticEntry, type Place, savePlaceMutation } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
 import { FieldLabel } from "@/components/field-label";
 import { PlaceCityField } from "@/components/place-city-field";
 import { Button } from "@/components/ui/button";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
 import { type BulkChange, bulkChanged, bulkNotParents, parentOptions } from "@/lib/place-bulk";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 interface PlaceBulkBarProps {

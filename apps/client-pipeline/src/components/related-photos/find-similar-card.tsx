@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { SearchCheckIcon } from "lucide-react";
 import { findSimilarPhotosMutation } from "@/api/related-photos";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 
 /**

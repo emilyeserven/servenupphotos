@@ -5,6 +5,7 @@ import type { ExifResponse, SanitizedExif } from "@/api/exif";
 import { type BucketImage, bucketExifMutation, photosInFlightQuery } from "@/api/photos";
 import { PUBLISHED, parseVersionKey } from "@/api/versions";
 import { AllPhotosGate } from "@/components/allphotos-check";
+import { ErrorNote } from "@/components/error-note";
 import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
 
 interface GenerateJsonProps {
   /** The original JPEG in R2. */

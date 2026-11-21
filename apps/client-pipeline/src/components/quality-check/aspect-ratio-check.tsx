@@ -2,14 +2,14 @@ import { useMutation } from "@tanstack/react-query";
 import { RatioIcon } from "lucide-react";
 import { useMemo } from "react";
 import { imageSizesMutation } from "@/api/image-sizes";
+import { ErrorNote } from "@/components/error-note";
 import { FlagList } from "@/components/quality-check/flag-list";
+import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { type AspectCheck, checkAspectRatios } from "@/lib/aspect-ratio";
 import type { AutogroupPhoto } from "@/lib/compare-autogroup";
 import { count } from "@portfolio/lib/words";
-import { SectionTitle } from "@/components/section-title";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * The aspect ratio check: measures every chosen photo's Small version on the backend and lists

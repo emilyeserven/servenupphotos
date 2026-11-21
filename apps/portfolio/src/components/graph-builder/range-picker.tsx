@@ -3,14 +3,14 @@ import type { ReactNode } from "react";
 import { ChoiceRow } from "@portfolio/components/choice-row";
 import { xName } from "@portfolio/components/graph-builder/axes-picker";
 import {
-  GraphPicker,
-  type GraphPickerSection,
-} from "@portfolio/components/graph-builder/graph-picker";
-import {
   BucketChoices,
   bucketText,
   withValue,
 } from "@portfolio/components/graph-builder/bucket-choices";
+import {
+  GraphPicker,
+  type GraphPickerSection,
+} from "@portfolio/components/graph-builder/graph-picker";
 import { XEnds, YEnds } from "@portfolio/components/graph-builder/graph-ranges";
 import {
   axisValues,

@@ -1,5 +1,5 @@
-import { Link, Outlet, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { Link, Outlet, useParams } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { settingsQuery, type SettingsResponse } from "@/api/settings";
 import { Page } from "@/components/page";

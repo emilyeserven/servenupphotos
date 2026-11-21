@@ -5,9 +5,9 @@ import { type Plugin, runnerImport } from "vite";
 import { previewPage, SITE_NAME, SITE_URL } from "../photo-previews.ts";
 import type { MapPage } from "../src/lib/map-pages.ts";
 import { frameOf, IMAGE } from "../src/lib/map-preview-view.ts";
+import { count } from "../src/lib/words.ts";
 import { markersOf, type Pin } from "./pins.ts";
 import { renderPreview, type TileSource, tileUrl } from "./render.ts";
-import { count } from "../src/lib/words.ts";
 
 /**
  * After a build, writes the map's place pages (see docs/map-link-previews.md): for each map page in

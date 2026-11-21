@@ -1,6 +1,3 @@
-// The photos the Gallery lists: the base branch's with the photo data pull request's and the
-// changes waiting for Commit over them, each marked published, draft, Undecided or Lower Tier.
-import type { Photo } from "@portfolio/lib/photos";
 import type {
   InFlightFileRead,
   InFlightImages,
@@ -9,13 +6,16 @@ import type {
   PublishedResponse,
 } from "@/api/photos";
 import { photoName } from "@/components/gallery/published-file";
-import type { CombinedPhoto } from "@/lib/group-photos";
-import { shownImageUrl } from "@/lib/face-json";
 import { isSetAside, isUnselected, titleOf } from "@/lib/drafts";
+import { shownImageUrl } from "@/lib/face-json";
+import type { CombinedPhoto } from "@/lib/group-photos";
 import { isLowerTier } from "@/lib/lower-tier";
 import { readEntries } from "@/lib/smart-album-photos";
 import { editedData } from "@/lib/undecided";
 import type { LocalEdit } from "@/stores/local-edits";
+// The photos the Gallery lists: the base branch's with the photo data pull request's and the
+// changes waiting for Commit over them, each marked published, draft, Undecided or Lower Tier.
+import type { Photo } from "@portfolio/lib/photos";
 
 /**
  * Which **Show** group a photo is in: on the portfolio, a draft without a title, set aside as

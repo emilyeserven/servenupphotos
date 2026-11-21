@@ -1,8 +1,8 @@
 import { TrainFront, X } from "lucide-react";
 import type { HopAsk, Spot } from "@/api/transit";
 import type { TripPoint } from "@/api/trip-lines";
-import { StationSearch } from "@/components/trips/station-search";
 import type { HopEnds } from "@/components/trip-lines/use-hop-ride";
+import { StationSearch } from "@/components/trips/station-search";
 import { Button } from "@/components/ui/button";
 
 interface HopEndsPickerProps {

@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { TrophyIcon } from "lucide-react";
 import type { CompareRead } from "@/components/compare/compare-group-list";
+import { ReadingNote } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type CompareGroup, winnersOf } from "@/lib/compare-groups";
-import { ReadingNote } from "@/components/query-result";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 

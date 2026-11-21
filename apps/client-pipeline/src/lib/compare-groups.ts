@@ -5,9 +5,9 @@ import type {
   PublishedResponse,
 } from "@/api/photos";
 import { shownImageUrl } from "@/lib/face-json";
+import { COMPARE_GROUP, COMPARE_WINNER } from "@/lib/photo-fields";
 import { editedData } from "@/lib/undecided";
 import type { LocalEdit } from "@/stores/local-edits";
-import { COMPARE_GROUP, COMPARE_WINNER } from "@/lib/photo-fields";
 
 /** A photo that can go in a compare group, from the Gallery or Photos in Flight. */
 export interface ComparePhoto {

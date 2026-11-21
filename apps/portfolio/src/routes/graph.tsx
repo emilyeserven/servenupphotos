@@ -1,14 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
 import { ChartColumn } from "lucide-react";
+import { useMemo } from "react";
 import { COLUMN, GraphBuilder } from "@/components/graph-builder/graph-builder";
+import { SiteHomeLink } from "@/components/site-home-link";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import { type ColorFilters, filterByColors, parseColorFilters } from "@/lib/color-search";
-import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { photos } from "@/lib/photos";
-import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
-import { SiteHomeLink } from "@/components/site-home-link";
-import { useGraphWide } from "@/lib/graph-wide";
+import type { GraphConfig } from "@/lib/graph-data";
 import {
   GRAPH_PARAMS,
   type GraphSearch,
@@ -16,7 +13,10 @@ import {
   graphToSearch,
   parseGraphSearch,
 } from "@/lib/graph-search";
-import type { GraphConfig } from "@/lib/graph-data";
+import { useGraphWide } from "@/lib/graph-wide";
+import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { photos } from "@/lib/photos";
+import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
 
 /**
  * What the Graph page keeps in the URL: the site's usual filters, Visuals' colors, the selected

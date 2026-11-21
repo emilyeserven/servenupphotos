@@ -1,8 +1,14 @@
 import { useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
+import type { InFlightFileRead } from "@/api/photos";
+import { Card, CardContent } from "@/components/ui/card";
+import type { CombinedPhoto } from "@/lib/group-photos";
+import { readEntries } from "@/lib/smart-album-photos";
+import { editedData } from "@/lib/undecided";
+import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 import { CameraFilterBar } from "@portfolio/components/camera-filters";
-import { VisualsPicker } from "@portfolio/components/visuals-picker";
 import { ScriptDisplayProvider } from "@portfolio/components/script-display-provider";
+import { VisualsPicker } from "@portfolio/components/visuals-picker";
 import {
   CAMERA_FILTER_KEYS,
   type CameraFilters,
@@ -23,12 +29,6 @@ import {
   parseFilters,
 } from "@portfolio/lib/photo-filters";
 import type { Photo } from "@portfolio/lib/photos";
-import type { InFlightFileRead } from "@/api/photos";
-import { Card, CardContent } from "@/components/ui/card";
-import type { CombinedPhoto } from "@/lib/group-photos";
-import { readEntries } from "@/lib/smart-album-photos";
-import { editedData } from "@/lib/undecided";
-import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 
 /**
  * The portfolio Grid's filters as the Gallery keeps them in the URL: places, album, tag and genre,

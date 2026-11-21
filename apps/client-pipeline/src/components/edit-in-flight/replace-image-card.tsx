@@ -1,19 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import { ImageUpIcon } from "lucide-react";
 import type { SanitizedExif } from "@/api/exif";
+import { type Editable, type PhotoJson } from "@/components/edit-in-flight/photo-json";
+import { exifStripped, newSize, savedSize } from "@/components/edit-in-flight/replace-image";
+import { type ReplaceImage, useReplaceImage } from "@/components/edit-in-flight/use-replace-image";
+import { ErrorNote } from "@/components/error-note";
+import { ReadingNote } from "@/components/query-result";
 import { SettingsSwitch } from "@/components/settings-switch";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { type Editable, type PhotoJson } from "@/components/edit-in-flight/photo-json";
-import { exifStripped, newSize, savedSize } from "@/components/edit-in-flight/replace-image";
-import { type ReplaceImage, useReplaceImage } from "@/components/edit-in-flight/use-replace-image";
 import { type Crop, type Size } from "@/lib/crop";
 import { useReplacedImageStore } from "@/stores/replaced-image";
-import { ReadingNote } from "@/components/query-result";
-import { ErrorNote } from "@/components/error-note";
 
 interface ReplaceImageCardProps {
   editable: Editable;

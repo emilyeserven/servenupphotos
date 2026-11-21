@@ -1,11 +1,12 @@
 import { useId, useMemo, useState } from "react";
+import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
+import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
 import { AutogroupReview } from "@/components/compare/autogroup-review";
 import { ReadProblems } from "@/components/compare/compare-group-list";
-import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
-import { PasteAnswer } from "@/components/paste-answer";
 import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
+import { PasteAnswer } from "@/components/paste-answer";
 import { PhotoScopeToggle } from "@/components/photo-scope-toggle";
-import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
+import { ReadingNote } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCompareGroups } from "@/hooks/use-compare-groups";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
@@ -20,7 +21,6 @@ import {
 } from "@/lib/compare-autogroup";
 import { readAutogroupAnswer } from "@/lib/compare-autogroup-answer";
 import type { ComparePhoto } from "@/lib/compare-groups";
-import { ReadingNote } from "@/components/query-result";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 

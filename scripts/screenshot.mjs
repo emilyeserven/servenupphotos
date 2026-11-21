@@ -24,8 +24,8 @@ import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import { createServer } from "node:net";
 import path from "node:path";
-import { parseArgs } from "node:util";
 import { pathToFileURL } from "node:url";
+import { parseArgs } from "node:util";
 import { chromium } from "playwright-core";
 import { defaultFixtures, photoSizes } from "./screenshot-fixtures.mjs";
 

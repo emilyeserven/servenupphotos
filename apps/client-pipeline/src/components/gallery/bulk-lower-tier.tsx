@@ -1,7 +1,7 @@
 import { ChevronsDownIcon, ChevronsUpIcon } from "lucide-react";
 import type { PublishedFile } from "@/api/photos";
-import { LOWER_TIER_HELP, useSetLowerTier } from "@/components/lower-tier";
 import { BulkMarkCard } from "@/components/gallery/bulk-mark-card";
+import { LOWER_TIER_HELP, useSetLowerTier } from "@/components/lower-tier";
 
 interface BulkLowerTierProps {
   files: PublishedFile[];

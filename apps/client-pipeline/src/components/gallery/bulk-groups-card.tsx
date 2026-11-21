@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
-import { type PublishedFile, publishedPhotosQuery } from "@/api/photos";
 import {
   GROUP_KIND_LIST,
   NO_GROUPS,
@@ -9,14 +8,15 @@ import {
   addPhotoGroupsMutation,
   savedGroups,
 } from "@/api/organize";
-import { WaitingForCommit } from "@/components/waiting-for-commit";
+import { type PublishedFile, publishedPhotosQuery } from "@/api/photos";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
+import { ErrorNote } from "@/components/error-note";
+import { fileData, selectProblem } from "@/components/gallery/published-file";
 import { PhotoGroupFields, Warning } from "@/components/photo-groups-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { fileData, selectProblem } from "@/components/gallery/published-file";
-import { ErrorNote } from "@/components/error-note";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { count } from "@portfolio/lib/words";
 
 interface BulkGroupsCardProps {

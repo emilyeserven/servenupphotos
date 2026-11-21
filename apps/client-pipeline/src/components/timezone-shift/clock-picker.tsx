@@ -1,3 +1,4 @@
+import { DateTimePicker } from "@/components/date-time-picker";
 import { ZoneField } from "@/components/timezone-shift/zone-pickers";
 import type { ComboboxOption } from "@/components/ui/combobox";
 import type { ClockSetting } from "@/lib/clock-setting";
@@ -5,7 +6,6 @@ import { fromInputValue, inputValue } from "@/lib/photo-date";
 import { readableTime, zoneOffsetOn } from "@/lib/timezone-shift";
 import type { DayPhoto } from "@/lib/timezone-shift-plan";
 import { cn } from "@/lib/utils";
-import { DateTimePicker } from "@/components/date-time-picker";
 
 type Kind = ClockSetting["kind"];
 

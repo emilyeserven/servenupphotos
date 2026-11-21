@@ -1,10 +1,10 @@
-import { Button } from "@portfolio/components/ui/button";
-import { MAP_POPUP } from "@portfolio/components/map-popup";
-import { formatCoordinates, type MapSpot } from "@portfolio/lib/map-coordinates";
 import { Popup, useMap } from "@vis.gl/react-maplibre";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import type { MapMouseEvent } from "maplibre-gl";
 import { useCallback, useEffect, useState } from "react";
+import { MAP_POPUP } from "@portfolio/components/map-popup";
+import { Button } from "@portfolio/components/ui/button";
+import { formatCoordinates, type MapSpot } from "@portfolio/lib/map-coordinates";
 
 /**
  * Copies the coordinates' text and says whether it could. Each app copies its own way: the

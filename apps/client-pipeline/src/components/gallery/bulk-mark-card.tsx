@@ -1,9 +1,9 @@
 import { CheckIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import type { PublishedFile } from "@/api/photos";
+import { selectProblem } from "@/components/gallery/published-file";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { selectProblem } from "@/components/gallery/published-file";
 import { count } from "@portfolio/lib/words";
 
 /** What a Gallery card that puts a mark on the chosen photos, or takes it off, says and does. */

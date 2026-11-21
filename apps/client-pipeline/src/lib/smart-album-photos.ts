@@ -1,9 +1,9 @@
+import type { CombinedFiles } from "@/api/photos";
+import type { CombinedPhoto } from "@/lib/group-photos";
 import type { Group } from "@portfolio/lib/groups";
 import { type Photo, photosFromData } from "@portfolio/lib/photos";
 import { isSmartAlbum } from "@portfolio/lib/smart-albums";
 import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
-import type { CombinedFiles } from "@/api/photos";
-import type { CombinedPhoto } from "@/lib/group-photos";
 
 /** A photo JSON entry as the portfolio reads it. */
 type PhotoData = Parameters<typeof photosFromData>[0][number];

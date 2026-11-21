@@ -1,4 +1,5 @@
 import { NO_STATE } from "@portfolio/lib/photo-filters";
+import type { Photo } from "@portfolio/lib/photos";
 import {
   type Bucket,
   type GroupDef,
@@ -9,7 +10,6 @@ import {
 } from "@portfolio/lib/stat-groups";
 import { cameraOf, GEAR_GROUPS } from "@portfolio/lib/stats-gear";
 import { TIME_GROUPS } from "@portfolio/lib/stats-time";
-import type { Photo } from "@portfolio/lib/photos";
 
 /** A section of the Stats page, such as Gear, with how to make its groups. */
 export interface StatSection {

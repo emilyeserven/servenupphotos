@@ -1,7 +1,9 @@
 import { ChevronRight, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { HiddenNote } from "@portfolio/components/hidden-note";
 import { useScriptDisplay } from "@portfolio/components/script-display-provider";
+import { TruncatedText } from "@portfolio/components/truncated-text";
 import { Button } from "@portfolio/components/ui/button";
 import { PopoverContent } from "@portfolio/components/ui/popover";
 import type { LocationOption } from "@portfolio/lib/filter-options";
@@ -15,8 +17,6 @@ import {
   withPhotos,
 } from "@portfolio/lib/place-tree";
 import { cn } from "@portfolio/lib/utils";
-import { TruncatedText } from "@portfolio/components/truncated-text";
-import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** What the Places flyout lists, and what choosing in it does. */
 interface PanelProps {

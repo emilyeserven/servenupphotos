@@ -4,7 +4,6 @@ import { exifMutation, type SanitizedExif } from "@/api/exif";
 import { photosInFlightQuery, publishedPhotosQuery, updateInFlightMutation } from "@/api/photos";
 import { renamePhoto, uploadMutation } from "@/api/upload";
 import { thumbnailCropQuery } from "@/api/versions";
-import { fileStem } from "@/components/photo-details";
 import { type Editable, type PhotoJson, photoFile } from "@/components/edit-in-flight/photo-json";
 import {
   newSize,
@@ -14,6 +13,7 @@ import {
 } from "@/components/edit-in-flight/replace-image";
 import { useLensSettings } from "@/components/edit-in-flight/use-edit";
 import { useReapplyFaces } from "@/components/edit-in-flight/use-reapply-faces";
+import { fileStem } from "@/components/photo-details";
 import { type Crop } from "@/lib/crop";
 import { useReplacedImageStore } from "@/stores/replaced-image";
 

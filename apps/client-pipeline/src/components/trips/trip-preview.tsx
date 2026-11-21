@@ -1,3 +1,8 @@
+import type { TripLine } from "@/api/trip-lines";
+import type { Trip } from "@/api/trips";
+import { lineFeatures } from "@/components/trip-lines/route-geometry";
+import type { TripDay } from "@/lib/trip-days";
+import { orderedPhotos } from "@/lib/trip-order";
 import { SketchDrawing } from "@portfolio/components/sketch-drawing";
 import { routePlaces } from "@portfolio/lib/route-places";
 import {
@@ -6,11 +11,6 @@ import {
   type SketchSize,
   routeSketch,
 } from "@portfolio/lib/route-sketch";
-import type { TripLine } from "@/api/trip-lines";
-import type { Trip } from "@/api/trips";
-import { lineFeatures } from "@/components/trip-lines/route-geometry";
-import type { TripDay } from "@/lib/trip-days";
-import { orderedPhotos } from "@/lib/trip-order";
 
 /** The size of a Trip's map when all its lines are in one place; it stretches to the card's width. */
 const ONE_PLACE: SketchSize = { width: 240, height: 120, lane: 3 };

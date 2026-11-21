@@ -2,10 +2,10 @@ import { type UseMutationOptions, useMutation, useQueryClient } from "@tanstack/
 import { type ReactNode, useState } from "react";
 import { organizeQuery } from "@/api/organize";
 import type { PruneTagsPreview } from "@/api/prune-tags";
+import { SectionTitle } from "@/components/section-title";
 import { SaveButton, invalidatePhotoReads } from "@/components/update-data-shared";
 import { toggled } from "@/lib/bulk-tags";
 import { count } from "@portfolio/lib/words";
-import { SectionTitle } from "@/components/section-title";
 
 /** The key of one suggested change, such as "merge 0", for the set of unticked ones. */
 export function changeKey(kind: string, index: number): string {

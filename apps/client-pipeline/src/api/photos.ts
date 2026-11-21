@@ -2,8 +2,8 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { ExifResponse, SanitizedExif } from "@/api/exif";
 import type { NearDuplicates } from "@/api/near-duplicates";
 import type { PhotoPlace } from "@/api/places";
-import { type PendingSave, type ScanChange, changesByKind, photoChanges } from "@/api/scan-changes";
 import { del, post, put, requestJson } from "@/api/request";
+import { type PendingSave, type ScanChange, changesByKind, photoChanges } from "@/api/scan-changes";
 import type { CombinedKind, GroupKind } from "@/lib/data-kinds";
 
 /** A photo's data to save as `<folder>/<name>.json` in the GitHub repository from Settings. */

@@ -1,5 +1,5 @@
-import { placeSlug } from "@portfolio/lib/place-slug";
 import type { RegionNode } from "@/lib/region-tree";
+import { placeSlug } from "@portfolio/lib/place-slug";
 
 /** Where Quick Edit goes for a portfolio link: the pipeline page that edits what it shows. */
 export interface QuickEditTarget {

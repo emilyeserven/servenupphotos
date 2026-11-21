@@ -1,9 +1,10 @@
-import { DownloadIcon, Trash2Icon } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { DownloadIcon, Trash2Icon } from "lucide-react";
 import type { ChangeEvent } from "react";
+import { ErrorNote } from "@/components/error-note";
+import { PasteAnswer } from "@/components/paste-answer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PasteAnswer } from "@/components/paste-answer";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { downloadFile } from "@/lib/album-layout-editor";
 import {
@@ -11,10 +12,9 @@ import {
   mergeLightroomAlbums,
   readLightroomAlbums,
 } from "@/lib/lightroom-albums";
-import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
-import { ErrorNote } from "@/components/error-note";
-import { count } from "@portfolio/lib/words";
 import { askFirst } from "@/stores/confirm";
+import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { count } from "@portfolio/lib/words";
 
 /** A read import: the merge to look over and the source it came from. */
 interface ImportRead {

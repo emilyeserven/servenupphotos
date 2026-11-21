@@ -1,12 +1,6 @@
 import { CheckIcon, RotateCcwIcon } from "lucide-react";
 import { type InFlightFileRead, type UpdateResult } from "@/api/photos";
 import { AllPhotosRebuild } from "@/components/all-photos-rebuild";
-import { FloatingAction } from "@/components/floating-actions";
-import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { WaitingForCommit } from "@/components/waiting-for-commit";
-import { sameCrop } from "@/lib/crop";
 import {
   type SquareUrls,
   fileName,
@@ -15,6 +9,12 @@ import {
 } from "@/components/edit-in-flight/photo-json";
 import { type Edit, type Save } from "@/components/edit-in-flight/use-edit";
 import { ErrorNote } from "@/components/error-note";
+import { FloatingAction } from "@/components/floating-actions";
+import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
+import { sameCrop } from "@/lib/crop";
 
 /**
  * Save changes and, once the square has moved, a way back to the saved crop, floated next to the

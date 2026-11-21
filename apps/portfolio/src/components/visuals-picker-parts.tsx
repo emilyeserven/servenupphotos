@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { ColorFilter } from "@portfolio/components/color-filter";
 import { ChoiceRow } from "@portfolio/components/choice-row";
+import { ColorFilter } from "@portfolio/components/color-filter";
 import { ShareThreshold } from "@portfolio/components/color-match-control";
 import { OrientationFilter } from "@portfolio/components/orientation-filter";
 import { type PickerInfo, PickerPart } from "@portfolio/components/section-picker";

@@ -2,8 +2,8 @@ import type { TripVisit } from "@/api/trip-lines";
 import { END_GAPS, GapPicker } from "@/components/trip-lines/gap-picker";
 import { GAPS } from "@/components/trip-lines/modes";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
-import type { Gap } from "@/lib/trip-gaps";
 import { type StopWay, stopWay } from "@/lib/stop-insert";
+import type { Gap } from "@/lib/trip-gaps";
 
 /** Changes how a trip stop was reached from the point before it. */
 export type OnStopWay = (visit: TripVisit, way: StopWay) => void;

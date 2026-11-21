@@ -6,13 +6,13 @@ import {
 } from "@/api/alt-text";
 import { placesQuery, readEntries } from "@/api/places";
 import { AltTextReview } from "@/components/alt-text/alt-text-review";
-import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { CopyPromptButton, PickBar, usePhotoPick } from "@/components/bulk-tagging/pick-controls";
+import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
+import { ErrorNote } from "@/components/error-note";
 import { PasteAnswer } from "@/components/paste-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { altTextPrompt } from "@/lib/alt-text-prompt";
-import { ErrorNote } from "@/components/error-note";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
+import { altTextPrompt } from "@/lib/alt-text-prompt";
 
 /** How many photos the Alt Text page picks until another number is chosen. */
 const defaultAltTextCount = 20;

@@ -1,6 +1,6 @@
-import { areaEdgePaint, areaFillPaint } from "@portfolio/lib/map-theme";
 import { Layer, type LayerProps, Source } from "@vis.gl/react-maplibre";
 import type { AreaShape, TripFence } from "@/api/trip-lines";
+import { areaEdgePaint, areaFillPaint } from "@portfolio/lib/map-theme";
 
 /** The shaded inside of an area. */
 function fillLayer(dark: boolean): LayerProps {

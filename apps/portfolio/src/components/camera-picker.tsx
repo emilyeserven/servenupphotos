@@ -8,19 +8,19 @@ import {
   type PickerSection,
   SectionPicker,
 } from "@portfolio/components/section-picker";
+import type { BlockerSource } from "@portfolio/lib/camera-blockers";
 import {
   CAMERA_FILTER_KEYS,
   type CameraFilters,
   type EquipmentKey,
   type RangeKey,
 } from "@portfolio/lib/camera-filters";
-import { ORIENTATION_KEY } from "@portfolio/lib/orientation";
 import { equipmentChoices } from "@portfolio/lib/camera-picker";
-import { useGraphicsPane } from "@portfolio/lib/use-graphics-pane";
-import type { BlockerSource } from "@portfolio/lib/camera-blockers";
-import type { ScriptDisplay } from "@portfolio/lib/localize";
 import type { FilterOption } from "@portfolio/lib/filter-options";
+import type { ScriptDisplay } from "@portfolio/lib/localize";
+import { ORIENTATION_KEY } from "@portfolio/lib/orientation";
 import type { Photo } from "@portfolio/lib/photos";
+import { useGraphicsPane } from "@portfolio/lib/use-graphics-pane";
 
 /** One section of the Camera picker: the camera, the lens, or a camera setting. */
 export type CameraSection = EquipmentKey | RangeKey;

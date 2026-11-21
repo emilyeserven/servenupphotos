@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Popover as PopoverPrimitive } from "radix-ui";
 import { Fragment, type ReactNode, useRef, useState } from "react";
-import { Popover, PopoverContent } from "@/components/ui/popover";
 import { isUnder, pagePath, type NavPage } from "@/components/sidebar/nav-groups";
+import { Popover, PopoverContent } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 /** How long the flyout stays after the pointer leaves, so it can cross the gap to the flyout. */

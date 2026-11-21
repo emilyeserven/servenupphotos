@@ -1,6 +1,6 @@
 import { filterWithCamera } from "@portfolio/lib/camera-filters";
-import type { Photo } from "@portfolio/lib/photos";
-import type { GroupDef, StatGroup, StatRow } from "@portfolio/lib/stat-groups";
+import { type AxisBuckets, axisBucketRows, bucketNames } from "@portfolio/lib/graph-buckets";
+import { PHOTO_STATS } from "@portfolio/lib/graph-photo-stats";
 import {
   type GraphRanges,
   rangedRows,
@@ -8,10 +8,10 @@ import {
   type YDomain,
   yDomain,
 } from "@portfolio/lib/graph-ranges";
-import { type AxisBuckets, axisBucketRows, bucketNames } from "@portfolio/lib/graph-buckets";
-import { PHOTO_STATS } from "@portfolio/lib/graph-photo-stats";
-import { uniqueStats } from "@portfolio/lib/graph-stat-ids";
 import { SETTING_STATS } from "@portfolio/lib/graph-settings";
+import { uniqueStats } from "@portfolio/lib/graph-stat-ids";
+import type { Photo } from "@portfolio/lib/photos";
+import type { GroupDef, StatGroup, StatRow } from "@portfolio/lib/stat-groups";
 import { STAT_SECTIONS } from "@portfolio/lib/stats";
 
 /** A stat a graph can be drawn by: one of the Numbers page's groups, such as Cameras or

@@ -1,6 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
-import { post } from "@/api/request";
 import type { BulkTagPhoto } from "@/api/bulk-tags";
+import { post } from "@/api/request";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
 
 /** Up to the chosen number of photos without alt text, in file name order, to ask an LLM about together. */

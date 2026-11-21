@@ -9,8 +9,8 @@ import {
 import { SiteHomeLink } from "@/components/site-home-link";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
-import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@/lib/words";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 interface RawVsEditedSearch extends ShownPhotoSearch {
   /** How the open photo is compared. Left out for the default, the slider. */

@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { type Group, groupLabel, organizeQuery, setAlbumOrderMutation } from "@/api/organize";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { movedAlbumOrder } from "@/lib/album-order";
-import { ErrorNote } from "@/components/error-note";
 
 interface AlbumMoveButtonsProps {
   album: Group;

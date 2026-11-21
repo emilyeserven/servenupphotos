@@ -1,8 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { CalendarPlus } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/date-picker";
+import { Button } from "@/components/ui/button";
 
 /**
  * Plans a day before its photos are taken: picking a date opens its Trip Stops page, where the

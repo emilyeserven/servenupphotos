@@ -10,6 +10,7 @@ import {
   r2ExifPreviewQuery,
   writeR2ExifMutation,
 } from "@/api/r2-exif";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,7 +22,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 interface ConfirmWriteProps {

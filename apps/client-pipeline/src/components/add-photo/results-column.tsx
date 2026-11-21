@@ -7,13 +7,13 @@ import type { ExifMutation } from "@/components/add-photo/photo-state";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import { SavedPhotoCard } from "@/components/choose-photo-dialog";
 import { NewPhotoLens } from "@/components/custom-lens-card";
-import { PhotoGroupsCard } from "@/components/photo-groups-card";
 import {
   fileStem,
   type ExifPlace,
   type PhotoDetails,
   PhotoDetailsCard,
 } from "@/components/photo-details";
+import { PhotoGroupsCard } from "@/components/photo-groups-card";
 import { PhotoLocationCard } from "@/components/photo-location-card";
 import type { LensChoice } from "@/lib/custom-lens";
 import type { CombinedPhoto } from "@/lib/group-photos";
