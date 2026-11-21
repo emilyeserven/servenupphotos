@@ -1,9 +1,9 @@
 {
-  "id": 200,
-  "title": null,
+  "title": "Nantucket Signpost",
   "comment": null,
+  "id": 200,
   "file": "IMG_8424.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T00:55:42Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S10-18mm f/4.5-5.6 IS STM",
   "aperture": 9,
@@ -266,5 +266,8 @@
     "peakChroma": 41.46,
     "samples": 10050
   },
-  "similarPhotos": [401, 231, 82, 114, 111, 113]
+  "similarPhotos": [401, 231, 82, 114, 111, 113],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

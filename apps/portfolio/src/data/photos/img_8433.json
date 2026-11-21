@@ -1,9 +1,9 @@
 {
-  "id": 201,
-  "title": null,
+  "title": "Cycles by Cook's",
   "comment": null,
+  "id": 201,
   "file": "IMG_8433.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T00:55:33Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S10-18mm f/4.5-5.6 IS STM",
   "aperture": 10,
@@ -266,5 +266,8 @@
     "peakChroma": 39.96,
     "samples": 10050
   },
-  "similarPhotos": [203, 323, 453, 297, 270, 38]
+  "similarPhotos": [203, 323, 453, 297, 270, 38],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }
