@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import type { PhotoSet } from "@portfolio/lib/photo-sets";
 import { savePhotoSetMutation } from "@/api/photo-sets";
 import type { SocialPhoto } from "@/api/publish";
+import { ErrorNote } from "@/components/error-note";
 import { PhotoDrawerToggle } from "@/components/instagram-picker/photo-drawer";
 import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import { SET_PHOTO_DRAG_TYPE, SetPhotos } from "@/components/photo-sets/set-photos";
@@ -9,7 +9,7 @@ import { SaveState } from "@/components/save-state";
 import { Input } from "@/components/ui/input";
 import { useDelayedDraft } from "@/hooks/use-delayed-draft";
 import { addToSet, moveSetPhoto, photoIdOf, removeSetPhoto, setsByPhoto } from "@/lib/photo-sets";
-import { ErrorNote } from "@/components/error-note";
+import type { PhotoSet } from "@portfolio/lib/photo-sets";
 
 /** What the photo drawer says beside the set. */
 const SET_DRAWER_WORDS = {

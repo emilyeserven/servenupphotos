@@ -5,8 +5,8 @@ import type { TripDay } from "@/lib/trip-days";
 import { type DayFilter, useTripLinesSearch } from "@/lib/trip-lines-search";
 import { cn } from "@/lib/utils";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { count } from "@portfolio/lib/words";
 import { weekdayDate } from "@portfolio/lib/dates";
+import { count } from "@portfolio/lib/words";
 
 /**
  * Whether a day's line is marked by hand, marked by hand but out of date with the day's photos,

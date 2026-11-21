@@ -13,8 +13,8 @@ import {
   type ShownPhotoSearch,
   useShownPhoto,
 } from "@/lib/shown-photo";
-import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@/lib/words";
+import { EmptyNote } from "@portfolio/components/empty-note";
 
 interface LikesSearch extends ShownPhotoSearch {
   /** Set to `text` when the text to send is just the ids, for Messenger or a text message. Left out for Discord. */

@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { BulkUploadPanel } from "@/components/bulk-upload/bulk-upload-panel";
-import { fixedCrumbs } from "@/components/sidebar/route-crumbs";
 import { Page } from "@/components/page";
+import { fixedCrumbs } from "@/components/sidebar/route-crumbs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Route = createFileRoute("/bulk-upload")({

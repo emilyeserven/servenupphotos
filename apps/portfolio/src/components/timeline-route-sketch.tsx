@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { createContext, type ReactNode, use, useMemo } from "react";
-import { fitView } from "@/lib/fit-view";
 import { SketchDrawing } from "@/components/sketch-drawing";
-import { type RouteSketch, type SketchSize, routeSketch } from "@/lib/route-sketch";
+import { fitView } from "@/lib/fit-view";
 import { type RoutePlace, routePlaces } from "@/lib/route-places";
+import { type RouteSketch, type SketchSize, routeSketch } from "@/lib/route-sketch";
 import { type TripMapFeature, useTripLinesMap } from "@/lib/trip-lines-map";
 
 /** TRIPLINES.geo.json's features by their day, and each day's route sketch, both by `yyyy-MM-dd`. */

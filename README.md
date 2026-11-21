@@ -2,12 +2,12 @@
 
 Monorepo for a photography portfolio and the local tooling that feeds it.
 
-| App                 | Path                   | Stack                                           | Runs on                      |
-| ------------------- | ---------------------- | ----------------------------------------------- | ---------------------------- |
-| **portfolio**       | `apps/portfolio`       | React, TanStack Router + Query, shadcn/ui, Vite | GitHub Pages (static)        |
-| **client-pipeline** | `apps/client-pipeline` | React, TanStack Router + Query, shadcn/ui, Vite | Served by `bff-pipeline`     |
-| **bff-pipeline**    | `apps/bff-pipeline`    | Fastify (TypeScript)                            | Local machine / Raspberry Pi |
-| **be-pipeline**     | `apps/be-pipeline`     | Go (stdlib `net/http`)                          | Local machine / Raspberry Pi |
+| App | Path | Stack | Runs on |
+| --- | --- | --- | --- |
+| **portfolio** | `apps/portfolio` | React, TanStack Router + Query, shadcn/ui, Vite | GitHub Pages (static) |
+| **client-pipeline** | `apps/client-pipeline` | React, TanStack Router + Query, shadcn/ui, Vite | Served by `bff-pipeline` |
+| **bff-pipeline** | `apps/bff-pipeline` | Fastify (TypeScript) | Local machine / Raspberry Pi |
+| **be-pipeline** | `apps/be-pipeline` | Go (stdlib `net/http`) | Local machine / Raspberry Pi |
 
 The three `*-pipeline` apps deploy together as one tool: the browser talks only to the BFF, and the BFF talks to the Go backend.
 
@@ -20,9 +20,7 @@ browser ──► bff-pipeline (Fastify, :8080) ──► be-pipeline (Go, :8081
 
 - Node 22 (`.nvmrc`) and pnpm 10 (`corepack enable`)
 - Go 1.24
-- [ExifTool](https://exiftool.org/install.html), only for `pnpm dev:pipeline` (`brew install exiftool`, or
-  `apt install libimage-exiftool-perl`); the Docker images include it. Without it the backend still starts, and
-  `POST /exif` returns color data with `"exif": null`.
+- [ExifTool](https://exiftool.org/install.html), only for `pnpm dev:pipeline` (`brew install exiftool`, or `apt install libimage-exiftool-perl`); the Docker images include it. Without it the backend still starts, and `POST /exif` returns color data with `"exif": null`.
 - [golangci-lint](https://golangci-lint.run/welcome/install/) v2, for linting the Go code locally
 - Docker with the Compose plugin, for deploying the pipeline
 
@@ -49,9 +47,7 @@ pnpm shot pipeline /gallery   # screenshot a page with sample data, no backend n
 
 ### Pipeline in Docker with hot reload
 
-`pnpm dev:docker` runs `docker-compose.dev.yml`, which starts each pipeline app's dev server in its own container and
-uses [Compose Watch](https://docs.docker.com/compose/how-tos/file-watch/) (Docker Compose 2.22 or newer) to copy your
-edits into them as you save:
+`pnpm dev:docker` runs `docker-compose.dev.yml`, which starts each pipeline app's dev server in its own container and uses [Compose Watch](https://docs.docker.com/compose/how-tos/file-watch/) (Docker Compose 2.22 or newer) to copy your edits into them as you save:
 
 | App               | On save                                                |
 | ----------------- | ------------------------------------------------------ |
@@ -59,24 +55,15 @@ edits into them as you save:
 | `bff-pipeline`    | `tsx watch` restarts Fastify                           |
 | `be-pipeline`     | container restarts and `go run` recompiles the backend |
 
-Changing a `package.json`, `pnpm-lock.yaml`, `go.mod` or `vite.config.ts` rebuilds the affected image automatically.
-Stop with <kbd>Ctrl</kbd>+<kbd>C</kbd>; `docker compose -f docker-compose.dev.yml down` removes the containers.
+Changing a `package.json`, `pnpm-lock.yaml`, `go.mod` or `vite.config.ts` rebuilds the affected image automatically. Stop with <kbd>Ctrl</kbd>+<kbd>C</kbd>; `docker compose -f docker-compose.dev.yml down` removes the containers.
 
-> **Frontend analogy:** Compose Watch is like the file watcher behind Vite's HMR, but one level up: it watches your
-> files on the host and syncs them into the container, where the app's own dev server takes it from there.
+> **Frontend analogy:** Compose Watch is like the file watcher behind Vite's HMR, but one level up: it watches your files on the host and syncs them into the container, where the app's own dev server takes it from there.
 
 ### Screenshots
 
-`pnpm shot <portfolio|pipeline> <path>` starts the app's Vite dev server, opens the page in headless Chromium and saves
-a PNG in `screenshots/` (git-ignored). The pipeline's `/api` requests are answered from sample data in
-`scripts/screenshot-fixtures.mjs`, built from the committed portfolio data plus one open **Add photo data** pull
-request, so no Go backend, R2 or GitHub is needed. Photos on the R2 CDN are drawn as placeholders and the map gets a
-plain background. Options are listed at the top of `scripts/screenshot.mjs`: `--mobile`, `--dark`, `--full`,
-`--out <dir>`, `--fixtures <file>` to change an answer, `--script <file>` to click around and take several, and
-`--live` to use the real BFF instead.
+`pnpm shot <portfolio|pipeline> <path>` starts the app's Vite dev server, opens the page in headless Chromium and saves a PNG in `screenshots/` (git-ignored). The pipeline's `/api` requests are answered from sample data in `scripts/screenshot-fixtures.mjs`, built from the committed portfolio data plus one open **Add photo data** pull request, so no Go backend, R2 or GitHub is needed. Photos on the R2 CDN are drawn as placeholders and the map gets a plain background. Options are listed at the top of `scripts/screenshot.mjs`: `--mobile`, `--dark`, `--full`, `--out <dir>`, `--fixtures <file>` to change an answer, `--script <file>` to click around and take several, and `--live` to use the real BFF instead.
 
-> **Frontend analogy:** it's Storybook for whole pages: the real components, fed canned API responses, so a page can be
-> shown in any state without the services behind it.
+> **Frontend analogy:** it's Storybook for whole pages: the real components, fed canned API responses, so a page can be shown in any state without the services behind it.
 
 ## Features
 
@@ -98,22 +85,18 @@ cd apps/be-pipeline && golangci-lint run && go test ./...   # golangci-lint also
 
 ### Portfolio → GitHub Pages
 
-`.github/workflows/deploy-portfolio.yml` builds `apps/portfolio` on every push to `main` and deploys it.
-One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**, and **Settings → Pages → Custom domain: `servenupphotos.net`** (with **Enforce HTTPS** on once the certificate is issued).
-Actions deploys ignore a `CNAME` file, so the domain lives only in that setting.
-The site is served from the domain root (Vite `base: "/"`), and `404.html` is a copy of `index.html` so deep links work.
+`.github/workflows/deploy-portfolio.yml` builds `apps/portfolio` on every push to `main` and deploys it. One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**, and **Settings → Pages → Custom domain: `servenupphotos.net`** (with **Enforce HTTPS** on once the certificate is issued). Actions deploys ignore a `CNAME` file, so the domain lives only in that setting. The site is served from the domain root (Vite `base: "/"`), and `404.html` is a copy of `index.html` so deep links work.
 
 ### Pipeline → local machine or Raspberry Pi
 
 The pipeline runs as two containers:
 
-| Service        | Port | Exposed?                   | Role                                         |
-| -------------- | ---- | -------------------------- | -------------------------------------------- |
-| `bff-pipeline` | 8080 | yes (`PIPELINE_PORT`)      | Serves the `client-pipeline` UI and `/api/*` |
-| `be-pipeline`  | 8081 | no (internal network only) | Go backend                                   |
+| Service | Port | Exposed? | Role |
+| --- | --- | --- | --- |
+| `bff-pipeline` | 8080 | yes (`PIPELINE_PORT`) | Serves the `client-pipeline` UI and `/api/*` |
+| `be-pipeline` | 8081 | no (internal network only) | Go backend |
 
-> **Frontend analogy:** `docker compose up` is like `pnpm dev:pipeline`, but each app runs in its own
-> container instead of a terminal tab. The containers restart on their own after a crash or reboot.
+> **Frontend analogy:** `docker compose up` is like `pnpm dev:pipeline`, but each app runs in its own container instead of a terminal tab. The containers restart on their own after a crash or reboot.
 
 #### Local machine (macOS / Linux / Windows)
 
@@ -127,14 +110,11 @@ The pipeline runs as two containers:
 
 3. Open <http://localhost:8080>. **Settings › Status** (`/settings/status`) should show both the BFF and the backend as `ok`.
 
-This runs the production builds, so code changes need another `docker compose up -d --build`. While developing, use
-`pnpm dev:docker` instead (see [Pipeline in Docker with hot reload](#pipeline-in-docker-with-hot-reload)).
+This runs the production builds, so code changes need another `docker compose up -d --build`. While developing, use `pnpm dev:docker` instead (see [Pipeline in Docker with hot reload](#pipeline-in-docker-with-hot-reload)).
 
 #### Raspberry Pi
 
-Requires a Raspberry Pi 4 or 5 running **Raspberry Pi OS 64-bit** (arm64), with 4 GB of RAM or more: building the
-images and resizing full-size photos both take a lot of memory. The images are built on the Pi itself. Deploy with
-[Coolify](#with-coolify) or with Docker Compose directly (below).
+Requires a Raspberry Pi 4 or 5 running **Raspberry Pi OS 64-bit** (arm64), with 4 GB of RAM or more: building the images and resizing full-size photos both take a lot of memory. The images are built on the Pi itself. Deploy with [Coolify](#with-coolify) or with Docker Compose directly (below).
 
 1. Install Docker ([Debian install guide](https://docs.docker.com/engine/install/debian/)), and let your user run it without `sudo` ([post-install steps](https://docs.docker.com/engine/install/linux-postinstall/)):
 
@@ -159,41 +139,23 @@ images and resizing full-size photos both take a lot of memory. The images are b
 
 Both services use `restart: unless-stopped`, so with Docker enabled at boot the pipeline comes back up after the Pi restarts.
 
-The BFF gzips its JSON, scripts and styles, and tells browsers to keep the app's hashed files in `assets/` for good
-(`index.html` is checked on every load, so a new deploy still shows). Opening a page from another computer, such as
-over Tailscale, then downloads its code once instead of asking the Pi about it on every page change.
+The BFF gzips its JSON, scripts and styles, and tells browsers to keep the app's hashed files in `assets/` for good (`index.html` is checked on every load, so a new deploy still shows). Opening a page from another computer, such as over Tailscale, then downloads its code once instead of asking the Pi about it on every page change.
 
 #### With Coolify
 
-[Coolify](https://coolify.io/docs/get-started/installation) supports Raspberry Pi OS 64-bit and needs at least 2 cores
-and 2 GB of RAM of its own ([requirements](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/start-with-self-hosted.mdx)).
-Only the pipeline goes on Coolify; the portfolio stays on GitHub Pages.
+[Coolify](https://coolify.io/docs/get-started/installation) supports Raspberry Pi OS 64-bit and needs at least 2 cores and 2 GB of RAM of its own ([requirements](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/start-with-self-hosted.mdx)). Only the pipeline goes on Coolify; the portfolio stays on GitHub Pages.
 
-1. In Coolify, add a resource from this repository with the **Docker Compose** build pack and `/docker-compose.yml` as
-   the Compose file.
-2. Under **Environment Variables**, set `PIPELINE_PORT` to a host port no other app on the Pi uses (it starts at
-   `8080`, the default in `docker-compose.yml`, and Coolify keeps your value when the Compose file changes;
-   [defaults](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/applications/builds/docker-compose.mdx)).
-3. Leave the services' domains empty and deploy. Open `http://<pi-hostname>:<PIPELINE_PORT>`, such as the Pi's
-   Tailscale name; the pipeline has no login, so keep that port on a private network like a tailnet.
+1. In Coolify, add a resource from this repository with the **Docker Compose** build pack and `/docker-compose.yml` as the Compose file.
+2. Under **Environment Variables**, set `PIPELINE_PORT` to a host port no other app on the Pi uses (it starts at `8080`, the default in `docker-compose.yml`, and Coolify keeps your value when the Compose file changes; [defaults](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/applications/builds/docker-compose.mdx)).
+3. Leave the services' domains empty and deploy. Open `http://<pi-hostname>:<PIPELINE_PORT>`, such as the Pi's Tailscale name; the pipeline has no login, so keep that port on a private network like a tailnet.
 
-The `./apps/portfolio/src/data` folder mounted into `be-pipeline` starts empty under Coolify, which keeps relative
-bind folders in its own folder; the backend then downloads the photo data from GitHub instead. Settings stay on the
-`pipeline-data` volume across deploys.
+The `./apps/portfolio/src/data` folder mounted into `be-pipeline` starts empty under Coolify, which keeps relative bind folders in its own folder; the backend then downloads the photo data from GitHub instead. Settings stay on the `pipeline-data` volume across deploys.
 
-> **Frontend analogy:** Coolify is a self-hosted Vercel dashboard on the Pi: it pulls the repo, runs
-> `docker compose up --build` for you on each deploy, and keeps the environment variables in its UI instead of `.env`.
+> **Frontend analogy:** Coolify is a self-hosted Vercel dashboard on the Pi: it pulls the repo, runs `docker compose up --build` for you on each deploy, and keeps the environment variables in its UI instead of `.env`.
 
-**Slow builds.** The deployment log shows "Adding build arguments to Docker Compose build command." and then nothing
-until both images are built, because Coolify hides the build's own output. Press **Show Debug Logs** on the deployment
-to see each step as it runs. A first build on a Pi takes a while: installing the packages, building the pipeline's UI
-with Vite and compiling the Go backend. Later builds reuse what hasn't changed: the package install reruns only when
-a `package.json` or `pnpm-lock.yaml` changes, and Go recompiles only the packages a change touches. Leave
-**Disable Build Cache** off, and use **Force deploy (without cache)** only when a build looks stuck on something old
-([build cache](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/applications/builds/overview.mdx)).
+**Slow builds.** The deployment log shows "Adding build arguments to Docker Compose build command." and then nothing until both images are built, because Coolify hides the build's own output. Press **Show Debug Logs** on the deployment to see each step as it runs. A first build on a Pi takes a while: installing the packages, building the pipeline's UI with Vite and compiling the Go backend. Later builds reuse what hasn't changed: the package install reruns only when a `package.json` or `pnpm-lock.yaml` changes, and Go recompiles only the packages a change touches. Leave **Disable Build Cache** off, and use **Force deploy (without cache)** only when a build looks stuck on something old ([build cache](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/applications/builds/overview.mdx)).
 
-> **Frontend analogy:** Docker's layer cache works like a lockfile-keyed `node_modules` cache in CI: as long as the
-> files a step depends on are the same, the step's result is reused instead of run again.
+> **Frontend analogy:** Docker's layer cache works like a lockfile-keyed `node_modules` cache in CI: as long as the files a step depends on are the same, the step's result is reused instead of run again.
 
 #### Day-to-day commands
 
@@ -217,8 +179,7 @@ apps/be-pipeline/bin/api &              # Go backend on :8081
 node apps/bff-pipeline/dist/index.js    # UI + API on :8080 (serves apps/client-pipeline/dist)
 ```
 
-Environment variables (all optional): `PORT` (BFF port, default `8080`), `API_URL` (Go backend URL, default
-`http://localhost:8081`), `CLIENT_DIST` (path to the client build). The Go backend reads `PORT` (default `8081`).
+Environment variables (all optional): `PORT` (BFF port, default `8080`), `API_URL` (Go backend URL, default `http://localhost:8081`), `CLIENT_DIST` (path to the client build). The Go backend reads `PORT` (default `8081`).
 
 ## Roadmap
 

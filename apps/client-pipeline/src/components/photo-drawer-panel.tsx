@@ -4,6 +4,7 @@ import type { SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
 import { GridFilterBar, useGridFilters } from "@/components/gallery/grid-filters";
 import { PhotoImage } from "@/components/instagram-picker/photo-image";
+import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDropTarget } from "@/hooks/use-drop-target";
@@ -11,7 +12,6 @@ import { takenDay } from "@/lib/social-focus";
 import { photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
 import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
-import { SectionTitle } from "@/components/section-title";
 
 /** The words a page's photo drawer uses for what it adds photos to. */
 interface DrawerWords {

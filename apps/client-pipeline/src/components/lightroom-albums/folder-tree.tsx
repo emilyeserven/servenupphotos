@@ -1,6 +1,6 @@
 import { ChevronRightIcon, FolderIcon } from "lucide-react";
-import { AlbumTitle, StageSelect, Uncertain } from "@/components/lightroom-albums/album-parts";
 import { AlbumCounts } from "@/components/lightroom-albums/album-counts";
+import { AlbumTitle, StageSelect, Uncertain } from "@/components/lightroom-albums/album-parts";
 import { ParentSelect } from "@/components/lightroom-albums/parent-select";
 import { RemoveAlbumButton } from "@/components/lightroom-albums/remove-album";
 import { RemoveFolderButton } from "@/components/lightroom-albums/remove-folder";

@@ -2,6 +2,7 @@ import { Trash2 } from "lucide-react";
 import type { TripFence } from "@/api/trip-lines";
 import { AreaSearch } from "@/components/area-search";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
+import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { LoosePhoto, TripDay } from "@/lib/trip-days";
@@ -15,7 +16,6 @@ import {
 } from "@/lib/trip-fences";
 import type { GapDraft } from "@/lib/trip-gaps";
 import { cn } from "@/lib/utils";
-import { SectionTitle } from "@/components/section-title";
 
 interface FencesProps {
   day: TripDay;

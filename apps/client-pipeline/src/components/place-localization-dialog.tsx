@@ -7,6 +7,7 @@ import {
   type Place,
   saveLocalizationMutation,
 } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
 import { FIELDS, type Fields, savedFields } from "@/components/localization-row";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +21,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * A button that opens a dialog to write how the place is written and said where it is, saved as

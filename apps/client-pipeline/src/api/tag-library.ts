@@ -1,8 +1,8 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { bulkTagChanges } from "@/api/bulk-tags";
-import type { PendingSave } from "@/api/scan-changes";
-import { post } from "@/api/request";
 import type { PruneTags, PruneTagsPreview } from "@/api/prune-tags";
+import { post } from "@/api/request";
+import type { PendingSave } from "@/api/scan-changes";
 
 /** One tag as the Tag library exports it. */
 export interface TagLibraryTag {

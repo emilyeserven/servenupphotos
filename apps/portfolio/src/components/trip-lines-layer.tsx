@@ -1,7 +1,7 @@
 import { Layer, Source } from "@vis.gl/react-maplibre";
 import { TripFlowLayer } from "@/components/trip-flow-layer";
-import { useIsDark } from "@/lib/map-theme";
 import type { PlacedPhoto } from "@/lib/map-photos";
+import { useIsDark } from "@/lib/map-theme";
 import { tripLineLayers } from "@/lib/trip-line-layers";
 import { type TripLinesMap, useShownTripLines } from "@/lib/trip-lines-map";
 

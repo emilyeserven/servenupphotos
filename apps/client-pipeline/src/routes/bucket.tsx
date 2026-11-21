@@ -31,8 +31,8 @@ import { type PhotoMarks, usePhotoMarks } from "@/hooks/use-photo-marks";
 import { isContactSheetKey } from "@/lib/contact-sheets";
 import { cn } from "@/lib/utils";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { count } from "@portfolio/lib/words";
 import { dateTimeText } from "@portfolio/lib/dates";
+import { count } from "@portfolio/lib/words";
 
 export const Route = createFileRoute("/bucket")({
   component: BucketPage,

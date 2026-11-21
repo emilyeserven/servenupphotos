@@ -1,11 +1,11 @@
 import { type MutationState, useMutationState } from "@tanstack/react-query";
 import type { Localization } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
 import type { LocalizationDrafts } from "@/components/localization-drafts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import type { LocalizationRow } from "@/lib/place-seeds";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** The three fields a localization notes, as the JSON names them, with their labels. */

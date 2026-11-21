@@ -5,10 +5,10 @@ import {
   normalizeTagNamesMutation,
   unnormalizedTags,
 } from "@/api/organize";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 interface TagNamesCardProps {

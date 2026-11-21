@@ -1,9 +1,9 @@
 import { ChevronDown, type LucideIcon, X } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { ClearableTrigger, TriggerArrows } from "@portfolio/components/clearable-trigger";
-import { SectionTab } from "@portfolio/components/picker-section-tab";
 import { FilterCount } from "@portfolio/components/filter-count";
 import { InfoButton } from "@portfolio/components/info-button";
+import { SectionTab } from "@portfolio/components/picker-section-tab";
 import { Button } from "@portfolio/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import { cn } from "@portfolio/lib/utils";

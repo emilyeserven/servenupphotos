@@ -1,8 +1,8 @@
 import { type Place, type PhotoPlace, entryId, RELATIONS } from "@/api/places";
 import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
+import { readPastedObject } from "@/lib/pasted-json";
 import { gpsText, writtenPosition } from "@/lib/place-gps";
 import { placeCity, withParent } from "@/lib/place-hierarchy";
-import { readPastedObject } from "@/lib/pasted-json";
 import { textOf } from "@portfolio/lib/values";
 
 /** What the location prompt tells the LLM about: what's already known of where the photo was taken. */

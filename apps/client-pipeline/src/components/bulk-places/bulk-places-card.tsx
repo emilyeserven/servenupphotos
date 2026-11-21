@@ -7,18 +7,18 @@ import {
 import type { BulkTagPhoto } from "@/api/bulk-tags";
 import { type Place, placesQuery, readEntries } from "@/api/places";
 import { BulkPlaceReview } from "@/components/bulk-places/bulk-place-review";
-import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
-import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
+import { NoPlaceFoundNote } from "@/components/bulk-places/no-place-found";
 import { CopyPromptButton, PickBar, usePhotoPick } from "@/components/bulk-tagging/pick-controls";
-import { PasteAnswer } from "@/components/paste-answer";
+import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
+import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
+import { ErrorNote } from "@/components/error-note";
+import { PasteAnswer } from "@/components/paste-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { bulkPlacePrompt, parseBulkPlaceAnswer } from "@/lib/bulk-place-prompt";
 import { noPlacePaths, reviewBulkPlaces, unpickedNames } from "@/lib/bulk-places";
-import { NoPlaceFoundNote } from "@/components/bulk-places/no-place-found";
-import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { useNoPlaceFoundStore } from "@/stores/no-place-found";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * Bulk Places: picks up to the chosen number of related photos without places, copies one prompt

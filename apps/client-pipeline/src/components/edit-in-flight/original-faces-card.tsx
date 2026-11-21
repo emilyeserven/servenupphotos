@@ -1,10 +1,10 @@
 import { CheckIcon, CopyPlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { PhotoJson } from "@/components/edit-in-flight/photo-json";
 import { OriginalCropPicker } from "@/components/edit-in-flight/original-crop-picker";
+import type { PhotoJson } from "@/components/edit-in-flight/photo-json";
 import type { UneditedOriginal } from "@/components/edit-in-flight/use-unedited-original";
 import { FaceEditor } from "@/components/face-pixelation/face-pixelation-card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { FaceBox } from "@/lib/face-boxes";
 import { facesFromJson } from "@/lib/face-json";
 import {

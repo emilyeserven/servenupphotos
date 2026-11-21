@@ -1,13 +1,13 @@
 import { useState } from "react";
 import type { TagLibraryExport } from "@/api/tag-library";
-import type { SaveChange } from "@/components/small-tags/page";
+import { ErrorNote } from "@/components/error-note";
 import { AddToPhotos } from "@/components/small-tags/add-to-photos";
+import type { SaveChange } from "@/components/small-tags/page";
 import { type PhotosById, TaggedPhotos } from "@/components/small-tags/small-photos";
 import { RemoveTag, RenameTag } from "@/components/small-tags/tag-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SmallTag } from "@/lib/small-tags";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** What can be done to a small tag, one at a time. */

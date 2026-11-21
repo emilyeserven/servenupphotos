@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Localization, PhotoPlace, Place } from "@/api/places";
-import type { ComboboxOption } from "@/components/ui/combobox";
 import { Button } from "@/components/ui/button";
+import type { ComboboxOption } from "@/components/ui/combobox";
 import { locationNames } from "@/lib/location-names";
 import { idsInScope, idsInside, optionsWith, placeScope } from "@/lib/place-scope";
 

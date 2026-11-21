@@ -1,3 +1,4 @@
+import { bucketNames } from "@/lib/graph-buckets";
 import {
   axisStatRows,
   xBuckets,
@@ -8,7 +9,6 @@ import {
   SPLIT_TYPES,
   statById,
 } from "@/lib/graph-data";
-import { bucketNames } from "@/lib/graph-buckets";
 import type { Photo } from "@/lib/photos";
 import type { StatRow } from "@/lib/stat-groups";
 

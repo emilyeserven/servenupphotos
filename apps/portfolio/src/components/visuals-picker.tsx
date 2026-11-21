@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Palette } from "lucide-react";
 import { useState } from "react";
+import type { OwnFilters } from "@portfolio/components/photo-filters";
 import {
   FilterPickerButton,
   PickerClear,
@@ -16,7 +17,6 @@ import {
 import { COLOR_FILTER_KEYS, colorFilterCount, DEFAULT_PERCENT } from "@portfolio/lib/color-search";
 import { ORIENTATION_KEY } from "@portfolio/lib/orientation";
 import { type ColorName, colorLabel, colorSwatch, isShade } from "@portfolio/lib/photo-colors";
-import type { OwnFilters } from "@portfolio/components/photo-filters";
 import type { Photo } from "@portfolio/lib/photos";
 import { cn } from "@portfolio/lib/utils";
 

@@ -2,10 +2,10 @@ import { ExternalLinkIcon } from "lucide-react";
 import { useState } from "react";
 import { applyBulkPlacesMutation } from "@/api/bulk-places";
 import { type Place, placesQuery } from "@/api/places";
+import { NoPlaceFound } from "@/components/bulk-places/no-place-found";
+import { outlineAsks, PlaceOutlines } from "@/components/bulk-places/place-outlines";
 import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
 import { UnknownPhotos } from "@/components/paste-answer";
-import { outlineAsks, PlaceOutlines } from "@/components/bulk-places/place-outlines";
-import { NoPlaceFound } from "@/components/bulk-places/no-place-found";
 import {
   type BulkPlacePlan,
   type BulkPlacesReview,
@@ -15,8 +15,8 @@ import {
   tickedAtFirst,
   whereText,
 } from "@/lib/bulk-places";
-import { promptImageUrl } from "@/lib/tag-prompt";
 import { tileImageUrl } from "@/lib/offline-thumbnails";
+import { promptImageUrl } from "@/lib/tag-prompt";
 import { count } from "@portfolio/lib/words";
 
 /** The paths of the photos that start ticked: those with a place the LLM isn't unsure of. */

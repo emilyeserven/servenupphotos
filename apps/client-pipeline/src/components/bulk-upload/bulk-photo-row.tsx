@@ -12,6 +12,7 @@ import {
 import { type ReactNode, useEffect } from "react";
 import { BulkRename } from "@/components/bulk-upload/bulk-rename";
 import { NearDuplicatesNote } from "@/components/compare/near-duplicates-note";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useObjectUrl } from "@/hooks/use-object-url";
@@ -23,7 +24,6 @@ import {
   hasSameName,
 } from "@/lib/bulk-upload";
 import { useBulkUploadStore } from "@/stores/bulk-upload";
-import { ErrorNote } from "@/components/error-note";
 
 /** What each step in progress says it's doing. */
 const WORKING: Partial<Record<BulkStep, string>> = {

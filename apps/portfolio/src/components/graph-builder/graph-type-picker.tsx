@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { ChoiceRow } from "@portfolio/components/choice-row";
-import { GraphTypeInfo } from "@portfolio/components/graph-builder/graph-type-info";
-import { PickerPart } from "@portfolio/components/section-picker";
-import { StatChoices } from "@portfolio/components/graph-builder/stat-choices";
 import { GraphPicker } from "@portfolio/components/graph-builder/graph-picker";
-import { useTypeFits } from "@portfolio/components/graph-builder/type-suggestion";
+import { GraphTypeInfo } from "@portfolio/components/graph-builder/graph-type-info";
 import { GRAPH_TYPES, graphTypeOf } from "@portfolio/components/graph-builder/graph-types";
 import { hasParts, PARTS } from "@portfolio/components/graph-builder/parts-buttons";
+import { StatChoices } from "@portfolio/components/graph-builder/stat-choices";
+import { useTypeFits } from "@portfolio/components/graph-builder/type-suggestion";
+import { PickerPart } from "@portfolio/components/section-picker";
 import { type GraphConfig, type GraphType, SPLIT_TYPES, statById } from "@portfolio/lib/graph-data";
 import { suggestedType, type TypeFit } from "@portfolio/lib/graph-suggest";
 import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";

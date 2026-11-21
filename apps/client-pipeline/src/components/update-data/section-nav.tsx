@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { cn } from "@/lib/utils";
 import type { UpdateDataSection } from "@/components/update-data/sections";
+import { cn } from "@/lib/utils";
 
 /** The URL of a page with subpages picked from a side navigation: Update Data. */
 export type SectionsRoute = "/update-data/$section";

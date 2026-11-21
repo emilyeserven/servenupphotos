@@ -1,5 +1,5 @@
-import { type Group, type OrganizeResponse, groupId, groupLabel } from "@/api/organize";
 import { META_FIELDS, type MetaGroup } from "@/api/metainfo";
+import { type Group, type OrganizeResponse, groupId, groupLabel } from "@/api/organize";
 
 /**
  * The photo's versions to link in the tag prompt, smallest that still works first. Small (500px on

@@ -1,6 +1,5 @@
 import { BracesIcon } from "lucide-react";
 import type { ReactNode } from "react";
-
 import {
   CodeBlock,
   CodeBlockActions,

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ImageIcon, ScaleIcon, TrophyIcon } from "lucide-react";
 import { FindNearDuplicates } from "@/components/compare/find-near-duplicates";
 import { UnselectedPhotos } from "@/components/compare/unselected-photos";
+import { ErrorNote } from "@/components/error-note";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { useCompareGroups } from "@/hooks/use-compare-groups";
@@ -15,7 +16,6 @@ import {
 import { squareImages } from "@/lib/offline-thumbnails";
 import { unselectedPhotos } from "@/lib/unselected";
 import { cn } from "@/lib/utils";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** The photos and compare groups, as `useCompareGroups` reads them. */

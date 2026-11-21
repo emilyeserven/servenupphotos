@@ -6,15 +6,15 @@ import {
 } from "@/api/genre-suggestions";
 import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
-import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { CopyPromptButton, PickBar, usePhotoPick } from "@/components/bulk-tagging/pick-controls";
+import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { ContactSheetsButton, usePickedContactSheets } from "@/components/contact-sheets-button";
+import { ErrorNote } from "@/components/error-note";
 import { GenreReview } from "@/components/genre-suggestions/genre-review";
 import { PasteAnswer } from "@/components/paste-answer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { genrePrompt } from "@/lib/genre-prompt";
-import { ErrorNote } from "@/components/error-note";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
+import { genrePrompt } from "@/lib/genre-prompt";
 
 /** How many photos Genre Suggestions picks until another number is chosen: a whole batch. */
 const defaultGenreCount = 50;

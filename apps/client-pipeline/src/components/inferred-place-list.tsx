@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cacheSavedEntry, type Place, savePlaceMutation } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
+import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { type InferredPlace, inferredPlaces } from "@/lib/inferred-places";
 import { shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
-import { SectionTitle } from "@/components/section-title";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * The place names written on two or more photos that aren't saved places yet, each with a button to

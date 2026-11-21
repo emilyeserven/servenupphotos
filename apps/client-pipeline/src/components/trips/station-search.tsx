@@ -2,12 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Search, TrainFront } from "lucide-react";
 import { useState } from "react";
 import { type Spot, type TransitStation, transitStationsQuery } from "@/api/transit";
-import { StationSourcePicker } from "@/components/trips/station-source-picker";
-import { useStationSourceStore } from "@/stores/station-source";
 import type { TripPoint } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
+import { StationSourcePicker } from "@/components/trips/station-source-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useStationSourceStore } from "@/stores/station-source";
 
 interface StationSearchProps {
   /** What the end is, such as "Leaves". */

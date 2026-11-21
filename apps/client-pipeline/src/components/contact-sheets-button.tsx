@@ -2,17 +2,17 @@ import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { LayoutGridIcon } from "lucide-react";
 import { useState } from "react";
+import type { BulkTagPhoto } from "@/api/bulk-tags";
 import {
   type ContactSheet,
   type ContactSheetPhoto,
   type ContactSheets,
   contactSheetsMutation,
 } from "@/api/contact-sheets";
-import type { BulkTagPhoto } from "@/api/bulk-tags";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { pickedSheetPhotos } from "@/lib/bulk-tag-prompt";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** The contact sheets for a prompt's photos, and how to make them. */

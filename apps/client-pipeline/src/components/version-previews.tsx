@@ -8,6 +8,7 @@ import {
   VERSIONS,
   versionPreviewQuery,
 } from "@/api/versions";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -21,7 +22,6 @@ import {
 } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useObjectUrl } from "@/hooks/use-object-url";
-import { ErrorNote } from "@/components/error-note";
 
 const sizeFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
 

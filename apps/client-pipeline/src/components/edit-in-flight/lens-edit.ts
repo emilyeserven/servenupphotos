@@ -1,7 +1,7 @@
 import { type CameraOverride } from "@/api/cameras";
 import { type CustomLens } from "@/api/lenses";
-import { canonicalJson } from "@/lib/combined";
 import { overrideChanges } from "@/lib/camera-overrides";
+import { canonicalJson } from "@/lib/combined";
 import { type LensChoice, lensChanged, withLensChoice } from "@/lib/custom-lens";
 import type { CombinedPhoto } from "@/lib/group-photos";
 

@@ -2,26 +2,22 @@ import { PenLine, Search, X } from "lucide-react";
 import type { HopAsk, LookupSource, Spot, TransitLine } from "@/api/transit";
 import type { TransitLike, TripPoint, TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
+import { SectionTitle } from "@/components/section-title";
 import { HopEndsPicker } from "@/components/trip-lines/hop-ends";
-import { HopStations } from "@/components/trip-lines/hop-stations";
 import { HopRideRows } from "@/components/trip-lines/hop-ride-rows";
+import { HopStations } from "@/components/trip-lines/hop-stations";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
 import { LookupKind } from "@/components/trip-lines/lookup-kind";
 import { MapDownloads } from "@/components/trip-lines/map-downloads";
-import { SearchedNote } from "@/components/trip-lines/searched-note";
+import { gapInfo } from "@/components/trip-lines/modes";
 import { NamedLine } from "@/components/trip-lines/named-line";
 import { RopewayStations } from "@/components/trip-lines/ropeway-stations";
 import { RouteSourcePicker } from "@/components/trip-lines/route-source-picker";
+import { SearchedNote } from "@/components/trip-lines/searched-note";
 import { TransitLikePicker } from "@/components/trip-lines/transit-like-picker";
-import { gapInfo } from "@/components/trip-lines/modes";
 import { type HopEnds, useHopRide } from "@/components/trip-lines/use-hop-ride";
 import { Button } from "@/components/ui/button";
-import type { Ride } from "@/lib/transit-ride";
-import type { TripPhoto } from "@/lib/trip-days";
-import type { Gap, GapDraft } from "@/lib/trip-gaps";
 import { legKeys } from "@/lib/hop-legs";
-import { withLegLike } from "@/lib/transit-like";
-import { isNamedLine, ridesLine, withHopLine, withNamedLine } from "@/lib/trip-hop-lines";
 import {
   type RopewayPick,
   type RopewayRide,
@@ -29,7 +25,11 @@ import {
   type RopewaySide,
   withRopeway,
 } from "@/lib/ropeway-ends";
-import { SectionTitle } from "@/components/section-title";
+import { withLegLike } from "@/lib/transit-like";
+import type { Ride } from "@/lib/transit-ride";
+import type { TripPhoto } from "@/lib/trip-days";
+import type { Gap, GapDraft } from "@/lib/trip-gaps";
+import { isNamedLine, ridesLine, withHopLine, withNamedLine } from "@/lib/trip-hop-lines";
 
 interface HopLinesProps {
   photos: TripPhoto[];

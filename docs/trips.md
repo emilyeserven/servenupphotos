@@ -1,78 +1,47 @@
 # Trips
 
-A **Trip**, on the **Trips** tab of the [Trip Lines](trip-lines.md) page (`/trip-lines?tab=trips`), names runs of days, such as **Korea** for September 20 to 21, 2026
-and **Japan** for September 22 to October 2, and adds the legs travelled between those days, such as the ferry from
-Busan to Fukuoka. One Trip does three jobs on the portfolio:
+A **Trip**, on the **Trips** tab of the [Trip Lines](trip-lines.md) page (`/trip-lines?tab=trips`), names runs of days, such as **Korea** for September 20 to 21, 2026 and **Japan** for September 22 to October 2, and adds the legs travelled between those days, such as the ferry from Busan to Fukuoka. One Trip does three jobs on the portfolio:
 
-- The [Timeline](portfolio-timeline.md) shows each day's Trip beside the date in the day's heading, which sticks just
-  under the month's heading. So while September 2026's Japan days scroll past, the top of the list reads
-  **September 2026** with **Japan** beside the date under it, and it switches to **Korea** once the Korea days reach
-  the top. Pointing at the Timeline's scrubber shows the Trip of the days there under the month in its bubble.
-- The [map](portfolio-map.md) draws its legs between days, which a day's [trip line](trip-lines.md) can't hold, since
-  a line can't cross midnight.
+- The [Timeline](portfolio-timeline.md) shows each day's Trip beside the date in the day's heading, which sticks just under the month's heading. So while September 2026's Japan days scroll past, the top of the list reads **September 2026** with **Japan** beside the date under it, and it switches to **Korea** once the Korea days reach the top. Pointing at the Timeline's scrubber shows the Trip of the days there under the month in its bubble.
+- The [map](portfolio-map.md) draws its legs between days, which a day's [trip line](trip-lines.md) can't hold, since a line can't cross midnight.
 - The days' [stories](trip-pages.md) make up its Trip page, under **Albums**.
 
 A [Smart Album](smart-albums.md) can also take its photos from a Trip's days.
 
-Trips and timeline labels used to be two things, a label on the Timeline Labels page and a Trip on the Trips tab, though a label like "Japan" usually was the trip. They're one now: every timeline label is a Trip with no
-legs, and its file didn't change.
+Trips and timeline labels used to be two things, a label on the Timeline Labels page and a Trip on the Trips tab, though a label like "Japan" usually was the trip. They're one now: every timeline label is a Trip with no legs, and its file didn't change.
 
-> **Frontend analogy:** a Trip is a lookup table from a date range to a name, like a `Map<[start, end], name>`, that
-> the Timeline checks each day heading against while rendering. Its legs are like a layout route wrapping several
-> pages: each day still renders its own line, and the Trip only adds what sits between them.
+> **Frontend analogy:** a Trip is a lookup table from a date range to a name, like a `Map<[start, end], name>`, that the Timeline checks each day heading against while rendering. Its legs are like a layout route wrapping several pages: each day still renders its own line, and the Trip only adds what sits between them.
 
 ## Map previews on the Trips tab
 
-Each Trip's card on the Trips tab draws its days' trip lines as a small map: walks solid dark blue, drives solid light
-blue, and transit (trains, subways, buses) dashed in its line's color, or purple when no line was picked, with Trip
-Stops as amber dots. It draws the lines as the next Commit will have them, so a line saved a moment ago shows at once.
-When the lines are far apart, such as Seoul and Busan, the card draws a small map for each place instead, grouped the
-way the [Timeline](portfolio-timeline.md) groups a month's lines (days within about 50 km share a map). The legs
-between days, such as a flight, are left out so they don't shrink the days' routes to dots. A Trip whose days have no
-line yet says so. The drawing is the portfolio's `SketchDrawing` (`components/sketch-drawing.tsx`) with the Trips
-tab's own line styles.
+Each Trip's card on the Trips tab draws its days' trip lines as a small map: walks solid dark blue, drives solid light blue, and transit (trains, subways, buses) dashed in its line's color, or purple when no line was picked, with Trip Stops as amber dots. It draws the lines as the next Commit will have them, so a line saved a moment ago shows at once. When the lines are far apart, such as Seoul and Busan, the card draws a small map for each place instead, grouped the way the [Timeline](portfolio-timeline.md) groups a month's lines (days within about 50 km share a map). The legs between days, such as a flight, are left out so they don't shrink the days' routes to dots. A Trip whose days have no line yet says so. The drawing is the portfolio's `SketchDrawing` (`components/sketch-drawing.tsx`) with the Trips tab's own line styles.
 
-> **Frontend analogy:** like an SVG sparkline per card: no map tiles, just the lines' coordinates scaled into a box,
-> so a grid of Trips draws instantly.
+> **Frontend analogy:** like an SVG sparkline per card: no map tiles, just the lines' coordinates scaled into a box, so a grid of Trips draws instantly.
 
 ## Timeline labels within a Trip
 
-A Trip can name parts of itself on the Timeline: a "Korea and Japan" Trip from September 12 to October 2 with the
-label **Korea** on September 12 to 21 and **Japan** on September 22 to October 2. The Timeline shows the label of each
-day in place of the Trip's name, and a day no label covers shows the Trip's name. The Trip stays one Trip everywhere
-else: one Trip page for its days' stories, one set of legs, one Smart Album rule.
+A Trip can name parts of itself on the Timeline: a "Korea and Japan" Trip from September 12 to October 2 with the label **Korea** on September 12 to 21 and **Japan** on September 22 to October 2. The Timeline shows the label of each day in place of the Trip's name, and a day no label covers shows the Trip's name. The Trip stays one Trip everywhere else: one Trip page for its days' stories, one set of legs, one Smart Album rule.
 
-Under its name and days, a Trip's page lists its **Timeline labels**: each one's name, and a row of the Trip's own
-days to pick its days from. A click picks the first day and a second click the last (the same day again for a
-one-day label), and a shift-click picks every day from the last one clicked to it; days another label has are
-struck out. **Add a timeline label** starts a new one the day after the
-last label ends. Labels can't share a day, and must be within the Trip.
+Under its name and days, a Trip's page lists its **Timeline labels**: each one's name, and a row of the Trip's own days to pick its days from. A click picks the first day and a second click the last (the same day again for a one-day label), and a shift-click picks every day from the last one clicked to it; days another label has are struck out. **Add a timeline label** starts a new one the day after the last label ends. Labels can't share a day, and must be within the Trip.
 
 > **Frontend analogy:** like a date range picker whose calendar only shows the Trip's days.
 
 ## Combining Trips
 
-**Combine Trips** on the Trips tab turns the cards into ones to pick. Pick two or more, check the combined Trip's name
-(their names joined with "and", oldest first), and **Combine N Trips** saves one Trip in their place and opens its
-page (`POST /api/trips/combine` → `POST /trips/combine`, `be-pipeline/internal/github/trips_combine.go`):
+**Combine Trips** on the Trips tab turns the cards into ones to pick. Pick two or more, check the combined Trip's name (their names joined with "and", oldest first), and **Combine N Trips** saves one Trip in their place and opens its page (`POST /api/trips/combine` → `POST /trips/combine`, `be-pipeline/internal/github/trips_combine.go`):
 
 - Its days run from the earliest first day to the latest last day, and it has all their legs.
-- Each Trip it combines becomes a timeline label on that Trip's days, or keeps its own labels when it has some, so the
-  Timeline reads the same as before.
-- It keeps the ID of the earliest Trip, so a Smart Album or link that used that one still works. Those that used the
-  others need their Trip picked again.
+- Each Trip it combines becomes a timeline label on that Trip's days, or keeps its own labels when it has some, so the Timeline reads the same as before.
+- It keeps the ID of the earliest Trip, so a Smart Album or link that used that one still works. Those that used the others need their Trip picked again.
 - Its days' stories become one Trip page.
 
-The new file and the removal of the others are one save, a [change waiting for Commit](pending-changes.md). Combining
-fails when another Trip falls within the combined days (pick it too), or when the Trips' labels would share a day.
+The new file and the removal of the others are one save, a [change waiting for Commit](pending-changes.md). Combining fails when another Trip falls within the combined days (pick it too), or when the Trips' labels would share a day.
 
-> **Frontend analogy:** combining is like merging several list items into one, with each old item kept as a
-> sub-item, in one state update rather than a delete followed by an add, so nothing renders half done.
+> **Frontend analogy:** combining is like merging several list items into one, with each old item kept as a sub-item, in one state update rather than a delete followed by an add, so nothing renders half done.
 
 ## The file
 
-Each Trip is one file, `timeline/<id>.json`, and **Commit** combines them into `timeline/TIMELINE.json` the way it
-combines the metadata groups into `METAINFO.json` (`be-pipeline/internal/github/trips.go`):
+Each Trip is one file, `timeline/<id>.json`, and **Commit** combines them into `timeline/TIMELINE.json` the way it combines the metadata groups into `METAINFO.json` (`be-pipeline/internal/github/trips.go`):
 
 ```json
 {
@@ -98,156 +67,64 @@ combines the metadata groups into `METAINFO.json` (`be-pipeline/internal/github/
 }
 ```
 
-- **`start`** and **`end`** are the first and last days the Trip covers, both included, written `YYYY-MM-DD`. A
-  photo's day is the day of its custom date, or else its EXIF date, as the Timeline groups it.
-- **`labels`** are the [timeline labels within it](#timeline-labels-within-a-trip), each `{ "name", "start", "end" }`,
-  left out when there are none.
-- **`legs`** are left out when there are none, as a timeline label was written. Each end has its `day`, and either a
-  `spot` with no photo or the ID of the day's `photo` it leaves from or arrives at; with neither, it's the day's last
-  photo with an exact spot where it leaves and its first where it arrives. A `photo` that isn't from that day, or has
-  no exact spot, falls back to the same. An end at a photo of a train, bus or ferry leg can also have a `station`
-  (`{ "latitude", "longitude", "label" }`) it got on or off at near that photo; see
-  [Stations and routes](#stations-and-routes). A train, bus or ferry leg can also have the `line` it rode and its track as `path`
-  (`[longitude, latitude]` points, at most 20,000); see [Stations and routes](#stations-and-routes).
-- Trips can't overlap: saving one whose days another Trip already covers fails, so each day has at most one Trip. If a
-  hand-edited file does overlap, the Timeline shows both names joined with " · ".
-- The ID is the name and first day as an ID, made when the Trip is first saved and kept when it's renamed or its days
-  change.
+- **`start`** and **`end`** are the first and last days the Trip covers, both included, written `YYYY-MM-DD`. A photo's day is the day of its custom date, or else its EXIF date, as the Timeline groups it.
+- **`labels`** are the [timeline labels within it](#timeline-labels-within-a-trip), each `{ "name", "start", "end" }`, left out when there are none.
+- **`legs`** are left out when there are none, as a timeline label was written. Each end has its `day`, and either a `spot` with no photo or the ID of the day's `photo` it leaves from or arrives at; with neither, it's the day's last photo with an exact spot where it leaves and its first where it arrives. A `photo` that isn't from that day, or has no exact spot, falls back to the same. An end at a photo of a train, bus or ferry leg can also have a `station` (`{ "latitude", "longitude", "label" }`) it got on or off at near that photo; see [Stations and routes](#stations-and-routes). A train, bus or ferry leg can also have the `line` it rode and its track as `path` (`[longitude, latitude]` points, at most 20,000); see [Stations and routes](#stations-and-routes).
+- Trips can't overlap: saving one whose days another Trip already covers fails, so each day has at most one Trip. If a hand-edited file does overlap, the Timeline shows both names joined with " · ".
+- The ID is the name and first day as an ID, made when the Trip is first saved and kept when it's renamed or its days change.
 
 ### Trips saved before the merge
 
-Before the merge, a Trip was saved in the trip lines folder as `triplines/trip-<slug>.json`. Such a file is still
-read, so its legs are still drawn, its days still go on its page and other Trips still can't take its days, and the
-Trips tab marks it **Save to show on the Timeline**, and its page says the same. **Save Trip** moves it: it saves
-`timeline/<id>.json` and removes the old file, both as changes waiting for Commit.
+Before the merge, a Trip was saved in the trip lines folder as `triplines/trip-<slug>.json`. Such a file is still read, so its legs are still drawn, its days still go on its page and other Trips still can't take its days, and the Trips tab marks it **Save to show on the Timeline**, and its page says the same. **Save Trip** moves it: it saves `timeline/<id>.json` and removes the old file, both as changes waiting for Commit.
 
 ## The tab and each Trip's page
 
-The Trips tab lists every Trip as a card, newest first, with its days, how many saved photos were taken on them and
-how many legs it has. Clicking one opens its own page, `/trip-lines/trips/<id>` (**New Trip** opens
-`/trip-lines/trips/new`), with **All Trips** to go back. From the top:
+The Trips tab lists every Trip as a card, newest first, with its days, how many saved photos were taken on them and how many legs it has. Clicking one opens its own page, `/trip-lines/trips/<id>` (**New Trip** opens `/trip-lines/trips/new`), with **All Trips** to go back. From the top:
 
-- **The map** (`components/trips/trip-map.tsx`, `lib/trip-map.ts`): each day's line and photos, with the day's number
-  (1 for the Trip's first day) at its first photo, and the legs between them, drawn with the portfolio map's own
-  layers (`@portfolio/lib/trip-line-layers`): a ferry in teal dots, a flight in pink dashes. It fits the days' photos,
-  so a long flight home runs off its edge rather than zooming out to the whole world, and it follows what's typed, so
-  a leg shows as soon as it's added. A leg is a straight line here; Commit bakes a flight as an arc for the portfolio.
-  Right-clicking it copies that spot's coordinates (see [Copy coordinates](portfolio-map.md#copy-coordinates)).
-- **Name, first day and last day** (left empty, the last day is the first). It says how many photos fall in the days
-  typed, and says so before saving when another Trip already covers some of them.
-- **Days and legs** (`components/trips/day-legs.tsx`): every day of the Trip, first to last, each linking to its Route
-  page when it has a route to mark. Under each day are the legs that **leave** it, edited in place, and **Add a leg
-  from this day**; a day lists the legs that **arrive** on it too, such as "Arrives by Flight (leg 1, from Tue, Sep
-  22, 2026)". A day can have any number of legs, and a leg can arrive the same day it left. The legs are kept in the order
-  they happen, so their numbers follow the Trip: by the day each leaves, then the time of the photo it leaves from (a
-  spot with no photo counts as the end of its day, as the day's last photo would), then when it arrives
-  (`legsInOrder` in `lib/trip-legs.ts`). Opening a Trip puts its legs in that order, and changing a leg's day or photo
-  moves it to its place.
+- **The map** (`components/trips/trip-map.tsx`, `lib/trip-map.ts`): each day's line and photos, with the day's number (1 for the Trip's first day) at its first photo, and the legs between them, drawn with the portfolio map's own layers (`@portfolio/lib/trip-line-layers`): a ferry in teal dots, a flight in pink dashes. It fits the days' photos, so a long flight home runs off its edge rather than zooming out to the whole world, and it follows what's typed, so a leg shows as soon as it's added. A leg is a straight line here; Commit bakes a flight as an arc for the portfolio. Right-clicking it copies that spot's coordinates (see [Copy coordinates](portfolio-map.md#copy-coordinates)).
+- **Name, first day and last day** (left empty, the last day is the first). It says how many photos fall in the days typed, and says so before saving when another Trip already covers some of them.
+- **Days and legs** (`components/trips/day-legs.tsx`): every day of the Trip, first to last, each linking to its Route page when it has a route to mark. Under each day are the legs that **leave** it, edited in place, and **Add a leg from this day**; a day lists the legs that **arrive** on it too, such as "Arrives by Flight (leg 1, from Tue, Sep 22, 2026)". A day can have any number of legs, and a leg can arrive the same day it left. The legs are kept in the order they happen, so their numbers follow the Trip: by the day each leaves, then the time of the photo it leaves from (a spot with no photo counts as the end of its day, as the day's last photo would), then when it arrives (`legsInOrder` in `lib/trip-legs.ts`). Opening a Trip puts its legs in that order, and changing a leg's day or photo moves it to its place.
 
-Saving a new Trip moves to its page; removing one goes back to the tab. An old link to `/timeline-labels` or `/trips`
-opens the Trips tab, and one to a Trip on the tab (`/trip-lines?tab=trips&trip=<id>`) opens that Trip's page.
+Saving a new Trip moves to its page; removing one goes back to the tab. An old link to `/timeline-labels` or `/trips` opens the Trips tab, and one to a Trip on the tab (`/trip-lines?tab=trips&trip=<id>`) opens that Trip's page.
 
-Each leg has a mode (**Ferry**, **Flight**, **Train**, **Bus** or **Car**), the day it **Leaves** and the day it
-**Arrives**, and where on each day: **The day's last photo** where it leaves or **first photo** where it arrives (the
-photos with an exact spot), **one of the day's photos** picked by its time and title, such as one taken at the
-airport, or **A station or spot with no photo**, such as "Home", typed as a label and `latitude, longitude`. Picking a
-photo is what lets one day have several legs from different places. The row shows the photo it uses and how far the
-leg is in a straight line.
+Each leg has a mode (**Ferry**, **Flight**, **Train**, **Bus** or **Car**), the day it **Leaves** and the day it **Arrives**, and where on each day: **The day's last photo** where it leaves or **first photo** where it arrives (the photos with an exact spot), **one of the day's photos** picked by its time and title, such as one taken at the airport, or **A station or spot with no photo**, such as "Home", typed as a label and `latitude, longitude`. Picking a photo is what lets one day have several legs from different places. The row shows the photo it uses and how far the leg is in a straight line.
 
 ### Stations and routes
 
-A **Train**, **Bus** or **Ferry** leg can leave from and arrive at a station. With **A station or spot with no photo**
-picked, **Find a station** looks up the stations (or stops, or ferry terminals) near that end's day (its
-spot once it has one, or else its photo; within about 100 km on Photon, 30 km on Overpass) whose names, in any language, have any of the words typed. The ones with the
-most of the words come first, then the nearest, each with its English name beside it, such as "博多 (Hakata)". So
-"Shimonoseki Kokusai Terminal" puts a terminal whose names have "Kokusai" and "Terminal" before one that only has
-"Shimonoseki". Picking one fills in the label and position
-(`GET /api/transit/stations?mode=ferry&q=Shimonoseki&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`,
-through the same Overpass servers, throttle and day-long cache as [Lines ridden](trip-lines.md#lines-ridden)).
+A **Train**, **Bus** or **Ferry** leg can leave from and arrive at a station. With **A station or spot with no photo** picked, **Find a station** looks up the stations (or stops, or ferry terminals) near that end's day (its spot once it has one, or else its photo; within about 100 km on Photon, 30 km on Overpass) whose names, in any language, have any of the words typed. The ones with the most of the words come first, then the nearest, each with its English name beside it, such as "博多 (Hakata)". So "Shimonoseki Kokusai Terminal" puts a terminal whose names have "Kokusai" and "Terminal" before one that only has "Shimonoseki". Picking one fills in the label and position (`GET /api/transit/stations?mode=ferry&q=Shimonoseki&near=<lng,lat>`, `be-pipeline/internal/transit/stations.go`, through the same Overpass servers, throttle and day-long cache as [Lines ridden](trip-lines/lines-ridden.md)).
 
 The menu beside the search box picks the service it asks, and the choice is kept in the browser for every search:
 
-- **Photon** (the default): [photon.komoot.io](https://photon.komoot.io), a search-as-you-type service over
-  OpenStreetMap's data. It answers in about a second and ranks by how well the name matches, then how near it is,
-  within a box about 100 km around the end (wide enough for a station a long ride away, such as Matsue from Izumo),
-  with English names where they're mapped. It can only filter by a station's
-  main tag ([`osm_tag`](https://github.com/komoot/photon#filter-results-by-tags-and-keys)), so a **Train** search
-  there also finds subway stations. OpenStreetMap names a station without the word "Station" (Shimonoseki Station is
-  just "Shimonoseki"), so when a search finds nothing, it's tried once more without words like "station", "terminal",
-  "port" or "駅". `PHOTON_URL` points it at another Photon server.
-  (`?source=photon`, `be-pipeline/internal/transit/photon.go`.)
-- **Overpass**: the OpenStreetMap query servers below, which tell subway and train stations apart but are often slow
-  when busy.
+- **Photon** (the default): [photon.komoot.io](https://photon.komoot.io), a search-as-you-type service over OpenStreetMap's data. It answers in about a second and ranks by how well the name matches, then how near it is, within a box about 100 km around the end (wide enough for a station a long ride away, such as Matsue from Izumo), with English names where they're mapped. It can only filter by a station's main tag ([`osm_tag`](https://github.com/komoot/photon#filter-results-by-tags-and-keys)), so a **Train** search there also finds subway stations. OpenStreetMap names a station without the word "Station" (Shimonoseki Station is just "Shimonoseki"), so when a search finds nothing, it's tried once more without words like "station", "terminal", "port" or "駅". `PHOTON_URL` points it at another Photon server. (`?source=photon`, `be-pipeline/internal/transit/photon.go`.)
+- **Overpass**: the OpenStreetMap query servers below, which tell subway and train stations apart but are often slow when busy.
 
-> **Frontend analogy:** Photon is a dedicated autocomplete endpoint, like Algolia, over the same data that Overpass
-> answers as a full database query each time.
+> **Frontend analogy:** Photon is a dedicated autocomplete endpoint, like Algolia, over the same data that Overpass answers as a full database query each time.
 
-With Overpass, a city has few enough stations and ferry terminals that the backend asks the server for all of them near there, with
-no name, and matches names itself, so one answer (kept for a day, for spots within about a kilometer) serves every
-name typed there. Bus stops are too many, so for a bus the server matches the longest word typed.
+With Overpass, a city has few enough stations and ferry terminals that the backend asks the server for all of them near there, with no name, and matches names itself, so one answer (kept for a day, for spots within about a kilometer) serves every name typed there. Bus stops are too many, so for a bus the server matches the longest word typed.
 
-Only the leg's kind of station is looked for: a **Ferry** leg finds ferry terminals (`amenity=ferry_terminal`, or a
-`public_transport` station with `ferry=yes`), a **Bus** leg bus stops and bus stations, and a **Train** leg railway
-stations other than subway ones (`station=subway`, `light_rail` or `monorail`), which only a subway hop finds. The query
-asks for these tags by name before matching names, so the server can use its tag index. Matching every tag nearby by pattern first made
-the public servers give up on a 30 km search, which the page showed as a 503 after a long spin.
+Only the leg's kind of station is looked for: a **Ferry** leg finds ferry terminals (`amenity=ferry_terminal`, or a `public_transport` station with `ferry=yes`), a **Bus** leg bus stops and bus stations, and a **Train** leg railway stations other than subway ones (`station=subway`, `light_rail` or `monorail`), which only a subway hop finds. The query asks for these tags by name before matching names, so the server can use its tag index. Matching every tag nearby by pattern first made the public servers give up on a 30 km search, which the page showed as a 503 after a long spin.
 
-> **Frontend analogy:** it's `document.getElementsByClassName("station")` and then filtering by text, instead of
-> `querySelectorAll("*")` and testing each element's attributes against a regex.
+> **Frontend analogy:** it's `document.getElementsByClassName("station")` and then filtering by text, instead of `querySelectorAll("*")` and testing each element's attributes against a regex.
 
-Every transit look-up logs to the browser console under `[transit]`: when it starts, how long it took, and what it found
-or why it failed (`api/transit-log.ts`). The backend's terminal logs each Overpass query, each server tried with how
-long it took and what it answered, and answers given from memory.
+Every transit look-up logs to the browser console under `[transit]`: when it starts, how long it took, and what it found or why it failed (`api/transit-log.ts`). The backend's terminal logs each Overpass query, each server tried with how long it took and what it answered, and answers given from memory.
 
-An end at a photo can have a station too, such as the ferry terminal a short walk from the day's last photo: under
-the photo, **Station near the photo** finds one the same way, or **Type the station instead** adds one by hand (a label and
-`latitude, longitude`, starting at the photo) for when the search can't find it or OpenStreetMap is too busy. A
-station found by name can be renamed or moved the same way. The photo stays the end's photo (picking a station for
-the day's usual photo names that photo, so the station stays with it), and the leg runs from the station instead, so
-**Look up route** looks near the station. Commit bakes a walk from the photo to the station (or from the station to the
-photo where the leg arrives) on that end's day. **From the photo** takes the station off. Changing the end's day or
-photo, or picking a spot, drops it, and a flight or drive keeps none.
+An end at a photo can have a station too, such as the ferry terminal a short walk from the day's last photo: under the photo, **Station near the photo** finds one the same way, or **Type the station instead** adds one by hand (a label and `latitude, longitude`, starting at the photo) for when the search can't find it or OpenStreetMap is too busy. A station found by name can be renamed or moved the same way. The photo stays the end's photo (picking a station for the day's usual photo names that photo, so the station stays with it), and the leg runs from the station instead, so **Look up route** looks near the station. Commit bakes a walk from the photo to the station (or from the station to the photo where the leg arrives) on that end's day. **From the photo** takes the station off. Changing the end's day or photo, or picking a spot, drops it, and a flight or drive keeps none.
 
-Once both ends have a spot, **Look up route** finds the lines of the leg's kind that pass within 500 m of both ends
-(the same look-up as a day's hops, so it works best with each end at its station), and picking one fetches its track
-between them. The leg is then saved with the `line` (its ID, name, number and color) and its `path`, drawn along the
-track in the line's color on the Trip's map and the portfolio's, instead of a straight line. **Clear** takes it off.
-Moving either end drops the track picked for the old spots (renaming one keeps it), and a flight or drive keeps no
-line.
+Once both ends have a spot, **Look up route** finds the lines of the leg's kind that pass within 500 m of both ends (the same look-up as a day's hops, so it works best with each end at its station), and picking one fetches its track between them. The leg is then saved with the `line` (its ID, name, number and color) and its `path`, drawn along the track in the line's color on the Trip's map and the portfolio's, instead of a straight line. **Clear** takes it off. Moving either end drops the track picked for the old spots (renaming one keeps it), and a flight or drive keeps no line.
 
 ### Changing lines on the way
 
-The look-up only finds a line that passes both ends, so a leg that changed trains, such as Shimonoseki to Higashi-Hagi
-(OpenStreetMap's San'in Line routes end at Nagato-shi), finds none, and says to add the change. The **Japan rail
-map** source instead finds a route that changes lines on its own, such as "山陽線 → 山陰線" (see
-[Looking lines up on Transitland or a rail map](trip-lines.md#looking-lines-up-on-transitland-or-a-rail-map)). **Changed lines on the way**, the outlined button under the rides, finds the station it
-changed at by name, looked for near halfway along the last ride, and splits that ride there. A station the search can't find, such as one farther than the search looks (100 km on Photon, 30 km on Overpass), can be typed instead: **Type the station instead** adds a change halfway, whose label and `latitude, longitude` are then typed in. Every change's label and position stay editable under **Changed at**; renaming one keeps the rides' lines, and moving one drops the lines on either side of it, to be looked up again. Each ride then
-gets its own **Look up route** between its ends, and **No change here** joins two rides back together (both are picked
-again). The leg keeps them in `rides`, each with the `change` station at its end (none on the last), its `line` and
-its `path`. The rides stay separate lines: the Trip's map and Commit draw each along its own track, in its line's color
-and under its name, from the station before it to the one after. Once every ride has a line, **Combine into one
-route** offers to draw them as one instead, such as a through train: the leg's `line` is then the first ride's line
-with the rides' names joined, which **Route name** renames (such as "Marumaru no Hanashi"), and its `path` the rides'
-tracks joined. **Show as separate lines** takes the combined route off again. **Route name** renames a single line too.
+The look-up only finds a line that passes both ends, so a leg that changed trains, such as Shimonoseki to Higashi-Hagi (OpenStreetMap's San'in Line routes end at Nagato-shi), finds none, and says to add the change. The **Japan rail map** source instead finds a route that changes lines on its own, such as "山陽線 → 山陰線" (see [Looking lines up on Transitland or a rail map](trip-lines/lines-ridden.md#looking-lines-up-on-transitland-or-a-rail-map)). **Changed lines on the way**, the outlined button under the rides, finds the station it changed at by name, looked for near halfway along the last ride, and splits that ride there. A station the search can't find, such as one farther than the search looks (100 km on Photon, 30 km on Overpass), can be typed instead: **Type the station instead** adds a change halfway, whose label and `latitude, longitude` are then typed in. Every change's label and position stay editable under **Changed at**; renaming one keeps the rides' lines, and moving one drops the lines on either side of it, to be looked up again. Each ride then gets its own **Look up route** between its ends, and **No change here** joins two rides back together (both are picked again). The leg keeps them in `rides`, each with the `change` station at its end (none on the last), its `line` and its `path`. The rides stay separate lines: the Trip's map and Commit draw each along its own track, in its line's color and under its name, from the station before it to the one after. Once every ride has a line, **Combine into one route** offers to draw them as one instead, such as a through train: the leg's `line` is then the first ride's line with the rides' names joined, which **Route name** renames (such as "Marumaru no Hanashi"), and its `path` the rides' tracks joined. **Show as separate lines** takes the combined route off again. **Route name** renames a single line too.
 
-> **Frontend analogy:** like a multi-step form whose steps each validate on their own, with a computed summary field
-> that's only filled once every step is done.
+> **Frontend analogy:** like a multi-step form whose steps each validate on their own, with a computed summary field that's only filled once every step is done.
 
-> **Frontend analogy:** the station search is an autocomplete endpoint scoped to a map viewport, like a places search
-> with a `near` bias, and the route is the same "find the paths in the sprite sheet" look-up as a day's hops, clipped
-> between the two stations.
+> **Frontend analogy:** the station search is an autocomplete endpoint scoped to a map viewport, like a places search with a `near` bias, and the route is the same "find the paths in the sprite sheet" look-up as a day's hops, clipped between the two stations.
 
-**Save Trip** (`PUT /api/trips/<id>` → `PUT /trips/{id}`) and **Remove Trip** (`DELETE /api/trips/<id>` →
-`DELETE /trips/{id}`) keep the file as a [change waiting for Commit](pending-changes.md), counted by the sync button as
-a Trip. The page reads the Trips from the [combined data store](combined-data-store.md)'s `TIMELINE.json` with those
-changes made over it, so a saved Trip shows at once. Photos in Flight lists the Trip files with the others.
+**Save Trip** (`PUT /api/trips/<id>` → `PUT /trips/{id}`) and **Remove Trip** (`DELETE /api/trips/<id>` → `DELETE /trips/{id}`) keep the file as a [change waiting for Commit](pending-changes.md), counted by the sync button as a Trip. The page reads the Trips from the [combined data store](combined-data-store.md)'s `TIMELINE.json` with those changes made over it, so a saved Trip shows at once. Photos in Flight lists the Trip files with the others.
 
 ## The legs on the map
 
-Commit bakes each leg into `triplines/TRIPLINES.geo.json` as a line with its `trip`, the `day` it left and the day it
-`arrive`d, counted as `tripLegs` (`trips_map.go`). A flight is drawn as a gentle arc bowed toward the nearer pole, the
-way a great circle looks on a flat map, and crosses the date line rather than going around the world the other way. A
-leg whose day has no photo with an exact spot, and no spot of its own, isn't drawn.
+Commit bakes each leg into `triplines/TRIPLINES.geo.json` as a line with its `trip`, the `day` it left and the day it `arrive`d, counted as `tripLegs` (`trips_map.go`). A flight is drawn as a gentle arc bowed toward the nearer pole, the way a great circle looks on a flat map, and crosses the date line rather than going around the world the other way. A leg whose day has no photo with an exact spot, and no spot of its own, isn't drawn.
 
 ## Locally
 

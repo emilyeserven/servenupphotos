@@ -1,6 +1,6 @@
 import type { SocialPhoto } from "@/api/publish";
-import { isoDate, parseIsoDate } from "@portfolio/lib/dates";
 import type { DayPost } from "@/lib/social-post-days";
+import { isoDate, parseIsoDate } from "@portfolio/lib/dates";
 
 /** How the Instagram queue looks from today: the next photos and how long it lasts. */
 export interface SocialQueue {

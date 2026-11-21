@@ -7,14 +7,14 @@ import {
   useRef,
   useState,
 } from "react";
-import type { Size } from "@/lib/crop";
 import { drawPreview, type Loaded } from "@/components/face-pixelation/draw-preview";
 import { FaceBoxOverlay } from "@/components/face-pixelation/face-box-overlay";
 import { type PreviewZoom, usePreviewZoom } from "@/components/face-pixelation/use-preview-zoom";
 import { ZoomControls } from "@/components/face-pixelation/zoom-controls";
+import { ReadingNote } from "@/components/query-result";
+import type { Size } from "@/lib/crop";
 import { type FaceBox, type Point, drawnBox, isBigEnough } from "@/lib/face-boxes";
 import { cn } from "@/lib/utils";
-import { ReadingNote } from "@/components/query-result";
 
 /**
  * The photo at src, once loaded. It's loaded without CORS, which is enough to draw it on a canvas:

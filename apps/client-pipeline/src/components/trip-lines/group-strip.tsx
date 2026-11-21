@@ -4,19 +4,19 @@ import type { TripVisit } from "@/api/trip-lines";
 import { BreakSpots } from "@/components/trip-lines/break-spots";
 import { GroupAreaButton } from "@/components/trip-lines/group-area-button";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
+import { StopsWithWays } from "@/components/trip-lines/stop-way-picker";
 import type { StripEnds } from "@/components/trip-lines/strip-ends";
 import type { StripVia } from "@/components/trip-lines/via-list";
-import { StopsWithWays } from "@/components/trip-lines/stop-way-picker";
+import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { insertChoices, insertedVisit, withGapKeepingStops, withStopWay } from "@/lib/stop-insert";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap, GapDraft } from "@/lib/trip-gaps";
-import { insertChoices, insertedVisit, withGapKeepingStops, withStopWay } from "@/lib/stop-insert";
 import { type PhotoGroup, photoGroups, withGroupName, withGroupStart } from "@/lib/trip-groups";
 import { firstStops, movedVisit, placedVisit, visitsAfter } from "@/lib/trip-visits";
-import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { isWandered, withWandered } from "@/lib/trip-wander";
+import { cn } from "@/lib/utils";
 
 interface GroupStripProps {
   photos: TripPhoto[];

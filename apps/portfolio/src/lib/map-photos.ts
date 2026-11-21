@@ -3,9 +3,9 @@ import { useMemo } from "react";
 import { byCountrySource } from "@/lib/map-country-groups";
 import { type PlacedSet, splitSets } from "@/lib/map-sets";
 import { filterPhotos, type PhotoFilters } from "@/lib/photo-filters";
-import { filterByVisuals, type VisualSearch } from "@/lib/visual-filters";
-import { photos, type Photo } from "@/lib/photos";
 import { photoSets } from "@/lib/photo-sets";
+import { photos, type Photo } from "@/lib/photos";
+import { filterByVisuals, type VisualSearch } from "@/lib/visual-filters";
 
 /** A photo with a GPS position, which is all the map can show. */
 export type PlacedPhoto = Photo & { latitude: number; longitude: number };

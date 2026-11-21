@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircleIcon, Check } from "lucide-react";
 import { type MapDownload, transitDownloadsQuery } from "@/api/transit";
+import { ErrorNote } from "@/components/error-note";
 import { Spinner } from "@/components/ui/spinner";
 import {
   clockText,
@@ -11,7 +12,6 @@ import {
   sourceText,
   stageState,
 } from "@/lib/map-download";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * The rail and bus maps being downloaded or read while a look-up runs or after it failed (active),

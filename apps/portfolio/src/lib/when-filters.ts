@@ -1,5 +1,5 @@
-import type { Photo } from "@portfolio/lib/photos";
 import { isoDate } from "@portfolio/lib/dates";
+import type { Photo } from "@portfolio/lib/photos";
 
 /**
  * The "when" filters that take any number of choices of one kind, in any year: seasons, months,

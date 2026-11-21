@@ -1,6 +1,7 @@
 import type { TripLine } from "@/api/trip-lines";
-import { type ComparePhoto, comparePhotoName } from "@/lib/compare-groups";
 import { type ClockSetting, resolveClock } from "@/lib/clock-setting";
+import { type ComparePhoto, comparePhotoName } from "@/lib/compare-groups";
+import { CUSTOM_DATE } from "@/lib/photo-fields";
 import {
   type Clock,
   type ShiftSide,
@@ -10,7 +11,6 @@ import {
   photoZone,
   shiftedTime,
 } from "@/lib/timezone-shift";
-import { CUSTOM_DATE } from "@/lib/photo-fields";
 import { textOf } from "@portfolio/lib/values";
 
 /** A photo that could have been taken on the day being fixed. */

@@ -1,6 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { Camera } from "lucide-react";
 import type * as React from "react";
+import { QuickEditButton } from "@/components/quick-edit-button";
+import { SidebarCollapseButton } from "@/components/sidebar-collapse-button";
+import { navGroups } from "@/components/sidebar/nav-groups";
+import { NavItem } from "@/components/sidebar/nav-item";
+import { ThemeButton } from "@/components/theme-button";
 import {
   Sidebar,
   SidebarContent,
@@ -14,11 +19,6 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { SidebarCollapseButton } from "@/components/sidebar-collapse-button";
-import { navGroups } from "@/components/sidebar/nav-groups";
-import { NavItem } from "@/components/sidebar/nav-item";
-import { QuickEditButton } from "@/components/quick-edit-button";
-import { ThemeButton } from "@/components/theme-button";
 import { UploadButtons } from "@/components/upload-buttons";
 
 /**

@@ -1,7 +1,7 @@
 import { CheckIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
-import { photoName } from "@/components/group-photo-grid";
 import { LayoutThumbnail } from "@/components/album-layout/layout-photo";
+import { photoName } from "@/components/group-photo-grid";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

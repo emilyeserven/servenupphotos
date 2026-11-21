@@ -1,7 +1,7 @@
-import { type CopyCoordinates, CoordinatesMenu } from "@portfolio/components/map-coordinates-menu";
 import { useRef } from "react";
 import { useCopyText } from "@/components/copy-text";
 import { copyText } from "@/lib/copy-text";
+import { type CopyCoordinates, CoordinatesMenu } from "@portfolio/components/map-coordinates-menu";
 
 /**
  * The portfolio map's right-click **Copy coordinates** menu, for the pipeline's maps; it goes

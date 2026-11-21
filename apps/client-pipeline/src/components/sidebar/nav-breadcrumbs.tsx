@@ -1,5 +1,7 @@
 import { Link, type StaticDataRouteOption, useLocation, useMatches } from "@tanstack/react-router";
 import { Fragment } from "react";
+import { navTrail, pagePath, type NavPage, type NavTrail } from "@/components/sidebar/nav-groups";
+import { type Crumb, fixedCrumbs } from "@/components/sidebar/route-crumbs";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,8 +10,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { navTrail, pagePath, type NavPage, type NavTrail } from "@/components/sidebar/nav-groups";
-import { type Crumb, fixedCrumbs } from "@/components/sidebar/route-crumbs";
 
 const NO_CRUMBS = fixedCrumbs();
 

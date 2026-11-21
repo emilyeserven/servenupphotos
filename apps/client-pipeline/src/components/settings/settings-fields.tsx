@@ -1,6 +1,6 @@
+import { SettingsSwitch } from "@/components/settings-switch";
 import { type FieldConfig, type SectionConfig } from "@/components/settings/sections";
 import { type SettingsForm } from "@/components/settings/use-settings-form";
-import { SettingsSwitch } from "@/components/settings-switch";
 import { Input } from "@/components/ui/input";
 
 interface SettingsFieldsProps {

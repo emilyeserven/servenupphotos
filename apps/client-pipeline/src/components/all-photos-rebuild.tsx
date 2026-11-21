@@ -2,11 +2,11 @@ import { type UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-q
 import { GitCommitHorizontalIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { type CombinedStatus, combinedStatusQuery } from "@/api/photos";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useCombinedSync } from "@/stores/combined-data";
-import { ErrorNote } from "@/components/error-note";
 
 type StatusQuery = UseQueryResult<CombinedStatus>;
 

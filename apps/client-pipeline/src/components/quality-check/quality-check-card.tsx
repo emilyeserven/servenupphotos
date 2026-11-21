@@ -4,11 +4,11 @@ import { PhotoScopeToggle } from "@/components/photo-scope-toggle";
 import { AspectRatioCheck } from "@/components/quality-check/aspect-ratio-check";
 import { MissingPlacesCheck } from "@/components/quality-check/missing-places-check";
 import { PixelationCheck } from "@/components/quality-check/pixelation-check";
+import { ReadingNote } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useCompareGroups } from "@/hooks/use-compare-groups";
 import { type AutogroupScope, autogroupPhotos } from "@/lib/compare-autogroup";
-import { ReadingNote } from "@/components/query-result";
 
 /**
  * Quality Check: checks every photo, or only the drafts, for what should be fixed before it's

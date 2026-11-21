@@ -1,7 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { GearPicture } from "@portfolio/components/gear-graphics";
-import type { GearFile } from "@portfolio/lib/gear-pictures";
 import {
   deleteGearMutation,
   gearId,
@@ -19,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { GearPicture } from "@portfolio/components/gear-graphics";
+import type { GearFile } from "@portfolio/lib/gear-pictures";
 
 /**
  * The file the row's camera or lens saves: its saved file with the picture and description

@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
 import { test } from "node:test";
-import { decodePng, encodePng } from "./png.ts";
-import { markersOf, type Pin } from "./pins.ts";
-import { renderPreview, tilesFor } from "./render.ts";
 import { frameOf, IMAGE } from "../src/lib/map-preview-view.ts";
+import { markersOf, type Pin } from "./pins.ts";
+import { decodePng, encodePng } from "./png.ts";
+import { renderPreview, tilesFor } from "./render.ts";
 
 test("covers the image with tiles, wrapping around the world sideways", () => {
   const tiles = tilesFor(frameOf({ lat: 0, lng: 180, zoom: 1 }));

@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
-import { cn } from "@portfolio/lib/utils";
 import { TruncatedText } from "@portfolio/components/truncated-text";
+import { cn } from "@portfolio/lib/utils";
 
 /**
  * A row in a list of choices: a check while it's on, its

@@ -2,12 +2,13 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
-import type { SanitizedExif } from "@/api/exif";
 import { suggestedNameOf } from "@/api/errors";
+import type { SanitizedExif } from "@/api/exif";
 import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import { type PublishResult, publishPhotoMutation } from "@/api/photos";
 import { type SettingsResponse, dataFolder, settingsQuery } from "@/api/settings";
 import { NearDuplicatesNote } from "@/components/compare/near-duplicates-note";
+import { ErrorNote } from "@/components/error-note";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +17,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { jsonFileName, jsonNameProblem } from "@/lib/file-name";
 import { photoData } from "@/lib/photo-data";
-import { ErrorNote } from "@/components/error-note";
 
 type GitHubSettings = SettingsResponse["github"];
 

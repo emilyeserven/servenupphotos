@@ -1,6 +1,7 @@
 import { CheckIcon, UploadIcon } from "lucide-react";
 import { type ChangeEvent, useState } from "react";
 import type { Group } from "@/api/organize";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,7 +14,6 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { type AlbumImport, type AlbumLayout, readAlbumImport } from "@/lib/album-layout-editor";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 interface AlbumImportDialogProps {

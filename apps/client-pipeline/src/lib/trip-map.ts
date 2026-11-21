@@ -1,7 +1,7 @@
 import type { TripLine } from "@/api/trip-lines";
 import type { Trip, TripLeg, TripLegRide } from "@/api/trips";
-import { separateRides } from "@/lib/leg-rides";
 import { lineFeatures } from "@/components/trip-lines/route-geometry";
+import { separateRides } from "@/lib/leg-rides";
 import type { TripDay, TripPhoto } from "@/lib/trip-days";
 import { endPhoto, endPosition } from "@/lib/trip-legs";
 import { orderedPhotos } from "@/lib/trip-order";

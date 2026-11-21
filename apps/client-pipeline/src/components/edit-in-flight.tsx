@@ -1,4 +1,3 @@
-import { pixelatedVersionUrl } from "@/lib/face-json";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeftIcon } from "lucide-react";
@@ -9,20 +8,11 @@ import {
   publishedPhotosQuery,
 } from "@/api/photos";
 import { savedThumbnailCrop, thumbnailCropQuery } from "@/api/versions";
-import { PhotoGroupsCard } from "@/components/photo-groups-card";
-import { JsonCodeBlock } from "@/components/json-code-block";
-import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-details";
-import { PhotoLocationCard } from "@/components/photo-location-card";
-import { QueryResult, ReadingNote } from "@/components/query-result";
-import { LowerTierCard } from "@/components/lower-tier";
-import { ReEditCard } from "@/components/re-edit-card";
-import { SocialPostsCard } from "@/components/social-posts-card";
-import { PickedSimilarCard } from "@/components/related-photos/picked-similar-card";
-import { ThumbnailCrop } from "@/components/thumbnail-crop";
-import { FacePixelationCard } from "@/components/face-pixelation/face-pixelation-card";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { type Crop } from "@/lib/crop";
+import { CameraOverridesCard } from "@/components/edit-in-flight/camera-overrides-card";
+import { DeletePhotoCard } from "@/components/edit-in-flight/delete-photo-card";
+import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
+import { LensSection } from "@/components/edit-in-flight/lens-section";
+import { useLocationPrompt } from "@/components/edit-in-flight/location-prompt";
 import {
   type Editable,
   fileName,
@@ -32,20 +22,30 @@ import {
   isPublished,
   photoFile,
 } from "@/components/edit-in-flight/photo-json";
-import { CameraOverridesCard } from "@/components/edit-in-flight/camera-overrides-card";
-import { LensSection } from "@/components/edit-in-flight/lens-section";
-import { ReplaceImageCard } from "@/components/edit-in-flight/replace-image-card";
-import { UneditedOriginalCards } from "@/components/edit-in-flight/unedited-original-card";
-import { useLocationPrompt } from "@/components/edit-in-flight/location-prompt";
-import { TagPromptButton } from "@/components/edit-in-flight/tag-prompt-button";
 import { PhotoSections } from "@/components/edit-in-flight/photo-sections";
+import { ReplaceImageCard } from "@/components/edit-in-flight/replace-image-card";
 import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
-import { DeletePhotoCard } from "@/components/edit-in-flight/delete-photo-card";
-import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
+import { TagPromptButton } from "@/components/edit-in-flight/tag-prompt-button";
+import { UneditedOriginalCards } from "@/components/edit-in-flight/unedited-original-card";
 import { type Edit, useEdit, useLensSettings, useSave } from "@/components/edit-in-flight/use-edit";
+import { FacePixelationCard } from "@/components/face-pixelation/face-pixelation-card";
+import { JsonCodeBlock } from "@/components/json-code-block";
+import { LowerTierCard } from "@/components/lower-tier";
+import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-details";
+import { PhotoGroupsCard } from "@/components/photo-groups-card";
+import { PhotoLocationCard } from "@/components/photo-location-card";
+import { QueryResult, ReadingNote } from "@/components/query-result";
+import { ReEditCard } from "@/components/re-edit-card";
+import { PickedSimilarCard } from "@/components/related-photos/picked-similar-card";
+import { SocialPostsCard } from "@/components/social-posts-card";
+import { ThumbnailCrop } from "@/components/thumbnail-crop";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { type Crop } from "@/lib/crop";
 import { hasLensChoice, lensChanged, savedLensChoice, withLensChoice } from "@/lib/custom-lens";
-import { promptImageUrl } from "@/lib/tag-prompt";
+import { pixelatedVersionUrl } from "@/lib/face-json";
 import { detailsSmallImage } from "@/lib/offline-thumbnails";
+import { promptImageUrl } from "@/lib/tag-prompt";
 import { useTabSubject } from "@/stores/tab-title";
 
 /**

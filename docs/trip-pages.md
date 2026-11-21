@@ -1,44 +1,27 @@
 # Trip Pages
 
-A Trip page tells the story of a trip on the portfolio, under **Albums**: each day's photos in rows, a caption under a
-photo, and paragraphs between photos. It's written day by day on the pipeline's [Trip Lines](trip-lines.md) page and
-built by **Commit**.
+A Trip page tells the story of a trip on the portfolio, under **Albums**: each day's photos in rows, a caption under a photo, and paragraphs between photos. It's written day by day on the pipeline's [Trip Lines](trip-lines.md) page and built by **Commit**.
 
-> **Frontend analogy:** each day's story is like a CMS block list for one section of a page (the same idea as an
-> album's [layout](album-layouts.md)), and Commit is a static site build that stitches the sections of one Trip into
-> one page's JSON, so the portfolio only renders it.
+> **Frontend analogy:** each day's story is like a CMS block list for one section of a page (the same idea as an album's [layout](album-layouts.md)), and Commit is a static site build that stitches the sections of one Trip into one page's JSON, so the portfolio only renders it.
 
 ## Writing a day's story
 
-On `/trip-lines`, under the chosen day's route (the card with the photo strip and map), **Trip page story** lists every
-photo of the day, with an exact spot or not, in the order they were taken, laid out in rows the way the page will be
-(`components/trip-story/`, `lib/trip-story.ts`):
+On `/trip-lines`, under the chosen day's route (the card with the photo strip and map), **Trip page story** lists every photo of the day, with an exact spot or not, in the order they were taken, laid out in rows the way the page will be (`components/trip-story/`, `lib/trip-story.ts`):
 
 - **Add an opening paragraph** opens a Markdown paragraph before the day's first photo.
-- Each photo's text goes where its three buttons say: **Caption under it** (small text under the photo), or
-  **Paragraph on its left** or **on its right**, beside the photo on a wide screen and above or below it on a phone.
-  **Add text** opens its box; a photo with a **Comment** on the Photo page also has **Use the photo's Comment**,
-  which shows the Comment instead and keeps it in step when the Comment changes.
-- **Same row as the next photo** puts the next photo beside the row's last one, up to 4 in a row, as in an album's
-  layout. The unlink button between two photos in a row splits it there.
-- **Add a paragraph** after a row opens a Markdown box for a paragraph between that photo and the next, shown across
-  the page. A paragraph ends the row, so the two can't be on one photo. After the last row it's a closing paragraph.
-- Every box is Markdown, with **Preview**, and its expand button opens the same text in a large box over the page.
-  No box shows until its button is pressed, unless it already has text.
+- Each photo's text goes where its three buttons say: **Caption under it** (small text under the photo), or **Paragraph on its left** or **on its right**, beside the photo on a wide screen and above or below it on a phone. **Add text** opens its box; a photo with a **Comment** on the Photo page also has **Use the photo's Comment**, which shows the Comment instead and keeps it in step when the Comment changes.
+- **Same row as the next photo** puts the next photo beside the row's last one, up to 4 in a row, as in an album's layout. The unlink button between two photos in a row splits it there.
+- **Add a paragraph** after a row opens a Markdown box for a paragraph between that photo and the next, shown across the page. A paragraph ends the row, so the two can't be on one photo. After the last row it's a closing paragraph.
+- Every box is Markdown, with **Preview**, and its expand button opens the same text in a large box over the page. No box shows until its button is pressed, unless it already has text.
 - The eye button on a photo leaves it off the page; it moves to **Not on the page**, where clicking it puts it back.
 
-The card says which Trip page the day goes on: the [Trip](trips.md) whose days include it, or else a page of
-its own for that day alone. **Save story** saves it and **Remove story** takes the day off its page, each as a
-[change waiting for Commit](pending-changes.md). A day without a saved story isn't on any Trip page.
+The card says which Trip page the day goes on: the [Trip](trips.md) whose days include it, or else a page of its own for that day alone. **Save story** saves it and **Remove story** takes the day off its page, each as a [change waiting for Commit](pending-changes.md). A day without a saved story isn't on any Trip page.
 
-A photo added to the day later shows in the editor in its place, and joins the page once the story is saved again. A
-day's story is kept apart from its line, so the line can be redrawn, turned automatic or removed without touching it.
+A photo added to the day later shows in the editor in its place, and joins the page once the story is saved again. A day's story is kept apart from its line, so the line can be redrawn, turned automatic or removed without touching it.
 
 ## The file
 
-Each day's story is `triplines/story-<YYYY-MM-DD>.json`, in the trip lines folder next to the days' lines, so
-it's listed, combined into `TRIPLINES.json` and committed with them (`PUT` and
-`DELETE /api/tripstories/story-<day>` → `/tripstories/{id}`, `be-pipeline/internal/github/tripstories.go`):
+Each day's story is `triplines/story-<YYYY-MM-DD>.json`, in the trip lines folder next to the days' lines, so it's listed, combined into `TRIPLINES.json` and committed with them (`PUT` and `DELETE /api/tripstories/story-<day>` → `/tripstories/{id}`, `be-pipeline/internal/github/tripstories.go`):
 
 ```json
 {
@@ -54,39 +37,25 @@ it's listed, combined into `TRIPLINES.json` and committed with them (`PUT` and
 }
 ```
 
-| Field               | Type              | Rules                                                                    |
-| ------------------- | ----------------- | ------------------------------------------------------------------------ |
-| `id`                | string            | `story-` and the day; the day comes from it                              |
-| `date`              | string            | The day, such as `2026-10-01`. Not `day`, so it's never read as a line   |
-| `intro`             | string (Markdown) | Left out for none; at most 5,000 characters                              |
-| `photos`            | list              | The photos on the page, in order, at most 500. Each taken that day, once |
-| `photos[].caption`  | string            | Left out for none; at most 500 characters                                |
-| `photos[].withNext` | boolean           | Puts the next photo in the same row. Left out on a row's last photo      |
-| `photos[].after`    | string (Markdown) | The paragraph after the photo; at most 5,000 characters. Ends the row    |
+| Field | Type | Rules |
+| --- | --- | --- |
+| `id` | string | `story-` and the day; the day comes from it |
+| `date` | string | The day, such as `2026-10-01`. Not `day`, so it's never read as a line |
+| `intro` | string (Markdown) | Left out for none; at most 5,000 characters |
+| `photos` | list | The photos on the page, in order, at most 500. Each taken that day, once |
+| `photos[].caption` | string | Left out for none; at most 500 characters |
+| `photos[].withNext` | boolean | Puts the next photo in the same row. Left out on a row's last photo |
+| `photos[].after` | string (Markdown) | The paragraph after the photo; at most 5,000 characters. Ends the row |
 
-The backend trims the words, drops `withNext` from the last photo and `text` beside `useComment`, and refuses a
-`textSide` other than `left` or `right`, a photo not taken that day (its custom
-date, or else its EXIF one), a photo listed twice, a photo with both `withNext` and `after`, and a row of more than 4.
+The backend trims the words, drops `withNext` from the last photo and `text` beside `useComment`, and refuses a `textSide` other than `left` or `right`, a photo not taken that day (its custom date, or else its EXIF one), a photo listed twice, a photo with both `withNext` and `after`, and a row of more than 4.
 
 ## Trip Stops
 
-A day's [trip stops](trip-lines.md#trip-stops), such as a restaurant, show in its story between the two photos the
-route puts them between (`after`), each on its own small line: a pin, its name (linking to its outside map), its kind
-and its note. The name is written the way the visitor's **Script display** setting says, from the stop's
-[localized names](trip-lines.md#localized-names) (or else its saved place's localization), with its local script
-beside it, faint, or its English name when the local script is the one shown (`localizeStop` in `lib/localize.ts`).
-Commit bakes the stop's `place` and localized names into `stops` for that. A stop's [casual photos](trip-lines.md#casual-photos) are folded under it behind **3 photos**, as small
-squares that each open the large version in a new tab (`components/trip-stops.tsx`). A stop ends its row the way a
-paragraph does, so a stop after a photo in the middle of a row splits it there, and it shows before that photo's
-paragraph. Stops not on the route, or after a photo left off the story, show after the day's last row. Casual photos
-aren't in `ALLPHOTOS.json`, so Commit bakes every stop, with what the page needs of its casual photos (ID, title, size
-and image URLs), into the day's `stops`.
+A day's [trip stops](trip-lines/trip-stops.md), such as a restaurant, show in its story between the two photos the route puts them between (`after`), each on its own small line: a pin, its name (linking to its outside map), its kind and its note. The name is written the way the visitor's **Script display** setting says, from the stop's [localized names](trip-lines/trip-stops.md#localized-names) (or else its saved place's localization), with its local script beside it, faint, or its English name when the local script is the one shown (`localizeStop` in `lib/localize.ts`). Commit bakes the stop's `place` and localized names into `stops` for that. A stop's [casual photos](trip-lines/trip-stops.md#casual-photos) are folded under it behind **3 photos**, as small squares that each open the large version in a new tab (`components/trip-stops.tsx`). A stop ends its row the way a paragraph does, so a stop after a photo in the middle of a row splits it there, and it shows before that photo's paragraph. Stops not on the route, or after a photo left off the story, show after the day's last row. Casual photos aren't in `ALLPHOTOS.json`, so Commit bakes every stop, with what the page needs of its casual photos (ID, title, size and image URLs), into the day's `stops`.
 
 ## The baked pages: `TRIPPAGES.json`
 
-Every Commit also writes `triplines/TRIPPAGES.json` from the story and Trip files (`trippages.go`), newest first, and
-counts its pages (`tripPages`). Like `TRIPLINES.geo.json`, it's left out of `TRIPLINES.json`, and the **Combine photo
-data** workflow leaves it as it is.
+Every Commit also writes `triplines/TRIPPAGES.json` from the story and Trip files (`trippages.go`), newest first, and counts its pages (`tripPages`). Like `TRIPLINES.geo.json`, it's left out of `TRIPLINES.json`, and the **Combine photo data** workflow leaves it as it is.
 
 ```json
 [
@@ -118,23 +87,12 @@ data** workflow leaves it as it is.
 ]
 ```
 
-A Trip with a story on any of its days is one page, with those days in order. A day with a story in no Trip is a page of
-its own, with the ID `day-` and the day and no name. The portfolio reads only this file, not every line's path.
+A Trip with a story on any of its days is one page, with those days in order. A day with a story in no Trip is a page of its own, with the ID `day-` and the day and no name. The portfolio reads only this file, not every line's path.
 
-> **Frontend analogy:** `TRIPPAGES.json` is a derived selector baked ahead of time: the day files are normalized
-> state, and this is the denormalized view the page needs, so the browser doesn't load `TRIPLINES.json` to group them.
+> **Frontend analogy:** `TRIPPAGES.json` is a derived selector baked ahead of time: the day files are normalized state, and this is the denormalized view the page needs, so the browser doesn't load `TRIPLINES.json` to group them.
 
 ## On the portfolio
 
-`/albums/trips/<id>` (`routes/albums.trips.$id.tsx`) shows the Trip's name, its days and how many photos it has, then
-each day under its date: its first paragraph, then its rows (`components/trip-story.tsx`, `lib/trip-pages.ts`). A row's
-photos are side by side at the same height, as an album's rows are (`components/album-rows.tsx`), each with its text
-rendered as Markdown: a caption under it, or a paragraph beside it (a wide column next to a photo on its own, a
-narrow one in a row of several). One photo is as large as it fits. A photo's Comment comes from `ALLPHOTOS.json`,
-so a story that uses it shows the Comment as it is now. On a phone a row's photos go one under another. A paragraph after a row
-spans the text column. Clicking a photo opens the [photo viewer](photo-viewer.md), which steps through the page in
-order. A day's page is titled with its date.
+`/albums/trips/<id>` (`routes/albums.trips.$id.tsx`) shows the Trip's name, its days and how many photos it has, then each day under its date: its first paragraph, then its rows (`components/trip-story.tsx`, `lib/trip-pages.ts`). A row's photos are side by side at the same height, as an album's rows are (`components/album-rows.tsx`), each with its text rendered as Markdown: a caption under it, or a paragraph beside it (a wide column next to a photo on its own, a narrow one in a row of several). One photo is as large as it fits. A photo's Comment comes from `ALLPHOTOS.json`, so a story that uses it shows the Comment as it is now. On a phone a row's photos go one under another. A paragraph after a row spans the text column. Clicking a photo opens the [photo viewer](photo-viewer.md), which steps through the page in order. A day's page is titled with its date.
 
-Photos the portfolio doesn't have, such as drafts or ones with no image yet, are left out; a row left empty is
-dropped, and a photo left out still ends its row and keeps its paragraph. The [Albums](portfolio-albums.md) page lists
-the Trip pages under **Trips**, after the albums.
+Photos the portfolio doesn't have, such as drafts or ones with no image yet, are left out; a row left empty is dropped, and a photo left out still ends its row and keeps its paragraph. The [Albums](portfolio-albums.md) page lists the Trip pages under **Trips**, after the albums.

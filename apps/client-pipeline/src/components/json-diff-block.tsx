@@ -1,6 +1,5 @@
 import { FileDiffIcon } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
-
 import { JsonCodeBlock } from "@/components/json-code-block";
 import {
   CodeBlock,

@@ -1,9 +1,9 @@
-import type { Photo } from "@portfolio/lib/photos";
-import { matchesRules, type SmartRules } from "@portfolio/lib/smart-albums";
-import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 import type { CombinedData } from "@/api/photos";
 import { type CombinedPhoto, currentListedPhotos, currentLists } from "@/lib/group-photos";
 import { labelsOf, readEntries } from "@/lib/smart-album-photos";
+import type { Photo } from "@portfolio/lib/photos";
+import { matchesRules, type SmartRules } from "@portfolio/lib/smart-albums";
+import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 
 /**
  * The photos a Smart Album's rules are tried on: ALLPHOTOS.json as the portfolio reads it, with

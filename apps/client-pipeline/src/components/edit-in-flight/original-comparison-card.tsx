@@ -1,17 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
-import {
-  type ComparisonMode,
-  ComparisonModePicker,
-  EditComparison,
-} from "@portfolio/components/edit-comparison";
-import { parseImage } from "@portfolio/lib/photo-image";
+import type { PhotoJson } from "@/components/edit-in-flight/photo-json";
+import type { UneditedOriginal } from "@/components/edit-in-flight/use-unedited-original";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import type { PhotoJson } from "@/components/edit-in-flight/photo-json";
-import type { UneditedOriginal } from "@/components/edit-in-flight/use-unedited-original";
 import {
   type OriginalEntry,
   cropOrMiddle,
@@ -19,7 +14,12 @@ import {
   knownSize,
   originalShown,
 } from "@/lib/unedited-original";
-import { ErrorNote } from "@/components/error-note";
+import {
+  type ComparisonMode,
+  ComparisonModePicker,
+  EditComparison,
+} from "@portfolio/components/edit-comparison";
+import { parseImage } from "@portfolio/lib/photo-image";
 
 interface OriginalComparisonCardProps {
   original: UneditedOriginal;

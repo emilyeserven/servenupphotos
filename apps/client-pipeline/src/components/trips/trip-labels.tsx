@@ -1,11 +1,11 @@
 import { Plus, X } from "lucide-react";
 import type { Trip, TripLabel } from "@/api/trips";
+import { SectionTitle } from "@/components/section-title";
 import { dayRange } from "@/components/trips/day-range";
 import { LabelDays } from "@/components/trips/label-days";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { nextLabel } from "@/lib/trip-labels";
-import { SectionTitle } from "@/components/section-title";
 
 interface TripLabelsProps {
   /** The Trip as it will be saved, whose days the labels can cover. */

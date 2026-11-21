@@ -1,13 +1,13 @@
 import { PlusIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import type { SavedPhoto } from "@/components/saved-photo-picker";
 import { PhotoChoiceGrid } from "@/components/related-photos/photo-choice-grid";
-import { MAX_PICKS, type Pick, savedPhotoId } from "@/components/related-photos/picks";
 import { PickedRow } from "@/components/related-photos/picked-row";
+import { MAX_PICKS, type Pick, savedPhotoId } from "@/components/related-photos/picks";
 import { SimilarTile } from "@/components/related-photos/similar-tile";
+import type { SavedPhoto } from "@/components/saved-photo-picker";
+import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { SectionTitle } from "@/components/section-title";
 
 interface PickedSimilarFieldsProps {
   /** The ID of the photo the picks are for, which can't be picked itself. */

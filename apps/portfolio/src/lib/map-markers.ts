@@ -1,5 +1,6 @@
 import type { MapRef } from "@vis.gl/react-maplibre";
 import type { GeoJSONFeature, GeoJSONSource } from "maplibre-gl";
+import { groupingSources } from "@/lib/map-country-groups";
 import {
   FAN_MIN_ZOOM,
   fanLimit,
@@ -9,7 +10,6 @@ import {
   type MarkerOnScreen,
   type ScreenPoint,
 } from "@/lib/map-fan";
-import { groupingSources } from "@/lib/map-country-groups";
 import { type MapSet, type PhotoPoint, type PlacedPhoto, placedById } from "@/lib/map-photos";
 
 /**

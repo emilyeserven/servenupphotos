@@ -7,20 +7,20 @@ import {
   organizeQuery,
   setSpotlightAlbumMutation,
 } from "@/api/organize";
+import { ErrorNote } from "@/components/error-note";
 import { GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
-import { albumPhotoOrder } from "@/lib/album-photo-order";
 import { GroupCombobox } from "@/components/photo-groups-card";
 import { QueryResult } from "@/components/query-result";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SpotlightOrientationPicker } from "@/components/spotlight-orientation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ZoneFocus } from "@/components/zone-focus";
+import { albumPhotoOrder } from "@/lib/album-photo-order";
 import {
   type SpotlightZone,
   spotlightZones,
   zoneAlbum,
   zoneOrientation,
 } from "@/lib/site-spotlight";
-import { ErrorNote } from "@/components/error-note";
 
 /** Picks the album each spotlight zone of the portfolio shows, such as the homepage's. */
 export function SiteSpotlight() {

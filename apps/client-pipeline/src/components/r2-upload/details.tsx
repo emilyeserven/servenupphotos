@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { ImageOffIcon } from "lucide-react";
 import { Fragment, type ReactNode, useState } from "react";
 import type { BucketImage } from "@/api/photos";
-import { PUBLISHED } from "@/api/versions";
 import {
   type CloudflareResponse,
   type UploadRequest,
@@ -10,15 +9,16 @@ import {
   UploadError,
   renamePhoto,
 } from "@/api/upload";
-import { type R2Upload, sameNameError } from "@/components/r2-upload/use-r2-upload";
+import { PUBLISHED } from "@/api/versions";
 import { CopyTextButton } from "@/components/copy-text";
+import { ErrorNote } from "@/components/error-note";
+import { type R2Upload, sameNameError } from "@/components/r2-upload/use-r2-upload";
 import { RenameForm } from "@/components/rename-prompt";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { uploadNameProblem } from "@/lib/file-name";
 import { dateTimeText } from "@portfolio/lib/dates";
-import { ErrorNote } from "@/components/error-note";
 
 interface R2DetailsProps {
   r2: R2Upload;

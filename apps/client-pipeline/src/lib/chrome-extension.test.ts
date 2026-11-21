@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { chromeExtensionFiles, EXTENSION_FOLDER } from "@/lib/chrome-extension";
-import { crc32 } from "@portfolio/lib/crc32";
 import { zipFiles } from "@/lib/zip";
+import { crc32 } from "@portfolio/lib/crc32";
 
 test("crc32 matches zip's checksum", () => {
   assert.equal(crc32(new TextEncoder().encode("123456789")), 0xcbf43926);

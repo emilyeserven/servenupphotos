@@ -3,6 +3,7 @@ import { useState } from "react";
 import { type CustomLens, customLenses } from "@/api/lenses";
 import type { CombinedData } from "@/api/photos";
 import { LensEditor } from "@/components/custom-lenses/editor";
+import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { chosenLens } from "@/lib/custom-lens";
@@ -11,7 +12,6 @@ import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { SectionTitle } from "@/components/section-title";
 
 /**
  * The Lenses tab's custom lenses: lenses the EXIF doesn't name well, such as manual ones, to pick on

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { CombinedData } from "@/api/photos";
+import { ErrorNote } from "@/components/error-note";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   captionLists,
@@ -8,9 +9,8 @@ import {
   unknownPlaceholders,
 } from "@/lib/caption-template";
 import { type CombinedPhoto, photoText } from "@/lib/group-photos";
-import { shownPhotos } from "@/lib/place-seeds";
 import { FILE, TITLE } from "@/lib/photo-fields";
-import { ErrorNote } from "@/components/error-note";
+import { shownPhotos } from "@/lib/place-seeds";
 
 /** A photo's name in the preview's list: its title, or else its file. */
 function photoLabel(photo: CombinedPhoto, index: number): string {

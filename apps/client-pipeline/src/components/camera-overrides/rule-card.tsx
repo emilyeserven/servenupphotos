@@ -6,12 +6,12 @@ import {
   type OverrideRule,
   type OverrideValue,
 } from "@/api/cameras";
+import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { exifValueCounts } from "@/lib/camera-overrides";
 import { canonicalJson } from "@/lib/combined";
 import type { CombinedPhoto } from "@/lib/group-photos";
-import { SectionTitle } from "@/components/section-title";
 
 const selectClass = "border-input bg-background h-9 min-w-0 rounded-md border px-3 text-sm";
 

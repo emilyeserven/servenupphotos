@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import type { GearBox, GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
 import { cropGearImageMutation, type UploadedGearOriginal } from "@/api/gear";
 import { cropLimits } from "@/components/gear-pictures/crop-limits";
 import { fitCrop } from "@/lib/gear-crop";
+import type { GearBox, GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
 
 /** A gear picture being edited: its crop's link, its original's, and the crop's place in it. */
 export interface GearPictureState {

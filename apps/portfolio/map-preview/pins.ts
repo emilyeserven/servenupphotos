@@ -1,3 +1,4 @@
+import { type Frame, IMAGE, pointIn, SCALE } from "../src/lib/map-preview-view.ts";
 /**
  * The photo pins on a map preview: grouped the way the map groups them, then drawn like its
  * markers. A photo is a rounded square in the photo's average color (the map shows its thumbnail
@@ -5,7 +6,6 @@
  */
 import { drawNumber } from "./digits.ts";
 import { type Canvas, type Color, fillCircle, fillRoundedSquare, hexColor } from "./draw.ts";
-import { type Frame, IMAGE, pointIn, SCALE } from "../src/lib/map-preview-view.ts";
 
 /** One photo on the map, as `map-pins.json` lists it: longitude, latitude, and average color. */
 export type Pin = [number, number, string | null];

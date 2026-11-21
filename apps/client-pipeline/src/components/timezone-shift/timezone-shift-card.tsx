@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { ReadingNote } from "@/components/query-result";
 import { ClockPicker } from "@/components/timezone-shift/clock-picker";
 import { DayPhotoList } from "@/components/timezone-shift/day-photo-list";
 import { DayRangeFields } from "@/components/timezone-shift/day-range-fields";
@@ -8,6 +9,7 @@ import { ZonePickers, zoneOptions } from "@/components/timezone-shift/zone-picke
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ClockSetting, DEFAULT_CLOCK } from "@/lib/clock-setting";
+import { CUSTOM_DATE } from "@/lib/photo-fields";
 import { type ShiftSide, type ShiftZones, browserZone } from "@/lib/timezone-shift";
 import {
   type PlannedShift,
@@ -16,8 +18,6 @@ import {
   tripLineEffects,
 } from "@/lib/timezone-shift-plan";
 import { type FieldChange, useLocalEditsStore } from "@/stores/local-edits";
-import { CUSTOM_DATE } from "@/lib/photo-fields";
-import { ReadingNote } from "@/components/query-result";
 import { count } from "@portfolio/lib/words";
 
 /**

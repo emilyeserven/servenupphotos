@@ -1,5 +1,5 @@
-import type { PhotoSet } from "@portfolio/lib/photo-sets";
 import { byName, settingEntries, settingMutations, uniqueEntryId } from "@/api/data-files";
+import type { PhotoSet } from "@portfolio/lib/photo-sets";
 
 function isPhotoSet(value: unknown): value is PhotoSet {
   const set = value as Partial<PhotoSet> | null;

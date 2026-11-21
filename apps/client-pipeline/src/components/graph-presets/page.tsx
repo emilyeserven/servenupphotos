@@ -2,18 +2,18 @@ import { useState } from "react";
 import { graphPresetFiles } from "@/api/graph-presets";
 import type { CombinedData } from "@/api/photos";
 import { GroupEditor } from "@/components/graph-presets/group-editor";
+import { PresetEditor } from "@/components/graph-presets/preset-editor";
 import {
   type Chosen,
   NEW_GROUP,
   NEW_PRESET,
   PresetList,
 } from "@/components/graph-presets/preset-list";
-import { PresetEditor } from "@/components/graph-presets/preset-editor";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
+import { QueryResult } from "@/components/query-result";
 import { useCombinedData } from "@/stores/combined-data";
 import type { GraphPresetFile } from "@portfolio/lib/graph-presets";
-import { QueryResult } from "@/components/query-result";
 
 /** The Graph Presets page: the ready-made graphs and preset groups on the portfolio's Graph page. */
 export function GraphPresetsPage() {

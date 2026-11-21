@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { CopyIcon } from "lucide-react";
 import { type NearDuplicatesResult, findNearDuplicatesMutation } from "@/api/near-duplicates";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /**

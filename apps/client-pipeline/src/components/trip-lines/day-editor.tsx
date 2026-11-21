@@ -8,34 +8,34 @@ import {
   type TripPoint,
   type TripSegment,
 } from "@/api/trip-lines";
+import { useDaySave, useLeaveGuard } from "@/components/trip-lines/day-save";
 import {
   type EditorView,
   type LineMode,
   LineSwitch,
   SaveBar,
 } from "@/components/trip-lines/editor-actions";
-import { useDaySave, useLeaveGuard } from "@/components/trip-lines/day-save";
-import { editedView, modeView } from "@/lib/trip-line-view";
 import { PickHint, type SpotPick } from "@/components/trip-lines/end-spots";
-import { useDayPlaceAreas } from "@/components/trip-lines/use-day-place-areas";
-import { newVisit, withVisit } from "@/lib/trip-visits";
 import { GroupStrip } from "@/components/trip-lines/group-strip";
-import { stripVias } from "@/components/trip-lines/via-list";
 import { RouteMap } from "@/components/trip-lines/route-map";
+import { MapTools, type MapPick } from "@/components/trip-lines/route-tools";
+import { useDayPlaceAreas } from "@/components/trip-lines/use-day-place-areas";
+import { stripVias } from "@/components/trip-lines/via-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
-import type { TripDay, TripPhoto } from "@/lib/trip-days";
-import { placeGroups } from "@/lib/trip-groups";
-import { draftOf, type GapDraft, segmentsOf, walkingDraft, withStops } from "@/lib/trip-gaps";
-import { movedVia, withVia } from "@/lib/trip-points";
-import { viasInRouteOrder } from "@/lib/via-order";
-import { useTripDaySearch } from "@/lib/trip-lines-search";
-import { isAreaPick, withAreaEnd } from "@/lib/trip-wander";
 import { isBreakPick, withBreakEnd } from "@/lib/break-ends";
 import { isRopewayPick, withRopewayEnd } from "@/lib/ropeway-ends";
-import { MapTools, type MapPick } from "@/components/trip-lines/route-tools";
+import type { TripDay, TripPhoto } from "@/lib/trip-days";
+import { draftOf, type GapDraft, segmentsOf, walkingDraft, withStops } from "@/lib/trip-gaps";
+import { placeGroups } from "@/lib/trip-groups";
+import { editedView, modeView } from "@/lib/trip-line-view";
+import { useTripDaySearch } from "@/lib/trip-lines-search";
 import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
+import { movedVia, withVia } from "@/lib/trip-points";
 import { keptStops, type KeptStops, withStopVias } from "@/lib/trip-stops-kept";
+import { newVisit, withVisit } from "@/lib/trip-visits";
+import { isAreaPick, withAreaEnd } from "@/lib/trip-wander";
+import { viasInRouteOrder } from "@/lib/via-order";
 
 /**
  * What the editor shows first: the saved line by hand, the automatic line, or nothing yet. A day

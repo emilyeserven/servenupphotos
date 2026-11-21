@@ -9,11 +9,11 @@ import {
   organizeQuery,
   setTagFavoritesMutation,
 } from "@/api/organize";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { ErrorNote } from "@/components/error-note";
 
 /** Saves whether tags are favorites, reading the tags again after. */
 function useFavoriteSave() {

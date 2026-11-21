@@ -1,8 +1,8 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { type PendingSave, changesByFolder, photoChanges } from "@/api/scan-changes";
 import type { FieldChange } from "@/api/cameras";
 import type { ColorSummary } from "@/api/exif";
 import { post, requestJson } from "@/api/request";
+import { type PendingSave, changesByFolder, photoChanges } from "@/api/scan-changes";
 
 /** Base URLs to move the photos' image URLs between; both empty to only list the origins. */
 export interface BaseUrlChange {

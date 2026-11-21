@@ -8,8 +8,6 @@ import {
   type PublishedResponse,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
-import { Page } from "@/components/page";
-import { Card, CardContent } from "@/components/ui/card";
 import { BulkGroupsCard } from "@/components/gallery/bulk-groups-card";
 import { BulkLowerTier } from "@/components/gallery/bulk-lower-tier";
 import { BulkUndecided } from "@/components/gallery/bulk-undecided";
@@ -17,36 +15,38 @@ import { type GalleryFile, galleryFiles, mergedImages } from "@/components/galle
 import { type GalleryRead, GalleryHeader } from "@/components/gallery/gallery-header";
 import { GalleryLightbox } from "@/components/gallery/gallery-lightbox";
 import {
-  type ShowSearch,
-  SHOW_PARAMS,
-  applyShow,
-  parseShowSearch,
-  showChanged,
-} from "@/lib/gallery-show";
-import { JumpBox } from "@/components/gallery/jump-box";
-import { scrollToTile } from "@/components/gallery/kind-mark";
-import { PhotoGrid } from "@/components/gallery/photo-grid";
-import { defaultOrder, sortEntries } from "@/components/gallery/photo-sort";
-import { ShowToggles, SortToggles, useSetShowSearch } from "@/components/gallery/show-and-sort";
-import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
-import { QueryResult } from "@/components/query-result";
-import {
-  type PlaceSearch,
-  PlaceFilterToggles,
-  parsePlaceSearch,
-  usePlaceFilter,
-} from "@/components/gallery/place-filter";
-import {
   type GridFilters,
   GRID_FILTER_PARAMS,
   GridFilterBar,
   parseGridFilters,
   useGridFilters,
 } from "@/components/gallery/grid-filters";
-import { prefixedFilters } from "@/lib/photo-data-filters";
-import { GALLERY_FILTER_KEYS, galleryFilters } from "@/lib/gallery-filters";
-import { useUntitledDrafts } from "@/lib/drafts";
+import { JumpBox } from "@/components/gallery/jump-box";
+import { scrollToTile } from "@/components/gallery/kind-mark";
+import { PhotoGrid } from "@/components/gallery/photo-grid";
+import { defaultOrder, sortEntries } from "@/components/gallery/photo-sort";
+import {
+  type PlaceSearch,
+  PlaceFilterToggles,
+  parsePlaceSearch,
+  usePlaceFilter,
+} from "@/components/gallery/place-filter";
 import { type Selection, fileName } from "@/components/gallery/published-file";
+import { ShowToggles, SortToggles, useSetShowSearch } from "@/components/gallery/show-and-sort";
+import { Page } from "@/components/page";
+import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
+import { QueryResult } from "@/components/query-result";
+import { Card, CardContent } from "@/components/ui/card";
+import { useUntitledDrafts } from "@/lib/drafts";
+import { GALLERY_FILTER_KEYS, galleryFilters } from "@/lib/gallery-filters";
+import {
+  type ShowSearch,
+  SHOW_PARAMS,
+  applyShow,
+  parseShowSearch,
+  showChanged,
+} from "@/lib/gallery-show";
+import { prefixedFilters } from "@/lib/photo-data-filters";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
 /**

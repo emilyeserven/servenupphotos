@@ -8,6 +8,7 @@ import {
   type MetaValue,
   saveMetaGroupMutation,
 } from "@/api/metainfo";
+import { EntryEditorButtons } from "@/components/entry-buttons";
 import { FieldLabel } from "@/components/field-label";
 import { MetaParentField } from "@/components/metadata-parent-field";
 import { MetaRangePicker, rangeStops } from "@/components/metadata-range-picker";
@@ -15,7 +16,6 @@ import { MetaUncovered } from "@/components/metadata-uncovered";
 import { MetaValuePicker } from "@/components/metadata-value-picker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { EntryEditorButtons } from "@/components/entry-buttons";
 import { Textarea } from "@/components/ui/textarea";
 import { uncoveredValues } from "@/lib/meta-groups";
 import type { MetaValueCount } from "@/lib/meta-values";

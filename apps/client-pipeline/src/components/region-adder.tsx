@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from "react";
 import { type Localization, localizationId } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
 import { FieldLabel } from "@/components/field-label";
 import { FloatingSaveButton } from "@/components/floating-save-button";
 import { LocalizationFields, useLocalizationDraft } from "@/components/localization-fields";
@@ -12,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { winningName } from "@/lib/location-names";
 import { regionNodeKey } from "@/lib/region-tree";
-import { ErrorNote } from "@/components/error-note";
 
 /** A country, state or city that can be added on the Places page. */
 export type AddedRegionKind = "country" | "state" | "city";

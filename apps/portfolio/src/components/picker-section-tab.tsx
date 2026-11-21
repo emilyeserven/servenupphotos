@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
-import { cn } from "@portfolio/lib/utils";
 import { TruncatedText } from "@portfolio/components/truncated-text";
+import { cn } from "@portfolio/lib/utils";
 
 /**
  * A section in a picker's left list, such as Cameras in **Gear & settings**: its name, with what

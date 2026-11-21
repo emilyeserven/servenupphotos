@@ -1,8 +1,8 @@
 import type { SocialPhoto } from "@/api/publish";
 import { writtenPosition } from "@/lib/place-gps";
 import { customOr, takenDay } from "@/lib/social-focus";
-import { type Unsaved, dateOf } from "@/lib/social-schedule";
 import { savedSocialPosts } from "@/lib/social-posts";
+import { type Unsaved, dateOf } from "@/lib/social-schedule";
 import { isObject } from "@portfolio/lib/values";
 
 /** How many photos before a day the suggestions compare against. */

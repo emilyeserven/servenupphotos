@@ -1,12 +1,12 @@
+import { type Frame, frameOf, IMAGE, type MapView } from "../src/lib/map-preview-view.ts";
 /**
  * Draws a map preview image: CARTO's map tiles for the view, the photo pins over them, and the map
  * credit in the corner, like the portfolio's map in light mode.
  */
 import { ATTRIBUTION_PNG } from "./attribution.ts";
 import { type Canvas, canvasOf, paste } from "./draw.ts";
-import { decodePng, encodePng, type Rgba } from "./png.ts";
 import { drawMarkers, markersOf, type Pin } from "./pins.ts";
-import { type Frame, frameOf, IMAGE, type MapView } from "../src/lib/map-preview-view.ts";
+import { decodePng, encodePng, type Rgba } from "./png.ts";
 
 /** Gets one map tile's PNG file by its zoom and position, or null when it can't. */
 export type TileSource = (z: number, x: number, y: number) => Promise<Uint8Array | null>;

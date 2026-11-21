@@ -2,11 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Building2Icon } from "lucide-react";
 import { useState } from "react";
 import { optimisticEntry, type PhotoPlace, type Place, savePlaceMutation } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
 import { PlaceCityField } from "@/components/place-city-field";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cityOfPlace } from "@/lib/place-cities";
-import { ErrorNote } from "@/components/error-note";
 
 /** The city and country the photo shows, offered as a place's. */
 interface PhotoRegion {

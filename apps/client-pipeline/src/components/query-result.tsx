@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-
 import { ErrorNote } from "@/components/error-note";
 
 /**

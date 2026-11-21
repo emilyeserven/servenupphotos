@@ -3,16 +3,16 @@ import { useState } from "react";
 import type { Place } from "@/api/places";
 import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { bulkTagCount, PickCount } from "@/components/bulk-tagging/pick-count";
+import { ErrorNote } from "@/components/error-note";
 import { useLocalizationRows } from "@/components/localization-drafts";
 import { LocalizationFillReview } from "@/components/localization-fill/localization-fill-review";
-import { ErrorNote } from "@/components/error-note";
 import { PasteAnswer } from "@/components/paste-answer";
+import { ReadingNote } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { readLocalizationAnswer } from "@/lib/localization-answer";
 import { localizationPrompt, rowsToFill } from "@/lib/localization-prompt";
 import type { LocalizationRow } from "@/lib/place-seeds";
-import { ReadingNote } from "@/components/query-result";
 import { count } from "@portfolio/lib/words";
 
 /** How many names a prompt asks about until another number is chosen. */
