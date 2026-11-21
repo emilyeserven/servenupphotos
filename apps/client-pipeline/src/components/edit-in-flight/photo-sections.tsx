@@ -43,7 +43,7 @@ interface SectionInfo {
 
 const SECTIONS: Record<PhotoSection, SectionInfo> = {
   // The details are split between Details and Location by unsavedSections.
-  details: { label: "Details", icon: FileTextIcon, fields: ["reEdit"] },
+  details: { label: "Details", icon: FileTextIcon, fields: ["reEdit", "lowerTier"] },
   location: { label: "Location", icon: MapPinIcon, fields: [] },
   groups: { label: "Albums & tags", icon: TagsIcon, fields: ["groups"] },
   image: { label: "Image", icon: ImageIcon, fields: [] },

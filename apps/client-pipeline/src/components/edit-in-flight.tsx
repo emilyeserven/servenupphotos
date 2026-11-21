@@ -50,7 +50,7 @@ import { useTabSubject } from "@/stores/tab-title";
 
 /**
  * The Photo page for a photo in the photo data pull request, or already in the portfolio: its
- * Square Thumbnail crop, title, place name, comment, social media posts and re-edit mark can be changed, its
+ * Square Thumbnail crop, title, place name, comment, social media posts, re-edit and Lower Tier marks can be changed, its
  * image replaced, its custom lens chosen and camera overrides applied again, then saved by remaking the thumbnail in R2
  * when the crop moved and updating its JSON in the pull request. A photo already in the portfolio is
  * read from the base branch until its first save puts it in the pull request.
@@ -171,7 +171,11 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
                 imageUrl={detailsSmallImage(edit.savedData, editable.image.url)}
               />
               <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
-              <LowerTierCard file={editable.file} disabled={pending} />
+              <LowerTierCard
+                value={edit.lowerTier}
+                onChange={edit.setLowerTier}
+                disabled={pending}
+              />
               <DeletePhotoCard
                 path={editable.file.path}
                 saved={edit.savedData}
