@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 07:05:06",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Dentetsu-Izumoshi Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["trains", "platform", "train-station", "railway"],
   "genres": ["transportation"],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "dentetsu-izumoshi-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

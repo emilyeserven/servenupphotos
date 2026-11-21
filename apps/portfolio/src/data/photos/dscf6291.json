@@ -16,7 +16,7 @@
   "customGpsPosition": "34.828024805893484, 134.69134977474073",
   "createDate": "2026:09:29 10:35:29",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Miyukidori Shopping Street",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["shotengai", "pedestrians", "storefronts", "signage", "tiles"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "miyukidori-shopping-street"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

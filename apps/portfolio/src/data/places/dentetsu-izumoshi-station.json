@@ -1,0 +1,12 @@
+{
+  "id": "dentetsu-izumoshi-station",
+  "name": "Dentetsu-Izumoshi Station",
+  "description": "",
+  "parent": "",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.361226,
+  "longitude": 132.758546,
+  "exactLocation": true
+}

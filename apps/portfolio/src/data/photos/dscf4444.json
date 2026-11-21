@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 13:52:33",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Matsue Horan-enya Memorial Hall",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["chochin", "kanji", "storefronts", "signage"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "matsue-horan-enya-memorial-hall"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

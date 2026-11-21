@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 09:36:43",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Statue of Musubi",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["shinto", "statues", "pine-trees", "garden"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "nature"],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "statue-of-musubi"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

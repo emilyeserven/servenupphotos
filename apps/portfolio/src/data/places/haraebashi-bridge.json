@@ -1,0 +1,11 @@
+{
+  "id": "haraebashi-bridge",
+  "name": "Haraebashi Bridge",
+  "description": "",
+  "parent": "izumo-shrine",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.398,
+  "longitude": 132.6861
+}

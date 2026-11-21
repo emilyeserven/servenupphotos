@@ -1,0 +1,12 @@
+{
+  "id": "seokbulsa-temple",
+  "name": "Seokbulsa Temple",
+  "description": "",
+  "parent": "",
+  "city": "Busan",
+  "state": "Busan",
+  "country": "South Korea",
+  "latitude": 35.221562,
+  "longitude": 129.048812,
+  "exactLocation": true
+}

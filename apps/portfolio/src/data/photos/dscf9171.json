@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 10:50:48",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Jogyesa Temple",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["hanja", "hangul", "storefronts", "signage", "pedestrians", "lanterns"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "jogyesa-temple"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 11:23:38",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Horikawa Moat",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["toro", "moat", "flowers", "stones", "garden"],
-  "genres": [],
-  "places": [],
+  "genres": ["nature", "landscape"],
+  "places": [
+    {
+      "relation": "on",
+      "id": "horikawa-moat"
+    },
+    {
+      "relation": "in",
+      "id": "matsue-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

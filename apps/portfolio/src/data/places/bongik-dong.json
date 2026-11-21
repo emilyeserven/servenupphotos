@@ -1,0 +1,12 @@
+{
+  "id": "bongik-dong",
+  "name": "Bongik-dong",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.570897,
+  "longitude": 126.992703,
+  "exactLocation": true
+}

@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 11:20:44",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Kyobashi River",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["kanji", "plaques", "bridges", "typography"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "abstract"],
+  "places": [
+    {
+      "relation": "on",
+      "id": "kyobashi-river"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

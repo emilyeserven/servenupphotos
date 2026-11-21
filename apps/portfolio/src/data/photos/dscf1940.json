@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:25 13:32:00",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Mejima Island",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["islands", "ocean", "trees"],
   "genres": ["landscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "across from",
+      "id": "mejima-island"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

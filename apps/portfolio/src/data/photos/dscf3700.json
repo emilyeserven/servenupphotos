@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 11:00:04",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Horikawa Sightseeing Boat Karakoro Square Dock",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["moat", "boats", "bridges", "stairs", "water"],
-  "genres": [],
-  "places": [],
+  "genres": ["transportation", "street"],
+  "places": [
+    {
+      "relation": "at",
+      "id": "horikawa-sightseeing-boat-karakoro-square-dock"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

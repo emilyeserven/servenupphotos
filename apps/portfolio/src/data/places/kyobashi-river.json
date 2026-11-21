@@ -1,0 +1,12 @@
+{
+  "id": "kyobashi-river",
+  "name": "Kyobashi River",
+  "description": "",
+  "parent": "",
+  "city": "Matsue",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.469975,
+  "longitude": 133.053625,
+  "exactLocation": true
+}

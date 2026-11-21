@@ -1,0 +1,12 @@
+{
+  "id": "osong-eup",
+  "name": "Osong-eup",
+  "description": "",
+  "parent": "",
+  "city": "Cheongju",
+  "state": "Chungcheongbuk-do",
+  "country": "South Korea",
+  "latitude": 36.613134,
+  "longitude": 127.336129,
+  "exactLocation": true
+}

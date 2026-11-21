@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 14:46:57",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Matsue Castle",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["lanterns", "art-installations", "path", "patterns"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "matsue-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

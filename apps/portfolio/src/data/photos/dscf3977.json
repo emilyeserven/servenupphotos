@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 11:50:03",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Matsue Castle",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["lanterns", "promenade", "path", "fences", "trees"],
-  "genres": [],
-  "places": [],
+  "genres": ["street", "architecture"],
+  "places": [
+    {
+      "relation": "near",
+      "id": "matsue-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

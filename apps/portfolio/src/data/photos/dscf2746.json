@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 10:33:00",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Senge Kokusokan",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["shimenawa", "shinto", "shrine", "walls", "pedestrians"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "street"],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "senge-kokusokan"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

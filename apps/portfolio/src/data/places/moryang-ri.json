@@ -1,0 +1,12 @@
+{
+  "id": "moryang-ri",
+  "name": "Moryang-ri",
+  "description": "",
+  "parent": "",
+  "city": "Gyeongju",
+  "state": "Gyeongsangbuk-do",
+  "country": "South Korea",
+  "latitude": 35.815886,
+  "longitude": 129.108278,
+  "exactLocation": true
+}

@@ -1,11 +1,11 @@
 {
-  "id": 854,
-  "title": null,
+  "title": "Lotus & Luck",
   "comment": null,
+  "id": 854,
   "altText": null,
   "notes": "Shows a carved lotus; 'lotus' isn't a tag, since only 1 photo has one.",
   "file": "DSCF7330.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T00:30:00Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 10,
@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:20 14:11:03",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Seokbulsa Temple",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["buddhism", "hanja", "carvings", "wood", "temple"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "seokbulsa-temple"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

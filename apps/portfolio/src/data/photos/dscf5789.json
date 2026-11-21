@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:28 10:04:28",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Matsue Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["framing", "windows", "city", "road", "traffic"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "from",
+      "id": "matsue-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

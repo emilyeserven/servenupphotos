@@ -1,11 +1,11 @@
 {
-  "id": 858,
-  "title": null,
+  "title": "Double Dragons at the Tower",
   "comment": null,
+  "id": 858,
   "altText": null,
   "notes": null,
   "file": "DSCF7348.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T00:30:41Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 6.4,
@@ -13,10 +13,10 @@
   "iso": 125,
   "focalLength": 135,
   "gpsPosition": "35 deg 13' 15.76\" N, 129 deg 2' 57.15\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "35.221506, 129.048993",
   "createDate": "2026:09:20 14:14:24",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Seokbulsa Temple",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["buddhism", "carvings", "walls", "temple"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "seokbulsa-temple"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

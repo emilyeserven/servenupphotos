@@ -1,0 +1,12 @@
+{
+  "id": "pedestrian-bridge-in-front-of-crown-hotel",
+  "name": "Pedestrian Bridge in Front of Crown Hotel",
+  "description": "",
+  "parent": "itaewon",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.530422,
+  "longitude": 126.991094,
+  "exactLocation": true
+}

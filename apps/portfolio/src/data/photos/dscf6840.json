@@ -16,7 +16,7 @@
   "customGpsPosition": "36.613134, 127.336129",
   "createDate": "2026:09:20 08:48:04",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Osong-eup",
   "customCity": "Cheongju",
   "customState": "Chungcheongbuk-do",
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["railway", "columns", "farm", "trees", "shadows"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "osong-eup"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

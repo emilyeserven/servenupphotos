@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 11:26:43",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Horikawa Moat",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["pine-trees", "moat", "houses", "reflections"],
-  "genres": [],
-  "places": [],
+  "genres": ["landscape", "architecture"],
+  "places": [
+    {
+      "relation": "on",
+      "id": "horikawa-moat"
+    },
+    {
+      "relation": "in",
+      "id": "matsue-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

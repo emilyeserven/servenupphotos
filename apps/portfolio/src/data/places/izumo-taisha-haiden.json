@@ -1,0 +1,12 @@
+{
+  "id": "izumo-taisha-haiden",
+  "name": "Izumo Taisha Haiden",
+  "description": "",
+  "parent": "izumo-shrine",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.401064,
+  "longitude": 132.685153,
+  "exactLocation": true
+}

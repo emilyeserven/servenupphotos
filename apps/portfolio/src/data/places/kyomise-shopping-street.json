@@ -1,0 +1,12 @@
+{
+  "id": "kyomise-shopping-street",
+  "name": "Kyomise Shopping Street",
+  "description": "",
+  "parent": "",
+  "city": "Matsue",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.469975,
+  "longitude": 133.053625,
+  "exactLocation": true
+}

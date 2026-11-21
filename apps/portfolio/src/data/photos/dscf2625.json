@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 09:33:14",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Izumo Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["shinto", "figurines", "monuments", "stones"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

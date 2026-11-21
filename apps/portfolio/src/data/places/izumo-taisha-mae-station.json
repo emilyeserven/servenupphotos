@@ -1,0 +1,12 @@
+{
+  "id": "izumo-taisha-mae-station",
+  "name": "Izumo-Taisha-mae Station",
+  "description": "",
+  "parent": "",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.393188,
+  "longitude": 132.687066,
+  "exactLocation": true
+}

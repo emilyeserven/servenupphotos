@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:24 12:31:08",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Shizuki Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": ["wabi-sabi", "toro", "moss", "grass", "forest"],
   "genres": ["nature"],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "shizuki-shrine"
+    },
+    {
+      "relation": "in",
+      "id": "hagi-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

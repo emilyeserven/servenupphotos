@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 13:48:16",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Former Taisha Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["trains", "machinery", "vintage", "steel"],
-  "genres": [],
-  "places": [],
+  "genres": ["transportation", "abstract"],
+  "places": [
+    {
+      "relation": "at",
+      "id": "former-taisha-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:29 11:17:47",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Himeji Castle",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["tenshu", "castle", "ishigaki", "kawara", "trees"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "below",
+      "id": "himeji-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

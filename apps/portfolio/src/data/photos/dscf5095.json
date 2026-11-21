@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 18:44:31",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Matsue Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": ["shinto", "shrine", "toro", "night", "symmetry"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "matsue-shrine"
+    },
+    {
+      "relation": "in",
+      "id": "matsue-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

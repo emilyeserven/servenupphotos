@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 09:09:24",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Seidamari Torii",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": ["torii", "shinto", "sando", "silhouettes", "pine-trees"],
   "genres": ["architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "seidamari-torii"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

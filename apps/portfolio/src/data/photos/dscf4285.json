@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 12:36:44",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Horikawa Sightseeing Boat Fureai Hiroba Dock",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["sidewalk", "pedestrians", "trees", "signage"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "horikawa-sightseeing-boat-fureai-hiroba-dock"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

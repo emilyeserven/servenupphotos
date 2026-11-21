@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 09:01:15",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Seidamari Torii",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": ["toro", "fog", "mountains", "clouds"],
   "genres": ["landscape", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "seidamari-torii"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

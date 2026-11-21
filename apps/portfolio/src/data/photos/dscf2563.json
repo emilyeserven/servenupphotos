@@ -16,7 +16,7 @@
   "customGpsPosition": "35.398516, 132.68607",
   "createDate": "2026:09:26 09:24:42",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Matsu-no-Sando",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["sando", "shinto", "gates", "pine-trees", "path"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "landscape"],
+  "places": [
+    {
+      "relation": "on",
+      "id": "matsu-no-sando"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

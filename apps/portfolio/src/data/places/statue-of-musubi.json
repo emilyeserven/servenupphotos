@@ -1,0 +1,11 @@
+{
+  "id": "statue-of-musubi",
+  "name": "Statue of Musubi",
+  "description": "",
+  "parent": "izumo-shrine",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.40045,
+  "longitude": 132.68585
+}

@@ -1,0 +1,12 @@
+{
+  "id": "jicheonji-reservoir",
+  "name": "Jicheonji Reservoir",
+  "description": "",
+  "parent": "",
+  "city": "Chilgok",
+  "state": "Gyeongsangbuk-do",
+  "country": "South Korea",
+  "latitude": 35.968226,
+  "longitude": 128.485169,
+  "exactLocation": true
+}

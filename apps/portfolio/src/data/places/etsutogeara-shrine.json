@@ -1,0 +1,12 @@
+{
+  "id": "etsutogeara-shrine",
+  "name": "Etsutogeara Shrine",
+  "description": "",
+  "parent": "",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.397101,
+  "longitude": 132.682621,
+  "exactLocation": true
+}

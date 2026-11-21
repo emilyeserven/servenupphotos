@@ -1,0 +1,12 @@
+{
+  "id": "shiomi-nawate",
+  "name": "Shiomi Nawate",
+  "description": "",
+  "parent": "",
+  "city": "Matsue",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.479083,
+  "longitude": 133.048969,
+  "exactLocation": true
+}

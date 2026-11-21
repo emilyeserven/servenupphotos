@@ -1,11 +1,11 @@
 {
-  "id": 855,
-  "title": null,
+  "title": "Double Dragons",
   "comment": null,
+  "id": 855,
   "altText": null,
   "notes": "Shows a painted dragon; 'dragons' isn't a tag, since only 2 photos have one.",
   "file": "DSCF7334.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T00:30:14Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 6.4,
@@ -13,10 +13,10 @@
   "iso": 125,
   "focalLength": 30.9,
   "gpsPosition": "35 deg 13' 15.76\" N, 129 deg 2' 57.15\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "35.221178, 129.04848",
   "createDate": "2026:09:20 14:11:42",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Seokbulsa Temple",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["dancheong", "buddhism", "murals", "temple"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "seokbulsa-temple"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 11:06:22",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Izumo Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["wabi-sabi", "shinto", "shrine", "moss", "fences", "wood"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "nature"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

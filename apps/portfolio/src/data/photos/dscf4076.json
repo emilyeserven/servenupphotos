@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 12:14:09",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Horikawa Moat",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": ["moat", "houses", "grass", "reflections"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "horikawa-moat"
+    },
+    {
+      "relation": "in",
+      "id": "matsue-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

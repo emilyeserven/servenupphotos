@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 11:17:10",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Soga-no-Yashiro Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["shinto", "shrine", "forest", "stairs", "tourists"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "nature"],
+  "places": [
+    {
+      "relation": "below",
+      "id": "soga-no-yashiro-shrine"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

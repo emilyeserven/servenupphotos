@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 20:12:48",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Seoul City Wall",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["alley", "night", "string-lights", "cables", "walls", "stairs"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "seoul-city-wall"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [

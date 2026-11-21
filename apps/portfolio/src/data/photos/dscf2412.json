@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 09:05:32",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Shinmon-dori",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,16 @@
   "albums": [],
   "tags": ["torii", "shinto", "sando", "road", "mountains", "trees"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "overlooking",
+      "id": "shinmon-dori"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

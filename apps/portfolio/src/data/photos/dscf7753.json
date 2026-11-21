@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:24 18:50:37",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Pedestrian Bridge in Front of Crown Hotel",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,16 @@
   "albums": [],
   "tags": ["road", "traffic", "cars", "typography", "trees", "sidewalk", "symmetry", "city"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "pedestrian-bridge-in-front-of-crown-hotel"
+    },
+    {
+      "relation": "in",
+      "id": "itaewon"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

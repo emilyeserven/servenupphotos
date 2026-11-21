@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 10:37:17",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Izumo Taisha Kaguraden",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["shimenawa", "shide", "shinto", "rope", "texture"],
-  "genres": [],
-  "places": [],
+  "genres": ["abstract", "architecture"],
+  "places": [
+    {
+      "relation": "below",
+      "id": "izumo-taisha-kaguraden"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

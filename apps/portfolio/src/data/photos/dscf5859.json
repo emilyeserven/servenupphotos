@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:28 11:15:36",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Shoyama Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["village", "mountains", "fog", "road", "houses"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "shoyama-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

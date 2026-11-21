@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["kawara", "shinto", "shrine", "walls", "pedestrians"],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],
