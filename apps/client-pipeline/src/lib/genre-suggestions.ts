@@ -1,5 +1,5 @@
-import type { GenreNew, GenreSuggestions, GenreSuggestionsPreview } from "@/api/genre-suggestions";
 import type { BulkTagPhotoPlan } from "@/api/bulk-tags";
+import type { GenreNew, GenreSuggestions, GenreSuggestionsPreview } from "@/api/genre-suggestions";
 
 /** What the review of a Genre Suggestions answer changes; everything else is saved as suggested. */
 export interface GenreChoices {

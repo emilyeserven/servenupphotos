@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { MetaFieldInfo, MetaRange } from "@/api/metainfo";
 import { FieldLabel } from "@/components/field-label";
-import { STANDARD_STOPS } from "@/lib/meta-stops";
 import { Input } from "@/components/ui/input";
+import { STANDARD_STOPS } from "@/lib/meta-stops";
 import { type MetaValueCount, metaNumber, showRange, showValue, valuesIn } from "@/lib/meta-values";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";

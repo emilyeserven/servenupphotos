@@ -1,8 +1,8 @@
 import type { LocationPrompt } from "@/components/edit-in-flight/location-prompt";
 import { CardTitleWithHint, LabeledHint } from "@/components/field-hint";
 import { FieldSection } from "@/components/field-section";
-import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
 import { PhotoCustomGps } from "@/components/photo-custom-gps";
+import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
 import { PhotoLocationMap } from "@/components/photo-location-map";
 import { PlaceFields } from "@/components/place-fields";
 import { RegionOverrideField } from "@/components/region-override-field";

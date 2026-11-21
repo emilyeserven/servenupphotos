@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   optimisticEntry,
   entryId,
@@ -10,15 +11,15 @@ import {
 import { ErrorNote } from "@/components/error-note";
 import { FieldLabel } from "@/components/field-label";
 import { FloatingSaveButton } from "@/components/floating-save-button";
-import { PlaceAreaEditor } from "@/components/place-area-editor";
 import {
   type LocalizationDraft,
   LocalizationFields,
   useLocalizationDraft,
 } from "@/components/localization-fields";
+import { PlaceAreaEditor } from "@/components/place-area-editor";
 import { PlaceCityField } from "@/components/place-city-field";
-import { PlaceGalleryButton } from "@/components/place-gallery-link";
 import { PlaceExactLocationField } from "@/components/place-exact-location-field";
+import { PlaceGalleryButton } from "@/components/place-gallery-link";
 import { PlaceJoinFields } from "@/components/place-join-fields";
 import { RegionIcon } from "@/components/region-icon";
 import { RegionOverrideField } from "@/components/region-override-field";
@@ -35,9 +36,8 @@ import { Input } from "@/components/ui/input";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
 import { SavedInApp } from "@/components/waiting-for-commit";
-import { useState } from "react";
-import { decimalGps, gpsText, parseGps } from "@/lib/place-gps";
 import { parentOptions } from "@/lib/place-bulk";
+import { decimalGps, gpsText, parseGps } from "@/lib/place-gps";
 import { notParentsOf } from "@/lib/place-hierarchy";
 
 interface PlaceEditorProps {

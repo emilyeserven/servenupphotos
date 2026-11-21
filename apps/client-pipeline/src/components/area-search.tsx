@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { type Area, areasQuery } from "@/api/areas";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { ErrorNote } from "@/components/error-note";
 
 /** Finds an area on OpenStreetMap by name or Wikidata ID, and adds the one picked. */
 export function AreaSearch({ initial, onPick }: { initial: string; onPick: (area: Area) => void }) {

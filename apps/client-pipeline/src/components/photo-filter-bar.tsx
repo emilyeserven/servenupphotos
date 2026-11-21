@@ -3,7 +3,6 @@ import { FilterIcon, XIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { editedData } from "@/lib/undecided";
 import {
   type FilterChoice,
   type FilterKey,
@@ -15,6 +14,7 @@ import {
   matchesFilters,
   parseFilters,
 } from "@/lib/photo-data-filters";
+import { editedData } from "@/lib/undecided";
 import { cn } from "@/lib/utils";
 import { useLocalEditsStore } from "@/stores/local-edits";
 import { count } from "@portfolio/lib/words";

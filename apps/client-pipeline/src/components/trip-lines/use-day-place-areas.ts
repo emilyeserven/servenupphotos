@@ -1,8 +1,8 @@
-import { circleShape } from "@portfolio/lib/place-circle";
 import { useQueries } from "@tanstack/react-query";
 import { type PlaceArea, placeAreaQuery } from "@/api/place-areas";
 import type { AreaShape, TripFence } from "@/api/trip-lines";
 import type { TripPhoto, TripPlace } from "@/lib/trip-days";
+import { circleShape } from "@portfolio/lib/place-circle";
 
 /** The places the day's photos are at, each once, in the order first seen. */
 function placesOf(photos: TripPhoto[]): TripPlace[] {

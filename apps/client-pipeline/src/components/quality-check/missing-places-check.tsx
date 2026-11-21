@@ -2,12 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { MapPinIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PhotoRow } from "@/components/quality-check/photo-parts";
+import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import type { AutogroupPhoto } from "@/lib/compare-autogroup";
 import { type MissingPlace, type MissingPlaceReason, missingPlaces } from "@/lib/missing-places";
 import { useNoPlaceFoundStore } from "@/stores/no-place-found";
 import { count } from "@portfolio/lib/words";
-import { SectionTitle } from "@/components/section-title";
 
 /** How many photos the list shows until **Show all** is pressed. */
 const SHOWN_AT_FIRST = 30;

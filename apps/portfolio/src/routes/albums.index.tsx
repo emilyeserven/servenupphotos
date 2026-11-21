@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BookImage } from "lucide-react";
-import { PhotoLightbox } from "@/components/photo-lightbox";
 import { AlbumStrip } from "@/components/album-strip";
+import { PhotoLightbox } from "@/components/photo-lightbox";
 import { SiteHomeLink } from "@/components/site-home-link";
+import { TripStrip } from "@/components/trip-strip";
 import { coverPhotos } from "@/lib/album-layout";
 import { albums, albumShown, albumTree } from "@/lib/groups";
+import { photos as allPhotos } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { albumPhotos, newestWithImages } from "@/lib/spotlight-zones";
-import { TripStrip } from "@/components/trip-strip";
-import { photos as allPhotos } from "@/lib/photos";
-import { shownPhotos, storyDays, type TripPage, tripPages } from "@/lib/trip-pages";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
+import { shownPhotos, storyDays, type TripPage, tripPages } from "@/lib/trip-pages";
 import { EmptyNote } from "@portfolio/components/empty-note";
 
 export const Route = createFileRoute("/albums/")({

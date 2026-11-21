@@ -9,11 +9,11 @@ import {
   filterByColors,
   parseColorFilters,
 } from "@portfolio/lib/color-search";
+import { isoDate } from "@portfolio/lib/dates";
 import { albums as builtAlbums, type Group } from "@portfolio/lib/groups";
 import { FILTER_KEYS, filterCount, parseFilters } from "@portfolio/lib/photo-filters";
 import type { Photo } from "@portfolio/lib/photos";
 import { findTimelineLabel, type TimelineLabel } from "@portfolio/lib/timeline-labels";
-import { isoDate } from "@portfolio/lib/dates";
 
 /**
  * The rules only a Smart Album has, besides the Grid's filters: a timeline label whose days its

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { OptionCheckbox, OptionChoices, OptionGroup } from "@/components/view-options-button";
 import { Slider } from "@/components/ui/slider";
+import { OptionCheckbox, OptionChoices, OptionGroup } from "@/components/view-options-button";
 import { GROUPING_RANGE } from "@/lib/map-display";
 
 /** How big pins are, on the map or the Color page. */

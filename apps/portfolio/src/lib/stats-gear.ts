@@ -1,3 +1,6 @@
+import type { RangeKey } from "@portfolio/lib/camera-filters";
+import { groupTree, groupValues, type MetaGroup } from "@portfolio/lib/metadata-groups";
+import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
 import {
   type Bucket,
   bucketGroup,
@@ -6,10 +9,7 @@ import {
   type StatGroup,
   valueGroup,
 } from "@portfolio/lib/stat-groups";
-import { groupTree, groupValues, type MetaGroup } from "@portfolio/lib/metadata-groups";
 import { settingGroup } from "@portfolio/lib/stats-settings";
-import type { RangeKey } from "@portfolio/lib/camera-filters";
-import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
 
 /** What the photos have for "no camera" in place of one. */
 const UNKNOWN_CAMERA = "Unknown camera";

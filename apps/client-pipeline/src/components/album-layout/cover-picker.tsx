@@ -1,9 +1,9 @@
 import { LayoutPhotoList } from "@/components/album-layout/layout-photo";
 import { PhotoPickDialog } from "@/components/album-layout/photo-pick-dialog";
-import { photoId } from "@/lib/album-photo-order";
-import { MAX_COVERS } from "@/lib/album-layout-editor";
-import type { CombinedPhoto } from "@/lib/group-photos";
 import { SectionTitle } from "@/components/section-title";
+import { MAX_COVERS } from "@/lib/album-layout-editor";
+import { photoId } from "@/lib/album-photo-order";
+import type { CombinedPhoto } from "@/lib/group-photos";
 
 interface CoverPickerProps {
   covers: number[];

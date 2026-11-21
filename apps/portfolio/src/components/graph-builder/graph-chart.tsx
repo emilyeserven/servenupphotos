@@ -13,9 +13,9 @@ import {
   YAxis,
 } from "recharts";
 import { WithKey } from "@/components/graph-builder/graph-key";
-import { useCursorTooltip, usePieLabels } from "@/components/graph-builder/pie-parts";
 import { GraphTooltip, shortLabel } from "@/components/graph-builder/graph-parts";
 import { pickedOpacity, pickOf, useGraphPick } from "@/components/graph-builder/graph-pick-context";
+import { useCursorTooltip, usePieLabels } from "@/components/graph-builder/pie-parts";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { formatValue, type GraphData, type Measure, seriesColor } from "@/lib/graph-data";
 

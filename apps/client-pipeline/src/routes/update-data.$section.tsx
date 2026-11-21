@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { SectionCard } from "@/components/update-data/sections-layout";
 import { movedSections, updateDataSections } from "@/components/update-data/sections";
+import { SectionCard } from "@/components/update-data/sections-layout";
 
 export const Route = createFileRoute("/update-data/$section")({
   // Subpages that moved, such as Tag library to Tag Data, open where they are now.

@@ -3,9 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { settingsQuery } from "@/api/settings";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
+import { ChromeExtensionCard } from "@/components/settings/chrome-extension-card";
 import { SECTIONS } from "@/components/settings/sections";
 import { SettingsCard } from "@/components/settings/settings-card";
-import { ChromeExtensionCard } from "@/components/settings/chrome-extension-card";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,

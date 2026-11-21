@@ -3,6 +3,8 @@ import { useState } from "react";
 import { type Group, organizeQuery } from "@/api/organize";
 import type { CombinedData } from "@/api/photos";
 import { bulkTagCount, PickCount } from "@/components/bulk-tagging/pick-count";
+import { ErrorNote } from "@/components/error-note";
+import { ReadingNote } from "@/components/query-result";
 import { TagDescriptionBatch } from "@/components/tag-descriptions/tag-description-batch";
 import {
   type SaveDescriptions,
@@ -10,12 +12,10 @@ import {
 } from "@/components/tag-descriptions/tag-description-review";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ReadingNote } from "@/components/query-result";
 import { CommitSuccess } from "@/components/update-data-shared";
 import { currentPhotos } from "@/lib/group-photos";
 import { tagsToDescribe } from "@/lib/tag-description-prompt";
 import { useCombinedData } from "@/stores/combined-data";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
 
 /** How many tags a batch has until another number is chosen. */

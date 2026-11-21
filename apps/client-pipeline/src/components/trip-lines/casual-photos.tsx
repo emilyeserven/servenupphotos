@@ -1,4 +1,3 @@
-import { shownImageUrl } from "@/lib/face-json";
 import { useQuery } from "@tanstack/react-query";
 import { ImagePlus, X } from "lucide-react";
 import { useMemo } from "react";
@@ -12,6 +11,7 @@ import type { TripVisit } from "@/api/trip-lines";
 import { galleryFiles, isListable } from "@/components/gallery/gallery-files";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { shownImageUrl } from "@/lib/face-json";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
 /** The JSON field marking a casual photo: `true`, or left out when it isn't one. */

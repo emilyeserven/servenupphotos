@@ -1,9 +1,9 @@
 import { CartesianGrid, Cell, Scatter, ScatterChart, XAxis, YAxis, ZAxis } from "recharts";
 import { hovered, shortLabel, TOOLTIP_CLASS } from "@/components/graph-builder/graph-parts";
 import { useGraphPick } from "@/components/graph-builder/graph-pick-context";
-import type { GraphPick } from "@/lib/graph-pick";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { formatValue, type Measure, type ScatterData, type ScatterPoint } from "@/lib/graph-data";
+import type { GraphPick } from "@/lib/graph-pick";
 
 /** The places of an axis's values, 0 up, for its ticks. */
 function places(labels: string[]): number[] {

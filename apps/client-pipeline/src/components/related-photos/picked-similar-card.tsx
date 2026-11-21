@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { useSavedPhotos } from "@/components/saved-photo-picker";
+import { ReadingNote } from "@/components/query-result";
 import { PickedSimilarFields } from "@/components/related-photos/picked-similar-fields";
 import { foundIds, type Pick, photosById, savedPhotoId } from "@/components/related-photos/picks";
+import { useSavedPhotos } from "@/components/saved-photo-picker";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ReadingNote } from "@/components/query-result";
 
 interface PickedSimilarCardProps {
   /** The photo's JSON as last saved, for its ID and the related photos found for it. */

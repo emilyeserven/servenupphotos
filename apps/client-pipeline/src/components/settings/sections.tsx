@@ -5,8 +5,8 @@ import {
   type SettingsSection,
   testSettings,
 } from "@/api/settings";
-import { GitHubTokenHelp, R2TokenHelp } from "@/components/settings/token-help";
 import { type SwitchConfig } from "@/components/settings-switch";
+import { GitHubTokenHelp, R2TokenHelp } from "@/components/settings/token-help";
 
 /** One text setting on a Settings card. */
 export interface FieldConfig {

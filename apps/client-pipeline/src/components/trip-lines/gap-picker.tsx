@@ -1,5 +1,5 @@
-import { END_GAP, type Gap } from "@/lib/trip-gaps";
 import { GAPS, gapInfo } from "@/components/trip-lines/modes";
+import { END_GAP, type Gap } from "@/lib/trip-gaps";
 import { cn } from "@/lib/utils";
 
 /** The ways the day can go from its start to the first photo, or from the last photo to its end. */

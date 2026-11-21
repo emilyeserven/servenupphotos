@@ -22,18 +22,18 @@ import {
   savedDetails,
   withDetails,
 } from "@/components/photo-details";
-import { canonicalJson } from "@/lib/combined";
-import { type Crop, sameCrop } from "@/lib/crop";
-import { type ReEditDraft, reEditChanged, withReEdit } from "@/lib/re-edit";
 import {
   picksChanged,
   type Pick,
   savedPicks,
   withPickedSimilar,
 } from "@/components/related-photos/picks";
-import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
+import { canonicalJson } from "@/lib/combined";
+import { type Crop, sameCrop } from "@/lib/crop";
 import { jsonFileName } from "@/lib/file-name";
 import { UNDECIDED } from "@/lib/photo-fields";
+import { type ReEditDraft, reEditChanged, withReEdit } from "@/lib/re-edit";
+import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
 import { isObject } from "@portfolio/lib/values";
 
 /**

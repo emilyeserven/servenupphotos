@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
-import { PasteAnswer, UnknownPhotos } from "@/components/paste-answer";
 import { ContactSheetsButton, useContactSheets } from "@/components/contact-sheets-button";
+import { PasteAnswer, UnknownPhotos } from "@/components/paste-answer";
 import { type FlagItem, FlagList } from "@/components/quality-check/flag-list";
+import { SectionTitle } from "@/components/section-title";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { type AutogroupPhoto, autogroupSheetPhotos } from "@/lib/compare-autogroup";
 import {
@@ -11,7 +12,6 @@ import {
   readPixelationAnswer,
 } from "@/lib/pixelation-prompt";
 import { count } from "@portfolio/lib/words";
-import { SectionTitle } from "@/components/section-title";
 
 /**
  * The flagged photos as rows of the list to flag, each with the photo as it is now in `photos`, so

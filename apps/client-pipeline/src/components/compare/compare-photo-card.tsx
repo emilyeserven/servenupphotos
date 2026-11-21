@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { ImageOffIcon, PencilIcon, TrophyIcon, XIcon } from "lucide-react";
 import { useState } from "react";
-import { DraftMark } from "@/components/draft-mark";
-import { FallbackImage } from "@/components/fallback-image";
 import { LowerTierButton } from "@/components/compare/lower-tier-button";
 import { WinnerButton } from "@/components/compare/winner-button";
+import { DraftMark } from "@/components/draft-mark";
+import { FallbackImage } from "@/components/fallback-image";
 import { LowerTierMark } from "@/components/lower-tier";
 import { Button } from "@/components/ui/button";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
@@ -15,10 +15,10 @@ import {
   isWinner,
 } from "@/lib/compare-groups";
 import { offlineSmallUrl } from "@/lib/offline-thumbnails";
-import { SETTING_FORMATS } from "@portfolio/lib/photo-settings";
 import { readableDate } from "@/lib/photo-date";
-import { cn } from "@/lib/utils";
 import { CREATE_DATE, CUSTOM_DATE } from "@/lib/photo-fields";
+import { cn } from "@/lib/utils";
+import { SETTING_FORMATS } from "@portfolio/lib/photo-settings";
 
 /**
  * One photo of a compare group: large, with what it was taken with, Pick as winner and Lower Tier.

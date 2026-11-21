@@ -1,9 +1,9 @@
 import { mutationOptions } from "@tanstack/react-query";
-import type { GearBox, GearCrop, GearFile, GearKind } from "@portfolio/lib/gear-pictures";
 import { settingEntries, settingMutations } from "@/api/data-files";
 import { entryId } from "@/api/places";
 import { post, requestJson } from "@/api/request";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import type { GearBox, GearCrop, GearFile, GearKind } from "@portfolio/lib/gear-pictures";
 
 function isGearFile(value: unknown): value is GearFile {
   const file = value as Partial<GearFile> | null;

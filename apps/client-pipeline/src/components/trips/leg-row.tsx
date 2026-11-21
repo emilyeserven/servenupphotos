@@ -1,4 +1,3 @@
-import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 import { X } from "lucide-react";
 import type { Spot } from "@/api/transit";
 import type { LegMode, TripLeg } from "@/api/trips";
@@ -6,8 +5,9 @@ import { LegEndField } from "@/components/trips/leg-end";
 import { LegRoute } from "@/components/trips/leg-route";
 import { Button } from "@/components/ui/button";
 import type { TripDay } from "@/lib/trip-days";
-import { distanceKm } from "@portfolio/lib/distance";
 import { dayPhotos, endPhoto, endPosition, endSpot, withLegEnd } from "@/lib/trip-legs";
+import { distanceKm } from "@portfolio/lib/distance";
+import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 
 /** The ways a leg can be travelled, as the menu lists them. */
 const LEG_MODES: { mode: LegMode; label: string }[] = [

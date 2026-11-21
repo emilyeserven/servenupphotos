@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { GearKind } from "@portfolio/lib/gear-pictures";
 import { gearFiles, type GearRow, gearRows } from "@/api/gear";
 import type { CombinedData } from "@/api/photos";
 import { GearCropCard } from "@/components/gear-pictures/crop-card";
@@ -7,10 +6,11 @@ import { GearEditor } from "@/components/gear-pictures/editor";
 import { GearList } from "@/components/gear-pictures/gear-list";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
+import { QueryResult } from "@/components/query-result";
 import { shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
-import { QueryResult } from "@/components/query-result";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import type { GearKind } from "@portfolio/lib/gear-pictures";
 
 /** The Gear Pictures page: a picture and a few words for each camera and lens. */
 export function GearPicturesPage() {

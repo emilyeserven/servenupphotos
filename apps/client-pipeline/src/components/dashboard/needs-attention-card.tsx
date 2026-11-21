@@ -20,12 +20,12 @@ import {
   photoProblems,
 } from "@/lib/needs-attention";
 import { type StaleTripLine, staleTripLines } from "@/lib/stale-trip-lines";
-import { useNoPlaceFoundStore } from "@/stores/no-place-found";
 import {
   useChangedPhotoFiles,
   useCombinedData,
   useCombinedDataStore,
 } from "@/stores/combined-data";
+import { useNoPlaceFoundStore } from "@/stores/no-place-found";
 import { count } from "@portfolio/lib/words";
 
 /** What each photo problem says, and the page that fixes it. */

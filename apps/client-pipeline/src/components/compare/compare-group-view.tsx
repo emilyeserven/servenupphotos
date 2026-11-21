@@ -5,11 +5,11 @@ import { type CompareRead, ReadProblems } from "@/components/compare/compare-gro
 import { CompareLightbox } from "@/components/compare/compare-lightbox";
 import { ComparePhotoCard } from "@/components/compare/compare-photo-card";
 import { FinishComparing } from "@/components/compare/finish-comparing";
+import { ReadingNote } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type CompareGroup, photoNames, winnersOf } from "@/lib/compare-groups";
 import { cn } from "@/lib/utils";
-import { ReadingNote } from "@/components/query-result";
 import { count } from "@portfolio/lib/words";
 
 /** Columns for a group of two, or three for a larger one, so photos sit side by side. */

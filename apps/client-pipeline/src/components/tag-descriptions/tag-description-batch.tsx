@@ -1,10 +1,10 @@
 import type { Group } from "@/api/organize";
 import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
+import { PasteAnswer } from "@/components/paste-answer";
 import {
   type SaveDescriptions,
   TagDescriptionReview,
 } from "@/components/tag-descriptions/tag-description-review";
-import { PasteAnswer } from "@/components/paste-answer";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { readTagDescriptions, tagDescriptionPrompt } from "@/lib/tag-description-prompt";

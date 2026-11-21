@@ -8,6 +8,7 @@ import {
   deleteBucketImagesMutation,
 } from "@/api/photos";
 import type { PhotoState } from "@/components/bucket-filters";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,7 +20,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
 
 interface DeleteImageProps {
   image: BucketImage;

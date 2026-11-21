@@ -1,13 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { CircleHelpIcon, ImageIcon, PencilIcon, Undo2Icon } from "lucide-react";
 import type { InFlightFileRead, InFlightImages } from "@/api/photos";
-import { SeeInGallery } from "@/components/gallery/see-in-gallery";
-import { CompareButton } from "@/components/compare/compare-button";
 import { CollapsiblePanel } from "@/components/collapsible-panel";
+import { CompareButton } from "@/components/compare/compare-button";
+import { SeeInGallery } from "@/components/gallery/see-in-gallery";
 import { Button } from "@/components/ui/button";
 import { squareImages } from "@/lib/offline-thumbnails";
-import { useLocalEditsStore } from "@/stores/local-edits";
 import { UNDECIDED } from "@/lib/photo-fields";
+import { useLocalEditsStore } from "@/stores/local-edits";
 import { count } from "@portfolio/lib/words";
 
 /** A photo file the Undecided mark is set on. */

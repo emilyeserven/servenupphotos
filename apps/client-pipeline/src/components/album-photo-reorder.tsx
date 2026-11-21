@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { GripVerticalIcon, ImageOffIcon } from "lucide-react";
 import { useState } from "react";
 import { type Group, organizeQuery, setAlbumPhotoOrderMutation } from "@/api/organize";
+import { ErrorNote } from "@/components/error-note";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
 import { MoveArrows } from "@/components/move-arrows";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,6 @@ import { type DragOrder, useDragOrder } from "@/hooks/use-drag-order";
 import { albumPhotoOrder, moved, photoId, savedPhotoOrder } from "@/lib/album-photo-order";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { cn } from "@/lib/utils";
-import { ErrorNote } from "@/components/error-note";
 
 interface AlbumPhotoReorderProps {
   album: Group;

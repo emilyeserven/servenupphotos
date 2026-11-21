@@ -1,6 +1,3 @@
-import { MAP_STYLES, useIsDark } from "@portfolio/lib/map-theme";
-import { withLanes } from "@portfolio/lib/trip-lanes";
-import { tripLineLayers } from "@portfolio/lib/trip-line-layers";
 import {
   Layer,
   Map,
@@ -10,12 +7,15 @@ import {
   type LayerProps,
 } from "@vis.gl/react-maplibre";
 import { setWorkerUrl } from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import type { Trip } from "@/api/trips";
 import { PipelineCoordinatesMenu } from "@/components/map-coordinates";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { type TripMapDays, tripMapData, tripMapPoints } from "@/lib/trip-map";
 import { weekdayDate } from "@portfolio/lib/dates";
+import { MAP_STYLES, useIsDark } from "@portfolio/lib/map-theme";
+import { withLanes } from "@portfolio/lib/trip-lanes";
+import { tripLineLayers } from "@portfolio/lib/trip-line-layers";
 
 setWorkerUrl(maplibreWorkerUrl);
 

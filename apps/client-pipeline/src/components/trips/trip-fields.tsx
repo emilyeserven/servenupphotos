@@ -1,6 +1,6 @@
 import type { Trip } from "@/api/trips";
-import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/date-picker";
+import { Input } from "@/components/ui/input";
 
 /** A Trip's name, as the Timeline shows it, and its first and last days. */
 export function TripFields({ trip, onChange }: { trip: Trip; onChange: (trip: Trip) => void }) {

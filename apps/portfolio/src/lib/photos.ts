@@ -1,5 +1,6 @@
 import committedData from "@portfolio/data/photos/ALLPHOTOS.json";
 import type { Group } from "@portfolio/lib/groups";
+import { shownTiers } from "@portfolio/lib/lower-tier";
 import {
   type ColorShare,
   type PhotoColorData,
@@ -22,15 +23,14 @@ import {
   withCityCountries,
 } from "@portfolio/lib/photo-places";
 import { type CameraSettings, cameraSettings } from "@portfolio/lib/photo-settings";
+import { relatedPhotos, type RelatedPhoto } from "@portfolio/lib/related-photos";
 import { withSmartAlbums } from "@portfolio/lib/smart-albums";
+import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 import {
   type OriginalCrop,
   type OriginalEntry,
   publicOriginal,
 } from "@portfolio/lib/unedited-original";
-import { relatedPhotos, type RelatedPhoto } from "@portfolio/lib/related-photos";
-import { shownTiers } from "@portfolio/lib/lower-tier";
-import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 
 export type { PhotoImage } from "@portfolio/lib/photo-image";
 export type {

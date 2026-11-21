@@ -1,6 +1,6 @@
 import { canonicalJson } from "@/lib/combined";
-import { isObject, stringOf } from "@portfolio/lib/values";
 import { isoDate } from "@portfolio/lib/dates";
+import { isObject, stringOf } from "@portfolio/lib/values";
 
 /** The photo JSON field that lists the photo's posts on social media. */
 const SOCIAL_POSTS = "socialPosts";

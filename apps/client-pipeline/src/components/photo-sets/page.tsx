@@ -1,14 +1,14 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import type { PhotoSet } from "@portfolio/lib/photo-sets";
 import { photoSetFiles } from "@/api/photo-sets";
+import type { SocialPhoto } from "@/api/publish";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { DecidedPhotoFiles } from "@/components/photo-files";
-import { QueryResult } from "@/components/query-result";
 import { SetChooser } from "@/components/photo-sets/set-chooser";
 import { SetEditor } from "@/components/photo-sets/set-editor";
-import type { SocialPhoto } from "@/api/publish";
+import { QueryResult } from "@/components/query-result";
 import { useCombinedData } from "@/stores/combined-data";
+import type { PhotoSet } from "@portfolio/lib/photo-sets";
 
 /**
  * The Photo Sets page, under Organize: photos the portfolio's map always keeps together as one

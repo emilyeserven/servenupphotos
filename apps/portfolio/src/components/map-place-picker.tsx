@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { locationOptions } from "@/lib/filter-options";
 import type { MapDisplay } from "@/lib/map-display";
-import { hiddenText } from "@/lib/map-trips";
 import type { PlacedPhoto } from "@/lib/map-photos";
+import { hiddenText } from "@/lib/map-trips";
 import { filterPhotos, locationFilters } from "@/lib/photo-filters";
 
 /** The Places menu's tabs: going to a country's places, or each Trip's trip lines. */

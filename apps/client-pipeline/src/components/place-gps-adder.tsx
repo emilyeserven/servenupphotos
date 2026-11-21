@@ -2,11 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LocateFixedIcon } from "lucide-react";
 import { useState } from "react";
 import { optimisticEntry, type PhotoPlace, type Place, savePlaceMutation } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { decimalGps, gpsSource, parseGps } from "@/lib/place-gps";
-import { ErrorNote } from "@/components/error-note";
 
 interface PlaceGpsAddersProps {
   /** The photo's places, in order. */

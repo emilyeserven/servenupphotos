@@ -1,6 +1,8 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { ChevronRightIcon } from "lucide-react";
 import { Fragment, useState } from "react";
+import { NavFlyout, SubmenuHeading } from "@/components/sidebar/nav-flyout";
+import { isUnder, isWithin, pagePath, type NavPage } from "@/components/sidebar/nav-groups";
 import {
   SidebarMenuAction,
   SidebarMenuButton,
@@ -10,8 +12,6 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { NavFlyout, SubmenuHeading } from "@/components/sidebar/nav-flyout";
-import { isUnder, isWithin, pagePath, type NavPage } from "@/components/sidebar/nav-groups";
 import { cn } from "@/lib/utils";
 
 interface NavItemProps {

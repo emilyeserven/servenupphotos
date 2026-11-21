@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { AxisSelect as AxisPicker } from "@/components/graph-builder/axis-select";
-import { KeyRow } from "@/components/graph-builder/graph-key";
 import type { ConfigChange } from "@/components/graph-builder/graph-controls";
 import { StatOptions } from "@/components/graph-builder/graph-field";
+import { KeyRow } from "@/components/graph-builder/graph-key";
 import { PartsButtons } from "@/components/graph-builder/parts-buttons";
 import { SplitPicker } from "@/components/graph-builder/split-picker";
 import { type GraphConfig, hasYStat, type Measure, SPLIT_TYPES } from "@/lib/graph-data";

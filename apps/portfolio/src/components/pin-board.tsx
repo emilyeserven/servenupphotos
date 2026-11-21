@@ -2,10 +2,11 @@ import { type CSSProperties, type ReactNode, useMemo } from "react";
 import { MarkerPin, type PinPhoto } from "@/components/marker-pin";
 import { WheelMinimap } from "@/components/wheel-minimap";
 import { WheelZoomControls } from "@/components/wheel-zoom-controls";
-import type { KeepInside, WheelPoint } from "@/lib/color-wheel";
 import type { ColorDisplay } from "@/lib/color-display";
+import type { KeepInside, WheelPoint } from "@/lib/color-wheel";
 import { clusterSpan, pinMarkers } from "@/lib/pin-markers";
 import { pinFactor } from "@/lib/pin-scale";
+import { useSize } from "@/lib/use-size";
 import {
   centerOn,
   MAX_ZOOM,
@@ -14,9 +15,8 @@ import {
   type WheelView,
   zoomAt,
 } from "@/lib/use-wheel-zoom";
-import type { WheelMarker } from "@/lib/wheel-clusters";
-import { useSize } from "@/lib/use-size";
 import { cn } from "@/lib/utils";
+import type { WheelMarker } from "@/lib/wheel-clusters";
 
 /** The board's top fading in from transparent, as a mask. */
 const TOP_FADE = "linear-gradient(to bottom, transparent, black 3rem)";

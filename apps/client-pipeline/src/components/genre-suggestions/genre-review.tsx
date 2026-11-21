@@ -6,12 +6,12 @@ import {
   applyGenreSuggestionsMutation,
 } from "@/api/genre-suggestions";
 import { type Group, organizeQuery } from "@/api/organize";
-import { NewGenreList } from "@/components/genre-suggestions/new-genre-list";
 import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
-import { UnknownPhotos } from "@/components/paste-answer";
+import { NewGenreList } from "@/components/genre-suggestions/new-genre-list";
 import { type GenreOption, PhotoGenreRow } from "@/components/genre-suggestions/photo-genre-row";
-import { type GenreChoices, NO_GENRE_CHOICES, genresToSave } from "@/lib/genre-suggestions";
+import { UnknownPhotos } from "@/components/paste-answer";
 import { withOthers } from "@/lib/answered-photos";
+import { type GenreChoices, NO_GENRE_CHOICES, genresToSave } from "@/lib/genre-suggestions";
 import { count } from "@portfolio/lib/words";
 
 interface GenreReviewProps {

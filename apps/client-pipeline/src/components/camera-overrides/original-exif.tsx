@@ -9,12 +9,12 @@ import {
 } from "@/api/cameras";
 import { bucketExifMutation } from "@/api/photos";
 import { showValue } from "@/components/camera-overrides/rule-card";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { exifValue } from "@/lib/camera-overrides";
 import type { CombinedPhoto } from "@/lib/group-photos";
-import { ErrorNote } from "@/components/error-note";
 
 /** EXIF tags about the camera, lens and settings, which the list shows unless asked for all. */
 const CAMERA_TAG = /make|model|lens|focal|camera|aperture|fnumber|serial|mount|adapter/i;

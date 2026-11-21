@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { GenreCrumbs } from "@/components/sidebar/route-crumbs";
 import { GroupDetailPage } from "@/components/group-detail";
+import { GenreCrumbs } from "@/components/sidebar/route-crumbs";
 
 export const Route = createFileRoute("/genres/$id")({
   component: GenreDetailPage,

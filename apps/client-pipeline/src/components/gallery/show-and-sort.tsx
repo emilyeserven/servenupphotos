@@ -1,6 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { GalleryFile, PhotoKind } from "@/components/gallery/gallery-files";
-import { type ShowSearch, shownKinds } from "@/lib/gallery-show";
 import {
   ORDER_LABELS,
   type PhotoSort,
@@ -8,6 +7,7 @@ import {
   type SortOrder,
 } from "@/components/gallery/photo-sort";
 import { FilterToggle, type ToggleChoices } from "@/components/photo-filter-bar";
+import { type ShowSearch, shownKinds } from "@/lib/gallery-show";
 import { cn } from "@/lib/utils";
 
 /** Changes some of the Gallery's search params, keeping the page where it's scrolled to. */

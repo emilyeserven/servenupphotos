@@ -1,15 +1,15 @@
 import { ChevronsUpDown, MapPin } from "lucide-react";
+import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
 import { PlacesPanel } from "@portfolio/components/place-columns";
 import { useScriptDisplay } from "@portfolio/components/script-display-provider";
-import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
+import { TruncatedText } from "@portfolio/components/truncated-text";
 import { Button } from "@portfolio/components/ui/button";
 import { Popover, PopoverTrigger } from "@portfolio/components/ui/popover";
 import type { LocationOption } from "@portfolio/lib/filter-options";
-import { NO_STATE } from "@portfolio/lib/photo-filters";
 import type { ScriptDisplay } from "@portfolio/lib/localize";
+import { NO_STATE } from "@portfolio/lib/photo-filters";
 import { everyOption, valueOf } from "@portfolio/lib/place-tree";
 import { cn } from "@portfolio/lib/utils";
-import { TruncatedText } from "@portfolio/components/truncated-text";
 
 /** What the button says: "All places", the one place's name, or how many are chosen. */
 function buttonText(options: LocationOption[], selected: string[], script: ScriptDisplay): string {

@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { CloudDownloadIcon } from "lucide-react";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { offlineXSmallUrl } from "@/lib/offline-thumbnails";
-import { ErrorNote } from "@/components/error-note";
 
 /** How many X-Small versions are asked for at once. */
 const AT_ONCE = 4;

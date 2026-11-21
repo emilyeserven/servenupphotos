@@ -1,4 +1,3 @@
-import { shownImageUrl } from "@/lib/face-json";
 import { Link } from "@tanstack/react-router";
 import { CircleMinusIcon, ImageOffIcon, PencilIcon } from "lucide-react";
 import { useState } from "react";
@@ -10,18 +9,19 @@ import { FallbackImage } from "@/components/fallback-image";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { fileName } from "@/components/in-flight-checks";
 import { AllPhotosMark, FileJson } from "@/components/in-flight-file-json";
-import { FileLink, FileStatus } from "@/components/in-flight-pending";
-import { ReEditMark } from "@/components/re-edit-card";
-import { LowerTierMark } from "@/components/lower-tier";
 import { ReEditButton } from "@/components/in-flight-page/re-edit-button";
+import { FileLink, FileStatus } from "@/components/in-flight-pending";
+import { LowerTierMark } from "@/components/lower-tier";
+import { ReEditMark } from "@/components/re-edit-card";
 import { RemoveFile } from "@/components/remove-in-flight-file";
+import { SectionTitle } from "@/components/section-title";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
 import { Button } from "@/components/ui/button";
 import { MoveToUndecided } from "@/components/undecided-photos";
+import { shownImageUrl } from "@/lib/face-json";
 import { offlineSmallUrl, squareImages } from "@/lib/offline-thumbnails";
 import { savedTitle } from "@/lib/untitled-photos";
 import { cn } from "@/lib/utils";
-import { SectionTitle } from "@/components/section-title";
 
 /** One photo in flight: its title row with its marks and actions, then its image beside its JSON. */
 export function FileSection({

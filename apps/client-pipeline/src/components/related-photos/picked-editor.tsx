@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { SaveIcon } from "lucide-react";
 import { useState } from "react";
 import { setPickedSimilarMutation } from "@/api/related-photos";
-import type { SavedPhoto } from "@/components/saved-photo-picker";
+import { ErrorNote } from "@/components/error-note";
 import { PickedSimilarFields } from "@/components/related-photos/picked-similar-fields";
 import {
   foundIds,
@@ -12,9 +12,9 @@ import {
   savedPhotoId,
   savedPicks,
 } from "@/components/related-photos/picks";
+import type { SavedPhoto } from "@/components/saved-photo-picker";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { ErrorNote } from "@/components/error-note";
 import { SavedInApp } from "@/components/waiting-for-commit";
 
 interface PickedEditorProps {

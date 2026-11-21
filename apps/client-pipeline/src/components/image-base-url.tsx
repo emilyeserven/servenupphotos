@@ -8,18 +8,18 @@ import {
   baseUrlPreviewQuery,
   replaceBaseUrlMutation,
 } from "@/api/data";
+import { ErrorNote } from "@/components/error-note";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { count } from "@portfolio/lib/words";
 import {
   CommitSuccess,
   PreviewDestination,
   SaveButton,
   Unreadable,
 } from "@/components/update-data-shared";
-import { ErrorNote } from "@/components/error-note";
+import { count } from "@portfolio/lib/words";
 
 /** Trims a base URL and its trailing slashes, as the backend does. */
 function cleanBaseUrl(value: string): string {

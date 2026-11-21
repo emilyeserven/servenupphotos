@@ -1,12 +1,12 @@
-import { MAP_STYLES, useIsDark } from "@portfolio/lib/map-theme";
 import { Map, Marker, NavigationControl, useMap } from "@vis.gl/react-maplibre";
 import { setWorkerUrl } from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect } from "react";
 import { PipelineCoordinatesMenu } from "@/components/map-coordinates";
 import { Button } from "@/components/ui/button";
 import { gpsText, writtenPosition } from "@/lib/place-gps";
+import { MAP_STYLES, useIsDark } from "@portfolio/lib/map-theme";
 
 setWorkerUrl(maplibreWorkerUrl);
 

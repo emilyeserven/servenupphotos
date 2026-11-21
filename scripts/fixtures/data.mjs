@@ -1,14 +1,3 @@
-// Sample answers for the routes in routes_data.go.
-import {
-  CDN,
-  FOLDER,
-  PULL_REQUEST,
-  REPO,
-  added,
-  headPhotos,
-  headPlaces,
-  pendingSave,
-} from "./shared.mjs";
 import {
   albumPick,
   albumSuggestionsPreview,
@@ -28,6 +17,17 @@ import {
   tagLibraryExport,
   tagLibraryPreview,
 } from "./data-helpers.mjs";
+// Sample answers for the routes in routes_data.go.
+import {
+  CDN,
+  FOLDER,
+  PULL_REQUEST,
+  REPO,
+  added,
+  headPhotos,
+  headPlaces,
+  pendingSave,
+} from "./shared.mjs";
 
 /** The sample answers for the data routes, keyed "METHOD /api/path". */
 export function dataFixtures() {

@@ -8,9 +8,9 @@ import {
   savePlaceAreaMutation,
 } from "@/api/place-areas";
 import { AreaSearch } from "@/components/area-search";
-import { Button } from "@/components/ui/button";
-import { SectionTitle } from "@/components/section-title";
 import { ErrorNote } from "@/components/error-note";
+import { SectionTitle } from "@/components/section-title";
+import { Button } from "@/components/ui/button";
 
 /** How many points an outline has. */
 function pointCount(area: PlaceArea): number {

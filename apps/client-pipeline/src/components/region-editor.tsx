@@ -2,17 +2,17 @@ import { Link } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import type { Localization, LocalizationType } from "@/api/places";
 import { localizationId } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
+import { FloatingSaveButton } from "@/components/floating-save-button";
 import {
   type LocalizationDraft,
   LocalizationFields,
   useLocalizationDraft,
 } from "@/components/localization-fields";
-import { ErrorNote } from "@/components/error-note";
-import { FloatingSaveButton } from "@/components/floating-save-button";
 import { OtherNamesField } from "@/components/other-names-field";
 import { RegionIcon } from "@/components/region-icon";
-import { NO_WHERE, type RegionWhere, RegionWhereFields } from "@/components/region-where-fields";
 import type { RegionListData } from "@/components/region-list";
+import { NO_WHERE, type RegionWhere, RegionWhereFields } from "@/components/region-where-fields";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";

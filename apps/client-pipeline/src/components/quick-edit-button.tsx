@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRightIcon, LinkIcon } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { quickEditTarget } from "@/lib/quick-edit";
-import { ErrorNote } from "@/components/error-note";
 
 /**
  * The sidebar's Quick Edit button, under Bulk Upload: it opens a modal to paste a link from the

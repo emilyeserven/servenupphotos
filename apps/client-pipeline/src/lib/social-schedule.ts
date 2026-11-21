@@ -1,7 +1,7 @@
 import type { SocialPhoto } from "@/api/publish";
 import { isSetAside } from "@/lib/drafts";
-import type { FieldChange, LocalEdit } from "@/stores/local-edits";
 import { PUBLISH_DATE } from "@/lib/photo-fields";
+import type { FieldChange, LocalEdit } from "@/stores/local-edits";
 
 /** The type a photo dragged between Instagram calendar days (or Social Feed tiles) carries its file path under. */
 export const PHOTO_DRAG_TYPE = "application/x-photo-path";

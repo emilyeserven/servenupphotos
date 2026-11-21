@@ -1,13 +1,13 @@
-import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 import { useState } from "react";
 import type { TripLegEnd } from "@/api/trips";
+import { ErrorNote } from "@/components/error-note";
 import { LegStation } from "@/components/trips/leg-station";
 import { PointFields } from "@/components/trips/point-fields";
 import { StationSearch } from "@/components/trips/station-search";
-import { endSpot, ridesLegLine } from "@/lib/trip-legs";
 import type { TripPhoto } from "@/lib/trip-days";
-import { ErrorNote } from "@/components/error-note";
+import { endSpot, ridesLegLine } from "@/lib/trip-legs";
 import { weekdayDate } from "@portfolio/lib/dates";
+import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 
 interface LegEndFieldProps {
   /** What the end is, such as "Leaves". */

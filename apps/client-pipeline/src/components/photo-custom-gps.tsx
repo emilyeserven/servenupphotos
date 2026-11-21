@@ -1,9 +1,9 @@
 import { useId } from "react";
-import { FieldSection } from "@/components/field-section";
+import { ErrorNote } from "@/components/error-note";
 import { FieldLabel } from "@/components/field-label";
+import { FieldSection } from "@/components/field-section";
 import { Input } from "@/components/ui/input";
 import { decimalGps, parseGps } from "@/lib/place-gps";
-import { ErrorNote } from "@/components/error-note";
 
 /** How to fill in the custom GPS position, shown beside its title. */
 const HELP =

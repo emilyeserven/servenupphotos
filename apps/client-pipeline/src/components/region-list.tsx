@@ -1,6 +1,7 @@
 import { ChevronRightIcon } from "lucide-react";
 import { useState } from "react";
 import { type Localization, type Place, type PlacesResponse } from "@/api/places";
+import { ErrorNote } from "@/components/error-note";
 import { InferredPlaceList } from "@/components/inferred-place-list";
 import { NewRegionButton } from "@/components/new-region-button";
 import { PlaceBulkBar } from "@/components/place-bulk-bar";
@@ -20,7 +21,6 @@ import {
 } from "@/components/ui/table";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import type { LocationNames } from "@/lib/location-names";
-import { cn } from "@/lib/utils";
 import {
   type RegionKind,
   type RegionNode,
@@ -28,8 +28,8 @@ import {
   regionParentKeys,
   regionTreeRows,
 } from "@/lib/region-tree";
+import { cn } from "@/lib/utils";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { ErrorNote } from "@/components/error-note";
 
 /** Everything the Places list shows, worked out from the place files and the photos. */
 export interface RegionListData {

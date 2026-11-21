@@ -1,3 +1,4 @@
+import { useSearch } from "@tanstack/react-router";
 import {
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
@@ -5,7 +6,6 @@ import {
   ChevronsUpDown,
   X,
 } from "lucide-react";
-import { useSearch } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { PickAxes } from "@/components/graph-builder/pick-axes";
 import {

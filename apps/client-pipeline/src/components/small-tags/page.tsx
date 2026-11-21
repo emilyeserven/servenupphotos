@@ -9,12 +9,12 @@ import {
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { useTagSave } from "@/components/prune-tags/change-list";
+import { QueryResult } from "@/components/query-result";
 import { AskLlmCard } from "@/components/small-tags/ask-llm-card";
-import { SmallTagCard } from "@/components/small-tags/small-tag-card";
 import { usePhotosById } from "@/components/small-tags/small-photos";
+import { SmallTagCard } from "@/components/small-tags/small-tag-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { QueryResult } from "@/components/query-result";
 import { CommitSuccess } from "@/components/update-data-shared";
 import { smallTags } from "@/lib/small-tags";
 import { count } from "@portfolio/lib/words";

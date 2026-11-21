@@ -1,8 +1,8 @@
 import { Columns2, type LucideIcon, Repeat2, SquareSplitHorizontal } from "lucide-react";
 import { type CSSProperties, type KeyboardEvent, type PointerEvent, useRef, useState } from "react";
 import type { PhotoImage } from "@portfolio/lib/photo-image";
-import type { OriginalCrop } from "@portfolio/lib/unedited-original";
 import { CONTROL_FRAME, controlButtonClass } from "@portfolio/lib/segmented-control";
+import type { OriginalCrop } from "@portfolio/lib/unedited-original";
 import { cn } from "@portfolio/lib/utils";
 
 // Shared with the pipeline's Photo page, so it imports with @portfolio/ (docs/gallery.md).

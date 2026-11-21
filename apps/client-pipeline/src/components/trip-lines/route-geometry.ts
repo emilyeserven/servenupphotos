@@ -1,9 +1,9 @@
 import type { StationWalk, TripPoint, TripSegment } from "@/api/trip-lines";
 import type { TripLegRide } from "@/api/trips";
-import type { TripPhoto } from "@/lib/trip-days";
-import { type LngLat, linePoints } from "@/lib/trip-points";
 import { walkLine } from "@/lib/station-walks";
 import { wayOf } from "@/lib/transit-like";
+import type { TripPhoto } from "@/lib/trip-days";
+import { type LngLat, linePoints } from "@/lib/trip-points";
 
 /** What the map draws a line by: its mode (the one a transit hop borrows), and for a hop along its line, that line's color. */
 interface LineProps {

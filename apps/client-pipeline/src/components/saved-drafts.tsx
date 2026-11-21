@@ -8,18 +8,18 @@ import {
 } from "@/api/photos";
 import { CollapsiblePanel } from "@/components/collapsible-panel";
 import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-sort";
+import { ErrorNote } from "@/components/error-note";
 import { DraftsSkeleton } from "@/components/in-flight-loading";
 import { MissingImageDrafts } from "@/components/missing-image-drafts";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filter-bar";
+import { SectionTitle } from "@/components/section-title";
 import { DraftTile, UndecidedQueue } from "@/components/undecided-photos";
 import { useRevealed } from "@/hooks/use-revealed";
 import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
 import { editedData, undecidedPaths } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
-import { ErrorNote } from "@/components/error-note";
 import { count } from "@portfolio/lib/words";
-import { SectionTitle } from "@/components/section-title";
 
 interface SavedDraftsProps {
   /** Whether photos are in flight too: these drafts' Undecided panel is named after the branch to tell it apart from theirs. */

@@ -1,8 +1,9 @@
 import { useForm } from "@tanstack/react-form";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
-import { readCount } from "@/components/lightroom-albums/album-counts";
+import { ErrorNote } from "@/components/error-note";
 import { FieldLabel } from "@/components/field-label";
+import { readCount } from "@/components/lightroom-albums/album-counts";
 import { type SwitchConfig, SettingsSwitch } from "@/components/settings-switch";
 import { Button } from "@/components/ui/button";
 import type { ComboboxOption } from "@/components/ui/combobox";
@@ -20,7 +21,6 @@ import { SingleCombobox } from "@/components/ui/single-combobox";
 import type { LightroomItem } from "@/lib/lightroom-albums";
 import { type ManualAlbum, folderPaths, manualAlbum, pathTaken } from "@/lib/lightroom-tree";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
-import { ErrorNote } from "@/components/error-note";
 
 const EMPTY: ManualAlbum = {
   name: "",

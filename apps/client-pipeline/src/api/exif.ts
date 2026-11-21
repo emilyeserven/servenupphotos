@@ -1,5 +1,5 @@
-import type { PhotoPlace } from "@/api/places";
 import { mutationOptions } from "@tanstack/react-query";
+import type { PhotoPlace } from "@/api/places";
 import { postForm } from "@/api/request";
 import type { ThumbnailCrop } from "@/api/versions";
 

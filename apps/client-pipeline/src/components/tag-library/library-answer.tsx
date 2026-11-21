@@ -4,8 +4,8 @@ import { organizeQuery } from "@/api/organize";
 import { previewTagLibraryMutation } from "@/api/tag-library";
 import { PasteAnswer } from "@/components/paste-answer";
 import { TagLibraryReview } from "@/components/tag-library/tag-library-review";
-import { filteredNames } from "@/lib/tag-prompt";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
+import { filteredNames } from "@/lib/tag-prompt";
 import { useCombinedData } from "@/stores/combined-data";
 
 /**

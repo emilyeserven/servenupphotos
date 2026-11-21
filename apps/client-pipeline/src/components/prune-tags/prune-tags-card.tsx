@@ -4,13 +4,13 @@ import { organizeQuery } from "@/api/organize";
 import { previewPruneTagsMutation } from "@/api/prune-tags";
 import { tagLibraryQuery } from "@/api/tag-library";
 import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
-import { PruneTagReview } from "@/components/prune-tags/prune-tag-review";
 import { PasteAnswer } from "@/components/paste-answer";
+import { PruneTagReview } from "@/components/prune-tags/prune-tag-review";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { currentPhotos, photoCounts } from "@/lib/group-photos";
 import { pruneTagPrompt } from "@/lib/prune-tag-prompt";
 import { fewPhotoTagLines } from "@/lib/tag-library-prompt";
-import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import { useCombinedData } from "@/stores/combined-data";
 
 /**

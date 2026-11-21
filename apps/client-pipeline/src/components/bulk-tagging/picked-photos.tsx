@@ -1,6 +1,6 @@
 import type { BulkTagPhoto } from "@/api/bulk-tags";
-import { promptImageUrl } from "@/lib/tag-prompt";
 import { tileImageUrl } from "@/lib/offline-thumbnails";
+import { promptImageUrl } from "@/lib/tag-prompt";
 import { cn } from "@/lib/utils";
 
 /** The photo's title, or "" when it's a draft without one. */

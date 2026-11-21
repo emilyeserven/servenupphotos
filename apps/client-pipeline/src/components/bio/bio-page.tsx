@@ -9,6 +9,7 @@ import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import { DecidedPhotoFiles } from "@/components/photo-files";
 import { QueryResult } from "@/components/query-result";
 import { SaveState } from "@/components/save-state";
+import { SectionTitle } from "@/components/section-title";
 import { useDelayedDraft } from "@/hooks/use-delayed-draft";
 import {
   type Bio,
@@ -21,7 +22,6 @@ import {
   sitePhotosIn,
 } from "@/lib/bio";
 import { useCombinedData } from "@/stores/combined-data";
-import { SectionTitle } from "@/components/section-title";
 
 /** What the photo drawer says beside the bio. */
 const BIO_DRAWER_WORDS = {

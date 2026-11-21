@@ -1,8 +1,8 @@
 import type { ContactSheet } from "@/api/contact-sheets";
 import { type AutogroupPhoto, photoFinder } from "@/lib/compare-autogroup";
-import { readPastedList } from "@/lib/pasted-json";
 import { lookAtPhotos, tileNote } from "@/lib/contact-sheets";
 import { titleOf } from "@/lib/drafts";
+import { readPastedList } from "@/lib/pasted-json";
 import { FACES } from "@/lib/photo-fields";
 import type { QualityFlag } from "@/lib/quality-flags";
 import { textOf } from "@portfolio/lib/values";

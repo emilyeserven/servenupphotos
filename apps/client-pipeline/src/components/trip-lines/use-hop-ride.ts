@@ -9,9 +9,8 @@ import {
   transitStopsQuery,
 } from "@/api/transit";
 import type { TripPoint, TripSegment, TripTransitLine } from "@/api/trip-lines";
-import { lineOf } from "@/lib/transit-line";
 import { lookupSource } from "@/lib/lookup-source";
-import { useRouteSourceStore } from "@/stores/route-source";
+import { lineOf } from "@/lib/transit-line";
 import {
   oneLine,
   type Ride,
@@ -20,6 +19,7 @@ import {
   type Stations,
   stationsFor,
 } from "@/lib/transit-ride";
+import { useRouteSourceStore } from "@/stores/route-source";
 
 /**
  * The ride on line between the stations chosen (the stops nearest near's spots where none was),

@@ -1,3 +1,4 @@
+import type { CombinedData } from "@/api/photos";
 import {
   type Localization,
   type LocalizationType,
@@ -5,7 +6,6 @@ import {
   type Place,
   savedPlaces,
 } from "@/api/places";
-import type { CombinedData } from "@/api/photos";
 import { type CombinedPhoto, currentPhotos } from "@/lib/group-photos";
 import { photoGpsSource } from "@/lib/photo-map";
 import { textOf } from "@portfolio/lib/values";

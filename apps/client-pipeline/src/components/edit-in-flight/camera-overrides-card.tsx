@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { type LensSettings } from "@/components/edit-in-flight/lens-edit";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exifCamera, overrideChanges } from "@/lib/camera-overrides";
 import type { CombinedPhoto } from "@/lib/group-photos";
-import { type LensSettings } from "@/components/edit-in-flight/lens-edit";
 
 interface CameraOverridesCardProps {
   /** The photo's JSON as last saved, with the lens and manual aperture chosen on the page. */

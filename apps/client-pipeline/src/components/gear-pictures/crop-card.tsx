@@ -1,5 +1,4 @@
 import { type PointerEvent, useRef, useState } from "react";
-import type { GearFile, GearKind } from "@portfolio/lib/gear-pictures";
 import { CropActions, SaveCrops } from "@/components/gear-pictures/crop-actions";
 import { CropLimitFields, CropLimitLines } from "@/components/gear-pictures/crop-limits";
 import {
@@ -11,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { cropStyle, moveCrop, wholeCrop } from "@/lib/gear-crop";
 import { cn } from "@/lib/utils";
 import { EmptyNote } from "@portfolio/components/empty-note";
+import type { GearFile, GearKind } from "@portfolio/lib/gear-pictures";
 import { count } from "@portfolio/lib/words";
 
 /** A checkerboard, so a transparent background shows as one. */

@@ -1,4 +1,5 @@
 import type { TagLibraryPreview } from "@/api/tag-library";
+import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import {
   type ChangeToggle,
   ChangeRow,
@@ -8,7 +9,6 @@ import {
   changeKey,
   placeName,
 } from "@/components/prune-tags/change-list";
-import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { tagLibraryFollowUpPrompt } from "@/lib/tag-library-prompt";
 import { count } from "@portfolio/lib/words";
 

@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import { formatValue, type GraphDatum, type GraphSeries, type Measure } from "@/lib/graph-data";
+import { cn } from "@/lib/utils";
 
 /** A colored square naming a series, beside its label; with `round`, a dot, like a photo dot graph's. */
 export function Swatch({ color, round = false }: { color: string; round?: boolean }) {

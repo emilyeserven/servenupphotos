@@ -24,9 +24,9 @@ import { placesFixtures } from "./fixtures/places.mjs";
 import { publishFixtures } from "./fixtures/publish.mjs";
 import { routerFixtures } from "./fixtures/router.mjs";
 import { settingsFixtures } from "./fixtures/settings.mjs";
+import { headPhotos, imagesOf } from "./fixtures/shared.mjs";
 import { triplinesFixtures } from "./fixtures/triplines.mjs";
 import { tripsFixtures } from "./fixtures/trips.mjs";
-import { headPhotos, imagesOf } from "./fixtures/shared.mjs";
 
 /** Merges each area's answers into one object, and throws if two areas answer the same route. */
 function merge(areas) {

@@ -2,7 +2,6 @@ import type { BulkTagPhoto } from "@/api/bulk-tags";
 import type { ContactSheet } from "@/api/contact-sheets";
 import type { Place } from "@/api/places";
 import { photoBasics, sheetsBlock } from "@/lib/bulk-tag-prompt";
-import { readPastedList } from "@/lib/pasted-json";
 import {
   type PastedLocation,
   PLACE_NAME_RULES,
@@ -11,6 +10,7 @@ import {
   listed,
   readLocation,
 } from "@/lib/location-prompt";
+import { readPastedList } from "@/lib/pasted-json";
 import { textOf } from "@portfolio/lib/values";
 
 /**

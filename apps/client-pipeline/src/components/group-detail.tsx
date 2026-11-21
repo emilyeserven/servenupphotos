@@ -8,7 +8,6 @@ import {
   MinusIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { isSmartAlbum } from "@portfolio/lib/smart-albums";
 import {
   GROUP_KINDS,
   type Group,
@@ -21,7 +20,6 @@ import {
   organizeQuery,
   setGroupParentMutation,
 } from "@/api/organize";
-import { WaitingForCommit } from "@/components/waiting-for-commit";
 import {
   type AlbumAdd,
   AlbumAddOutcome,
@@ -31,21 +29,22 @@ import {
 import { AlbumDeleteCard } from "@/components/album-delete";
 import { AlbumLayoutCard } from "@/components/album-layout/album-layout-card";
 import { AlbumPhotoReorder } from "@/components/album-photo-reorder";
+import { AlbumPhotoGrid } from "@/components/album-remove-one";
 import {
   type AlbumRemove,
   AlbumRemoveOutcome,
   AlbumRemovePhotos,
   useAlbumRemove,
 } from "@/components/album-remove-photos";
-import { AlbumPhotoGrid } from "@/components/album-remove-one";
 import { AlbumVisibilityCard } from "@/components/album-visibility-card";
-import { SmartAlbumCard } from "@/components/smart-album/smart-album-card";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
+import { ErrorNote } from "@/components/error-note";
 import { type GroupPhotos, useGroupPhotos } from "@/components/group-photo-grid";
-import { GroupCombobox } from "@/components/photo-groups-card";
 import { GitHubGate, GroupStatus } from "@/components/organize-page";
 import { Page } from "@/components/page";
+import { GroupCombobox } from "@/components/photo-groups-card";
 import { QueryResult } from "@/components/query-result";
+import { SmartAlbumCard } from "@/components/smart-album/smart-album-card";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -56,10 +55,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { currentPhotos, photoCounts } from "@/lib/group-photos";
 import { useCombinedData } from "@/stores/combined-data";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { ErrorNote } from "@/components/error-note";
+import { isSmartAlbum } from "@portfolio/lib/smart-albums";
 import { count } from "@portfolio/lib/words";
 
 /** One album's or tag's page: what it is, where an album sits, and the photos in it. */

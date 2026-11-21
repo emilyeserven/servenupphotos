@@ -3,20 +3,20 @@ import { BrowseInViewButton } from "@/components/browse-in-view-button";
 import { CopyMapLinkButton } from "@/components/copy-map-link-button";
 import { MapDisplayOptions } from "@/components/map-display-options";
 import { MapLegend } from "@/components/map-legend";
-import { MapViewControls } from "@/components/map-view-controls";
 import { MapPlacePicker } from "@/components/map-place-picker";
+import { MapViewControls } from "@/components/map-view-controls";
+import { NearestInGridButton } from "@/components/nearest-in-grid-button";
+import { MoreFilterControls } from "@/components/photo-filters";
 import { PlaceAreaLayer } from "@/components/place-area-layer";
 import { TripLinesLayer } from "@/components/trip-lines-layer";
-import { MoreFilterControls } from "@/components/photo-filters";
-import { NearestInGridButton } from "@/components/nearest-in-grid-button";
 import { ViewInGridButton } from "@/components/view-in-grid-button";
+import { visualsOwnFilters } from "@/components/visuals-picker";
 import type { MapDisplay } from "@/lib/map-display";
 import { gridFiltersFor } from "@/lib/map-grid-link";
 import { type PlacedPhoto, placedPhotos } from "@/lib/map-photos";
-import { visualsOwnFilters } from "@/components/visuals-picker";
 import { filterPhotos, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { parseVisualFilters, type VisualSearch } from "@/lib/visual-filters";
 import { useShownArea } from "@/lib/place-areas";
+import { parseVisualFilters, type VisualSearch } from "@/lib/visual-filters";
 
 /**
  * The map's controls under its title: **Places**, which moves the map to a place and shades its

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BackdropCaption } from "@/components/backdrop-caption";
-import { focusIn, HOMEPAGE_ZONE, type ImagePhoto } from "@/lib/spotlight-zones";
 import { objectPosition } from "@/lib/spotlight-focus";
+import { focusIn, HOMEPAGE_ZONE, type ImagePhoto } from "@/lib/spotlight-zones";
 import { useArrowKeys } from "@/lib/use-arrow-keys";
 import { useSize } from "@/lib/use-size";
 import { isNear, useTurn } from "@/lib/use-turn";

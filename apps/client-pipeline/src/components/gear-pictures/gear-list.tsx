@@ -1,8 +1,8 @@
 import { ImageIcon } from "lucide-react";
-import type { GearKind } from "@portfolio/lib/gear-pictures";
 import type { GearRow } from "@/api/gear";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import type { GearKind } from "@portfolio/lib/gear-pictures";
 import { count } from "@portfolio/lib/words";
 
 /** The two lists, with their tab names. */

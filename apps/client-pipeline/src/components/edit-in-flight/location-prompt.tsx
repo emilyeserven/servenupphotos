@@ -8,9 +8,10 @@ import {
   savePlaceMutation,
 } from "@/api/places";
 import { PromptCopyButton } from "@/components/edit-in-flight/prompt-copy-button";
+import { ErrorNote } from "@/components/error-note";
+import { PasteAnswer } from "@/components/paste-answer";
 import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
 import { Button } from "@/components/ui/button";
-import { PasteAnswer } from "@/components/paste-answer";
 import { usePastedAnswer } from "@/hooks/use-pasted-answer";
 import {
   type LocationClues,
@@ -24,7 +25,6 @@ import {
   parseLocationAnswer,
   withLocation,
 } from "@/lib/location-prompt";
-import { ErrorNote } from "@/components/error-note";
 
 interface LocationPromptProps {
   /** The public URL of the photo's version the prompt links to. */

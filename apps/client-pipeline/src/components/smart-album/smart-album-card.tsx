@@ -1,24 +1,24 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PencilIcon, SparklesIcon, Undo2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { isSmartAlbum, ruleCount, type SmartRules } from "@portfolio/lib/smart-albums";
-import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 import { type Group, organizeQuery, setAlbumRulesMutation } from "@/api/organize";
+import { ErrorNote } from "@/components/error-note";
 import { GridFilterBar } from "@/components/gallery/grid-filters";
-import { QueryResult } from "@/components/query-result";
 import { PhotoTile } from "@/components/group-photo-grid";
+import { QueryResult } from "@/components/query-result";
 import { DateRules } from "@/components/smart-album/date-rules";
-import { type RuleParams, useRuleParams } from "@/components/smart-album/rule-params";
 import { RuleList } from "@/components/smart-album/rule-list";
-import { SavedInApp } from "@/components/waiting-for-commit";
+import { type RuleParams, useRuleParams } from "@/components/smart-album/rule-params";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { SavedInApp } from "@/components/waiting-for-commit";
 import { type CombinedPhoto, currentLists } from "@/lib/group-photos";
 import { labelsOf } from "@/lib/smart-album-photos";
 import { entriesMatching, type RulePhotos, rulePhotos } from "@/lib/smart-album-rules";
 import { useCombinedData } from "@/stores/combined-data";
-import { ErrorNote } from "@/components/error-note";
+import { isSmartAlbum, ruleCount, type SmartRules } from "@portfolio/lib/smart-albums";
+import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 import { count } from "@portfolio/lib/words";
 
 /** How many of the matching photos the editor shows. */

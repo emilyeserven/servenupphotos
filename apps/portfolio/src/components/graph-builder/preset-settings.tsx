@@ -1,8 +1,8 @@
 import { graphTypeName } from "@portfolio/components/graph-builder/graph-type-picker";
-import { type GraphConfig, hasYStat, SPLIT_TYPES, statById } from "@portfolio/lib/graph-data";
-import { orderName } from "@portfolio/lib/graph-order";
 import { evenText } from "@portfolio/lib/even-buckets";
+import { type GraphConfig, hasYStat, SPLIT_TYPES, statById } from "@portfolio/lib/graph-data";
 import { measureName } from "@portfolio/lib/graph-measure";
+import { orderName } from "@portfolio/lib/graph-order";
 
 /** One line of a preset's settings: its name and what it's set to, such as X axis: Aperture. */
 type SettingLine = [string, string];

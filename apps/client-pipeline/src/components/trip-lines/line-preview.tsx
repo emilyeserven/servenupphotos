@@ -1,10 +1,10 @@
-import { tripLineStroke, tripLineStyle, useIsDark } from "@portfolio/lib/map-theme";
 import { useQuery } from "@tanstack/react-query";
 import { basemapQuery, type TripLine } from "@/api/trip-lines";
 import { lineFeatures } from "@/components/trip-lines/route-geometry";
+import { type PlacedTile, type PreviewBox, previewBox } from "@/lib/preview-tiles";
 import type { TripPhoto } from "@/lib/trip-days";
 import { orderedPhotos } from "@/lib/trip-order";
-import { type PlacedTile, type PreviewBox, previewBox } from "@/lib/preview-tiles";
+import { tripLineStroke, tripLineStyle, useIsDark } from "@portfolio/lib/map-theme";
 
 /** The preview's size in its own units; it stretches to its card's width. */
 const WIDTH = 240;

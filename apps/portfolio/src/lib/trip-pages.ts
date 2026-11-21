@@ -1,6 +1,6 @@
-import committedPages from "@/data/triplines/TRIPPAGES.json";
 import { format, parseISO } from "date-fns";
 import type { PhotoText } from "@/components/album-rows";
+import committedPages from "@/data/triplines/TRIPPAGES.json";
 import type { StopNaming } from "@/lib/localize";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 
