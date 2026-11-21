@@ -1,0 +1,12 @@
+{
+  "id": "himeji-shrine",
+  "name": "Himeji Shrine",
+  "description": "",
+  "parent": "",
+  "city": "Himeji",
+  "state": "Hyōgo",
+  "country": "Japan",
+  "latitude": 34.839238,
+  "longitude": 134.695596,
+  "exactLocation": true
+}

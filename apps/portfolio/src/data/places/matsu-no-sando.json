@@ -1,0 +1,12 @@
+{
+  "id": "matsu-no-sando",
+  "name": "Matsu-no-Sando",
+  "description": "",
+  "parent": "izumo-shrine",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.398516,
+  "longitude": 132.68607,
+  "exactLocation": true
+}

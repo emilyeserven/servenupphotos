@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 11:00:40",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Kyomise Shopping Street",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["machiya", "storefronts", "houses", "road", "power-lines"],
-  "genres": [],
-  "places": [],
+  "genres": ["street", "architecture"],
+  "places": [
+    {
+      "relation": "on",
+      "id": "kyomise-shopping-street"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

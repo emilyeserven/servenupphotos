@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 13:50:17",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Shiomi Nawate",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["bridges", "umbrellas", "pedestrians", "rain", "moat"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "shiomi-nawate"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -1,11 +1,11 @@
 {
-  "id": 561,
-  "title": null,
+  "title": "Moon Above the Temple",
   "comment": null,
+  "id": 561,
   "altText": null,
   "notes": null,
   "file": "DSCF1507.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T00:37:51Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -73,8 +73,8 @@
       "hex": "#2c2c2c",
       "lab": {
         "l": 17.88,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

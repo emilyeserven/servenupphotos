@@ -16,7 +16,7 @@
   "customGpsPosition": "35.39318841447989, 132.68706637234905",
   "createDate": "2026:09:26 07:41:02",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Izumo-Taisha-mae Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["train-station", "trains", "mountains", "rain", "rooftops"],
   "genres": ["architecture", "transportation"],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "izumo-taisha-mae-station"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

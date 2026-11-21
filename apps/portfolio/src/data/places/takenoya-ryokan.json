@@ -1,0 +1,12 @@
+{
+  "id": "takenoya-ryokan",
+  "name": "Takenoya Ryokan",
+  "description": "",
+  "parent": "",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.395672,
+  "longitude": 132.686507,
+  "exactLocation": true
+}

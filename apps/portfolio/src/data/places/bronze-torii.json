@@ -1,0 +1,12 @@
+{
+  "id": "bronze-torii",
+  "name": "Bronze Torii",
+  "description": "",
+  "parent": "izumo-shrine",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.400712,
+  "longitude": 132.68567,
+  "exactLocation": true
+}

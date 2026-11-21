@@ -1,0 +1,12 @@
+{
+  "id": "shoyama-station",
+  "name": "Shoyama Station",
+  "description": "",
+  "parent": "",
+  "city": "Nichinan",
+  "state": "Tottori",
+  "country": "Japan",
+  "latitude": 35.1735,
+  "longitude": 133.321786,
+  "exactLocation": true
+}

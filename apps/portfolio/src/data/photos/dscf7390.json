@@ -1,11 +1,11 @@
 {
-  "id": 863,
-  "title": null,
+  "title": "Buddha Engraving at Seokbulsa",
   "comment": null,
+  "id": 863,
   "altText": null,
   "notes": null,
   "file": "DSCF7390.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T00:32:15Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 6.4,
@@ -13,10 +13,10 @@
   "iso": 125,
   "focalLength": 41.3,
   "gpsPosition": "35 deg 13' 15.76\" N, 129 deg 2' 57.15\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "35.221776, 129.049039",
   "createDate": "2026:09:20 14:19:47",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Seokbulsa Temple",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["buddhism", "carvings", "statues", "rock-formations", "temple"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "seokbulsa-temple"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

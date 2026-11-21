@@ -26,14 +26,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534.jpg",
     "key": "photos/05d6ec46b1bd-dscf7534.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-thumbnail.webp?crop=0,0,3111",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-thumbnailpreview.webp?crop=0,0,3111",
+    "xlarge": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-xlarge.webp?faces=mwpof0w6",
+    "large": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-large.webp?faces=mwpof0w6",
+    "medium": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-medium.webp?faces=mwpof0w6",
+    "small": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-small.webp?faces=mwpof0w6",
+    "xsmall": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-xsmall.webp?faces=mwpof0w6",
+    "preview": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-preview.webp?faces=mwpof0w6",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-thumbnail.webp?crop=0,0,3111&faces=mwpof0w6",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/05d6ec46b1bd-dscf7534-thumbnailpreview.webp?crop=0,0,3111&faces=mwpof0w6",
     "thumbnailcrop": {
       "x": 0,
       "y": 0,
@@ -54,10 +54,7 @@
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": {
-    "reason": "Pixelate a license plate",
-    "date": "2026-11-15"
-  },
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#5a565d",
@@ -265,5 +262,43 @@
     "samples": 9900
   },
   "notes": "Shows motorcycles; 'motorcycles' isn't a tag, since only 2 photos have them.\n\nQuality Check (pixelation): The rear plate of the white Volvo SUV at the bottom left is readable.",
-  "similarPhotos": [250, 304, 219, 453, 120, 121]
+  "similarPhotos": [250, 304, 219, 453, 120, 121],
+  "faces": [
+    {
+      "x": 942,
+      "y": 2965,
+      "width": 209,
+      "height": 37,
+      "blocks": 15
+    },
+    {
+      "x": 1945,
+      "y": 3063,
+      "width": 78,
+      "height": 48,
+      "blocks": 8,
+      "edge": "blocks",
+      "rotation": -11
+    },
+    {
+      "x": 1770,
+      "y": 2928,
+      "width": 75,
+      "height": 50,
+      "blocks": 8,
+      "edge": "blocks",
+      "rotation": -17
+    },
+    {
+      "x": 1576,
+      "y": 2877,
+      "width": 75,
+      "height": 43,
+      "blocks": 8,
+      "edge": "blocks",
+      "rotation": -12
+    }
+  ],
+  "noGps": false,
+  "altText": null
 }

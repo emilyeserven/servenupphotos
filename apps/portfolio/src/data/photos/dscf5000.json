@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 20:03:51",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Seoul City Wall",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["daldongne", "night", "houses", "rooftops", "city-lights", "trees"],
   "genres": ["cityscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "seoul-city-wall"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [

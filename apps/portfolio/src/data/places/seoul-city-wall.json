@@ -1,0 +1,12 @@
+{
+  "id": "seoul-city-wall",
+  "name": "Seoul City Wall",
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "state": "Seoul",
+  "country": "South Korea",
+  "latitude": 37.576889,
+  "longitude": 127.008522,
+  "exactLocation": true
+}

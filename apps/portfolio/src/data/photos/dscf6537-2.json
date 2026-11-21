@@ -16,7 +16,7 @@
   "customGpsPosition": "34.83923771065468, 134.69559578466692",
   "createDate": "2026:09:29 11:36:28",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Himeji Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["torii", "shinto", "path", "trees"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "himeji-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

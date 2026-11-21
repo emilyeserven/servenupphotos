@@ -1,0 +1,12 @@
+{
+  "id": "izumo-taisha-kaguraden",
+  "name": "Izumo Taisha Kaguraden",
+  "description": "",
+  "parent": "izumo-shrine",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.400997,
+  "longitude": 132.684416,
+  "exactLocation": true
+}

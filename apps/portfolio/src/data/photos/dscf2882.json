@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 11:00:12",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Izumo Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["omikuji", "shinto", "prayers", "trees", "tourists", "plaques"],
-  "genres": [],
-  "places": [],
+  "genres": ["street", "architecture"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

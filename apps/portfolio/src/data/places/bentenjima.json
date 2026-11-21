@@ -1,0 +1,12 @@
+{
+  "id": "bentenjima",
+  "name": "Bentenjima",
+  "description": "",
+  "parent": "",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.400236,
+  "longitude": 132.672858,
+  "exactLocation": true
+}

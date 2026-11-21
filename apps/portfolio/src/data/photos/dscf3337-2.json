@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["road", "power-lines", "houses", "hills"],
-  "genres": [],
+  "genres": ["street", "landscape"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

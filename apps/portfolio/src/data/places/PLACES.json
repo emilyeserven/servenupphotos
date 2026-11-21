@@ -148,12 +148,48 @@
     "country": ""
   },
   {
+    "id": "bentenjima",
+    "name": "Bentenjima",
+    "description": "",
+    "parent": "",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.400236,
+    "longitude": 132.672858,
+    "exactLocation": true
+  },
+  {
     "id": "bethesda-fountain",
     "name": "Bethesda Fountain",
     "description": "",
     "parent": "",
     "city": "New York City",
     "country": "United States of America"
+  },
+  {
+    "id": "bisan-dong",
+    "name": "Bisan-dong",
+    "description": "",
+    "parent": "",
+    "city": "Daegu",
+    "state": "Daegu",
+    "country": "South Korea",
+    "latitude": 35.884111,
+    "longitude": 128.569821,
+    "exactLocation": true
+  },
+  {
+    "id": "bongik-dong",
+    "name": "Bongik-dong",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.570897,
+    "longitude": 126.992703,
+    "exactLocation": true
   },
   {
     "id": "bosingak-pavilion",
@@ -214,6 +250,18 @@
     "parent": "",
     "city": "New Canaan",
     "country": "United States of America"
+  },
+  {
+    "id": "bronze-torii",
+    "name": "Bronze Torii",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.400712,
+    "longitude": 132.68567,
+    "exactLocation": true
   },
   {
     "id": "brooklyn-bridge-park-pier-1",
@@ -304,6 +352,17 @@
     "country": "United States of America",
     "latitude": 40.78258706164638,
     "longitude": -73.96560105308485
+  },
+  {
+    "id": "changdeokgung-palace",
+    "name": "Changdeokgung Palace",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.5768,
+    "longitude": 126.991
   },
   {
     "id": "changuimun-gate",
@@ -455,6 +514,18 @@
     "longitude": -80.05759565128407
   },
   {
+    "id": "dentetsu-izumoshi-station",
+    "name": "Dentetsu-Izumoshi Station",
+    "description": "",
+    "parent": "",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.361226,
+    "longitude": 132.758546,
+    "exactLocation": true
+  },
+  {
     "id": "devil-s-den-state-park",
     "name": "Devil's Den State Park",
     "description": "",
@@ -520,6 +591,18 @@
     "country": "Japan"
   },
   {
+    "id": "etsutogeara-shrine",
+    "name": "Etsutogeara Shrine",
+    "description": "",
+    "parent": "",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.397101,
+    "longitude": 132.682621,
+    "exactLocation": true
+  },
+  {
     "id": "fairview-lookout-trail",
     "name": "Fairview Lookout Trail",
     "description": "",
@@ -556,6 +639,18 @@
     "parent": "hagi-castle-town",
     "city": "Hagi",
     "country": "Japan"
+  },
+  {
+    "id": "former-taisha-station",
+    "name": "Former Taisha Station",
+    "description": "",
+    "parent": "",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.386819,
+    "longitude": 132.6903,
+    "exactLocation": true
   },
   {
     "id": "freeman-alley",
@@ -669,6 +764,18 @@
     "parent": "",
     "city": "Brussels",
     "country": "Belgium"
+  },
+  {
+    "id": "grand-torii-at-uga-bridge",
+    "name": "Grand Torii at Uga Bridge",
+    "description": "",
+    "parent": "",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.386811,
+    "longitude": 132.689103,
+    "exactLocation": true
   },
   {
     "id": "greene-street",
@@ -844,6 +951,17 @@
     "exactLocation": true
   },
   {
+    "id": "haraebashi-bridge",
+    "name": "Haraebashi Bridge",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.398,
+    "longitude": 132.6861
+  },
+  {
     "id": "harlan-place",
     "name": "Harlan Place",
     "description": "",
@@ -926,6 +1044,18 @@
     "exactLocation": true
   },
   {
+    "id": "himeji-shrine",
+    "name": "Himeji Shrine",
+    "description": "",
+    "parent": "",
+    "city": "Himeji",
+    "state": "Hyōgo",
+    "country": "Japan",
+    "latitude": 34.839238,
+    "longitude": 134.695596,
+    "exactLocation": true
+  },
+  {
     "id": "hongdae",
     "name": "Hongdae",
     "description": "",
@@ -936,6 +1066,40 @@
     "latitude": 37.557578,
     "longitude": 126.928458,
     "exactLocation": true
+  },
+  {
+    "id": "horikawa-moat",
+    "name": "Horikawa Moat",
+    "description": "",
+    "parent": "matsue-castle",
+    "city": "Matsue",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.4751,
+    "longitude": 133.0507
+  },
+  {
+    "id": "horikawa-sightseeing-boat-fureai-hiroba-dock",
+    "name": "Horikawa Sightseeing Boat Fureai Hiroba Dock",
+    "description": "",
+    "parent": "",
+    "city": "Matsue",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.478647,
+    "longitude": 133.046239,
+    "exactLocation": true
+  },
+  {
+    "id": "horikawa-sightseeing-boat-karakoro-square-dock",
+    "name": "Horikawa Sightseeing Boat Karakoro Square Dock",
+    "description": "",
+    "parent": "",
+    "city": "Matsue",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.469841,
+    "longitude": 133.054387
   },
   {
     "id": "hyangwonjeong-pavilion",
@@ -986,6 +1150,42 @@
     "country": "Japan"
   },
   {
+    "id": "izumo-taisha-haiden",
+    "name": "Izumo Taisha Haiden",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.401064,
+    "longitude": 132.685153,
+    "exactLocation": true
+  },
+  {
+    "id": "izumo-taisha-kaguraden",
+    "name": "Izumo Taisha Kaguraden",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.400997,
+    "longitude": 132.684416,
+    "exactLocation": true
+  },
+  {
+    "id": "izumo-taisha-mae-station",
+    "name": "Izumo-Taisha-mae Station",
+    "description": "",
+    "parent": "",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.393188,
+    "longitude": 132.687066,
+    "exactLocation": true
+  },
+  {
     "id": "jacqueline-kennedy-onassis-reservoir",
     "name": "Jacqueline Kennedy Onassis Reservoir",
     "description": "",
@@ -994,6 +1194,18 @@
     "country": "United States of America",
     "latitude": 40.785811799352814,
     "longitude": -73.96228768992302
+  },
+  {
+    "id": "jicheonji-reservoir",
+    "name": "Jicheonji Reservoir",
+    "description": "",
+    "parent": "",
+    "city": "Chilgok",
+    "state": "Gyeongsangbuk-do",
+    "country": "South Korea",
+    "latitude": 35.968226,
+    "longitude": 128.485169,
+    "exactLocation": true
   },
   {
     "id": "jogyesa-temple",
@@ -1052,12 +1264,48 @@
     "country": "United States of America"
   },
   {
+    "id": "kitasomon-bridge",
+    "name": "Kitasomon Bridge",
+    "description": "",
+    "parent": "matsue-castle",
+    "city": "Matsue",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.476025,
+    "longitude": 133.05405,
+    "exactLocation": true
+  },
+  {
     "id": "komfortabel-coffee-namsan",
     "name": "Komfortabel coffee Namsan",
     "description": "",
     "parent": "",
     "city": "Seoul",
     "country": "South Korea"
+  },
+  {
+    "id": "kyobashi-river",
+    "name": "Kyobashi River",
+    "description": "",
+    "parent": "",
+    "city": "Matsue",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.469975,
+    "longitude": 133.053625,
+    "exactLocation": true
+  },
+  {
+    "id": "kyomise-shopping-street",
+    "name": "Kyomise Shopping Street",
+    "description": "",
+    "parent": "",
+    "city": "Matsue",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.469975,
+    "longitude": 133.053625,
+    "exactLocation": true
   },
   {
     "id": "lake-brienz",
@@ -1190,12 +1438,46 @@
     "country": "Egypt"
   },
   {
+    "id": "matsu-no-sando",
+    "name": "Matsu-no-Sando",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.398516,
+    "longitude": 132.68607,
+    "exactLocation": true
+  },
+  {
     "id": "matsue-castle",
     "name": "Matsue Castle",
     "description": "",
     "parent": "",
     "city": "Matsue",
     "country": "Japan"
+  },
+  {
+    "id": "matsue-horan-enya-memorial-hall",
+    "name": "Matsue Horan-enya Memorial Hall",
+    "description": "",
+    "parent": "",
+    "city": "Matsue",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.47556,
+    "longitude": 133.054
+  },
+  {
+    "id": "matsue-shrine",
+    "name": "Matsue Shrine",
+    "description": "",
+    "parent": "matsue-castle",
+    "city": "Matsue",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.4737,
+    "longitude": 133.0489
   },
   {
     "id": "matsue-station",
@@ -1207,6 +1489,18 @@
     "country": "Japan",
     "latitude": 35.4644,
     "longitude": 133.063
+  },
+  {
+    "id": "mejima-island",
+    "name": "Mejima Island",
+    "description": "",
+    "parent": "",
+    "city": "Abu District",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.48702,
+    "longitude": 131.462987,
+    "exactLocation": true
   },
   {
     "id": "mena-house",
@@ -1271,6 +1565,18 @@
     "country": ""
   },
   {
+    "id": "miyukidori-shopping-street",
+    "name": "Miyukidori Shopping Street",
+    "description": "",
+    "parent": "",
+    "city": "Himeji",
+    "state": "Hyōgo",
+    "country": "Japan",
+    "latitude": 34.828025,
+    "longitude": 134.69135,
+    "exactLocation": true
+  },
+  {
     "id": "morikami-museum-and-japanese-gardens",
     "name": "Morikami Museum and Japanese Gardens",
     "description": "",
@@ -1279,6 +1585,18 @@
     "country": "United States of America",
     "latitude": 26.42915437684975,
     "longitude": -80.15643210386787
+  },
+  {
+    "id": "moryang-ri",
+    "name": "Moryang-ri",
+    "description": "",
+    "parent": "",
+    "city": "Gyeongju",
+    "state": "Gyeongsangbuk-do",
+    "country": "South Korea",
+    "latitude": 35.815886,
+    "longitude": 129.108278,
+    "exactLocation": true
   },
   {
     "id": "mosque-madrasa-of-sultan-hassan",
@@ -1455,6 +1773,18 @@
     "country": "United States of America"
   },
   {
+    "id": "nikaimachi",
+    "name": "Nikaimachi",
+    "description": "",
+    "parent": "",
+    "city": "Himeji",
+    "state": "Hyōgo",
+    "country": "Japan",
+    "latitude": 34.831792,
+    "longitude": 134.692542,
+    "exactLocation": true
+  },
+  {
     "id": "noho",
     "name": "NoHo",
     "description": "",
@@ -1501,6 +1831,18 @@
     "exactLocation": true
   },
   {
+    "id": "osong-eup",
+    "name": "Osong-eup",
+    "description": "",
+    "parent": "",
+    "city": "Cheongju",
+    "state": "Chungcheongbuk-do",
+    "country": "South Korea",
+    "latitude": 36.613134,
+    "longitude": 127.336129,
+    "exactLocation": true
+  },
+  {
     "id": "outer-richmond",
     "name": "Outer Richmond",
     "description": "",
@@ -1530,6 +1872,18 @@
     "country": "United States of America",
     "latitude": 42.351561,
     "longitude": -71.062697,
+    "exactLocation": true
+  },
+  {
+    "id": "pedestrian-bridge-in-front-of-crown-hotel",
+    "name": "Pedestrian Bridge in Front of Crown Hotel",
+    "description": "",
+    "parent": "itaewon",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.530422,
+    "longitude": 126.991094,
     "exactLocation": true
   },
   {
@@ -1733,6 +2087,76 @@
     "exactLocation": true
   },
   {
+    "id": "seidamari-torii",
+    "name": "Seidamari Torii",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.39662,
+    "longitude": 132.68633
+  },
+  {
+    "id": "senge-kokusokan",
+    "name": "Senge Kokusokan",
+    "description": "",
+    "parent": "",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.4007,
+    "longitude": 132.6838
+  },
+  {
+    "id": "seokbulsa-temple",
+    "name": "Seokbulsa Temple",
+    "description": "",
+    "parent": "",
+    "city": "Busan",
+    "state": "Busan",
+    "country": "South Korea",
+    "latitude": 35.221562,
+    "longitude": 129.048812,
+    "exactLocation": true
+  },
+  {
+    "id": "seoul-city-wall",
+    "name": "Seoul City Wall",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "state": "Seoul",
+    "country": "South Korea",
+    "latitude": 37.576889,
+    "longitude": 127.008522,
+    "exactLocation": true
+  },
+  {
+    "id": "shinmon-dori",
+    "name": "Shinmon-dori",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.39662,
+    "longitude": 132.68633,
+    "exactLocation": true
+  },
+  {
+    "id": "shiomi-nawate",
+    "name": "Shiomi Nawate",
+    "description": "",
+    "parent": "",
+    "city": "Matsue",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.479083,
+    "longitude": 133.048969,
+    "exactLocation": true
+  },
+  {
     "id": "shizuki-shrine",
     "name": "Shizuki Shrine",
     "description": "",
@@ -1756,6 +2180,29 @@
     "longitude": 131.4183
   },
   {
+    "id": "shokokan-museum",
+    "name": "Shokokan Museum",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.4023,
+    "longitude": 132.685
+  },
+  {
+    "id": "shoyama-station",
+    "name": "Shoyama Station",
+    "description": "",
+    "parent": "",
+    "city": "Nichinan",
+    "state": "Tottori",
+    "country": "Japan",
+    "latitude": 35.1735,
+    "longitude": 133.321786,
+    "exactLocation": true
+  },
+  {
     "id": "singyeongju-station",
     "name": "Singyeongju Station",
     "description": "",
@@ -1765,6 +2212,17 @@
     "country": "South Korea",
     "latitude": 35.8019,
     "longitude": 129.136914
+  },
+  {
+    "id": "soga-no-yashiro-shrine",
+    "name": "Soga-no-Yashiro Shrine",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.4025,
+    "longitude": 132.68556
   },
   {
     "id": "soho",
@@ -1812,6 +2270,17 @@
     "longitude": -71.057598
   },
   {
+    "id": "statue-of-musubi",
+    "name": "Statue of Musubi",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.40045,
+    "longitude": 132.68585
+  },
+  {
     "id": "step-pyramid-of-djoser",
     "name": "Step Pyramid of Djoser",
     "description": "",
@@ -1826,6 +2295,18 @@
     "parent": "",
     "city": "Nantucket",
     "country": "United States of America"
+  },
+  {
+    "id": "takenoya-ryokan",
+    "name": "Takenoya Ryokan",
+    "description": "",
+    "parent": "",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.395672,
+    "longitude": 132.686507,
+    "exactLocation": true
   },
   {
     "id": "tapgol-park",
@@ -2006,5 +2487,16 @@
     "country": "United States of America",
     "latitude": 40.713571238577536,
     "longitude": -73.97179563411781
+  },
+  {
+    "id": "yatsuashimon-gate",
+    "name": "Yatsuashimon Gate",
+    "description": "",
+    "parent": "izumo-shrine",
+    "city": "Izumo",
+    "state": "Shimane",
+    "country": "Japan",
+    "latitude": 35.4014,
+    "longitude": 132.68551
   }
 ]

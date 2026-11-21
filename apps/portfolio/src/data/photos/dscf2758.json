@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 10:33:47",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Senge Kokusokan",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["shinto", "shrine", "mountains", "path", "cars"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "landscape"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "senge-kokusokan"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

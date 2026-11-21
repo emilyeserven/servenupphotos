@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 13:19:37",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Shiomi Nawate",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["bridges", "boats", "moat", "water"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "shiomi-nawate"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

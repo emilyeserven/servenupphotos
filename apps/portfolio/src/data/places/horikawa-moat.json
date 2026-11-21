@@ -1,0 +1,11 @@
+{
+  "id": "horikawa-moat",
+  "name": "Horikawa Moat",
+  "description": "",
+  "parent": "matsue-castle",
+  "city": "Matsue",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.4751,
+  "longitude": 133.0507
+}

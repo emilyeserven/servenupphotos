@@ -1,0 +1,11 @@
+{
+  "id": "yatsuashimon-gate",
+  "name": "Yatsuashimon Gate",
+  "description": "",
+  "parent": "izumo-shrine",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.4014,
+  "longitude": 132.68551
+}

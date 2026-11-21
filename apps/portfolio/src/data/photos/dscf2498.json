@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 09:15:35",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Izumo Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["shimenawa", "shide", "shinto", "rope", "wood"],
   "genres": ["architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 13:05:10",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Bentenjima",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["shinto", "torii", "shrine", "rock-formations", "pine-trees"],
-  "genres": [],
-  "places": [],
+  "genres": ["landscape", "architecture"],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "bentenjima"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

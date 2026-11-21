@@ -1,0 +1,12 @@
+{
+  "id": "kitasomon-bridge",
+  "name": "Kitasomon Bridge",
+  "description": "",
+  "parent": "matsue-castle",
+  "city": "Matsue",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.476025,
+  "longitude": 133.05405,
+  "exactLocation": true
+}

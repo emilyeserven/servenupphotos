@@ -16,8 +16,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 13:50:50",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Bongik-dong",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["power-lines", "cables", "signage", "cars", "pedestrians", "sidewalk"],
   "genres": ["street"],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "bongik-dong"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

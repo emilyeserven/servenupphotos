@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["torii", "shinto", "toro", "forest", "path"],
-  "genres": [],
+  "genres": ["architecture", "nature"],
   "places": [],
   "noGps": false,
   "spotlightZones": [],

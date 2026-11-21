@@ -1,0 +1,12 @@
+{
+  "id": "bisan-dong",
+  "name": "Bisan-dong",
+  "description": "",
+  "parent": "",
+  "city": "Daegu",
+  "state": "Daegu",
+  "country": "South Korea",
+  "latitude": 35.884111,
+  "longitude": 128.569821,
+  "exactLocation": true
+}

@@ -16,7 +16,7 @@
   "customGpsPosition": "35.39567202720589, 132.6865074683916",
   "createDate": "2026:09:26 08:32:53",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Takenoya Ryokan",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["koshi", "kawara", "kanji", "signage", "power-lines", "rain"],
   "genres": ["street", "architecture"],
-  "places": [],
+  "places": [
+    {
+      "relation": "outside",
+      "id": "takenoya-ryokan"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

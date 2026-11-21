@@ -1,0 +1,11 @@
+{
+  "id": "matsue-shrine",
+  "name": "Matsue Shrine",
+  "description": "",
+  "parent": "matsue-castle",
+  "city": "Matsue",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.4737,
+  "longitude": 133.0489
+}

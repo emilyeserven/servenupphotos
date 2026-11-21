@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:27 19:09:23",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Matsue Castle",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["andon", "festivals", "lanterns", "night", "city-lights", "pedestrians"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "overlooking",
+      "id": "matsue-castle"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

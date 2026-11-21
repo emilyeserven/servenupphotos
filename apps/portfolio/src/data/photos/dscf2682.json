@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 09:42:41",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Izumo Taisha Haiden",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["shimenawa", "chochin", "shinto", "shrine", "prayers", "tourists"],
-  "genres": [],
-  "places": [],
+  "genres": ["street", "architecture"],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "izumo-taisha-haiden"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

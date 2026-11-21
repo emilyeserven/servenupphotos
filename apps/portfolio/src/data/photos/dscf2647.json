@@ -16,7 +16,7 @@
   "customGpsPosition": "35.400712, 132.68567",
   "createDate": "2026:09:26 09:37:09",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Bronze Torii",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["torii", "shinto", "sando", "tourists", "pedestrians"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "street"],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "bronze-torii"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

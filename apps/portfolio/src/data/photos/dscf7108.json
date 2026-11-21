@@ -16,7 +16,7 @@
   "customGpsPosition": "35.884111, 128.569821",
   "createDate": "2026:09:20 10:02:49",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Bisan-dong",
   "customCity": "Daegu",
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["apartments", "mountains", "city", "skyline"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "bisan-dong"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

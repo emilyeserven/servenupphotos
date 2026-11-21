@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 09:26:27",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Matsu-no-Sando",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["flowers", "grass"],
-  "genres": [],
-  "places": [],
+  "genres": ["nature"],
+  "places": [
+    {
+      "relation": "on",
+      "id": "matsu-no-sando"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

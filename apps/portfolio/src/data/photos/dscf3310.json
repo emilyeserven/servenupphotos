@@ -16,7 +16,7 @@
   "customGpsPosition": "35.397101125214725, 132.68262147179598",
   "createDate": "2026:09:26 12:36:14",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Etsutogeara Shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["shimenawa", "shide", "shinto", "kanji", "carvings", "wood"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "abstract"],
+  "places": [
+    {
+      "relation": "at",
+      "id": "etsutogeara-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

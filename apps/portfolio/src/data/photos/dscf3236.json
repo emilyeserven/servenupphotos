@@ -16,7 +16,7 @@
   "customGpsPosition": "35.397164, 132.686287",
   "createDate": "2026:09:26 12:19:19",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Seidamari Torii",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["torii", "shinto", "birds", "silhouettes", "minimalism"],
-  "genres": [],
-  "places": [],
+  "genres": ["abstract", "architecture", "wildlife"],
+  "places": [
+    {
+      "relation": "below",
+      "id": "seidamari-torii"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

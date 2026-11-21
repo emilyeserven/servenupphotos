@@ -1,0 +1,12 @@
+{
+  "id": "mejima-island",
+  "name": "Mejima Island",
+  "description": "",
+  "parent": "",
+  "city": "Abu District",
+  "state": "Yamaguchi",
+  "country": "Japan",
+  "latitude": 34.48702,
+  "longitude": 131.462987,
+  "exactLocation": true
+}

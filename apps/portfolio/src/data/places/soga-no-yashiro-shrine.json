@@ -1,0 +1,11 @@
+{
+  "id": "soga-no-yashiro-shrine",
+  "name": "Soga-no-Yashiro Shrine",
+  "description": "",
+  "parent": "izumo-shrine",
+  "city": "Izumo",
+  "state": "Shimane",
+  "country": "Japan",
+  "latitude": 35.4025,
+  "longitude": 132.68556
+}

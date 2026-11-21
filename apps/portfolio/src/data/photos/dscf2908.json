@@ -16,7 +16,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:26 11:03:26",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Izumo Taisha Haiden",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -51,8 +51,17 @@
   "customLens": null,
   "albums": [],
   "tags": ["chochin", "kamon", "shimenawa", "shinto"],
-  "genres": [],
-  "places": [],
+  "genres": ["architecture", "abstract"],
+  "places": [
+    {
+      "relation": "at",
+      "id": "izumo-taisha-haiden"
+    },
+    {
+      "relation": "in",
+      "id": "izumo-shrine"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,
