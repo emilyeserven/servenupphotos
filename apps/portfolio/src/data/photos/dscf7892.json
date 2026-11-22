@@ -1,11 +1,11 @@
 {
-  "id": 927,
-  "title": null,
+  "title": "Pillars of Reflected Light",
   "comment": null,
+  "id": 927,
   "altText": null,
   "notes": null,
   "file": "DSCF7892.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T00:30:24Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -68,8 +68,8 @@
       "hex": "#252525",
       "lab": {
         "l": 14.9,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

@@ -1,9 +1,9 @@
 {
-  "id": 208,
-  "title": null,
+  "title": "Union Square Player",
   "comment": null,
+  "id": 208,
   "file": "post-processed-0160.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:20:52Z",
   "camera": "Canon EOS REBEL T3i",
   "lens": "EF-S18-55mm f/3.5-5.6 IS II",
   "aperture": 5,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/1519ea8586da-post-processed-0160-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/1519ea8586da-post-processed-0160-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/1519ea8586da-post-processed-0160-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/1519ea8586da-post-processed-0160-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1519ea8586da-post-processed-0160-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/1519ea8586da-post-processed-0160-thumbnail.webp?crop=0,0,2610",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1519ea8586da-post-processed-0160-thumbnailpreview.webp?crop=0,0,2610",
     "thumbnailcrop": {
-      "x": 1287,
+      "x": 0,
       "y": 0,
       "size": 2610,
       "outputSize": 500
@@ -68,7 +68,7 @@
       "hex": "#6f6f6f",
       "lab": {
         "l": 46.67,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {
@@ -270,5 +270,7 @@
     "samples": 10011
   },
   "notes": "Shows a violinist; 'violin' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 251 (2:1), not the 16:9 crop for a landscape photo.",
-  "similarPhotos": [46, 180, 22, 25, 186, 6]
+  "similarPhotos": [46, 180, 22, 25, 186, 6],
+  "noGps": false,
+  "altText": null
 }

@@ -1,11 +1,11 @@
 {
-  "id": 877,
-  "title": null,
+  "title": "Passing by the Canal II",
   "comment": null,
+  "id": 877,
   "altText": null,
   "notes": null,
   "file": "DSCF3937.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T22:45:55Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.5,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/01fe4d9f0bfb-dscf3937-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/01fe4d9f0bfb-dscf3937-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/01fe4d9f0bfb-dscf3937-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/01fe4d9f0bfb-dscf3937-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/01fe4d9f0bfb-dscf3937-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/01fe4d9f0bfb-dscf3937-thumbnail.webp?crop=795,0,4248",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/01fe4d9f0bfb-dscf3937-thumbnailpreview.webp?crop=795,0,4248",
     "thumbnailcrop": {
-      "x": 1652,
+      "x": 795,
       "y": 0,
       "size": 4248,
       "outputSize": 500

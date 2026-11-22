@@ -1,9 +1,9 @@
 {
-  "id": 397,
-  "title": null,
+  "title": "Hagi Castle Town Door",
   "comment": null,
+  "id": 397,
   "file": "DSCF1301.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T23:29:56Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -267,5 +267,8 @@
     "peakChroma": 7.01,
     "samples": 9975
   },
-  "similarPhotos": [298, 350, 330, 500, 504, 391]
+  "similarPhotos": [298, 350, 330, 500, 504, 391],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

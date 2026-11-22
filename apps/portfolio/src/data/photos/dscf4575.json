@@ -1,11 +1,11 @@
 {
-  "id": 893,
-  "title": null,
+  "title": "Horikawa Boat Turn",
   "comment": null,
+  "id": 893,
   "altText": null,
   "notes": null,
   "file": "DSCF4575.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T22:35:20Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/32bb2313ca82-dscf4575-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/32bb2313ca82-dscf4575-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/32bb2313ca82-dscf4575-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/32bb2313ca82-dscf4575-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/32bb2313ca82-dscf4575-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/32bb2313ca82-dscf4575-thumbnail.webp?crop=1333,0,4109",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/32bb2313ca82-dscf4575-thumbnailpreview.webp?crop=1333,0,4109",
     "thumbnailcrop": {
-      "x": 1597,
+      "x": 1333,
       "y": 0,
       "size": 4109,
       "outputSize": 500

@@ -1,11 +1,11 @@
 {
-  "id": 523,
-  "title": null,
+  "title": "Utilities Array",
   "comment": null,
+  "id": 523,
   "altText": null,
   "notes": "Shows solar panels on an apartment block; 'solar-panels' was removed as a tag, since only 1 photo has them.",
   "file": "DSCF0249.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T00:56:37Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/4d35954bc4a2-dscf0249-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/4d35954bc4a2-dscf0249-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/4d35954bc4a2-dscf0249-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/4d35954bc4a2-dscf0249-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4d35954bc4a2-dscf0249-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/4d35954bc4a2-dscf0249-thumbnail.webp?crop=0,1394,5152",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4d35954bc4a2-dscf0249-thumbnailpreview.webp?crop=0,1394,5152",
     "thumbnailcrop": {
       "x": 0,
-      "y": 1030,
+      "y": 1394,
       "size": 5152,
       "outputSize": 500
     }
@@ -73,7 +73,7 @@
       "hex": "#555555",
       "lab": {
         "l": 36.29,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {

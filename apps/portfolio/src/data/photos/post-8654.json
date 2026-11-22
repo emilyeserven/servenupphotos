@@ -1,9 +1,9 @@
 {
-  "id": 119,
-  "title": null,
+  "title": "Looking Down",
   "comment": null,
+  "id": 119,
   "file": "post-8654.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:22:39Z",
   "camera": "Canon EOS REBEL T3i",
   "lens": "EF-S18-55mm f/3.5-5.6 IS II",
   "aperture": 5.6,
@@ -265,5 +265,7 @@
     "samples": 9842
   },
   "notes": "Shows shoes; 'shoes' isn't a tag, since only 1 photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 277 (1.81:1), not the 16:9 crop for a landscape photo.",
-  "similarPhotos": [478, 146, 322, 477, 88, 496]
+  "similarPhotos": [478, 146, 322, 477, 88, 496],
+  "noGps": false,
+  "altText": null
 }

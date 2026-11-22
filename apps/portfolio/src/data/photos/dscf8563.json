@@ -1,11 +1,11 @@
 {
-  "id": 845,
-  "title": null,
+  "title": "Street Corner Shrine",
   "comment": null,
+  "id": 845,
   "altText": null,
   "notes": null,
   "file": "DSCF8563.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T22:22:40Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -13,10 +13,10 @@
   "iso": 125,
   "focalLength": 18.5,
   "gpsPosition": "34 deg 40' 3.18\" N, 135 deg 9' 5.67\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.66755, 135.151575",
   "createDate": "2026:09:30 13:29:11",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Nagata Jinja-mae Shopping Street",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["shinto", "shrine", "wood", "sidewalk"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "nagata-jinja-mae-shopping-street"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

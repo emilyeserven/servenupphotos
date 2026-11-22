@@ -1,9 +1,9 @@
 {
-  "id": 188,
-  "title": null,
+  "title": "Banjos & Busking",
   "comment": null,
+  "id": 188,
   "file": "IMG_5291.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:02:37Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 7.1,
@@ -63,7 +63,7 @@
       "hex": "#777777",
       "lab": {
         "l": 50.11,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {
@@ -265,5 +265,7 @@
     "samples": 9864
   },
   "notes": "Shows a banjo player; 'banjos' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 263 (1.90:1), not the 16:9 crop for a landscape photo.",
-  "similarPhotos": [186, 208, 192, 193, 164, 173]
+  "similarPhotos": [186, 208, 192, 193, 164, 173],
+  "noGps": false,
+  "altText": null
 }

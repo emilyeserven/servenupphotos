@@ -1,11 +1,11 @@
 {
-  "id": 567,
-  "title": null,
+  "title": "Hill to Itaewon II",
   "comment": null,
+  "id": 567,
   "altText": null,
   "notes": null,
   "file": "DSCF1761.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T00:42:12Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/c9b971797847-dscf1761-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/c9b971797847-dscf1761-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/c9b971797847-dscf1761-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/c9b971797847-dscf1761-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c9b971797847-dscf1761-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/c9b971797847-dscf1761-thumbnail.webp?crop=0,364,3088",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c9b971797847-dscf1761-thumbnailpreview.webp?crop=0,364,3088",
     "thumbnailcrop": {
       "x": 0,
-      "y": 617,
+      "y": 364,
       "size": 3088,
       "outputSize": 500
     }

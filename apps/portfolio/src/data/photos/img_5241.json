@@ -1,9 +1,9 @@
 {
-  "id": 185,
-  "title": null,
+  "title": "NYC Architecture I",
   "comment": null,
+  "id": 185,
   "file": "IMG_5241.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:02:48Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 5,
@@ -63,7 +63,7 @@
       "hex": "#6b6b6b",
       "lab": {
         "l": 45.11,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {
@@ -265,5 +265,7 @@
     "samples": 9880
   },
   "similarPhotos": [174, 173, 176, 175, 172, 67],
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 289 (1.73:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 289 (1.73:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

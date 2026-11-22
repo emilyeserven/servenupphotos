@@ -1,11 +1,11 @@
 {
-  "id": 524,
-  "title": null,
+  "title": "Lanterns Outside the Park",
   "comment": null,
+  "id": 524,
   "altText": null,
   "notes": null,
   "file": "DSCF0281.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T00:55:45Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/a24932defaa9-dscf0281-small.webp?faces=mwbnq87h",
     "xsmall": "https://cdn.servenupphotos.net/photos/a24932defaa9-dscf0281-xsmall.webp?faces=mwbnq87h",
     "preview": "https://cdn.servenupphotos.net/photos/a24932defaa9-dscf0281-preview.webp?faces=mwbnq87h",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/a24932defaa9-dscf0281-thumbnail.webp?faces=mwbnq87h",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a24932defaa9-dscf0281-thumbnailpreview.webp?faces=mwbnq87h",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/a24932defaa9-dscf0281-thumbnail.webp?crop=1797,0,3887",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a24932defaa9-dscf0281-thumbnailpreview.webp?crop=1797,0,3887",
     "thumbnailcrop": {
-      "x": 1512,
+      "x": 1797,
       "y": 0,
       "size": 3887,
       "outputSize": 500

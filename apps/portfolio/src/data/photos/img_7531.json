@@ -1,9 +1,9 @@
 {
-  "id": 145,
-  "title": null,
+  "title": "Blue Shell",
   "comment": null,
+  "id": 145,
   "file": "IMG_7531.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:00:24Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S35mm f/2.8 MACRO IS STM",
   "aperture": 6.3,
@@ -271,5 +271,7 @@
   },
   "similarPhotos": [147, 140, 144, 142, 143, 141],
   "compareGroup": "Scallop Shell on Pebbles",
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

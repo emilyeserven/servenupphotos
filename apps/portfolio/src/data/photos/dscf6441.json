@@ -1,11 +1,11 @@
 {
-  "id": 600,
-  "title": null,
+  "title": "Stumbling Through Seoul",
   "comment": null,
+  "id": 600,
   "altText": null,
   "notes": "Quality Check (pixelation): The couple walking toward the camera in the street, left of centre, both have their faces visible.\n\nQuality Check (pixelation): The couple walking toward the camera on the left both have their faces visible; the rear plate of the white taxi behind them, right of centre, is readable.",
   "file": "DSCF6441.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T00:34:30Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 9,
@@ -28,14 +28,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441.jpg",
     "key": "photos/d2cab33f54f3-dscf6441.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-thumbnailpreview.webp",
+    "xlarge": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-xlarge.webp?faces=mwr3r1x6",
+    "large": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-large.webp?faces=mwr3r1x6",
+    "medium": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-medium.webp?faces=mwr3r1x6",
+    "small": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-small.webp?faces=mwr3r1x6",
+    "xsmall": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-xsmall.webp?faces=mwr3r1x6",
+    "preview": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-preview.webp?faces=mwr3r1x6",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-thumbnail.webp?faces=mwr3r1x6",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d2cab33f54f3-dscf6441-thumbnailpreview.webp?faces=mwr3r1x6",
     "thumbnailcrop": {
       "x": 0,
       "y": 554,
@@ -271,5 +271,34 @@
     "chroma": 5.66,
     "peakChroma": 14.88,
     "samples": 9912
-  }
+  },
+  "faces": [
+    {
+      "x": 1082,
+      "y": 2488,
+      "width": 103,
+      "height": 125,
+      "blocks": 16,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 1052,
+      "y": 2352,
+      "width": 168,
+      "height": 168,
+      "blocks": 8,
+      "keep": true
+    },
+    {
+      "x": 844,
+      "y": 2315,
+      "width": 126,
+      "height": 147,
+      "blocks": 17,
+      "shape": "circle",
+      "edge": "blocks",
+      "rotation": 23
+    }
+  ]
 }
