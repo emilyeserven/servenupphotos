@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { type GitHubFailure, githubFailureOf } from "@/api/errors";
+import { CloudflareFailureDetails } from "@/components/cloudflare-details";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +25,8 @@ interface ErrorNoteProps {
 /**
  * The one way the pipeline shows that something failed: the message in red, announced to screen
  * readers, and when a GitHub call failed, GitHub's own answer under it (the failing step, the
- * request and GitHub's errors) so it can be read and copied.
+ * request and GitHub's errors) so it can be read and copied; when an R2 request failed,
+ * Cloudflare's answer the same way.
  */
 export function ErrorNote({
   error,
@@ -45,6 +47,7 @@ export function ErrorNote({
         {children ?? messageOf(error, lead)}
       </span>
       <GitHubFailureDetails error={error} open={githubOpen} />
+      <CloudflareFailureDetails error={error} />
     </span>
   );
 }
