@@ -22,22 +22,51 @@ export interface GitHubFailure {
   body?: string;
 }
 
+/**
+ * What Cloudflare answered to an R2 request that failed, as the backend passes it on, so a failure
+ * its plain-language reason doesn't explain can be looked up.
+ */
+export interface CloudflareResponse {
+  /** HTTP status, missing when no response arrived. */
+  status?: number;
+  /** The S3 error code and message, as listed in https://developers.cloudflare.com/r2/api/error-codes/ */
+  code?: string;
+  message?: string;
+  requestId?: string;
+  /** Cloudflare's CF-Ray ID for the answer, which Cloudflare support asks for. */
+  ray?: string;
+  /** The S3 call that failed, such as "HeadObject". */
+  operation?: string;
+  /** The request's method and path, bucket then key, such as "HEAD /photos/photos/abc-name-thumbnail.webp". */
+  request?: string;
+  /** How many times the backend sent the request before giving up, when it asked again. */
+  attempts?: number;
+  /** The whole error, as the backend's S3 client reported it. */
+  error: string;
+}
+
 /** A failed request to the pipeline's API, with GitHub's answer when a GitHub call failed. */
 class ApiError extends Error {
   /** The pipeline's HTTP status. */
   readonly status: number;
+  /** The pipeline request that failed, such as `/api/photos/bucket/thumbnail-crop?key=…`. */
+  readonly url: string;
   /** GitHub's answer, when a GitHub call is what failed. */
   readonly github?: GitHubFailure;
+  /** Cloudflare's answer, when an R2 request is what failed. */
+  readonly cloudflare?: CloudflareResponse;
   /** A free file name to offer instead, when the one asked for is taken. */
   readonly suggestedName?: string;
   /** Whether it failed only because a map it needs is still downloading, so asking again works. */
   readonly loading: boolean;
 
-  constructor(message: string, status: number, body: ErrorBody | null) {
+  constructor(message: string, url: string, status: number, body: ErrorBody | null) {
     super(message);
     this.name = "ApiError";
+    this.url = url;
     this.status = status;
     this.github = body?.github;
+    this.cloudflare = body?.cloudflare;
     this.suggestedName = body?.suggestedName;
     this.loading = body?.loading === true;
   }
@@ -47,6 +76,8 @@ class ApiError extends Error {
 export interface ErrorBody {
   message?: string;
   github?: GitHubFailure;
+  /** When an R2 request failed, what Cloudflare answered. */
+  cloudflare?: CloudflareResponse;
   /** A free file name to offer instead, when the one asked for is taken. */
   suggestedName?: string;
   /** True when a rail or bus map the look-up needs is still downloading or being read. */
@@ -56,7 +87,7 @@ export interface ErrorBody {
 /** The error for a failed request to url, from its status and body. */
 export function apiErrorOf(url: string, status: number, body: ErrorBody | null): ApiError {
   const message = body?.message ?? `${url} responded ${status}`;
-  return new ApiError(message, status, body);
+  return new ApiError(message, url, status, body);
 }
 
 /**
@@ -70,6 +101,31 @@ export function isMapLoading(error: unknown): boolean {
 /** GitHub's answer carried by error, when it's an ApiError from a failed GitHub call. */
 export function githubFailureOf(error: unknown): GitHubFailure | undefined {
   return error instanceof ApiError ? error.github : undefined;
+}
+
+/**
+ * Cloudflare's answer carried by error, from an ApiError or an UploadError whose R2 request failed,
+ * with the pipeline request it answered when that's known; undefined for any other failure.
+ */
+export function cloudflareFailureOf(
+  error: unknown,
+): { response: CloudflareResponse; pipeline?: string } | undefined {
+  if (error instanceof ApiError) {
+    return (
+      error.cloudflare && {
+        response: error.cloudflare,
+        pipeline: `${error.status} from ${error.url}`,
+      }
+    );
+  }
+  if (error instanceof Error && "cloudflare" in error && isCloudflareResponse(error.cloudflare)) {
+    return { response: error.cloudflare };
+  }
+  return undefined;
+}
+
+function isCloudflareResponse(value: unknown): value is CloudflareResponse {
+  return typeof value === "object" && value !== null && "error" in value;
 }
 
 /**

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/retry"
 	awshttp "github.com/aws/aws-sdk-go-v2/aws/transport/http"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -78,8 +79,8 @@ func newR2Client(cfg settings.R2, endpoint string) *s3.Client {
 		UsePathStyle: true,
 		Credentials: credentials.NewStaticCredentialsProvider(
 			strings.TrimSpace(cfg.AccessKeyID), cfg.SecretAccessKey, ""),
-		RetryMaxAttempts: 1,
-		HTTPClient:       r2HTTP,
+		Retryer:    newR2Retryer(),
+		HTTPClient: r2HTTP,
 		// Skip the checksums the SDK adds to uploads by default; R2 doesn't
 		// need them and not every algorithm is supported.
 		RequestChecksumCalculation: aws.RequestChecksumCalculationWhenRequired,
@@ -111,6 +112,17 @@ type CloudflareResponse struct {
 	Code      string `json:"code,omitempty"`
 	Message   string `json:"message,omitempty"`
 	RequestID string `json:"requestId,omitempty"`
+	// Ray is Cloudflare's CF-Ray ID for the answer, which Cloudflare support
+	// asks for.
+	Ray string `json:"ray,omitempty"`
+	// Operation is the S3 call that failed, such as "HeadObject".
+	Operation string `json:"operation,omitempty"`
+	// Request is the failed request's method and path, such as
+	// "HEAD /photos/photos/abc-name-thumbnail.webp" (bucket, then key).
+	Request string `json:"request,omitempty"`
+	// Attempts is how many times the request was sent before giving up, when
+	// it was retried.
+	Attempts int `json:"attempts,omitempty"`
 	// Error is the whole error as the SDK reports it.
 	Error string `json:"error"`
 }
@@ -122,6 +134,20 @@ func cloudflareResponse(err error) *CloudflareResponse {
 	if errors.As(err, &respErr) {
 		res.Status = respErr.HTTPStatusCode()
 		res.RequestID = respErr.ServiceRequestID()
+		if resp := respErr.Response; resp != nil && resp.Response != nil {
+			res.Ray = resp.Header.Get("CF-Ray")
+			if req := resp.Request; req != nil && req.URL != nil {
+				res.Request = req.Method + " " + req.URL.Path
+			}
+		}
+	}
+	var opErr *smithy.OperationError
+	if errors.As(err, &opErr) {
+		res.Operation = opErr.Operation()
+	}
+	var attemptsErr *retry.MaxAttemptsError
+	if errors.As(err, &attemptsErr) {
+		res.Attempts = attemptsErr.Attempt
 	}
 	var apiErr smithy.APIError
 	if errors.As(err, &apiErr) {

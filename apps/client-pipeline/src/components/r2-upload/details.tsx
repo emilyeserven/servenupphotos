@@ -1,14 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ImageOffIcon } from "lucide-react";
-import { Fragment, type ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import type { BucketImage } from "@/api/photos";
-import {
-  type CloudflareResponse,
-  type UploadRequest,
-  type UploadResponse,
-  UploadError,
-  renamePhoto,
-} from "@/api/upload";
+import { type UploadRequest, type UploadResponse, UploadError, renamePhoto } from "@/api/upload";
 import { PUBLISHED } from "@/api/versions";
 import { CopyTextButton } from "@/components/copy-text";
 import { ErrorNote } from "@/components/error-note";
@@ -81,44 +75,9 @@ function R2NotSetUp({ missing }: { missing: string[] }) {
   );
 }
 
-/** Why the upload failed, with what Cloudflare actually answered when it rejected it. */
+/** Why the upload failed; ErrorNote adds what Cloudflare answered when it rejected it. */
 function UploadFailure({ error }: { error: Error | null }) {
-  if (!error) return null;
-  const cloudflare = error instanceof UploadError ? error.cloudflare : undefined;
-  return (
-    <>
-      <ErrorNote error={error} />
-      {cloudflare && <CloudflareDetails response={cloudflare} />}
-    </>
-  );
-}
-
-/** Cloudflare's answer, for looking up a failure its plain-language reason doesn't explain. */
-function CloudflareDetails({ response }: { response: CloudflareResponse }) {
-  const rows = [
-    ["Status", response.status],
-    ["Code", response.code],
-    ["Message", response.message],
-    ["Request ID", response.requestId],
-  ].filter(([, value]) => value);
-  return (
-    <div className="bg-muted/40 flex flex-col gap-2 rounded-lg border p-3 text-xs">
-      <p className="font-medium">Cloudflare's response</p>
-      {rows.length > 0 && (
-        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
-          {rows.map(([label, value]) => (
-            <Fragment key={label}>
-              <dt className="text-muted-foreground">{label}</dt>
-              <dd className="font-mono">{value}</dd>
-            </Fragment>
-          ))}
-        </dl>
-      )}
-      <pre className="text-muted-foreground font-mono break-all whitespace-pre-wrap">
-        {response.error}
-      </pre>
-    </div>
-  );
+  return <ErrorNote error={error} />;
 }
 
 interface SameNamePromptProps {

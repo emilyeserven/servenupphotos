@@ -68,7 +68,8 @@ func TestFindPhotosReusesListing(t *testing.T) {
 		t.Fatalf("listed %d times after the listing got old, want 3", got)
 	}
 
-	// A failed listing isn't kept, so the next find lists again.
+	// A failed listing isn't kept, so the next find lists again. R2's 500 is
+	// asked r2ReadAttempts times before it counts as failed.
 	listings.last.read = time.Now().Add(-listingTTL)
 	failing.Store(true)
 	if _, problem := findPhotos(t.Context(), cfg, endpoint, refs); problem == "" {
@@ -76,7 +77,7 @@ func TestFindPhotosReusesListing(t *testing.T) {
 	}
 	failing.Store(false)
 	find()
-	if got := listed.Load(); got != 5 {
-		t.Fatalf("listed %d times after a failure, want 5", got)
+	if got, want := listed.Load(), int32(3+r2ReadAttempts+1); got != want {
+		t.Fatalf("listed %d times after a failure, want %d", got, want)
 	}
 }

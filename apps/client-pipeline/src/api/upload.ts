@@ -1,4 +1,5 @@
 import { mutationOptions } from "@tanstack/react-query";
+import type { CloudflareResponse } from "@/api/errors";
 import type { BucketImage } from "@/api/photos";
 import type { PublishedName } from "@/api/versions";
 import type { Crop } from "@/lib/crop";
@@ -16,18 +17,6 @@ export interface UploadResponse extends UploadedObject {
   thumbnailCrop?: Crop;
 }
 
-/** What Cloudflare answered to a failed request. */
-export interface CloudflareResponse {
-  /** HTTP status, missing when no response arrived. */
-  status?: number;
-  /** The S3 error code and message, as listed in https://developers.cloudflare.com/r2/api/error-codes/ */
-  code?: string;
-  message?: string;
-  requestId?: string;
-  /** The whole error, as the backend's S3 client reported it. */
-  error: string;
-}
-
 export interface UploadRequest {
   photo: File;
   /** Upload even when the bucket already has a different photo under this name. */
@@ -40,6 +29,7 @@ export interface UploadRequest {
 export class UploadError extends Error {
   /** Other photos in the bucket under the same name, newest first, when that stopped the upload. */
   readonly sameName: BucketImage[];
+  /** What Cloudflare answered, when an R2 request is what failed. */
   readonly cloudflare?: CloudflareResponse;
   /** A name no photo in the bucket has yet, offered with sameName as the new name. */
   readonly suggestedName?: string;
