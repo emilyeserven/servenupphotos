@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-thumbnail.webp?crop=0,1091,3956",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-thumbnailpreview.webp?crop=0,1091,3956",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-thumbnail.webp?crop=0,556,3956",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9ac12862f6f8-dscf5023-thumbnailpreview.webp?crop=0,556,3956",
     "thumbnailcrop": {
       "x": 0,
-      "y": 1091,
+      "y": 556,
       "size": 3956,
       "outputSize": 500
     }
@@ -49,7 +49,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["homepage-spotlight"],
   "tags": ["lanterns", "arches", "art-installations", "night"],
   "genres": [],
   "places": [

@@ -1,9 +1,9 @@
 {
-  "id": 147,
-  "title": null,
+  "title": "Balancing on Two Little Hills",
   "comment": null,
+  "id": 147,
   "file": "IMG_7847.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:00:57Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S35mm f/2.8 MACRO IS STM",
   "aperture": 6.3,
@@ -270,5 +270,7 @@
     "samples": 9984
   },
   "similarPhotos": [140, 144, 142, 145, 143, 141],
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 304 (1.64:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 304 (1.64:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

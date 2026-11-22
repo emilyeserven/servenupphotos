@@ -1,11 +1,11 @@
 {
-  "id": 548,
-  "title": null,
+  "title": "Seoul Modern Building I",
   "comment": null,
+  "id": 548,
   "altText": null,
   "notes": null,
   "file": "DSCF9778.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T00:58:11Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -68,7 +68,7 @@
       "hex": "#6b6b6b",
       "lab": {
         "l": 45.32,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {

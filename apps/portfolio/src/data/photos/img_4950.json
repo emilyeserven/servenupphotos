@@ -1,9 +1,9 @@
 {
-  "id": 172,
-  "title": null,
+  "title": "NYC Architecture II",
   "comment": null,
+  "id": 172,
   "file": "IMG_4950.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:02:52Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 5.6,
@@ -63,7 +63,7 @@
       "hex": "#757575",
       "lab": {
         "l": 49.37,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {
@@ -265,5 +265,7 @@
     "samples": 10062
   },
   "similarPhotos": [175, 76, 185, 67, 35, 174],
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 301 (1.66:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 301 (1.66:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

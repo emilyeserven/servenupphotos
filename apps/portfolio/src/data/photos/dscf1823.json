@@ -1,11 +1,11 @@
 {
-  "id": 572,
-  "title": null,
+  "title": "Seoul Alley",
   "comment": null,
+  "id": 572,
   "altText": null,
   "notes": null,
   "file": "DSCF1823.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T00:38:52Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.6,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/04ca63bab9eb-dscf1823-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/04ca63bab9eb-dscf1823-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/04ca63bab9eb-dscf1823-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/04ca63bab9eb-dscf1823-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/04ca63bab9eb-dscf1823-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/04ca63bab9eb-dscf1823-thumbnail.webp?crop=0,1953,4883",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/04ca63bab9eb-dscf1823-thumbnailpreview.webp?crop=0,1953,4883",
     "thumbnailcrop": {
       "x": 0,
-      "y": 976,
+      "y": 1953,
       "size": 4883,
       "outputSize": 500
     }

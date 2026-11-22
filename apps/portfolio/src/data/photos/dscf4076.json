@@ -1,11 +1,11 @@
 {
-  "id": 882,
-  "title": null,
+  "title": "Passing by the Canal I",
   "comment": null,
+  "id": 882,
   "altText": null,
   "notes": null,
   "file": "DSCF4076.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T22:45:52Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.3,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/9c1639b1f72b-dscf4076-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/9c1639b1f72b-dscf4076-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/9c1639b1f72b-dscf4076-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/9c1639b1f72b-dscf4076-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9c1639b1f72b-dscf4076-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/9c1639b1f72b-dscf4076-thumbnail.webp?crop=655,0,4305",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9c1639b1f72b-dscf4076-thumbnailpreview.webp?crop=655,0,4305",
     "thumbnailcrop": {
-      "x": 1674,
+      "x": 655,
       "y": 0,
       "size": 4305,
       "outputSize": 500

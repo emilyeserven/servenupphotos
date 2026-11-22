@@ -1,11 +1,11 @@
 {
-  "id": 833,
-  "title": null,
+  "title": "Road to Tower Records",
   "comment": null,
+  "id": 833,
   "altText": null,
   "notes": "Shows an escalator; 'escalators' isn't a tag, since only 1 photo has one.",
   "file": "DSCF8139.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T22:27:48Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -13,7 +13,7 @@
   "iso": 160,
   "focalLength": 35,
   "gpsPosition": "34 deg 41' 36.07\" N, 135 deg 11' 28.55\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.694483457322406, 135.19540797562647",
   "createDate": "2026:09:29 19:10:25",
   "customCreateDate": null,
   "placeName": null,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/be6d6cc572c7-dscf8139-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/be6d6cc572c7-dscf8139-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/be6d6cc572c7-dscf8139-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/be6d6cc572c7-dscf8139-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/be6d6cc572c7-dscf8139-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/be6d6cc572c7-dscf8139-thumbnail.webp?crop=0,497,4321",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/be6d6cc572c7-dscf8139-thumbnailpreview.webp?crop=0,497,4321",
     "thumbnailcrop": {
       "x": 0,
-      "y": 864,
+      "y": 497,
       "size": 4321,
       "outputSize": 500
     }

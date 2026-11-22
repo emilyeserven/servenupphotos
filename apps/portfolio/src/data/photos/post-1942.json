@@ -1,9 +1,9 @@
 {
-  "id": 115,
-  "title": null,
+  "title": "Heart in the Park",
   "comment": null,
+  "id": 115,
   "file": "post-1942.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:25:00Z",
   "camera": "Canon EOS REBEL T3i",
   "lens": "EF-S18-55mm f/3.5-5.6 IS II",
   "aperture": 5,
@@ -265,5 +265,7 @@
     "samples": 9801
   },
   "notes": "Shows a wreath; 'wreath' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo.",
-  "similarPhotos": [496, 479, 100, 486, 403, 41]
+  "similarPhotos": [496, 479, 100, 486, 403, 41],
+  "noGps": false,
+  "altText": null
 }

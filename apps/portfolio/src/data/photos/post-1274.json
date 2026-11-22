@@ -1,9 +1,9 @@
 {
-  "id": 112,
-  "title": null,
+  "title": "Bridge Cross-Brace",
   "comment": null,
+  "id": 112,
   "file": "post-1274.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:27:17Z",
   "camera": "Canon EOS REBEL T3i",
   "lens": "EF-S18-55mm f/3.5-5.6 IS II",
   "aperture": 5.6,
@@ -270,5 +270,7 @@
     "samples": 9956
   },
   "similarPhotos": [113, 79, 63, 81, 180, 300],
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

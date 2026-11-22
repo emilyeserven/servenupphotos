@@ -1,11 +1,11 @@
 {
-  "id": 844,
-  "title": null,
+  "title": "The Road to Ikuta",
   "comment": null,
+  "id": 844,
   "altText": null,
   "notes": null,
   "file": "DSCF8551.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T22:22:51Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 7.1,
@@ -13,10 +13,10 @@
   "iso": 125,
   "focalLength": 78.7,
   "gpsPosition": "34 deg 40' 49.95\" N, 135 deg 10' 34.42\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.6677, 135.1515",
   "createDate": "2026:09:30 13:19:14",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Nagata Jinja-mae Shopping Street",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["torii", "shinto", "road", "traffic"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in front of",
+      "id": "nagata-jinja-mae-shopping-street"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

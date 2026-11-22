@@ -1671,6 +1671,18 @@
     "longitude": 131.4097
   },
   {
+    "id": "nagata-jinja-mae-shopping-street",
+    "name": "Nagata Jinja-mae Shopping Street",
+    "description": "",
+    "parent": "",
+    "city": "Kobe",
+    "state": "Hyōgo",
+    "country": "Japan",
+    "latitude": 34.66755,
+    "longitude": 135.151575,
+    "exactLocation": true
+  },
+  {
     "id": "nagwon-dong",
     "name": "Nagwon-dong",
     "description": "",

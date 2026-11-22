@@ -1,11 +1,11 @@
 {
-  "id": 703,
-  "title": null,
+  "title": "Washington Square Arch",
   "comment": null,
+  "id": 703,
   "altText": null,
   "notes": null,
   "file": "IMG_2023-2.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:15:48Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": null,
   "aperture": null,
@@ -68,7 +68,7 @@
       "hex": "#646464",
       "lab": {
         "l": 42.2,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {

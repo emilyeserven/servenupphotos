@@ -1,9 +1,9 @@
 {
-  "id": 111,
-  "title": null,
+  "title": "Kent Appalachian Marker",
   "comment": null,
+  "id": 111,
   "file": "post-1129.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:27:48Z",
   "camera": "Canon EOS REBEL T3i",
   "lens": "EF-S18-55mm f/3.5-5.6 IS II",
   "aperture": 5.6,
@@ -271,5 +271,7 @@
   },
   "similarPhotos": [82, 114, 264, 469, 313, 486],
   "compareGroup": "Appalachian Trail Markers",
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 298 (1.68:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 298 (1.68:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

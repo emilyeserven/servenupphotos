@@ -1,9 +1,9 @@
 {
-  "id": 466,
-  "title": null,
+  "title": "Shrine Stickers",
   "comment": null,
+  "id": 466,
   "file": "DSCF9997.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T00:08:58Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -267,5 +267,8 @@
     "peakChroma": 8.31,
     "samples": 9828
   },
-  "similarPhotos": [350, 391, 349, 509, 339, 397]
+  "similarPhotos": [350, 391, 349, 509, 339, 397],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

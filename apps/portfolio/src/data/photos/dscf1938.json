@@ -1,11 +1,11 @@
 {
-  "id": 577,
-  "title": null,
+  "title": "Itaewon Antiques Street",
   "comment": null,
+  "id": 577,
   "altText": null,
   "notes": null,
   "file": "DSCF1938.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T00:34:52Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4,
@@ -73,8 +73,8 @@
       "hex": "#2a2a2a",
       "lab": {
         "l": 17.09,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

@@ -1,11 +1,11 @@
 {
-  "id": 891,
-  "title": null,
+  "title": "Greetings from the Other Boat",
   "comment": null,
+  "id": 891,
   "altText": null,
   "notes": null,
   "file": "DSCF4518.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-21T22:39:08Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.3,
@@ -28,14 +28,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518.jpg",
     "key": "photos/93cc3b701bb9-dscf4518.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-thumbnailpreview.webp",
+    "xlarge": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-xlarge.webp?faces=mwqzoyqn",
+    "large": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-large.webp?faces=mwqzoyqn",
+    "medium": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-medium.webp?faces=mwqzoyqn",
+    "small": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-small.webp?faces=mwqzoyqn",
+    "xsmall": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-xsmall.webp?faces=mwqzoyqn",
+    "preview": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-preview.webp?faces=mwqzoyqn",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-thumbnail.webp?faces=mwqzoyqn",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/93cc3b701bb9-dscf4518-thumbnailpreview.webp?faces=mwqzoyqn",
     "thumbnailcrop": {
       "x": 1319,
       "y": 0,
@@ -277,5 +277,87 @@
     "chroma": 5.31,
     "peakChroma": 12.58,
     "samples": 9768
-  }
+  },
+  "faces": [
+    {
+      "x": 2690,
+      "y": 1516,
+      "width": 44,
+      "height": 64,
+      "blocks": 20,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 2749,
+      "y": 1544,
+      "width": 54,
+      "height": 106,
+      "blocks": 20,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 2712,
+      "y": 1600,
+      "width": 132,
+      "height": 132,
+      "blocks": 8,
+      "keep": true
+    },
+    {
+      "x": 3087,
+      "y": 1478,
+      "width": 87,
+      "height": 85,
+      "blocks": 20,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 3344,
+      "y": 1477,
+      "width": 54,
+      "height": 77,
+      "blocks": 16,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 3543,
+      "y": 1546,
+      "width": 55,
+      "height": 58,
+      "blocks": 16,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 3815,
+      "y": 1487,
+      "width": 65,
+      "height": 67,
+      "blocks": 16,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 4086,
+      "y": 1507,
+      "width": 75,
+      "height": 92,
+      "blocks": 16,
+      "shape": "circle",
+      "edge": "blocks"
+    },
+    {
+      "x": 4707,
+      "y": 1387,
+      "width": 56,
+      "height": 65,
+      "blocks": 16,
+      "shape": "circle",
+      "edge": "blocks"
+    }
+  ]
 }

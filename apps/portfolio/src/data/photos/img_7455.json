@@ -1,9 +1,9 @@
 {
-  "id": 144,
-  "title": null,
+  "title": "Orange Shell",
   "comment": null,
+  "id": 144,
   "file": "IMG_7455.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:00:12Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S35mm f/2.8 MACRO IS STM",
   "aperture": 6.3,
@@ -271,5 +271,7 @@
   },
   "similarPhotos": [147, 141, 145, 142, 143, 140],
   "compareGroup": "Scallop Shell on Pebbles",
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 304 (1.64:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 304 (1.64:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

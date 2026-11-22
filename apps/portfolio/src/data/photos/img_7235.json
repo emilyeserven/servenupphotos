@@ -1,9 +1,9 @@
 {
-  "id": 142,
-  "title": null,
+  "title": "Leaf Skeleton",
   "comment": null,
+  "id": 142,
   "file": "IMG_7235.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T00:59:48Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S35mm f/2.8 MACRO IS STM",
   "aperture": 6.3,
@@ -270,5 +270,7 @@
     "samples": 9750
   },
   "similarPhotos": [141, 147, 143, 144, 140, 145],
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 311 (1.61:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 311 (1.61:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

@@ -1,11 +1,11 @@
 {
-  "id": 695,
-  "title": null,
+  "title": "Subway Tiles",
   "comment": null,
+  "id": 695,
   "altText": null,
   "notes": null,
   "file": "IMG_0175.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-22T01:19:56Z",
   "camera": "Canon EOS REBEL T3i",
   "lens": "EF-S18-55mm f/3.5-5.6 IS II",
   "aperture": 3.5,
@@ -68,7 +68,7 @@
       "hex": "#808080",
       "lab": {
         "l": 53.48,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {
