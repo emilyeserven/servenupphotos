@@ -4,7 +4,7 @@ A **compare group** holds photos weighed head-to-head to decide which one gets p
 
 ## Putting a photo in a group
 
-**Compare** (a scale icon) is on each Gallery tile, on each photo in flight beside **Undecided**, and on each draft tile under **Drafts on `<branch>`**. It opens a dialog to choose a group, or to type a name and **Start a group named “…”**. A photo is in at most one group, so choosing another moves it. Once a photo is in a group, its button shows the group's name, and the dialog adds **Compare “…”**, to open the group, and **Take out of the group**.
+**Compare** (a scale icon) is on each Gallery tile (an icon in its [button group](gallery.md), named on hover), on each photo in flight beside **Undecided**, and on each draft tile under **Drafts on `<branch>`**. It opens a dialog to choose a group, or to type a name and **Start a group named “…”**. A photo is in at most one group, so choosing another moves it. Once a photo is in a group, its button shows the group's name, and the dialog adds **Compare “…”**, to open the group, and **Take out of the group**.
 
 ## Near duplicates
 

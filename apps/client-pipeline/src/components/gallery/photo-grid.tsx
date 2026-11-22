@@ -9,9 +9,9 @@ import {
   savedGroups,
 } from "@/api/organize";
 import type { InFlightImages } from "@/api/photos";
-import { CompareButton } from "@/components/compare/compare-button";
 import { UnselectedMark } from "@/components/compare/unselected-mark";
 import { DraftMark } from "@/components/draft-mark";
+import { CardTools } from "@/components/gallery/card-tools";
 import type { GalleryFile } from "@/components/gallery/gallery-files";
 import { EditButton, tileId } from "@/components/gallery/kind-mark";
 import { PlaceGpsMark } from "@/components/gallery/place-filter";
@@ -156,7 +156,7 @@ function cardClass(file: GalleryFile, selected: boolean | null, highlighted: boo
   );
 }
 
-/** Edit, or why the photo can't be edited, and Compare. */
+/** Edit, or why the photo can't be edited, and the Compare, Undecided and Re-edit button group. */
 function CardActions({ file, images }: { file: GalleryFile; images: InFlightImages }) {
   const problem = editProblem(file, images);
   return (
@@ -166,7 +166,7 @@ function CardActions({ file, images }: { file: GalleryFile; images: InFlightImag
       ) : (
         <EditButton file={file} />
       )}
-      <CompareButton file={file} />
+      <CardTools file={file} />
     </div>
   );
 }
