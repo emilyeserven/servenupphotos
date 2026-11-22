@@ -11,7 +11,7 @@ import (
 // A HEAD that R2 answers with a passing 500 is asked again and works.
 func TestThumbnailMetadataRetriesPassingFailure(t *testing.T) {
 	var heads atomic.Int32
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		if heads.Add(1) == 1 {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -34,7 +34,7 @@ func TestThumbnailMetadataRetriesPassingFailure(t *testing.T) {
 // was and how many times it was sent.
 func TestThumbnailMetadataFailureDetails(t *testing.T) {
 	var heads atomic.Int32
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		heads.Add(1)
 		w.Header().Set("CF-Ray", "8abc123-NRT")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -60,7 +60,7 @@ func TestThumbnailMetadataFailureDetails(t *testing.T) {
 // An upload isn't sent again after a 500: its body may be a stream.
 func TestUploadNotRetried(t *testing.T) {
 	var puts atomic.Int32
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		puts.Add(1)
 		w.WriteHeader(http.StatusInternalServerError)
 	}))
