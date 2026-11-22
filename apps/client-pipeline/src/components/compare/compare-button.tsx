@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ScaleIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import type { InFlightFileRead } from "@/api/photos";
+import { IconToolButton } from "@/components/icon-tool-button";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,16 +33,24 @@ function useGroupOf(file: InFlightFileRead): string | undefined {
 export function CompareButton({
   file,
   className,
+  iconOnly,
 }: {
   file: InFlightFileRead & { inFlight?: string };
   className?: string;
+  /** Show only the scale icon, with its name on hover, as in a Gallery tile's button group. */
+  iconOnly?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const group = useGroupOf(file);
   if (!canCompare(file)) return null;
   return (
     <>
-      <GroupButton group={group} className={className} onClick={() => setOpen(true)} />
+      <CompareTrigger
+        group={group}
+        iconOnly={iconOnly}
+        className={className}
+        onClick={() => setOpen(true)}
+      />
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
@@ -68,6 +77,28 @@ function buttonLook(group: string | undefined) {
       label: "Compare",
     };
   return { variant: "secondary" as const, title: `In the compare group “${group}”`, label: group };
+}
+
+/** The button that opens the dialog: `GroupButton`, or only the scale icon named on hover. */
+function CompareTrigger({
+  iconOnly,
+  ...props
+}: {
+  group?: string;
+  iconOnly?: boolean;
+  className?: string;
+  onClick: () => void;
+}) {
+  if (!iconOnly) return <GroupButton {...props} />;
+  return (
+    <IconToolButton
+      label={props.group ? `Compare: in “${props.group}”` : "Compare"}
+      pressed={Boolean(props.group)}
+      icon={<ScaleIcon />}
+      className={props.className}
+      onClick={props.onClick}
+    />
+  );
 }
 
 function GroupButton({

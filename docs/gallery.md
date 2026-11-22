@@ -73,7 +73,13 @@ Each photo with its image in R2 has an **Edit** button that opens it on the Phot
 
 A photo people liked shows a heart and how many of them liked it beside its title, summed from the lists on [User Likes](viewer-likes.md).
 
-Each tile's **Compare** puts the photo in a [compare group](compare-groups.md), to weigh it against others on the Compare page before deciding which gets posted.
+Beside **Edit**, each tile has a button group of icons, each named in a tooltip on hover or focus and filled in while its mark is on:
+
+- **Compare** (a scale) puts the photo in a [compare group](compare-groups.md), to weigh it against others on the Compare page before deciding which gets posted. Its tooltip names the group the photo is in.
+- **Undecided** (a question mark) sends the photo to [Undecided](photos-in-flight.md#undecided), or moves it back once it's there, as a change waiting for Commit, the way the **Undecided** card under **Select** does for many photos. With **Show → Undecided** off, a photo sent there leaves the list.
+- **Re-edit** (a circular arrow) opens the same form as Photos in Flight's [**Re-edit**](photos-in-flight.md), to [mark the photo for re-editing](replace-image.md#marking-a-photo-for-re-editing) with an optional note, change the note, or take the mark off. Its tooltip shows the note.
+
+The group is `CardTools` in `components/gallery/card-tools.tsx`, built from `IconToolButton` and `IconToolGroup` (`components/icon-tool-button.tsx`); `CompareButton` and `ReEditButton` take `iconOnly` to draw themselves as one of its buttons. Undecided and Re-edit don't show for a photo whose JSON couldn't be read or that's removed in the pull request.
 
 **Select** turns on choosing photos, with a checkbox on each tile (or click the tile), **Select all shown** for the filtered ones, and an **Add albums, tags and genres** card with an album, a tag and a genre combobox. **Add to N photos** (`POST /api/photos/groups` with `paths`, `albums`, `tags` and `genres`) adds them to each chosen photo's `albums`, `tags` and `genres` after the ones it has, changing nothing else in the files, as [changes waiting for Commit](pending-changes.md), the way Update Data saves. It warns when a chosen photo is already in another album. Under it, an **Undecided** card sends the chosen photos to [Undecided](photos-in-flight.md#undecided) (**Send N photos to Undecided**) or moves them back, and a **Lower Tier** card marks them [Lower Tier](lower-tier.md) or takes the mark off. Both keep the change waiting for Commit straight away, and the selection stays, so a photo sent to Undecided while **Show → Undecided** is off leaves the list but can still be moved back.
 

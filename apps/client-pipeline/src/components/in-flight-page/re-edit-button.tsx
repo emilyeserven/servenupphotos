@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { RotateCcwIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { type ComponentProps, useState } from "react";
 import {
   type InFlightFileRead,
   photosInFlightQuery,
@@ -8,6 +8,7 @@ import {
   updateInFlightMutation,
 } from "@/api/photos";
 import { ErrorNote } from "@/components/error-note";
+import { IconToolButton } from "@/components/icon-tool-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -66,23 +67,60 @@ function lookOf(reason: string | undefined) {
  * does; on a photo already marked it changes the note or takes the mark off. Nothing for a photo
  * whose JSON couldn't be read or that's being removed.
  */
-export function ReEditButton({ file }: { file: InFlightFileRead }) {
+export function ReEditButton({
+  file,
+  iconOnly,
+}: {
+  file: InFlightFileRead;
+  /** Show only the icon, with its name on hover, as in a Gallery tile's button group. */
+  iconOnly?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   if (!canReEdit(file)) return null;
   const reason = savedReEdit(file.data)?.reason;
-  const look = lookOf(reason);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant={look.variant} size="sm" className={look.className} title={look.title}>
-          <RotateCcwIcon />
-          Re-edit
-        </Button>
+        <ReEditTrigger reason={reason} iconOnly={iconOnly} />
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80">
         {open && <ReEditForm file={file} reason={reason} onDone={() => setOpen(false)} />}
       </PopoverContent>
     </Popover>
+  );
+}
+
+/**
+ * The button that opens the form: "Re-edit", or only its icon with its name and note on hover.
+ * `reason` is the saved note, undefined when the photo isn't marked; the popover passes its props.
+ */
+function ReEditTrigger({
+  reason,
+  iconOnly,
+  ...props
+}: ComponentProps<typeof Button> & { reason?: string; iconOnly?: boolean }) {
+  const marked = reason !== undefined;
+  if (iconOnly)
+    return (
+      <IconToolButton
+        label={marked && reason ? `Re-edit: ${reason}` : "Re-edit"}
+        pressed={marked}
+        icon={<RotateCcwIcon />}
+        {...props}
+      />
+    );
+  const look = lookOf(reason);
+  return (
+    <Button
+      variant={look.variant}
+      size="sm"
+      className={look.className}
+      title={look.title}
+      {...props}
+    >
+      <RotateCcwIcon />
+      Re-edit
+    </Button>
   );
 }
 
