@@ -1,11 +1,11 @@
 {
-  "id": 535,
-  "title": null,
+  "title": "Passing by Lanterns",
   "comment": null,
+  "id": 535,
   "altText": null,
   "notes": "Quality Check (pixelation): The older man in the hat and light jacket walking past the lanterns on the left shows his face.",
   "file": "DSCF9243.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:54:31Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -34,10 +34,10 @@
     "small": "https://cdn.servenupphotos.net/photos/13460f7c296e-dscf9243-small.webp?faces=mwbngn1o",
     "xsmall": "https://cdn.servenupphotos.net/photos/13460f7c296e-dscf9243-xsmall.webp?faces=mwbngn1o",
     "preview": "https://cdn.servenupphotos.net/photos/13460f7c296e-dscf9243-preview.webp?faces=mwbngn1o",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/13460f7c296e-dscf9243-thumbnail.webp?faces=mwbngn1o",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/13460f7c296e-dscf9243-thumbnailpreview.webp?faces=mwbngn1o",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/13460f7c296e-dscf9243-thumbnail.webp?crop=221,0,3867",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/13460f7c296e-dscf9243-thumbnailpreview.webp?crop=221,0,3867",
     "thumbnailcrop": {
-      "x": 1504,
+      "x": 221,
       "y": 0,
       "size": 3867,
       "outputSize": 500

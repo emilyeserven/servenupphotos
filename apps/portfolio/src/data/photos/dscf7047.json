@@ -1,9 +1,9 @@
 {
-  "id": 266,
-  "title": null,
+  "title": "Looking Over the Skytrail",
   "comment": null,
+  "id": 266,
   "file": "DSCF7047.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:54:42Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -267,5 +267,8 @@
     "samples": 10050
   },
   "similarPhotos": [265, 264, 471, 313, 469, 221],
-  "compareGroup": "Namsan Forest Boardwalk"
+  "compareGroup": "Namsan Forest Boardwalk",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

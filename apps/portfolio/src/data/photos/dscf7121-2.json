@@ -1,11 +1,11 @@
 {
-  "id": 784,
-  "title": null,
+  "title": "Stones on the Torii",
   "comment": null,
+  "id": 784,
   "altText": null,
   "notes": null,
   "file": "DSCF7121.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:37:46Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.7,
@@ -68,7 +68,7 @@
       "hex": "#2d2b28",
       "lab": {
         "l": 17.64,
-        "a": -0,
+        "a": 0,
         "b": 2.11
       },
       "hcl": {

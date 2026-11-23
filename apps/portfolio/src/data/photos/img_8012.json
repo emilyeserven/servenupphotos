@@ -1,9 +1,9 @@
 {
-  "id": 238,
-  "title": null,
+  "title": "Winterized Park",
   "comment": null,
+  "id": 238,
   "file": "IMG_8012.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:58:35Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 5.6,
@@ -262,5 +262,7 @@
     "samples": 9216
   },
   "notes": "Shows farmland; 'farmland' isn't a tag, since only 2 photos have it.\n\nShows farmland, now tagged 'farm'.",
-  "similarPhotos": [239, 240, 237, 104, 105, 241]
+  "similarPhotos": [239, 240, 237, 104, 105, 241],
+  "noGps": false,
+  "altText": null
 }

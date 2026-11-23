@@ -1,9 +1,9 @@
 {
-  "id": 139,
-  "title": null,
+  "title": "Lizard on Leaves",
   "comment": null,
+  "id": 139,
   "file": "IMG_7047.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T23:20:49Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S35mm f/2.8 MACRO IS STM",
   "aperture": 6.3,
@@ -270,5 +270,7 @@
     "samples": 9728
   },
   "notes": "Shows a lizard; 'lizards' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 296 (1.69:1), not the 16:9 crop for a landscape photo.",
-  "similarPhotos": [146, 155, 97, 119, 496, 96]
+  "similarPhotos": [146, 155, 97, 119, 496, 96],
+  "noGps": false,
+  "altText": null
 }

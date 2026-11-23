@@ -1,11 +1,11 @@
 {
-  "id": 615,
-  "title": null,
+  "title": "Diagonal Parallel Paths",
   "comment": null,
+  "id": 615,
   "altText": null,
   "notes": null,
   "file": "DSCF5709.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:31:20Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -34,11 +34,11 @@
     "small": "https://cdn.servenupphotos.net/photos/7ab049c2fee2-dscf5709-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/7ab049c2fee2-dscf5709-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/7ab049c2fee2-dscf5709-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/7ab049c2fee2-dscf5709-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7ab049c2fee2-dscf5709-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/7ab049c2fee2-dscf5709-thumbnail.webp?crop=0,1537,3844",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7ab049c2fee2-dscf5709-thumbnailpreview.webp?crop=0,1537,3844",
     "thumbnailcrop": {
       "x": 0,
-      "y": 768,
+      "y": 1537,
       "size": 3844,
       "outputSize": 500
     }

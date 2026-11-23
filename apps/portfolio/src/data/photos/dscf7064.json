@@ -1,11 +1,11 @@
 {
-  "id": 632,
-  "title": null,
+  "title": "Red Car, Red House",
   "comment": null,
+  "id": 632,
   "altText": null,
   "notes": "Quality Check (pixelation): The front plate of the red Toyota at the bottom is fully readable.",
   "file": "DSCF7064.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:22:23Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -28,17 +28,17 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064.jpg",
     "key": "photos/72003f6d34ec-dscf7064.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-thumbnailpreview.webp",
+    "xlarge": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-xlarge.webp?faces=mwtrr7kz",
+    "large": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-large.webp?faces=mwtrr7kz",
+    "medium": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-medium.webp?faces=mwtrr7kz",
+    "small": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-small.webp?faces=mwtrr7kz",
+    "xsmall": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-xsmall.webp?faces=mwtrr7kz",
+    "preview": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-preview.webp?faces=mwtrr7kz",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-thumbnail.webp?crop=0,1945,4862",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/72003f6d34ec-dscf7064-thumbnailpreview.webp?crop=0,1945,4862",
     "thumbnailcrop": {
       "x": 0,
-      "y": 972,
+      "y": 1945,
       "size": 4862,
       "outputSize": 500
     }
@@ -271,5 +271,16 @@
     "chroma": 16.31,
     "peakChroma": 46.87,
     "samples": 9912
-  }
+  },
+  "faces": [
+    {
+      "x": 3225,
+      "y": 5526,
+      "width": 654,
+      "height": 415,
+      "blocks": 18,
+      "edge": "blocks",
+      "rotation": -10
+    }
+  ]
 }

@@ -26,14 +26,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643.jpg",
     "key": "photos/8b0e62f8326b-20250125-140643.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-thumbnail.webp?crop=651,0,1985",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-thumbnailpreview.webp?crop=651,0,1985",
+    "xlarge": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-xlarge.webp?faces=mwsouwpk",
+    "large": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-large.webp?faces=mwsouwpk",
+    "medium": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-medium.webp?faces=mwsouwpk",
+    "small": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-small.webp?faces=mwsouwpk",
+    "xsmall": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-xsmall.webp?faces=mwsouwpk",
+    "preview": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-preview.webp?faces=mwsouwpk",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-thumbnail.webp?crop=651,0,1985&faces=mwsouwpk",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-thumbnailpreview.webp?crop=651,0,1985&faces=mwsouwpk",
     "thumbnailcrop": {
       "x": 651,
       "y": 0,
@@ -267,5 +267,16 @@
     "samples": 9694
   },
   "notes": "Shows a picnic on a carpet in the desert; 'carpet' and 'picnic' aren't tags, since only 2 photos have each.",
-  "similarPhotos": [366, 365, 367, 369, 362, 426]
+  "similarPhotos": [366, 365, 367, 369, 362, 426],
+  "faces": [
+    {
+      "x": 65,
+      "y": 1233,
+      "width": 101,
+      "height": 40,
+      "blocks": 25,
+      "edge": "blocks",
+      "rotation": 7
+    }
+  ]
 }

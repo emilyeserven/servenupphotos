@@ -1,9 +1,9 @@
 {
-  "id": 234,
-  "title": null,
+  "title": "Green House Surrounded by Greenery",
   "comment": null,
+  "id": 234,
   "file": "IMG_5785.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:59:00Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 5.6,
@@ -262,5 +262,7 @@
     "samples": 9216
   },
   "notes": "Shows an abandoned house; 'abandoned' isn't a tag, since only 2 photos have it.",
-  "similarPhotos": [197, 264, 231, 431, 281, 194]
+  "similarPhotos": [197, 264, 231, 431, 281, 194],
+  "noGps": false,
+  "altText": null
 }

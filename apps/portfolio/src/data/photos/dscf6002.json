@@ -1,9 +1,9 @@
 {
-  "id": 256,
-  "title": null,
+  "title": "Jongmyo Window",
   "comment": null,
+  "id": 256,
   "file": "DSCF6002.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:57:11Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -267,5 +267,7 @@
     "samples": 10050
   },
   "notes": "Shows Korean changsal latticework; 'changsal' isn't a tag, since only 1 photo has it.",
-  "similarPhotos": [260, 298, 62, 339, 397, 172]
+  "similarPhotos": [260, 298, 62, 339, 397, 172],
+  "noGps": false,
+  "altText": null
 }

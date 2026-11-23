@@ -1,9 +1,9 @@
 {
-  "id": 375,
-  "title": null,
+  "title": "San Francisco Sunset",
   "comment": null,
+  "id": 375,
   "file": "IMG_3840.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:58:09Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 6.3,
@@ -262,5 +262,8 @@
     "samples": 9768
   },
   "similarPhotos": [399, 405, 489, 402, 341, 204],
-  "compareGroup": "Golden Gate Bridge Across the Bay"
+  "compareGroup": "Golden Gate Bridge Across the Bay",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }
