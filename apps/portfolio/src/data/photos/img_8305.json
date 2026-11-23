@@ -1,9 +1,9 @@
 {
-  "id": 241,
-  "title": null,
+  "title": "A River in Vermont",
   "comment": null,
+  "id": 241,
   "file": "IMG_8305.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:58:19Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 8,
@@ -262,5 +262,8 @@
     "samples": 9216
   },
   "similarPhotos": [236, 93, 235, 239, 81, 238],
-  "compareGroup": "Snowy Creek Banks"
+  "compareGroup": "Snowy Creek Banks",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

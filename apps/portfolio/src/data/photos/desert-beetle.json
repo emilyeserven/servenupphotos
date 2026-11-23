@@ -26,14 +26,14 @@
   "images": {
     "full": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744.jpg",
     "key": "photos/70a9a18ba4af-20250124-142744.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-thumbnail.webp?crop=930,278,1761",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-thumbnailpreview.webp?crop=930,278,1761",
+    "xlarge": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-xlarge.webp?faces=mwsoqa2q",
+    "large": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-large.webp?faces=mwsoqa2q",
+    "medium": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-medium.webp?faces=mwsoqa2q",
+    "small": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-small.webp?faces=mwsoqa2q",
+    "xsmall": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-xsmall.webp?faces=mwsoqa2q",
+    "preview": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-preview.webp?faces=mwsoqa2q",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-thumbnail.webp?crop=930,278,1761&faces=mwsoqa2q",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-thumbnailpreview.webp?crop=930,278,1761&faces=mwsoqa2q",
     "thumbnailcrop": {
       "x": 930,
       "y": 278,
@@ -270,5 +270,16 @@
     "samples": 9490
   },
   "notes": "Shows a vintage VW Beetle and van by a domed mud-brick building; 'vintage-cars', 'van', 'domes' and 'mud-brick' aren't tags, since each is on only 1–2 photos.\n\nQuality Check (pixelation): The front plate of the cream VW van, below the left headlight, is readable.",
-  "similarPhotos": [366, 368, 367, 369, 362, 201]
+  "similarPhotos": [366, 368, 367, 369, 362, 201],
+  "faces": [
+    {
+      "x": 1263,
+      "y": 1457,
+      "width": 278,
+      "height": 101,
+      "blocks": 34,
+      "edge": "blocks",
+      "rotation": 5
+    }
+  ]
 }

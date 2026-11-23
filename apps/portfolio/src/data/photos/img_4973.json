@@ -1,9 +1,9 @@
 {
-  "id": 174,
-  "title": null,
+  "title": "NYC Architecture III",
   "comment": null,
+  "id": 174,
   "file": "IMG_4973.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T23:24:10Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 5.6,
@@ -63,7 +63,7 @@
       "hex": "#838383",
       "lab": {
         "l": 54.57,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {
@@ -265,5 +265,7 @@
     "samples": 9956
   },
   "similarPhotos": [173, 185, 175, 176, 76, 172],
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

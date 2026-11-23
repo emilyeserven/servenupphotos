@@ -1,11 +1,11 @@
 {
-  "id": 597,
-  "title": null,
+  "title": "Green Leafed Holdouts",
   "comment": null,
+  "id": 597,
   "altText": null,
   "notes": null,
   "file": "DSCF5615.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-23T21:34:45Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2.5,
@@ -73,7 +73,7 @@
       "hex": "#423e33",
       "lab": {
         "l": 26.18,
-        "a": -0,
+        "a": 0,
         "b": 7.12
       },
       "hcl": {
