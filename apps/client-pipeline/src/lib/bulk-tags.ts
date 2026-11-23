@@ -23,7 +23,7 @@ export function photoTagKey(path: string, id: string): string {
 }
 
 /** `set` with `item` added when it's missing, or taken out when it's there. */
-export function toggled(set: ReadonlySet<string>, item: string): Set<string> {
+export function toggled<T>(set: ReadonlySet<T>, item: T): Set<T> {
   const next = new Set(set);
   if (!next.delete(item)) next.add(item);
   return next;

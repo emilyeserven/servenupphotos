@@ -16,6 +16,7 @@ Below them every page is listed under its section, with the pages in its submenu
 - **Organize**
   - Albums
     - Album Suggestions
+    - Shared Likes
   - Tags
     - Small Tags
     - Tools: Bulk tagging, Tag library, Tag pruning, Tag descriptions

@@ -40,3 +40,5 @@ The left side lists everyone who sent a list, with how many photos they liked an
 Saving (`PUT /api/likes/<id>` → `PUT /likes/{id}`) and removing (`DELETE /api/likes/<id>` → `DELETE /likes/{id}`) keep the file as a [change waiting for Commit](pending-changes.md), counted by the sync button as a viewer likes list. The page reads the lists from the [combined data store](combined-data-store.md)'s `LIKES.json` with those changes made over it, so a saved list counts at once.
 
 **Most liked**, under them, lists the photos with the most likes, summed across everyone, with their titles and IDs. The [Gallery](gallery.md) shows the same total on each liked photo's tile, as a heart and a number.
+
+To find the photos several people all liked and turn them into albums, use [Shared Likes](shared-likes.md).
