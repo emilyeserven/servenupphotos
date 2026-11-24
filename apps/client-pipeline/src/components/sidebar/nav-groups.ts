@@ -10,6 +10,7 @@ import {
   DatabaseIcon,
   FolderTreeIcon,
   GalleryHorizontalIcon,
+  HeartHandshakeIcon,
   HeartIcon,
   HistoryIcon,
   ImageIcon,
@@ -98,7 +99,10 @@ export const navGroups: readonly NavGroup[] = [
         title: "Albums",
         url: "/albums",
         icon: BookImageIcon,
-        children: [{ title: "Album Suggestions", url: "/album-suggestions", icon: LightbulbIcon }],
+        children: [
+          { title: "Album Suggestions", url: "/album-suggestions", icon: LightbulbIcon },
+          { title: "Shared Likes", url: "/shared-likes", icon: HeartHandshakeIcon },
+        ],
       },
       {
         title: "Tags",

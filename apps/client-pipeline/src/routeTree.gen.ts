@@ -41,6 +41,7 @@ import { Route as ReEditRouteImport } from './routes/re-edit'
 import { Route as RelatedPhotosRouteImport } from './routes/related-photos'
 import { Route as ReorganizeGenresRouteImport } from './routes/reorganize-genres'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SharedLikesRouteImport } from './routes/shared-likes'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as SmallTagsRouteImport } from './routes/small-tags'
@@ -228,6 +229,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SharedLikesRoute = SharedLikesRouteImport.update({
+  id: '/shared-likes',
+  path: '/shared-likes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SiteSpotlightRoute = SiteSpotlightRouteImport.update({
   id: '/site-spotlight',
   path: '/site-spotlight',
@@ -392,6 +398,7 @@ export interface FileRoutesByFullPath {
   '/related-photos': typeof RelatedPhotosRoute
   '/reorganize-genres': typeof ReorganizeGenresRoute
   '/settings': typeof SettingsRoute
+  '/shared-likes': typeof SharedLikesRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
@@ -452,6 +459,7 @@ export interface FileRoutesByTo {
   '/related-photos': typeof RelatedPhotosRoute
   '/reorganize-genres': typeof ReorganizeGenresRoute
   '/settings': typeof SettingsRoute
+  '/shared-likes': typeof SharedLikesRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
@@ -512,6 +520,7 @@ export interface FileRoutesById {
   '/related-photos': typeof RelatedPhotosRoute
   '/reorganize-genres': typeof ReorganizeGenresRoute
   '/settings': typeof SettingsRoute
+  '/shared-likes': typeof SharedLikesRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
@@ -574,6 +583,7 @@ export interface FileRouteTypes {
     | '/related-photos'
     | '/reorganize-genres'
     | '/settings'
+    | '/shared-likes'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
@@ -634,6 +644,7 @@ export interface FileRouteTypes {
     | '/related-photos'
     | '/reorganize-genres'
     | '/settings'
+    | '/shared-likes'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
@@ -693,6 +704,7 @@ export interface FileRouteTypes {
     | '/related-photos'
     | '/reorganize-genres'
     | '/settings'
+    | '/shared-likes'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
@@ -754,6 +766,7 @@ export interface RootRouteChildren {
   RelatedPhotosRoute: typeof RelatedPhotosRoute
   ReorganizeGenresRoute: typeof ReorganizeGenresRoute
   SettingsRoute: typeof SettingsRoute
+  SharedLikesRoute: typeof SharedLikesRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
   SmallTagsRoute: typeof SmallTagsRoute
@@ -1006,6 +1019,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shared-likes': {
+      id: '/shared-likes'
+      path: '/shared-likes'
+      fullPath: '/shared-likes'
+      preLoaderRoute: typeof SharedLikesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/site-spotlight': {
       id: '/site-spotlight'
       path: '/site-spotlight'
@@ -1238,6 +1258,7 @@ const rootRouteChildren: RootRouteChildren = {
   RelatedPhotosRoute: RelatedPhotosRoute,
   ReorganizeGenresRoute: ReorganizeGenresRoute,
   SettingsRoute: SettingsRoute,
+  SharedLikesRoute: SharedLikesRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
   SmallTagsRoute: SmallTagsRoute,
