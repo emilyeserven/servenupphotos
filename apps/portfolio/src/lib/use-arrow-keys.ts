@@ -12,7 +12,7 @@ function isShortcut({ altKey, ctrlKey, metaKey }: KeyboardEvent): boolean {
 }
 
 /** Whether the key press belongs to something else: a field being typed in, or a shortcut. */
-function isForSomethingElse(event: KeyboardEvent): boolean {
+export function isForSomethingElse(event: KeyboardEvent): boolean {
   return event.defaultPrevented || isShortcut(event) || isTyping(event);
 }
 
