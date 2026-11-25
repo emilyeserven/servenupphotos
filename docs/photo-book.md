@@ -31,6 +31,10 @@ Built-in layouts stay as they are. The copy button beside any layout (or **Custo
 - **Arrange the photos:** one under another, or side by side.
 - **Photo size:** landscape 3:2, portrait 2:3, square, **Custom ratio** (a width and height typed in, such as 4 : 5, or one of the common ratios under them: 4:5, 5:4, 4:3, 3:4, 16:9, 9:16, 2:1), or **Fill the room**, which gives each photo all the room it has and crops it to fill.
 - **Title and captions:** on the left, right, above or below the photos, **Together in one column** or **Beside each photo**, and where they sit in their room (top, middle or bottom).
+- **Line the text up with:** **The photo's room** (the start) lines the text up with all the room the photos are given, which can leave a gap between a photo kept in its shape and the text sitting at the room's bottom. **The photo itself** lines it up with the photos as drawn, so a caption that sits at the bottom ends level with its photo's bottom edge, and one above or below the photos starts and ends where they do. With **Fill the room** the two are the same.
+
+> **Frontend analogy:** a photo kept in its shape is `width: min(100cqw, 150cqh)` inside its room, so the room's edges and the photo's differ, and plain CSS can't line a sibling up with that. **The photo itself** measures the photos with a `ResizeObserver` and gives the text room a `margin-top` and `height` (or `margin-left` and `width`) that match them.
+
 - **Room for the text**, **Gap** and **Margin**: shares of the page, as sliders.
 
 ### Left and right pages

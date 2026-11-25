@@ -38,6 +38,12 @@ export interface CustomLayout {
   textShare: number;
   /** Where the text sits in its room. */
   align: "start" | "center" | "end";
+  /**
+   * What align lines the text up with: the edges of the photos as drawn (`photo`), or all the room
+   * they're given (`room`, or absent in a layout made before), which can leave space between a
+   * photo kept in its shape and the room's edge.
+   */
+  alignTo?: "room" | "photo";
   /** The room between the photos and the text, in percent of the page's width, 0 to 20. */
   gap: number;
   /** The room around the page's edge, in percent of its width, 0 to 20. */

@@ -159,6 +159,15 @@ function TextFields({ look, onChange }: LayoutFieldsProps) {
         options={ALIGN_OPTIONS[textBeside(look) ? "beside" : "across"]}
         onChange={(align) => onChange({ align })}
       />
+      <Choices
+        label="Line the text up with"
+        value={look.alignTo ?? "room"}
+        options={[
+          ["room", "The photo's room"],
+          ["photo", "The photo itself"],
+        ]}
+        onChange={(alignTo) => onChange({ alignTo })}
+      />
     </>
   );
 }
