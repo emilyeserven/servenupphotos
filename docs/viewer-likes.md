@@ -26,7 +26,7 @@ Each person is one file, `likes/<id>.json`, and **Commit** combines them into `l
 
 - **`photos`** are the [photo IDs](data-model.md#photo-ids) they liked, lowest first, each once.
 - **`importedAt`** is when their list was last imported, set by the pipeline on each save.
-- The ID is the name as an ID, made when the person is added and kept if they're renamed. Two people can't share an ID, so a second "Jane" needs a different name, such as "Jane D.".
+- The ID is the name as an ID, made when the person is added and kept if they're renamed. Only the exact same name (ignoring spaces at either end) is the same person, so a second "Jane" needs a different name, such as "Jane D.". A different name that makes an ID someone already has, such as "dk" after "DK", is a new person whose ID gets `-2` (then `-3`, …) after it.
 
 The portfolio doesn't read `LIKES.json`; it only sits in the data folder with the rest of the photo data. The names are committed to the repository, so use a first name, initials or a nickname if the repository is public.
 
