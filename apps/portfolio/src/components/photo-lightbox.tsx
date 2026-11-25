@@ -10,9 +10,10 @@ import { PhotoLocation } from "@/components/photo-location";
 import { RawVsEditedLink } from "@/components/raw-vs-edited-link";
 import { Button } from "@/components/ui/button";
 import { viewOnMapLink } from "@/components/view-on-map-link";
-import { like } from "@/lib/likes";
+import { like, unlike } from "@/lib/likes";
 import { settingsText } from "@/lib/photo-settings";
 import type { Photo, PhotoImage } from "@/lib/photos";
+import { isForSomethingElse } from "@/lib/use-arrow-keys";
 import { useSwipe } from "@/lib/use-swipe";
 import { useTaps } from "@/lib/use-taps";
 import { cn } from "@/lib/utils";
@@ -52,6 +53,7 @@ export function PhotoLightbox({
   const opener = useRef<HTMLElement | null>(null);
   const content = useRef<HTMLDivElement>(null);
   const steps = useSteps(photos, photo, onShow);
+  const burst = useLikeBurst();
   // Set when the details and buttons are hidden, leaving only the photo, as large as the window.
   const [bare, setBare] = useState(false);
   function toggleBare() {
@@ -79,7 +81,13 @@ export function PhotoLightbox({
             opener.current?.focus();
           }}
           onKeyDown={(event) =>
-            runKey(event, { ...steps.keys, ...drawerKeys(bare), h: toggleBare, H: toggleBare })
+            runKey(event, {
+              ...steps.keys,
+              ...drawerKeys(bare),
+              ...pickKeys(photo, burst.pop),
+              h: toggleBare,
+              H: toggleBare,
+            })
           }
           className={cn("fixed inset-0 z-50 flex flex-col text-white outline-none", FADE)}
         >
@@ -88,6 +96,7 @@ export function PhotoLightbox({
               photo={photo}
               steps={steps}
               bare={bare}
+              burst={burst}
               onToggleBare={toggleBare}
               onShow={onShow}
             />
@@ -103,10 +112,33 @@ function drawerKeys(bare: boolean): Record<string, () => void> {
   return bare ? {} : { m: toggleMoreLikeThis, M: toggleMoreLikeThis };
 }
 
-/** Runs the step for the key pressed, if there is one, instead of what the key would do. */
+/**
+ * Lightroom's pick keys: Z likes the photo and X unlikes it, each popping a heart (or a crossed out
+ * one) over the photo, so it shows even while the details are hidden.
+ */
+function pickKeys(
+  photo: ImagePhoto | null,
+  pop: (kind: BurstKind) => void,
+): Record<string, () => void> {
+  if (!photo) return {};
+  const pick = () => {
+    like(photo.id);
+    pop("like");
+  };
+  const unpick = () => {
+    unlike(photo.id);
+    pop("unlike");
+  };
+  return { z: pick, Z: pick, x: unpick, X: unpick };
+}
+
+/**
+ * Runs the step for the key pressed, if there is one, instead of what the key would do. A press
+ * with Ctrl, Alt or Cmd held, or while typing in a field, is left alone.
+ */
 function runKey(event: KeyboardEvent, keys: Record<string, (() => void) | undefined>) {
   const step = keys[event.key];
-  if (!step) return;
+  if (!step || isForSomethingElse(event.nativeEvent)) return;
   event.preventDefault();
   step();
 }
@@ -116,6 +148,8 @@ interface LightboxBodyProps {
   steps: Steps;
   /** Set when only the photo is shown, without the details and buttons. */
   bare: boolean;
+  /** The heart popping over the photo after it's liked or unliked. */
+  burst: LikeBurstState;
   /** Hides the details and buttons from the hide button, or shows them again from a tap on the photo. */
   onToggleBare: () => void;
   /** Shows another photo, such as one from the More like this drawer, which is left out without it. */
@@ -126,7 +160,7 @@ interface LightboxBodyProps {
  * The caption and buttons over the photo, with the previous and next buttons beside it and the
  * More like this drawer to its left, or just the photo, filling the window, when they're hidden.
  */
-function LightboxBody({ photo, steps, bare, onToggleBare, onShow }: LightboxBodyProps) {
+function LightboxBody({ photo, steps, bare, burst, onToggleBare, onShow }: LightboxBodyProps) {
   const showDetails = !bare;
   return (
     <>
@@ -139,7 +173,13 @@ function LightboxBody({ photo, steps, bare, onToggleBare, onShow }: LightboxBody
         />
       )}
       <div className="relative flex min-h-0 flex-1 flex-col">
-        <LightboxPhotoRow photo={photo} steps={steps} bare={bare} onToggleBare={onToggleBare} />
+        <LightboxPhotoRow
+          photo={photo}
+          steps={steps}
+          bare={bare}
+          burst={burst}
+          onToggleBare={onToggleBare}
+        />
         {showDetails && <MoreLikeThis photo={photo} onShow={onShow} />}
       </div>
     </>
@@ -152,9 +192,9 @@ function LightboxBody({ photo, steps, bare, onToggleBare, onShow }: LightboxBody
  * and double tapping (or double clicking) it likes it. A single tap does nothing while the
  * details show, and shows them again when bare.
  */
-function LightboxPhotoRow({ photo, steps, bare, onToggleBare }: LightboxBodyProps) {
+function LightboxPhotoRow({ photo, steps, bare, burst, onToggleBare }: LightboxBodyProps) {
   const swipe = useSwipe((by) => (by < 0 ? steps.previous : steps.next)?.());
-  const { onTap, burst, onBurstDone } = useDoubleTapLike(photo.id, bare ? onToggleBare : undefined);
+  const onTap = useDoubleTapLike(photo.id, burst.pop, bare ? onToggleBare : undefined);
   return (
     <div
       {...swipe}
@@ -170,7 +210,13 @@ function LightboxPhotoRow({ photo, steps, bare, onToggleBare }: LightboxBodyProp
         className="flex size-full touch-manipulation items-center justify-center select-none [container-type:size]"
       >
         <LightboxImage key={photo.id} image={photo.image} alt={photo.alt}>
-          {burst !== null && <LikeBurst key={burst} onDone={onBurstDone} />}
+          {burst.shown && (
+            <LikeBurst
+              key={burst.shown.count}
+              unliked={burst.shown.kind === "unlike"}
+              onDone={burst.onDone}
+            />
+          )}
           <StepButtons steps={steps} bare={bare} />
         </LightboxImage>
       </div>
@@ -189,21 +235,43 @@ function StepButtons({ steps, bare }: { steps: Steps; bare: boolean }) {
   );
 }
 
+/** Whether the heart popping over the photo is for a like or an unlike. */
+type BurstKind = "like" | "unlike";
+
+/** The heart popping over the photo, and how to pop another or clear it once it has faded. */
+interface LikeBurstState {
+  /** The heart showing: a count that's new for each one, so each pops afresh, and its kind. */
+  shown: { count: number; kind: BurstKind } | null;
+  pop: (kind: BurstKind) => void;
+  onDone: () => void;
+}
+
+/** Keeps the heart that pops over the photo after a double tap, Z or X, null once it has faded. */
+function useLikeBurst(): LikeBurstState {
+  const [shown, setShown] = useState<LikeBurstState["shown"]>(null);
+  return {
+    shown,
+    pop: (kind) => setShown((last) => ({ count: (last?.count ?? 0) + 1, kind })),
+    onDone: () => setShown(null),
+  };
+}
+
 /**
  * The photo's tap handler: a double tap likes the photo and pops a heart over it, and a single tap
  * runs onSingle, if there is one, once it's clear it isn't a double tap.
  */
-function useDoubleTapLike(id: number, onSingle: (() => void) | undefined) {
-  // Counts double taps, so each one pops a new heart; null once the last heart has faded.
-  const [burst, setBurst] = useState<number | null>(null);
-  const onTap = useTaps({
+function useDoubleTapLike(
+  id: number,
+  pop: (kind: BurstKind) => void,
+  onSingle: (() => void) | undefined,
+) {
+  return useTaps({
     onSingle,
     onDouble: () => {
       like(id);
-      setBurst((count) => (count ?? 0) + 1);
+      pop("like");
     },
   });
-  return { onTap, burst, onBurstDone: () => setBurst(null) };
 }
 
 /** The photo's caption, where it is among the photos, and the related, link, like, hide and close buttons. */

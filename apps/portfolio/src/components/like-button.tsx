@@ -1,4 +1,4 @@
-import { HeartIcon } from "lucide-react";
+import { HeartIcon, HeartOffIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { like, unlike, useIsLiked } from "@/lib/likes";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,7 @@ export function LikeButton({ id }: { id: number }) {
       size="icon"
       aria-label="Like"
       aria-pressed={liked}
-      title={liked ? "Liked; press to unlike" : "Like (or double tap the photo)"}
+      title={liked ? "Liked; press to unlike (X)" : "Like (Z, or double tap the photo)"}
       onClick={() => (liked ? unlike : like)(id)}
       className="text-white hover:bg-white/10 hover:text-white"
     >
@@ -24,15 +24,24 @@ export function LikeButton({ id }: { id: number }) {
   );
 }
 
-/** A big heart that pops up over the photo and fades away, after a double tap likes it. */
-export function LikeBurst({ onDone }: { onDone: () => void }) {
+/**
+ * A big heart that pops up over the photo and fades away, after a double tap or the Z key likes it,
+ * or a crossed out heart after the X key unlikes it.
+ */
+export function LikeBurst({ unliked, onDone }: { unliked?: boolean; onDone: () => void }) {
+  const Icon = unliked ? HeartOffIcon : HeartIcon;
   return (
     <span
       aria-hidden
       onAnimationEnd={onDone}
       className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
     >
-      <HeartIcon className="size-24 animate-like-burst fill-white/90 text-white/90 drop-shadow-lg" />
+      <Icon
+        className={cn(
+          "size-24 animate-like-burst text-white/90 drop-shadow-lg",
+          !unliked && "fill-white/90",
+        )}
+      />
     </span>
   );
 }

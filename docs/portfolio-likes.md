@@ -6,6 +6,8 @@ Visitors can like photos on the portfolio and see them on **My Likes** (`/likes`
 
 In the [photo viewer](photo-viewer.md), **double tapping** (or double clicking) the photo likes it, and a heart pops over it for a moment. The **heart** button, to the left of the eye button, shows whether the photo is liked (filled red) and likes or unlikes it. A double tap only ever likes; unliking is the heart button's job.
 
+On a keyboard, as in Lightroom's pick and unpick keys, **Z** likes the photo and **X** unlikes it, each popping a heart (or a crossed out heart for X) over the photo, so they show even while the details are hidden. The heart button's tooltip names them. Like the viewer's other keys, they're ignored while Ctrl, Alt or Cmd is held (so Ctrl+Z isn't a like) or while typing in a field.
+
 A single tap on the photo does nothing while the details are shown, so it can't be mistaken for the start of a double tap. While the details are hidden, a single tap brings them back, but only once 300ms have passed without a second tap, so a double tap there likes the photo and leaves the details hidden (`lib/use-taps.ts`).
 
 > **Frontend analogy:** `useTaps` is a debounce on `click`: the first click starts a 300ms timer for the single-tap action, and a second click inside that window cancels it and runs the double-tap action instead. `touch-action: manipulation` on the photo stops mobile browsers from zooming on a double tap, while pinch-zoom still works.
