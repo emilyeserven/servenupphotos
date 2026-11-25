@@ -48,9 +48,13 @@ function setUpGitHub(settings: SettingsResponse | undefined): GitHub | null {
   return settings && githubIsSetUp(settings) ? settings.github : null;
 }
 
-/** Whether clicking the button saves: GitHub is set up, and it isn't saving or saved. */
-function canSave(github: GitHub | null, publish: Publish): boolean {
-  return github !== null && (publish.isIdle || publish.isError);
+/**
+ * Whether clicking the button saves: GitHub is set up, the photo is in R2, and it isn't saving or
+ * saved. A photo that isn't in R2 yet would be saved with empty image links, so until it is, the
+ * button only opens the flyout saying why.
+ */
+function canSave(github: GitHub | null, uploaded: boolean, publish: Publish): boolean {
+  return github !== null && uploaded && (publish.isIdle || publish.isError);
 }
 
 /** Saving the photo's JSON, named after its title. */
@@ -76,7 +80,7 @@ export function PhotoSaveButton({ uploaded, ...photo }: PhotoSaveButtonProps) {
     <FloatingFlyout
       {...lookOf(publish)}
       title="Save"
-      onRun={canSave(github, publish) ? () => save() : undefined}
+      onRun={canSave(github, uploaded, publish) ? () => save() : undefined}
       disabled={publish.isPending}
     >
       <p className="font-medium">Save to the batch</p>
@@ -106,7 +110,9 @@ function SaveDetails({ github, publish, onRename, ...rest }: SaveDetailsProps) {
   return (
     <>
       <SaveIntro github={github} error={publish.error} {...rest} />
-      <TakenNamePrompt error={publish.error} pending={publish.isPending} onRename={onRename} />
+      {rest.uploaded && (
+        <TakenNamePrompt error={publish.error} pending={publish.isPending} onRename={onRename} />
+      )}
     </>
   );
 }
@@ -164,12 +170,13 @@ function jsonPath(folder: string, name: string): string {
   return `${dataFolder(folder)}/photos/${name}.json`;
 }
 
-/** Saving before uploading leaves the JSON's image links empty. */
+/** Why Save waits for the upload: saving first would leave the JSON's image links empty. */
 function NotUploadedNote({ uploaded }: { uploaded: boolean }) {
   if (uploaded) return null;
   return (
     <p className="text-amber-700 dark:text-amber-400">
-      The photo isn't in R2 yet, so the JSON's image links would be empty. Upload it first.
+      The photo isn't in R2 yet, so saving now would leave the JSON's image links empty. Upload it
+      to R2 first, or use Upload &amp; save, and Save is ready once the upload finishes.
     </p>
   );
 }

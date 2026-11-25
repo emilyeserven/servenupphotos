@@ -87,7 +87,7 @@ function UnsavedNote({ unsaved }: { unsaved: boolean }) {
 }
 
 /** The new image's Square Thumbnail, to pick again when it isn't the old image's size. */
-function NewImageCrop({ replace }: { replace: ReplaceImage }) {
+export function NewImageCrop({ replace }: { replace: ReplaceImage }) {
   const photo = replace.read.data && replace.read.variables;
   if (!photo || replace.keepsCrop) return null;
   return (
@@ -103,7 +103,7 @@ function NewImageCrop({ replace }: { replace: ReplaceImage }) {
 }
 
 /** Picks the new JPEG, which is read as soon as it's chosen. */
-function ImageField({ replace, disabled }: { replace: ReplaceImage; disabled: boolean }) {
+export function ImageField({ replace, disabled }: { replace: ReplaceImage; disabled: boolean }) {
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor="replace-image" className="text-sm font-medium">
@@ -140,12 +140,12 @@ function ReplacedNote({ path }: { path: string }) {
 }
 
 /** Whether the new image is being read or uploaded, so another can't be chosen yet. */
-function busy(replace: ReplaceImage): boolean {
+export function busy(replace: ReplaceImage): boolean {
   return replace.read.isPending || replace.replace.isPending;
 }
 
 /** Reading the new image's EXIF, or why it couldn't be read. */
-function ReadStatus({ replace }: { replace: ReplaceImage }) {
+export function ReadStatus({ replace }: { replace: ReplaceImage }) {
   const { read } = replace;
   if (read.isPending) return <ReadingNote label="Reading the new image…" />;
   if (read.isError) return <ErrorNote error={read.error} />;
@@ -270,7 +270,7 @@ function ExifHelp({ sanitized }: { sanitized: SanitizedExif }) {
 }
 
 /** Why replacing failed, and whether the new image got as far as R2. */
-function ReplaceError({ replace }: { replace: ReplaceImage }) {
+export function ReplaceError({ replace }: { replace: ReplaceImage }) {
   const lead = replace.uploadedOnly
     ? "The new image is in R2, but saving the JSON failed:"
     : undefined;

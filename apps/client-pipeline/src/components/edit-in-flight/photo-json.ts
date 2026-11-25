@@ -48,6 +48,25 @@ export interface Editable {
   image: { key: string; url: string };
 }
 
+/**
+ * A photo JSON file whose image R2 doesn't have, such as one saved before its upload finished, so
+ * the Photo page offers to upload it rather than edit it.
+ */
+export interface MissingImage {
+  file: InFlightFileRead;
+  /** The photo's JSON object as the pull request, or the portfolio, has it. */
+  data: PhotoJson;
+  missingImage: true;
+}
+
+/** What the Photo page edits from: a photo with its image in R2, or one whose image is missing. */
+export type EditTarget = Editable | MissingImage;
+
+/** Whether the photo's image is missing from R2, so it has to be uploaded before it can be edited. */
+export function isMissingImage(target: EditTarget): target is MissingImage {
+  return "missingImage" in target;
+}
+
 /** A photo JSON file's object, with its `images` when it has them. */
 export type PhotoJson = Record<string, unknown> & { images?: Record<string, unknown> };
 
@@ -56,25 +75,27 @@ export function isPublished(file: InFlightFileRead): boolean {
   return file.status === "published";
 }
 
-/** Why the file at path can't be edited, or what to edit it from. */
-export function findEditable(data: InFlightRead, path: string): Editable | string {
-  const file = data.files.find((f) => f.path === path);
-  const problem = editProblem(data, file, path);
-  if (problem !== undefined || !file) return problem ?? "";
-  return { file, data: file.data as PhotoJson, image: data.images.byPath[path]! };
-}
-
 /**
- * Why the file at path can't be edited, or undefined when it can. A file only waiting for Commit,
+ * Why the file at path can't be edited, or what to edit it from. A file only waiting for Commit,
  * with no pull request open yet, is edited like one in the pull request.
  */
-function editProblem(
-  data: InFlightRead,
-  file: InFlightFileRead | undefined,
-  path: string,
-): string | undefined {
+export function findEditable(data: InFlightRead, path: string): EditTarget | string {
+  const file = data.files.find((f) => f.path === path);
   if (!file) return `${path} isn't in the photo data pull request or waiting for Commit anymore.`;
-  return fileProblem(file) ?? imageProblem(data.images, path);
+  return fileProblem(file) ?? withImage(file, data.images, path);
+}
+
+/** The file with its image in R2, marked missing when R2 was searched and doesn't have it, or why R2 couldn't be searched. */
+function withImage(
+  file: InFlightFileRead,
+  images: InFlightImages,
+  path: string,
+): EditTarget | string {
+  const image = images.byPath[path];
+  const data = file.data as PhotoJson;
+  if (image) return { file, data, image };
+  if (!images.checked) return images.message ?? "Couldn't check R2 for its photo.";
+  return { file, data, missingImage: true };
 }
 
 /** Why the file's JSON can't be edited, or undefined when it can. */
@@ -83,20 +104,11 @@ function fileProblem(file: InFlightFileRead): string | undefined {
   return isObject(file.data) ? undefined : `${file.path} isn't a JSON object.`;
 }
 
-/** Why the file at path has no image in R2 to edit, or undefined when it has one. */
-function imageProblem(images: InFlightImages, path: string): string | undefined {
-  if (images.byPath[path]) return undefined;
-  if (!images.checked) return images.message ?? "Couldn't check R2 for its photo.";
-  return "Its photo isn't in R2, so there's nothing to cut a Square Thumbnail from.";
-}
-
 /** Why the file at path, already in the portfolio, can't be edited, or what to edit it from. */
-function findPublished(data: PublishedResponse, path: string): Editable | string {
+function findPublished(data: PublishedResponse, path: string): EditTarget | string {
   const file = data.files.find((f) => f.path === path);
   if (!file) return `${path} isn't in the photo data pull request or on ${data.branch}.`;
-  const problem = publishedProblem(file) ?? imageProblem(data.images, path);
-  if (problem !== undefined) return problem;
-  return { file, data: file.data as PhotoJson, image: data.images.byPath[path]! };
+  return publishedProblem(file) ?? withImage(file, data.images, path);
 }
 
 /** Why a file already in the portfolio can't be edited, or undefined when it can. */
@@ -116,7 +128,7 @@ export function inPullRequest(inFlight: InFlightRead, path: string): boolean {
 export function fromBase(
   published: UseQueryResult<PublishedResponse>,
   path: string,
-): Editable | string | null {
+): EditTarget | string | null {
   if (published.isError) return published.error.message;
   return published.data ? findPublished(published.data, path) : null;
 }
