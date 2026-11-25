@@ -16,7 +16,6 @@ import {
   type PageLayout,
   type PageSide,
   type PhotoBook,
-  layoutSlots,
 } from "@/lib/photo-book";
 import {
   addLayout,
@@ -30,6 +29,7 @@ import {
   setLeftPages,
   sideLook,
 } from "@/lib/photo-book-layouts";
+import { frameFits, photoAspect, pickForFrames } from "@/lib/photo-book-preview";
 import { askFirst } from "@/stores/confirm";
 import { count } from "@portfolio/lib/words";
 
@@ -120,39 +120,40 @@ function PreviewSheets({ pages, look }: { pages: BookPage[]; look: PageLook }) {
   );
 }
 
-/** The pages to preview layout on: a left and a right one for the book's own, else one. */
+/**
+ * The pages to preview layout on: a left and a right one for the book's own, else one, each frame
+ * with an album photo of its shape where there is one.
+ */
 function previewPages(
   book: PhotoBook,
   layout: PageLayout,
   photos: SocialPhoto[],
   offset: number,
 ): BookPage[] {
-  const first = samplePage(book, layout, photos, offset, "layout-preview");
-  if (!customLayout(book, layout)) return [first];
-  const next = offset + first.slots.length;
-  return [first, samplePage(book, layout, photos, next, "layout-preview-right")];
+  const used = new Set<SocialPhoto>();
+  const page = (id: string, side: PageSide) =>
+    samplePage(
+      layout,
+      pickForFrames(photos, frameFits(book, layout, side), offset, photoOf, used),
+      id,
+    );
+  if (!customLayout(book, layout)) return [page("layout-preview", "right")];
+  return [page("layout-preview", "left"), page("layout-preview-right", "right")];
 }
 
-/**
- * A page in layout to preview it, with the album's photos from offset on, their captions from the
- * caption template, and a title.
- */
-function samplePage(
-  book: PhotoBook,
-  layout: PageLayout,
-  photos: SocialPhoto[],
-  offset: number,
-  id: string,
-): BookPage {
-  const n = layoutSlots(book, layout);
-  const start = photos.length > n ? offset % photos.length : 0;
-  const picked = [...photos.slice(start), ...photos].slice(0, n);
+/** A photo's width over its height, from its file's data. */
+function photoOf(photo: SocialPhoto): number | null {
+  return photoAspect(photo.data);
+}
+
+/** A page in layout to preview it, with picked photos, their captions from the caption template, and a title. */
+function samplePage(layout: PageLayout, picked: (SocialPhoto | undefined)[], id: string): BookPage {
   return {
     id,
     name: "Preview",
     layout,
     title: "Title",
-    slots: Array.from({ length: n }, (_, i) => ({ photo: picked[i]?.path ?? "", caption: null })),
+    slots: picked.map((photo) => ({ photo: photo?.path ?? "", caption: null })),
   };
 }
 
