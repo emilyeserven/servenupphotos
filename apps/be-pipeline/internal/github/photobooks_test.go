@@ -12,15 +12,18 @@ func TestSavePhotoBook(t *testing.T) {
 	title := "  Seoul "
 	book := PhotoBook{ID: "korea", Name: " Korea ", Album: " korea-2026 ", Pages: []PhotoBookPage{
 		{ID: "p1", Layout: "full", Title: &title, Slots: []PhotoBookSlot{{Photo: "a.json"}, {Photo: "extra.json"}}},
-		{ID: "p2", Layout: "verticals-left", LeftOut: true},
-	}}
+		{ID: "p2", Layout: "verticals-left"},
+	}, Order: &[]string{"p2", "gone", "p2", "p1"}}
 	if _, err := c.SavePhotoBook(t.Context(), placesGH, book); err != nil {
 		t.Fatalf("SavePhotoBook() error = %v", err)
 	}
 	saved := staged(t, c, dataRoot+"/photobooks/korea.json")
 	// The name, album and title are trimmed, the full page keeps one slot, and the
 	// pair gets its two empty ones.
-	for _, want := range []string{`"name": "Korea"`, `"album": "korea-2026"`, `"title": "Seoul"`, `"photo": "a.json"`, `"leftOut": true`} {
+	for _, want := range []string{`"name": "Korea"`, `"album": "korea-2026"`, `"title": "Seoul"`, `"photo": "a.json"`, `"order": [
+    "p2",
+    "p1"
+  ]`} {
 		if !strings.Contains(saved, want) {
 			t.Errorf("saved %s, want %s in it", saved, want)
 		}
