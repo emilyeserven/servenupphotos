@@ -6,6 +6,7 @@ import { PhotoDrawerToggle } from "@/components/instagram-picker/photo-drawer";
 import { useBookTemplate, useCaptionFor } from "@/components/photo-book/book-captions";
 import { BookTab } from "@/components/photo-book/book-tab";
 import { InfoTab } from "@/components/photo-book/info-tab";
+import { LayoutsTab } from "@/components/photo-book/layouts-tab";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { PagesTab } from "@/components/photo-book/pages-tab";
 import { usePhotoBookDraft } from "@/components/photo-book/use-photo-book";
@@ -14,26 +15,30 @@ import { type PhotoBook, pageAspect } from "@/lib/photo-book";
 import { cn } from "@/lib/utils";
 
 /**
- * A book's three tabs: Info for its name, album, captions and size; Photo Pages for making pages
- * that could be used; Book for putting the ones that will be used in order.
+ * A book's four tabs: Info for its name, album, captions and size; Layouts for trying out page
+ * layouts; Photo Pages for making pages that could be used; Book for putting the ones that will be
+ * used in order.
  */
-export type BookPart = "info" | "pages" | "book";
+export type BookPart = "info" | "layouts" | "pages" | "book";
 
 /** Each tab's name, in the order they're shown. */
 export const BOOK_PARTS: Record<BookPart, string> = {
   info: "Info",
+  layouts: "Layouts",
   pages: "Photo Pages",
   book: "Book",
 };
 
 /** The tab the URL names; Photo Pages for one the page doesn't know. */
 export function bookPart(part: string): BookPart {
-  return part === "book" || part === "info" ? part : "pages";
+  return part in BOOK_PARTS ? (part as BookPart) : "pages";
 }
 
 /** What each tab is for, under the tabs. */
 const PART_DESCRIPTIONS: Record<BookPart, string> = {
   info: "The book's name, the album its photos come from, the caption template its captions are filled in with, and its page size, which sets the pages' shape.",
+  layouts:
+    "Try out page layouts at the book's page size before using them: customize a built-in layout to move the captions, size the photos, and change the gaps and margin. The book's layouts show up on Photo Pages.",
   pages:
     "Make pages that could be used, in any layout, from the album's photos, as many as you like. Link a page with the next one to make a two-page spread.",
   book: "Drag pages, spreads and other pages from the drawer into Used page spreads to put the book together, and page through it in the preview.",
@@ -66,6 +71,7 @@ interface TabProps {
 /** How each tab is drawn. */
 const TABS: Record<BookPart, (props: TabProps) => ReactNode> = {
   info: (p) => <InfoTab {...p} />,
+  layouts: (p) => <LayoutsTab {...p} />,
   pages: (p) => (
     <PagesTab {...p} drawer={p.drawerOpen ? () => p.setDrawerOpen(false) : undefined} />
   ),
@@ -82,6 +88,7 @@ export function BookEditor({ saved, photos, data, part, onRemoved }: BookEditorP
     photos: byPath,
     captionFor: useCaptionFor(byPath, template),
     aspect: pageAspect(book),
+    layouts: book.layouts ?? [],
   };
   const drawer = part === "pages" && (
     <PhotoDrawerToggle open={drawerOpen} onToggle={() => setDrawerOpen(!drawerOpen)} />

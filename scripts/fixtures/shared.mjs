@@ -517,6 +517,21 @@ added.photobooks = [
       album: bookAlbum,
       order: ["o1", "p1", "p2", "o2"],
       size: { width: 12.5, height: 10.625, unit: "in" },
+      layouts: [
+        {
+          id: "custom-1",
+          name: "Big portrait pair",
+          photos: 2,
+          arrange: "row",
+          shape: "fill",
+          text: "left",
+          captions: "column",
+          textShare: 24,
+          align: "end",
+          gap: 1.5,
+          margin: 1,
+        },
+      ],
       pages: [
         {
           id: "p1",
@@ -549,7 +564,7 @@ added.photobooks = [
         {
           id: "p4",
           name: "Alternate pair",
-          layout: "pair-right",
+          layout: "custom-1",
           title: null,
           slots: [
             { photo: bookPhoto(0), caption: null },

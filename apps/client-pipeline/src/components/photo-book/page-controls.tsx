@@ -3,10 +3,13 @@ import { MoveArrows } from "@/components/move-arrows";
 import { LayoutGlyph } from "@/components/photo-book/layout-glyph";
 import { pageName } from "@/components/photo-book/page-types";
 import { Button } from "@/components/ui/button";
-import { type BookPage, LAYOUTS, type PageLayout } from "@/lib/photo-book";
+import type { BookPage, PageLayout } from "@/lib/photo-book";
+import type { LayoutChoice } from "@/lib/photo-book-layouts";
 
 interface PageControlsProps {
   page: BookPage;
+  /** The layouts the page can have: the built-in ones and the book's own. */
+  layouts: LayoutChoice[];
   onName: (name: string) => void;
   onLayout: (layout: PageLayout) => void;
   onTitle: (title: string | null) => void;
@@ -17,7 +20,8 @@ interface PageControlsProps {
  * Above a page on the Photo Pages tab: its name, typed in, its layout, a title to add or take off,
  * and Remove.
  */
-export function PageControls({ page, onName, onLayout, onTitle, onRemove }: PageControlsProps) {
+export function PageControls(props: PageControlsProps) {
+  const { page, layouts, onName, onLayout, onTitle, onRemove } = props;
   const name = pageName(page);
   return (
     <div className="flex flex-wrap items-center gap-1">
@@ -28,7 +32,7 @@ export function PageControls({ page, onName, onLayout, onTitle, onRemove }: Page
         onChange={(event) => onName(event.target.value)}
         className="hover:border-input focus:border-input placeholder:text-muted-foreground mr-1 h-7 min-w-0 flex-1 rounded-md border border-transparent bg-transparent px-1.5 text-sm font-medium outline-none"
       />
-      <LayoutButtons page={page} name={name} onLayout={onLayout} />
+      <LayoutButtons page={page} name={name} layouts={layouts} onLayout={onLayout} />
       <TitleButton page={page} name={name} onTitle={onTitle} />
       <Button
         size="icon-xs"
@@ -111,11 +115,12 @@ interface ButtonProps {
 function LayoutButtons({
   page,
   name,
+  layouts,
   onLayout,
-}: ButtonProps & { onLayout: (layout: PageLayout) => void }) {
+}: ButtonProps & { layouts: LayoutChoice[]; onLayout: (layout: PageLayout) => void }) {
   return (
     <div role="radiogroup" aria-label={`Layout of ${name}`} className="flex gap-0.5">
-      {LAYOUTS.map((layout) => (
+      {layouts.map((layout) => (
         <Button
           key={layout.id}
           size="icon-xs"
@@ -126,7 +131,7 @@ function LayoutButtons({
           title={layout.label}
           onClick={() => onLayout(layout.id)}
         >
-          <LayoutGlyph layout={layout.id} className="h-3.5 w-4.5" />
+          <LayoutGlyph layout={layout.id} look={layout.look} className="h-3.5 w-4.5" />
         </Button>
       ))}
     </div>

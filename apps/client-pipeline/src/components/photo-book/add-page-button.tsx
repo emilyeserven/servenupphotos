@@ -3,10 +3,18 @@ import { useState } from "react";
 import { LayoutGlyph } from "@/components/photo-book/layout-glyph";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LAYOUTS, type PageLayout } from "@/lib/photo-book";
+import type { PageLayout } from "@/lib/photo-book";
+import type { LayoutChoice } from "@/lib/photo-book-layouts";
 
-/** **Add page**, which asks for the new page's layout and adds it at the end of the book. */
-export function AddPageButton({ onAdd }: { onAdd: (layout: PageLayout) => void }) {
+/**
+ * **Add page**, which asks for the new page's layout, built in or made on the Layouts tab, and adds
+ * it after the other photo pages.
+ */
+export function AddPageButton(props: {
+  layouts: LayoutChoice[];
+  onAdd: (layout: PageLayout) => void;
+}) {
+  const { layouts, onAdd } = props;
   const [open, setOpen] = useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -21,7 +29,7 @@ export function AddPageButton({ onAdd }: { onAdd: (layout: PageLayout) => void }
           Pick the new page&apos;s layout
         </p>
         <ul className="flex flex-col gap-1">
-          {LAYOUTS.map((layout) => (
+          {layouts.map((layout) => (
             <li key={layout.id}>
               <button
                 type="button"
@@ -33,6 +41,7 @@ export function AddPageButton({ onAdd }: { onAdd: (layout: PageLayout) => void }
               >
                 <LayoutGlyph
                   layout={layout.id}
+                  look={layout.look}
                   className="text-muted-foreground h-9 w-12 shrink-0"
                 />
                 <span className="flex flex-col gap-0.5">
