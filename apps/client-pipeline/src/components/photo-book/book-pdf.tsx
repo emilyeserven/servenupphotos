@@ -1,89 +1,119 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { FileDownIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
+import { bookPdfMutation, bookPdfProgressQuery } from "@/api/photo-books";
+import { ErrorNote } from "@/components/error-note";
 import { BookPage } from "@/components/photo-book/book-page";
 import { NO_ACTIONS, type PageLook } from "@/components/photo-book/page-actions";
 import { PrintingContext } from "@/components/photo-book/printing";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { downloadBlob } from "@/lib/download-blob";
 import type { BookPage as Page, PhotoBook } from "@/lib/photo-book";
 import { type BookUnit, isPlaceholder, printedPages } from "@/lib/photo-book-order";
-import { PRINT_ROOT_ID, printCss, printSide, printSize } from "@/lib/photo-book-pdf";
+import {
+  PRINT_ROOT_ID,
+  absoluteSrcSet,
+  pdfDocument,
+  pdfProgressText,
+  printCss,
+  printSide,
+  printSize,
+} from "@/lib/photo-book-pdf";
 
 /** No photo is marked as on another page in the PDF. */
 const NOT_REPEATED = new Map<string, number[]>();
-
-/** The longest **Save as PDF** waits for the photos to load before opening the print dialog anyway. */
-const LONGEST_WAIT_MS = 30_000;
-
-/** Waits until every photo in the element has loaded or failed. */
-function photosLoaded(root: HTMLElement): Promise<unknown> {
-  const pending = [...root.querySelectorAll("img")].filter((img) => !img.complete);
-  return Promise.all(
-    pending.map(
-      (img) =>
-        new Promise((done) => {
-          img.addEventListener("load", done, { once: true });
-          img.addEventListener("error", done, { once: true });
-        }),
-    ),
-  );
-}
 
 /** Waits a moment, for the pages to be measured and pick their photos' versions. */
 function settle(): Promise<void> {
   return new Promise((done) => setTimeout(done, 500));
 }
 
-/**
- * Opens the print dialog once the PDF's pages and their photos are ready, and turns printing off
- * with setOn when it closes.
- */
-function usePrintWhenReady(on: boolean, setOn: (on: boolean) => void) {
-  useEffect(() => {
-    if (!on) return;
-    let cancelled = false;
-    const onDone = () => setOn(false);
-    window.addEventListener("afterprint", onDone, { once: true });
-    const ready = async () => {
-      await settle();
-      const root = document.getElementById(PRINT_ROOT_ID);
-      if (root) {
-        const timeout = new Promise((done) => setTimeout(done, LONGEST_WAIT_MS));
-        await Promise.race([photosLoaded(root), timeout]);
+/** Every style sheet on this page, as text: the pipeline's Tailwind styles the pages are drawn with. */
+function pageStyles(): string {
+  return [...document.styleSheets]
+    .map((sheet) => {
+      try {
+        return [...sheet.cssRules].map((rule) => rule.cssText).join("\n");
+      } catch {
+        // A style sheet from another site can't be read; the pages don't use one.
+        return "";
       }
-      if (!cancelled) window.print();
-    };
-    void ready();
-    return () => {
-      cancelled = true;
-      window.removeEventListener("afterprint", onDone);
-    };
-  }, [on, setOn]);
+    })
+    .join("\n");
 }
 
 /**
- * **Save as PDF**: draws every page of the book in its order, each on a sheet of paper the book's
- * page size, and opens the browser's print dialog, where **Save as PDF** makes the file. Blank
- * pages print blank; the inside covers aren't pages of the book, so they're left out.
+ * A copy of the drawn pages for the backend to print: each photo's addresses made whole and set to
+ * load at once, since the pages open at another address there.
+ */
+function pagesHtml(root: HTMLElement): string {
+  const copy = root.cloneNode(true) as HTMLElement;
+  for (const img of copy.querySelectorAll("img")) {
+    img.setAttribute("src", img.src);
+    const srcSet = img.getAttribute("srcset");
+    if (srcSet) img.setAttribute("srcset", absoluteSrcSet(srcSet, document.baseURI));
+    img.setAttribute("loading", "eager");
+  }
+  return copy.outerHTML;
+}
+
+/** The drawn pages as a whole page for the backend to print, or null when they aren't drawn. */
+function drawnPages(): string | null {
+  const root = document.getElementById(PRINT_ROOT_ID);
+  if (!root) return null;
+  return pdfDocument({ styles: pageStyles(), pages: pagesHtml(root), base: document.baseURI });
+}
+
+/**
+ * Making the book's PDF: start draws the pages out of sight, sends them to the backend once drawn
+ * and downloads the PDF it makes; text is the button's words, how far it has got while busy.
+ */
+function useSavePdf(book: PhotoBook, used: BookUnit[]) {
+  const [drawing, setDrawing] = useState(false);
+  const pdf = useMutation(bookPdfMutation);
+  const progress = useQuery({ ...bookPdfProgressQuery(book.id), enabled: pdf.isPending });
+  const start = async () => {
+    pdf.reset();
+    setDrawing(true);
+    await settle();
+    const html = drawnPages();
+    setDrawing(false);
+    if (!html) return;
+    const pages = printedPages(used).length;
+    pdf.mutate(
+      { id: book.id, html, pages },
+      { onSuccess: ({ blob }) => downloadBlob(`${book.id}.pdf`, blob) },
+    );
+  };
+  const busy = drawing || pdf.isPending;
+  const text = busy ? pdfProgressText(drawing, progress.data) : "Save as PDF";
+  return { start, drawing, busy, disabled: busy || used.length === 0, text, error: pdf.error };
+}
+
+/**
+ * **Save as PDF**: draws every page of the book in its order, each the book's page size, and has
+ * the backend print them to a PDF with a headless Chrome, saying how far it has got, then downloads
+ * the PDF. Blank pages print blank; the inside covers aren't pages of the book, so they're left out.
  */
 export function SavePdfButton(props: { book: PhotoBook; look: PageLook; used: BookUnit[] }) {
-  const [printing, setPrinting] = useState(false);
-  usePrintWhenReady(printing, setPrinting);
+  const { start, drawing, busy, disabled, text, error } = useSavePdf(props.book, props.used);
   return (
-    <>
+    <div className="flex flex-col items-end gap-1">
       <Button
         size="sm"
         variant="outline"
-        disabled={printing || props.used.length === 0}
-        title="Opens the print dialog with every page of the book at its page size; pick Save as PDF there"
-        onClick={() => setPrinting(true)}
+        disabled={disabled}
+        title="Makes a PDF of every page of the book at its page size, with sharp photos, and downloads it"
+        onClick={() => void start()}
       >
-        {printing ? <Spinner /> : <FileDownIcon />}
-        Save as PDF
+        {busy ? <Spinner /> : <FileDownIcon />}
+        {text}
       </Button>
-      {printing && createPortal(<PrintBook {...props} />, document.body)}
-    </>
+      {error && <ErrorNote error={error} className="max-w-sm text-right" />}
+      {drawing && createPortal(<PrintBook {...props} />, document.body)}
+    </div>
   );
 }
 

@@ -213,7 +213,7 @@ function FilledSlot(props: {
  * The photo in its place, sharp at any size: the browser picks the resized version from R2 that
  * covers the place at the screen's pixel ratio, starting from the offline Small version, which it
  * goes back to when R2 can't be reached. For **Save as PDF** it asks for one three times as wide,
- * about 300 dpi on paper, and loads it at once.
+ * about 300 dpi on paper.
  */
 function SlotImage(props: {
   photo: SocialPhoto | undefined;
@@ -224,7 +224,7 @@ function SlotImage(props: {
   const { photo, image, size, alt } = props;
   const changed = useChangedPhotoFiles();
   const [failed, setFailed] = useState(false);
-  const { box, loading } = usePrintedSize(size);
+  const box = usePrintedSize(size);
   const data = photo && currentData(photo, changed);
   return (
     <img
@@ -232,7 +232,7 @@ function SlotImage(props: {
       {...slotSources(failed ? null : data, box)}
       alt={alt}
       draggable={false}
-      loading={loading}
+      loading="lazy"
       onError={() => setFailed(true)}
       className="size-full object-cover"
     />

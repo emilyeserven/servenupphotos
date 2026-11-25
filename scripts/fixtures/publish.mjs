@@ -93,6 +93,17 @@ export function publishFixtures() {
       ...body,
       id: "sample-book",
     })),
+    // Save as PDF: a few seconds of making the PDF, to see its progress, then a stand-in answer.
+    "POST /api/photobooks/sample-book/pdf": async () => {
+      await new Promise((done) => setTimeout(done, 3000));
+      return { status: 200, body: { pdf: "A screenshot doesn't make a real PDF." } };
+    },
+    "GET /api/photobooks/sample-book/pdf/progress": {
+      running: true,
+      step: "photos",
+      done: 38,
+      total: 90,
+    },
     "PUT /api/bio/bio": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/bio/bio.json`,

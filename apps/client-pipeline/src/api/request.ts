@@ -78,3 +78,12 @@ export async function requestBlob(url: string, init?: RequestInit): Promise<Blob
   }
   return { blob: await res.blob(), headers: res.headers };
 }
+
+/** POSTs `body` as JSON to `url` and reads the answer as a Blob, such as a photo book's PDF. */
+export function postForBlob(url: string, body: unknown): Promise<BlobResponse> {
+  return requestBlob(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
