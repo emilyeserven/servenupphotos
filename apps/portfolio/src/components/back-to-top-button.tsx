@@ -1,8 +1,8 @@
 import { useLocation } from "@tanstack/react-router";
 import { ArrowUpIcon } from "lucide-react";
 import { useSyncExternalStore } from "react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@portfolio/components/ui/button";
+import { cn } from "@portfolio/lib/utils";
 
 /** The pages without the button: the Map and the Color page fill the screen and don't scroll. */
 const PAGES_WITHOUT: readonly string[] = ["/map", "/color"];
@@ -34,8 +34,12 @@ export function BackToTopButton() {
   return PAGES_WITHOUT.includes(path) ? null : <ScrollUpButton />;
 }
 
-/** The button itself, hidden until the page is scrolled down. */
-function ScrollUpButton() {
+/**
+ * The round button that scrolls smoothly back to the top, hidden until the page is scrolled down.
+ * The pipeline's Photo Pages uses it too. `className` places it on the screen; it's at the bottom
+ * left without one.
+ */
+export function ScrollUpButton({ className = "bottom-4 left-4" }: { className?: string }) {
   const shown = useScrolledDown();
   return (
     <Button
@@ -47,8 +51,9 @@ function ScrollUpButton() {
       aria-hidden={!shown}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       className={cn(
-        "fixed bottom-4 left-4 z-40 rounded-full bg-muted shadow-sm transition-opacity duration-200 dark:bg-muted",
+        "fixed z-40 rounded-full bg-muted shadow-sm transition-opacity duration-200 dark:bg-muted",
         shown ? "opacity-100" : "pointer-events-none opacity-0",
+        className,
       )}
     >
       <ArrowUpIcon className="size-5" />

@@ -55,6 +55,7 @@ import {
   setLinkNext,
 } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
+import { ScrollUpButton } from "@portfolio/components/back-to-top-button";
 import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** What the photo drawer says beside the pages. */
@@ -92,6 +93,7 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
       <div className="flex min-w-0 flex-1 flex-col gap-4">
+        <ScrollUpButton className="right-4 bottom-4" />
         <PagesView book={book} update={update} look={look} />
         <div>
           <AddPageButton
