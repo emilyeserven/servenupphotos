@@ -1,5 +1,6 @@
 import committedData from "@portfolio/data/photos/ALLPHOTOS.json";
 import type { Group } from "@portfolio/lib/groups";
+import type { Liker } from "@portfolio/lib/liked-by";
 import { shownTiers } from "@portfolio/lib/lower-tier";
 import {
   type ColorShare,
@@ -114,6 +115,11 @@ export interface Photo {
   related: RelatedPhoto[];
   /** The IDs of the photographic genres it's in, such as "street"; empty for older entries. */
   genres: string[];
+  /**
+   * The people whose Like list has it, for the Groups picker's **Likes**. Only the pipeline's
+   * Gallery sets it, from its User Likes; the portfolio doesn't read the Like lists.
+   */
+  likedBy?: Liker[];
   /** The point of the photo kept in view when the screen is the other way round, set on its Photo page; null keeps the middle. */
   spotlightFocus: SpotlightFocus | null;
   /** Where on the screen the focus point goes, in percent across and down, set on its Photo page; null for the middle. */

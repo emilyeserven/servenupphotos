@@ -1,4 +1,4 @@
-import { FolderOpen, type LucideIcon, Shapes, Tag } from "lucide-react";
+import { FolderOpen, Heart, type LucideIcon, Shapes, Tag } from "lucide-react";
 import { useState } from "react";
 import { ChoiceRow } from "@portfolio/components/choice-row";
 import { EmptyNote } from "@portfolio/components/empty-note";
@@ -12,11 +12,12 @@ import {
   tagOptions,
 } from "@portfolio/lib/filter-options";
 import { type GroupRow, searchAndSortGroups } from "@portfolio/lib/group-list";
+import { likeOptions } from "@portfolio/lib/liked-by";
 import { filterPhotos, type PhotoFilters, withoutFilters } from "@portfolio/lib/photo-filters";
 import type { Photo } from "@portfolio/lib/photos";
 
-/** The filters the Groups picker sets: the album, the tag and the genre. */
-type GroupKey = "album" | "tag" | "genre";
+/** The filters the Groups picker sets: the album, the tag, the genre and whose Likes. */
+type GroupKey = "album" | "tag" | "genre" | "liked";
 
 /** What the Groups picker reads and changes, and the photos its counts are out of. */
 export interface GroupPickerProps {
@@ -52,11 +53,13 @@ const SECTIONS: {
   { key: "album", label: "Albums", all: "All albums", Icon: FolderOpen, list: albumOptions },
   { key: "tag", label: "Tags", all: "All tags", Icon: Tag, list: tagOptions },
   { key: "genre", label: "Genres", all: "All genres", Icon: Shapes, list: genreOptions },
+  { key: "liked", label: "Likes", all: "All photos", Icon: Heart, list: likeOptions },
 ];
 
 /**
- * The picker's sections, each choice counting what the other filters leave. Tags and Genres are
- * left out while there are none; Albums always shows.
+ * The picker's sections, each choice counting what the other filters leave. Tags, Genres and
+ * Likes are left out while there are none; Albums always shows. Likes only has choices in the
+ * pipeline's Gallery, which says whose Like lists each photo is in.
  */
 export function useSections({ facet, filters }: GroupPickerProps): GroupSection[] {
   const { script } = useScriptDisplay();
