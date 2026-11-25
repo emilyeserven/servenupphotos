@@ -13,8 +13,13 @@ import type { LayoutChoice } from "@/lib/photo-book-layouts";
 export function AddPageButton(props: {
   layouts: LayoutChoice[];
   onAdd: (layout: PageLayout) => void;
+  /**
+   * Leaves focus where it is when the flyout closes, rather than on the button, so scrolling to the
+   * new page isn't undone by the page scrolling back to the button.
+   */
+  keepScroll?: boolean;
 }) {
-  const { layouts, onAdd } = props;
+  const { layouts, onAdd, keepScroll } = props;
   const [open, setOpen] = useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -24,7 +29,11 @@ export function AddPageButton(props: {
           Add page
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-80 p-2">
+      <PopoverContent
+        align="start"
+        className="w-80 p-2"
+        onCloseAutoFocus={keepScroll ? (event) => event.preventDefault() : undefined}
+      >
         <p className="text-muted-foreground px-2 pt-1 pb-2 text-xs">
           Pick the new page&apos;s layout
         </p>

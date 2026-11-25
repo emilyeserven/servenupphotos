@@ -75,6 +75,8 @@ Pages have no numbers here. Above each page, its name, typed in (**Untitled page
 
 **Edit pages** and **Grid to reorder**, above the pages, switch views. The grid shows every photo page and spread as a small preview, numbered in order and marked **In book**; drag one onto another to put it before that one, or onto the box at the end. A spread moves as one, and the book's own order (on **The book**) doesn't change. Clicking one opens **Edit pages** scrolled to it, and clicking its number opens **Move to…**. Check two or more with the box by their names and **Set as alternates**, above the grid, puts them in one alternates group, bringing along any group one was already in.
 
+Two round buttons at the bottom right scroll smoothly to either end of the page: **Jump to bottom**, shown while the page is more than a little way from its end, and **Back to top** above it, shown once it's scrolled down a little. They're the portfolio's **Back to top** button, which can go either way. A second **Add page**, at the right end of the row above the pages, adds a page the same way as the one at the end and scrolls down to it.
+
 ### Alternates
 
 **Alternates**, above each page or spread, makes others alternates of it: two or more versions of the same part of the book, grouped and lettered (**Alternate A**). Its flyout lists the group; **Pick** keeps that one and hides the others from Photo Pages (they're kept, marked **Alternate A · hidden**), and in the book the picked one takes the place of the first of its group there, the others coming out. **Show hidden alternates**, beside the views, shows the hidden ones again, to pick another; **Show all again** undoes the pick; **Leave group** takes one out (a group left with one ends). A spread is an alternate as one.

@@ -30,6 +30,7 @@ import {
   isOtherPage,
   placePhoto,
   removePhoto,
+  type PageLayout,
   renamePage,
   setLayout,
 } from "@/lib/photo-book";
@@ -55,6 +56,7 @@ import {
   setLinkNext,
 } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
+import { ScrollButton } from "@portfolio/components/back-to-top-button";
 import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** What the photo drawer says beside the pages. */
@@ -92,6 +94,8 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
       <div className="flex min-w-0 flex-1 flex-col gap-4">
+        <ScrollButton to="top" className="right-4 bottom-16" />
+        <ScrollButton to="bottom" className="right-4 bottom-4" />
         <PagesView book={book} update={update} look={look} />
         <div>
           <AddPageButton
@@ -170,6 +174,7 @@ function PagesView(props: UnitsProps) {
           showInBook={showInBook}
           onShowInBook={setShowInBook}
         />
+        <TopAddPage book={book} update={update} />
       </div>
       {grid ? (
         <PagesGrid
@@ -186,6 +191,29 @@ function PagesView(props: UnitsProps) {
         <PhotoUnits {...props} shows={shows} />
       )}
     </>
+  );
+}
+
+/**
+ * **Add page** at the right end of the row above the pages, the same as the one under them; the new
+ * page is scrolled into view once it's drawn (in **Edit pages**).
+ */
+function TopAddPage({ book, update }: Pick<UnitsProps, "book" | "update">) {
+  const add = (layout: PageLayout) => {
+    const next = addPage(book, layout);
+    update(next);
+    const id = next.pages.at(-1)?.id;
+    if (!id) return;
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() =>
+        document.getElementById(unitElementId(id))?.scrollIntoView({ behavior: "smooth" }),
+      ),
+    );
+  };
+  return (
+    <div className="ml-auto">
+      <AddPageButton layouts={layoutChoices(book)} onAdd={add} keepScroll />
+    </div>
   );
 }
 
