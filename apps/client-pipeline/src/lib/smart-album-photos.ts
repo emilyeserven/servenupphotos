@@ -25,6 +25,11 @@ export function labelsOf(files: Pick<CombinedFiles, "timeline">): TimelineLabel[
   return listOf<TimelineLabel>(files.timeline.data);
 }
 
+/** The albums (ALLALBUMS.json) in the combined lists, as the portfolio reads them. */
+export function albumsOf(files: Pick<CombinedFiles, "albums">): Group[] {
+  return listOf<Group>(files.albums.data);
+}
+
 /** ALLPHOTOS.json's entries as the portfolio reads them, and which entry each photo is, by its ID. */
 interface ReadEntries {
   photos: Photo[];
@@ -57,7 +62,7 @@ export function withSmartAlbumEntries(
   entries: CombinedPhoto[],
   files: Pick<CombinedFiles, "albums" | "timeline">,
 ): CombinedPhoto[] {
-  const albums = listOf<Group>(files.albums.data);
+  const albums = albumsOf(files);
   const smartIds = new Set(albums.filter(isSmartAlbum).map((album) => album.id));
   if (smartIds.size === 0) return entries;
   const { photos, ids } = readEntries(entries, albums, labelsOf(files));

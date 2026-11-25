@@ -10,17 +10,20 @@ import (
 func TestSavePhotoBook(t *testing.T) {
 	_, c := newMainRepo(t, map[string]string{})
 	title := "  Seoul "
-	book := PhotoBook{ID: "korea", Name: " Korea ", Pages: []PhotoBookPage{
+	book := PhotoBook{ID: "korea", Name: " Korea ", Album: " korea-2026 ", Pages: []PhotoBookPage{
 		{ID: "p1", Layout: "full", Title: &title, Slots: []PhotoBookSlot{{Photo: "a.json"}, {Photo: "extra.json"}}},
-		{ID: "p2", Layout: "pair-left"},
-	}}
+		{ID: "p2", Layout: "verticals-left"},
+	}, Order: &[]string{"p2", "gone", "p2", "p1"}}
 	if _, err := c.SavePhotoBook(t.Context(), placesGH, book); err != nil {
 		t.Fatalf("SavePhotoBook() error = %v", err)
 	}
 	saved := staged(t, c, dataRoot+"/photobooks/korea.json")
-	// The name and title are trimmed, the full page keeps one slot, and the
+	// The name, album and title are trimmed, the full page keeps one slot, and the
 	// pair gets its two empty ones.
-	for _, want := range []string{`"name": "Korea"`, `"title": "Seoul"`, `"photo": "a.json"`} {
+	for _, want := range []string{`"name": "Korea"`, `"album": "korea-2026"`, `"title": "Seoul"`, `"photo": "a.json"`, `"order": [
+    "p2",
+    "p1"
+  ]`} {
 		if !strings.Contains(saved, want) {
 			t.Errorf("saved %s, want %s in it", saved, want)
 		}
@@ -34,6 +37,7 @@ func TestSavePhotoBook(t *testing.T) {
 	}{
 		{"bad id", PhotoBook{ID: "Korea!", Name: "Korea"}},
 		{"no name", PhotoBook{ID: "korea"}},
+		{"long album", PhotoBook{ID: "korea", Name: "Korea", Album: strings.Repeat("a", maxEntryTextLength+1)}},
 		{"unknown layout", PhotoBook{ID: "korea", Name: "Korea", Pages: []PhotoBookPage{{ID: "p1", Layout: "triptych"}}}},
 		{"page without id", PhotoBook{ID: "korea", Name: "Korea", Pages: []PhotoBookPage{{Layout: "full"}}}},
 		{"same page id", PhotoBook{ID: "korea", Name: "Korea", Pages: []PhotoBookPage{{ID: "p", Layout: "full"}, {ID: "p", Layout: "full"}}}},

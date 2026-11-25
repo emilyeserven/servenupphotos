@@ -496,7 +496,17 @@ added.sets = [
   },
 ];
 
-/** A photo book on the Photo Book page, laid out with the first few photos. */
+/** The album the sample photo book takes its photos from, and its photos. */
+const bookAlbum = "homepage-spotlight";
+const bookPhotos = decidedPhotos.filter(({ data }) => data.albums?.includes(bookAlbum));
+
+/** The path of the sample photo book's album's nth photo, or "" when it has fewer. */
+const bookPhoto = (n) => bookPhotos[n]?.path ?? "";
+
+/**
+ * A photo book on the Photo Books page, laid out with its album's first few photos: three pages in
+ * the book, and a page not in it that tries the first photo another way.
+ */
 added.photobooks = [
   {
     path: `${FOLDER}/photobooks/sample-book.json`,
@@ -504,29 +514,40 @@ added.photobooks = [
       id: "sample-book",
       name: "Sample book",
       template: "",
+      album: bookAlbum,
+      order: ["p1", "p2", "p3"],
       pages: [
         {
           id: "p1",
           layout: "full",
           title: "Chapter one",
-          slots: [{ photo: decidedPhotos[0]?.path ?? "", caption: null }],
+          slots: [{ photo: bookPhoto(0), caption: null }],
         },
         {
           id: "p2",
           layout: "pair-left",
-          title: null,
+          title: "Spotlight",
           slots: [
-            { photo: decidedPhotos[1]?.path ?? "", caption: null },
-            { photo: decidedPhotos[2]?.path ?? "", caption: "A caption written by hand." },
+            { photo: bookPhoto(1), caption: null },
+            { photo: bookPhoto(2), caption: "A caption written by hand." },
           ],
         },
         {
           id: "p3",
+          layout: "verticals-right",
+          title: null,
+          slots: [
+            { photo: bookPhoto(3), caption: null },
+            { photo: "", caption: null },
+          ],
+        },
+        {
+          id: "p4",
           layout: "pair-right",
           title: null,
           slots: [
-            { photo: decidedPhotos[3]?.path ?? "", caption: null },
-            { photo: "", caption: null },
+            { photo: bookPhoto(0), caption: null },
+            { photo: bookPhoto(4), caption: null },
           ],
         },
       ],

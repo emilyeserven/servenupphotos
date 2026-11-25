@@ -1,5 +1,5 @@
 import { PanelRightCloseIcon } from "lucide-react";
-import { type DragEvent, useMemo, useState } from "react";
+import { type DragEvent, type ReactNode, useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
 import { GridFilterBar, useGridFilters } from "@/components/gallery/grid-filters";
@@ -27,8 +27,8 @@ interface DrawerWords {
 interface TakeOff {
   /** The drag type that marks a drag from the page, not from the drawer itself. */
   fromType: string;
-  /** Takes the photo at path out. */
-  onRemove: (path: string) => void;
+  /** Takes the photo at path out; from is the drag's fromType data, such as where it was. */
+  onRemove: (path: string, from: string) => void;
 }
 
 interface PhotoDrawerPanelProps {
@@ -43,19 +43,37 @@ interface PhotoDrawerPanelProps {
   words: DrawerWords;
   /** Dropping a photo from the page here takes it out; left out, the drawer takes no drops. */
   takeOff?: TakeOff;
+  /**
+   * True to list the photos in the order given, such as a photo book's album's, without the
+   * portfolio Grid's filters; left out, newest taken first, with the filters.
+   */
+  inOrder?: boolean;
+  /** What the drawer says with no photos given at all, such as before an album is picked. */
+  empty?: ReactNode;
 }
 
-/** The photos whose title or file name has search, newest taken first, without those used unless shown. */
-function searched(photos: SocialPhoto[], search: string, used: Set<string> | null) {
+/** Newest taken first, then by name. */
+function byNewest(a: SocialPhoto, b: SocialPhoto): number {
+  return (
+    takenDay(b.data).localeCompare(takenDay(a.data)) || photoName(a).localeCompare(photoName(b))
+  );
+}
+
+/**
+ * The photos whose title or file name has search, without those used unless shown, newest taken
+ * first unless inOrder keeps the order given.
+ */
+function searched(
+  photos: SocialPhoto[],
+  search: string,
+  used: Set<string> | null,
+  inOrder = false,
+) {
   const query = search.trim().toLowerCase();
-  return photos
+  const found = photos
     .filter((p) => !used?.has(p.path))
-    .filter((p) => `${photoName(p)} ${p.file}`.toLowerCase().includes(query))
-    .toSorted(
-      (a, b) =>
-        takenDay(b.data).localeCompare(takenDay(a.data)) ||
-        photoName(a).localeCompare(photoName(b)),
-    );
+    .filter((p) => `${photoName(p)} ${p.file}`.toLowerCase().includes(query));
+  return inOrder ? found : found.toSorted(byNewest);
 }
 
 /**
@@ -63,7 +81,9 @@ function searched(photos: SocialPhoto[], search: string, used: Set<string> | nul
  * from the drawer itself can't be dropped back on it.
  */
 function useTakeOffDrop(dragType: string, takeOff: TakeOff | undefined) {
-  const { over, handlers } = useDropTarget(dragType, (path) => takeOff?.onRemove(path));
+  const { over, handlers } = useDropTarget(dragType, (path, event) =>
+    takeOff?.onRemove(path, event.dataTransfer.getData(takeOff.fromType)),
+  );
   const onDragOver = (event: DragEvent) => {
     if (takeOff && event.dataTransfer.types.includes(takeOff.fromType)) handlers.onDragOver(event);
   };
@@ -71,19 +91,39 @@ function useTakeOffDrop(dragType: string, takeOff: TakeOff | undefined) {
 }
 
 /**
- * A panel beside a page's content, like the Instagram calendar's photo drawer, listing the photos to
- * drag onto it, with a search and the portfolio Grid's filters. Clicking a photo adds it; with
- * takeOff, a photo dropped here from the page comes out.
+ * The drawer's search and its Show used checkbox, and the photos it shows with them: through the
+ * portfolio Grid's filters, or, inOrder, in the order given without them.
  */
-export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
-  const { photos, used, onPick, onClose, dragType, words, takeOff } = props;
+function useDrawerList(photos: SocialPhoto[], used: Set<string>, inOrder = false) {
   const [search, setSearch] = useState("");
   const [showUsed, setShowUsed] = useState(false);
   const listed = useMemo(
-    () => searched(photos, search, showUsed ? null : used),
-    [photos, search, showUsed, used],
+    () => searched(photos, search, showUsed ? null : used, inOrder),
+    [photos, search, showUsed, used, inOrder],
   );
   const grid = useGridFilters(photos, listed);
+  return {
+    search,
+    setSearch,
+    showUsed,
+    setShowUsed,
+    shown: inOrder ? listed : grid.shown,
+    filterPhotos: grid.photos,
+  };
+}
+
+/**
+ * A panel beside a page's content, like the Instagram calendar's photo drawer, listing the photos to
+ * drag onto it, with a search and the portfolio Grid's filters (or, inOrder, in the order given).
+ * Clicking a photo adds it; with takeOff, a photo dropped here from the page comes out.
+ */
+export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
+  const { photos, used, onPick, onClose, dragType, words, takeOff, inOrder, empty } = props;
+  const { search, setSearch, showUsed, setShowUsed, shown, filterPhotos } = useDrawerList(
+    photos,
+    used,
+    inOrder,
+  );
   const { over, handlers } = useTakeOffDrop(dragType, takeOff);
   return (
     <aside
@@ -121,12 +161,15 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
         />
         {words.showUsed}
       </label>
-      <div className="shrink-0">
-        <GridFilterBar photos={grid.photos} />
-      </div>
+      {!inOrder && (
+        <div className="shrink-0">
+          <GridFilterBar photos={filterPhotos} />
+        </div>
+      )}
       <div className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1">
         <DrawerPhotos
-          photos={grid.shown}
+          photos={shown}
+          empty={emptyNote(photos.length, empty)}
           used={used}
           onPick={onPick}
           dragType={dragType}
@@ -137,16 +180,22 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
   );
 }
 
+/** What the drawer says with nothing to show: empty when it was given no photos at all. */
+function emptyNote(given: number, empty: ReactNode): ReactNode {
+  return given === 0 && empty ? empty : NO_PHOTOS_MATCH;
+}
+
 function DrawerPhotos(props: {
   photos: SocialPhoto[];
+  empty: ReactNode;
   used: Set<string>;
   onPick: (photo: SocialPhoto) => void;
   dragType: string;
   usedBadge: string;
 }) {
-  const { photos, used, onPick, dragType, usedBadge } = props;
+  const { photos, empty, used, onPick, dragType, usedBadge } = props;
   if (photos.length === 0) {
-    return <EmptyNote className="py-6 text-center">{NO_PHOTOS_MATCH}</EmptyNote>;
+    return <EmptyNote className="py-6 text-center">{empty}</EmptyNote>;
   }
   return (
     <ul className="grid grid-cols-3 gap-2" aria-label="Photos to add">

@@ -19,6 +19,11 @@ var photoBookLayouts = map[string]int{
 	"pair-left": 2,
 	// Two photos down the right side, their captions beside them on the left.
 	"pair-right": 2,
+	// Two portrait photos side by side on the left, their captions on the
+	// right.
+	"verticals-left": 2,
+	// The same, mirrored: the photos on the right, their captions on the left.
+	"verticals-right": 2,
 }
 
 // The most pages a photo book can have, and the most characters of a
@@ -39,15 +44,23 @@ type PhotoBook struct {
 	// Template is the ID of the caption template its captions are filled in
 	// with, or "" for the page's default.
 	Template string `json:"template"`
-	// Pages are the book's pages, first to last.
+	// Album is the ID of the album the book's photos come from, or "" while
+	// none is picked.
+	Album string `json:"album"`
+	// Pages are every page made for the book, ones that could be used,
+	// newest last.
 	Pages []PhotoBookPage `json:"pages"`
+	// Order is the IDs of the pages that will be used, in the book's order;
+	// nil in a book made before, whose pages are then all in it.
+	Order *[]string `json:"order,omitempty"`
 }
 
 // PhotoBookPage is one page of a photo book.
 type PhotoBookPage struct {
 	// ID tells the page from the others in its book.
 	ID string `json:"id"`
-	// Layout is "full", "pair-left" or "pair-right".
+	// Layout is "full", "pair-left", "pair-right", "verticals-left" or
+	// "verticals-right".
 	Layout string `json:"layout"`
 	// Title is shown above the page's top photo; nil for none.
 	Title *string `json:"title"`
@@ -80,16 +93,17 @@ func (c *Client) DeletePhotoBook(ctx context.Context, gh settings.GitHub, id str
 }
 
 // validPhotoBook checks b and returns it as it will be saved: its name
-// trimmed, and each page with as many slots as its layout holds.
+// and album trimmed, each page with as many slots as its layout holds, and
+// its order listing only its pages, each once.
 func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
-	out := PhotoBook{ID: strings.TrimSpace(b.ID), Name: strings.TrimSpace(b.Name), Template: strings.TrimSpace(b.Template)}
+	out := PhotoBook{ID: strings.TrimSpace(b.ID), Name: strings.TrimSpace(b.Name), Template: strings.TrimSpace(b.Template), Album: strings.TrimSpace(b.Album)}
 	if perr := validEntryID(PhotoBooks.Name, out.ID); perr != nil {
 		return out, perr
 	}
 	if out.Name == "" {
 		return out, publishErr(http.StatusBadRequest, "Give the photo book a name.")
 	}
-	if utf8.RuneCountInString(out.Name) > maxEntryTextLength || utf8.RuneCountInString(out.Template) > maxEntryTextLength {
+	if slices.ContainsFunc([]string{out.Name, out.Template, out.Album}, tooLongEntryText) {
 		return out, publishErr(http.StatusBadRequest, "Keep the name to %d characters.", maxEntryTextLength)
 	}
 	if len(b.Pages) > maxPhotoBookPages {
@@ -106,7 +120,29 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 		}
 		out.Pages = append(out.Pages, p)
 	}
+	out.Order = validPhotoBookOrder(b.Order, out.Pages)
 	return out, nil
+}
+
+// validPhotoBookOrder returns order without the IDs of pages that aren't
+// there or that it lists twice; nil stays nil.
+func validPhotoBookOrder(order *[]string, pages []PhotoBookPage) *[]string {
+	if order == nil {
+		return nil
+	}
+	kept := []string{}
+	for _, id := range *order {
+		there := slices.ContainsFunc(pages, func(p PhotoBookPage) bool { return p.ID == id })
+		if there && !slices.Contains(kept, id) {
+			kept = append(kept, id)
+		}
+	}
+	return &kept
+}
+
+// tooLongEntryText reports whether s is longer than an entry's text can be.
+func tooLongEntryText(s string) bool {
+	return utf8.RuneCountInString(s) > maxEntryTextLength
 }
 
 // validPhotoBookPage checks page n of a book, and returns it with its title
