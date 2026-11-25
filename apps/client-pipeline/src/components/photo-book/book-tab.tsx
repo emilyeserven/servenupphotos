@@ -7,6 +7,7 @@ import { usePreviewKeys, usePreviewMode } from "@/components/photo-book/preview-
 import { UnitsDrawer } from "@/components/photo-book/units-drawer";
 import { UsedPanel } from "@/components/photo-book/used-panel";
 import type { PhotoBook } from "@/lib/photo-book";
+import { unitLayouts } from "@/lib/photo-book-layout-filter";
 import {
   type BookUnit,
   addOtherPage,
@@ -113,6 +114,7 @@ export function BookTab({ book, update, look }: BookTabProps) {
           )
         }
         tags={bookTags(book)}
+        layouts={unitLayouts(book, bookUnits(book))}
         open={drawerOpen && !preview.on}
         onOpen={panel(setDrawerOpen)}
       />

@@ -1,16 +1,17 @@
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import { DrawerFilters, useDrawerFilters } from "@/components/photo-book/drawer-filters";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { InBookBadge } from "@/components/photo-book/page-controls";
 import { unitName } from "@/components/photo-book/page-types";
 import { BOOK_UNIT_DRAG_TYPE, dragUnit } from "@/components/photo-book/unit-drag";
 import { UnitSheets } from "@/components/photo-book/unit-sheets";
-import { TagSelect } from "@/components/photo-book/unit-tags";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { isOtherPage } from "@/lib/photo-book";
-import { type BookUnit, unitsTagged } from "@/lib/photo-book-order";
+import type { LayoutOption } from "@/lib/photo-book-layout-filter";
+import type { BookUnit } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
@@ -30,6 +31,8 @@ interface UnitsDrawerProps {
   onOpen: (open: boolean) => void;
   /** Every tag in the book, to filter by. */
   tags: string[];
+  /** The layouts the pages and spreads use, to filter by. */
+  layouts: LayoutOption[];
 }
 
 /**
@@ -39,12 +42,9 @@ interface UnitsDrawerProps {
  * out of the book. Closed, it's one line.
  */
 export function UnitsDrawer(props: UnitsDrawerProps) {
-  const { units, open, onTakeOut, tags, inBook } = props;
+  const { units, open, onTakeOut, tags, layouts, inBook } = props;
   const drop = useDropTarget(BOOK_UNIT_DRAG_TYPE, (id) => onTakeOut(id));
-  const [picked, setPicked] = useState<string | null>(null);
-  const [showUsed, setShowUsed] = useState(true);
-  const { filter, shown } = unitsTagged(units, tags, picked);
-  const listed = showUsed ? shown : shown.filter((unit) => !inBook.has(unit.id));
+  const { listed, state } = useDrawerFilters(units, tags, layouts, inBook);
   return (
     <section
       aria-label="All pages and spreads"
@@ -56,15 +56,7 @@ export function UnitsDrawer(props: UnitsDrawerProps) {
     >
       <DrawerHeader
         {...props}
-        filters={
-          <DrawerFilters
-            tags={tags}
-            filter={filter}
-            onFilter={setPicked}
-            showUsed={showUsed}
-            onShowUsed={setShowUsed}
-          />
-        }
+        filters={<DrawerFilters tags={tags} layouts={layouts} state={state} />}
       />
       {open && <DrawerList {...props} listed={listed} />}
     </section>
@@ -75,11 +67,7 @@ export function UnitsDrawer(props: UnitsDrawerProps) {
 function DrawerList(props: UnitsDrawerProps & { listed: BookUnit[] }) {
   const { listed } = props;
   if (listed.length === 0) {
-    return (
-      <EmptyNote>
-        No pages or spreads to show. Every one shown here is already in the book.
-      </EmptyNote>
-    );
+    return <EmptyNote>No pages or spreads match these filters.</EmptyNote>;
   }
   return (
     <ul className="flex gap-3 overflow-x-auto pb-1">
@@ -87,31 +75,6 @@ function DrawerList(props: UnitsDrawerProps & { listed: BookUnit[] }) {
         <DrawerUnit key={unit.id} unit={unit} {...props} />
       ))}
     </ul>
-  );
-}
-
-/** Beside the drawer's name: the tag dropdown and **Show ones in the book**, on to start. */
-function DrawerFilters(props: {
-  tags: string[];
-  filter: string | null;
-  onFilter: (tag: string | null) => void;
-  showUsed: boolean;
-  onShowUsed: (on: boolean) => void;
-}) {
-  const { tags, filter, onFilter, showUsed, onShowUsed } = props;
-  return (
-    <>
-      <TagSelect tags={tags} value={filter} onChange={onFilter} />
-      <label className="flex items-center gap-1.5 text-xs">
-        <input
-          type="checkbox"
-          className="accent-primary size-3.5"
-          checked={showUsed}
-          onChange={(event) => onShowUsed(event.target.checked)}
-        />
-        Show ones in the book
-      </label>
-    </>
   );
 }
 
