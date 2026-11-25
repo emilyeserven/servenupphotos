@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { GroupDetailPage } from "@/components/group-detail";
+import { AlbumPage } from "@/components/album-page/album-page";
 import { AlbumCrumbs } from "@/components/sidebar/route-crumbs";
 
+/** One album's page, whose Photos, Info and Layout tabs are the routes under it. */
 export const Route = createFileRoute("/albums/$id")({
   component: AlbumDetailPage,
   staticData: { wide: true, crumbs: AlbumCrumbs },
@@ -9,5 +10,5 @@ export const Route = createFileRoute("/albums/$id")({
 
 function AlbumDetailPage() {
   const { id } = Route.useParams();
-  return <GroupDetailPage kind="albums" id={id} />;
+  return <AlbumPage id={id} />;
 }

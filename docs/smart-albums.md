@@ -6,7 +6,7 @@ A Smart Album is an album whose photos come from saved rules rather than being p
 
 ## Making one
 
-Every album's page in the pipeline (`/albums/<id>`) starts with a **Smart Album** card. **Pick its photos with rules** (or **Edit rules** on one that has them) opens the editor:
+Every album's page in the pipeline (`/albums/<id>`) starts its **Photos** tab with a **Smart Album** card. **Pick its photos with rules** (or **Edit rules** on one that has them) opens the editor:
 
 - the **Timeline label**, **Taken on or after** and **Taken on or before** fields,
 - the same **Show filters** panel as the [Gallery](gallery.md#the-portfolio-grids-filters), with the portfolio's own components, whose counts are out of every photo in `ALLPHOTOS.json` (they don't take the label or days into account),
