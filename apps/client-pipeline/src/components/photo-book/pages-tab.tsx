@@ -5,6 +5,7 @@ import { AddPageButton } from "@/components/photo-book/add-page-button";
 import { useAlbumPhotos } from "@/components/photo-book/album-photos";
 import { AlternatesControl } from "@/components/photo-book/alternates-control";
 import { BookPage } from "@/components/photo-book/book-page";
+import { MoveToControl } from "@/components/photo-book/move-to-control";
 import { type PageLook, pageActions } from "@/components/photo-book/page-actions";
 import { PageControls, UnitControls } from "@/components/photo-book/page-controls";
 import {
@@ -30,7 +31,7 @@ import {
   renamePage,
   setLayout,
 } from "@/lib/photo-book";
-import { isHidden } from "@/lib/photo-book-alternates";
+import { isHidden, markAlternates } from "@/lib/photo-book-alternates";
 import { layoutChoices } from "@/lib/photo-book-layouts";
 import {
   type BookUnit,
@@ -38,6 +39,8 @@ import {
   bookOrder,
   bookUnits,
   movePhotoUnit,
+  movePhotoUnitTo,
+  photoUnitPositions,
   pageNumbers,
   bookTags,
   setUnitTags,
@@ -161,6 +164,9 @@ function PagesView(props: UnitsProps) {
           look={look}
           onPlace={(id, before) => update(placePhotoUnit(book, id, before))}
           onOpen={open}
+          onSetAlternates={(ids) => update(markAlternates(book, ids))}
+          positions={photoUnitPositions(book)}
+          onMoveTo={(id, to) => update(movePhotoUnitTo(book, id, to))}
         />
       ) : (
         <PhotoUnits {...props} showHidden={showHidden} />
@@ -233,6 +239,12 @@ function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
           <>
             <UnitTagsControl unit={unit} book={book} update={update} />
             <AlternatesControl unit={unit} book={book} update={update} />
+            <MoveToControl
+              name={unitName(unit)}
+              position={place + 1}
+              total={photoUnitPositions(book).size}
+              onMoveTo={(to) => update(movePhotoUnitTo(book, unit.id, to))}
+            />
           </>
         }
       />

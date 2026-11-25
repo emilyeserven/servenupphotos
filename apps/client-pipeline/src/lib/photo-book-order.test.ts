@@ -16,6 +16,8 @@ import {
   pageNumbers,
   pageSides,
   placePhotoUnit,
+  movePhotoUnitTo,
+  photoUnitPositions,
   photosInBook,
   removePage,
   repeatedPhotos,
@@ -168,4 +170,23 @@ test("dragging a photo page or spread puts it before another, or at the end, a s
   ]);
   assert.equal(placePhotoUnit(b, "page-1", "page-1"), b);
   assert.equal(placePhotoUnit(b, "page-4", null), b);
+});
+
+test("moving a photo page or spread to a typed position, past either end putting it first or last", () => {
+  const b = addOtherPage(setLinkNext(book(), "page-2", true), "Bio");
+  const moved = [["page-2", "page-3"], ["page-1"], ["page-4"]];
+  assert.deepEqual(units(movePhotoUnitTo(b, "page-2", 1)), moved);
+  assert.deepEqual(units(movePhotoUnitTo(b, "page-1", 2)), moved);
+  assert.deepEqual(units(movePhotoUnitTo(b, "page-1", 99)), moved);
+  assert.deepEqual(units(movePhotoUnitTo(b, "page-2", -3)), moved);
+  assert.equal(movePhotoUnitTo(b, "page-1", 1), b);
+  assert.equal(movePhotoUnitTo(b, "page-4", 1), b);
+  assert.equal(movePhotoUnitTo(b, "page-1", Number.NaN), b);
+  assert.deepEqual(
+    [...photoUnitPositions(b)],
+    [
+      ["page-1", 1],
+      ["page-2", 2],
+    ],
+  );
 });

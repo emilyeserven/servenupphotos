@@ -67,7 +67,9 @@ Each photo place keeps its shape whatever room the page gives it: 3:2 for the la
 
 Pages have no numbers here. Above each page, its name, typed in (**Untitled page** until it has one), its layout's buttons (to switch it; a photo past the new layout's places comes off the page), the **H** button that adds or takes off a title (typed on the page itself), and the bin that removes it. Clicking a caption types over it.
 
-**Edit pages** and **Grid to reorder**, above the pages, switch views. The grid shows every photo page and spread as a small preview, numbered in order and marked **In book**; drag one onto another to put it before that one, or onto the box at the end. A spread moves as one, and the book's own order (on **The book**) doesn't change. Clicking one opens **Edit pages** scrolled to it.
+**Move to…** on each photo page or spread in **Edit pages** moves it to a position you type among the photo pages, 1 first, a spread moving as one; a number past either end puts it first or last. Like dragging, it doesn't change the book's own order.
+
+**Edit pages** and **Grid to reorder**, above the pages, switch views. The grid shows every photo page and spread as a small preview, numbered in order and marked **In book**; drag one onto another to put it before that one, or onto the box at the end. A spread moves as one, and the book's own order (on **The book**) doesn't change. Clicking one opens **Edit pages** scrolled to it, and clicking its number opens **Move to…**. Check two or more with the box by their names and **Set as alternates**, above the grid, puts them in one alternates group, bringing along any group one was already in.
 
 ### Alternates
 

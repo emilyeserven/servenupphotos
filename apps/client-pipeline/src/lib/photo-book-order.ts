@@ -6,6 +6,7 @@ import {
   isOtherPage,
   newPage,
 } from "@/lib/photo-book";
+import { clamp } from "@portfolio/lib/values";
 
 /**
  * What goes in the book as one: a page on its own, or two photo pages linked into a spread. Its ID
@@ -149,6 +150,27 @@ export function placePhotoUnit(book: PhotoBook, id: string, before: string | nul
   const at = rest.findIndex((unit) => unit.id === before);
   rest.splice(at < 0 ? rest.length : at, 0, moved);
   return withPhotoUnits(book, rest);
+}
+
+/**
+ * The book with the photo page or spread with ID id moved to position among the photo pages, 1
+ * first, a spread's pages together; a number past either end puts it first or last. Like dragging,
+ * it doesn't change the book's own order.
+ */
+export function movePhotoUnitTo(book: PhotoBook, id: string, position: number): PhotoBook {
+  const units = photoUnits(book);
+  const from = units.findIndex((unit) => unit.id === id);
+  if (from < 0 || !Number.isFinite(position)) return book;
+  const to = clamp(Math.round(position) - 1, 0, units.length - 1);
+  if (to === from) return book;
+  const [moved] = units.splice(from, 1);
+  units.splice(to, 0, moved!);
+  return withPhotoUnits(book, units);
+}
+
+/** Each photo page or spread's position among the photo pages, by its ID, 1 first. */
+export function photoUnitPositions(book: PhotoBook): Map<string, number> {
+  return new Map(photoUnits(book).map((unit, at) => [unit.id, at + 1]));
 }
 
 /**
