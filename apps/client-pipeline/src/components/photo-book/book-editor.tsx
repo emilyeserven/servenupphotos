@@ -12,6 +12,7 @@ import { PagesTab } from "@/components/photo-book/pages-tab";
 import { usePhotoBookDraft } from "@/components/photo-book/use-photo-book";
 import { SaveState } from "@/components/save-state";
 import { type PhotoBook, pageAspect } from "@/lib/photo-book";
+import { pageWidthInches } from "@/lib/photo-book-dpi";
 import { pageSides } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
 
@@ -91,6 +92,7 @@ export function BookEditor({ saved, photos, data, part, onRemoved }: BookEditorP
     aspect: pageAspect(book),
     layouts: book.layouts ?? [],
     sides: pageSides(book),
+    printWidth: pageWidthInches(book),
   };
   const drawer = part === "pages" && (
     <PhotoDrawerToggle open={drawerOpen} onToggle={() => setDrawerOpen(!drawerOpen)} />

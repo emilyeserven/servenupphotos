@@ -35,6 +35,8 @@ export interface PageLook {
   layouts: CustomLayout[];
   /** Which side of the open book each page is on, which sets how a custom layout draws it. */
   sides: Map<string, PageSide>;
+  /** The page's printed width in inches, to check its photos' resolution; null for a size in pixels. */
+  printWidth: number | null;
 }
 
 /** Actions for a page that's only shown, such as a small preview: they do nothing. */

@@ -1,10 +1,12 @@
 import { ImageIcon, XIcon } from "lucide-react";
 import { type CSSProperties, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
+import { useSlotDpi } from "@/components/photo-book/use-slot-dpi";
 import { Button } from "@/components/ui/button";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { offlineSmallImage } from "@/lib/offline-thumbnails";
 import type { BookSlot, SlotPlace } from "@/lib/photo-book";
+import { PRINT_DPI } from "@/lib/photo-book-dpi";
 import { type BoxSize, slotSources } from "@/lib/photo-book-image";
 import { currentData, photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
@@ -57,6 +59,8 @@ interface PhotoSlotProps {
   slot: BookSlot;
   /** Where the slot is in the book, carried by a drag that starts here. */
   place: SlotPlace;
+  /** The page's ID and printed width in inches (null for a size in pixels), to check the photo's resolution. */
+  print: { page: string; inches: number | null };
   shape: SlotShape;
   /** The numbers of the other pages in the book with the same photo; none when it's only here. */
   alsoOn: number[];
@@ -80,13 +84,22 @@ function useSlotImage(photo: SocialPhoto | undefined): string | undefined {
  * or a dashed box to drop one on. It keeps its shape, as large as the room it's given allows.
  */
 export function PhotoSlot(props: PhotoSlotProps) {
-  const { slot, place, shape, alsoOn, photo, onDrop, onRemove, className } = props;
+  const { slot, place, print, shape, alsoOn, photo, onDrop, onRemove, className } = props;
   const { over, handlers } = useDropTarget(BOOK_PHOTO_DRAG_TYPE, (path, event) =>
     onDrop(path, fromPlace(event.dataTransfer.getData(FROM_PAGE_DRAG_TYPE))),
   );
   const image = useSlotImage(photo);
   const [box, size] = useSize();
   const filled = slot.photo !== "";
+  const dpi = useSlotDpi({
+    element: box,
+    box: size,
+    inches: print.inches,
+    page: print.page,
+    slot: place.slot,
+    photo: slot.photo,
+    file: photo,
+  });
   return (
     <div
       className={cn("flex min-h-0 min-w-0 items-center justify-center", className)}
@@ -117,8 +130,22 @@ export function PhotoSlot(props: PhotoSlotProps) {
           </span>
         )}
         <AlsoOn pages={alsoOn} />
+        <LowResolution dpi={dpi} />
       </div>
     </div>
+  );
+}
+
+/** A mark on a photo too small to print sharp in its place, with its resolution; none when it's fine. */
+function LowResolution({ dpi }: { dpi: number | null }) {
+  if (dpi === null || dpi >= PRINT_DPI) return null;
+  return (
+    <span
+      title={`Prints at ${dpi} dpi here; ${PRINT_DPI} dpi looks sharp. Use a smaller place or a larger photo.`}
+      className="absolute top-1 left-1 rounded bg-red-600 px-1 text-[10px] font-medium text-white in-data-[preview]:hidden"
+    >
+      {dpi} dpi
+    </span>
   );
 }
 

@@ -30,6 +30,8 @@ export interface BookPageProps {
   layouts: CustomLayout[];
   /** Which side of the open book each page is on, which sets how a custom layout draws it. */
   sides: Map<string, PageSide>;
+  /** The page's printed width in inches, to check its photos' resolution; null for a size in pixels. */
+  printWidth: number | null;
   /** The side to draw the page on, over the one sides gives, such as in a spread shown on its own. */
   side?: PageSide;
   /** The buttons above the page; none on a preview. */

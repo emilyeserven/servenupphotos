@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BookPreview } from "@/components/photo-book/book-preview";
+import { LowResolutionList } from "@/components/photo-book/low-resolution-list";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { usePreviewKeys, usePreviewMode } from "@/components/photo-book/preview-mode";
 import { UnitsDrawer } from "@/components/photo-book/units-drawer";
@@ -77,6 +78,12 @@ export function BookTab({ book, update, look }: BookTabProps) {
             numbers={pageNumbers(book)}
             previewMode={preview.on}
             onPreviewMode={turnPreview}
+          />
+          <LowResolutionList
+            book={book}
+            photos={look.photos}
+            printWidth={look.printWidth}
+            onShow={(id) => setAt(viewOf(views, id))}
           />
         </div>
         <UsedPanel
