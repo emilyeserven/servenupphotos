@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { InBookBadge } from "@/components/photo-book/page-controls";
 import { unitName } from "@/components/photo-book/page-types";
@@ -12,6 +12,7 @@ import { useDropTarget } from "@/hooks/use-drop-target";
 import { isOtherPage } from "@/lib/photo-book";
 import { type BookUnit, unitsTagged } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
+import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
 
 interface UnitsDrawerProps {
@@ -38,10 +39,12 @@ interface UnitsDrawerProps {
  * out of the book. Closed, it's one line.
  */
 export function UnitsDrawer(props: UnitsDrawerProps) {
-  const { units, open, onTakeOut, tags } = props;
+  const { units, open, onTakeOut, tags, inBook } = props;
   const drop = useDropTarget(BOOK_UNIT_DRAG_TYPE, (id) => onTakeOut(id));
   const [picked, setPicked] = useState<string | null>(null);
+  const [showUsed, setShowUsed] = useState(true);
   const { filter, shown } = unitsTagged(units, tags, picked);
+  const listed = showUsed ? shown : shown.filter((unit) => !inBook.has(unit.id));
   return (
     <section
       aria-label="All pages and spreads"
@@ -51,26 +54,73 @@ export function UnitsDrawer(props: UnitsDrawerProps) {
         drop.over && "ring-primary ring-2",
       )}
     >
-      <DrawerHeader {...props} filter={filter} onFilter={setPicked} />
-      {open && (
-        <ul className="flex gap-3 overflow-x-auto pb-1">
-          {shown.map((unit) => (
-            <DrawerUnit key={unit.id} unit={unit} {...props} />
-          ))}
-        </ul>
-      )}
+      <DrawerHeader
+        {...props}
+        filters={
+          <DrawerFilters
+            tags={tags}
+            filter={filter}
+            onFilter={setPicked}
+            showUsed={showUsed}
+            onShowUsed={setShowUsed}
+          />
+        }
+      />
+      {open && <DrawerList {...props} listed={listed} />}
     </section>
   );
 }
 
+/** The pages and spreads the drawer shows, in a row; a note when every one is hidden. */
+function DrawerList(props: UnitsDrawerProps & { listed: BookUnit[] }) {
+  const { listed } = props;
+  if (listed.length === 0) {
+    return (
+      <EmptyNote>
+        No pages or spreads to show. Every one shown here is already in the book.
+      </EmptyNote>
+    );
+  }
+  return (
+    <ul className="flex gap-3 overflow-x-auto pb-1">
+      {listed.map((unit) => (
+        <DrawerUnit key={unit.id} unit={unit} {...props} />
+      ))}
+    </ul>
+  );
+}
+
+/** Beside the drawer's name: the tag dropdown and **Show ones in the book**, on to start. */
+function DrawerFilters(props: {
+  tags: string[];
+  filter: string | null;
+  onFilter: (tag: string | null) => void;
+  showUsed: boolean;
+  onShowUsed: (on: boolean) => void;
+}) {
+  const { tags, filter, onFilter, showUsed, onShowUsed } = props;
+  return (
+    <>
+      <TagSelect tags={tags} value={filter} onChange={onFilter} />
+      <label className="flex items-center gap-1.5 text-xs">
+        <input
+          type="checkbox"
+          className="accent-primary size-3.5"
+          checked={showUsed}
+          onChange={(event) => onShowUsed(event.target.checked)}
+        />
+        Show ones in the book
+      </label>
+    </>
+  );
+}
+
 /**
- * The drawer's name, how many pages and spreads it has, and, open, the tag dropdown beside them and
- * the other page form.
+ * The drawer's name, how many pages and spreads it has, and, open, its filters beside them and the
+ * other page form.
  */
-function DrawerHeader(
-  props: UnitsDrawerProps & { filter: string | null; onFilter: (tag: string | null) => void },
-) {
-  const { units, inBook, open, onOpen, onAddOther, tags, filter, onFilter } = props;
+function DrawerHeader(props: UnitsDrawerProps & { filters: ReactNode }) {
+  const { units, inBook, open, onOpen, onAddOther, filters } = props;
   const Icon = open ? ChevronDownIcon : ChevronUpIcon;
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -86,7 +136,7 @@ function DrawerHeader(
           {count(units.length, "page or spread", "pages and spreads")} · {inBook.size} in the book
         </span>
       </button>
-      {open && <TagSelect tags={tags} value={filter} onChange={onFilter} />}
+      {open && filters}
       {open && <OtherPageForm onAdd={onAddOther} />}
     </div>
   );
