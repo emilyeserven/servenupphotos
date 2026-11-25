@@ -48,11 +48,14 @@ export interface PhotoFacts {
   genres: string[];
 }
 
-/** How the chosen photos are grouped into suggested albums. */
-export type GroupBy = "location" | "theme";
+/**
+ * How the chosen photos are grouped into suggested albums: all in one album (the default), or split
+ * by location or by theme.
+ */
+export type GroupBy = "one" | "location" | "theme";
 
-/** What a suggested group is made from. */
-export type GroupSource = "city" | "country" | "tag" | "genre" | "none";
+/** What a suggested group is made from; "all" is every chosen photo, in one album. */
+export type GroupSource = "all" | "city" | "country" | "tag" | "genre" | "none";
 
 /** A group of the chosen photos to suggest as an album. */
 export interface SuggestedGroup {
@@ -63,6 +66,17 @@ export interface SuggestedGroup {
   source: GroupSource;
   /** The IDs of its photos, lowest first. */
   photos: number[];
+}
+
+/** The name the one album of every chosen photo starts with. */
+const ONE_ALBUM_NAME = "Shared Likes";
+
+/** Every chosen photo in one suggested album, named "Shared Likes" to start with; none when there are no photos. */
+export function oneAlbum(photos: number[]): SuggestedGroup[] {
+  if (photos.length === 0) return [];
+  return [
+    { key: "all", name: ONE_ALBUM_NAME, source: "all", photos: photos.toSorted((a, b) => a - b) },
+  ];
 }
 
 /** The name of photos that have nothing to group by. */
@@ -190,14 +204,15 @@ export interface ReviewedAlbum {
 
 /**
  * What to save from the reviewed albums: the new ones to make, described with who liked their
- * photos, and the albums each photo file goes in. Albums with no name that can be an ID, or no
+ * photos and hidden on the portfolio when `made.hidden` says so, and the albums each photo file
+ * goes in. Albums with no name that can be an ID, or no
  * photos, are left out, and so are photos with no saved file.
  */
 export function sharedAlbumsToSave(
   reviewed: ReviewedAlbum[],
   paths: ReadonlyMap<number, string>,
   albums: Pick<Group, "id" | "name">[],
-  description: string,
+  made: { description: string; hidden: boolean },
 ): AlbumSuggestions {
   const newAlbums = new Map<string, AlbumSuggestions["newAlbums"][number]>();
   const photos = new Map<string, Set<string>>();
@@ -205,7 +220,7 @@ export function sharedAlbumsToSave(
     const { id, existing } = albumFor(album.name, albums);
     const files = album.photos.flatMap((p) => paths.get(p) ?? []);
     if (!id || files.length === 0) continue;
-    if (!existing) newAlbums.set(id, { id, name: album.name.trim(), description });
+    if (!existing) newAlbums.set(id, { id, name: album.name.trim(), ...made });
     for (const path of files) photos.set(path, (photos.get(path) ?? new Set()).add(id));
   }
   return {

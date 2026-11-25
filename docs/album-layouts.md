@@ -1,6 +1,6 @@
 # Album Layouts and Covers
 
-An album's page in the pipeline (`/albums/<id>`) has a **Layout and covers** card under its other cards. It sets how the portfolio shows the album:
+An album's page in the pipeline has a **Layout and covers** card on its **Layout** tab (`/albums/<id>/layout`). It sets how the portfolio shows the album:
 
 - **Covers**: up to 5 of the album's photos, in order, that stand for it on the portfolio's [Albums](portfolio-albums.md) page in place of its first 5. **Choose covers** opens the album's photos to click, in the order they should show; each cover's arrows move it one place, and its × takes it out.
 - **Rows**: the album's page as a list of rows, each with Markdown text above, up to 4 photos side by side, and Markdown text below. **Add a row** adds an empty one, **Add photos** in a row picks from the photos not in a row yet (left to right in the order they're clicked), and each row's arrows and bin move or remove it. **Preview** by each text box shows the Markdown as the portfolio renders it (a single line break stays a line break). **Give each photo not in a row its own** adds a one-photo row for each of the rest, to start from the album's order.

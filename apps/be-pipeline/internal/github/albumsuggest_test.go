@@ -106,7 +106,7 @@ func TestApplyAlbumSuggestions(t *testing.T) {
 		"b.json": "{\n  \"albums\": []\n}\n",
 	})
 	got, err := c.ApplyAlbumSuggestions(t.Context(), baseURLSettings, AlbumSuggestions{
-		NewAlbums: []NewGroup{{ID: "osaka-at-night", Name: "Osaka at Night", Description: "Neon", Parent: "japan"}},
+		NewAlbums: []NewGroup{{ID: "osaka-at-night", Name: "Osaka at Night", Description: "Neon", Parent: "japan", Hidden: true}},
 		Photos: []AlbumSuggestionsPhoto{
 			{Path: photosDir + "a.json", Albums: []string{"kyoto"}},
 			{Path: photosDir + "b.json", Albums: []string{"osaka-at-night"}},
@@ -123,8 +123,8 @@ func TestApplyAlbumSuggestions(t *testing.T) {
 	}
 	osaka, _ := stagedContent(t, c, dataRoot+"/albums/osaka-at-night.json")
 	var album groupJSON
-	if json.Unmarshal([]byte(osaka.Content), &album) != nil || album.Name != "Osaka at Night" || album.Parent == nil || *album.Parent != "japan" {
-		t.Errorf("osaka-at-night.json = %s", osaka.Content)
+	if json.Unmarshal([]byte(osaka.Content), &album) != nil || album.Name != "Osaka at Night" || album.Parent == nil || *album.Parent != "japan" || !album.Hidden {
+		t.Errorf("osaka-at-night.json = %s, want it inside japan and hidden", osaka.Content)
 	}
 	b, _ := stagedContent(t, c, photosDir+"b.json")
 	if !strings.Contains(b.Content, "\"osaka-at-night\"") {

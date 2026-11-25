@@ -3,13 +3,13 @@ import { SharedLikesPage } from "@/components/shared-likes/page";
 
 /**
  * Shared Likes' search: the people whose Like lists are left out (`skip`), the fewest lists a photo
- * has to be in (`atLeast`, every list when missing), and grouping by theme (`by=theme`) rather than
- * location.
+ * has to be in (`atLeast`, every list when missing), and splitting the photos into albums by location
+ * (`by=location`) or theme (`by=theme`) rather than putting them all in one album.
  */
 interface SharedLikesSearch {
   skip?: string[];
   atLeast?: number;
-  by?: "theme";
+  by?: "location" | "theme";
 }
 
 /** The people to leave out, when there are any. */
@@ -24,11 +24,16 @@ function parseAtLeast(value: unknown): Pick<SharedLikesSearch, "atLeast"> {
   return Number.isInteger(atLeast) && atLeast > 0 ? { atLeast } : {};
 }
 
+/** How to split the photos into albums, when they aren't all in one. */
+function parseBy(value: unknown): Pick<SharedLikesSearch, "by"> {
+  return value === "location" || value === "theme" ? { by: value } : {};
+}
+
 function parseSearch(search: Record<string, unknown>): SharedLikesSearch {
   return {
     ...parseSkip(search.skip),
     ...parseAtLeast(search.atLeast),
-    ...(search.by === "theme" ? { by: "theme" as const } : {}),
+    ...parseBy(search.by),
   };
 }
 
