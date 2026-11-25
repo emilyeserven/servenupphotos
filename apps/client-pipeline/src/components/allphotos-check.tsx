@@ -165,20 +165,26 @@ function AlreadyThere({ file, check }: { file: string; check: AllPhotosCheck }) 
  * in R2, which the Photo page then offers to upload.
  */
 function OpenSaved({ entry }: { entry: unknown }) {
-  if (!isObject(entry) || typeof entry.id !== "number") return null;
-  const missing = !hasImage(entry.images);
+  const saved = savedPhoto(entry);
+  if (!saved) return null;
   return (
     <p className="text-sm">
-      {missing && "It was saved without its image in R2. "}
+      {saved.missing && "It was saved without its image in R2. "}
       <Link
         to="/exif"
-        search={{ photo: entry.id }}
+        search={{ photo: saved.id }}
         className="font-medium underline underline-offset-4"
       >
-        {missing ? "Open it to upload the image" : "Open the saved photo"}
+        {saved.missing ? "Open it to upload the image" : "Open the saved photo"}
       </Link>
     </p>
   );
+}
+
+/** The saved entry's ID, and whether it has no image in R2, or null when it has no ID. */
+function savedPhoto(entry: unknown): { id: number; missing: boolean } | null {
+  if (!isObject(entry) || typeof entry.id !== "number") return null;
+  return { id: entry.id, missing: !hasImage(entry.images) };
 }
 
 /** Whether a saved photo's `images` links to its original in R2. */

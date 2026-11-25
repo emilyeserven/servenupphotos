@@ -69,11 +69,20 @@ function UploadButton({ upload }: { upload: ReplaceImage }) {
   if (!upload.read.data?.sanitized) return null;
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Button disabled={busy(upload) || !upload.hasCrop} onClick={() => upload.replace.mutate()}>
-        {upload.replace.isPending ? <Spinner /> : <ImageUpIcon />}
+      <Button disabled={!canUpload(upload)} onClick={() => upload.replace.mutate()}>
+        <UploadIcon pending={upload.replace.isPending} />
         Upload image
       </Button>
       <ReplaceError replace={upload} />
     </div>
   );
+}
+
+/** Whether the chosen JPEG can be uploaded: it isn't still being read or uploaded, and has a square. */
+function canUpload(upload: ReplaceImage): boolean {
+  return !busy(upload) && upload.hasCrop;
+}
+
+function UploadIcon({ pending }: { pending: boolean }) {
+  return pending ? <Spinner /> : <ImageUpIcon />;
 }
