@@ -74,11 +74,11 @@ func Make(ctx context.Context, html string, pages int, report func(Progress)) ([
 	cctx, cancel := chromedp.NewContext(actx)
 	defer cancel()
 
-	site, err := servePages(html)
+	site, err := servePages(ctx, html)
 	if err != nil {
 		return nil, err
 	}
-	defer site.Close() //nolint:errcheck // only Chrome reads it
+	defer func() { _ = site.Close() }()
 	// Opened without waiting for the page to load, which waits for every
 	// photo, so waitForPhotos can say how many have.
 	if _, err := chromedp.Call(cctx, page.Navigate, page.NavigateParams{URL: site.url}); err != nil {
@@ -120,8 +120,9 @@ type pagesSite struct {
 // there rather than set into a blank tab, the pages may load photos from this
 // computer as well as from R2: Chrome blocks a blank tab from reaching
 // local addresses.
-func servePages(html string) (*pagesSite, error) {
-	listener, err := net.Listen("tcp", "127.0.0.1:0")
+func servePages(ctx context.Context, html string) (*pagesSite, error) {
+	var lc net.ListenConfig
+	listener, err := lc.Listen(ctx, "tcp", "127.0.0.1:0")
 	if err != nil {
 		return nil, fmt.Errorf("serving the pages to Chrome: %w", err)
 	}
@@ -129,10 +130,12 @@ func servePages(html string) (*pagesSite, error) {
 		ReadHeaderTimeout: 10 * time.Second,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			io.WriteString(w, html) //nolint:errcheck // Chrome reports a page that didn't arrive
+			// Chrome reports a page that didn't arrive.
+			_, _ = io.WriteString(w, html)
 		}),
 	}
-	go server.Serve(listener) //nolint:errcheck // stops when the listener closes
+	// Serve stops with an error when the listener closes, once the PDF is made.
+	go func() { _ = server.Serve(listener) }()
 	return &pagesSite{listener: listener, url: "http://" + listener.Addr().String() + "/"}, nil
 }
 
@@ -172,7 +175,7 @@ func printPDF(ctx context.Context, _ *chromedp.Target) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("printing: %w", err)
 	}
-	defer chromedp.Call(ctx, cdpio.Close, cdpio.CloseParams{Handle: res.Stream}) //nolint:errcheck // the stream is read
+	defer func() { _, _ = chromedp.Call(ctx, cdpio.Close, cdpio.CloseParams{Handle: res.Stream}) }()
 	var pdf []byte
 	for {
 		chunk, err := chromedp.Call(ctx, cdpio.Read, cdpio.ReadParams{Handle: res.Stream, Size: readChunk})
