@@ -5,11 +5,12 @@ import { InBookBadge } from "@/components/photo-book/page-controls";
 import { unitName } from "@/components/photo-book/page-types";
 import { BOOK_UNIT_DRAG_TYPE, dragUnit } from "@/components/photo-book/unit-drag";
 import { UnitSheets } from "@/components/photo-book/unit-sheets";
+import { TagButton, TagChips, TagFilter } from "@/components/photo-book/unit-tags";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { isOtherPage } from "@/lib/photo-book";
-import type { BookUnit } from "@/lib/photo-book-order";
+import { type BookUnit, unitTags, unitsTagged } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
 import { count } from "@portfolio/lib/words";
 
@@ -26,6 +27,10 @@ interface UnitsDrawerProps {
   onRemoveOther: (id: string) => void;
   open: boolean;
   onOpen: (open: boolean) => void;
+  /** Every tag in the book, to filter by and to offer while tagging. */
+  tags: string[];
+  /** Tags the page or spread with ID id. */
+  onTags: (id: string, tags: string[]) => void;
 }
 
 /**
@@ -35,8 +40,10 @@ interface UnitsDrawerProps {
  * out of the book. Closed, it's one line.
  */
 export function UnitsDrawer(props: UnitsDrawerProps) {
-  const { units, open, onTakeOut } = props;
+  const { units, open, onTakeOut, tags } = props;
   const drop = useDropTarget(BOOK_UNIT_DRAG_TYPE, (id) => onTakeOut(id));
+  const [picked, setPicked] = useState<string | null>(null);
+  const { filter, shown } = unitsTagged(units, tags, picked);
   return (
     <section
       aria-label="All pages and spreads"
@@ -47,9 +54,10 @@ export function UnitsDrawer(props: UnitsDrawerProps) {
       )}
     >
       <DrawerHeader {...props} />
+      {open && <TagFilter tags={tags} value={filter} onChange={setPicked} />}
       {open && (
         <ul className="flex gap-3 overflow-x-auto pb-1">
-          {units.map((unit) => (
+          {shown.map((unit) => (
             <DrawerUnit key={unit.id} unit={unit} {...props} />
           ))}
         </ul>
@@ -80,17 +88,19 @@ function DrawerHeader({ units, inBook, open, onOpen, onAddOther }: UnitsDrawerPr
   );
 }
 
-/** One page or spread in the drawer, its height fixed and its width from its shape. */
+/** One page or spread in the drawer, its height fixed and its width from its shape, and its tags. */
 function DrawerUnit(props: UnitsDrawerProps & { unit: BookUnit }) {
-  const { unit, inBook, look, onAdd, onRemoveOther } = props;
+  const { unit, inBook, look, tags, onTags } = props;
   const name = unitName(unit);
-  const used = inBook.has(unit.id);
-  const other = unit.pages.some(isOtherPage);
+  const own = unitTags(unit);
   return (
     <li
       draggable
       onDragStart={(event) => dragUnit(event, unit.id)}
-      className={cn("flex shrink-0 cursor-grab flex-col gap-1", used && "opacity-75")}
+      className={cn(
+        "flex shrink-0 cursor-grab flex-col gap-1",
+        inBook.has(unit.id) && "opacity-75",
+      )}
       style={{ width: `calc(5.5rem * ${look.aspect * unit.pages.length})` }}
     >
       <UnitSheets pages={unit.pages} look={look} className="gap-px" />
@@ -98,32 +108,44 @@ function DrawerUnit(props: UnitsDrawerProps & { unit: BookUnit }) {
         <span className="min-w-0 flex-1 truncate" title={name}>
           {name}
         </span>
-        {used ? (
-          <InBookBadge />
-        ) : (
-          <Button
-            size="icon-xs"
-            variant="outline"
-            aria-label={`Add ${name} to the end of the book`}
-            title="Add to the book"
-            onClick={() => onAdd(unit.id)}
-          >
-            <PlusIcon />
-          </Button>
-        )}
-        {other && (
-          <Button
-            size="icon-xs"
-            variant="ghost"
-            aria-label={`Remove ${name}`}
-            title="Remove page"
-            onClick={() => onRemoveOther(unit.id)}
-          >
-            <Trash2Icon />
-          </Button>
-        )}
+        <TagButton name={name} tags={own} all={tags} onChange={(next) => onTags(unit.id, next)} />
+        <UnitActions {...props} name={name} />
       </div>
+      <TagChips tags={own} />
     </li>
+  );
+}
+
+/** **+**, which adds the page or spread at the end of the book, or In book; and an other page's bin. */
+function UnitActions(props: UnitsDrawerProps & { unit: BookUnit; name: string }) {
+  const { unit, name, inBook, onAdd, onRemoveOther } = props;
+  return (
+    <>
+      {inBook.has(unit.id) ? (
+        <InBookBadge />
+      ) : (
+        <Button
+          size="icon-xs"
+          variant="outline"
+          aria-label={`Add ${name} to the end of the book`}
+          title="Add to the book"
+          onClick={() => onAdd(unit.id)}
+        >
+          <PlusIcon />
+        </Button>
+      )}
+      {unit.pages.some(isOtherPage) && (
+        <Button
+          size="icon-xs"
+          variant="ghost"
+          aria-label={`Remove ${name}`}
+          title="Remove page"
+          onClick={() => onRemoveOther(unit.id)}
+        >
+          <Trash2Icon />
+        </Button>
+      )}
+    </>
   );
 }
 

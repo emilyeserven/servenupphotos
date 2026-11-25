@@ -1,13 +1,15 @@
 import { ImageIcon, XIcon } from "lucide-react";
-import type { CSSProperties } from "react";
+import { type CSSProperties, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { Button } from "@/components/ui/button";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { offlineSmallImage } from "@/lib/offline-thumbnails";
 import type { BookSlot, SlotPlace } from "@/lib/photo-book";
+import { type BoxSize, slotSources } from "@/lib/photo-book-image";
 import { currentData, photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
+import { useSize } from "@portfolio/lib/use-size";
 
 /** A photo dragged from the drawer or a page, as its file's path. */
 export const BOOK_PHOTO_DRAG_TYPE = "application/x-photo-book-photo";
@@ -83,6 +85,7 @@ export function PhotoSlot(props: PhotoSlotProps) {
     onDrop(path, fromPlace(event.dataTransfer.getData(FROM_PAGE_DRAG_TYPE))),
   );
   const image = useSlotImage(photo);
+  const [box, size] = useSize();
   const filled = slot.photo !== "";
   return (
     <div
@@ -90,6 +93,7 @@ export function PhotoSlot(props: PhotoSlotProps) {
       style={{ containerType: "size" }}
     >
       <div
+        ref={box}
         {...handlers}
         style={shapeStyle(shape)}
         className={cn(
@@ -99,7 +103,14 @@ export function PhotoSlot(props: PhotoSlotProps) {
         )}
       >
         {filled ? (
-          <FilledSlot slot={slot} place={place} photo={photo} image={image} onRemove={onRemove} />
+          <FilledSlot
+            slot={slot}
+            place={place}
+            photo={photo}
+            image={image}
+            size={size}
+            onRemove={onRemove}
+          />
         ) : (
           <span className="flex size-full items-center justify-center p-2 text-center text-xs text-neutral-400 in-data-[preview]:hidden">
             Drop a photo here
@@ -126,9 +137,11 @@ function FilledSlot(props: {
   place: SlotPlace;
   photo: SocialPhoto | undefined;
   image: string | undefined;
+  /** The place's size on the screen, which picks the photo version sharp enough for it. */
+  size: BoxSize;
   onRemove: () => void;
 }) {
-  const { slot, place, photo, image, onRemove } = props;
+  const { slot, place, photo, image, size, onRemove } = props;
   const name = photo ? photoName(photo) : slot.photo;
   return (
     <>
@@ -143,13 +156,7 @@ function FilledSlot(props: {
         className="size-full cursor-grab active:cursor-grabbing"
       >
         {image ? (
-          <img
-            src={image}
-            alt={name}
-            draggable={false}
-            loading="lazy"
-            className="size-full object-cover"
-          />
+          <SlotImage photo={photo} image={image} size={size} alt={name} />
         ) : (
           <span className="flex size-full flex-col items-center justify-center gap-1 p-2 text-center text-xs text-neutral-400">
             <ImageIcon className="size-5" />
@@ -167,5 +174,33 @@ function FilledSlot(props: {
         <XIcon />
       </Button>
     </>
+  );
+}
+
+/**
+ * The photo in its place, sharp at any size: the browser picks the resized version from R2 that
+ * covers the place at the screen's pixel ratio, starting from the offline Small version, which it
+ * goes back to when R2 can't be reached.
+ */
+function SlotImage(props: {
+  photo: SocialPhoto | undefined;
+  image: string;
+  size: BoxSize;
+  alt: string;
+}) {
+  const { photo, image, size, alt } = props;
+  const changed = useChangedPhotoFiles();
+  const [failed, setFailed] = useState(false);
+  const data = photo && currentData(photo, changed);
+  return (
+    <img
+      src={image}
+      {...slotSources(failed ? null : data, size)}
+      alt={alt}
+      draggable={false}
+      loading="lazy"
+      onError={() => setFailed(true)}
+      className="size-full object-cover"
+    />
   );
 }

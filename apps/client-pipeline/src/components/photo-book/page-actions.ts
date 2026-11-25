@@ -3,6 +3,7 @@ import type { useCaptionFor } from "@/components/photo-book/book-captions";
 import type { PageActions } from "@/components/photo-book/page-types";
 import {
   type CustomLayout,
+  type PageSide,
   type PhotoBook,
   placePhoto,
   removePhoto,
@@ -32,6 +33,8 @@ export interface PageLook {
   aspect: number;
   /** The layouts made on the book's Layouts tab, which pages can have besides the built-in ones. */
   layouts: CustomLayout[];
+  /** Which side of the open book each page is on, which sets how a custom layout draws it. */
+  sides: Map<string, PageSide>;
 }
 
 /** Actions for a page that's only shown, such as a small preview: they do nothing. */

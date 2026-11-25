@@ -8,7 +8,6 @@ import { editedData } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 import { CameraFilterBar } from "@portfolio/components/camera-filters";
 import { ScriptDisplayProvider } from "@portfolio/components/script-display-provider";
-import { VisualsPicker } from "@portfolio/components/visuals-picker";
 import {
   CAMERA_FILTER_KEYS,
   type CameraFilters,
@@ -102,27 +101,9 @@ export function useGridFilters<T extends GridFile>(all: T[], files: T[]) {
  * what the Gallery's other filters leave, which the counts are out of.
  */
 export function GridFilterBar({ photos, bare }: { photos: Photo[]; bare?: boolean }) {
-  const search = useSearch({ strict: false }) as Record<string, unknown>;
   if (photos.length === 0) return null;
-  const bar = (
-    <CameraFilterBar
-      photos={photos}
-      bare={bare}
-      extra={{
-        keys: COLOR_FILTER_KEYS,
-        count: colorFilterCount(parseColorFilters(search)),
-        children: (
-          <VisualsPicker
-            photos={filterWithCamera(photos, { ...search, orientation: undefined })}
-            filters={{
-              ...parseColorFilters(search),
-              orientation: parseCameraFilters(search).orientation,
-            }}
-          />
-        ),
-      }}
-    />
-  );
+  // CameraFilterBar has the Visuals picker (colors and orientation) itself, so no extra here.
+  const bar = <CameraFilterBar photos={photos} bare={bare} />;
   return (
     <ScriptDisplayProvider>
       {bare ? (

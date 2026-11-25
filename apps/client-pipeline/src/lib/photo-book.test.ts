@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   type PhotoBook,
   firstEmptySlot,
+  photosOnPages,
   pageAspect,
   placePhoto,
   removePhoto,
@@ -33,6 +34,7 @@ test("a photo from the drawer fills a place, and one dragged from a page swaps w
   assert.deepEqual(b.pages[0]?.slots[0], { photo: "b.json", caption: null });
   assert.deepEqual(b.pages[1]?.slots[1], { photo: "a.json", caption: "By hand" });
   assert.deepEqual(firstEmptySlot(b), { page: 1, slot: 0 });
+  assert.deepEqual([...photosOnPages(b)].toSorted(), ["a.json", "b.json"]);
   assert.equal(removePhoto(b, { page: 1, slot: 1 }).pages[1]?.slots[1]?.photo, "");
 });
 

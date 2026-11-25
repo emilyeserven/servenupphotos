@@ -64,6 +64,9 @@ type PhotoBook struct {
 	// Layouts are the page layouts made on the book's Layouts tab, which its
 	// pages can have besides the built-in ones.
 	Layouts []PhotoBookLayout `json:"layouts,omitempty"`
+	// HiddenLayouts are the built-in layouts the book's Photo Pages leave
+	// out of their layout pickers, so its own are used instead.
+	HiddenLayouts []string `json:"hiddenLayouts,omitempty"`
 }
 
 // PhotoBookSize is a book's page size: its width and height in unit.
@@ -93,6 +96,9 @@ type PhotoBookPage struct {
 	// LinkNext is true when the page and the one after it among the pages
 	// make a two-page spread.
 	LinkNext bool `json:"linkNext,omitempty"`
+	// Tags are free-form labels for sorting pages into alternatives, such
+	// as "by place" or "by theme"; a spread's are its pages' together.
+	Tags []string `json:"tags,omitempty"`
 	// Layout is "full", "pair-left", "pair-right", "verticals-left",
 	// "verticals-right", "other", or the ID of one of the book's layouts.
 	Layout string `json:"layout"`
@@ -148,6 +154,9 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 		return out, perr
 	}
 	out.Layouts = layouts
+	if out.HiddenLayouts, perr = validHiddenLayouts(b.HiddenLayouts); perr != nil {
+		return out, perr
+	}
 	counts := photoBookSlotCounts(layouts)
 	out.Pages = make([]PhotoBookPage, 0, len(b.Pages))
 	for i, page := range b.Pages {
@@ -218,6 +227,11 @@ func validPhotoBookPage(page PhotoBookPage, n int, counts map[string]int) (Photo
 	if tooLongEntryText(out.Name) {
 		return out, publishErr(http.StatusBadRequest, "Keep page %d's name to %d characters.", n, maxEntryTextLength)
 	}
+	tags, perr := validPhotoBookTags(page.Tags, n)
+	if perr != nil {
+		return out, perr
+	}
+	out.Tags = tags
 	if page.Title != nil {
 		title := strings.TrimSpace(*page.Title)
 		if utf8.RuneCountInString(title) > maxEntryTextLength {
@@ -244,6 +258,28 @@ func validPhotoBookSlot(slot PhotoBookSlot, n int) (PhotoBookSlot, *PublishError
 	}
 	if out.Caption != nil && utf8.RuneCountInString(*out.Caption) > maxPhotoBookCaption {
 		return out, publishErr(http.StatusBadRequest, "Keep each caption on page %d to %d characters.", n, maxPhotoBookCaption)
+	}
+	return out, nil
+}
+
+// The most tags a page can have.
+const maxPhotoBookTags = 20
+
+// validPhotoBookTags returns page n's tags trimmed, without empty ones or
+// ones listed twice; nil when none is left.
+func validPhotoBookTags(tags []string, n int) ([]string, *PublishError) {
+	var out []string
+	for _, tag := range tags {
+		tag = strings.TrimSpace(tag)
+		if tooLongEntryText(tag) {
+			return nil, publishErr(http.StatusBadRequest, "Keep page %d's tags to %d characters each.", n, maxEntryTextLength)
+		}
+		if tag != "" && !slices.Contains(out, tag) {
+			out = append(out, tag)
+		}
+	}
+	if len(out) > maxPhotoBookTags {
+		return nil, publishErr(http.StatusBadRequest, "Page %d can have up to %d tags.", n, maxPhotoBookTags)
 	}
 	return out, nil
 }

@@ -19,7 +19,7 @@ export function UnitSheets(props: { pages: Page[]; look: PageLook; className?: s
       className={cn("grid", className)}
       style={{ gridTemplateColumns: `repeat(${pages.length}, minmax(0, 1fr))` }}
     >
-      {pages.map((page) => (
+      {pages.map((page, i) => (
         <BookPage
           key={page.id}
           page={page}
@@ -27,6 +27,7 @@ export function UnitSheets(props: { pages: Page[]; look: PageLook; className?: s
           number={null}
           repeated={NOT_REPEATED}
           {...look}
+          side={pages.length > 1 ? (i === 0 ? "left" : "right") : undefined}
           actions={NO_ACTIONS}
         />
       ))}

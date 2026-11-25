@@ -530,14 +530,17 @@ added.photobooks = [
           align: "end",
           gap: 1.5,
           margin: 1,
+          leftPages: "mirror",
         },
       ],
+      hiddenLayouts: ["verticals-left"],
       pages: [
         {
           id: "p1",
           name: "Opener",
           layout: "full",
           title: "Chapter one",
+          tags: ["Seoul"],
           slots: [{ photo: bookPhoto(0), caption: null }],
         },
         {
@@ -546,6 +549,7 @@ added.photobooks = [
           linkNext: true,
           layout: "pair-left",
           title: "Spotlight",
+          tags: ["Seoul", "maybe"],
           slots: [
             { photo: bookPhoto(1), caption: null },
             { photo: bookPhoto(2), caption: "A caption written by hand." },
@@ -556,6 +560,7 @@ added.photobooks = [
           name: "Spotlight right",
           layout: "verticals-right",
           title: null,
+          tags: ["Seoul", "maybe"],
           slots: [
             { photo: bookPhoto(3), caption: null },
             { photo: "", caption: null },

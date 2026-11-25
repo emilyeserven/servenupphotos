@@ -42,7 +42,20 @@ export interface CustomLayout {
   gap: number;
   /** The room around the page's edge, in percent of its width, 0 to 20. */
   margin: number;
+  /**
+   * What left-hand (even) pages get: the look turned around (`mirror`), their own look (`own`,
+   * `left`), or the same look; absent in a layout made before, which is the same.
+   */
+  leftPages?: "same" | "mirror" | "own";
+  /** The look of left-hand pages when leftPages is `own`. */
+  left?: VariantLook;
 }
+
+/** How a layout draws a page, without what's the same on both sides of the book. */
+export type VariantLook = Omit<CustomLayout, "id" | "name" | "photos" | "leftPages" | "left">;
+
+/** Which side of the book a page falls on: left (even page numbers) or right (odd ones). */
+export type PageSide = "left" | "right";
 
 /** One photo's place on a page, with its caption. */
 export interface BookSlot {
@@ -63,6 +76,8 @@ export interface BookPage {
    * together; absent or false otherwise.
    */
   linkNext?: boolean;
+  /** Free-form labels for sorting pages into alternatives, such as "by place"; a spread's are its pages' together. */
+  tags?: string[];
   layout: PageLayout;
   /** Shown above the page's top photo; null for none. */
   title: string | null;
@@ -97,6 +112,8 @@ export interface PhotoBook {
   size?: BookSize;
   /** The layouts made on the book's Layouts tab, which its pages can have besides the built-in ones. */
   layouts?: CustomLayout[];
+  /** The built-in layouts the book's Photo Pages leave out of their layout pickers. */
+  hiddenLayouts?: BuiltInLayout[];
 }
 
 /** The units a book's page size can be given in. */
@@ -283,4 +300,9 @@ export function firstEmptySlot(book: PhotoBook): SlotPlace | null {
 /** The book with the page at index named name. */
 export function renamePage(book: PhotoBook, index: number, name: string): PhotoBook {
   return changePage(book, index, (page) => ({ ...page, name }));
+}
+
+/** The paths of every photo on any of the book's pages, in the book or not. */
+export function photosOnPages(book: PhotoBook): Set<string> {
+  return new Set(book.pages.flatMap((page) => page.slots.map((s) => s.photo)).filter(Boolean));
 }
