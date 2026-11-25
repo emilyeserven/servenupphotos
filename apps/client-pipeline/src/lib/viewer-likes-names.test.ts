@@ -16,3 +16,10 @@ test("only the same name is the same person", () => {
   assert.equal(viewerNamed("D.K.", [dk]), undefined);
   assert.equal(viewerNamed("dk", [dk]), undefined);
 });
+
+test("a person renamed after they were added keeps their ID, and a new person with their old name gets another", () => {
+  // DK was first saved as "ES", so their ID is still `es`.
+  const renamed = { id: "es", name: "DK", photos: [1] };
+  assert.equal(viewerNamed("ES", [renamed]), undefined);
+  assert.equal(viewerId("ES", [renamed]), "es-2");
+});
