@@ -12,7 +12,7 @@ import {
   fromPlace,
 } from "@/components/photo-book/page-slot";
 import { unitName } from "@/components/photo-book/page-types";
-import { TagFilter } from "@/components/photo-book/unit-tags";
+import { TagButton, TagChips, TagFilter } from "@/components/photo-book/unit-tags";
 import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import {
   type PhotoBook,
@@ -33,6 +33,8 @@ import {
   movePhotoUnit,
   pageNumbers,
   bookTags,
+  setUnitTags,
+  unitTags,
   photosInBook,
   removePage,
   repeatedPhotos,
@@ -169,6 +171,7 @@ function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
         last={next === undefined}
         onLink={(link) => update(setLinkNext(book, unit.id, link))}
         onMove={(from, to) => update(movePhotoUnit(book, from, to > from ? 1 : -1))}
+        tags={<UnitTagsControl unit={unit} book={book} update={update} />}
       />
       <div className={cn("grid gap-x-4", spread && "grid-cols-2 gap-x-0.5")}>
         {unit.pages.map((page) => {
@@ -218,5 +221,33 @@ function FadeByTag(props: ReturnType<typeof useFadeTag>) {
       <span className="text-sm">Fade photos on</span>
       <TagFilter tags={tags} value={tag} onChange={onChange} label="Fade photos on pages tagged" />
     </div>
+  );
+}
+
+/** A page or spread's tags as chips, and **Add tag**, which offers the book's other tags. */
+function UnitTagsControl({ unit, book, update }: Pick<PhotoUnitProps, "unit" | "book" | "update">) {
+  const own = unitTags(unit);
+  return (
+    <span className="flex items-center gap-1">
+      <TagChips
+        tags={own}
+        onRemove={(tag) =>
+          update(
+            setUnitTags(
+              book,
+              unit.id,
+              own.filter((t) => t !== tag),
+            ),
+          )
+        }
+      />
+      <TagButton
+        name={unitName(unit)}
+        tags={own}
+        all={bookTags(book)}
+        onChange={(tags) => update(setUnitTags(book, unit.id, tags))}
+        labeled
+      />
+    </span>
   );
 }

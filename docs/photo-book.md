@@ -69,7 +69,7 @@ Pages have no numbers here. Above each page, its name, typed in (**Untitled page
 
 ### Spreads
 
-**Link with next page**, above a page, links it with the photo page after it into a two-page spread, shown side by side across the row with **Unlink** above it; a spread's pages always follow each other, so the arrows beside it move the page or the whole spread one place earlier or later among the photo pages, to line up the two to link. A page before a spread can't link to it. **In book** marks a page or spread that's in the book. Removing one page of a spread leaves the other on its own, in the book where the spread was.
+**Link with next page**, above a page, links it with the photo page after it into a two-page spread, shown side by side across the row with **Unlink** above it; a spread's pages always follow each other, so the arrows beside it move the page or the whole spread one place earlier or later among the photo pages, to line up the two to link. A page before a spread can't link to it. **In book** marks a page or spread that's in the book. Its tags show beside that as chips (the × takes one off), and **Add tag** opens a flyout with this book's tags to add with a click and a box for a new one. Tags belong to the book: the ones offered are the ones on its pages, and no other book shares them. Removing one page of a spread leaves the other on its own, in the book where the spread was.
 
 ## The book
 
