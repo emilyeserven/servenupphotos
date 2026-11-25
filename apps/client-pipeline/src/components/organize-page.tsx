@@ -25,6 +25,7 @@ import {
   useAllPhotosRebuild,
 } from "@/components/all-photos-rebuild";
 import { ErrorNote } from "@/components/error-note";
+import { HideOnPortfolioCheckbox } from "@/components/hide-on-portfolio-checkbox";
 import { Page } from "@/components/page";
 import { GroupCombobox } from "@/components/photo-groups-card";
 import { QueryResult } from "@/components/query-result";
@@ -198,7 +199,7 @@ function NewGroupForm({
   const create = useMutation({ ...createGroupMutation(kind), onSuccess: onSaved });
 
   const form = useForm({
-    defaultValues: { name: "", description: "", parent: [] as string[] },
+    defaultValues: { name: "", description: "", parent: [] as string[], hidden: false },
     validators: { onSubmit: ({ value }) => validateGroupName(organize, value.name) },
     onSubmit: async ({ value }) => {
       await create
@@ -207,6 +208,7 @@ function NewGroupForm({
           name: groupName(kind, value.name),
           description: value.description.trim(),
           parent: value.parent[0],
+          hidden: kind === "albums" && value.hidden ? true : undefined,
         })
         .catch(() => {});
     },
@@ -283,6 +285,19 @@ function NewGroupForm({
           </FormField>
         )}
       </form.Field>
+
+      {kind === "albums" && (
+        <form.Field name="hidden">
+          {(field) => (
+            <HideOnPortfolioCheckbox
+              what="the album"
+              checked={field.state.value}
+              disabled={create.isPending}
+              onChange={(hidden) => field.handleChange(hidden)}
+            />
+          )}
+        </form.Field>
+      )}
 
       <ErrorNote error={create.error} />
 

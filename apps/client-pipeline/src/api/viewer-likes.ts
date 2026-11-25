@@ -1,5 +1,4 @@
-import { overrideId } from "@/api/cameras";
-import { byName, settingEntries, settingMutations } from "@/api/data-files";
+import { byName, settingEntries, settingMutations, uniqueEntryId } from "@/api/data-files";
 import { parsePastedJson } from "@/lib/pasted-json";
 
 /**
@@ -26,9 +25,26 @@ function isViewer(value: unknown): value is ViewerLikes {
 /** The people who sent likes, as the next Commit will have them: LIKES.json with the changes since, by name. */
 export const viewerLikes = settingEntries("likes", isViewer, byName);
 
-/** The ID a new person gets, such as `jane-doe`. */
-export function viewerId(name: string): string {
-  return overrideId(name);
+/**
+ * The ID a new person gets, such as `jane-doe`: made from their name, with -2, -3 and so on after it
+ * while someone saved has it already, so "DK" and "dk" are two people, `dk` and `dk-2`.
+ */
+export function viewerId(name: string, viewers: ViewerLikes[]): string {
+  return uniqueEntryId(
+    name,
+    viewers.map((viewer) => viewer.id),
+    "person",
+  );
+}
+
+/**
+ * The saved person a new person's name is already, when it's theirs exactly (ignoring spaces at
+ * either end). Only the same name counts: another name that happens to make the same ID is a
+ * different person, who gets an ID of their own.
+ */
+export function viewerNamed(name: string, viewers: ViewerLikes[]): ViewerLikes | undefined {
+  const trimmed = name.trim();
+  return viewers.find((viewer) => viewer.name.trim() === trimmed);
 }
 
 /** What a pasted or uploaded list holds: its photo IDs, each once, and the parts that aren't IDs. */

@@ -316,3 +316,27 @@ func TestTagParents(t *testing.T) {
 		t.Errorf("shotengai.json = %q, want parent null", content.Content)
 	}
 }
+
+func TestCreateGroupHidden(t *testing.T) {
+	_, c := newFakeGitHub(t)
+
+	if _, err := c.CreateGroup(t.Context(), organizeGH, Albums, NewGroup{ID: "shared", Name: "Shared", Hidden: true}); err != nil {
+		t.Fatalf("CreateGroup() error = %v", err)
+	}
+	if content, _ := stagedContent(t, c, "data/albums/shared.json"); !strings.Contains(content.Content, `"hidden": true`) {
+		t.Errorf("file content = %q, want hidden", content.Content)
+	}
+	got, err := c.Organize(t.Context(), organizeGH)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got.Albums) != 1 || !got.Albums[0].Hidden {
+		t.Errorf("Albums = %+v, want Shared hidden", got.Albums)
+	}
+
+	_, err = c.CreateGroup(t.Context(), organizeGH, Tags, NewGroup{ID: "night", Name: "night", Hidden: true})
+	var perr *PublishError
+	if !errors.As(err, &perr) || perr.Status != http.StatusBadRequest {
+		t.Errorf("CreateGroup(hidden tag) error = %v, want 400", err)
+	}
+}
