@@ -1,5 +1,6 @@
 import { PageBody } from "@/components/photo-book/page-body";
 import { type BookPageProps, pageName } from "@/components/photo-book/page-types";
+import { PAGE_SHEET_ATTRIBUTE } from "@/components/photo-book/use-slot-dpi";
 import { cn } from "@/lib/utils";
 
 /** The look of a printed page: black, Helvetica, white text, in the book's shape. */
@@ -25,6 +26,7 @@ export function BookPage(props: BookPageProps & { className?: string }) {
 function PageSheet({ aspect, children }: { aspect: number; children: React.ReactNode }) {
   return (
     <div
+      {...{ [PAGE_SHEET_ATTRIBUTE]: "" }}
       style={{ containerType: "inline-size", aspectRatio: aspect }}
       className={cn(
         "w-full overflow-hidden rounded-sm border border-neutral-800 shadow-sm",

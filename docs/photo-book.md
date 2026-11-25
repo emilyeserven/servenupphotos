@@ -81,6 +81,12 @@ The **Book** tab has three parts, as the book makers' own software does:
 
 When a photo is on more than one page in the book, each of them is marked **Also on page …** on **Photo Pages**.
 
+### Print resolution
+
+Each photo is checked against the book's page size from **Info**: its original's pixel width over the inches it covers on the printed page, once cropped to fill its place (so a photo cropped to a narrow place prints larger than the place). Below 300 dpi, the photo is marked with its resolution in red (**170 dpi**) on **Photo Pages**, and **The book** lists every such photo in the book under the preview, with its page number and page name; clicking one shows that page. A page size in pixels has no printed size, so it isn't checked, and the Book tab says so.
+
+> **Frontend analogy:** the places are sized by CSS, so rather than copy every layout's flexbox math into TypeScript, each place measures itself with a `ResizeObserver` against its page's sheet (the same ratio at any zoom, so a small preview measures as well as a full page) and writes its dpi to a small Zustand store, which the Book tab's list reads. `lib/photo-book-dpi.ts` has the math (`printDpi`, `lowResolution`).
+
 ### Other pages
 
 Other pages are pages without photos: one the publisher requires, a bio page, or anything else. For now each shows only its name, as a placeholder. Type a name in the drawer and **Add other page** makes one and adds it at the end of the book; each has a bin in the drawer that removes it. They're not on **Photo Pages** and are never part of a spread.

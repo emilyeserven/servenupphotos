@@ -19,6 +19,7 @@ type BodyProps = Pick<
   | "layouts"
   | "sides"
   | "side"
+  | "printWidth"
 >;
 
 /** The other pages in the book with the slot's photo; none for a page left out. */
@@ -29,7 +30,7 @@ function alsoOn(photo: string, number: number | null, repeated: Map<string, numb
 
 /** The page's photo places and captions, each wired to the page's actions. */
 function pageParts(props: BodyProps): PageParts {
-  const { page, index, number, repeated, photos, captionFor, actions } = props;
+  const { page, index, number, repeated, photos, captionFor, actions, printWidth } = props;
   return {
     title:
       page.title === null ? null : (
@@ -49,6 +50,7 @@ function pageParts(props: BodyProps): PageParts {
           key={`photo-${i}`}
           slot={s}
           place={{ page: index, slot: i }}
+          print={{ page: page.id, inches: printWidth }}
           shape={shape}
           alsoOn={alsoOn(s.photo, number, repeated)}
           photo={photos.get(s.photo)}
