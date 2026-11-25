@@ -116,7 +116,7 @@ Other pages are pages without photos: one the publisher requires, a bio page, or
 
 ## List
 
-The **List** tab lists the book's pages in the order they're printed, as **Book** puts them, each headed by its page number, name and layout ("Page 4 · Spotlight left  Two photos on the left"). A blank page the Book tab adds is left out, but its number is skipped, so the numbers match the printed book. Under each photo page, its photos in its layout's order: the place's number, the photo's Square Thumbnail, its name and its caption's first line, and **Edit info**, which opens the photo's editor (`/exif?edit=<path>`) to fix its title, Place or anything else its caption shows. An empty place says so; an other page says it has no photos. Above the pages, how many photos are on how many pages.
+The **List** tab lists the book's pages in the order they're printed, as **Book** puts them, each headed by its page number, name and layout ("Page 4 · Spotlight left Two photos on the left"). A blank page the Book tab adds is left out, but its number is skipped, so the numbers match the printed book. Under each photo page, its photos in its layout's order: the place's number, the photo's Square Thumbnail, its name and its caption's first line, and **Edit info**, which opens the photo's editor (`/exif?edit=<path>`) to fix its title, Place or anything else its caption shows. An empty place says so; an other page says it has no photos. Above the pages, how many photos are on how many pages.
 
 ## The photo drawer
 
