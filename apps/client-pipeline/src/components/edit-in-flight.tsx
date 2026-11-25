@@ -13,12 +13,15 @@ import { DeletePhotoCard } from "@/components/edit-in-flight/delete-photo-card";
 import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
 import { LensSection } from "@/components/edit-in-flight/lens-section";
 import { useLocationPrompt } from "@/components/edit-in-flight/location-prompt";
+import { MissingImageEditor } from "@/components/edit-in-flight/missing-image-card";
 import {
   type Editable,
+  type EditTarget,
   fileName,
   findEditable,
   fromBase,
   inPullRequest,
+  isMissingImage,
   isPublished,
   photoFile,
 } from "@/components/edit-in-flight/photo-json";
@@ -76,15 +79,17 @@ function EditFound({ inFlight, path }: { inFlight: InFlightRead; path: string })
   const editable = useEditable(inFlight, path);
   if (editable === null) return <ReadingNote label="Reading the photo…" />;
   if (typeof editable === "string") return <Problem>{editable}</Problem>;
+  if (isMissingImage(editable)) return <MissingImageEditor missing={editable} />;
   // Keyed by the photo's image rather than its file, which a new title can rename.
   return <EditWithSavedCrop key={editable.image.key} editable={editable} />;
 }
 
 /**
  * What to edit the file at path from, or why it can't be edited: the pull request's copy when the
- * pull request has it, or else the base branch's, which is null while it's being read.
+ * pull request has it, or else the base branch's, which is null while it's being read. A photo
+ * whose image R2 doesn't have comes back marked missing, so its image can be uploaded.
  */
-function useEditable(inFlight: InFlightRead, path: string): Editable | string | null {
+function useEditable(inFlight: InFlightRead, path: string): EditTarget | string | null {
   const fromPullRequest = findEditable(inFlight, path);
   const onBase = typeof fromPullRequest === "string" && !inPullRequest(inFlight, path);
   const published = useQuery({ ...publishedPhotosQuery, enabled: onBase });

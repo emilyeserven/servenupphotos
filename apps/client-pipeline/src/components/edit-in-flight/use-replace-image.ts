@@ -23,9 +23,14 @@ import { useReplacedImageStore } from "@/stores/replaced-image";
  * the same size, or else one picked on it), uploading it with every version, pixelating the saved
  * faces on them again when the new image is the same size (and dropping them when it isn't, since
  * they'd be in the wrong places), and saving the photo's JSON with its new links as a change waiting
- * for Commit.
+ * for Commit. With `missing`, the photo had no image in R2, so there's no old image to note it replaced.
  */
-export function useReplaceImage({ file }: Editable, saved: PhotoJson, savedCrop: Crop | null) {
+export function useReplaceImage(
+  { file }: Pick<Editable, "file">,
+  saved: PhotoJson,
+  savedCrop: Crop | null,
+  missing = false,
+) {
   const queryClient = useQueryClient();
   const settings = useLensSettings();
   const note = useReplacedImageStore((state) => state.note);
@@ -53,7 +58,7 @@ export function useReplaceImage({ file }: Editable, saved: PhotoJson, savedCrop:
       return { key: uploaded.key, path: updated.path, name: chosen.photo.name };
     },
     onSuccess: ({ key, path, name }) => {
-      note(path, name);
+      if (!missing) note(path, name);
       read.reset();
       refetchReplaced(queryClient, key);
     },
@@ -87,7 +92,8 @@ export function useReplaceImage({ file }: Editable, saved: PhotoJson, savedCrop:
 
 /**
  * The square to cut the new image's Square Thumbnail from: the saved one when the new image is the
- * same size as the old, or else the one picked on it.
+ * same size as the old, or else the one picked on it. A photo with no saved square, such as one whose
+ * image is missing from R2, always gets one picked.
  */
 function squareFor(
   sanitized: SanitizedExif | null | undefined,
@@ -95,7 +101,7 @@ function squareFor(
   savedCrop: Crop | null,
   newCrop: Crop | null,
 ): { keepsCrop: boolean; crop: Crop | null } {
-  const keepsCrop = sameSize(savedSize(saved), newSize(sanitized));
+  const keepsCrop = savedCrop !== null && sameSize(savedSize(saved), newSize(sanitized));
   return { keepsCrop, crop: keepsCrop ? savedCrop : newCrop };
 }
 

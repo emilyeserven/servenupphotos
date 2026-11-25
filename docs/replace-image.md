@@ -36,4 +36,12 @@ The new JPEG is uploaded under the old one's file name, so its key is `photos/<n
 
 > **Frontend analogy:** it's a content-hashed asset, like `main.3f9a1c.js` from a bundler. A new file gets a new URL instead of overwriting the old one, so no browser or CDN cache can serve the old picture under it, and the page still on the old HTML (here, the portfolio before the merge) keeps working.
 
+## A photo missing from R2
+
+A photo's JSON can be saved without its image in R2, such as one saved before its upload finished, so its `images` links are all `null`. The Photo page can't edit it as usual, since there's nothing to cut a Square Thumbnail from, so it opens on an **Upload the missing image** card instead, with the saved JSON under it. Choosing the JPEG reads it, a **New image's Square Thumbnail** card picks its square (starting in the middle), and **Upload image** uploads it under the photo's `file` name and saves the JSON as for [Replace image](#replace-image), keeping its EXIF and taking only the new `width`, `height` and `images`. Once the save is done, the page opens the photo's usual editor. It's `MissingImageEditor` in `components/edit-in-flight/missing-image-card.tsx`. A saved photo is only treated as missing when R2 could be searched; when it couldn't, the page says why instead.
+
+The new photo page's **Save** waits for the upload, so a new photo isn't saved this way any more ([Saving photo data to GitHub](saving-to-github.md)).
+
+> **Frontend analogy:** it's a broken `<img src>` with a "re-upload" button next to it, rather than a page that refuses to render because one asset 404s.
+
 The colors the Photo page shows aren't saved in the photo's JSON, so there's nothing to recompute there.
