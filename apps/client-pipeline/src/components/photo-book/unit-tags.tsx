@@ -3,7 +3,6 @@ import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 
 interface TagButtonProps {
   /** What the page or spread is called, for the button's label. */
@@ -127,36 +126,5 @@ export function TagChips(props: { tags: string[]; onRemove?: (tag: string) => vo
         </li>
       ))}
     </ul>
-  );
-}
-
-/** The drawer's tag filter: All, then a button for each of the book's tags, the one picked pressed. */
-export function TagFilter(props: {
-  tags: string[];
-  value: string | null;
-  onChange: (tag: string | null) => void;
-  /** What the chips pick, for screen readers; "Show pages tagged" when left out. */
-  label?: string;
-}) {
-  const { tags, value, onChange, label = "Show pages tagged" } = props;
-  if (tags.length === 0) return null;
-  return (
-    <div role="radiogroup" aria-label={label} className="flex flex-wrap gap-1">
-      {[null, ...tags].map((tag) => (
-        <button
-          key={tag ?? ""}
-          type="button"
-          role="radio"
-          aria-checked={tag === value}
-          onClick={() => onChange(tag)}
-          className={cn(
-            "rounded-full border px-2 py-0.5 text-xs",
-            tag === value ? "bg-primary text-primary-foreground border-primary" : "hover:bg-accent",
-          )}
-        >
-          {tag ?? "All"}
-        </button>
-      ))}
-    </div>
   );
 }

@@ -6,6 +6,7 @@ import { useAlbumPhotos } from "@/components/photo-book/album-photos";
 import { AlternatesControl } from "@/components/photo-book/alternates-control";
 import { BookOrderControls } from "@/components/photo-book/book-order-controls";
 import { BookPage } from "@/components/photo-book/book-page";
+import { FilterSelect } from "@/components/photo-book/filter-select";
 import { MoveToControl } from "@/components/photo-book/move-to-control";
 import { type PageLook, pageActions } from "@/components/photo-book/page-actions";
 import { PageControls, UnitControls } from "@/components/photo-book/page-controls";
@@ -18,7 +19,7 @@ import { unitName } from "@/components/photo-book/page-types";
 import { PagesGrid } from "@/components/photo-book/pages-grid";
 import { PagesViewToggle } from "@/components/photo-book/pages-view-toggle";
 import { ShowHiddenToggle } from "@/components/photo-book/show-hidden-toggle";
-import { TagButton, TagChips, TagFilter } from "@/components/photo-book/unit-tags";
+import { TagButton, TagChips } from "@/components/photo-book/unit-tags";
 import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import {
   type PhotoBook,
@@ -301,15 +302,21 @@ function useFadeTag(book: PhotoBook) {
   return { tags, tag, onChange: setPicked };
 }
 
-/** Picks which pages' photos are faded in the Photos panel: every page's, or one tag's. */
+/** Picks, from a dropdown, which pages' photos are faded in the Photos panel: every page's, or one tag's. */
 function FadeByTag(props: ReturnType<typeof useFadeTag>) {
   const { tags, tag, onChange } = props;
   if (tags.length === 0) return null;
   return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-sm">Fade photos on</span>
-      <TagFilter tags={tags} value={tag} onChange={onChange} label="Fade photos on pages tagged" />
-    </div>
+    <label className="flex items-center gap-2 text-sm">
+      Fade photos on
+      <FilterSelect
+        label="Fade photos on pages tagged"
+        all="All pages"
+        options={tags.map((t) => ({ value: t, label: t }))}
+        value={tag}
+        onChange={onChange}
+      />
+    </label>
   );
 }
 
