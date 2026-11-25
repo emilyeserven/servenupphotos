@@ -14,7 +14,7 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 }
 
 /** Buttons for each of a setting's choices, the one set pressed. */
-function Choices<T extends string | number>(props: {
+export function Choices<T extends string | number>(props: {
   label: string;
   value: T;
   options: [T, string][];

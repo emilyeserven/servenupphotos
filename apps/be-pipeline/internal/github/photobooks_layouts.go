@@ -9,7 +9,8 @@ import (
 // PhotoBookLayout is a page layout made on a photo book's Layouts tab: how
 // many photos the page holds, how they're arranged and shaped, and where
 // the title and captions go, so other layouts can be tried before
-// committing to one.
+// committing to one. Its look is for right-hand (odd) pages; LeftPages
+// says what left-hand (even) pages get.
 type PhotoBookLayout struct {
 	// ID starts with "custom-" and tells the layout from the book's others.
 	ID string `json:"id"`
@@ -17,6 +18,18 @@ type PhotoBookLayout struct {
 	Name string `json:"name"`
 	// Photos is how many photos the page holds, 1 to 4.
 	Photos int `json:"photos"`
+	PhotoBookLayoutLook
+	// LeftPages is what left-hand pages get: "mirror" for the look turned
+	// around, "own" for Left, or "same" (or "", in a layout made before)
+	// for the same look.
+	LeftPages string `json:"leftPages,omitempty"`
+	// Left is the look of left-hand pages when LeftPages is "own".
+	Left *PhotoBookLayoutLook `json:"left,omitempty"`
+}
+
+// PhotoBookLayoutLook is how a layout draws a page: its photos' arrangement
+// and shape, and where its text goes.
+type PhotoBookLayoutLook struct {
 	// Arrange is "stack" for the photos one under another, or "row" for
 	// side by side.
 	Arrange string `json:"arrange"`
@@ -65,6 +78,7 @@ var (
 		"captions": {"column", "photo"},
 		"align":    {"start", "center", "end"},
 	}
+	leftPagesChoices = []string{"", "same", "mirror", "own"}
 )
 
 // validPhotoBookLayouts checks a book's layouts and returns them with their
@@ -100,6 +114,35 @@ func validPhotoBookLayout(l PhotoBookLayout, n int) (PhotoBookLayout, *PublishEr
 	if l.Photos < 1 || l.Photos > 4 {
 		return l, publishErr(http.StatusBadRequest, "Layout %d can hold 1 to 4 photos.", n)
 	}
+	look, perr := validLayoutLook(l.PhotoBookLayoutLook, n)
+	if perr != nil {
+		return l, perr
+	}
+	l.PhotoBookLayoutLook = look
+	return validLeftPages(l, n)
+}
+
+// validLeftPages checks what layout n gives left-hand pages: Left is kept
+// only when LeftPages is "own", and then has to be there.
+func validLeftPages(l PhotoBookLayout, n int) (PhotoBookLayout, *PublishError) {
+	if !slices.Contains(leftPagesChoices, l.LeftPages) {
+		return l, publishErr(http.StatusBadRequest, "Layout %d's left pages have to be the same, mirrored or their own.", n)
+	}
+	if l.LeftPages != "own" {
+		l.Left = nil
+		return l, nil
+	}
+	if l.Left == nil {
+		return l, publishErr(http.StatusBadRequest, "Give layout %d's left pages their own settings.", n)
+	}
+	left, perr := validLayoutLook(*l.Left, n)
+	l.Left = &left
+	return l, perr
+}
+
+// validLayoutLook checks a look of layout n and returns it with its numbers
+// kept in range and its ratio only when its shape takes one.
+func validLayoutLook(l PhotoBookLayoutLook, n int) (PhotoBookLayoutLook, *PublishError) {
 	for field, value := range map[string]string{"arrange": l.Arrange, "shape": l.Shape, "text": l.Text, "captions": l.Captions, "align": l.Align} {
 		if !slices.Contains(layoutChoices[field], value) {
 			return l, publishErr(http.StatusBadRequest, "Layout %d's %s has to be one of %s.", n, field, strings.Join(layoutChoices[field], ", "))
@@ -114,6 +157,21 @@ func validPhotoBookLayout(l PhotoBookLayout, n int) (PhotoBookLayout, *PublishEr
 	l.Gap = min(max(l.Gap, 0), 20)
 	l.Margin = min(max(l.Margin, 0), 20)
 	return l, nil
+}
+
+// validHiddenLayouts returns the built-in layouts a book hides from its
+// pages' layout pickers, each once; a name that isn't one is refused.
+func validHiddenLayouts(hidden []string) ([]string, *PublishError) {
+	var out []string
+	for _, id := range hidden {
+		if photoBookLayouts[id] == 0 {
+			return nil, publishErr(http.StatusBadRequest, "Only a built-in photo layout can be hidden, not %q.", id)
+		}
+		if !slices.Contains(out, id) {
+			out = append(out, id)
+		}
+	}
+	return out, nil
 }
 
 // photoBookSlotCounts is how many photos each layout a book's pages can

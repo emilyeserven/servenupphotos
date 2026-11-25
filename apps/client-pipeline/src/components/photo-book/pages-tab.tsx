@@ -182,7 +182,7 @@ function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
               controls={
                 <PageControls
                   page={page}
-                  layouts={layoutChoices(book)}
+                  layouts={layoutChoices(book, page.layout)}
                   onName={(name) => update(renamePage(book, index, name))}
                   onLayout={(layout) => update(setLayout(book, index, layout))}
                   onTitle={actions.onTitle}

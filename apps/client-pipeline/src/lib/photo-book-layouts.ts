@@ -3,13 +3,14 @@ import {
   type CustomLayout,
   LAYOUTS,
   type PageLayout,
+  type PageSide,
   type PhotoBook,
   setLayout,
 } from "@/lib/photo-book";
 import { count } from "@portfolio/lib/words";
 
 /** Everything about a layout made on the Layouts tab but its ID and name. */
-export type LayoutLook = Omit<CustomLayout, "id" | "name">;
+export type LayoutLook = Omit<CustomLayout, "id" | "name" | "leftPages" | "left">;
 
 /** The built-in layouts as Layouts tab settings, so Customize starts a new layout from one of them. */
 export const BUILT_IN_LOOKS: Record<BuiltInLayout, LayoutLook> = {
@@ -121,8 +122,8 @@ function describeLook(look: LayoutLook): string {
   return `${photos}${arrange}, ${shape}, text ${side}${captions}.`;
 }
 
-/** Every layout a photo page can have: the built-in ones, then the book's own, oldest first. */
-export function layoutChoices(book: PhotoBook): LayoutChoice[] {
+/** Every layout a page can have, hidden built-in ones too: the built-in ones, then the book's own. */
+export function everyLayoutChoice(book: PhotoBook): LayoutChoice[] {
   return [
     ...LAYOUTS.map((info) => ({ ...info, look: BUILT_IN_LOOKS[info.id] })),
     ...(book.layouts ?? []).map((l) => ({
@@ -132,6 +133,15 @@ export function layoutChoices(book: PhotoBook): LayoutChoice[] {
       look: l,
     })),
   ];
+}
+
+/**
+ * The layouts a page's picker offers: every one but the built-in ones the book hides, though a
+ * page keeps its current one.
+ */
+export function layoutChoices(book: PhotoBook, current?: PageLayout): LayoutChoice[] {
+  const hidden = new Set<PageLayout>(book.hiddenLayouts ?? []);
+  return everyLayoutChoice(book).filter((c) => !hidden.has(c.id) || c.id === current);
 }
 
 /**
@@ -148,7 +158,7 @@ export function addLayout(
   while (ids.has(`custom-${n}`)) n += 1;
   const id = `custom-${n}` as const;
   const look = layoutLook(book, from) ?? BUILT_IN_LOOKS.full;
-  const layout: CustomLayout = { ...look, id, name };
+  const layout: CustomLayout = { ...look, id, name, leftPages: "mirror" };
   return { book: { ...book, layouts: [...(book.layouts ?? []), layout] }, id };
 }
 
@@ -214,4 +224,76 @@ export function photoShape(look: Pick<LayoutLook, "shape" | "ratio">): number | 
   if (look.shape !== "ratio") return SHAPE_RATIOS[look.shape];
   const { width = 0, height = 0 } = look.ratio ?? {};
   return width > 0 && height > 0 ? width / height : 1;
+}
+
+/** The look turned around for the other side of the book: text on the left goes on the right. */
+function mirrorLook<T extends Pick<LayoutLook, "text">>(look: T): T {
+  const turned = { left: "right", right: "left", above: "above", below: "below" } as const;
+  return { ...look, text: turned[look.text] };
+}
+
+/** How layout draws a page on side: its look on the right, or what it gives left-hand pages. */
+export function sideLook(layout: CustomLayout, side: PageSide): LayoutLook {
+  const { id: _id, name: _name, leftPages, left, ...look } = layout;
+  if (side === "right" || !leftPages || leftPages === "same") return look;
+  if (leftPages === "own" && left) return { ...left, photos: look.photos };
+  return mirrorLook(look);
+}
+
+/**
+ * The book with layout's left-hand pages set to what: the same look, mirrored, or their own,
+ * which starts as the mirrored look when the layout had none.
+ */
+export function setLeftPages(
+  book: PhotoBook,
+  id: string,
+  what: NonNullable<CustomLayout["leftPages"]>,
+): PhotoBook {
+  const layout = customLayout(book, id);
+  if (!layout) return book;
+  if (what !== "own" || layout.left) return changeLayout(book, id, { leftPages: what });
+  const { photos: _photos, ...mirrored } = sideLook({ ...layout, leftPages: "mirror" }, "left");
+  return changeLayout(book, id, { leftPages: what, left: mirrored });
+}
+
+/** The book with the built-in layout id hidden from its Photo Pages' pickers, or shown again. */
+export function setHidden(book: PhotoBook, id: BuiltInLayout, hide: boolean): PhotoBook {
+  const rest = (book.hiddenLayouts ?? []).filter((other) => other !== id);
+  return { ...book, hiddenLayouts: hide ? [...rest, id] : rest };
+}
+
+/**
+ * The book with change made to its layout with ID id as drawn on side: on the left, when left-hand
+ * pages have their own settings, it changes those, except how many photos, which both sides share.
+ */
+export function changeSide(
+  book: PhotoBook,
+  id: string,
+  side: PageSide,
+  change: Partial<LayoutLook>,
+): PhotoBook {
+  const layout = customLayout(book, id);
+  if (side === "right" || layout?.leftPages !== "own" || !layout.left) {
+    return changeLayout(book, id, change);
+  }
+  const { photos, ...rest } = change;
+  return changeLayout(book, id, {
+    ...(photos === undefined ? {} : { photos }),
+    left: { ...layout.left, ...rest },
+  });
+}
+
+/**
+ * How a page with one of the book's own layouts is drawn: its layout's look for the page's side,
+ * which side gives when set and else sides, a right-hand page when neither knows; undefined for a
+ * page with a built-in layout.
+ */
+export function customPageLook(
+  layouts: CustomLayout[],
+  page: { id: string; layout: PageLayout },
+  sides: Map<string, PageSide>,
+  side?: PageSide,
+): LayoutLook | undefined {
+  const custom = layouts.find((l) => l.id === page.layout);
+  return custom && sideLook(custom, side ?? sides.get(page.id) ?? "right");
 }

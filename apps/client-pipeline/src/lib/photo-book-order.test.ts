@@ -14,6 +14,7 @@ import {
   moveInBook,
   movePhotoUnit,
   pageNumbers,
+  pageSides,
   photosInBook,
   removePage,
   repeatedPhotos,
@@ -129,4 +130,25 @@ test("tagging a spread tags both its pages, and the book lists every tag once", 
   assert.deepEqual(tagged("by theme"), ["by theme", [p3]]);
   assert.deepEqual(tagged("gone"), [null, [p1, p3]]);
   assert.equal(p2, b.pages[1]?.id);
+});
+
+test("a page in the book is on the side its number gives; one not in it, on its spread's side", () => {
+  let b = setLinkNext(book(), "page-1", true);
+  assert.deepEqual(Object.fromEntries(pageSides(b)), {
+    "page-1": "left",
+    "page-2": "right",
+    "page-3": "right",
+  });
+  b = addToBook(addToBook(b, "page-3"), "page-1");
+  assert.deepEqual(Object.fromEntries(pageSides(b)), {
+    "page-1": "left",
+    "page-2": "right",
+    "page-3": "right",
+  });
+  b = moveInBook(b, 1, 0);
+  assert.deepEqual(Object.fromEntries(pageSides(b)), {
+    "page-1": "right",
+    "page-2": "left",
+    "page-3": "right",
+  });
 });

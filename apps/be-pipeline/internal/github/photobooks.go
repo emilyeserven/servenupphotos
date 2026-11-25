@@ -64,6 +64,9 @@ type PhotoBook struct {
 	// Layouts are the page layouts made on the book's Layouts tab, which its
 	// pages can have besides the built-in ones.
 	Layouts []PhotoBookLayout `json:"layouts,omitempty"`
+	// HiddenLayouts are the built-in layouts the book's Photo Pages leave
+	// out of their layout pickers, so its own are used instead.
+	HiddenLayouts []string `json:"hiddenLayouts,omitempty"`
 }
 
 // PhotoBookSize is a book's page size: its width and height in unit.
@@ -151,6 +154,9 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 		return out, perr
 	}
 	out.Layouts = layouts
+	if out.HiddenLayouts, perr = validHiddenLayouts(b.HiddenLayouts); perr != nil {
+		return out, perr
+	}
 	counts := photoBookSlotCounts(layouts)
 	out.Pages = make([]PhotoBookPage, 0, len(b.Pages))
 	for i, page := range b.Pages {

@@ -4,11 +4,21 @@ import { PhotoSlot } from "@/components/photo-book/page-slot";
 import { type BookPageProps, type PageParts, pageName } from "@/components/photo-book/page-types";
 import { SlotCaption } from "@/components/photo-book/slot-caption";
 import type { BuiltInLayout } from "@/lib/photo-book";
+import { customPageLook } from "@/lib/photo-book-layouts";
 import { cn } from "@/lib/utils";
 
 type BodyProps = Pick<
   BookPageProps,
-  "page" | "index" | "number" | "repeated" | "photos" | "captionFor" | "actions" | "layouts"
+  | "page"
+  | "index"
+  | "number"
+  | "repeated"
+  | "photos"
+  | "captionFor"
+  | "actions"
+  | "layouts"
+  | "sides"
+  | "side"
 >;
 
 /** The other pages in the book with the slot's photo; none for a page left out. */
@@ -174,7 +184,7 @@ export function PageBody(props: BodyProps) {
   const { layout } = props.page;
   if (layout === "other") return <OtherBody name={pageName(props.page)} />;
   const parts = pageParts(props);
-  const custom = props.layouts.find((l) => l.id === layout);
+  const custom = customPageLook(props.layouts, props.page, props.sides, props.side);
   if (custom) return <CustomBody parts={parts} look={custom} />;
   return (BODIES[layout as BuiltInLayout] ?? BODIES.full)(parts);
 }

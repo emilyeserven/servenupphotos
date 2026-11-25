@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import type { SlotShape } from "@/components/photo-book/page-slot";
-import type { CustomLayout, BookPage as Page, SlotPlace } from "@/lib/photo-book";
+import type { CustomLayout, BookPage as Page, PageSide, SlotPlace } from "@/lib/photo-book";
 
 /** What the page itself can do to its book: its title, photos and captions. */
 export interface PageActions {
@@ -28,6 +28,10 @@ export interface BookPageProps {
   aspect: number;
   /** The layouts made on the book's Layouts tab, which pages can have besides the built-in ones. */
   layouts: CustomLayout[];
+  /** Which side of the open book each page is on, which sets how a custom layout draws it. */
+  sides: Map<string, PageSide>;
+  /** The side to draw the page on, over the one sides gives, such as in a spread shown on its own. */
+  side?: PageSide;
   /** The buttons above the page; none on a preview. */
   controls?: ReactNode;
 }

@@ -42,7 +42,20 @@ export interface CustomLayout {
   gap: number;
   /** The room around the page's edge, in percent of its width, 0 to 20. */
   margin: number;
+  /**
+   * What left-hand (even) pages get: the look turned around (`mirror`), their own look (`own`,
+   * `left`), or the same look; absent in a layout made before, which is the same.
+   */
+  leftPages?: "same" | "mirror" | "own";
+  /** The look of left-hand pages when leftPages is `own`. */
+  left?: VariantLook;
 }
+
+/** How a layout draws a page, without what's the same on both sides of the book. */
+export type VariantLook = Omit<CustomLayout, "id" | "name" | "photos" | "leftPages" | "left">;
+
+/** Which side of the book a page falls on: left (even page numbers) or right (odd ones). */
+export type PageSide = "left" | "right";
 
 /** One photo's place on a page, with its caption. */
 export interface BookSlot {
@@ -99,6 +112,8 @@ export interface PhotoBook {
   size?: BookSize;
   /** The layouts made on the book's Layouts tab, which its pages can have besides the built-in ones. */
   layouts?: CustomLayout[];
+  /** The built-in layouts the book's Photo Pages leave out of their layout pickers. */
+  hiddenLayouts?: BuiltInLayout[];
 }
 
 /** The units a book's page size can be given in. */

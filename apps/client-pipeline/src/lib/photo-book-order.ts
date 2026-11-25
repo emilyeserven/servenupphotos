@@ -1,6 +1,7 @@
 import {
   type BookPage,
   type PageLayout,
+  type PageSide,
   type PhotoBook,
   isOtherPage,
   newPage,
@@ -245,4 +246,20 @@ export function unitsTagged(
 ): { filter: string | null; shown: BookUnit[] } {
   if (tag === null || !tags.includes(tag)) return { filter: null, shown: units };
   return { filter: tag, shown: units.filter((unit) => unitTags(unit).includes(tag)) };
+}
+
+/**
+ * The side of the book each page falls on, by its ID: in the book, left for an even page number
+ * and right for an odd one, as a printed book opens; not in it, a spread's first page on the left
+ * and its second on the right, and a page on its own on the right.
+ */
+export function pageSides(book: PhotoBook): Map<string, PageSide> {
+  const sides = new Map<string, PageSide>();
+  for (const unit of bookUnits(book)) {
+    unit.pages.forEach((page, i) => {
+      sides.set(page.id, unit.pages.length > 1 && i === 0 ? "left" : "right");
+    });
+  }
+  for (const [id, number] of pageNumbers(book)) sides.set(id, number % 2 === 0 ? "left" : "right");
+  return sides;
 }
