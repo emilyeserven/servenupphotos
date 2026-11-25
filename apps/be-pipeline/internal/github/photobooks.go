@@ -99,6 +99,13 @@ type PhotoBookPage struct {
 	// Tags are free-form labels for sorting pages into alternatives, such
 	// as "by place" or "by theme"; a spread's are its pages' together.
 	Tags []string `json:"tags,omitempty"`
+	// Alternates names the group of alternate pages and spreads the page is
+	// in, such as "alt-1", one of which is picked for the book; "" for none.
+	// A spread's pages share it.
+	Alternates string `json:"alternates,omitempty"`
+	// Hidden is true on an alternate that lost to the one picked, kept but
+	// not shown on Photo Pages.
+	Hidden bool `json:"hidden,omitempty"`
 	// Layout is "full", "pair-left", "pair-right", "verticals-left",
 	// "verticals-right", "other", or the ID of one of the book's layouts.
 	Layout string `json:"layout"`
@@ -220,12 +227,14 @@ func validPhotoBookPage(page PhotoBookPage, n int, counts map[string]int) (Photo
 	if !ok {
 		return page, publishErr(http.StatusBadRequest, "Page %d has no layout the Photo Book knows.", n)
 	}
-	out := PhotoBookPage{ID: strings.TrimSpace(page.ID), Name: strings.TrimSpace(page.Name), LinkNext: page.LinkNext, Layout: page.Layout}
+	out := PhotoBookPage{ID: strings.TrimSpace(page.ID), Name: strings.TrimSpace(page.Name), LinkNext: page.LinkNext, Layout: page.Layout, Alternates: strings.TrimSpace(page.Alternates)}
+	// Only an alternate can be hidden, so no page is lost from view for good.
+	out.Hidden = page.Hidden && out.Alternates != ""
 	if out.ID == "" || utf8.RuneCountInString(out.ID) > maxEntryTextLength {
 		return out, publishErr(http.StatusBadRequest, "Page %d needs an ID.", n)
 	}
-	if tooLongEntryText(out.Name) {
-		return out, publishErr(http.StatusBadRequest, "Keep page %d's name to %d characters.", n, maxEntryTextLength)
+	if tooLongEntryText(out.Name) || tooLongEntryText(out.Alternates) {
+		return out, publishErr(http.StatusBadRequest, "Keep page %d's name and alternates group to %d characters.", n, maxEntryTextLength)
 	}
 	tags, perr := validPhotoBookTags(page.Tags, n)
 	if perr != nil {

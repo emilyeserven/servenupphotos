@@ -541,6 +541,7 @@ added.photobooks = [
           layout: "full",
           title: "Chapter one",
           tags: ["Seoul"],
+          alternates: "alt-1",
           slots: [{ photo: bookPhoto(0), caption: null }],
         },
         {
@@ -570,6 +571,8 @@ added.photobooks = [
           id: "p4",
           name: "Alternate pair",
           layout: "custom-1",
+          alternates: "alt-1",
+          hidden: true,
           title: null,
           slots: [
             { photo: bookPhoto(0), caption: null },

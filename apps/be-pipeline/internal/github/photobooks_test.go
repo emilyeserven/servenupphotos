@@ -12,7 +12,8 @@ func TestSavePhotoBook(t *testing.T) {
 	title := "  Seoul "
 	book := PhotoBook{ID: "korea", Name: " Korea ", Album: " korea-2026 ", Pages: []PhotoBookPage{
 		{ID: "p1", Name: " By place ", LinkNext: true, Tags: []string{" by place ", "", "by place", "draft"}, Layout: "full", Title: &title, Slots: []PhotoBookSlot{{Photo: "a.json"}, {Photo: "extra.json"}}},
-		{ID: "p2", Layout: "verticals-left"},
+		{ID: "p2", Layout: "verticals-left", Alternates: " alt-1 ", Hidden: true},
+		{ID: "p3", Layout: "full", Hidden: true},
 	}, Order: &[]string{"p2", "gone", "p2", "p1"}, Size: &PhotoBookSize{Width: 12.5, Height: 10.625, Unit: "in"}}
 	if _, err := c.SavePhotoBook(t.Context(), placesGH, book); err != nil {
 		t.Fatalf("SavePhotoBook() error = %v", err)
@@ -23,7 +24,8 @@ func TestSavePhotoBook(t *testing.T) {
 	for _, want := range []string{`"name": "Korea"`, `"album": "korea-2026"`, `"name": "By place"`, `"linkNext": true`, `"tags": [
         "by place",
         "draft"
-      ]`, `"unit": "in"`, `"title": "Seoul"`, `"photo": "a.json"`, `"order": [
+      ]`, `"unit": "in"`, `"alternates": "alt-1",
+      "hidden": true`, `"title": "Seoul"`, `"photo": "a.json"`, `"order": [
     "p2",
     "p1"
   ]`} {
@@ -31,7 +33,10 @@ func TestSavePhotoBook(t *testing.T) {
 			t.Errorf("saved %s, want %s in it", saved, want)
 		}
 	}
-	if strings.Contains(saved, "extra.json") || strings.Count(saved, `"photo": ""`) != 2 {
+	if strings.Count(saved, `"hidden"`) != 1 {
+		t.Errorf("saved %s, want only the alternate hidden", saved)
+	}
+	if strings.Contains(saved, "extra.json") || strings.Count(saved, `"photo": ""`) != 3 {
 		t.Errorf("saved %s, want one slot on the full page and two empty on the pair", saved)
 	}
 	tests := []struct {

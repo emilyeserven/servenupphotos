@@ -241,16 +241,27 @@ export function unitTags(unit: BookUnit): string[] {
   return [...new Set(unit.pages.flatMap((page) => page.tags ?? []))];
 }
 
+/** The book with change made to each page whose ID is in ids, its order written out. */
+export function changePages(
+  book: PhotoBook,
+  ids: Set<string>,
+  change: (page: BookPage) => BookPage,
+): PhotoBook {
+  return {
+    ...withOrder(book),
+    pages: book.pages.map((page) => (ids.has(page.id) ? change(page) : page)),
+  };
+}
+
 /** The book with the unit with ID id tagged tags, on each of its pages, trimmed, each once. */
 export function setUnitTags(book: PhotoBook, id: string, tags: string[]): PhotoBook {
   const unit = bookUnits(book).find((u) => u.id === id);
   if (!unit) return book;
   const clean = [...new Set(tags.map((tag) => tag.trim()).filter(Boolean))];
-  const ids = new Set(unit.pages.map((page) => page.id));
-  return {
-    ...withOrder(book),
-    pages: book.pages.map((page) => (ids.has(page.id) ? { ...page, tags: clean } : page)),
-  };
+  return changePages(book, new Set(unit.pages.map((page) => page.id)), (page) => ({
+    ...page,
+    tags: clean,
+  }));
 }
 
 /** Every tag on the book's pages, in alphabetical order. */

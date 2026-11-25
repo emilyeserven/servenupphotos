@@ -3,6 +3,7 @@ import type { CombinedData } from "@/api/photos";
 import type { SocialPhoto } from "@/api/publish";
 import { AddPageButton } from "@/components/photo-book/add-page-button";
 import { useAlbumPhotos } from "@/components/photo-book/album-photos";
+import { AlternatesControl } from "@/components/photo-book/alternates-control";
 import { BookPage } from "@/components/photo-book/book-page";
 import { type PageLook, pageActions } from "@/components/photo-book/page-actions";
 import { PageControls, UnitControls } from "@/components/photo-book/page-controls";
@@ -14,6 +15,7 @@ import {
 import { unitName } from "@/components/photo-book/page-types";
 import { PagesGrid } from "@/components/photo-book/pages-grid";
 import { PagesViewToggle } from "@/components/photo-book/pages-view-toggle";
+import { ShowHiddenToggle } from "@/components/photo-book/show-hidden-toggle";
 import { TagButton, TagChips, TagFilter } from "@/components/photo-book/unit-tags";
 import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import {
@@ -26,6 +28,7 @@ import {
   renamePage,
   setLayout,
 } from "@/lib/photo-book";
+import { isHidden } from "@/lib/photo-book-alternates";
 import { layoutChoices } from "@/lib/photo-book-layouts";
 import {
   type BookUnit,
@@ -131,6 +134,7 @@ function unitElementId(id: string): string {
 function PagesView(props: UnitsProps) {
   const { book, update, look } = props;
   const [grid, setGrid] = useState(false);
+  const [showHidden, setShowHidden] = useState(false);
   const open = (id: string) => {
     setGrid(false);
     requestAnimationFrame(() => document.getElementById(unitElementId(id))?.scrollIntoView());
@@ -138,24 +142,31 @@ function PagesView(props: UnitsProps) {
   const units = bookUnits(book).filter((unit) => !unit.pages.some(isOtherPage));
   return (
     <>
-      <PagesViewToggle grid={grid} onGrid={setGrid} />
+      <div className="flex flex-wrap items-center gap-3">
+        <PagesViewToggle grid={grid} onGrid={setGrid} />
+        <ShowHiddenToggle
+          hidden={units.filter(isHidden).length}
+          on={showHidden}
+          onChange={setShowHidden}
+        />
+      </div>
       {grid ? (
         <PagesGrid
-          units={units}
+          units={units.filter((unit) => showHidden || !isHidden(unit))}
           inBook={new Set(bookOrder(book))}
           look={look}
           onPlace={(id, before) => update(placePhotoUnit(book, id, before))}
           onOpen={open}
         />
       ) : (
-        <PhotoUnits {...props} />
+        <PhotoUnits {...props} showHidden={showHidden} />
       )}
     </>
   );
 }
 
 /** The photo pages, each page or spread with its controls, a spread across the whole row. */
-function PhotoUnits({ book, update, look }: UnitsProps) {
+function PhotoUnits({ book, update, look, showHidden }: UnitsProps & { showHidden: boolean }) {
   const units = useMemo(
     () => bookUnits(book).filter((unit) => !unit.pages.some(isOtherPage)),
     [book],
@@ -170,17 +181,19 @@ function PhotoUnits({ book, update, look }: UnitsProps) {
   }
   return (
     <div className="grid gap-x-4 gap-y-8 2xl:grid-cols-2">
-      {units.map((unit, place) => (
-        <PhotoUnit
-          key={unit.id}
-          unit={unit}
-          place={place}
-          next={units[place + 1]}
-          book={book}
-          update={update}
-          look={look}
-        />
-      ))}
+      {units.map((unit, place) =>
+        showHidden || !isHidden(unit) ? (
+          <PhotoUnit
+            key={unit.id}
+            unit={unit}
+            place={place}
+            next={units[place + 1]}
+            book={book}
+            update={update}
+            look={look}
+          />
+        ) : null,
+      )}
     </div>
   );
 }
@@ -212,7 +225,12 @@ function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
         last={next === undefined}
         onLink={(link) => update(setLinkNext(book, unit.id, link))}
         onMove={(from, to) => update(movePhotoUnit(book, from, to > from ? 1 : -1))}
-        tags={<UnitTagsControl unit={unit} book={book} update={update} />}
+        extras={
+          <>
+            <UnitTagsControl unit={unit} book={book} update={update} />
+            <AlternatesControl unit={unit} book={book} update={update} />
+          </>
+        }
       />
       <div className={cn("grid gap-x-4", spread && "grid-cols-2 gap-x-0.5")}>
         {unit.pages.map((page) => {
