@@ -17,14 +17,14 @@ import { EmptyNote } from "@portfolio/components/empty-note";
 
 /**
  * Shared Likes: the photos that are in every chosen Like list from User Likes (or in at least the
- * chosen number of them), grouped into suggested albums by location or by theme.
+ * chosen number of them), put into one album, or split into suggested albums by location or by theme.
  */
 export function SharedLikesPage() {
   return (
     <Page
       wide
       title="Shared Likes"
-      description="Finds the photos several people all liked, from the Like lists on User Likes, and groups them into suggested albums by where they were taken or by what they show."
+      description="Finds the photos several people all liked, from the Like lists on User Likes, and puts them into one album, or splits them into albums by where they were taken or by what they show."
     >
       <GitHubGate>{() => <Reads />}</GitHubGate>
     </Page>
