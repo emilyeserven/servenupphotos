@@ -73,7 +73,7 @@ export const BUILT_IN_LOOKS: Record<BuiltInLayout, LayoutLook> = {
 
 /** The settings of layout, built in or one of the book's; null for an other page's or one it doesn't have. */
 function layoutLook(book: PhotoBook, layout: PageLayout): LayoutLook | null {
-  if (layout === "other") return null;
+  if (layout === "other" || layout === "text") return null;
   const custom = book.layouts?.find((l) => l.id === layout);
   if (custom) return custom;
   return BUILT_IN_LOOKS[layout as BuiltInLayout] ?? null;
@@ -86,10 +86,32 @@ export function customLayout(book: PhotoBook, id: string): CustomLayout | undefi
 
 /** What a layout is called, for its buttons: a built-in one's label, or the name it was given. */
 export function layoutName(book: PhotoBook, layout: PageLayout): string {
+  if (layout === "text") return TEXT_CHOICE.label;
   return (
     LAYOUTS.find((info) => info.id === layout)?.label ?? customLayout(book, layout)?.name ?? layout
   );
 }
+
+/**
+ * A text page, as the layout pickers offer it after the built-in layouts: a title and text, with
+ * photos under them if wanted. Its look only draws its glyph.
+ */
+const TEXT_CHOICE: LayoutChoice = {
+  id: "text",
+  label: "Text page",
+  description: "A title and text in Markdown, in up to 3 columns, with up to 4 photos under it.",
+  look: {
+    photos: 2,
+    arrange: "row",
+    shape: "fill",
+    text: "above",
+    captions: "column",
+    textShare: 60,
+    align: "start",
+    gap: 2,
+    margin: 0,
+  },
+};
 
 /** A layout a photo page can have, as its buttons show it. */
 export interface LayoutChoice {
@@ -137,11 +159,13 @@ export function everyLayoutChoice(book: PhotoBook): LayoutChoice[] {
 
 /**
  * The layouts a page's picker offers: every one but the built-in ones the book hides, though a
- * page keeps its current one.
+ * page keeps its current one: the built-in ones, a text page, then the book's own.
  */
 export function layoutChoices(book: PhotoBook, current?: PageLayout): LayoutChoice[] {
   const hidden = new Set<PageLayout>(book.hiddenLayouts ?? []);
-  return everyLayoutChoice(book).filter((c) => !hidden.has(c.id) || c.id === current);
+  const choices = everyLayoutChoice(book).filter((c) => !hidden.has(c.id) || c.id === current);
+  const own = choices.filter((c) => c.id.startsWith("custom-"));
+  return [...choices.filter((c) => !own.includes(c)), TEXT_CHOICE, ...own];
 }
 
 /**

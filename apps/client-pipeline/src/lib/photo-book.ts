@@ -8,10 +8,14 @@ export type BuiltInLayout =
 
 /**
  * A page layout of the Photo Book: a built-in one, one made on the book's Layouts tab (its ID starts
- * with `custom-`), or `other` for one of the book's other pages, such as one the publisher requires
- * or a bio page, which shows only its name for now.
+ * with `custom-`), `text` for a text page (a title and text, with photos under them if wanted), or
+ * `other` for one of the book's other pages, such as one the publisher requires or a bio page,
+ * which shows only its name for now.
  */
-export type PageLayout = BuiltInLayout | "other" | `custom-${string}`;
+export type PageLayout = BuiltInLayout | "other" | "text" | `custom-${string}`;
+
+/** The most photos a text page holds. */
+export const TEXT_PAGE_PHOTOS = 4;
 
 /**
  * A page layout made on a book's Layouts tab: how many photos the page holds, how they're arranged
@@ -94,7 +98,11 @@ export interface BookPage {
   layout: PageLayout;
   /** Shown above the page's top photo; null for none. */
   title: string | null;
-  /** The page's photo places, as many as its layout holds. */
+  /** A text page's words under its title, in Markdown; absent or "" for none. */
+  text?: string;
+  /** How many columns a text page's text flows into, 1 to 3; absent for one. */
+  columns?: number;
+  /** The page's photo places, as many as its layout holds; a text page's, as many as it was given. */
   slots: BookSlot[];
 }
 
@@ -204,10 +212,10 @@ export const LAYOUTS: LayoutInfo[] = [
 
 /**
  * How many photos layout holds: a built-in one's count, one of the book's layouts' photos, none on
- * an other page, and a full page's one for a layout the book doesn't have.
+ * an other page or a new text page, and a full page's one for a layout the book doesn't have.
  */
 export function layoutSlots(book: Pick<PhotoBook, "layouts">, layout: PageLayout): number {
-  if (layout === "other") return 0;
+  if (layout === "other" || layout === "text") return 0;
   const custom = book.layouts?.find((l) => l.id === layout);
   return custom?.photos ?? LAYOUTS.find((info) => info.id === layout)?.slots ?? 1;
 }
@@ -235,7 +243,13 @@ export function newPage(book: PhotoBook, layout: PageLayout): BookPage {
   const ids = new Set(book.pages.map((page) => page.id));
   let n = book.pages.length + 1;
   while (ids.has(`page-${n}`)) n += 1;
-  return { id: `page-${n}`, layout, title: null, slots: fitSlots([], layoutSlots(book, layout)) };
+  const page = {
+    id: `page-${n}`,
+    layout,
+    title: null,
+    slots: fitSlots([], layoutSlots(book, layout)),
+  };
+  return layout === "text" ? { ...page, title: "", text: "" } : page;
 }
 
 /** The book with the page at index changed by change. */
@@ -247,15 +261,23 @@ function changePage(
   return { ...book, pages: book.pages.map((page, i) => (i === index ? change(page) : page)) };
 }
 
+/** A page's photos as a text page keeps them: its photos without the empty places, up to TEXT_PAGE_PHOTOS. */
+function textPageSlots(slots: BookSlot[]): BookSlot[] {
+  return slots.filter((slot) => slot.photo !== "").slice(0, TEXT_PAGE_PHOTOS);
+}
+
 /**
  * The book with the page at index in a new layout, keeping its photos in order. A photo past the
- * new layout's places comes off the page.
+ * new layout's places comes off the page; a page made a text page keeps up to TEXT_PAGE_PHOTOS.
  */
 export function setLayout(book: PhotoBook, index: number, layout: PageLayout): PhotoBook {
   return changePage(book, index, (page) => ({
     ...page,
     layout,
-    slots: fitSlots(page.slots, layoutSlots(book, layout)),
+    slots:
+      layout === "text"
+        ? textPageSlots(page.slots)
+        : fitSlots(page.slots, layoutSlots(book, layout)),
   }));
 }
 

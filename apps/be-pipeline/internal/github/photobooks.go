@@ -27,13 +27,28 @@ var photoBookLayouts = map[string]int{
 	// One of the book's other pages, such as one the publisher requires or a
 	// bio page: no photos, only its name for now.
 	"other": 0,
+	// A text page: a title and text, with as many photos under them as the
+	// page was given, up to maxTextPagePhotos.
+	"text": textPagePhotos,
 }
+
+// textPagePhotos stands for a text page's count of photos, which is however
+// many places the page was given, up to maxTextPagePhotos.
+const textPagePhotos = -1
+
+// maxTextPagePhotos is the most photos a text page can hold, and
+// maxTextPageColumns the most columns its text can flow into.
+const (
+	maxTextPagePhotos  = 4
+	maxTextPageColumns = 3
+)
 
 // The most pages a photo book can have, and the most characters of a
 // caption written by hand.
 const (
 	maxPhotoBookPages     = 500
 	maxPhotoBookCaption   = 2000
+	maxPhotoBookPageText  = 5000
 	maxPhotoBookPathChars = 500
 )
 
@@ -120,10 +135,16 @@ type PhotoBookPage struct {
 	// not shown on Photo Pages.
 	Hidden bool `json:"hidden,omitempty"`
 	// Layout is "full", "pair-left", "pair-right", "verticals-left",
-	// "verticals-right", "other", or the ID of one of the book's layouts.
+	// "verticals-right", "other", "text", or the ID of one of the book's
+	// layouts.
 	Layout string `json:"layout"`
 	// Title is shown above the page's top photo; nil for none.
 	Title *string `json:"title"`
+	// Text is a text page's words under its title, in Markdown; "" for none.
+	Text string `json:"text,omitempty"`
+	// Columns is how many columns a text page's text flows into, 1 to
+	// maxTextPageColumns; 0 (absent) for one.
+	Columns int `json:"columns,omitempty"`
 	// Slots are the page's photo places, as many as its layout holds.
 	Slots []PhotoBookSlot `json:"slots"`
 }
@@ -281,6 +302,12 @@ func validPhotoBookPage(page PhotoBookPage, n int, counts map[string]int) (Photo
 		}
 		out.Title = &title
 	}
+	if out.Text, out.Columns, perr = validPhotoBookPageText(page, n); perr != nil {
+		return out, perr
+	}
+	if count == textPagePhotos {
+		count = min(len(page.Slots), maxTextPagePhotos)
+	}
 	out.Slots = make([]PhotoBookSlot, count)
 	for i := range min(count, len(page.Slots)) {
 		slot, perr := validPhotoBookSlot(page.Slots[i], n)
@@ -290,6 +317,24 @@ func validPhotoBookPage(page PhotoBookPage, n int, counts map[string]int) (Photo
 		out.Slots[i] = slot
 	}
 	return out, nil
+}
+
+// validPhotoBookPageText is page n's text, trimmed, and its columns, from 1
+// to maxTextPageColumns with 1 as 0: a text page's, its text up to
+// maxPhotoBookPageText characters, and none on any other page.
+func validPhotoBookPageText(page PhotoBookPage, n int) (string, int, *PublishError) {
+	if page.Layout != "text" {
+		return "", 0, nil
+	}
+	text := strings.TrimSpace(page.Text)
+	if utf8.RuneCountInString(text) > maxPhotoBookPageText {
+		return "", 0, publishErr(http.StatusBadRequest, "Keep page %d's text to %d characters.", n, maxPhotoBookPageText)
+	}
+	columns := min(max(page.Columns, 1), maxTextPageColumns)
+	if columns == 1 {
+		columns = 0
+	}
+	return text, columns, nil
 }
 
 // validPhotoBookSlot checks a photo's place on page n.

@@ -10,7 +10,7 @@ export interface LayoutOption {
 
 /**
  * The layouts the pages and spreads use, to filter them by: the built-in ones, then the book's
- * own, in the order the pickers list them, then **Other pages** when there are any. A spread
+ * own, in the order the pickers list them, then **Text pages** and **Other pages** when there are any. A spread
  * counts for each of its pages' layouts.
  */
 export function unitLayouts(book: PhotoBook, units: BookUnit[]): LayoutOption[] {
@@ -18,7 +18,9 @@ export function unitLayouts(book: PhotoBook, units: BookUnit[]): LayoutOption[] 
   const options: LayoutOption[] = everyLayoutChoice(book)
     .filter((choice) => used.has(choice.id))
     .map(({ id, label }) => ({ id, label }));
-  return used.has("other") ? [...options, { id: "other", label: "Other pages" }] : options;
+  const text: LayoutOption[] = used.has("text") ? [{ id: "text", label: "Text pages" }] : [];
+  const other: LayoutOption[] = used.has("other") ? [{ id: "other", label: "Other pages" }] : [];
+  return [...options, ...text, ...other];
 }
 
 /**

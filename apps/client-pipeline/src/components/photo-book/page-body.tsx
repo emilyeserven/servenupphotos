@@ -3,6 +3,7 @@ import { CustomBody } from "@/components/photo-book/custom-body";
 import { PhotoSlot } from "@/components/photo-book/page-slot";
 import { type BookPageProps, type PageParts, pageName } from "@/components/photo-book/page-types";
 import { SlotCaption } from "@/components/photo-book/slot-caption";
+import { TextBody } from "@/components/photo-book/text-body";
 import type { BuiltInLayout } from "@/lib/photo-book";
 import { customPageLook } from "@/lib/photo-book-layouts";
 import { cn } from "@/lib/utils";
@@ -181,12 +182,19 @@ const BODIES: Record<BuiltInLayout, (parts: PageParts) => ReactNode> = {
   "verticals-right": (parts) => <VerticalsBody parts={parts} left={false} />,
 };
 
-/** The page's photos and captions, laid out as its layout says. */
+/** A photo page's photos and captions, laid out as its layout, built in or the book's own, says. */
+function PhotosBody(props: BodyProps & { parts: PageParts }) {
+  const { parts } = props;
+  const custom = customPageLook(props.layouts, props.page, props.sides, props.side);
+  if (custom) return <CustomBody parts={parts} look={custom} />;
+  return (BODIES[props.page.layout as BuiltInLayout] ?? BODIES.full)(parts);
+}
+
+/** The page's photos and captions, laid out as its layout says; a text page's text too. */
 export function PageBody(props: BodyProps) {
   const { layout } = props.page;
   if (layout === "other") return <OtherBody name={pageName(props.page)} />;
   const parts = pageParts(props);
-  const custom = customPageLook(props.layouts, props.page, props.sides, props.side);
-  if (custom) return <CustomBody parts={parts} look={custom} />;
-  return (BODIES[layout as BuiltInLayout] ?? BODIES.full)(parts);
+  if (layout !== "text") return <PhotosBody {...props} parts={parts} />;
+  return <TextBody parts={parts} page={props.page} actions={props.actions} />;
 }

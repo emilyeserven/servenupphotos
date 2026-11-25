@@ -3,13 +3,19 @@ import type { SocialPhoto } from "@/api/publish";
 import type { SlotShape } from "@/components/photo-book/page-slot";
 import type { CustomLayout, BookPage as Page, PageSide, SlotPlace } from "@/lib/photo-book";
 
-/** What the page itself can do to its book: its title, photos and captions. */
+/** What the page itself can do to its book: its title, photos and captions, and a text page's text. */
 export interface PageActions {
   onTitle: (title: string | null) => void;
   /** Puts the photo at path in the slot; from is where it was dragged from on the pages, if it was. */
   onDropPhoto: (slot: number, path: string, from: SlotPlace | undefined) => void;
   onRemovePhoto: (slot: number) => void;
   onCaption: (slot: number, caption: string | null) => void;
+  /** Sets a text page's text, in Markdown. */
+  onText: (text: string) => void;
+  /** Sets how many columns a text page's text flows into. */
+  onColumns: (columns: number) => void;
+  /** Sets how many photo places a text page has. */
+  onPhotoPlaces: (count: number) => void;
 }
 
 /** A page of the book, where it is, and what it shows and can do. */

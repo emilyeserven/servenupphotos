@@ -103,7 +103,9 @@ export function LayoutGlyph(props: {
       aria-hidden
       className={cn("inline-flex rounded-[2px] border border-current p-[2px]", className)}
     >
-      {layout.startsWith("custom-") && look ? customGlyph(look) : glyphBody(layout)}
+      {(layout.startsWith("custom-") || layout === "text") && look
+        ? customGlyph(look)
+        : glyphBody(layout)}
     </span>
   );
 }
