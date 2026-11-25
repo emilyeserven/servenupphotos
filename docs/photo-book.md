@@ -8,7 +8,7 @@
 
 On a book's page, **All photo books** goes back to the list. Under it, three tabs, each a page of its own with a line under the tabs saying what it's for:
 
-- **Info** (`/photo-books/<id>/info`): the book's name, album, caption template and page size.
+- **Info** (`/photo-books/<id>/info`): the book's name, album, caption template, page size and page budget.
 - **Layouts** (`/photo-books/<id>/layouts`): trying out page layouts at the book's page size.
 - **Photo Pages** (`/photo-books/<id>/pages`, where the book opens): making photo pages that could be used, and linking them into spreads.
 - **Book** (`/photo-books/<id>/book`): putting the pages that will be used in order, adding other pages, and paging through the book.
@@ -18,6 +18,8 @@ On a book's page, **All photo books** goes back to the list. Under it, three tab
 **Name** renames the book, **Photos from** picks the album its photos come from, **Captions from** picks the [caption template](caption-templates.md) its captions are filled in with, and **Remove book** removes it after asking.
 
 **Page size** takes the page's width and height in inches, centimeters, millimeters, points or pixels, starting at BookWright's large landscape page, 12.5 × 10.625 in. Only the shape is used: every page on every tab is drawn with width over height as its `aspect-ratio`, shown beside the fields as a small black page. A side that isn't a number more than 0 isn't saved.
+
+**Page budget** sets a **Target** and a **Max** page count, each saved as it's typed; an empty box isn't set, and a target over the max isn't saved. They count printed pages: a spread is two, and other pages count too. On **The book**, above the preview, a bar shows the pages placed against them: the count, how many pages to go to (or past) each, the target marked on a bar that runs to the max, green once the target is reached and red with a warning past the max. A book with no budget shows none of it.
 
 ## Layouts
 
@@ -154,6 +156,7 @@ Each book is one file, `photobooks/<id>.json`, and **Commit** combines them into
 
 - **`template`** is the caption template's ID, or `""` for the default one.
 - **`album`** is the ID of the album the book's photos come from, or `""` (or missing, in a book made before) while none is picked.
+- **`budget`** is the page budget from **Info**, `{ target, max }`, each a whole number of printed pages up to 500 with `target` no more than `max`; a number not set is left out, and so is a budget with neither.
 - **`size`** is the page size from **Info**, `unit` one of `in`, `cm`, `mm`, `pt` or `px`; a book without one uses 12.5 × 10.625 in.
 - **`layout`** is `full`, `pair-left`, `pair-right`, `verticals-left` or `verticals-right`, `other` for an other page, or the ID of one of the book's `layouts`; the backend fills or cuts `slots` to the layout's count (none for `other`).
 - **`layouts`** are the book's own layouts from the **Layouts** tab, each `{ id: "custom-<n>", name, photos (1–4), arrange: "stack" | "row", shape: "landscape" | "portrait" | "square" | "ratio" | "fill", ratio: { width, height } (only with "ratio", each more than 0 and at most 100), text: "left" | "right" | "above" | "below", captions: "column" | "photo", textShare (10–60), align: "start" | "center" | "end", gap (0–20), margin (0–20), leftPages: "mirror" | "same" | "own", left: { the same settings but id, name, photos and leftPages } (only with "own") }`, the numbers in percent of the page; left out while there are none. A layout without `leftPages` (made before) draws the same on both sides. A page whose layout isn't there is refused.

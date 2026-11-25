@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BookPreview } from "@/components/photo-book/book-preview";
+import { BudgetMeter } from "@/components/photo-book/budget-meter";
 import { LowResolutionList } from "@/components/photo-book/low-resolution-list";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { usePreviewKeys, usePreviewMode } from "@/components/photo-book/preview-mode";
@@ -69,7 +70,8 @@ export function BookTab({ book, update, look }: BookTabProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
+          <BudgetMeter book={book} />
           <BookPreview
             views={views}
             at={at}
