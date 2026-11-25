@@ -3,6 +3,1422 @@
     "id": "2026",
     "name": "2026",
     "template": "",
-    "pages": []
+    "album": "2026-photo-book-candidates",
+    "pages": [
+      {
+        "id": "page-25",
+        "tags": ["japan", "architecture", "rural", "grayscale"],
+        "layout": "custom-4",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9608.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-78",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf1861.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5055.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-10",
+        "name": "Korea B&Ws",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf1823.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7906.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-6",
+        "name": "Distinctive Cityscapes",
+        "tags": ["cityscape", "egypt", "korea", "grayscale"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7323.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/from-the-mosque-looking-over-cairo.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-82",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/20250118_140137.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/20250118_143456.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-3",
+        "tags": ["egypt", "architecture", "rural"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/20250119_153957.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/luxor-lunch.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-4",
+        "tags": ["egypt", "architecture"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/hallway-of-the-mosque.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/karnak-scaffolding.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-83",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/20250118_143611.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5384.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-13",
+        "name": "Suitorou Horizontals",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5103.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5004.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-15",
+        "name": "Night Verticals",
+        "tags": ["nighttime"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/matsue-castle-x-suitorou.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/racing-through-kobe.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-8",
+        "name": "Twisting Roads",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7432.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7374.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-39",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7390.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9413.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-72",
+        "tags": ["rural", "japan", "daytime"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9569.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7394.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-35",
+        "tags": ["semirural"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf1940.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/the-other-end-of-the-salt-water-pond.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-21",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2882.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2735.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-22",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2635.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf3482.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-29",
+        "tags": ["rural"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7199-2.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7470.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-5",
+        "layout": "custom-4",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/path-in-tokoji-temple.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-12",
+        "name": "Izumo II",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf3436.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf3236.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-11",
+        "name": "Izumo I",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2305.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/looking-back-at-gate-1.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-20",
+        "tags": ["semirural"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2454.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf3005.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-73",
+        "tags": ["rural", "japan", "daytime"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5967.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5863.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-19",
+        "name": "Red Bridge Verticals",
+        "tags": ["semirural"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5888.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9400.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-61",
+        "tags": ["architecture"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0309-2.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/bays-looking-over-the-bay.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-85",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/seal-rock-row.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/seal-rock-row-ii.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-60",
+        "tags": ["industrial"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/outer-richmond-residences.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7692.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-57",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5615.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5705.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-93",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7776.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5696.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-62",
+        "tags": ["bright"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7710.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf4800.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-63",
+        "tags": ["bright"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf4789.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7121.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-92",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf4748.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7759.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-34",
+        "tags": ["semirural"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8563.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0032.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-51",
+        "tags": ["objects"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8397.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/lucky-frog.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-91",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/sacred-paper.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0003.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-40",
+        "tags": ["objects"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7330.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8334.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-32",
+        "tags": ["bright", "daytime"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9278.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf1425.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-88",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9461.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf1445.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-80",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9706.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/japsang.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-46",
+        "tags": ["bright"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/photographing-photographers...gyeongbokgung-edition.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/ladies-waiting.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-1",
+        "name": "Mirror Pond",
+        "layout": "custom-4",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/mirror-pond.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-79",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/palace-halls.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf6604.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-18",
+        "name": "Busan Night",
+        "tags": ["industrial"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8058.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7892.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-49",
+        "tags": ["nighttime"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8002.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/rainy-hot-spring-night.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-41",
+        "tags": ["industrial", "nighttime"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8110.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8139.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-7",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8051.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2138.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-17",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2175.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf6291.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-74",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0063.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0566.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-37",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0423.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/osakan-street.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-38",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf6313.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf4387.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-43",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7565.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/blue-culture-street.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-27",
+        "layout": "custom-4",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/gamcheon-bowl.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-31",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8748.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf4856.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-28",
+        "tags": ["industrial"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7486.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7239-2.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-89",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7261.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7450.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-54",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7476.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7613.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-47",
+        "tags": ["rural"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8416.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8743.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-36",
+        "tags": ["rural", "industrial"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf1782-2.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7991.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-67",
+        "tags": ["industrial"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8754.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf6819.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-90",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf3541.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf8722.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-23",
+        "tags": ["semirural"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf3909.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf3700.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-55",
+        "tags": ["objects"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9391.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/blue-fish.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-33",
+        "tags": ["semirural"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9485.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2846.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-66",
+        "tags": ["religious"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/to-the-offering-box.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/rope-charms.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-70",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9997.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5307.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-64",
+        "tags": ["industrial", "objects"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5360.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5353.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-65",
+        "tags": ["objects"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/pull-the-hook-down-once-and-let-go.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/fire-alarm.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-45",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5675.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0014.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-52",
+        "tags": ["objects"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0646-2.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/20250120_143106.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-84",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0159.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/20250118_114107.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-26",
+        "tags": ["grayscale", "rural", "japan"],
+        "layout": "custom-4",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9679-2.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-58",
+        "tags": ["objects"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7900.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5365.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-87",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2563.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2647.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-42",
+        "tags": ["lanterns", "bright"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9669.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf1482-2.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-30",
+        "tags": ["nighttime"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9706.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9305-2.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-9",
+        "name": "Suitorou Verticals",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5023.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5217.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-75",
+        "tags": ["lanterns", "egypt", "japan", "nature", "desert"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0906.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/20250118_143432.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-76",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf9887.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/walking-through-arima-on-a-rainy-night.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-48",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf3817.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0309-2.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-68",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5784.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/palace-halls.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-69",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf4444.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf2276.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-71",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/palace-halls.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7554.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-77",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf6203.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf3640.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-81",
+        "tags": ["architecture"],
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/seal-rock-row-ii.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7692.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-86",
+        "name": "About",
+        "layout": "other",
+        "title": null,
+        "slots": []
+      }
+    ],
+    "order": [
+      "page-25",
+      "page-78",
+      "page-10",
+      "page-6",
+      "page-82",
+      "page-3",
+      "page-4",
+      "page-83",
+      "page-13",
+      "page-15",
+      "page-8",
+      "page-39",
+      "page-72",
+      "page-35",
+      "page-21",
+      "page-22",
+      "page-29",
+      "page-5",
+      "page-12",
+      "page-11",
+      "page-20",
+      "page-73",
+      "page-19",
+      "page-61",
+      "page-85",
+      "page-60",
+      "page-57",
+      "page-93",
+      "page-62",
+      "page-63",
+      "page-92",
+      "page-34",
+      "page-51",
+      "page-91",
+      "page-40",
+      "page-32",
+      "page-88",
+      "page-80",
+      "page-46",
+      "page-1",
+      "page-79",
+      "page-18",
+      "page-49",
+      "page-41",
+      "page-7",
+      "page-17",
+      "page-74",
+      "page-37",
+      "page-38",
+      "page-43",
+      "page-27",
+      "page-31",
+      "page-28",
+      "page-89",
+      "page-54",
+      "page-47",
+      "page-36",
+      "page-67",
+      "page-90",
+      "page-23",
+      "page-55",
+      "page-33",
+      "page-66",
+      "page-70",
+      "page-64",
+      "page-65",
+      "page-45",
+      "page-52",
+      "page-84",
+      "page-26"
+    ],
+    "size": {
+      "width": 13,
+      "height": 11,
+      "unit": "in"
+    },
+    "layouts": [
+      {
+        "id": "custom-1",
+        "name": "Two portrait photos, info below",
+        "photos": 2,
+        "arrange": "row",
+        "shape": "ratio",
+        "ratio": {
+          "width": 5,
+          "height": 7
+        },
+        "text": "below",
+        "captions": "photo",
+        "textShare": 26,
+        "align": "start",
+        "gap": 2,
+        "margin": 0
+      },
+      {
+        "id": "custom-2",
+        "name": "Two horizontal photos",
+        "photos": 2,
+        "arrange": "stack",
+        "shape": "ratio",
+        "ratio": {
+          "width": 16,
+          "height": 9
+        },
+        "text": "left",
+        "captions": "photo",
+        "textShare": 37,
+        "align": "end",
+        "gap": 3,
+        "margin": 0,
+        "leftPages": "mirror"
+      },
+      {
+        "id": "custom-4",
+        "name": "Full page (mine)",
+        "photos": 1,
+        "arrange": "stack",
+        "shape": "ratio",
+        "ratio": {
+          "width": 16,
+          "height": 9
+        },
+        "text": "below",
+        "captions": "photo",
+        "textShare": 18.5,
+        "align": "start",
+        "gap": 3,
+        "margin": 0
+      }
+    ]
   }
 ]
