@@ -2,7 +2,23 @@
 
 `/albums` and `/tags`, under **Organize** in the sidebar, add new albums and tags. Each page lists every album or tag on the Settings branch and in the open **Add photo data** pull request, marking the ones not merged yet as in flight (`GET /api/organize` → `GET /organize`). **New album** (or **New tag**) asks for a name and an optional description. Its ID is made from the name (lowercase, accents dropped, anything other than a to z and 0 to 9 turned into dashes, so `Busan, South Korea` becomes `busan-south-korea`), and the form warns while you type when an album or tag already has that name or ID, or when the name has nothing to make an ID from (such as `東京` on its own). A tag's name is always its ID, in lowercase kebab-case: **New tag** saves `Street Food` as `street-food`, and the backend refuses a tag whose name isn't its ID. When older tags have other names, the Tags page lists them under **Tag names to fix**, whose **Rename** button saves each one's name as its ID (`PUT /api/organize/tags/names`), as changes waiting for Commit. Photos list tags by ID, so no photo changes. Saving (`POST /api/organize/{albums,tags}`) checks again on GitHub, then adds `<folder>/albums/<id>.json` (or `tags/`) to the open photo data pull request, or opens one, the same way photos are saved, and shows it in `ALLALBUMS.json` or `ALLTAGS.json` at once, until a **Commit** writes it there. A new album can have a **Parent album**, and a new tag a **Parent tag**. Albums and tags are listed as a tree, each under its parent, with how many photos in `ALLPHOTOS.json` list each one.
 
-Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its file and status, an album's parents, a **Sub-albums** panel under **Parent album** listing every album inside it as a tree with photo counts, and the photos `ALLPHOTOS.json` lists in it (at the pull request's head when one is open, from the [combined data store](combined-data-store.md)), optionally with the ones in its sub-albums. An album's page can change its parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }`), which rewrites only the file's `parent`, as a [change waiting for Commit](pending-changes.md), refusing a parent that's the album itself or inside it.
+Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its file and status, an album's parents, a **Sub-albums** panel listing every album inside it as a tree with photo counts, and the photos `ALLPHOTOS.json` lists in it (at the pull request's head when one is open, from the [combined data store](combined-data-store.md)), optionally with the ones in its sub-albums. An album's page can change its parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }`), which rewrites only the file's `parent`, as a [change waiting for Commit](pending-changes.md), refusing a parent that's the album itself or inside it.
+
+## Album page tabs
+
+An album's page splits its cards into three tabs under its name, each its own address, so a link or a reload opens the same one (`routes/albums.$id.*.tsx`, `components/album-page/`):
+
+- **Photos** (`/albums/<id>`, where every link to the album opens): the **Smart Album** card and the **Photos** card.
+- **Info** (`/albums/<id>/info`): **About this album** and **Parent album**, beside **On the portfolio**, **Sub-albums** and **Delete album**.
+- **Layout** (`/albums/<id>/layout`): the **Layout and covers** card, or a note saying why a Smart Album, or an album whose file couldn't be read, has none.
+
+> **Frontend analogy:** the tabs are TanStack Router child routes under `/albums/$id`, which reads the album once and hands it to whichever tab's `<Outlet />` is open through React context, like a layout component in any nested router.
+
+A tag's or genre's page has no tabs: its cards sit side by side as before.
+
+## Orientation quick filter
+
+The **Photos** card of an album, tag or genre with two or more photos has a row of buttons above them: **All**, then **Landscape**, **Portrait** and **Square**, each with how many of the photos have that shape (from the width and height in each photo's JSON; a shape none has is left out). Picking one shows only those photos, until **All** brings them back; it only filters what's shown, so **Reorder** and **Remove photos** still list every photo. When none match, the card says so.
 
 ## Adding photos
 
@@ -22,7 +38,7 @@ To take out just one photo, hover its tile in the **Photos** card (on a phone th
 
 ## Deleting an album
 
-**Delete album**, in its own card on an album's page, asks first in a dialog that says what goes with it: how many photos list the album, where its sub-albums move, and which of the portfolio's spotlight spots it leaves without an album. Confirming saves, as one change waiting for Commit (`DELETE /api/organize/albums/<id>`):
+**Delete album**, in its own card on an album's **Info** tab, asks first in a dialog that says what goes with it: how many photos list the album, where its sub-albums move, and which of the portfolio's spotlight spots it leaves without an album. Confirming saves, as one change waiting for Commit (`DELETE /api/organize/albums/<id>`):
 
 - its file deleted, with its photo order, covers, layout and spotlight spots;
 - the album taken out of every photo file that lists it, drafts included, each keeping its other albums;
@@ -38,11 +54,11 @@ An album's page shows its photos in the album's order, the one the portfolio use
 
 > **Frontend analogy:** like a sortable list that saves an array of IDs rather than an index on each item, so a photo can be in several albums with a different place in each, and a new item simply goes on the end.
 
-To lay the album's page out in rows with text above and below them, and to pick its cover photos, use the **Layout and covers** card under it; see [Album Layouts and Covers](album-layouts.md).
+To lay the album's page out in rows with text above and below them, and to pick its cover photos, use the **Layout and covers** card on its **Layout** tab; see [Album Layouts and Covers](album-layouts.md).
 
 ## Showing or hiding on the portfolio
 
-The **On the portfolio** card, on an album's page, hides the album on the portfolio or shows it again (`PUT /api/organize/albums/<id>/visibility` with `{ "hidden": true | false }`), writing only the file's `hidden`, as a [change waiting for Commit](pending-changes.md). A hidden album, and every album inside it, isn't on the portfolio's [Albums](portfolio-albums.md) page or in the Grid's **Groups** filter, and its own page says there's no such album. Its photos still show everywhere else, and a [spotlight zone](publish.md#site-spotlight) that shows it still does, so an album like **Homepage Spotlight** can feed the homepage without being listed. The card says when an album is hidden because one it's inside is, and the Albums list marks each hidden album with **Hidden on the portfolio**.
+The **On the portfolio** card, on an album's **Info** tab, hides the album on the portfolio or shows it again (`PUT /api/organize/albums/<id>/visibility` with `{ "hidden": true | false }`), writing only the file's `hidden`, as a [change waiting for Commit](pending-changes.md). A hidden album, and every album inside it, isn't on the portfolio's [Albums](portfolio-albums.md) page or in the Grid's **Groups** filter, and its own page says there's no such album. Its photos still show everywhere else, and a [spotlight zone](publish.md#site-spotlight) that shows it still does, so an album like **Homepage Spotlight** can feed the homepage without being listed. The card says when an album is hidden because one it's inside is, and the Albums list marks each hidden album with **Hidden on the portfolio**.
 
 > **Frontend analogy:** like a `published: false` flag on a CMS entry: the entry and its data stay, and only the public list and detail routes skip it, the same as a filtered-out row rather than a deleted one.
 
