@@ -6,6 +6,7 @@ import {
   groupByLocation,
   groupByTheme,
   idAsName,
+  oneAlbum,
   sharedAlbumsToSave,
   sharedLikes,
 } from "@/lib/shared-likes";
@@ -114,4 +115,11 @@ test("the save makes new albums and puts each photo file in its albums", () => {
       { path: "photos/b.json", albums: ["our-favorites"] },
     ],
   });
+});
+
+test("one album holds every chosen photo, lowest ID first", () => {
+  assert.deepEqual(oneAlbum([5, 2, 9]), [
+    { key: "all", name: "Shared Likes", source: "all", photos: [2, 5, 9] },
+  ]);
+  assert.deepEqual(oneAlbum([]), []);
 });

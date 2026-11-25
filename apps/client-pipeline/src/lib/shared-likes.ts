@@ -48,11 +48,14 @@ export interface PhotoFacts {
   genres: string[];
 }
 
-/** How the chosen photos are grouped into suggested albums. */
-export type GroupBy = "location" | "theme";
+/**
+ * How the chosen photos are grouped into suggested albums: all in one album (the default), or split
+ * by location or by theme.
+ */
+export type GroupBy = "one" | "location" | "theme";
 
-/** What a suggested group is made from. */
-export type GroupSource = "city" | "country" | "tag" | "genre" | "none";
+/** What a suggested group is made from; "all" is every chosen photo, in one album. */
+export type GroupSource = "all" | "city" | "country" | "tag" | "genre" | "none";
 
 /** A group of the chosen photos to suggest as an album. */
 export interface SuggestedGroup {
@@ -63,6 +66,17 @@ export interface SuggestedGroup {
   source: GroupSource;
   /** The IDs of its photos, lowest first. */
   photos: number[];
+}
+
+/** The name the one album of every chosen photo starts with. */
+const ONE_ALBUM_NAME = "Shared Likes";
+
+/** Every chosen photo in one suggested album, named "Shared Likes" to start with; none when there are no photos. */
+export function oneAlbum(photos: number[]): SuggestedGroup[] {
+  if (photos.length === 0) return [];
+  return [
+    { key: "all", name: ONE_ALBUM_NAME, source: "all", photos: photos.toSorted((a, b) => a - b) },
+  ];
 }
 
 /** The name of photos that have nothing to group by. */
