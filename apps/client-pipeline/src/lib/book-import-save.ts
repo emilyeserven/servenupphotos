@@ -4,9 +4,6 @@ import { type BookImport, importedBook, importedPhotos } from "@/lib/book-import
 import type { PhotoBook } from "@/lib/photo-book";
 import { albumFor } from "@/lib/shared-likes";
 
-/** How many photo files one album save takes, as the backend allows. */
-const PHOTOS_PER_SAVE = 50;
-
 /** What the review chose: the name for the album and book, and whether the album starts hidden. */
 export interface ImportChoices {
   name: string;
@@ -26,18 +23,11 @@ export interface ImportContext {
 export interface ImportSaves {
   /** The album's ID, and whether it's an album already (its photos are added to it). */
   album: { id: string; existing: boolean };
-  /** The album saves, 50 photos at a time; the first makes the album when it's new. None without photos. */
-  albumSaves: AlbumSuggestions[];
+  /** The album save, with every photo, making the album when it's new; null without photos. */
+  albumSave: AlbumSuggestions | null;
   /** The new album's photo order, the book's order; empty for an existing album, which keeps its own. */
   photoOrder: number[];
   book: PhotoBook;
-}
-
-/** list in pieces of size. */
-function chunks<T>(list: T[], size: number): T[][] {
-  return Array.from({ length: Math.ceil(list.length / size) }, (_, i) =>
-    list.slice(i * size, (i + 1) * size),
-  );
 }
 
 /**
@@ -57,15 +47,12 @@ export function importSaves(
     album.id && !album.existing
       ? [{ id: album.id, name, description: read.description, hidden: choices.hidden }]
       : [];
-  const albumSaves = album.id
-    ? chunks(paths, PHOTOS_PER_SAVE).map((part, i) => ({
-        newAlbums: i === 0 ? newAlbums : [],
-        photos: part.map((path) => ({ path, albums: [album.id] })),
-      }))
-    : [];
+  const albumSave = album.id
+    ? { newAlbums, photos: paths.map((path) => ({ path, albums: [album.id] })) }
+    : null;
   const photoOrder = album.existing
     ? []
     : paths.flatMap((path) => context.photoIds.get(path) ?? []);
   const book = importedBook(read, { id: context.bookId(name), name, album: album.id });
-  return { album, albumSaves, photoOrder, book };
+  return { album, albumSave, photoOrder, book };
 }

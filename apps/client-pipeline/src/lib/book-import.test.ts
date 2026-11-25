@@ -108,7 +108,7 @@ test("an import makes a new album of the matched photos in book order, then the 
     },
   );
   assert.deepEqual(saves.album, { id: "vol-3", existing: false });
-  assert.deepEqual(saves.albumSaves[0]?.newAlbums, [
+  assert.deepEqual(saves.albumSave?.newAlbums, [
     { id: "vol-3", name: "Vol. 3", description: "A year of photos.", hidden: true },
   ]);
   assert.deepEqual(saves.photoOrder, [1, 2]);
@@ -123,7 +123,7 @@ test("an import adds to an album with the name already, keeping its order", () =
     { albums: [{ id: "winter", name: "Winter" }], bookId: () => "winter", photoIds: new Map() },
   );
   assert.deepEqual(saves.album, { id: "winter", existing: true });
-  assert.deepEqual(saves.albumSaves[0]?.newAlbums, []);
+  assert.deepEqual(saves.albumSave?.newAlbums, []);
   assert.deepEqual(saves.photoOrder, []);
 });
 
@@ -134,6 +134,6 @@ test("an import without matched photos makes only the book", () => {
     { name: "Old", hidden: true },
     { albums: [], bookId: () => "old", photoIds: new Map() },
   );
-  assert.deepEqual(saves.albumSaves, []);
+  assert.equal(saves.albumSave, null);
   assert.equal(saves.book.album, "");
 });

@@ -214,8 +214,8 @@ type AlbumSuggestionsResult struct {
 // albums, all as one save in the pending changes. Nothing is saved when an
 // album can't be made or a photo can't be read.
 func (c *Client) ApplyAlbumSuggestions(ctx context.Context, gh settings.GitHub, s AlbumSuggestions) (AlbumSuggestionsResult, error) {
-	if len(s.Photos) == 0 || len(s.Photos) > maxBulkTagPhotos {
-		return AlbumSuggestionsResult{}, publishErr(http.StatusBadRequest, "Put 1 to %d photos in albums at a time.", maxBulkTagPhotos)
+	if len(s.Photos) == 0 {
+		return AlbumSuggestionsResult{}, publishErr(http.StatusBadRequest, "Pick at least 1 photo to put in albums.")
 	}
 	adds := make([]photoAdds, 0, len(s.Photos))
 	for _, p := range s.Photos {

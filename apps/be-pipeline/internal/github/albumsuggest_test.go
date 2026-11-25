@@ -2,6 +2,7 @@ package github
 
 import (
 	"encoding/json"
+	"fmt"
 	"slices"
 	"strings"
 	"testing"
@@ -132,6 +133,24 @@ func TestApplyAlbumSuggestions(t *testing.T) {
 	}
 }
 
+func TestApplyAlbumSuggestionsManyPhotos(t *testing.T) {
+	files := map[string]string{}
+	var photos []AlbumSuggestionsPhoto
+	for i := range maxBulkTagPhotos + 25 {
+		name := fmt.Sprintf("p%03d.json", i)
+		files[name] = "{\n  \"albums\": []\n}\n"
+		photos = append(photos, AlbumSuggestionsPhoto{Path: photosDir + name, Albums: []string{"kyoto"}})
+	}
+	_, c := albumRepo(t, files)
+	got, err := c.ApplyAlbumSuggestions(t.Context(), baseURLSettings, AlbumSuggestions{Photos: photos})
+	if err != nil {
+		t.Fatalf("ApplyAlbumSuggestions(%d photos) error = %v", len(photos), err)
+	}
+	if got.Photos != len(photos) {
+		t.Errorf("ApplyAlbumSuggestions() put %d photos in albums, want all %d", got.Photos, len(photos))
+	}
+}
+
 func TestApplyAlbumSuggestionsErrors(t *testing.T) {
 	_, c := albumRepo(t, map[string]string{"a.json": `{"albums":["kyoto"]}`})
 	a := photosDir + "a.json"
@@ -140,7 +159,7 @@ func TestApplyAlbumSuggestionsErrors(t *testing.T) {
 		s    AlbumSuggestions
 		want string
 	}{
-		{"no photos", AlbumSuggestions{}, "Put 1 to 50"},
+		{"no photos", AlbumSuggestions{}, "at least 1 photo"},
 		{"not an album", AlbumSuggestions{Photos: []AlbumSuggestionsPhoto{{Path: a, Albums: []string{"temple"}}}}, "isn't one of the albums"},
 		{"taken name", AlbumSuggestions{NewAlbums: []NewGroup{{ID: "temple", Name: "Temple"}}, Photos: []AlbumSuggestionsPhoto{{Path: a, Albums: []string{"temple"}}}}, "already has the ID"},
 		{"nothing new", AlbumSuggestions{Photos: []AlbumSuggestionsPhoto{{Path: a, Albums: []string{"kyoto"}}}}, "nothing to change"},
