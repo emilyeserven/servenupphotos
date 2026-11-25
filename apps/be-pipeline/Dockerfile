@@ -2,8 +2,8 @@
 # Build context: apps/be-pipeline. Multi-arch friendly (e.g. linux/arm64 for Raspberry Pi).
 # The final (default) stage is the production image; the `dev` stage is used by docker-compose.dev.yml.
 FROM golang:1.27-alpine AS dev
-# Chromium makes the Photo Book's PDFs (internal/bookpdf), with fonts for Helvetica and Arial's stand-ins.
-RUN apk add --no-cache exiftool chromium font-liberation font-noto
+# Chromium makes the Photo Book's PDFs (internal/bookpdf), with fonts for Helvetica and Arial's stand-ins and for Japanese, Chinese and Korean.
+RUN apk add --no-cache exiftool chromium font-liberation font-noto font-noto-cjk
 ENV CHROME_NO_SANDBOX=1
 WORKDIR /src
 COPY go.mod go.sum ./
@@ -25,8 +25,8 @@ RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache
 
 # exiftool is a Perl program, so the runtime needs a distro that ships it (go-exiftool shells out to it).
 FROM alpine:3.22
-# Chromium makes the Photo Book's PDFs (internal/bookpdf), with fonts for Helvetica and Arial's stand-ins.
-RUN apk add --no-cache exiftool chromium font-liberation font-noto
+# Chromium makes the Photo Book's PDFs (internal/bookpdf), with fonts for Helvetica and Arial's stand-ins and for Japanese, Chinese and Korean.
+RUN apk add --no-cache exiftool chromium font-liberation font-noto font-noto-cjk
 # Chrome's sandbox can't start as nobody in a container; it only opens the book's own pages.
 ENV CHROME_NO_SANDBOX=1
 COPY --from=build /out/api /api
