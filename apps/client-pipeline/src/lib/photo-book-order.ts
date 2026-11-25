@@ -111,19 +111,44 @@ export function setLinkNext(book: PhotoBook, id: string, link: boolean): PhotoBo
   return { ...ordered, pages };
 }
 
+/** The photo pages and spreads, in their order on Photo Pages. */
+function photoUnits(book: PhotoBook): BookUnit[] {
+  return bookUnits(book).filter((unit) => !unit.pages.some(isOtherPage));
+}
+
+/** The book with its photo pages in units' order, the other pages after them. */
+function withPhotoUnits(book: PhotoBook, units: BookUnit[]): PhotoBook {
+  const ordered = withOrder(book);
+  const pages = [...units.flatMap((unit) => unit.pages), ...book.pages.filter(isOtherPage)];
+  return { ...ordered, pages };
+}
+
 /**
  * The book with the photo unit at from among the photo pages moved one place earlier (-1) or later
  * (1), so a page can be paired with another one into a spread.
  */
 export function movePhotoUnit(book: PhotoBook, from: number, by: -1 | 1): PhotoBook {
-  const units = bookUnits(book).filter((unit) => !unit.pages.some(isOtherPage));
+  const units = photoUnits(book);
   const to = from + by;
   const [moved] = units.splice(from, 1);
   if (!moved || to < 0 || to > units.length) return book;
   units.splice(to, 0, moved);
-  const ordered = withOrder(book);
-  const pages = [...units.flatMap((unit) => unit.pages), ...book.pages.filter(isOtherPage)];
-  return { ...ordered, pages };
+  return withPhotoUnits(book, units);
+}
+
+/**
+ * The book with the photo page or spread with ID id moved before the one with ID before among the
+ * photo pages, or to the end with null, a spread's pages together. It doesn't change the book's
+ * own order, only Photo Pages'.
+ */
+export function placePhotoUnit(book: PhotoBook, id: string, before: string | null): PhotoBook {
+  const units = photoUnits(book);
+  const moved = units.find((unit) => unit.id === id);
+  if (!moved || id === before) return book;
+  const rest = units.filter((unit) => unit !== moved);
+  const at = rest.findIndex((unit) => unit.id === before);
+  rest.splice(at < 0 ? rest.length : at, 0, moved);
+  return withPhotoUnits(book, rest);
 }
 
 /**

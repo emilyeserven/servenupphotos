@@ -15,6 +15,7 @@ import {
   movePhotoUnit,
   pageNumbers,
   pageSides,
+  placePhotoUnit,
   photosInBook,
   removePage,
   repeatedPhotos,
@@ -151,4 +152,20 @@ test("a page in the book is on the side its number gives; one not in it, on its 
     "page-2": "left",
     "page-3": "right",
   });
+});
+
+test("dragging a photo page or spread puts it before another, or at the end, a spread's pages together", () => {
+  const b = addOtherPage(setLinkNext(book(), "page-2", true), "Bio");
+  assert.deepEqual(units(placePhotoUnit(b, "page-2", "page-1")), [
+    ["page-2", "page-3"],
+    ["page-1"],
+    ["page-4"],
+  ]);
+  assert.deepEqual(units(placePhotoUnit(b, "page-1", null)), [
+    ["page-2", "page-3"],
+    ["page-1"],
+    ["page-4"],
+  ]);
+  assert.equal(placePhotoUnit(b, "page-1", "page-1"), b);
+  assert.equal(placePhotoUnit(b, "page-4", null), b);
 });
