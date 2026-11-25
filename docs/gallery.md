@@ -57,6 +57,12 @@ The choices the dropdowns and sliders list (albums, tags, cameras, setting range
 
 A package that a shared portfolio file imports (React, `date-fns`, `lucide-react`, …) has to be in client-pipeline's `package.json` **and** in `resolve.dedupe` in its `vite.config.ts`. The Docker build installs only the pipeline's packages, so without `dedupe` Vite looks for the package next to the portfolio's file, finds no `node_modules` there, and the build fails with "failed to resolve import". CI's **Docker (pipeline image)** check builds that image, so it catches a missing entry before it reaches the Raspberry Pi.
 
+#### Likes in the Groups picker
+
+The Gallery's **Groups** picker has a fourth section, **Likes** (`?liked=<person>`), that the portfolio leaves out: **Liked by anyone** (`?liked=_anyone`), the photos in at least one person's list, and under it each person who sent a list on [User Likes](viewer-likes.md), with how many of the photos the other filters leave they liked. It has the same search box and **Sort** menu (A to Z first) as Tags. The lists are read from the [combined data store](combined-data-store.md)'s `LIKES.json` with the changes waiting for Commit made over it, so a list imported a moment ago filters at once; `useGridFilters` puts each person on the photos in their list (`likedBy`), and `lib/liked-by.ts` in the portfolio makes the choices and matches them.
+
+> **Frontend analogy:** it's a join done in the client before filtering: each photo object gets a `likedBy` array from a `Map<photoId, person[]>`, so the shared filter code can stay a pure `photos.filter(...)` without knowing where the likes came from.
+
 ### A place's photos
 
 On the [Places page](places-and-localizations.md#places), a place's photo count and **See photos in Gallery** at the top of its panel open the Gallery showing only the photos that list that place (`?placeId=<id>`). The filter bar then shows the place, with an × that shows every photo again, and a **Coordinates** filter for where each of its photos goes on the portfolio's map (`?placeGps=`):

@@ -10,10 +10,10 @@ import { FilterPickerButton, SectionPicker } from "@portfolio/components/section
 import { GROUP_KEYS, withoutFilters } from "@portfolio/lib/photo-filters";
 
 /**
- * A **Groups** button that opens one picker for the album, tag and genre filters, like **When**: a
- * list of Albums, Tags and Genres on the left, each saying what it's set to, and the chosen one's
- * choices on the right. One of each can be chosen at once. Tags and Genres are left out while there
- * are none. On phones the list folds up above the choices, under a button naming the chosen one.
+ * A **Groups** button that opens one picker for the album, tag, genre and Likes filters, like
+ * **When**: a list of Albums, Tags, Genres and Likes on the left, each saying what it's set to, and
+ * the chosen one's choices on the right. One of each can be chosen at once. Tags, Genres and Likes
+ * are left out while there are none. On phones the list folds up above the choices, under a button naming the chosen one.
  */
 export function GroupPicker(props: GroupPickerProps) {
   const sections = useSections(props);

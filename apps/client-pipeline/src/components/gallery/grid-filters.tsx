@@ -1,10 +1,12 @@
 import { useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { InFlightFileRead } from "@/api/photos";
+import { type ViewerLikes, viewerLikes } from "@/api/viewer-likes";
 import { Card, CardContent } from "@/components/ui/card";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { readEntries } from "@/lib/smart-album-photos";
 import { editedData } from "@/lib/undecided";
+import { useCombinedData } from "@/stores/combined-data";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 import { CameraFilterBar } from "@portfolio/components/camera-filters";
 import { ScriptDisplayProvider } from "@portfolio/components/script-display-provider";
@@ -21,6 +23,7 @@ import {
   filterByColors,
   parseColorFilters,
 } from "@portfolio/lib/color-search";
+import type { Liker } from "@portfolio/lib/liked-by";
 import {
   FILTER_KEYS,
   type PhotoFilters,
@@ -62,16 +65,33 @@ interface GalleryPhotos {
   paths: Map<number, string>;
 }
 
+/** The people whose Like list has each photo, by photo ID, from User Likes as the next Commit will have them. */
+function likersByPhoto(viewers: ViewerLikes[]): Map<number, Liker[]> {
+  const byPhoto = new Map<number, Liker[]>();
+  for (const { id, name, photos } of viewers) {
+    for (const photo of new Set(photos))
+      byPhoto.set(photo, [...(byPhoto.get(photo) ?? []), { id, name }]);
+  }
+  return byPhoto;
+}
+
 /**
- * The files as the portfolio reads its photos, with the local edits made. A file whose JSON
- * couldn't be read, or that has no date, has no photo, so the Grid's filters never show it.
+ * The files as the portfolio reads its photos, with the local edits made, each saying whose Like
+ * lists it's in, for the Groups picker's **Likes**. A file whose JSON couldn't be read, or that has
+ * no date, has no photo, so the Grid's filters never show it.
  */
-function galleryPhotos(files: GridFile[], edits: Record<string, LocalEdit>): GalleryPhotos {
+function galleryPhotos(
+  files: GridFile[],
+  edits: Record<string, LocalEdit>,
+  likers: Map<number, Liker[]>,
+): GalleryPhotos {
   const entries = files.flatMap((file) => {
     const data = editedData(file, edits);
     return typeof data === "object" && data !== null ? [{ path: file.path, data }] : [];
   });
-  const { photos, ids } = readEntries(entries.map(({ data }) => data as CombinedPhoto));
+  const read = readEntries(entries.map(({ data }) => data as CombinedPhoto));
+  const photos = read.photos.map((photo) => ({ ...photo, likedBy: likers.get(photo.id) }));
+  const ids = read.ids;
   return { photos, paths: new Map(ids.map((id, index) => [id, entries[index]?.path ?? ""])) };
 }
 
@@ -83,7 +103,12 @@ function galleryPhotos(files: GridFile[], edits: Record<string, LocalEdit>): Gal
 export function useGridFilters<T extends GridFile>(all: T[], files: T[]) {
   const search = useSearch({ strict: false }) as Record<string, unknown>;
   const edits = useLocalEditsStore((s) => s.edits);
-  const { photos: every, paths } = useMemo(() => galleryPhotos(all, edits), [all, edits]);
+  const { data } = useCombinedData();
+  const likers = useMemo(() => likersByPhoto(viewerLikes(data)), [data]);
+  const { photos: every, paths } = useMemo(
+    () => galleryPhotos(all, edits, likers),
+    [all, edits, likers],
+  );
   const listed = new Set(files.map(({ path }) => path));
   const photos = every.filter(({ id }) => listed.has(paths.get(id) ?? ""));
   const count = gridFilterCount(search);
