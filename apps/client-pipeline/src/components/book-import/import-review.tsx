@@ -143,7 +143,7 @@ function ImportChoicesFields({ choices, saves, busy, onChange }: ImportChoicesFi
 
 /** Whether the photos go in a new album or one already there, or in none without matched photos. */
 function AlbumNote({ saves }: { saves: ImportSaves }) {
-  if (saves.albumSaves.length === 0) {
+  if (!saves.albumSave) {
     return (
       <EmptyNote>
         None of the book&apos;s photos are on the website, so only the photo book is made.
