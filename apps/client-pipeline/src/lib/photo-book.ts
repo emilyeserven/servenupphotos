@@ -1,8 +1,15 @@
 /**
  * A page layout of the Photo Book: one photo over the page, two down one side, or two portrait
- * photos side by side on one side.
+ * photos beside an info column; or `other` for one of the book's other pages, such as one the
+ * publisher requires or a bio page, which shows only its name for now.
  */
-export type PageLayout = "full" | "pair-left" | "pair-right" | "verticals-left" | "verticals-right";
+export type PageLayout =
+  | "full"
+  | "pair-left"
+  | "pair-right"
+  | "verticals-left"
+  | "verticals-right"
+  | "other";
 
 /** One photo's place on a page, with its caption. */
 export interface BookSlot {
@@ -16,6 +23,13 @@ export interface BookSlot {
 export interface BookPage {
   /** Tells the page from the others in its book. */
   id: string;
+  /** What the page is called on the Photo Book page, such as "Bicycles, by place"; "" or absent for none. */
+  name?: string;
+  /**
+   * True when the page and the next photo page make a two-page spread, which goes in the book
+   * together; absent or false otherwise.
+   */
+  linkNext?: boolean;
   layout: PageLayout;
   /** Shown above the page's top photo; null for none. */
   title: string | null;
@@ -46,6 +60,27 @@ export interface PhotoBook {
    * book made before, whose pages are then all in it, in their order.
    */
   order?: string[];
+  /** The printed book's page size, which sets the shape pages are drawn in; absent for the default. */
+  size?: BookSize;
+}
+
+/** The units a book's page size can be given in. */
+export const SIZE_UNITS = ["in", "cm", "mm", "pt", "px"] as const;
+
+/** A book's page size: its width and height, both more than 0, in unit. */
+export interface BookSize {
+  width: number;
+  height: number;
+  unit: (typeof SIZE_UNITS)[number];
+}
+
+/** BookWright's large landscape page, 12.5 × 10.625 in (900 × 765 pt), the size a book starts with. */
+export const DEFAULT_SIZE: BookSize = { width: 12.5, height: 10.625, unit: "in" };
+
+/** The book's pages' width over their height, from its size. */
+export function pageAspect(book: Pick<PhotoBook, "size">): number {
+  const { width, height } = book.size ?? DEFAULT_SIZE;
+  return width > 0 && height > 0 ? width / height : DEFAULT_SIZE.width / DEFAULT_SIZE.height;
 }
 
 /** What a page layout is called, how it's described, and how many photos it holds. */
@@ -92,9 +127,24 @@ export const LAYOUTS: LayoutInfo[] = [
   },
 ];
 
+/** An other page's layout: no photos. */
+const OTHER_LAYOUT: LayoutInfo = {
+  id: "other",
+  label: "Other page",
+  description: "A page without photos, such as one the publisher requires or a bio page.",
+  slots: 0,
+};
+
 /** The layout's info; a full page's for a layout the page doesn't know. */
 function layoutInfo(layout: PageLayout): LayoutInfo {
-  return LAYOUTS.find((info) => info.id === layout) ?? (LAYOUTS[0] as LayoutInfo);
+  return (
+    [...LAYOUTS, OTHER_LAYOUT].find((info) => info.id === layout) ?? (LAYOUTS[0] as LayoutInfo)
+  );
+}
+
+/** Whether the page is one of the book's other pages, not a photo page. */
+export function isOtherPage(page: BookPage): boolean {
+  return page.layout === "other";
 }
 
 /** Where a photo goes: a page, by its place in the book, and a slot on it. */
@@ -111,19 +161,11 @@ function fitSlots(slots: BookSlot[], count: number): BookSlot[] {
 }
 
 /** A new page with layout and no photos, with an ID none of the book's pages has. */
-function newPage(book: PhotoBook, layout: PageLayout): BookPage {
+export function newPage(book: PhotoBook, layout: PageLayout): BookPage {
   const ids = new Set(book.pages.map((page) => page.id));
   let n = book.pages.length + 1;
   while (ids.has(`page-${n}`)) n += 1;
   return { id: `page-${n}`, layout, title: null, slots: fitSlots([], layoutInfo(layout).slots) };
-}
-
-/**
- * The book with a new page with layout after the other pages that could be used, not in the book
- * until it's added on the Book tab.
- */
-export function addPage(book: PhotoBook, layout: PageLayout): PhotoBook {
-  return { ...book, pages: [...book.pages, newPage(book, layout)], order: bookOrder(book) };
 }
 
 /** The book with the page at index changed by change. */
@@ -208,70 +250,7 @@ export function firstEmptySlot(book: PhotoBook): SlotPlace | null {
   return null;
 }
 
-/**
- * The IDs of the pages in the book, in its order: `order` without IDs of pages that aren't there or
- * are listed twice, or, in a book made before it had one, every page.
- */
-export function bookOrder(book: PhotoBook): string[] {
-  const ids = new Set(book.pages.map((page) => page.id));
-  if (!book.order) return [...ids];
-  return [...new Set(book.order)].filter((id) => ids.has(id));
-}
-
-/** The pages in the book, in its order. */
-export function bookPages(book: PhotoBook): BookPage[] {
-  const byId = new Map(book.pages.map((page) => [page.id, page]));
-  return bookOrder(book).flatMap((id) => byId.get(id) ?? []);
-}
-
-/** The book with the page with ID id added at its end, unless it's in it already. */
-export function addToBook(book: PhotoBook, id: string): PhotoBook {
-  const order = bookOrder(book);
-  return order.includes(id) ? book : { ...book, order: [...order, id] };
-}
-
-/** The book without the page with ID id; the page stays among the pages that could be used. */
-export function takeOutOfBook(book: PhotoBook, id: string): PhotoBook {
-  return { ...book, order: bookOrder(book).filter((other) => other !== id) };
-}
-
-/** The book with its page at from, in the book's order, moved to to. */
-export function moveInBook(book: PhotoBook, from: number, to: number): PhotoBook {
-  const order = bookOrder(book);
-  const [moved] = order.splice(from, 1);
-  if (moved === undefined || to < 0 || to > order.length) return book;
-  order.splice(to, 0, moved);
-  return { ...book, order };
-}
-
-/** The book without the page at index, taken out of the book's order too. */
-export function removePage(book: PhotoBook, index: number): PhotoBook {
-  const id = book.pages[index]?.id;
-  const pages = book.pages.filter((_, i) => i !== index);
-  return { ...book, pages, order: bookOrder(book).filter((other) => other !== id) };
-}
-
-/** The paths of every photo on the pages in the book. */
-export function photosInBook(book: PhotoBook): Set<string> {
-  return new Set(
-    bookPages(book)
-      .flatMap((page) => page.slots.map((s) => s.photo))
-      .filter(Boolean),
-  );
-}
-
-/** Each page's number in the book, 1 first, by its ID; a page not in the book has none. */
-export function pageNumbers(book: PhotoBook): Map<string, number> {
-  return new Map(bookOrder(book).map((id, i) => [id, i + 1]));
-}
-
-/** For each photo on more than one page in the book, the numbers of those pages. */
-export function repeatedPhotos(book: PhotoBook): Map<string, number[]> {
-  const pages = new Map<string, number[]>();
-  for (const [i, page] of bookPages(book).entries()) {
-    for (const { photo } of page.slots) {
-      if (photo) pages.set(photo, [...(pages.get(photo) ?? []), i + 1]);
-    }
-  }
-  return new Map([...pages].filter(([, on]) => on.length > 1));
+/** The book with the page at index named name. */
+export function renamePage(book: PhotoBook, index: number, name: string): PhotoBook {
+  return changePage(book, index, (page) => ({ ...page, name }));
 }

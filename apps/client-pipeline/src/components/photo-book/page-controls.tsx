@@ -1,135 +1,109 @@
-import { BookMinusIcon, BookPlusIcon, HeadingIcon, Trash2Icon } from "lucide-react";
+import { HeadingIcon, Link2Icon, Trash2Icon, Unlink2Icon } from "lucide-react";
 import { MoveArrows } from "@/components/move-arrows";
 import { LayoutGlyph } from "@/components/photo-book/layout-glyph";
 import { pageName } from "@/components/photo-book/page-types";
 import { Button } from "@/components/ui/button";
 import { type BookPage, LAYOUTS, type PageLayout } from "@/lib/photo-book";
-import { cn } from "@/lib/utils";
 
-/** The page's name above it: its number in the book, or that it isn't in the book. */
-function PageLabel({ number }: { number: number | null }) {
-  return (
-    <span className={cn("mr-1 text-sm font-medium", number === null && "text-muted-foreground")}>
-      {pageName(number)}
-    </span>
-  );
-}
-
-/** How the page's buttons name it, such as "page 3", or "page idea 4" for one not in the book. */
-function buttonName(index: number, number: number | null): string {
-  return number === null ? `page idea ${index + 1}` : `page ${number}`;
-}
-
-interface WorkshopControlsProps {
+interface PageControlsProps {
   page: BookPage;
-  index: number;
-  number: number | null;
+  onName: (name: string) => void;
   onLayout: (layout: PageLayout) => void;
   onTitle: (title: string | null) => void;
-  /** Adds the page to the end of the book, or takes it out when inBook is false. */
-  onBook: (inBook: boolean) => void;
   onRemove: () => void;
 }
 
 /**
- * Above a page on the Pages tab: whether it's in the book, its layout, a title to add or take off,
- * a button that adds it to the book or takes it out, and Remove.
+ * Above a page on the Photo Pages tab: its name, typed in, its layout, a title to add or take off,
+ * and Remove.
  */
-export function WorkshopControls(props: WorkshopControlsProps) {
-  const { page, index, number, onLayout, onTitle, onBook, onRemove } = props;
-  const name = buttonName(index, number);
+export function PageControls({ page, onName, onLayout, onTitle, onRemove }: PageControlsProps) {
+  const name = pageName(page);
   return (
     <div className="flex flex-wrap items-center gap-1">
-      <PageLabel number={number} />
+      <input
+        aria-label="Page name"
+        value={page.name ?? ""}
+        placeholder="Name this page"
+        onChange={(event) => onName(event.target.value)}
+        className="hover:border-input focus:border-input placeholder:text-muted-foreground mr-1 h-7 min-w-0 flex-1 rounded-md border border-transparent bg-transparent px-1.5 text-sm font-medium outline-none"
+      />
       <LayoutButtons page={page} name={name} onLayout={onLayout} />
       <TitleButton page={page} name={name} onTitle={onTitle} />
-      <span className="ml-auto flex items-center gap-1">
-        <BookButton inBook={number !== null} name={name} onBook={onBook} />
-        <Button
-          size="icon-xs"
-          variant="ghost"
-          aria-label={`Remove ${name}`}
-          title="Remove page"
-          onClick={onRemove}
-        >
-          <Trash2Icon />
-        </Button>
-      </span>
+      <Button
+        size="icon-xs"
+        variant="ghost"
+        aria-label={`Remove ${name}`}
+        title="Remove page"
+        onClick={onRemove}
+      >
+        <Trash2Icon />
+      </Button>
     </div>
   );
 }
 
-interface OrderControlsProps {
-  /** The page's number in the book. */
-  number: number;
+interface UnitControlsProps {
+  /** What the unit is called on its buttons: its page's name, or its two pages' names. */
+  name: string;
+  spread: boolean;
+  inBook: boolean;
+  /** Whether the page can be linked with the next one: there's a next one, on its own. */
+  canLink: boolean;
+  /** The unit's place among the photo pages, 0 first. */
+  place: number;
   last: boolean;
-  /** Moves the page from one place in the book to another, 0 first. */
+  onLink: (link: boolean) => void;
   onMove: (from: number, to: number) => void;
-  onTakeOut: () => void;
 }
 
-/** Above a page on the Book tab: its number, arrows that move it, and a button that takes it out. */
-export function OrderControls({ number, last, onMove, onTakeOut }: OrderControlsProps) {
-  const name = `page ${number}`;
+/**
+ * Above a page or spread on the Photo Pages tab: whether it's in the book, a button that links the
+ * page with the next one into a spread or unlinks the spread, and arrows that move it.
+ */
+export function UnitControls(props: UnitControlsProps) {
+  const { name, spread, inBook, canLink, place, last, onLink, onMove } = props;
   return (
-    <div className="flex flex-wrap items-center gap-1">
-      <PageLabel number={number} />
+    <div className="text-muted-foreground flex flex-wrap items-center gap-1 text-xs">
+      <UnitLabels spread={spread} inBook={inBook} />
       <span className="ml-auto flex items-center gap-1">
-        <MoveArrows name={name} place={number - 1} last={last} onMove={onMove} />
-        <BookButton inBook name={name} onBook={() => onTakeOut()} />
+        {canLink || spread ? <LinkButton spread={spread} name={name} onLink={onLink} /> : null}
+        <MoveArrows name={name} place={place} last={last} onMove={onMove} />
       </span>
     </div>
   );
 }
 
-/** Above a page on the Book tab that isn't in the book yet: a button that adds it at the end. */
-export function SpareControls({ index, onAdd }: { index: number; onAdd: () => void }) {
+/** "Two-page spread" on a spread, and "In book" on one in the book. */
+function UnitLabels({ spread, inBook }: { spread: boolean; inBook: boolean }) {
   return (
-    <div className="flex flex-wrap items-center gap-1">
-      <PageLabel number={null} />
-      <span className="ml-auto">
-        <BookButton inBook={false} name={buttonName(index, null)} onBook={onAdd} />
-      </span>
-    </div>
+    <>
+      {spread && <span className="font-medium">Two-page spread</span>}
+      {inBook && <InBookBadge />}
+    </>
   );
 }
 
-/** What the book button says and shows, for a page not in the book and for one in it. */
-const BOOK_BUTTON = {
-  out: {
-    variant: "outline",
-    label: "Add to book",
-    aria: "Add {name} to the book",
-    Icon: BookPlusIcon,
-  },
-  in: {
-    variant: "ghost",
-    label: "Take out",
-    aria: "Take {name} out of the book",
-    Icon: BookMinusIcon,
-  },
-} as const;
-
-/** **Add to book**, or **Take out** for a page in the book. */
-function BookButton(props: { inBook: boolean; name: string; onBook: (inBook: boolean) => void }) {
-  const { inBook, name, onBook } = props;
-  const { variant, label, aria, Icon } = BOOK_BUTTON[inBook ? "in" : "out"];
+/** **Link with next page**, or **Unlink** on a spread. */
+function LinkButton(props: { spread: boolean; name: string; onLink: (link: boolean) => void }) {
+  const { spread, name, onLink } = props;
+  const Icon = spread ? Unlink2Icon : Link2Icon;
   return (
     <Button
       size="sm"
-      variant={variant}
-      aria-label={aria.replace("{name}", name)}
-      onClick={() => onBook(!inBook)}
+      variant="ghost"
+      aria-label={spread ? `Unlink ${name}` : `Link ${name} with the next page`}
+      onClick={() => onLink(!spread)}
     >
       <Icon />
-      {label}
+      {spread ? "Unlink" : "Link with next page"}
     </Button>
   );
 }
 
 interface ButtonProps {
   page: BookPage;
-  /** How the button names the page, such as "page 3". */
+  /** How the button names the page, its name. */
   name: string;
 }
 
@@ -177,5 +151,14 @@ function TitleButton({
     >
       <HeadingIcon />
     </Button>
+  );
+}
+
+/** "In book", on a page or spread that's in the book. */
+export function InBookBadge() {
+  return (
+    <span className="bg-secondary text-secondary-foreground rounded-md px-1.5 py-0.5 text-xs font-medium">
+      In book
+    </span>
   );
 }

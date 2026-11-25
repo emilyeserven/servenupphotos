@@ -23,11 +23,18 @@ export interface BookPageProps {
   photos: Map<string, SocialPhoto>;
   captionFor: (slot: Page["slots"][number]) => string;
   actions: PageActions;
-  /** The buttons above the page, which differ on the Pages and Book tabs. */
-  controls: ReactNode;
+  /** The page's width over its height, from the book's size. */
+  aspect: number;
+  /** The buttons above the page; none on a preview. */
+  controls?: ReactNode;
 }
 
-/** What a page is called: "Page 3" in the book, or "Not in the book". */
-export function pageName(number: number | null): string {
-  return number === null ? "Not in the book" : `Page ${number}`;
+/** What a page is called: the name it was given, or "Untitled page". */
+export function pageName(page: Page): string {
+  return page.name?.trim() || "Untitled page";
+}
+
+/** What a page or spread is called: its page's name, or its two pages' names joined. */
+export function unitName(unit: { pages: Page[] }): string {
+  return unit.pages.map(pageName).join(" + ");
 }

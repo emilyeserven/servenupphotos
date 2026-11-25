@@ -1,19 +1,26 @@
 # Photo Book
 
-`/photo-books`, **Photo Books** under **Publish** in the sidebar, is for roughing out a photo book before laying it out for real in the book maker's own software: which photos go on which page, in what layout, and what their captions say. The pages are drawn like the printed books (BookWright's large landscape page, 900 × 765, black, in Helvetica: a bold uppercase page title, each caption's first line bold and the lines under it small) but only as a sketch, for reference while placing the photos and captions by hand. Text sizes are in `cqw`, shares of the page's width, so they scale with it.
+`/photo-books`, **Photo Books** under **Publish** in the sidebar, is for roughing out a photo book before laying it out for real in the book maker's own software: which photos go on which page, in what layout, and what their captions say. The pages are drawn like the printed books (black, in Helvetica: a bold uppercase page title, each caption's first line bold and the lines under it small) in the shape the book's page size gives them, but only as a sketch, for reference while placing the photos and captions by hand. Text sizes are in `cqw`, shares of the page's width, so they scale with it.
 
 ## Books
 
 **Photo Books** lists every book as a card, with the album its photos come from, how many pages are in the book (and how many more could be used), and how many photos are on them; each card opens the book's own page, as the Trips do. **New book** names and makes another (its ID is made from the name, as caption templates' are) and opens it. An old `/photo-book` link opens the list, or the book its `?book=<id>` names.
 
-On a book's page, **All photo books** goes back to the list, **Name** renames the book, **Photos from** picks the album its photos come from, **Captions from** picks the [caption template](caption-templates.md) its captions are filled in with, and **Remove book** removes it after asking. Under them, two tabs, each a page of its own:
+On a book's page, **All photo books** goes back to the list. Under it, three tabs, each a page of its own with a line under the tabs saying what it's for:
 
-- **Pages** (`/photo-books/<id>/pages`, where the book opens): making pages that could be used.
-- **Book** (`/photo-books/<id>/book`): putting the pages that will be used in order.
+- **Info** (`/photo-books/<id>/info`): the book's name, album, caption template and page size.
+- **Photo Pages** (`/photo-books/<id>/pages`, where the book opens): making photo pages that could be used, and linking them into spreads.
+- **Book** (`/photo-books/<id>/book`): putting the pages that will be used in order, adding other pages, and paging through the book.
 
-## Pages
+## Info
 
-The **Pages** tab holds every page made for the book, newest last, so other ways of laying out the same photos can be tried side by side, such as one run of pages sorted by place and another by theme. **Add page** at the end asks for the new page's layout:
+**Name** renames the book, **Photos from** picks the album its photos come from, **Captions from** picks the [caption template](caption-templates.md) its captions are filled in with, and **Remove book** removes it after asking.
+
+**Page size** takes the page's width and height in inches, centimeters, millimeters, points or pixels, starting at BookWright's large landscape page, 12.5 × 10.625 in. Only the shape is used: every page on every tab is drawn with width over height as its `aspect-ratio`, shown beside the fields as a small black page. A side that isn't a number more than 0 isn't saved.
+
+## Photo Pages
+
+The **Photo Pages** tab holds every photo page made for the book, so other ways of laying out the same photos can be tried side by side, such as one run of pages sorted by place and another by theme. **Add page** at the end asks for the new page's layout:
 
 - **Full page:** one photo over the page, the title above it and its caption under it.
 - **Two photos on the left:** two photos down the left side, each with its caption beside it on the right, toward the gap between them (the top one low beside its photo, under the title; the bottom one at its photo's top), as the printed books have them.
@@ -25,15 +32,35 @@ Each photo place keeps its shape whatever room the page gives it: 3:2 for the la
 
 > **Frontend analogy:** each place is a CSS size container (`container-type: size`) whose photo is `min(100cqw, 150cqh)` wide with `aspect-ratio: 3 / 2`, so it's as big as it can be without stretching, whichever side runs out first.
 
-Pages are shown one to a row, or two on a very wide screen. Above each page, its number in the book or **Not in the book**, its layout's buttons (to switch it; a photo past the new layout's places comes off the page), the **H** button that adds or takes off a title (typed on the page itself), **Add to book** (which adds it at the end of the book) or **Take out**, and the bin that removes it. A new page isn't in the book until it's added. Clicking a caption types over it.
+Pages have no numbers here. Above each page, its name, typed in (**Untitled page** until it has one), its layout's buttons (to switch it; a photo past the new layout's places comes off the page), the **H** button that adds or takes off a title (typed on the page itself), and the bin that removes it. Clicking a caption types over it.
+
+### Spreads
+
+**Link with next page**, above a page, links it with the photo page after it into a two-page spread, shown side by side across the row with **Unlink** above it; a spread's pages always follow each other, so the arrows beside it move the page or the whole spread one place earlier or later among the photo pages, to line up the two to link. A page before a spread can't link to it. **In book** marks a page or spread that's in the book. Removing one page of a spread leaves the other on its own, in the book where the spread was.
 
 ## The book
 
-The **Book** tab shows the pages in the book, numbered in its order, two to a row like spreads, each with arrows that move it earlier or later and **Take out**, which leaves it among the pages that could be used. Under them, **Pages not in the book** lists the rest, each with **Add to book**. When a photo is on more than one page in the book, each of them is marked **Also on page …**.
+The **Book** tab has three parts, as the book makers' own software does:
+
+- **The preview**, as large as fits, keeping the pages' shape: one page or spread at a time, with **‹** and **›** under it to page through, where it is (**Pages 3–4 of 12**) and the pages' names, and **Preview Mode**.
+- **Used page spreads**, beside it (under it on a narrow screen): the pages and spreads in the book, in order, top to bottom, each a small preview with its page numbers and name. Click one to show it in the preview; drag one onto another to put it before it, or onto the box at the end; the arrows move it and **×** takes it out, leaving it among the ones that could be used. The panel's button collapses it to a thin rail.
+- **All pages and spreads**, a drawer along the bottom of the window: every photo page and spread made on **Photo Pages**, then the other pages, each a small preview, dimmed and marked **In book** when it's in. Drag one into **Used page spreads**, or its **+** adds it at the end; drag one from **Used page spreads** onto the drawer to take it out. Its heading opens and closes it.
+
+When a photo is on more than one page in the book, each of them is marked **Also on page …** on **Photo Pages**.
+
+### Other pages
+
+Other pages are pages without photos: one the publisher requires, a bio page, or anything else. For now each shows only its name, as a placeholder. Type a name in the drawer and **Add other page** makes one and adds it at the end of the book; each has a bin in the drawer that removes it. They're not on **Photo Pages** and are never part of a spread.
+
+### Preview Mode
+
+**Preview Mode** collapses the app's sidebar, **Used page spreads** and the drawer, makes the preview larger, and shows the book as it opens: two pages facing each other, a spread on its own, and a page before a spread facing nothing. **Esc** or **Leave Preview Mode** turns it off and opens the sidebar again if it was open; the arrow keys page through the book. Opening either panel leaves it too.
+
+> **Frontend analogy:** the drawer and **Used page spreads** share one HTML5 drag type carrying the page or spread's ID, so each is both a source and a drop target, like a sortable list fed from a palette. The preview's views are derived state: the book's order grouped one way or the other, recomputed each render rather than stored.
 
 ## The photo drawer
 
-**Photos**, on the **Pages** tab, opens and closes a drawer to the right of the pages (under them on a narrow screen), like the [Instagram calendar's](publish.md#photo-drawer). It lists the photos of the book's album and the albums inside it (Smart Albums by their rules), in the album's order as the portfolio shows it, with changes waiting for Commit, and not the [Undecided](photos-in-flight.md#undecided) ones. Until an album is picked it asks for one. It has:
+**Photos**, on the **Photo Pages** tab, opens and closes a drawer to the right of the pages (under them on a narrow screen), like the [Instagram calendar's](publish.md#photo-drawer). It lists the photos of the book's album and the albums inside it (Smart Albums by their rules), in the album's order as the portfolio shows it, with changes waiting for Commit, and not the [Undecided](photos-in-flight.md#undecided) ones. Until an album is picked it asks for one. It has:
 
 - a search by title or file name,
 - **Show photos already in the book**, off at first, so each photo is used once.
@@ -56,23 +83,31 @@ Each book is one file, `photobooks/<id>.json`, and **Commit** combines them into
   "name": "Korea 2026",
   "template": "",
   "album": "korea",
+  "size": { "width": 12.5, "height": 10.625, "unit": "in" },
   "pages": [
     {
       "id": "page-1",
+      "name": "Seoul opener",
       "layout": "full",
       "title": "Seoul",
+      "linkNext": true,
       "slots": [{ "photo": "apps/portfolio/src/data/photos/DSCF4800.json", "caption": null }]
-    }
+    },
+    { "id": "page-2", "name": "Seoul pair", "layout": "pair-left", "title": null, "slots": […] },
+    { "id": "page-3", "name": "Bio", "layout": "other", "title": null, "slots": [] }
   ],
-  "order": ["page-1"]
+  "order": ["page-3", "page-1"]
 }
 ```
 
 - **`template`** is the caption template's ID, or `""` for the default one.
 - **`album`** is the ID of the album the book's photos come from, or `""` (or missing, in a book made before) while none is picked.
-- **`layout`** is `full`, `pair-left`, `pair-right`, `verticals-left` or `verticals-right`; the backend fills or cuts `slots` to the layout's 1 or 2.
-- **`pages`** is every page made on the **Pages** tab, and **`order`** the IDs of the ones in the book, in its order. A book made before `order` has none, and then every page is in it, in their order; adding a page writes it.
+- **`size`** is the page size from **Info**, `unit` one of `in`, `cm`, `mm`, `pt` or `px`; a book without one uses 12.5 × 10.625 in.
+- **`layout`** is `full`, `pair-left`, `pair-right`, `verticals-left` or `verticals-right`, or `other` for an other page; the backend fills or cuts `slots` to the layout's 1 or 2 (none for `other`).
+- **`name`** is the page's name, left out until it has one.
+- **`linkNext`** is `true` on a photo page linked with the photo page after it into a spread, in the order of `pages`.
+- **`pages`** is every page made for the book, and **`order`** the IDs of the pages and spreads in the book, in its order, a spread listed by its first page. A book made before `order` has none, and then every page is in it, in their order; adding a page writes it. A spread's second page listed too (as **Import Book** writes every page) counts as the spread.
 - **`title`** is `null` for a page without one.
 - **`photo`** is the photo file's path, or `""` for an empty place. **`caption`** is `null` to fill it in from the template, or the text typed instead.
 
-`apps/client-pipeline/src/lib/photo-book.ts` makes the changes (`placePhoto`, `setLayout`, `addToBook`, `moveInBook`, …), `src/lib/photo-book-album.ts` and `components/photo-book/album-photos.ts` find the album's photos, and `apps/be-pipeline/internal/github/photobooks.go` checks and saves the files.
+`apps/client-pipeline/src/lib/photo-book.ts` makes the changes to a page (`placePhoto`, `setLayout`, `renamePage`, …), `src/lib/photo-book-order.ts` the changes to which pages make spreads and which are in the book (`bookUnits`, `addToBook`, `setLinkNext`, `bookViews`, …), `src/lib/photo-book-album.ts` and `components/photo-book/album-photos.ts` find the album's photos, and `apps/be-pipeline/internal/github/photobooks.go` checks and saves the files.

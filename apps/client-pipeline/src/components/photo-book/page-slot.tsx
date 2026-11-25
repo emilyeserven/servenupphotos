@@ -87,7 +87,7 @@ export function PhotoSlot(props: PhotoSlotProps) {
         {filled ? (
           <FilledSlot slot={slot} place={place} photo={photo} image={image} onRemove={onRemove} />
         ) : (
-          <span className="flex size-full items-center justify-center p-2 text-center text-xs text-neutral-400">
+          <span className="flex size-full items-center justify-center p-2 text-center text-xs text-neutral-400 in-data-[preview]:hidden">
             Drop a photo here
           </span>
         )}

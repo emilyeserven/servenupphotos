@@ -31,7 +31,7 @@ function pageParts(props: BodyProps): PageParts {
     title:
       page.title === null ? null : (
         <input
-          aria-label={`${pageName(number)} title`}
+          aria-label={`${pageName(page)} title`}
           value={page.title}
           placeholder="TITLE"
           onChange={(event) => actions.onTitle(event.target.value)}
@@ -69,11 +69,6 @@ function pageParts(props: BodyProps): PageParts {
       );
     },
   };
-}
-
-/** Whether the layout puts its photos on the left and its captions on the right. */
-function photosLeft(layout: PageLayout): boolean {
-  return layout === "pair-left" || layout === "verticals-left";
 }
 
 /** The photos and the captions side by side, the photos taking the larger share on their side. */
@@ -163,13 +158,27 @@ function PairBody({ parts, left }: { parts: PageParts; left: boolean }) {
   );
 }
 
+/** One of the book's other pages, such as a bio page: only its name, as a placeholder for now. */
+function OtherBody({ name }: { name: string }) {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-sm border border-dashed border-neutral-700 p-[6%] text-center text-[4cqw] leading-tight font-bold text-neutral-400 uppercase">
+      {name}
+    </div>
+  );
+}
+
+/** How each photo layout draws the page's parts. */
+const BODIES: Record<Exclude<PageLayout, "other">, (parts: PageParts) => ReactNode> = {
+  full: (parts) => <FullBody parts={parts} />,
+  "pair-left": (parts) => <PairBody parts={parts} left />,
+  "pair-right": (parts) => <PairBody parts={parts} left={false} />,
+  "verticals-left": (parts) => <VerticalsBody parts={parts} left />,
+  "verticals-right": (parts) => <VerticalsBody parts={parts} left={false} />,
+};
+
 /** The page's photos and captions, laid out as its layout says. */
 export function PageBody(props: BodyProps) {
-  const parts = pageParts(props);
   const { layout } = props.page;
-  if (layout === "full") return <FullBody parts={parts} />;
-  if (layout === "verticals-left" || layout === "verticals-right") {
-    return <VerticalsBody parts={parts} left={photosLeft(layout)} />;
-  }
-  return <PairBody parts={parts} left={photosLeft(layout)} />;
+  if (layout === "other") return <OtherBody name={pageName(props.page)} />;
+  return BODIES[layout](pageParts(props));
 }
