@@ -1,7 +1,14 @@
 import type { SocialPhoto } from "@/api/publish";
 import type { useCaptionFor } from "@/components/photo-book/book-captions";
 import type { PageActions } from "@/components/photo-book/page-types";
-import { type PhotoBook, placePhoto, removePhoto, setCaption, setTitle } from "@/lib/photo-book";
+import {
+  type CustomLayout,
+  type PhotoBook,
+  placePhoto,
+  removePhoto,
+  setCaption,
+  setTitle,
+} from "@/lib/photo-book";
 
 /** What the page itself does to book, through update: its title, photos and captions. */
 export function pageActions(
@@ -23,6 +30,8 @@ export interface PageLook {
   captionFor: ReturnType<typeof useCaptionFor>;
   /** The page's width over its height, from the book's size. */
   aspect: number;
+  /** The layouts made on the book's Layouts tab, which pages can have besides the built-in ones. */
+  layouts: CustomLayout[];
 }
 
 /** Actions for a page that's only shown, such as a small preview: they do nothing. */

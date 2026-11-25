@@ -1,15 +1,48 @@
-/**
- * A page layout of the Photo Book: one photo over the page, two down one side, or two portrait
- * photos beside an info column; or `other` for one of the book's other pages, such as one the
- * publisher requires or a bio page, which shows only its name for now.
- */
-export type PageLayout =
+/** A built-in page layout: one photo over the page, two down one side, or two portrait photos beside an info column. */
+export type BuiltInLayout =
   | "full"
   | "pair-left"
   | "pair-right"
   | "verticals-left"
-  | "verticals-right"
-  | "other";
+  | "verticals-right";
+
+/**
+ * A page layout of the Photo Book: a built-in one, one made on the book's Layouts tab (its ID starts
+ * with `custom-`), or `other` for one of the book's other pages, such as one the publisher requires
+ * or a bio page, which shows only its name for now.
+ */
+export type PageLayout = BuiltInLayout | "other" | `custom-${string}`;
+
+/**
+ * A page layout made on a book's Layouts tab: how many photos the page holds, how they're arranged
+ * and shaped, and where the title and captions go.
+ */
+export interface CustomLayout {
+  /** Starts with `custom-`. */
+  id: `custom-${string}`;
+  /** What the layout buttons call it, such as "Big pair". */
+  name: string;
+  /** How many photos the page holds, 1 to 4. */
+  photos: number;
+  /** The photos one under another, or side by side. */
+  arrange: "stack" | "row";
+  /** Each photo's place: 3:2, 2:3, square, `ratio`'s, or all the room it's given, cropping the photo. */
+  shape: "landscape" | "portrait" | "square" | "ratio" | "fill";
+  /** The photos' width to height, such as 4 to 5, when shape is `ratio`; absent otherwise. */
+  ratio?: { width: number; height: number };
+  /** The side the title and captions go on. */
+  text: "left" | "right" | "above" | "below";
+  /** The title and every caption together on one side, or each caption beside its own photo. */
+  captions: "column" | "photo";
+  /** The share of the page's width (or height, above or below) the text takes, in percent, 10 to 60. */
+  textShare: number;
+  /** Where the text sits in its room. */
+  align: "start" | "center" | "end";
+  /** The room between the photos and the text, in percent of the page's width, 0 to 20. */
+  gap: number;
+  /** The room around the page's edge, in percent of its width, 0 to 20. */
+  margin: number;
+}
 
 /** One photo's place on a page, with its caption. */
 export interface BookSlot {
@@ -62,6 +95,8 @@ export interface PhotoBook {
   order?: string[];
   /** The printed book's page size, which sets the shape pages are drawn in; absent for the default. */
   size?: BookSize;
+  /** The layouts made on the book's Layouts tab, which its pages can have besides the built-in ones. */
+  layouts?: CustomLayout[];
 }
 
 /** The units a book's page size can be given in. */
@@ -85,7 +120,7 @@ export function pageAspect(book: Pick<PhotoBook, "size">): number {
 
 /** What a page layout is called, how it's described, and how many photos it holds. */
 export interface LayoutInfo {
-  id: PageLayout;
+  id: BuiltInLayout;
   label: string;
   description: string;
   slots: number;
@@ -127,19 +162,14 @@ export const LAYOUTS: LayoutInfo[] = [
   },
 ];
 
-/** An other page's layout: no photos. */
-const OTHER_LAYOUT: LayoutInfo = {
-  id: "other",
-  label: "Other page",
-  description: "A page without photos, such as one the publisher requires or a bio page.",
-  slots: 0,
-};
-
-/** The layout's info; a full page's for a layout the page doesn't know. */
-function layoutInfo(layout: PageLayout): LayoutInfo {
-  return (
-    [...LAYOUTS, OTHER_LAYOUT].find((info) => info.id === layout) ?? (LAYOUTS[0] as LayoutInfo)
-  );
+/**
+ * How many photos layout holds: a built-in one's count, one of the book's layouts' photos, none on
+ * an other page, and a full page's one for a layout the book doesn't have.
+ */
+export function layoutSlots(book: Pick<PhotoBook, "layouts">, layout: PageLayout): number {
+  if (layout === "other") return 0;
+  const custom = book.layouts?.find((l) => l.id === layout);
+  return custom?.photos ?? LAYOUTS.find((info) => info.id === layout)?.slots ?? 1;
 }
 
 /** Whether the page is one of the book's other pages, not a photo page. */
@@ -165,7 +195,7 @@ export function newPage(book: PhotoBook, layout: PageLayout): BookPage {
   const ids = new Set(book.pages.map((page) => page.id));
   let n = book.pages.length + 1;
   while (ids.has(`page-${n}`)) n += 1;
-  return { id: `page-${n}`, layout, title: null, slots: fitSlots([], layoutInfo(layout).slots) };
+  return { id: `page-${n}`, layout, title: null, slots: fitSlots([], layoutSlots(book, layout)) };
 }
 
 /** The book with the page at index changed by change. */
@@ -185,7 +215,7 @@ export function setLayout(book: PhotoBook, index: number, layout: PageLayout): P
   return changePage(book, index, (page) => ({
     ...page,
     layout,
-    slots: fitSlots(page.slots, layoutInfo(layout).slots),
+    slots: fitSlots(page.slots, layoutSlots(book, layout)),
   }));
 }
 

@@ -1,4 +1,5 @@
 import { ImageIcon, XIcon } from "lucide-react";
+import type { CSSProperties } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { Button } from "@/components/ui/button";
 import { useDropTarget } from "@/hooks/use-drop-target";
@@ -30,11 +31,25 @@ export function fromPlace(text: string): SlotPlace | undefined {
     : undefined;
 }
 
-/** The shape a photo's place keeps on the page, whatever room the page gives it. */
-export type SlotShape = "landscape" | "portrait";
+/**
+ * The shape a photo's place keeps on the page, whatever room the page gives it (a named one, or a
+ * number for its width over its height), or `fill` for all the room, the photo cropped to fill it.
+ */
+export type SlotShape = "landscape" | "portrait" | "square" | "fill" | number;
 
-/** Each shape's width over its height: 3:2, as the camera takes them, and 2:3 turned. */
-const SHAPE_RATIO: Record<SlotShape, number> = { landscape: 3 / 2, portrait: 2 / 3 };
+/** Each kept shape's width over its height: 3:2, as the camera takes them, 2:3 turned, and 1:1. */
+const SHAPE_RATIO: Record<Exclude<SlotShape, "fill">, number> = {
+  landscape: 3 / 2,
+  portrait: 2 / 3,
+  square: 1,
+};
+
+/** The size of a place with shape in the room it's given, which is a size container. */
+function shapeStyle(shape: SlotShape): CSSProperties {
+  if (shape === "fill") return { width: "100%", height: "100%" };
+  const ratio = typeof shape === "number" ? shape : SHAPE_RATIO[shape];
+  return { width: `min(100cqw, ${ratio * 100}cqh)`, aspectRatio: ratio };
+}
 
 interface PhotoSlotProps {
   slot: BookSlot;
@@ -69,7 +84,6 @@ export function PhotoSlot(props: PhotoSlotProps) {
   );
   const image = useSlotImage(photo);
   const filled = slot.photo !== "";
-  const ratio = SHAPE_RATIO[shape];
   return (
     <div
       className={cn("flex min-h-0 min-w-0 items-center justify-center", className)}
@@ -77,7 +91,7 @@ export function PhotoSlot(props: PhotoSlotProps) {
     >
       <div
         {...handlers}
-        style={{ width: `min(100cqw, ${ratio * 100}cqh)`, aspectRatio: ratio }}
+        style={shapeStyle(shape)}
         className={cn(
           "group/slot relative overflow-hidden rounded-sm",
           filled ? "bg-neutral-800" : "border border-dashed border-neutral-600",

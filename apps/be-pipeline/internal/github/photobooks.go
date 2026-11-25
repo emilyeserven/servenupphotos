@@ -61,6 +61,9 @@ type PhotoBook struct {
 	// Book page draws its pages in; nil for the default, BookWright's large
 	// landscape page.
 	Size *PhotoBookSize `json:"size,omitempty"`
+	// Layouts are the page layouts made on the book's Layouts tab, which its
+	// pages can have besides the built-in ones.
+	Layouts []PhotoBookLayout `json:"layouts,omitempty"`
 }
 
 // PhotoBookSize is a book's page size: its width and height in unit.
@@ -90,8 +93,8 @@ type PhotoBookPage struct {
 	// LinkNext is true when the page and the one after it among the pages
 	// make a two-page spread.
 	LinkNext bool `json:"linkNext,omitempty"`
-	// Layout is "full", "pair-left", "pair-right", "verticals-left" or
-	// "verticals-right".
+	// Layout is "full", "pair-left", "pair-right", "verticals-left",
+	// "verticals-right", "other", or the ID of one of the book's layouts.
 	Layout string `json:"layout"`
 	// Title is shown above the page's top photo; nil for none.
 	Title *string `json:"title"`
@@ -140,9 +143,15 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 	if len(b.Pages) > maxPhotoBookPages {
 		return out, publishErr(http.StatusBadRequest, "A photo book can have up to %d pages.", maxPhotoBookPages)
 	}
+	layouts, perr := validPhotoBookLayouts(b.Layouts)
+	if perr != nil {
+		return out, perr
+	}
+	out.Layouts = layouts
+	counts := photoBookSlotCounts(layouts)
 	out.Pages = make([]PhotoBookPage, 0, len(b.Pages))
 	for i, page := range b.Pages {
-		p, perr := validPhotoBookPage(page, i+1)
+		p, perr := validPhotoBookPage(page, i+1, counts)
 		if perr != nil {
 			return out, perr
 		}
@@ -194,10 +203,11 @@ func tooLongEntryText(s string) bool {
 	return utf8.RuneCountInString(s) > maxEntryTextLength
 }
 
-// validPhotoBookPage checks page n of a book, and returns it with its title
+// validPhotoBookPage checks page n of a book, whose layouts hold counts
+// photos, and returns it with its title
 // trimmed and its slots cut or filled to its layout's count.
-func validPhotoBookPage(page PhotoBookPage, n int) (PhotoBookPage, *PublishError) {
-	count, ok := photoBookLayouts[page.Layout]
+func validPhotoBookPage(page PhotoBookPage, n int, counts map[string]int) (PhotoBookPage, *PublishError) {
+	count, ok := counts[page.Layout]
 	if !ok {
 		return page, publishErr(http.StatusBadRequest, "Page %d has no layout the Photo Book knows.", n)
 	}

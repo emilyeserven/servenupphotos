@@ -22,6 +22,7 @@ import {
   renamePage,
   setLayout,
 } from "@/lib/photo-book";
+import { layoutChoices } from "@/lib/photo-book-layouts";
 import {
   type BookUnit,
   addPage,
@@ -72,7 +73,10 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
       <div className="flex min-w-0 flex-1 flex-col gap-4">
         <PhotoUnits book={book} update={update} look={look} />
         <div>
-          <AddPageButton onAdd={(layout) => update(addPage(book, layout))} />
+          <AddPageButton
+            layouts={layoutChoices(book)}
+            onAdd={(layout) => update(addPage(book, layout))}
+          />
         </div>
       </div>
       {drawer && (
@@ -176,6 +180,7 @@ function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
               controls={
                 <PageControls
                   page={page}
+                  layouts={layoutChoices(book)}
                   onName={(name) => update(renamePage(book, index, name))}
                   onLayout={(layout) => update(setLayout(book, index, layout))}
                   onTitle={actions.onTitle}
