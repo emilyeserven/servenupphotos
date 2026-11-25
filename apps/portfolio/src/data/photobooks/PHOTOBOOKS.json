@@ -3,6 +3,23 @@
     "id": "2026",
     "name": "2026",
     "template": "",
-    "pages": []
+    "album": "2026-photo-book-candidates",
+    "pages": [
+      {
+        "id": "page-1",
+        "layout": "pair-left",
+        "title": null,
+        "slots": [
+          {
+            "photo": "",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf6882.json",
+            "caption": null
+          }
+        ]
+      }
+    ]
   }
 ]
