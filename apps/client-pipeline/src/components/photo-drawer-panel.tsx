@@ -2,6 +2,7 @@ import { PanelRightCloseIcon } from "lucide-react";
 import { type DragEvent, type ReactNode, useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
+import { GridFilterButton } from "@/components/gallery/grid-filter-button";
 import { GridFilterBar, useGridFilters } from "@/components/gallery/grid-filters";
 import { PhotoImage } from "@/components/instagram-picker/photo-image";
 import { SectionTitle } from "@/components/section-title";
@@ -44,8 +45,9 @@ interface PhotoDrawerPanelProps {
   /** Dropping a photo from the page here takes it out; left out, the drawer takes no drops. */
   takeOff?: TakeOff;
   /**
-   * True to list the photos in the order given, such as a photo book's album's, without the
-   * portfolio Grid's filters; left out, newest taken first, with the filters.
+   * True to list the photos in the order given, such as a photo book's album's, with the portfolio
+   * Grid's filters behind a **Filter** button beside the search; left out, newest taken first,
+   * with the filters' bar under it.
    */
   inOrder?: boolean;
   /** What the drawer says with no photos given at all, such as before an album is picked. */
@@ -107,23 +109,22 @@ function useDrawerList(photos: SocialPhoto[], used: Set<string>, inOrder = false
     setSearch,
     showUsed,
     setShowUsed,
-    shown: inOrder ? listed : grid.shown,
+    shown: grid.shown,
     filterPhotos: grid.photos,
+    filterCount: grid.count,
   };
 }
 
 /**
  * A panel beside a page's content, like the Instagram calendar's photo drawer, listing the photos to
- * drag onto it, with a search and the portfolio Grid's filters (or, inOrder, in the order given).
+ * drag onto it, with a search and the portfolio Grid's filters (or, inOrder, in the order given,
+ * with the filters in a flyout).
  * Clicking a photo adds it; with takeOff, a photo dropped here from the page comes out.
  */
 export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
   const { photos, used, onPick, onClose, dragType, words, takeOff, inOrder, empty } = props;
-  const { search, setSearch, showUsed, setShowUsed, shown, filterPhotos } = useDrawerList(
-    photos,
-    used,
-    inOrder,
-  );
+  const { search, setSearch, showUsed, setShowUsed, shown, filterPhotos, filterCount } =
+    useDrawerList(photos, used, inOrder);
   const { over, handlers } = useTakeOffDrop(dragType, takeOff);
   return (
     <aside
@@ -145,13 +146,16 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
           <PanelRightCloseIcon />
         </Button>
       </div>
-      <Input
-        type="search"
-        placeholder="Search by title or file name"
-        aria-label="Search photos"
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-      />
+      <div className="flex items-center gap-2">
+        <Input
+          type="search"
+          placeholder="Search by title or file name"
+          aria-label="Search photos"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        {inOrder && <GridFilterButton photos={filterPhotos} count={filterCount} />}
+      </div>
       <label className="flex items-center gap-2 text-sm">
         <input
           type="checkbox"

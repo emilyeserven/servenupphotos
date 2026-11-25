@@ -96,35 +96,42 @@ export function useGridFilters<T extends GridFile>(all: T[], files: T[]) {
 }
 
 /**
- * The portfolio Grid's **Show filters** button and panel, the same filters as there: places,
+ * The portfolio Grid's **Show filters** button and panel (or, bare, the filters always shown, for a
+ * flyout that opens them itself), the same filters as there: places,
  * album, tag, genre, camera, lens, the setting and time of day sliders, and colors. `photos` is
  * what the Gallery's other filters leave, which the counts are out of.
  */
-export function GridFilterBar({ photos }: { photos: Photo[] }) {
+export function GridFilterBar({ photos, bare }: { photos: Photo[]; bare?: boolean }) {
   const search = useSearch({ strict: false }) as Record<string, unknown>;
   if (photos.length === 0) return null;
-  return (
-    <ScriptDisplayProvider>
-      <Card className="py-4">
-        <CardContent className="px-4 text-sm">
-          <CameraFilterBar
-            photos={photos}
-            extra={{
-              keys: COLOR_FILTER_KEYS,
-              count: colorFilterCount(parseColorFilters(search)),
-              children: (
-                <VisualsPicker
-                  photos={filterWithCamera(photos, { ...search, orientation: undefined })}
-                  filters={{
-                    ...parseColorFilters(search),
-                    orientation: parseCameraFilters(search).orientation,
-                  }}
-                />
-              ),
+  const bar = (
+    <CameraFilterBar
+      photos={photos}
+      bare={bare}
+      extra={{
+        keys: COLOR_FILTER_KEYS,
+        count: colorFilterCount(parseColorFilters(search)),
+        children: (
+          <VisualsPicker
+            photos={filterWithCamera(photos, { ...search, orientation: undefined })}
+            filters={{
+              ...parseColorFilters(search),
+              orientation: parseCameraFilters(search).orientation,
             }}
           />
-        </CardContent>
-      </Card>
+        ),
+      }}
+    />
+  );
+  return (
+    <ScriptDisplayProvider>
+      {bare ? (
+        <div className="text-sm">{bar}</div>
+      ) : (
+        <Card className="py-4">
+          <CardContent className="px-4 text-sm">{bar}</CardContent>
+        </Card>
+      )}
     </ScriptDisplayProvider>
   );
 }
