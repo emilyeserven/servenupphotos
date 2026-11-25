@@ -222,7 +222,7 @@ export const LAYOUTS: LayoutInfo[] = [
  * How many photos layout holds: a built-in one's count, one of the book's layouts' photos, none on
  * an other page or a new text page, and a full page's one for a layout the book doesn't have.
  */
-export function layoutSlots(book: Pick<PhotoBook, "layouts">, layout: PageLayout): number {
+function layoutSlots(book: Pick<PhotoBook, "layouts">, layout: PageLayout): number {
   if (layout === "other" || layout === "text") return 0;
   const custom = book.layouts?.find((l) => l.id === layout);
   return custom?.photos ?? LAYOUTS.find((info) => info.id === layout)?.slots ?? 1;

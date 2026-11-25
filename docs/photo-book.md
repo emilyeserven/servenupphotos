@@ -26,7 +26,7 @@ On a book's page, **All photo books** goes back to the list. Under it, five tabs
 
 ## Layouts
 
-The **Layouts** tab lists the built-in layouts, then **This book's layouts**, each with how many pages have it. The picked one is drawn on the right as a page in the book's shape, with the album's photos, their captions from the caption template and a title; **Other photos** tries the next few photos of the album. The page is cut off at its edge, as the printed one would be, so text that doesn't fit shows it.
+The **Layouts** tab lists the built-in layouts, then **This book's layouts**, each with how many pages have it. The picked one is drawn on the right as a page in the book's shape, with the album's photos, their captions from the caption template and a title; **Other photos** tries the next few photos of the album. Each frame gets the next photo of its shape: landscape photos in landscape frames and portrait ones in portrait frames (from the photo file's `width` and `height`, a photo within 5% of square suiting either). A square frame or one that fills its room takes any photo, and when the album has no photo of a frame's shape left, the next one of any shape fills it. The left and right pages of a book's own layout never repeat a photo. The page is cut off at its edge, as the printed one would be, so text that doesn't fit shows it.
 
 Built-in layouts stay as they are. The copy button beside any layout (or **Customize** under a built-in one) makes a layout of the book's own from its settings, named after it, to change:
 
