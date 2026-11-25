@@ -39,7 +39,7 @@ function pageParts(props: BodyProps): PageParts {
           value={page.title}
           placeholder="TITLE"
           onChange={(event) => actions.onTitle(event.target.value)}
-          className="w-full shrink-0 rounded-sm bg-transparent text-[4.4cqw] leading-none font-bold uppercase outline-none placeholder:text-neutral-600 hover:bg-white/10 focus:bg-white/10"
+          className="w-full shrink-0 rounded-sm bg-transparent text-[4.4cqw] leading-none font-bold uppercase outline-none placeholder:text-neutral-600 hover:bg-white/10 in-data-[print]:placeholder:text-transparent focus:bg-white/10"
         />
       ),
     slot: (i, shape, className) => {
@@ -166,7 +166,7 @@ function PairBody({ parts, left }: { parts: PageParts; left: boolean }) {
 /** One of the book's other pages, such as a bio page: only its name, as a placeholder for now. */
 function OtherBody({ name }: { name: string }) {
   return (
-    <div className="flex flex-1 items-center justify-center rounded-sm border border-dashed border-neutral-700 p-[6%] text-center text-[4cqw] leading-tight font-bold text-neutral-400 uppercase">
+    <div className="flex flex-1 items-center justify-center rounded-sm border border-dashed border-neutral-700 p-[6%] in-data-[print]:border-transparent text-center text-[4cqw] leading-tight font-bold text-neutral-400 uppercase">
       {name}
     </div>
   );

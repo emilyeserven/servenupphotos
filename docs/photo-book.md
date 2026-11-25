@@ -117,6 +117,12 @@ Other pages are pages without photos: one the publisher requires, a bio page, or
 
 > **Frontend analogy:** the drawer and **Used page spreads** share one HTML5 drag type carrying the page or spread's ID, so each is both a source and a drop target, like a sortable list fed from a palette. The preview's views are derived state: the book's order grouped one way or the other, recomputed each render rather than stored.
 
+### Save as PDF
+
+**Save as PDF**, above the preview, draws every page of the book in its order, each on its own sheet of paper the book's page size from **Info**, and opens the browser's print dialog; pick **Save as PDF** there to make the file. Page 1 is a right page and they alternate from there, so a custom layout's left and right looks print as they show in the preview. Blank pages print blank, and the inside covers are left out, since they aren't pages of the book. Photos are loaded at about three times the size they're drawn, close to 300 dpi on paper (as large as the photo's biggest version allows), and the dialog waits for them, up to 30 seconds. Nothing that's only for editing is printed: no "Drop a photo here", dashed outlines, empty caption or title placeholders, or dpi marks.
+
+> **Frontend analogy:** it's `window.print()` on a portal of the pages, with `@page { size: 12.5in 10.625in; margin: 0 }`, `break-after: page` on each page and a print media query that hides the rest of the app. A React context tells each photo it's printing, so its `<img>` loads eagerly with a larger `sizes`.
+
 ## The photo drawer
 
 **Photos**, on the **Photo Pages** tab, opens and closes a drawer to the right of the pages (under them on a narrow screen), like the [Instagram calendar's](publish.md#photo-drawer). It lists the photos of the book's album and the albums inside it (Smart Albums by their rules), in the album's order as the portfolio shows it, with changes waiting for Commit, and not the [Undecided](photos-in-flight.md#undecided) ones. Until an album is picked it asks for one. It has:
