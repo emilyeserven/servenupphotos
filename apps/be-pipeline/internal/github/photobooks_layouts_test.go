@@ -38,9 +38,12 @@ func TestSavePhotoBookLayouts(t *testing.T) {
 		t.Errorf("saved %s, want no ratio on a layout whose photos fill their room", saved)
 	}
 	l := bigPair
-	l.Shape, l.LeftPages, l.Left, l.AlignTo = "ratio", "mirror", &left, "photo"
-	if _, err := c.SavePhotoBook(t.Context(), placesGH, PhotoBook{ID: "korea", Name: "Korea", Layouts: []PhotoBookLayout{l}}); err != nil {
+	l.Shape, l.LeftPages, l.Left, l.AlignTo, l.Title = "ratio", "mirror", &left, "photo", "off"
+	if _, err := c.SavePhotoBook(t.Context(), placesGH, PhotoBook{ID: "korea", Name: "Korea", NoTitles: true, Layouts: []PhotoBookLayout{l}}); err != nil {
 		t.Errorf("SavePhotoBook() with a 4:5 ratio error = %v", err)
+	}
+	if titled := staged(t, c, dataRoot+"/photobooks/korea.json"); !strings.Contains(titled, `"title": "off"`) || !strings.Contains(titled, `"noTitles": true`) {
+		t.Errorf("saved %s, want the layout's title off and the book's titles off", titled)
 	}
 	if strings.Count(saved, `"photo": `) != 2 {
 		t.Errorf("saved %s, want the page to have two places", saved)
@@ -60,6 +63,7 @@ func TestSavePhotoBookLayouts(t *testing.T) {
 		{"bad shape", with(func(l *PhotoBookLayout) { l.Shape = "round" })},
 		{"bad text side", with(func(l *PhotoBookLayout) { l.Text = "middle" })},
 		{"bad align to", with(func(l *PhotoBookLayout) { l.AlignTo = "page" })},
+		{"bad title place", with(func(l *PhotoBookLayout) { l.Title = "below" })},
 		{"ratio without sides", with(func(l *PhotoBookLayout) { l.Shape, l.Ratio = "ratio", nil })},
 		{"ratio of 0", with(func(l *PhotoBookLayout) { l.Shape, l.Ratio = "ratio", &PhotoBookRatio{Width: 0, Height: 5} })},
 		{"bad left pages", with(func(l *PhotoBookLayout) { l.LeftPages = "flipped" })},

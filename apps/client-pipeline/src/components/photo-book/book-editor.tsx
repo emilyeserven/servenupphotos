@@ -97,6 +97,7 @@ export function BookEditor({ saved, photos, data, part, onRemoved }: BookEditorP
     layouts: book.layouts ?? [],
     sides: pageSides(book),
     printWidth: pageWidthInches(book),
+    noTitles: book.noTitles === true,
   };
   const drawer = part === "pages" && (
     <PhotoDrawerToggle open={drawerOpen} onToggle={() => setDrawerOpen(!drawerOpen)} />

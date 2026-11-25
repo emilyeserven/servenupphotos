@@ -5,6 +5,7 @@ import { bookAlbums } from "@/components/photo-book/album-photos";
 import { BookSettings, DeleteBookButton } from "@/components/photo-book/book-bar";
 import { BudgetFields } from "@/components/photo-book/budget-fields";
 import { SizeFields } from "@/components/photo-book/size-fields";
+import { TitlesField } from "@/components/photo-book/titles-field";
 import type { PhotoBook } from "@/lib/photo-book";
 
 interface InfoTabProps {
@@ -19,7 +20,7 @@ interface InfoTabProps {
 
 /**
  * A book's Info tab: its name, the album its photos come from, its caption template, its page size,
- * its page budget, and Remove book.
+ * its page budget, whether its pages show titles, and Remove book.
  */
 export function InfoTab({ book, update, data, templates, template, onRemoved }: InfoTabProps) {
   const albums = useMemo(() => bookAlbums(data), [data]);
@@ -34,6 +35,7 @@ export function InfoTab({ book, update, data, templates, template, onRemoved }: 
       />
       <SizeFields book={book} onChange={update} />
       <BudgetFields book={book} onChange={update} />
+      <TitlesField book={book} onChange={update} />
       <div>
         <DeleteBookButton book={book} onDeleted={onRemoved} />
       </div>

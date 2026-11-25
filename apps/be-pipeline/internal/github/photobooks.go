@@ -85,6 +85,9 @@ type PhotoBook struct {
 	// Budget is how many pages the printed book should have and can have at
 	// most; nil when none is set.
 	Budget *PhotoBookBudget `json:"budget,omitempty"`
+	// NoTitles is true when no photo page of the book shows its title, set
+	// on its Info tab.
+	NoTitles bool `json:"noTitles,omitempty"`
 }
 
 // PhotoBookBudget is a book's page budget, counted in printed pages (a
@@ -177,7 +180,7 @@ func (c *Client) DeletePhotoBook(ctx context.Context, gh settings.GitHub, id str
 // and album trimmed, each page with as many slots as its layout holds, and
 // its order listing only its pages, each once.
 func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
-	out := PhotoBook{ID: strings.TrimSpace(b.ID), Name: strings.TrimSpace(b.Name), Template: strings.TrimSpace(b.Template), Album: strings.TrimSpace(b.Album)}
+	out := PhotoBook{ID: strings.TrimSpace(b.ID), Name: strings.TrimSpace(b.Name), Template: strings.TrimSpace(b.Template), Album: strings.TrimSpace(b.Album), NoTitles: b.NoTitles}
 	if perr := validEntryID(PhotoBooks.Name, out.ID); perr != nil {
 		return out, perr
 	}

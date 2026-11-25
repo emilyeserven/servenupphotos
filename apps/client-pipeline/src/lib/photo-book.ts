@@ -48,6 +48,12 @@ export interface CustomLayout {
    * photo kept in its shape and the room's edge.
    */
   alignTo?: "room" | "photo";
+  /**
+   * Where the page's title goes: in the text with the captions (`text`), across the top above the
+   * photos and their text (`top`), or nowhere (`off`). Absent in a layout made before: with the
+   * captions when they're together in one column, across the top when each is beside its photo.
+   */
+  title?: "text" | "top" | "off";
   /** The room between the photos and the text, in percent of the page's width, 0 to 20. */
   gap: number;
   /** The room around the page's edge, in percent of its width, 0 to 20. */
@@ -137,6 +143,8 @@ export interface PhotoBook {
   hiddenLayouts?: BuiltInLayout[];
   /** How many pages the printed book should have and can have at most, set on its Info tab. */
   budget?: PageBudget;
+  /** True when no page of the book shows a title, set on its Info tab; absent when they do. */
+  noTitles?: boolean;
 }
 
 /** A book's page budget, in printed pages (a spread is two); a number left out isn't set. */
