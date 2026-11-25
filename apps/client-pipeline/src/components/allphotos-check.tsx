@@ -1,4 +1,5 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { CircleAlertIcon, TriangleAlertIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { type AllPhotosCheck, type PhotoIdentity, pullRequestCheckQuery } from "@/api/photos";
@@ -7,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Spinner } from "@/components/ui/spinner";
 import { allPhotosCheck } from "@/lib/combined";
 import { useCombinedData } from "@/stores/combined-data";
+import { isObject } from "@portfolio/lib/values";
 
 interface AllPhotosGateProps {
   /** The analyzed photo, or null when its EXIF couldn't be read and it can't be checked. */
@@ -22,7 +24,7 @@ interface AllPhotosGateProps {
 
 /**
  * Checks ALLPHOTOS.json for the analyzed photo before anything can be done with it. A photo already
- * there can't be uploaded or saved again, since editing a saved photo isn't supported yet. When the
+ * there can't be uploaded or saved again here; it links to the saved photo on the Photo page instead. When the
  * check can't run, its actions are still offered, with a warning.
  */
 export function AllPhotosGate({ photo, children, showStatus = true }: AllPhotosGateProps) {
@@ -131,8 +133,8 @@ function AlreadyThere({ file, check }: { file: string; check: AllPhotosCheck }) 
         </CardTitle>
         <CardDescription>
           {file} with the same GPS position and creation date is already in {check.path} or waiting
-          in the photo data pull request, so it can't be uploaded or saved again. Editing a saved
-          photo isn't supported yet.
+          in the photo data pull request, so it can't be uploaded or saved again here. Open the
+          saved photo to edit it, or to upload its image when it was saved without one.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -149,12 +151,39 @@ function AlreadyThere({ file, check }: { file: string; check: AllPhotosCheck }) 
                 {match.source}
               </a>
             </p>
+            <OpenSaved entry={match.entry} />
             <JsonCodeBlock value={match.entry} title="Saved photo data" />
           </div>
         ))}
       </CardContent>
     </Card>
   );
+}
+
+/**
+ * A link to the saved photo on the Photo page, by its ID, saying when it was saved without its image
+ * in R2, which the Photo page then offers to upload.
+ */
+function OpenSaved({ entry }: { entry: unknown }) {
+  if (!isObject(entry) || typeof entry.id !== "number") return null;
+  const missing = !hasImage(entry.images);
+  return (
+    <p className="text-sm">
+      {missing && "It was saved without its image in R2. "}
+      <Link
+        to="/exif"
+        search={{ photo: entry.id }}
+        className="font-medium underline underline-offset-4"
+      >
+        {missing ? "Open it to upload the image" : "Open the saved photo"}
+      </Link>
+    </p>
+  );
+}
+
+/** Whether a saved photo's `images` links to its original in R2. */
+function hasImage(images: unknown): boolean {
+  return isObject(images) && typeof images.full === "string" && images.full !== "";
 }
 
 /** Places the check couldn't fully read. */
