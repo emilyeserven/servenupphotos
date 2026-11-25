@@ -12,6 +12,8 @@ import {
   fromPlace,
 } from "@/components/photo-book/page-slot";
 import { unitName } from "@/components/photo-book/page-types";
+import { PagesGrid } from "@/components/photo-book/pages-grid";
+import { PagesViewToggle } from "@/components/photo-book/pages-view-toggle";
 import { TagButton, TagChips, TagFilter } from "@/components/photo-book/unit-tags";
 import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import {
@@ -36,6 +38,7 @@ import {
   setUnitTags,
   unitTags,
   photosInBook,
+  placePhotoUnit,
   removePage,
   repeatedPhotos,
   setLinkNext,
@@ -77,7 +80,7 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
       <div className="flex min-w-0 flex-1 flex-col gap-4">
-        <PhotoUnits book={book} update={update} look={look} />
+        <PagesView book={book} update={update} look={look} />
         <div>
           <AddPageButton
             layouts={layoutChoices(book)}
@@ -115,6 +118,41 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
 }
 
 type UnitsProps = Pick<PagesTabProps, "book" | "update" | "look">;
+
+/** The element ID of a photo page or spread in the editing view, to scroll to it. */
+function unitElementId(id: string): string {
+  return `photo-unit-${id}`;
+}
+
+/**
+ * The photo pages, as the editing view (each page large, with its controls) or as the grid of small
+ * previews to drag into a new order; clicking one in the grid opens it in the editing view.
+ */
+function PagesView(props: UnitsProps) {
+  const { book, update, look } = props;
+  const [grid, setGrid] = useState(false);
+  const open = (id: string) => {
+    setGrid(false);
+    requestAnimationFrame(() => document.getElementById(unitElementId(id))?.scrollIntoView());
+  };
+  const units = bookUnits(book).filter((unit) => !unit.pages.some(isOtherPage));
+  return (
+    <>
+      <PagesViewToggle grid={grid} onGrid={setGrid} />
+      {grid ? (
+        <PagesGrid
+          units={units}
+          inBook={new Set(bookOrder(book))}
+          look={look}
+          onPlace={(id, before) => update(placePhotoUnit(book, id, before))}
+          onOpen={open}
+        />
+      ) : (
+        <PhotoUnits {...props} />
+      )}
+    </>
+  );
+}
 
 /** The photo pages, each page or spread with its controls, a spread across the whole row. */
 function PhotoUnits({ book, update, look }: UnitsProps) {
@@ -161,7 +199,10 @@ function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
   const repeated = repeatedPhotos(book);
   const spread = unit.pages.length > 1;
   return (
-    <div className={cn("flex flex-col gap-2", spread && "2xl:col-span-2")}>
+    <div
+      id={unitElementId(unit.id)}
+      className={cn("flex scroll-mt-4 flex-col gap-2", spread && "2xl:col-span-2")}
+    >
       <UnitControls
         name={unitName(unit)}
         spread={spread}
