@@ -13,7 +13,11 @@ const PAGE_CLASS = "bg-black p-[2.5%] font-[Helvetica_Neue,Helvetica,Arial,sans-
 export function BookPage(props: BookPageProps & { className?: string }) {
   const { page, aspect, controls, className } = props;
   return (
-    <section aria-label={pageName(page)} className={cn("flex min-w-0 flex-col gap-2", className)}>
+    <section
+      aria-label={pageName(page)}
+      data-page-id={page.id}
+      className={cn("flex min-w-0 flex-col gap-2", className)}
+    >
       {controls}
       <PageSheet aspect={aspect}>
         <PageBody {...props} />

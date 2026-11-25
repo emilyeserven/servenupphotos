@@ -1,4 +1,4 @@
-import { PanelRightCloseIcon } from "lucide-react";
+import { CornerDownRightIcon, PanelRightCloseIcon } from "lucide-react";
 import { type DragEvent, type ReactNode, useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
@@ -56,6 +56,11 @@ interface PhotoDrawerPanelProps {
   empty?: ReactNode;
   /** The paths of photos to show faded, such as ones already on a photo book's page. */
   dimmed?: Set<string>;
+  /**
+   * Goes to the next page with the photo, from a button on a faded photo when it's pointed at;
+   * left out, faded photos have none.
+   */
+  onJump?: (photo: SocialPhoto) => void;
   /** Under Show used: a control for which photos are faded, such as a photo book's tags. */
   fadeBy?: ReactNode;
 }
@@ -140,6 +145,7 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
     empty,
     dimmed,
     fadeBy,
+    onJump,
   } = props;
   const { search, setSearch, showUsed, setShowUsed, shown, filterPhotos, filterCount } =
     useDrawerList(photos, used, inOrder);
@@ -190,6 +196,7 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
           empty={emptyNote(photos.length, empty)}
           used={used}
           dimmed={dimmed}
+          onJump={onJump}
           onPick={onPick}
           dragType={dragType}
           usedBadge={words.usedBadge}
@@ -236,18 +243,19 @@ function DrawerPhotos(props: {
   empty: ReactNode;
   used: Set<string>;
   dimmed: Set<string> | undefined;
+  onJump: ((photo: SocialPhoto) => void) | undefined;
   onPick: (photo: SocialPhoto) => void;
   dragType: string;
   usedBadge: string;
 }) {
-  const { photos, empty, used, dimmed, onPick, dragType, usedBadge } = props;
+  const { photos, empty, used, dimmed, onJump, onPick, dragType, usedBadge } = props;
   if (photos.length === 0) {
     return <EmptyNote className="py-6 text-center">{empty}</EmptyNote>;
   }
   return (
     <ul className="grid grid-cols-3 gap-2" aria-label="Photos to add">
       {photos.map((photo) => (
-        <li key={photo.path}>
+        <li key={photo.path} className="group/tile relative">
           <button
             type="button"
             draggable
@@ -277,8 +285,33 @@ function DrawerPhotos(props: {
             </span>
             <span className="truncate text-xs group-hover:underline">{photoName(photo)}</span>
           </button>
+          <JumpButton photo={photo} onJump={dimmed?.has(photo.path) ? onJump : undefined} />
         </li>
       ))}
     </ul>
+  );
+}
+
+/**
+ * On a faded photo, shown while it's pointed at: a button that goes to the next page with it, and
+ * on each click the one after; nothing without onJump.
+ */
+function JumpButton(props: {
+  photo: SocialPhoto;
+  onJump: ((photo: SocialPhoto) => void) | undefined;
+}) {
+  const { photo, onJump } = props;
+  if (!onJump) return null;
+  return (
+    <Button
+      size="icon-xs"
+      variant="secondary"
+      aria-label={`Go to the next page with ${photoName(photo)}`}
+      title="Go to the next page with this photo"
+      onClick={() => onJump(photo)}
+      className="absolute top-1 right-1 opacity-0 shadow group-hover/tile:opacity-100 focus-visible:opacity-100"
+    >
+      <CornerDownRightIcon />
+    </Button>
   );
 }

@@ -4,6 +4,8 @@ import {
   type PhotoBook,
   firstEmptySlot,
   photosOnPages,
+  pagesWithPhoto,
+  nextId,
   pageAspect,
   placePhoto,
   removePhoto,
@@ -57,4 +59,16 @@ test("a page's shape comes from the book's size, or BookWright's large landscape
   assert.equal(pageAspect({}), 900 / 765);
   assert.equal(pageAspect({ size: { width: 20, height: 25, unit: "cm" } }), 0.8);
   assert.equal(pageAspect({ size: { width: 0, height: 25, unit: "cm" } }), 900 / 765);
+});
+
+test("the pages with a photo come in order, and going to the next one cycles through them", () => {
+  let b = placePhoto(book(), { page: 0, slot: 0 }, "a.json");
+  b = placePhoto(b, { page: 1, slot: 1 }, "a.json");
+  assert.deepEqual(pagesWithPhoto(b, "a.json"), ["page-1", "page-2"]);
+  assert.deepEqual(pagesWithPhoto(b, "b.json"), []);
+  assert.equal(nextId(["x", "y"], undefined), "x");
+  assert.equal(nextId(["x", "y"], "x"), "y");
+  assert.equal(nextId(["x", "y"], "y"), "x");
+  assert.equal(nextId(["x", "y"], "gone"), "x");
+  assert.equal(nextId([], undefined), undefined);
 });
