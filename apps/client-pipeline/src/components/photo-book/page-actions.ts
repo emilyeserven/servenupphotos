@@ -41,6 +41,8 @@ export interface PageLook {
   sides: Map<string, PageSide>;
   /** The page's printed width in inches, to check its photos' resolution; null for a size in pixels. */
   printWidth: number | null;
+  /** True when the book shows no page titles, set on its Info tab. */
+  noTitles: boolean;
 }
 
 /** Actions for a page that's only shown, such as a small preview: they do nothing. */

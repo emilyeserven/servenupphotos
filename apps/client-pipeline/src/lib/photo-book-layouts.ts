@@ -79,6 +79,14 @@ function layoutLook(book: PhotoBook, layout: PageLayout): LayoutLook | null {
   return BUILT_IN_LOOKS[layout as BuiltInLayout] ?? null;
 }
 
+/**
+ * Where a layout puts the page's title: as it says, or, in a layout made before that doesn't, with
+ * the captions when they're in one column and across the top when each is beside its photo.
+ */
+export function titlePlace(look: Pick<LayoutLook, "title" | "captions">): "text" | "top" | "off" {
+  return look.title ?? (look.captions === "column" ? "text" : "top");
+}
+
 /** The book's layout with ID id, if it's one of the book's own. */
 export function customLayout(book: PhotoBook, id: string): CustomLayout | undefined {
   return book.layouts?.find((l) => l.id === id);

@@ -55,6 +55,11 @@ type PhotoBookLayoutLook struct {
 	// of the photos as drawn, or "room" (or "", in a layout made before)
 	// for all the room the photos are given.
 	AlignTo string `json:"alignTo,omitempty"`
+	// Title is where the page's title goes: "text" with the captions,
+	// "top" across the top above the photos, "off" for none, or "" (in a
+	// layout made before) for with the captions in one column and across
+	// the top when each caption is beside its photo.
+	Title string `json:"title,omitempty"`
 	// Gap is the room between the photos and the text, in percent of the
 	// page's width, 0 to 20.
 	Gap float64 `json:"gap"`
@@ -82,6 +87,7 @@ var (
 		"captions": {"column", "photo"},
 		"align":    {"start", "center", "end"},
 		"alignTo":  {"", "room", "photo"},
+		"title":    {"", "text", "top", "off"},
 	}
 	leftPagesChoices = []string{"", "same", "mirror", "own"}
 )
@@ -148,7 +154,7 @@ func validLeftPages(l PhotoBookLayout, n int) (PhotoBookLayout, *PublishError) {
 // validLayoutLook checks a look of layout n and returns it with its numbers
 // kept in range and its ratio only when its shape takes one.
 func validLayoutLook(l PhotoBookLayoutLook, n int) (PhotoBookLayoutLook, *PublishError) {
-	for field, value := range map[string]string{"arrange": l.Arrange, "shape": l.Shape, "text": l.Text, "captions": l.Captions, "align": l.Align, "alignTo": l.AlignTo} {
+	for field, value := range map[string]string{"arrange": l.Arrange, "shape": l.Shape, "text": l.Text, "captions": l.Captions, "align": l.Align, "alignTo": l.AlignTo, "title": l.Title} {
 		if !slices.Contains(layoutChoices[field], value) {
 			return l, publishErr(http.StatusBadRequest, "Layout %d's %s has to be one of %s.", n, field, strings.Join(layoutChoices[field], ", "))
 		}

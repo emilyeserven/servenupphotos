@@ -1,7 +1,13 @@
 import { type CSSProperties, type ReactNode, useRef } from "react";
 import type { PageParts } from "@/components/photo-book/page-types";
 import { usePhotoEdges } from "@/components/photo-book/photo-edges";
-import { type LayoutLook, photoShape, textBeside, textFirst } from "@/lib/photo-book-layouts";
+import {
+  type LayoutLook,
+  photoShape,
+  textBeside,
+  textFirst,
+  titlePlace,
+} from "@/lib/photo-book-layouts";
 import { cn } from "@/lib/utils";
 
 /** How each text alignment sits in its room, as flexbox's justify-content. */
@@ -68,48 +74,72 @@ function PhotoRoom({ look, children }: { look: LayoutLook; children: ReactNode }
   );
 }
 
+/** The captions together in one column on the text's side, with the title when the layout puts it there. */
+function ColumnBody(props: { parts: PageParts; look: LayoutLook; title: ReactNode }) {
+  const { parts, look, title } = props;
+  const indexes = Array.from({ length: look.photos }, (_, i) => i);
+  return (
+    <Split
+      look={look}
+      text={
+        <>
+          {title}
+          {indexes.map((i) => parts.caption(i))}
+        </>
+      }
+      photos={
+        <PhotoRoom key="photos" look={look}>
+          {indexes.map((i) => parts.slot(i, photoShape(look), "flex-1"))}
+        </PhotoRoom>
+      }
+    />
+  );
+}
+
+/** Each caption beside its own photo, the first one under the title when the layout puts it there. */
+function BesideBody(props: { parts: PageParts; look: LayoutLook; title: ReactNode }) {
+  const { parts, look, title } = props;
+  const indexes = Array.from({ length: look.photos }, (_, i) => i);
+  return (
+    <PhotoRoom look={look}>
+      {indexes.map((i) => (
+        <Split
+          key={i}
+          look={look}
+          text={
+            i === 0 && title ? (
+              <>
+                {title}
+                {parts.caption(0)}
+              </>
+            ) : (
+              parts.caption(i)
+            )
+          }
+          photos={parts.slot(i, photoShape(look), "flex-1")}
+        />
+      ))}
+    </PhotoRoom>
+  );
+}
+
 /**
  * A page in a layout made on the Layouts tab: its photos arranged and shaped as the layout says,
- * and its title and captions on the layout's side, together in one column or each beside its own
- * photo, inside the layout's margin.
+ * and its captions on the layout's side, together in one column or each beside its own photo,
+ * inside the layout's margin. The title goes with the captions, across the top, or nowhere, as the
+ * layout says.
  */
 export function CustomBody({ parts, look }: { parts: PageParts; look: LayoutLook }) {
-  const indexes = Array.from({ length: look.photos }, (_, i) => i);
+  const place = titlePlace(look);
+  const inText = place === "text" ? parts.title : null;
+  const Body = look.captions === "column" ? ColumnBody : BesideBody;
   return (
     <div
       className="flex min-h-0 flex-1 flex-col gap-[2cqw]"
       style={{ padding: `${look.margin}cqw` }}
     >
-      {look.captions === "column" ? (
-        <Split
-          look={look}
-          text={
-            <>
-              {parts.title}
-              {indexes.map((i) => parts.caption(i))}
-            </>
-          }
-          photos={
-            <PhotoRoom key="photos" look={look}>
-              {indexes.map((i) => parts.slot(i, photoShape(look), "flex-1"))}
-            </PhotoRoom>
-          }
-        />
-      ) : (
-        <>
-          {parts.title}
-          <PhotoRoom look={look}>
-            {indexes.map((i) => (
-              <Split
-                key={i}
-                look={look}
-                text={parts.caption(i)}
-                photos={parts.slot(i, photoShape(look), "flex-1")}
-              />
-            ))}
-          </PhotoRoom>
-        </>
-      )}
+      {place === "top" && parts.title}
+      <Body parts={parts} look={look} title={inText} />
     </div>
   );
 }

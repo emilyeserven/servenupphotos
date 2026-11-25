@@ -21,6 +21,7 @@ type BodyProps = Pick<
   | "sides"
   | "side"
   | "printWidth"
+  | "noTitles"
 >;
 
 /** The other pages in the book with the slot's photo; none for a page left out. */
@@ -34,7 +35,7 @@ function pageParts(props: BodyProps): PageParts {
   const { page, index, number, repeated, photos, captionFor, actions, printWidth } = props;
   return {
     title:
-      page.title === null ? null : (
+      page.title === null || (props.noTitles && page.layout !== "text") ? null : (
         <input
           aria-label={`${pageName(page)} title`}
           value={page.title}

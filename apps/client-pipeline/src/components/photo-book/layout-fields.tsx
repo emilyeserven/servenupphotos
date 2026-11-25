@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { RatioFields } from "@/components/photo-book/ratio-fields";
 import { Button } from "@/components/ui/button";
-import { type LayoutLook, textBeside } from "@/lib/photo-book-layouts";
+import { type LayoutLook, textBeside, titlePlace } from "@/lib/photo-book-layouts";
 
 /** One setting's name over its control. */
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -152,6 +152,16 @@ function TextFields({ look, onChange }: LayoutFieldsProps) {
           ["photo", "Beside each photo"],
         ]}
         onChange={(captions) => onChange({ captions })}
+      />
+      <Choices
+        label="Page title"
+        value={titlePlace(look)}
+        options={[
+          ["text", "With the captions"],
+          ["top", "Across the top"],
+          ["off", "None"],
+        ]}
+        onChange={(title) => onChange({ title })}
       />
       <Choices
         label="Text sits"
