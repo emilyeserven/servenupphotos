@@ -6,12 +6,13 @@
 
 **Photo Books** lists every book as a card, with the album its photos come from, how many pages are in the book (and how many more could be used), and how many photos are on them; each card opens the book's own page, as the Trips do. **New book** names and makes another (its ID is made from the name, as caption templates' are) and opens it. An old `/photo-book` link opens the list, or the book its `?book=<id>` names.
 
-On a book's page, **All photo books** goes back to the list. Under it, three tabs, each a page of its own with a line under the tabs saying what it's for:
+On a book's page, **All photo books** goes back to the list. Under it, five tabs, each a page of its own with a line under the tabs saying what it's for:
 
 - **Info** (`/photo-books/<id>/info`): the book's name, album, caption template, page size and page budget.
 - **Layouts** (`/photo-books/<id>/layouts`): trying out page layouts at the book's page size.
 - **Photo Pages** (`/photo-books/<id>/pages`, where the book opens): making photo pages that could be used, and linking them into spreads.
 - **Book** (`/photo-books/<id>/book`): putting the pages that will be used in order, adding other pages, and paging through the book.
+- **List** (`/photo-books/<id>/list`): every photo in the book in printed order, to jump to editing one.
 
 ## Info
 
@@ -112,6 +113,10 @@ Other pages are pages without photos: one the publisher requires, a bio page, or
 **Preview Mode** collapses the app's sidebar, **Used page spreads** and the drawer, and shows the preview over the whole window, with nothing around it, as large as the window lets it be. **Esc** or **Leave Preview Mode** turns it off and opens the sidebar again if it was open; the arrow keys page through the book. Opening either panel leaves it too.
 
 > **Frontend analogy:** the drawer and **Used page spreads** share one HTML5 drag type carrying the page or spread's ID, so each is both a source and a drop target, like a sortable list fed from a palette. The preview's views are derived state: the book's order grouped one way or the other, recomputed each render rather than stored.
+
+## List
+
+The **List** tab lists the book's pages in the order they're printed, as **Book** puts them, each headed by its page number, name and layout ("Page 4 · Spotlight left  Two photos on the left"). A blank page the Book tab adds is left out, but its number is skipped, so the numbers match the printed book. Under each photo page, its photos in its layout's order: the place's number, the photo's Square Thumbnail, its name and its caption's first line, and **Edit info**, which opens the photo's editor (`/exif?edit=<path>`) to fix its title, Place or anything else its caption shows. An empty place says so; an other page says it has no photos. Above the pages, how many photos are on how many pages.
 
 ## The photo drawer
 

@@ -7,6 +7,7 @@ import { useBookTemplate, useCaptionFor } from "@/components/photo-book/book-cap
 import { BookTab } from "@/components/photo-book/book-tab";
 import { InfoTab } from "@/components/photo-book/info-tab";
 import { LayoutsTab } from "@/components/photo-book/layouts-tab";
+import { ListTab } from "@/components/photo-book/list-tab";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { PagesTab } from "@/components/photo-book/pages-tab";
 import { usePhotoBookDraft } from "@/components/photo-book/use-photo-book";
@@ -17,11 +18,11 @@ import { pageSides } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
 
 /**
- * A book's four tabs: Info for its name, album, captions and size; Layouts for trying out page
+ * A book's five tabs: Info for its name, album, captions and size; Layouts for trying out page
  * layouts; Photo Pages for making pages that could be used; Book for putting the ones that will be
- * used in order.
+ * used in order; List for every photo in the book, in order, to jump to editing one.
  */
-export type BookPart = "info" | "layouts" | "pages" | "book";
+export type BookPart = "info" | "layouts" | "pages" | "book" | "list";
 
 /** Each tab's name, in the order they're shown. */
 export const BOOK_PARTS: Record<BookPart, string> = {
@@ -29,6 +30,7 @@ export const BOOK_PARTS: Record<BookPart, string> = {
   layouts: "Layouts",
   pages: "Photo Pages",
   book: "Book",
+  list: "List",
 };
 
 /** The tab the URL names; Photo Pages for one the page doesn't know. */
@@ -44,6 +46,7 @@ const PART_DESCRIPTIONS: Record<BookPart, string> = {
   pages:
     "Make pages that could be used, in any layout, from the album's photos, as many as you like. Link a page with the next one to make a two-page spread.",
   book: "Drag pages, spreads and other pages from the drawer into Used page spreads to put the book together, and page through it in the preview.",
+  list: "Every photo in the book, page by page in the order it's printed. Edit info opens a photo's editor, to fix its title, Place or anything else its caption shows.",
 };
 
 interface BookEditorProps {
@@ -78,6 +81,7 @@ const TABS: Record<BookPart, (props: TabProps) => ReactNode> = {
     <PagesTab {...p} drawer={p.drawerOpen ? () => p.setDrawerOpen(false) : undefined} />
   ),
   book: (p) => <BookTab {...p} />,
+  list: (p) => <ListTab {...p} />,
 };
 
 /** The open book: its tabs, what the open one is for, and the open one. */
