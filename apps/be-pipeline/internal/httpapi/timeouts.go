@@ -43,6 +43,7 @@ var relayTimeouts = map[string]time.Duration{
 	"/data/r2-exif":         r2ExifTimeout,
 	"/data/near-duplicates": nearDuplicatesTimeout,
 	"/publish/":             baseURLTimeout,
+	"/photobooks/":          bookPdfTimeout,
 	"/transit/":             transitTimeout,
 	// Answers from memory while a rail or bus map downloads.
 	"/transit/downloads": 0,

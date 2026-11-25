@@ -9,6 +9,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.20.15
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.8
 	github.com/aws/smithy-go v1.28.8
+	github.com/chromedp/cdproto v0.160.1
+	github.com/chromedp/chromedp v0.24.0
 	github.com/disintegration/imaging v1.6.2
 	github.com/esimov/pigo v1.4.6
 	github.com/gen2brain/avif v0.6.0
@@ -29,6 +31,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.10 // indirect
 	github.com/ebitengine/purego v0.10.1 // indirect
+	github.com/go-json-experiment/json v0.0.0-20260213210345-44df1a37e875 // indirect
 	github.com/paulmach/orb v0.12.0 // indirect
 	github.com/paulmach/protoscan v0.2.1 // indirect
 	github.com/tetratelabs/wazero v1.12.0 // indirect
