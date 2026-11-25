@@ -1,4 +1,4 @@
-import { ImageIcon, RotateCcwIcon, XIcon } from "lucide-react";
+import { ImageIcon, XIcon } from "lucide-react";
 import type { SocialPhoto } from "@/api/publish";
 import { Button } from "@/components/ui/button";
 import { useDropTarget } from "@/hooks/use-drop-target";
@@ -80,14 +80,14 @@ export function PhotoSlot(props: PhotoSlotProps) {
         style={{ width: `min(100cqw, ${ratio * 100}cqh)`, aspectRatio: ratio }}
         className={cn(
           "group/slot relative overflow-hidden rounded-sm",
-          filled ? "bg-muted" : "border-muted-foreground/40 border border-dashed",
+          filled ? "bg-neutral-800" : "border border-dashed border-neutral-600",
           over && "ring-ring ring-2",
         )}
       >
         {filled ? (
           <FilledSlot slot={slot} place={place} photo={photo} image={image} onRemove={onRemove} />
         ) : (
-          <span className="text-muted-foreground flex size-full items-center justify-center p-2 text-center text-xs">
+          <span className="flex size-full items-center justify-center p-2 text-center text-xs text-neutral-400">
             Drop a photo here
           </span>
         )}
@@ -137,7 +137,7 @@ function FilledSlot(props: {
             className="size-full object-cover"
           />
         ) : (
-          <span className="text-muted-foreground flex size-full flex-col items-center justify-center gap-1 p-2 text-center text-xs">
+          <span className="flex size-full flex-col items-center justify-center gap-1 p-2 text-center text-xs text-neutral-400">
             <ImageIcon className="size-5" />
             {photo ? name : "This photo isn't in the photo files any more"}
           </span>
@@ -153,47 +153,5 @@ function FilledSlot(props: {
         <XIcon />
       </Button>
     </>
-  );
-}
-
-interface SlotCaptionProps {
-  slot: BookSlot;
-  /** What the caption says: the one written by hand, or the template's. */
-  text: string;
-  onChange: (caption: string | null) => void;
-  className?: string;
-}
-
-/**
- * A photo's caption, filled in from its data with the book's caption template until it's typed
- * over; typed over, a button puts the template's back.
- */
-export function SlotCaption({ slot, text, onChange, className }: SlotCaptionProps) {
-  if (slot.photo === "" && slot.caption === null) {
-    return (
-      <div className={cn("text-muted-foreground/60 text-[10px] italic", className)}>Caption</div>
-    );
-  }
-  return (
-    <div className={cn("group/caption relative flex min-h-0 flex-col", className)}>
-      <textarea
-        aria-label="Caption"
-        value={text}
-        placeholder="Caption"
-        onChange={(event) => onChange(event.target.value)}
-        className="hover:bg-muted/60 focus:bg-muted/60 min-h-0 w-full flex-1 resize-none [text-align:inherit] rounded-sm bg-transparent text-[10px] leading-snug outline-none"
-      />
-      {slot.caption !== null && (
-        <button
-          type="button"
-          onClick={() => onChange(null)}
-          title="Fill the caption in from the caption template again"
-          className="text-muted-foreground hover:text-foreground flex items-center gap-1 self-start text-[10px]"
-        >
-          <RotateCcwIcon className="size-3" />
-          From template
-        </button>
-      )}
-    </div>
   );
 }

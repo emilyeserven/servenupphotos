@@ -504,8 +504,8 @@ const bookPhotos = decidedPhotos.filter(({ data }) => data.albums?.includes(book
 const bookPhoto = (n) => bookPhotos[n]?.path ?? "";
 
 /**
- * A photo book on the Photo Books page, laid out with its album's first few photos, and a page
- * left out of the book that tries the first photo another way.
+ * A photo book on the Photo Books page, laid out with its album's first few photos: three pages in
+ * the book, and a page not in it that tries the first photo another way.
  */
 added.photobooks = [
   {
@@ -515,6 +515,7 @@ added.photobooks = [
       name: "Sample book",
       template: "",
       album: bookAlbum,
+      order: ["p1", "p2", "p3"],
       pages: [
         {
           id: "p1",
@@ -525,7 +526,7 @@ added.photobooks = [
         {
           id: "p2",
           layout: "pair-left",
-          title: null,
+          title: "Spotlight",
           slots: [
             { photo: bookPhoto(1), caption: null },
             { photo: bookPhoto(2), caption: "A caption written by hand." },
@@ -544,7 +545,6 @@ added.photobooks = [
           id: "p4",
           layout: "pair-right",
           title: null,
-          leftOut: true,
           slots: [
             { photo: bookPhoto(0), caption: null },
             { photo: bookPhoto(4), caption: null },

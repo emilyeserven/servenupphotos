@@ -8,7 +8,7 @@ import { NewBookForm } from "@/components/photo-book/book-bar";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { type PhotoBook, inBook, photosInBook } from "@/lib/photo-book";
+import { type PhotoBook, bookOrder, photosInBook } from "@/lib/photo-book";
 import type { BookAlbum } from "@/lib/photo-book-album";
 import { useCombinedData } from "@/stores/combined-data";
 import { EmptyNote } from "@portfolio/components/empty-note";
@@ -72,15 +72,15 @@ function albumText(book: PhotoBook, albums: BookAlbum[]): string {
   return `Photos from ${album?.name || book.album}`;
 }
 
-/** "3 pages · 5 photos", with how many pages are left out when some are. */
+/** "3 pages · 5 photos" in the book, with how many more pages could be used when there are some. */
 function pagesText(book: PhotoBook): string {
-  const kept = book.pages.filter(inBook).length;
-  const out = book.pages.length - kept;
-  const pages = `${count(kept, "page")}${out > 0 ? ` (${out} left out)` : ""}`;
+  const kept = bookOrder(book).length;
+  const spare = book.pages.length - kept;
+  const pages = `${count(kept, "page")}${spare > 0 ? ` (${spare} more not in it)` : ""}`;
   return `${pages} · ${count(photosInBook(book).size, "photo")}`;
 }
 
-/** One photo book on the list: its name, album, pages and photos, linking to its page. */
+/** One photo book on the list: its name, album, and the pages and photos in it, linking to its page. */
 function BookCard({ book, albums }: { book: PhotoBook; albums: BookAlbum[] }) {
   return (
     <Link

@@ -4,14 +4,18 @@ import {
   type PhotoBook,
   addPage,
   firstEmptySlot,
-  movePage,
+  addToBook,
+  bookOrder,
+  bookPages,
+  moveInBook,
   pageNumbers,
   photosInBook,
   placePhoto,
+  removePage,
   removePhoto,
   repeatedPhotos,
   setLayout,
-  setLeftOut,
+  takeOutOfBook,
 } from "@/lib/photo-book";
 
 const book = (): PhotoBook =>
@@ -26,7 +30,7 @@ test("a new page gets its layout's empty places and an ID of its own", () => {
       ["page-2", 2],
     ],
   );
-  assert.equal(addPage(movePage(b, 1, 0), "full").pages[2]?.id, "page-3");
+  assert.equal(addPage(removePage(b, 0), "full").pages[1]?.id, "page-3");
 });
 
 test("a photo from the drawer fills a place, and one dragged from a page swaps with its caption", () => {
@@ -40,16 +44,35 @@ test("a photo from the drawer fills a place, and one dragged from a page swaps w
   assert.equal(removePhoto(b, { page: 1, slot: 1 }).pages[1]?.slots[1]?.photo, "");
 });
 
-test("a page left out keeps its photos but isn't counted, filled or checked for repeats", () => {
+test("the book is the pages its order lists, which new pages aren't in until added", () => {
   let b = placePhoto(book(), { page: 0, slot: 0 }, "a.json");
   b = placePhoto(b, { page: 1, slot: 0 }, "a.json");
-  assert.deepEqual([...repeatedPhotos(b)], [["a.json", [1, 2]]]);
-  b = setLeftOut(b, 0, true);
-  assert.deepEqual(pageNumbers(b), [null, 1]);
-  assert.equal(repeatedPhotos(b).size, 0);
+  assert.deepEqual(bookOrder(b), []);
   assert.deepEqual(firstEmptySlot(b), { page: 1, slot: 1 });
-  assert.deepEqual([...photosInBook(setLeftOut(b, 1, true))], []);
-  assert.equal(setLeftOut(b, 0, false).pages[0]?.slots[0]?.photo, "a.json");
+  b = addToBook(addToBook(b, "page-2"), "page-1");
+  assert.deepEqual(
+    [...pageNumbers(b)],
+    [
+      ["page-2", 1],
+      ["page-1", 2],
+    ],
+  );
+  assert.deepEqual([...repeatedPhotos(b)], [["a.json", [1, 2]]]);
+  b = moveInBook(takeOutOfBook(b, "page-2"), 0, 0);
+  assert.deepEqual(
+    bookPages(b).map((p) => p.id),
+    ["page-1"],
+  );
+  assert.equal(repeatedPhotos(b).size, 0);
+  assert.deepEqual([...photosInBook(b)], ["a.json"]);
+  assert.deepEqual(bookOrder(removePage(b, 0)), []);
+});
+
+test("a book from before the order has every page in it, and keeps them when one is added", () => {
+  const before: PhotoBook = { ...book(), order: undefined };
+  assert.deepEqual(bookOrder(before), ["page-1", "page-2"]);
+  assert.deepEqual(bookOrder(addPage(before, "full")), ["page-1", "page-2"]);
+  assert.deepEqual(bookOrder({ ...before, order: ["page-2", "gone", "page-2"] }), ["page-2"]);
 });
 
 test("changing the layout keeps the photos in order and drops what doesn't fit", () => {
