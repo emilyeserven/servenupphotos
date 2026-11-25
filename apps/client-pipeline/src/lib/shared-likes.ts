@@ -204,14 +204,15 @@ export interface ReviewedAlbum {
 
 /**
  * What to save from the reviewed albums: the new ones to make, described with who liked their
- * photos, and the albums each photo file goes in. Albums with no name that can be an ID, or no
+ * photos and hidden on the portfolio when `made.hidden` says so, and the albums each photo file
+ * goes in. Albums with no name that can be an ID, or no
  * photos, are left out, and so are photos with no saved file.
  */
 export function sharedAlbumsToSave(
   reviewed: ReviewedAlbum[],
   paths: ReadonlyMap<number, string>,
   albums: Pick<Group, "id" | "name">[],
-  description: string,
+  made: { description: string; hidden: boolean },
 ): AlbumSuggestions {
   const newAlbums = new Map<string, AlbumSuggestions["newAlbums"][number]>();
   const photos = new Map<string, Set<string>>();
@@ -219,7 +220,7 @@ export function sharedAlbumsToSave(
     const { id, existing } = albumFor(album.name, albums);
     const files = album.photos.flatMap((p) => paths.get(p) ?? []);
     if (!id || files.length === 0) continue;
-    if (!existing) newAlbums.set(id, { id, name: album.name.trim(), description });
+    if (!existing) newAlbums.set(id, { id, name: album.name.trim(), ...made });
     for (const path of files) photos.set(path, (photos.get(path) ?? new Set()).add(id));
   }
   return {

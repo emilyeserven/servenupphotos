@@ -42,7 +42,14 @@ export interface AlbumSuggestionsPreview {
 
 /** What Album Suggestions saves once reviewed: the new albums to make and each photo's albums. */
 export interface AlbumSuggestions {
-  newAlbums: { id: string; name: string; description: string; parent?: string }[];
+  /** The albums to make; hidden ones start hidden on the portfolio. */
+  newAlbums: {
+    id: string;
+    name: string;
+    description: string;
+    parent?: string;
+    hidden?: boolean;
+  }[];
   photos: { path: string; albums: string[] }[];
 }
 
