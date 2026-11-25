@@ -121,6 +121,16 @@ export interface PhotoBook {
   layouts?: CustomLayout[];
   /** The built-in layouts the book's Photo Pages leave out of their layout pickers. */
   hiddenLayouts?: BuiltInLayout[];
+  /** How many pages the printed book should have and can have at most, set on its Info tab. */
+  budget?: PageBudget;
+}
+
+/** A book's page budget, in printed pages (a spread is two); a number left out isn't set. */
+export interface PageBudget {
+  /** The number of pages aimed for. */
+  target?: number;
+  /** The most pages the book can have. */
+  max?: number;
 }
 
 /** The units a book's page size can be given in. */

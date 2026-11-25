@@ -9,6 +9,7 @@ import {
   isHidden,
   leaveAlternates,
   markAlternate,
+  markAlternates,
   pickAlternate,
   showAlternates,
 } from "@/lib/photo-book-alternates";
@@ -68,4 +69,19 @@ test("a spread is an alternate as one, and a group left with one page or spread 
   );
   b = leaveAlternates(pickAlternate(b, "page-1"), "page-3");
   assert.ok(b.pages.every((p) => p.alternates === undefined && p.hidden === undefined));
+});
+
+test("several pages checked together become one group, bringing groups they're in", () => {
+  let b = markAlternates(book(), ["page-1", "page-3", "page-4"]);
+  assert.deepEqual(
+    groups(b).map(([, group]) => group),
+    ["alt-1", null, "alt-1", "alt-1"],
+  );
+  b = markAlternates(leaveAlternates(b, "page-4"), ["page-4", "page-2", "page-3"]);
+  assert.deepEqual(
+    groups(b).map(([, group]) => group),
+    ["alt-1", "alt-1", "alt-1", "alt-1"],
+  );
+  assert.equal(markAlternates(b, ["page-1"]), b);
+  assert.equal(markAlternates(b, ["page-1", "missing", "page-1"]), b);
 });

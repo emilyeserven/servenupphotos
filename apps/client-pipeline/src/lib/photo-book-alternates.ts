@@ -70,16 +70,22 @@ function newGroup(book: PhotoBook): string {
  * joins id's group (and brings its own group with it), or both start a new one.
  */
 export function markAlternate(book: PhotoBook, id: string, other: string): PhotoBook {
+  return markAlternates(book, [id, other]);
+}
+
+/**
+ * The book with the pages or spreads with the IDs made alternates of each other, in one group: the
+ * first one's group, or the first group among them, or a new one. Groups they were in come along
+ * whole. Fewer than two that exist changes nothing.
+ */
+export function markAlternates(book: PhotoBook, ids: string[]): PhotoBook {
   const units = bookUnits(book);
-  const one = units.find((unit) => unit.id === id);
-  const two = units.find((unit) => unit.id === other);
-  if (!one || !two || one === two) return book;
-  const group = alternatesOf(one) ?? alternatesOf(two) ?? newGroup(book);
+  const chosen = ids.flatMap((id) => units.filter((unit) => unit.id === id));
+  if (new Set(chosen).size < 2) return book;
+  const groups = new Set(chosen.map(alternatesOf).filter((g) => g !== undefined));
+  const group = groups.values().next().value ?? newGroup(book);
   const joining = units.filter(
-    (unit) =>
-      unit === one ||
-      unit === two ||
-      [alternatesOf(one), alternatesOf(two)].includes(alternatesOf(unit) ?? "-"),
+    (unit) => chosen.includes(unit) || groups.has(alternatesOf(unit) ?? "-"),
   );
   return changePages(book, pageIds(joining), (page) => ({ ...page, alternates: group }));
 }

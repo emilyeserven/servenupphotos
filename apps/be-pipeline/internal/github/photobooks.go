@@ -67,6 +67,19 @@ type PhotoBook struct {
 	// HiddenLayouts are the built-in layouts the book's Photo Pages leave
 	// out of their layout pickers, so its own are used instead.
 	HiddenLayouts []string `json:"hiddenLayouts,omitempty"`
+	// Budget is how many pages the printed book should have and can have at
+	// most; nil when none is set.
+	Budget *PhotoBookBudget `json:"budget,omitempty"`
+}
+
+// PhotoBookBudget is a book's page budget, counted in printed pages (a
+// spread is two): the number aimed for and the most it can have. 0 is not
+// set.
+type PhotoBookBudget struct {
+	// Target is the number of pages aimed for; 0 for none.
+	Target int `json:"target,omitempty"`
+	// Max is the most pages the book can have; 0 for none.
+	Max int `json:"max,omitempty"`
 }
 
 // PhotoBookSize is a book's page size: its width and height in unit.
@@ -177,9 +190,29 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 		out.Pages = append(out.Pages, p)
 	}
 	out.Order = validPhotoBookOrder(b.Order, out.Pages)
-	size, perr := validPhotoBookSize(b.Size)
-	out.Size = size
+	if out.Size, perr = validPhotoBookSize(b.Size); perr != nil {
+		return out, perr
+	}
+	out.Budget, perr = validPhotoBookBudget(b.Budget)
 	return out, perr
+}
+
+// validPhotoBookBudget checks a book's page budget: each number from 0 to
+// the most pages a book can have, and the target no more than the max. One
+// with neither set is nil.
+func validPhotoBookBudget(budget *PhotoBookBudget) (*PhotoBookBudget, *PublishError) {
+	if budget == nil || (budget.Target == 0 && budget.Max == 0) {
+		return nil, nil
+	}
+	for _, n := range []int{budget.Target, budget.Max} {
+		if n < 0 || n > maxPhotoBookPages {
+			return nil, publishErr(http.StatusBadRequest, "Give the page budget as numbers from 0 to %d.", maxPhotoBookPages)
+		}
+	}
+	if budget.Max > 0 && budget.Target > budget.Max {
+		return nil, publishErr(http.StatusBadRequest, "Make the target page count no more than the max.")
+	}
+	return budget, nil
 }
 
 // validPhotoBookSize checks a book's page size; nil stays nil.

@@ -4,7 +4,9 @@ import type { SocialPhoto } from "@/api/publish";
 import { AddPageButton } from "@/components/photo-book/add-page-button";
 import { useAlbumPhotos } from "@/components/photo-book/album-photos";
 import { AlternatesControl } from "@/components/photo-book/alternates-control";
+import { BookOrderControls } from "@/components/photo-book/book-order-controls";
 import { BookPage } from "@/components/photo-book/book-page";
+import { MoveToControl } from "@/components/photo-book/move-to-control";
 import { type PageLook, pageActions } from "@/components/photo-book/page-actions";
 import { PageControls, UnitControls } from "@/components/photo-book/page-controls";
 import {
@@ -30,7 +32,7 @@ import {
   renamePage,
   setLayout,
 } from "@/lib/photo-book";
-import { isHidden } from "@/lib/photo-book-alternates";
+import { isHidden, markAlternates } from "@/lib/photo-book-alternates";
 import { layoutChoices } from "@/lib/photo-book-layouts";
 import {
   type BookUnit,
@@ -38,12 +40,15 @@ import {
   bookOrder,
   bookUnits,
   movePhotoUnit,
+  movePhotoUnitTo,
+  photoUnitPositions,
   pageNumbers,
   bookTags,
   setUnitTags,
   unitTags,
   photosInBook,
   placePhotoUnit,
+  sortByBookOrder,
   removePage,
   repeatedPhotos,
   setLinkNext,
@@ -139,11 +144,15 @@ function PagesView(props: UnitsProps) {
   const { book, update, look } = props;
   const [grid, setGrid] = useState(false);
   const [showHidden, setShowHidden] = useState(false);
+  const [showInBook, setShowInBook] = useState(true);
   const open = (id: string) => {
     setGrid(false);
     requestAnimationFrame(() => document.getElementById(unitElementId(id))?.scrollIntoView());
   };
   const units = bookUnits(book).filter((unit) => !unit.pages.some(isOtherPage));
+  const inBook = new Set(bookOrder(book));
+  const shows = (unit: BookUnit) =>
+    (showHidden || !isHidden(unit)) && (showInBook || !inBook.has(unit.id));
   return (
     <>
       <div className="flex flex-wrap items-center gap-3">
@@ -153,24 +162,35 @@ function PagesView(props: UnitsProps) {
           on={showHidden}
           onChange={setShowHidden}
         />
+        <BookOrderControls
+          inBook={units.filter((unit) => inBook.has(unit.id)).length}
+          sorted={sortByBookOrder(book) === book}
+          onSort={() => update(sortByBookOrder(book))}
+          showInBook={showInBook}
+          onShowInBook={setShowInBook}
+        />
       </div>
       {grid ? (
         <PagesGrid
-          units={units.filter((unit) => showHidden || !isHidden(unit))}
-          inBook={new Set(bookOrder(book))}
+          units={units.filter(shows)}
+          inBook={inBook}
           look={look}
           onPlace={(id, before) => update(placePhotoUnit(book, id, before))}
           onOpen={open}
+          onSetAlternates={(ids) => update(markAlternates(book, ids))}
+          positions={photoUnitPositions(book)}
+          onMoveTo={(id, to) => update(movePhotoUnitTo(book, id, to))}
         />
       ) : (
-        <PhotoUnits {...props} showHidden={showHidden} />
+        <PhotoUnits {...props} shows={shows} />
       )}
     </>
   );
 }
 
 /** The photo pages, each page or spread with its controls, a spread across the whole row. */
-function PhotoUnits({ book, update, look, showHidden }: UnitsProps & { showHidden: boolean }) {
+function PhotoUnits(props: UnitsProps & { shows: (unit: BookUnit) => boolean }) {
+  const { book, update, look, shows } = props;
   const units = useMemo(
     () => bookUnits(book).filter((unit) => !unit.pages.some(isOtherPage)),
     [book],
@@ -186,7 +206,7 @@ function PhotoUnits({ book, update, look, showHidden }: UnitsProps & { showHidde
   return (
     <div className="grid gap-x-4 gap-y-8 2xl:grid-cols-2">
       {units.map((unit, place) =>
-        showHidden || !isHidden(unit) ? (
+        shows(unit) ? (
           <PhotoUnit
             key={unit.id}
             unit={unit}
@@ -233,6 +253,12 @@ function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
           <>
             <UnitTagsControl unit={unit} book={book} update={update} />
             <AlternatesControl unit={unit} book={book} update={update} />
+            <MoveToControl
+              name={unitName(unit)}
+              position={place + 1}
+              total={photoUnitPositions(book).size}
+              onMoveTo={(to) => update(movePhotoUnitTo(book, unit.id, to))}
+            />
           </>
         }
       />

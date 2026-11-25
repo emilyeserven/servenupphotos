@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BookPreview } from "@/components/photo-book/book-preview";
+import { BudgetMeter } from "@/components/photo-book/budget-meter";
 import { LowResolutionList } from "@/components/photo-book/low-resolution-list";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { usePreviewKeys, usePreviewMode } from "@/components/photo-book/preview-mode";
@@ -16,6 +17,7 @@ import {
   bookViews,
   moveInBook,
   pageNumbers,
+  printedPages,
   removePage,
   setUnitTags,
   takeOutOfBook,
@@ -24,20 +26,16 @@ import {
 } from "@/lib/photo-book-order";
 
 /**
- * What the preview shows and where it is: the views of the units in the book, one at a time or,
- * in Preview Mode, facing; the one shown; and Preview Mode, which keeps the same pages shown when
- * it's turned on or off.
+ * What the preview shows and where it is: the book as it opens, two facing pages at a time; the
+ * view shown; and Preview Mode.
  */
 function useBookPreview(used: BookUnit[]) {
   const [wanted, setAt] = useState(0);
   const preview = usePreviewMode();
-  const views = bookViews(used, preview.on);
+  const views = bookViews(used);
   const at = Math.min(wanted, Math.max(0, views.length - 1));
   const shown = views[at]?.units ?? [];
-  const turnPreview = (on: boolean) => {
-    preview.turn(on);
-    if (shown[0]) setAt(viewOf(bookViews(used, on), shown[0]));
-  };
+  const turnPreview = (on: boolean) => preview.turn(on);
   const page = (by: -1 | 1) => setAt(Math.min(Math.max(0, at + by), views.length - 1));
   usePreviewKeys(preview.on, () => turnPreview(false), page);
   return { views, at, setAt, shown, preview, turnPreview };
@@ -69,13 +67,14 @@ export function BookTab({ book, update, look }: BookTabProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
+          <BudgetMeter book={book} />
           <BookPreview
             views={views}
             at={at}
             onAt={setAt}
             look={look}
-            numbers={pageNumbers(book)}
+            total={printedPages(used).length}
             previewMode={preview.on}
             onPreviewMode={turnPreview}
           />

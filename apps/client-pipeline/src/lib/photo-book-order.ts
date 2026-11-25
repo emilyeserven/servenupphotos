@@ -6,6 +6,7 @@ import {
   isOtherPage,
   newPage,
 } from "@/lib/photo-book";
+import { clamp } from "@portfolio/lib/values";
 
 /**
  * What goes in the book as one: a page on its own, or two photo pages linked into a spread. Its ID
@@ -152,6 +153,39 @@ export function placePhotoUnit(book: PhotoBook, id: string, before: string | nul
 }
 
 /**
+ * The book with the photo page or spread with ID id moved to position among the photo pages, 1
+ * first, a spread's pages together; a number past either end puts it first or last. Like dragging,
+ * it doesn't change the book's own order.
+ */
+export function movePhotoUnitTo(book: PhotoBook, id: string, position: number): PhotoBook {
+  const units = photoUnits(book);
+  const from = units.findIndex((unit) => unit.id === id);
+  if (from < 0 || !Number.isFinite(position)) return book;
+  const to = clamp(Math.round(position) - 1, 0, units.length - 1);
+  if (to === from) return book;
+  const [moved] = units.splice(from, 1);
+  units.splice(to, 0, moved!);
+  return withPhotoUnits(book, units);
+}
+
+/**
+ * The book with its photo pages in the book's order: the ones in the book first, as the Book tab
+ * has them, then the rest in the order they were. The book's own order doesn't change.
+ */
+export function sortByBookOrder(book: PhotoBook): PhotoBook {
+  const units = photoUnits(book);
+  const place = new Map(bookOrder(book).map((id, at) => [id, at]));
+  const rank = (unit: BookUnit) => place.get(unit.id) ?? Number.POSITIVE_INFINITY;
+  const sorted = units.toSorted((a, b) => rank(a) - rank(b));
+  return sorted.every((unit, at) => unit === units[at]) ? book : withPhotoUnits(book, sorted);
+}
+
+/** Each photo page or spread's position among the photo pages, by its ID, 1 first. */
+export function photoUnitPositions(book: PhotoBook): Map<string, number> {
+  return new Map(photoUnits(book).map((unit, at) => [unit.id, at + 1]));
+}
+
+/**
  * The book without the page at index, out of the book's order too. The other page of its spread
  * stays, on its own, in the book where the spread was.
  */
@@ -181,42 +215,89 @@ export function photosInBook(book: PhotoBook): Set<string> {
 
 /** Each page's number in the book, 1 first, by its ID; a page not in the book has none. */
 export function pageNumbers(book: PhotoBook): Map<string, number> {
-  return new Map(bookPages(book).map((page, i) => [page.id, i + 1]));
+  const pages = printedPages(unitsInBook(book));
+  return new Map(pages.flatMap((page, i) => (isPlaceholder(page) ? [] : [[page.id, i + 1]])));
+}
+
+/** The ID prefix of a blank page the Book tab adds as a placeholder. */
+const BLANK_PREFIX = "blank-";
+/** The ID prefix of the inside covers the first and last pages face. */
+const COVER_PREFIX = "inside-";
+
+/** A placeholder page: drawn on the Book tab, never saved. */
+function placeholderPage(id: string, name: string): BookPage {
+  return { id, name, layout: "other", title: null, slots: [] };
+}
+
+/** Whether the page is one the Book tab adds, not one made for the book: a blank page or an inside cover. */
+export function isPlaceholder(page: BookPage): boolean {
+  return page.id.startsWith(BLANK_PREFIX) || isInsideCover(page);
+}
+
+/** Whether the page is an inside cover, which the first and last pages face; it isn't a page of the book. */
+export function isInsideCover(page: BookPage): boolean {
+  return page.id.startsWith(COVER_PREFIX);
+}
+
+/**
+ * The printed book's pages in order, page 1 first (a right page, so odd pages are right and even
+ * ones left): the units' pages, with a blank placeholder before a spread that would start on a
+ * right page, so it opens left and right, and one at the end when the count is odd, as a printed
+ * book has an even number of pages.
+ */
+export function printedPages(units: BookUnit[]): BookPage[] {
+  const pages: BookPage[] = [];
+  const blank = () =>
+    pages.push(placeholderPage(`${BLANK_PREFIX}${pages.length + 1}`, "Blank page"));
+  for (const unit of units) {
+    if (unit.pages.length > 1 && pages.length % 2 === 0) blank();
+    pages.push(...unit.pages);
+  }
+  if (pages.length % 2 === 1) blank();
+  return pages;
 }
 
 /** For each photo on more than one page in the book, the numbers of those pages. */
 export function repeatedPhotos(book: PhotoBook): Map<string, number[]> {
   const pages = new Map<string, number[]>();
-  for (const [i, page] of bookPages(book).entries()) {
+  const numbers = pageNumbers(book);
+  for (const page of bookPages(book)) {
     for (const { photo } of page.slots) {
-      if (photo) pages.set(photo, [...(pages.get(photo) ?? []), i + 1]);
+      if (photo) pages.set(photo, [...(pages.get(photo) ?? []), numbers.get(page.id) ?? 0]);
     }
   }
   return new Map([...pages].filter(([, on]) => on.length > 1));
 }
 
-/** What the book's preview shows at once: one page, a spread, or two pages facing each other. */
+/** What the book's preview shows at once: two pages facing each other as the book opens. */
 export interface BookView {
   /** The IDs of the units on it, left first. */
   units: string[];
-  /** Its pages, left first. */
+  /** Its two pages, left first, placeholders among them. */
   pages: BookPage[];
 }
 
 /**
- * The views of the units, in their order: each unit on its own, or, facing when facing is true,
- * the way the printed book opens: a spread on its own, and two pages on their own side by side,
- * a page before a spread facing nothing.
+ * The book as it opens, two facing pages at a time: page 1 on the right facing the inside front
+ * cover, then each even page on the left facing the one after it, the last page facing the inside
+ * back cover. A spread is always on one view, with a blank page before it when needed.
  */
-export function bookViews(units: BookUnit[], facing: boolean): BookView[] {
+export function bookViews(units: BookUnit[]): BookView[] {
+  const pages = printedPages(units);
+  if (pages.length === 0) return [];
+  const sides = [
+    placeholderPage(`${COVER_PREFIX}front`, "Inside front cover"),
+    ...pages,
+    placeholderPage(`${COVER_PREFIX}back`, "Inside back cover"),
+  ];
+  const unitOf = new Map(units.flatMap((unit) => unit.pages.map((page) => [page.id, unit.id])));
   const views: BookView[] = [];
-  for (let i = 0; i < units.length; i += 1) {
-    const unit = units[i] as BookUnit;
-    const next = units[i + 1];
-    if (facing && unit.pages.length === 1 && next?.pages.length === 1) {
-      views.push({ units: [unit.id, next.id], pages: [...unit.pages, ...next.pages] });
-      i += 1;
-    } else views.push({ units: [unit.id], pages: unit.pages });
+  for (let i = 0; i < sides.length; i += 2) {
+    const two = sides.slice(i, i + 2);
+    views.push({
+      pages: two,
+      units: [...new Set(two.flatMap((page) => unitOf.get(page.id) ?? []))],
+    });
   }
   return views;
 }

@@ -14,8 +14,13 @@ import {
   moveInBook,
   movePhotoUnit,
   pageNumbers,
+  printedPages,
+  isPlaceholder,
   pageSides,
   placePhotoUnit,
+  sortByBookOrder,
+  movePhotoUnitTo,
+  photoUnitPositions,
   photosInBook,
   removePage,
   repeatedPhotos,
@@ -99,17 +104,49 @@ test("an other page is added straight to the end of the book, on its own", () =>
   assert.equal(b.pages[3]?.slots.length, 0);
 });
 
-test("the preview shows units one at a time, or facing: spreads alone, other pages in twos", () => {
+test("the preview shows the book as it opens, two facing pages, a spread never split", () => {
   let b = addOtherPage(addOtherPage(book(), "Bio"), "Credits");
   const [p1, p2, p3] = b.pages.map((p) => p.id);
   b = setLinkNext(b, p2 as string, true);
   b = addToBookBefore(b, p3 as string, null);
   b = addToBookBefore(b, p1 as string, b.pages[4]?.id ?? null);
-  const ids = (facing: boolean) =>
-    bookViews(unitsInBook(b), facing).map((v) => v.pages.map((p) => p.name ?? p.id));
-  assert.deepEqual(ids(false), [["Bio"], [p1], ["Credits"], [p2, p3]]);
-  assert.deepEqual(ids(true), [["Bio", p1], ["Credits"], [p2, p3]]);
-  assert.equal(viewOf(bookViews(unitsInBook(b), true), p2 as string), 2);
+  const views = bookViews(unitsInBook(b));
+  assert.deepEqual(
+    views.map((v) => v.pages.map((p) => p.name ?? p.id)),
+    [
+      ["Inside front cover", "Bio"],
+      [p1, "Credits"],
+      [p2, p3],
+      ["Blank page", "Inside back cover"],
+    ],
+  );
+  assert.deepEqual(views[2]?.units, [p2]);
+  assert.equal(viewOf(views, p2 as string), 2);
+  assert.equal(printedPages(unitsInBook(b)).length, 6);
+  assert.deepEqual(bookViews([]), []);
+});
+
+test("a spread that would start on a right page gets a blank page before it, which takes a number", () => {
+  let b = setLinkNext(book(), "page-1", true);
+  b = addToBook(addToBook(b, "page-1"), "page-3");
+  const pages = printedPages(unitsInBook(b));
+  assert.deepEqual(
+    pages.map((p) => [p.id, isPlaceholder(p)]),
+    [
+      ["blank-1", true],
+      ["page-1", false],
+      ["page-2", false],
+      ["page-3", false],
+    ],
+  );
+  assert.deepEqual(
+    [...pageNumbers(b)],
+    [
+      ["page-1", 2],
+      ["page-2", 3],
+      ["page-3", 4],
+    ],
+  );
 });
 
 test("tagging a spread tags both its pages, and the book lists every tag once", () => {
@@ -148,9 +185,9 @@ test("a page in the book is on the side its number gives; one not in it, on its 
   });
   b = moveInBook(b, 1, 0);
   assert.deepEqual(Object.fromEntries(pageSides(b)), {
-    "page-1": "right",
-    "page-2": "left",
-    "page-3": "right",
+    "page-1": "left",
+    "page-2": "right",
+    "page-3": "left",
   });
 });
 
@@ -168,4 +205,32 @@ test("dragging a photo page or spread puts it before another, or at the end, a s
   ]);
   assert.equal(placePhotoUnit(b, "page-1", "page-1"), b);
   assert.equal(placePhotoUnit(b, "page-4", null), b);
+});
+
+test("moving a photo page or spread to a typed position, past either end putting it first or last", () => {
+  const b = addOtherPage(setLinkNext(book(), "page-2", true), "Bio");
+  const moved = [["page-2", "page-3"], ["page-1"], ["page-4"]];
+  assert.deepEqual(units(movePhotoUnitTo(b, "page-2", 1)), moved);
+  assert.deepEqual(units(movePhotoUnitTo(b, "page-1", 2)), moved);
+  assert.deepEqual(units(movePhotoUnitTo(b, "page-1", 99)), moved);
+  assert.deepEqual(units(movePhotoUnitTo(b, "page-2", -3)), moved);
+  assert.equal(movePhotoUnitTo(b, "page-1", 1), b);
+  assert.equal(movePhotoUnitTo(b, "page-4", 1), b);
+  assert.equal(movePhotoUnitTo(b, "page-1", Number.NaN), b);
+  assert.deepEqual(
+    [...photoUnitPositions(b)],
+    [
+      ["page-1", 1],
+      ["page-2", 2],
+    ],
+  );
+});
+
+test("sorting the photo pages by the book's order puts the book's first, then the rest as they were", () => {
+  let b = addOtherPage(setLinkNext(book(), "page-2", true), "Bio");
+  b = addToBook(addToBook(b, "page-2"), "page-1");
+  assert.deepEqual(units(sortByBookOrder(b)), [["page-2", "page-3"], ["page-1"], ["page-4"]]);
+  assert.deepEqual(bookOrder(sortByBookOrder(b)), bookOrder(b));
+  const sorted = sortByBookOrder(b);
+  assert.equal(sortByBookOrder(sorted), sorted);
 });

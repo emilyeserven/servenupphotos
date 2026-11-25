@@ -8,7 +8,7 @@
 
 On a book's page, **All photo books** goes back to the list. Under it, three tabs, each a page of its own with a line under the tabs saying what it's for:
 
-- **Info** (`/photo-books/<id>/info`): the book's name, album, caption template and page size.
+- **Info** (`/photo-books/<id>/info`): the book's name, album, caption template, page size and page budget.
 - **Layouts** (`/photo-books/<id>/layouts`): trying out page layouts at the book's page size.
 - **Photo Pages** (`/photo-books/<id>/pages`, where the book opens): making photo pages that could be used, and linking them into spreads.
 - **Book** (`/photo-books/<id>/book`): putting the pages that will be used in order, adding other pages, and paging through the book.
@@ -18,6 +18,8 @@ On a book's page, **All photo books** goes back to the list. Under it, three tab
 **Name** renames the book, **Photos from** picks the album its photos come from, **Captions from** picks the [caption template](caption-templates.md) its captions are filled in with, and **Remove book** removes it after asking.
 
 **Page size** takes the page's width and height in inches, centimeters, millimeters, points or pixels, starting at BookWright's large landscape page, 12.5 × 10.625 in. Only the shape is used: every page on every tab is drawn with width over height as its `aspect-ratio`, shown beside the fields as a small black page. A side that isn't a number more than 0 isn't saved.
+
+**Page budget** sets a **Target** and a **Max** page count, each saved as it's typed; an empty box isn't set, and a target over the max isn't saved. They count printed pages: a spread is two, and other pages and the blank placeholder pages the Book tab adds count too. On **The book**, above the preview, a bar shows the pages in the book against them: the count, how many pages to go to (or past) each, the target marked on a bar that runs to the max, green once the target is reached and red with a warning past the max. A book with no budget shows none of it.
 
 ## Layouts
 
@@ -67,7 +69,11 @@ Each photo place keeps its shape whatever room the page gives it: 3:2 for the la
 
 Pages have no numbers here. Above each page, its name, typed in (**Untitled page** until it has one), its layout's buttons (to switch it; a photo past the new layout's places comes off the page), the **H** button that adds or takes off a title (typed on the page itself), and the bin that removes it. Clicking a caption types over it.
 
-**Edit pages** and **Grid to reorder**, above the pages, switch views. The grid shows every photo page and spread as a small preview, numbered in order and marked **In book**; drag one onto another to put it before that one, or onto the box at the end. A spread moves as one, and the book's own order (on **The book**) doesn't change. Clicking one opens **Edit pages** scrolled to it.
+**Move to…** on each photo page or spread in **Edit pages** moves it to a position you type among the photo pages, 1 first, a spread moving as one; a number past either end puts it first or last. Like dragging, it doesn't change the book's own order.
+
+**Sort by book order**, beside the views, puts the photo pages in the order **The book** has them, the ones not in the book after them in the order they were; it says **In book order** once they are. **Show pages in the book**, on to start, can be turned off to see only the pages and spreads not in the book yet. Both show only once something is in the book.
+
+**Edit pages** and **Grid to reorder**, above the pages, switch views. The grid shows every photo page and spread as a small preview, numbered in order and marked **In book**; drag one onto another to put it before that one, or onto the box at the end. A spread moves as one, and the book's own order (on **The book**) doesn't change. Clicking one opens **Edit pages** scrolled to it, and clicking its number opens **Move to…**. Check two or more with the box by their names and **Set as alternates**, above the grid, puts them in one alternates group, bringing along any group one was already in.
 
 ### Alternates
 
@@ -81,7 +87,8 @@ Pages have no numbers here. Above each page, its name, typed in (**Untitled page
 
 The **Book** tab has three parts, as the book makers' own software does:
 
-- **The preview**, as large as fits, keeping the pages' shape: one page or spread at a time, with **‹** and **›** under it to page through, where it is (**Pages 3–4 of 12**) and the pages' names, and **Preview Mode**.
+- **The preview**, as large as fits, keeping the pages' shape: the book as it opens, two facing pages at a time, with **‹** and **›** under it to page through, where it is (**Pages 2–3 of 12**) and the pages' names, and **Preview Mode**. Page 1 is a right page, facing the inside front cover, and the last page faces the inside back cover (both drawn plain grey).
+- **Blank pages:** a spread always opens left and right, so one that would start on a right (odd) page gets a blank page before it, and a book with an odd number of pages gets one at the end, as a printed book has an even number. They're drawn striped and dashed, marked **Blank page · placeholder**, take page numbers (so the pages after them change side) and count toward the page budget, but are never saved: moving pages changes where they go.
 - **Used page spreads**, beside it (under it on a narrow screen): the pages and spreads in the book, in order, top to bottom, each a small preview with its page numbers and name. Click one to show it in the preview; drag one onto another to put it before it, or onto the box at the end; the arrows move it and **×** takes it out, leaving it among the ones that could be used. The panel's button collapses it to a thin rail.
 - **All pages and spreads**, a drawer along the bottom of the window: every photo page and spread made on **Photo Pages**, then the other pages, each a small preview, dimmed and marked **In book** when it's in. Drag one into **Used page spreads**, or its **+** adds it at the end; drag one from **Used page spreads** onto the drawer to take it out. Its heading opens and closes it. The tag button under each one tags the page or spread (a spread's tags are on both its pages), and the tags across the top of the open drawer show only the ones with that tag, to find a group of pages again, such as "Seoul" or "maybe".
 
@@ -99,7 +106,7 @@ Other pages are pages without photos: one the publisher requires, a bio page, or
 
 ### Preview Mode
 
-**Preview Mode** collapses the app's sidebar, **Used page spreads** and the drawer, makes the preview larger, and shows the book as it opens: two pages facing each other, a spread on its own, and a page before a spread facing nothing. **Esc** or **Leave Preview Mode** turns it off and opens the sidebar again if it was open; the arrow keys page through the book. Opening either panel leaves it too.
+**Preview Mode** collapses the app's sidebar, **Used page spreads** and the drawer, and makes the preview larger. **Esc** or **Leave Preview Mode** turns it off and opens the sidebar again if it was open; the arrow keys page through the book. Opening either panel leaves it too.
 
 > **Frontend analogy:** the drawer and **Used page spreads** share one HTML5 drag type carrying the page or spread's ID, so each is both a source and a drop target, like a sortable list fed from a palette. The preview's views are derived state: the book's order grouped one way or the other, recomputed each render rather than stored.
 
@@ -152,6 +159,7 @@ Each book is one file, `photobooks/<id>.json`, and **Commit** combines them into
 
 - **`template`** is the caption template's ID, or `""` for the default one.
 - **`album`** is the ID of the album the book's photos come from, or `""` (or missing, in a book made before) while none is picked.
+- **`budget`** is the page budget from **Info**, `{ target, max }`, each a whole number of printed pages up to 500 with `target` no more than `max`; a number not set is left out, and so is a budget with neither.
 - **`size`** is the page size from **Info**, `unit` one of `in`, `cm`, `mm`, `pt` or `px`; a book without one uses 12.5 × 10.625 in.
 - **`layout`** is `full`, `pair-left`, `pair-right`, `verticals-left` or `verticals-right`, `other` for an other page, or the ID of one of the book's `layouts`; the backend fills or cuts `slots` to the layout's count (none for `other`).
 - **`layouts`** are the book's own layouts from the **Layouts** tab, each `{ id: "custom-<n>", name, photos (1–4), arrange: "stack" | "row", shape: "landscape" | "portrait" | "square" | "ratio" | "fill", ratio: { width, height } (only with "ratio", each more than 0 and at most 100), text: "left" | "right" | "above" | "below", captions: "column" | "photo", textShare (10–60), align: "start" | "center" | "end", gap (0–20), margin (0–20), leftPages: "mirror" | "same" | "own", left: { the same settings but id, name, photos and leftPages } (only with "own") }`, the numbers in percent of the page; left out while there are none. A layout without `leftPages` (made before) draws the same on both sides. A page whose layout isn't there is refused.
