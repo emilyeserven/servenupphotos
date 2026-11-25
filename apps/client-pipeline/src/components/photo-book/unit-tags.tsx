@@ -12,61 +12,98 @@ interface TagButtonProps {
   /** Every tag in the book, offered while typing. */
   all: string[];
   onChange: (tags: string[]) => void;
+  /** True for a button with the words **Add tag** beside its icon, as on Photo Pages. */
+  labeled?: boolean;
 }
 
 /**
- * The tag button on a page or spread: a flyout with its tags, each with an × that takes it off, and
- * a box that adds one, offering the book's other tags.
+ * The tag button on a page or spread: a flyout with its tags, each with an × that takes it off, the
+ * book's other tags to add with a click, and a box that adds a new one.
  */
-export function TagButton({ name, tags, all, onChange }: TagButtonProps) {
-  const [text, setText] = useState("");
-  const list = useId();
-  const add = () => {
-    if (text.trim()) onChange([...tags, text.trim()]);
-    setText("");
-  };
+export function TagButton({ name, tags, all, onChange, labeled }: TagButtonProps) {
+  const others = all.filter((tag) => !tags.includes(tag));
+  const add = (tag: string) => onChange([...tags, tag]);
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          size="icon-xs"
-          variant={tags.length > 0 ? "secondary" : "ghost"}
-          aria-label={`Tags of ${name}`}
-          title="Tags"
-        >
-          <TagIcon />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="flex w-64 flex-col gap-2 p-3">
-        <TagChips tags={tags} onRemove={(tag) => onChange(tags.filter((t) => t !== tag))} />
-        <form
-          className="flex gap-2"
-          onSubmit={(event) => {
-            event.preventDefault();
-            add();
-          }}
-        >
-          <Input
-            aria-label="New tag"
-            list={list}
-            value={text}
-            placeholder="by place, by theme…"
-            onChange={(event) => setText(event.target.value)}
-            className="h-8"
-          />
-          <datalist id={list}>
-            {all
-              .filter((tag) => !tags.includes(tag))
-              .map((tag) => (
-                <option key={tag} value={tag} />
-              ))}
-          </datalist>
-          <Button type="submit" size="sm" variant="outline" disabled={!text.trim()}>
-            Add
+        {labeled ? (
+          <Button size="xs" variant="ghost" aria-label={`Tags of ${name}`}>
+            <TagIcon />
+            Add tag
           </Button>
-        </form>
+        ) : (
+          <Button
+            size="icon-xs"
+            variant={tags.length > 0 ? "secondary" : "ghost"}
+            aria-label={`Tags of ${name}`}
+            title="Tags"
+          >
+            <TagIcon />
+          </Button>
+        )}
+      </PopoverTrigger>
+      <PopoverContent align={labeled ? "start" : "end"} className="flex w-64 flex-col gap-2 p-3">
+        <TagChips tags={tags} onRemove={(tag) => onChange(tags.filter((t) => t !== tag))} />
+        <BookTagChoices tags={others} onAdd={add} />
+        <NewTagForm others={others} onAdd={add} />
       </PopoverContent>
     </Popover>
+  );
+}
+
+/** A box that adds a new tag, offering the book's other tags as it's typed in. */
+function NewTagForm({ others, onAdd }: { others: string[]; onAdd: (tag: string) => void }) {
+  const [text, setText] = useState("");
+  const list = useId();
+  return (
+    <form
+      className="flex gap-2"
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (text.trim()) onAdd(text.trim());
+        setText("");
+      }}
+    >
+      <Input
+        aria-label="New tag"
+        list={list}
+        value={text}
+        placeholder="New tag: by place, by theme…"
+        onChange={(event) => setText(event.target.value)}
+        className="h-8"
+      />
+      <datalist id={list}>
+        {others.map((tag) => (
+          <option key={tag} value={tag} />
+        ))}
+      </datalist>
+      <Button type="submit" size="sm" variant="outline" disabled={!text.trim()}>
+        Add
+      </Button>
+    </form>
+  );
+}
+
+/** The book's tags not on the page or spread yet, each a button that adds it. */
+function BookTagChoices({ tags, onAdd }: { tags: string[]; onAdd: (tag: string) => void }) {
+  if (tags.length === 0) return null;
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-muted-foreground text-xs">This book&apos;s tags</span>
+      <div className="flex flex-wrap gap-1">
+        {tags.map((tag) => (
+          <button
+            key={tag}
+            type="button"
+            aria-label={`Add ${tag}`}
+            onClick={() => onAdd(tag)}
+            className="hover:bg-accent rounded-full border px-2 py-0.5 text-xs"
+          >
+            + {tag}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 

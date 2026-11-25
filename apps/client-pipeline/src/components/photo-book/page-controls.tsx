@@ -1,4 +1,5 @@
 import { HeadingIcon, Link2Icon, Trash2Icon, Unlink2Icon } from "lucide-react";
+import type { ReactNode } from "react";
 import { MoveArrows } from "@/components/move-arrows";
 import { LayoutGlyph } from "@/components/photo-book/layout-glyph";
 import { pageName } from "@/components/photo-book/page-types";
@@ -59,17 +60,20 @@ interface UnitControlsProps {
   last: boolean;
   onLink: (link: boolean) => void;
   onMove: (from: number, to: number) => void;
+  /** The page or spread's tags and the button that tags it, after its labels. */
+  tags?: ReactNode;
 }
 
 /**
- * Above a page or spread on the Photo Pages tab: whether it's in the book, a button that links the
+ * Above a page or spread on the Photo Pages tab: whether it's in the book, its tags, a button that links the
  * page with the next one into a spread or unlinks the spread, and arrows that move it.
  */
 export function UnitControls(props: UnitControlsProps) {
-  const { name, spread, inBook, canLink, place, last, onLink, onMove } = props;
+  const { name, spread, inBook, canLink, place, last, onLink, onMove, tags } = props;
   return (
     <div className="text-muted-foreground flex flex-wrap items-center gap-1 text-xs">
       <UnitLabels spread={spread} inBook={inBook} />
+      {tags}
       <span className="ml-auto flex items-center gap-1">
         {canLink || spread ? <LinkButton spread={spread} name={name} onLink={onLink} /> : null}
         <MoveArrows name={name} place={place} last={last} onMove={onMove} />
