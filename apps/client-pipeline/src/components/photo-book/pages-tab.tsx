@@ -2,25 +2,19 @@ import { useMemo, useRef, useState } from "react";
 import type { CombinedData } from "@/api/photos";
 import type { SocialPhoto } from "@/api/publish";
 import { AddPageButton } from "@/components/photo-book/add-page-button";
-import { useAlbumPhotos } from "@/components/photo-book/album-photos";
 import { AlternatesControl } from "@/components/photo-book/alternates-control";
 import { BookOrderControls } from "@/components/photo-book/book-order-controls";
 import { BookPage } from "@/components/photo-book/book-page";
+import { BookPhotoDrawer } from "@/components/photo-book/book-photo-drawer";
 import { FilterSelect } from "@/components/photo-book/filter-select";
 import { MoveToControl } from "@/components/photo-book/move-to-control";
 import { type PageLook, pageActions } from "@/components/photo-book/page-actions";
 import { PageControls, UnitControls } from "@/components/photo-book/page-controls";
-import {
-  BOOK_PHOTO_DRAG_TYPE,
-  FROM_PAGE_DRAG_TYPE,
-  fromPlace,
-} from "@/components/photo-book/page-slot";
 import { unitName } from "@/components/photo-book/page-types";
 import { PagesGrid } from "@/components/photo-book/pages-grid";
 import { PagesViewToggle } from "@/components/photo-book/pages-view-toggle";
 import { ShowHiddenToggle } from "@/components/photo-book/show-hidden-toggle";
 import { TagButton, TagChips } from "@/components/photo-book/unit-tags";
-import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import {
   type PhotoBook,
   firstEmptySlot,
@@ -29,7 +23,6 @@ import {
   nextId,
   isOtherPage,
   placePhoto,
-  removePhoto,
   type PageLayout,
   renamePage,
   setLayout,
@@ -48,7 +41,6 @@ import {
   bookTags,
   setUnitTags,
   unitTags,
-  photosInBook,
   placePhotoUnit,
   sortByBookOrder,
   removePage,
@@ -59,12 +51,9 @@ import { cn } from "@/lib/utils";
 import { ScrollButton } from "@portfolio/components/back-to-top-button";
 import { EmptyNote } from "@portfolio/components/empty-note";
 
-/** What the photo drawer says beside the pages. */
-const DRAWER_WORDS = {
-  help: "The album's photos, in its order; ones already on a page are faded. Drag one onto a page, or click it to fill the first empty place. Drop a photo from a page here to take it off.",
-  showUsed: "Show photos already in the book",
-  usedBadge: "In book",
-};
+/** What the photo drawer says it is for, beside the pages. */
+const DRAWER_HELP =
+  "The album's photos, in its order; ones already on a page are faded. Drag one onto a page, or click it to fill the first empty place. Drop a photo from a page here to take it off.";
 
 interface PagesTabProps {
   book: PhotoBook;
@@ -83,8 +72,6 @@ interface PagesTabProps {
  * the drawer of the album's photos beside them.
  */
 export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabProps) {
-  const albumPhotos = useAlbumPhotos(data, photos, book.album);
-  const inBook = useMemo(() => photosInBook(book), [book]);
   const fade = useFadeTag(book);
   const jump = useJumpToPhoto(book);
   const pick = (photo: SocialPhoto) => {
@@ -105,29 +92,17 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
         </div>
       </div>
       {drawer && (
-        <PhotoDrawerPanel
-          photos={albumPhotos}
-          used={inBook}
+        <BookPhotoDrawer
+          book={book}
+          update={update}
+          data={data}
+          photos={photos}
+          help={DRAWER_HELP}
           dimmed={photosOnPages(book, fade.tag)}
           onJump={jump}
           fadeBy={<FadeByTag {...fade} />}
           onPick={pick}
           onClose={drawer}
-          dragType={BOOK_PHOTO_DRAG_TYPE}
-          words={DRAWER_WORDS}
-          inOrder
-          empty={
-            book.album
-              ? "The album has no photos yet."
-              : "Pick the album the book's photos come from, under Photos from, on the Info tab."
-          }
-          takeOff={{
-            fromType: FROM_PAGE_DRAG_TYPE,
-            onRemove: (_path, from) => {
-              const place = fromPlace(from);
-              if (place) update(removePhoto(book, place));
-            },
-          }}
         />
       )}
     </div>

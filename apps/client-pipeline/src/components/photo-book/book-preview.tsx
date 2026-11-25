@@ -5,8 +5,9 @@ import {
   MinimizeIcon,
   MoveIcon,
 } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { InsertPagePoints, type PageInserting } from "@/components/photo-book/insert-page-points";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { pageName } from "@/components/photo-book/page-types";
 import { UnitSheets, sheetsAspect } from "@/components/photo-book/unit-sheets";
@@ -29,18 +30,21 @@ interface BookPreviewProps {
   /** The book and the function that changes it, for Edit mode's moving photos between pages. */
   book: PhotoBook;
   update: (book: PhotoBook) => void;
+  editMode: boolean;
+  onEditMode: (on: boolean) => void;
+  /** Inserting pages in Edit mode. */
+  inserting: PageInserting;
 }
 
 /**
  * The book's preview: the two facing pages shown, in the book's shape, as large as fits, with
  * controls under it to page through the book and to turn Edit mode and Preview Mode on or off.
  * In Edit mode, photos can be dragged from one place to another on the pages shown, moving or
- * swapping them; nothing else on the pages changes there. In Preview Mode
- * it covers the whole window, with nothing around it, so the pages are as large as they can be.
+ * swapping them, or in from the Photos drawer, and **+** buttons on their edges insert new pages;
+ * nothing else on the pages changes there. In Preview Mode it covers the whole window, with nothing around it, so the pages are as large as they can be.
  */
 export function BookPreview(props: BookPreviewProps) {
-  const { views, at, look, previewMode, book, update } = props;
-  const [editMode, setEditMode] = useState(false);
+  const { views, at, look, previewMode, book, update, editMode, inserting } = props;
   const view = views[at];
   if (!view) {
     return (
@@ -52,13 +56,16 @@ export function BookPreview(props: BookPreviewProps) {
   }
   return (
     <PreviewFrame previewMode={previewMode} ratio={sheetsAspect(view.pages, look)}>
-      <UnitSheets
-        pages={view.pages}
-        look={look}
-        editing={editMode ? { book, update } : undefined}
-        className="gap-px"
-      />
-      <PreviewControls {...props} view={view} editMode={editMode} onEditMode={setEditMode} />
+      <div className="relative">
+        <UnitSheets
+          pages={view.pages}
+          look={look}
+          editing={editMode ? { book, update } : undefined}
+          className="gap-px"
+        />
+        {editMode && <InsertPagePoints {...inserting} />}
+      </div>
+      <PreviewControls {...props} view={view} />
     </PreviewFrame>
   );
 }
@@ -103,13 +110,7 @@ function viewText(view: BookView, at: number, total: number): string {
  * its right, so they stay put while paging; between them where the preview is in the book, and
  * Preview Mode.
  */
-function PreviewControls(
-  props: BookPreviewProps & {
-    view: BookView;
-    editMode: boolean;
-    onEditMode: (on: boolean) => void;
-  },
-) {
+function PreviewControls(props: BookPreviewProps & { view: BookView }) {
   const { views, at, onAt, total, view } = props;
   return (
     <div className="flex w-full items-center gap-2">
