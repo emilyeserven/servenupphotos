@@ -64,6 +64,36 @@ func TestSavePhotoBook(t *testing.T) {
 	}
 }
 
+func TestSavePhotoBookTextPage(t *testing.T) {
+	_, c := newMainRepo(t, map[string]string{})
+	title := "Getting there"
+	five := []PhotoBookSlot{{Photo: "a.json"}, {Photo: "b.json"}, {}, {Photo: "d.json"}, {Photo: "e.json"}}
+	book := PhotoBook{ID: "korea", Name: "Korea", Pages: []PhotoBookPage{
+		{ID: "t1", Layout: "text", Title: &title, Text: "  We flew in on **Tuesday**.\n\nThen the train.  ", Columns: 5, Slots: five},
+		{ID: "t2", Layout: "text", Text: "Short", Columns: 1},
+		{ID: "p1", Layout: "full", Text: "not a text page", Columns: 2},
+	}}
+	if _, err := c.SavePhotoBook(t.Context(), placesGH, book); err != nil {
+		t.Fatalf("SavePhotoBook() error = %v", err)
+	}
+	saved := staged(t, c, dataRoot+"/photobooks/korea.json")
+	// The text is trimmed, the columns kept to 3, the photos to 4 (an empty
+	// place kept), and a photo page has neither.
+	for _, want := range []string{`"text": "We flew in on **Tuesday**.\n\nThen the train."`, `"columns": 3`, `"photo": "d.json"`, `"text": "Short"`} {
+		if !strings.Contains(saved, want) {
+			t.Errorf("saved %s, want %s in it", saved, want)
+		}
+	}
+	if strings.Contains(saved, "e.json") || strings.Count(saved, `"columns"`) != 1 || strings.Contains(saved, "not a text page") {
+		t.Errorf("saved %s, want 4 photos, columns only on the first page and no text on the photo page", saved)
+	}
+	long := PhotoBook{ID: "korea", Name: "Korea", Pages: []PhotoBookPage{{ID: "t", Layout: "text", Text: strings.Repeat("a", maxPhotoBookPageText+1)}}}
+	var perr *PublishError
+	if _, err := c.SavePhotoBook(t.Context(), placesGH, long); !errors.As(err, &perr) || perr.Status != http.StatusBadRequest {
+		t.Errorf("SavePhotoBook(long text) error = %v, want 400", err)
+	}
+}
+
 func TestDeletePhotoBook(t *testing.T) {
 	_, c := newMainRepo(t, map[string]string{
 		dataRoot + "/photobooks/korea.json": `{"id":"korea","name":"Korea","template":"","pages":[]}`,
