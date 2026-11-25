@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { CombinedData } from "@/api/photos";
 import type { SocialPhoto } from "@/api/publish";
 import { AddPageButton } from "@/components/photo-book/add-page-button";
@@ -12,6 +12,7 @@ import {
   fromPlace,
 } from "@/components/photo-book/page-slot";
 import { unitName } from "@/components/photo-book/page-types";
+import { TagFilter } from "@/components/photo-book/unit-tags";
 import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import {
   type PhotoBook,
@@ -31,6 +32,7 @@ import {
   bookUnits,
   movePhotoUnit,
   pageNumbers,
+  bookTags,
   photosInBook,
   removePage,
   repeatedPhotos,
@@ -65,6 +67,7 @@ interface PagesTabProps {
 export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabProps) {
   const albumPhotos = useAlbumPhotos(data, photos, book.album);
   const inBook = useMemo(() => photosInBook(book), [book]);
+  const fade = useFadeTag(book);
   const pick = (photo: SocialPhoto) => {
     const place = firstEmptySlot(book);
     if (place) update(placePhoto(book, place, photo.path));
@@ -84,7 +87,8 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
         <PhotoDrawerPanel
           photos={albumPhotos}
           used={inBook}
-          dimmed={photosOnPages(book)}
+          dimmed={photosOnPages(book, fade.tag)}
+          fadeBy={<FadeByTag {...fade} />}
           onPick={pick}
           onClose={drawer}
           dragType={BOOK_PHOTO_DRAG_TYPE}
@@ -193,6 +197,26 @@ function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/** The tag whose pages' photos the Photos panel fades, or null for every page's; back to null when the tag goes. */
+function useFadeTag(book: PhotoBook) {
+  const tags = bookTags(book);
+  const [picked, setPicked] = useState<string | null>(null);
+  const tag = picked !== null && tags.includes(picked) ? picked : null;
+  return { tags, tag, onChange: setPicked };
+}
+
+/** Picks which pages' photos are faded in the Photos panel: every page's, or one tag's. */
+function FadeByTag(props: ReturnType<typeof useFadeTag>) {
+  const { tags, tag, onChange } = props;
+  if (tags.length === 0) return null;
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-sm">Fade photos on</span>
+      <TagFilter tags={tags} value={tag} onChange={onChange} label="Fade photos on pages tagged" />
     </div>
   );
 }

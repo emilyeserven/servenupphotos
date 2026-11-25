@@ -4,6 +4,7 @@ import type { SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
 import { GridFilterButton } from "@/components/gallery/grid-filter-button";
 import { GridFilterBar, useGridFilters } from "@/components/gallery/grid-filters";
+import { OrientationButtons } from "@/components/gallery/orientation-buttons";
 import { PhotoImage } from "@/components/instagram-picker/photo-image";
 import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import { takenDay } from "@/lib/social-focus";
 import { photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
 import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
+import type { Photo } from "@portfolio/lib/photos";
 
 /** The words a page's photo drawer uses for what it adds photos to. */
 interface DrawerWords {
@@ -54,6 +56,8 @@ interface PhotoDrawerPanelProps {
   empty?: ReactNode;
   /** The paths of photos to show faded, such as ones already on a photo book's page. */
   dimmed?: Set<string>;
+  /** Under Show used: a control for which photos are faded, such as a photo book's tags. */
+  fadeBy?: ReactNode;
 }
 
 /** Newest taken first, then by name. */
@@ -124,7 +128,19 @@ function useDrawerList(photos: SocialPhoto[], used: Set<string>, inOrder = false
  * Clicking a photo adds it; with takeOff, a photo dropped here from the page comes out.
  */
 export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
-  const { photos, used, onPick, onClose, dragType, words, takeOff, inOrder, empty, dimmed } = props;
+  const {
+    photos,
+    used,
+    onPick,
+    onClose,
+    dragType,
+    words,
+    takeOff,
+    inOrder,
+    empty,
+    dimmed,
+    fadeBy,
+  } = props;
   const { search, setSearch, showUsed, setShowUsed, shown, filterPhotos, filterCount } =
     useDrawerList(photos, used, inOrder);
   const { over, handlers } = useTakeOffDrop(dragType, takeOff);
@@ -148,16 +164,11 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
           <PanelRightCloseIcon />
         </Button>
       </div>
-      <div className="flex items-center gap-2">
-        <Input
-          type="search"
-          placeholder="Search by title or file name"
-          aria-label="Search photos"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
-        {inOrder && <GridFilterButton photos={filterPhotos} count={filterCount} />}
-      </div>
+      <DrawerSearch
+        search={search}
+        onSearch={setSearch}
+        filters={inOrder ? { photos: filterPhotos, count: filterCount } : undefined}
+      />
       <label className="flex items-center gap-2 text-sm">
         <input
           type="checkbox"
@@ -167,6 +178,7 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
         />
         {words.showUsed}
       </label>
+      {fadeBy}
       {!inOrder && (
         <div className="shrink-0">
           <GridFilterBar photos={filterPhotos} />
@@ -184,6 +196,33 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
         />
       </div>
     </aside>
+  );
+}
+
+/**
+ * The drawer's search, and with filters, **Filter** beside it (the portfolio Grid's filters in a
+ * flyout, counted out of filters.photos) and the quick orientation buttons under it.
+ */
+function DrawerSearch(props: {
+  search: string;
+  onSearch: (search: string) => void;
+  filters: { photos: Photo[]; count: number } | undefined;
+}) {
+  const { search, onSearch, filters } = props;
+  return (
+    <>
+      <div className="flex items-center gap-2">
+        <Input
+          type="search"
+          placeholder="Search by title or file name"
+          aria-label="Search photos"
+          value={search}
+          onChange={(event) => onSearch(event.target.value)}
+        />
+        {filters && <GridFilterButton photos={filters.photos} count={filters.count} />}
+      </div>
+      {filters && <OrientationButtons />}
+    </>
   );
 }
 
