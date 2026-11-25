@@ -5,12 +5,12 @@ import { InBookBadge } from "@/components/photo-book/page-controls";
 import { unitName } from "@/components/photo-book/page-types";
 import { BOOK_UNIT_DRAG_TYPE, dragUnit } from "@/components/photo-book/unit-drag";
 import { UnitSheets } from "@/components/photo-book/unit-sheets";
-import { TagButton, TagChips, TagFilter } from "@/components/photo-book/unit-tags";
+import { TagFilter } from "@/components/photo-book/unit-tags";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { isOtherPage } from "@/lib/photo-book";
-import { type BookUnit, unitTags, unitsTagged } from "@/lib/photo-book-order";
+import { type BookUnit, unitsTagged } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
 import { count } from "@portfolio/lib/words";
 
@@ -27,10 +27,8 @@ interface UnitsDrawerProps {
   onRemoveOther: (id: string) => void;
   open: boolean;
   onOpen: (open: boolean) => void;
-  /** Every tag in the book, to filter by and to offer while tagging. */
+  /** Every tag in the book, to filter by. */
   tags: string[];
-  /** Tags the page or spread with ID id. */
-  onTags: (id: string, tags: string[]) => void;
 }
 
 /**
@@ -88,11 +86,13 @@ function DrawerHeader({ units, inBook, open, onOpen, onAddOther }: UnitsDrawerPr
   );
 }
 
-/** One page or spread in the drawer, its height fixed and its width from its shape, and its tags. */
+/**
+ * One page or spread in the drawer, its height fixed and its width from its shape. Its tags aren't
+ * shown, to keep it short; they're set on Photo Pages.
+ */
 function DrawerUnit(props: UnitsDrawerProps & { unit: BookUnit }) {
-  const { unit, inBook, look, tags, onTags } = props;
+  const { unit, inBook, look } = props;
   const name = unitName(unit);
-  const own = unitTags(unit);
   return (
     <li
       draggable
@@ -108,10 +108,8 @@ function DrawerUnit(props: UnitsDrawerProps & { unit: BookUnit }) {
         <span className="min-w-0 flex-1 truncate" title={name}>
           {name}
         </span>
-        <TagButton name={name} tags={own} all={tags} onChange={(next) => onTags(unit.id, next)} />
         <UnitActions {...props} name={name} />
       </div>
-      <TagChips tags={own} />
     </li>
   );
 }
