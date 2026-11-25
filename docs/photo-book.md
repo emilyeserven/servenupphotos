@@ -114,6 +114,12 @@ Other pages are pages without photos: one the publisher requires, a bio page, or
 
 > **Frontend analogy:** the drawer and **Used page spreads** share one HTML5 drag type carrying the page or spread's ID, so each is both a source and a drop target, like a sortable list fed from a palette. The preview's views are derived state: the book's order grouped one way or the other, recomputed each render rather than stored.
 
+### Save as PDF
+
+**Save as PDF**, above the preview, draws every page of the book in its order, each on its own sheet of paper the book's page size from **Info**, and opens the browser's print dialog; pick **Save as PDF** there to make the file. Page 1 is a right page and they alternate from there, so a custom layout's left and right looks print as they show in the preview. Blank pages print blank, and the inside covers are left out, since they aren't pages of the book. Photos are loaded at about three times the size they're drawn, close to 300 dpi on paper (as large as the photo's biggest version allows), and the dialog waits for them, up to 30 seconds. Nothing that's only for editing is printed: no "Drop a photo here", dashed outlines, empty caption or title placeholders, or dpi marks.
+
+> **Frontend analogy:** it's `window.print()` on a portal of the pages, with `@page { size: 12.5in 10.625in; margin: 0 }`, `break-after: page` on each page and a print media query that hides the rest of the app. A React context tells each photo it's printing, so its `<img>` loads eagerly with a larger `sizes`.
+
 ## List
 
 The **List** tab lists the book's pages in the order they're printed, as **Book** puts them, each headed by its page number, name and layout ("Page 4 · Spotlight left Two photos on the left"). A blank page the Book tab adds is left out, but its number is skipped, so the numbers match the printed book. Under each photo page, its photos in its layout's order: the place's number, the photo's Square Thumbnail, its name and its caption's first line, and **Edit info**, which opens the photo's editor (`/exif?edit=<path>`) to fix its title, Place or anything else its caption shows. An empty place says so; an other page says it has no photos. Above the pages, how many photos are on how many pages.

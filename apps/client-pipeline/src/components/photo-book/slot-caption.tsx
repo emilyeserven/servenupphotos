@@ -21,7 +21,13 @@ interface SlotCaptionProps {
 export function SlotCaption({ slot, text, onChange, className }: SlotCaptionProps) {
   const [editing, setEditing] = useState(false);
   if (slot.photo === "" && slot.caption === null) {
-    return <div className={cn("text-[1.9cqw] text-neutral-600 italic", className)}>Caption</div>;
+    return (
+      <div
+        className={cn("text-[1.9cqw] text-neutral-600 italic in-data-[print]:invisible", className)}
+      >
+        Caption
+      </div>
+    );
   }
   return (
     <div className={cn("relative flex min-h-0 flex-col", className)}>

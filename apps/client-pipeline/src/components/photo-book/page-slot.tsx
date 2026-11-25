@@ -1,6 +1,7 @@
 import { ImageIcon, XIcon } from "lucide-react";
 import { type CSSProperties, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
+import { usePrintedSize } from "@/components/photo-book/printing";
 import { useSlotDpi } from "@/components/photo-book/use-slot-dpi";
 import { Button } from "@/components/ui/button";
 import { useDropTarget } from "@/hooks/use-drop-target";
@@ -111,7 +112,9 @@ export function PhotoSlot(props: PhotoSlotProps) {
         style={shapeStyle(shape)}
         className={cn(
           "group/slot relative overflow-hidden rounded-sm",
-          filled ? "bg-neutral-800" : "border border-dashed border-neutral-600",
+          filled
+            ? "bg-neutral-800"
+            : "border border-dashed border-neutral-600 in-data-[print]:border-transparent",
           over && "ring-ring ring-2",
         )}
       >
@@ -207,7 +210,8 @@ function FilledSlot(props: {
 /**
  * The photo in its place, sharp at any size: the browser picks the resized version from R2 that
  * covers the place at the screen's pixel ratio, starting from the offline Small version, which it
- * goes back to when R2 can't be reached.
+ * goes back to when R2 can't be reached. For **Save as PDF** it asks for one three times as wide,
+ * about 300 dpi on paper, and loads it at once.
  */
 function SlotImage(props: {
   photo: SocialPhoto | undefined;
@@ -218,14 +222,15 @@ function SlotImage(props: {
   const { photo, image, size, alt } = props;
   const changed = useChangedPhotoFiles();
   const [failed, setFailed] = useState(false);
+  const { box, loading } = usePrintedSize(size);
   const data = photo && currentData(photo, changed);
   return (
     <img
       src={image}
-      {...slotSources(failed ? null : data, size)}
+      {...slotSources(failed ? null : data, box)}
       alt={alt}
       draggable={false}
-      loading="lazy"
+      loading={loading}
       onError={() => setFailed(true)}
       className="size-full object-cover"
     />
