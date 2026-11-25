@@ -8,8 +8,9 @@ import { NewBookForm } from "@/components/photo-book/book-bar";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { type PhotoBook, bookOrder, photosInBook } from "@/lib/photo-book";
+import type { PhotoBook } from "@/lib/photo-book";
 import type { BookAlbum } from "@/lib/photo-book-album";
+import { bookPages, photosInBook } from "@/lib/photo-book-order";
 import { useCombinedData } from "@/stores/combined-data";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
@@ -74,7 +75,7 @@ function albumText(book: PhotoBook, albums: BookAlbum[]): string {
 
 /** "3 pages · 5 photos" in the book, with how many more pages could be used when there are some. */
 function pagesText(book: PhotoBook): string {
-  const kept = bookOrder(book).length;
+  const kept = bookPages(book).length;
   const spare = book.pages.length - kept;
   const pages = `${count(kept, "page")}${spare > 0 ? ` (${spare} more not in it)` : ""}`;
   return `${pages} · ${count(photosInBook(book).size, "photo")}`;

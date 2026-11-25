@@ -24,6 +24,9 @@ var photoBookLayouts = map[string]int{
 	"verticals-left": 2,
 	// The same, mirrored: the photos on the right, their captions on the left.
 	"verticals-right": 2,
+	// One of the book's other pages, such as one the publisher requires or a
+	// bio page: no photos, only its name for now.
+	"other": 0,
 }
 
 // The most pages a photo book can have, and the most characters of a
@@ -51,16 +54,73 @@ type PhotoBook struct {
 	// newest last.
 	Pages []PhotoBookPage `json:"pages"`
 	// Order is the IDs of the pages that will be used, in the book's order;
-	// nil in a book made before, whose pages are then all in it.
+	// nil in a book made before, whose pages are then all in it. A spread is
+	// listed by its first page.
 	Order *[]string `json:"order,omitempty"`
+	// Size is the printed book's page size, which sets the shape the Photo
+	// Book page draws its pages in; nil for the default, BookWright's large
+	// landscape page.
+	Size *PhotoBookSize `json:"size,omitempty"`
+	// Layouts are the page layouts made on the book's Layouts tab, which its
+	// pages can have besides the built-in ones.
+	Layouts []PhotoBookLayout `json:"layouts,omitempty"`
+	// HiddenLayouts are the built-in layouts the book's Photo Pages leave
+	// out of their layout pickers, so its own are used instead.
+	HiddenLayouts []string `json:"hiddenLayouts,omitempty"`
+	// Budget is how many pages the printed book should have and can have at
+	// most; nil when none is set.
+	Budget *PhotoBookBudget `json:"budget,omitempty"`
 }
+
+// PhotoBookBudget is a book's page budget, counted in printed pages (a
+// spread is two): the number aimed for and the most it can have. 0 is not
+// set.
+type PhotoBookBudget struct {
+	// Target is the number of pages aimed for; 0 for none.
+	Target int `json:"target,omitempty"`
+	// Max is the most pages the book can have; 0 for none.
+	Max int `json:"max,omitempty"`
+}
+
+// PhotoBookSize is a book's page size: its width and height in unit.
+type PhotoBookSize struct {
+	// Width is the page's width, more than 0.
+	Width float64 `json:"width"`
+	// Height is the page's height, more than 0.
+	Height float64 `json:"height"`
+	// Unit is "in", "cm", "mm", "pt" or "px".
+	Unit string `json:"unit"`
+}
+
+// The units a book's page size can be in, and the largest number a side
+// can be in any of them.
+var (
+	photoBookUnits      = []string{"in", "cm", "mm", "pt", "px"}
+	maxPhotoBookSideLen = 100000.0
+)
 
 // PhotoBookPage is one page of a photo book.
 type PhotoBookPage struct {
 	// ID tells the page from the others in its book.
 	ID string `json:"id"`
-	// Layout is "full", "pair-left", "pair-right", "verticals-left" or
-	// "verticals-right".
+	// Name is what the page is called on the Photo Book page, such as
+	// "Bicycles, by place"; "" for none.
+	Name string `json:"name,omitempty"`
+	// LinkNext is true when the page and the one after it among the pages
+	// make a two-page spread.
+	LinkNext bool `json:"linkNext,omitempty"`
+	// Tags are free-form labels for sorting pages into alternatives, such
+	// as "by place" or "by theme"; a spread's are its pages' together.
+	Tags []string `json:"tags,omitempty"`
+	// Alternates names the group of alternate pages and spreads the page is
+	// in, such as "alt-1", one of which is picked for the book; "" for none.
+	// A spread's pages share it.
+	Alternates string `json:"alternates,omitempty"`
+	// Hidden is true on an alternate that lost to the one picked, kept but
+	// not shown on Photo Pages.
+	Hidden bool `json:"hidden,omitempty"`
+	// Layout is "full", "pair-left", "pair-right", "verticals-left",
+	// "verticals-right", "other", or the ID of one of the book's layouts.
 	Layout string `json:"layout"`
 	// Title is shown above the page's top photo; nil for none.
 	Title *string `json:"title"`
@@ -109,9 +169,18 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 	if len(b.Pages) > maxPhotoBookPages {
 		return out, publishErr(http.StatusBadRequest, "A photo book can have up to %d pages.", maxPhotoBookPages)
 	}
+	layouts, perr := validPhotoBookLayouts(b.Layouts)
+	if perr != nil {
+		return out, perr
+	}
+	out.Layouts = layouts
+	if out.HiddenLayouts, perr = validHiddenLayouts(b.HiddenLayouts); perr != nil {
+		return out, perr
+	}
+	counts := photoBookSlotCounts(layouts)
 	out.Pages = make([]PhotoBookPage, 0, len(b.Pages))
 	for i, page := range b.Pages {
-		p, perr := validPhotoBookPage(page, i+1)
+		p, perr := validPhotoBookPage(page, i+1, counts)
 		if perr != nil {
 			return out, perr
 		}
@@ -121,7 +190,45 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 		out.Pages = append(out.Pages, p)
 	}
 	out.Order = validPhotoBookOrder(b.Order, out.Pages)
-	return out, nil
+	if out.Size, perr = validPhotoBookSize(b.Size); perr != nil {
+		return out, perr
+	}
+	out.Budget, perr = validPhotoBookBudget(b.Budget)
+	return out, perr
+}
+
+// validPhotoBookBudget checks a book's page budget: each number from 0 to
+// the most pages a book can have, and the target no more than the max. One
+// with neither set is nil.
+func validPhotoBookBudget(budget *PhotoBookBudget) (*PhotoBookBudget, *PublishError) {
+	if budget == nil || (budget.Target == 0 && budget.Max == 0) {
+		return nil, nil
+	}
+	for _, n := range []int{budget.Target, budget.Max} {
+		if n < 0 || n > maxPhotoBookPages {
+			return nil, publishErr(http.StatusBadRequest, "Give the page budget as numbers from 0 to %d.", maxPhotoBookPages)
+		}
+	}
+	if budget.Max > 0 && budget.Target > budget.Max {
+		return nil, publishErr(http.StatusBadRequest, "Make the target page count no more than the max.")
+	}
+	return budget, nil
+}
+
+// validPhotoBookSize checks a book's page size; nil stays nil.
+func validPhotoBookSize(size *PhotoBookSize) (*PhotoBookSize, *PublishError) {
+	if size == nil {
+		return nil, nil
+	}
+	if !slices.Contains(photoBookUnits, size.Unit) {
+		return nil, publishErr(http.StatusBadRequest, "Give the book's size in in, cm, mm, pt or px.")
+	}
+	for _, side := range []float64{size.Width, size.Height} {
+		if !(side > 0 && side <= maxPhotoBookSideLen) {
+			return nil, publishErr(http.StatusBadRequest, "Give the book's width and height as numbers more than 0.")
+		}
+	}
+	return size, nil
 }
 
 // validPhotoBookOrder returns order without the IDs of pages that aren't
@@ -145,17 +252,28 @@ func tooLongEntryText(s string) bool {
 	return utf8.RuneCountInString(s) > maxEntryTextLength
 }
 
-// validPhotoBookPage checks page n of a book, and returns it with its title
+// validPhotoBookPage checks page n of a book, whose layouts hold counts
+// photos, and returns it with its title
 // trimmed and its slots cut or filled to its layout's count.
-func validPhotoBookPage(page PhotoBookPage, n int) (PhotoBookPage, *PublishError) {
-	count, ok := photoBookLayouts[page.Layout]
+func validPhotoBookPage(page PhotoBookPage, n int, counts map[string]int) (PhotoBookPage, *PublishError) {
+	count, ok := counts[page.Layout]
 	if !ok {
 		return page, publishErr(http.StatusBadRequest, "Page %d has no layout the Photo Book knows.", n)
 	}
-	out := PhotoBookPage{ID: strings.TrimSpace(page.ID), Layout: page.Layout}
+	out := PhotoBookPage{ID: strings.TrimSpace(page.ID), Name: strings.TrimSpace(page.Name), LinkNext: page.LinkNext, Layout: page.Layout, Alternates: strings.TrimSpace(page.Alternates)}
+	// Only an alternate can be hidden, so no page is lost from view for good.
+	out.Hidden = page.Hidden && out.Alternates != ""
 	if out.ID == "" || utf8.RuneCountInString(out.ID) > maxEntryTextLength {
 		return out, publishErr(http.StatusBadRequest, "Page %d needs an ID.", n)
 	}
+	if tooLongEntryText(out.Name) || tooLongEntryText(out.Alternates) {
+		return out, publishErr(http.StatusBadRequest, "Keep page %d's name and alternates group to %d characters.", n, maxEntryTextLength)
+	}
+	tags, perr := validPhotoBookTags(page.Tags, n)
+	if perr != nil {
+		return out, perr
+	}
+	out.Tags = tags
 	if page.Title != nil {
 		title := strings.TrimSpace(*page.Title)
 		if utf8.RuneCountInString(title) > maxEntryTextLength {
@@ -182,6 +300,28 @@ func validPhotoBookSlot(slot PhotoBookSlot, n int) (PhotoBookSlot, *PublishError
 	}
 	if out.Caption != nil && utf8.RuneCountInString(*out.Caption) > maxPhotoBookCaption {
 		return out, publishErr(http.StatusBadRequest, "Keep each caption on page %d to %d characters.", n, maxPhotoBookCaption)
+	}
+	return out, nil
+}
+
+// The most tags a page can have.
+const maxPhotoBookTags = 20
+
+// validPhotoBookTags returns page n's tags trimmed, without empty ones or
+// ones listed twice; nil when none is left.
+func validPhotoBookTags(tags []string, n int) ([]string, *PublishError) {
+	var out []string
+	for _, tag := range tags {
+		tag = strings.TrimSpace(tag)
+		if tooLongEntryText(tag) {
+			return nil, publishErr(http.StatusBadRequest, "Keep page %d's tags to %d characters each.", n, maxEntryTextLength)
+		}
+		if tag != "" && !slices.Contains(out, tag) {
+			out = append(out, tag)
+		}
+	}
+	if len(out) > maxPhotoBookTags {
+		return nil, publishErr(http.StatusBadRequest, "Page %d can have up to %d tags.", n, maxPhotoBookTags)
 	}
 	return out, nil
 }

@@ -1,13 +1,25 @@
 import type { ReactNode } from "react";
-import { PhotoSlot, type SlotShape } from "@/components/photo-book/page-slot";
-import { type BookPageProps, pageName } from "@/components/photo-book/page-types";
+import { CustomBody } from "@/components/photo-book/custom-body";
+import { PhotoSlot } from "@/components/photo-book/page-slot";
+import { type BookPageProps, type PageParts, pageName } from "@/components/photo-book/page-types";
 import { SlotCaption } from "@/components/photo-book/slot-caption";
-import type { PageLayout } from "@/lib/photo-book";
+import type { BuiltInLayout } from "@/lib/photo-book";
+import { customPageLook } from "@/lib/photo-book-layouts";
 import { cn } from "@/lib/utils";
 
 type BodyProps = Pick<
   BookPageProps,
-  "page" | "index" | "number" | "repeated" | "photos" | "captionFor" | "actions"
+  | "page"
+  | "index"
+  | "number"
+  | "repeated"
+  | "photos"
+  | "captionFor"
+  | "actions"
+  | "layouts"
+  | "sides"
+  | "side"
+  | "printWidth"
 >;
 
 /** The other pages in the book with the slot's photo; none for a page left out. */
@@ -16,22 +28,14 @@ function alsoOn(photo: string, number: number | null, repeated: Map<string, numb
   return (repeated.get(photo) ?? []).filter((n) => n !== number);
 }
 
-/** Draws the page's photo places and captions, by their place on the page, and its title. */
-interface PageParts {
-  /** The page's title, typed on the page; nothing for a page without one. */
-  title: ReactNode;
-  slot: (i: number, shape: SlotShape, className?: string) => ReactNode;
-  caption: (i: number, className?: string) => ReactNode;
-}
-
 /** The page's photo places and captions, each wired to the page's actions. */
 function pageParts(props: BodyProps): PageParts {
-  const { page, index, number, repeated, photos, captionFor, actions } = props;
+  const { page, index, number, repeated, photos, captionFor, actions, printWidth } = props;
   return {
     title:
       page.title === null ? null : (
         <input
-          aria-label={`${pageName(number)} title`}
+          aria-label={`${pageName(page)} title`}
           value={page.title}
           placeholder="TITLE"
           onChange={(event) => actions.onTitle(event.target.value)}
@@ -46,6 +50,7 @@ function pageParts(props: BodyProps): PageParts {
           key={`photo-${i}`}
           slot={s}
           place={{ page: index, slot: i }}
+          print={{ page: page.id, inches: printWidth }}
           shape={shape}
           alsoOn={alsoOn(s.photo, number, repeated)}
           photo={photos.get(s.photo)}
@@ -69,11 +74,6 @@ function pageParts(props: BodyProps): PageParts {
       );
     },
   };
-}
-
-/** Whether the layout puts its photos on the left and its captions on the right. */
-function photosLeft(layout: PageLayout): boolean {
-  return layout === "pair-left" || layout === "verticals-left";
 }
 
 /** The photos and the captions side by side, the photos taking the larger share on their side. */
@@ -163,13 +163,30 @@ function PairBody({ parts, left }: { parts: PageParts; left: boolean }) {
   );
 }
 
+/** One of the book's other pages, such as a bio page: only its name, as a placeholder for now. */
+function OtherBody({ name }: { name: string }) {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-sm border border-dashed border-neutral-700 p-[6%] text-center text-[4cqw] leading-tight font-bold text-neutral-400 uppercase">
+      {name}
+    </div>
+  );
+}
+
+/** How each photo layout draws the page's parts. */
+const BODIES: Record<BuiltInLayout, (parts: PageParts) => ReactNode> = {
+  full: (parts) => <FullBody parts={parts} />,
+  "pair-left": (parts) => <PairBody parts={parts} left />,
+  "pair-right": (parts) => <PairBody parts={parts} left={false} />,
+  "verticals-left": (parts) => <VerticalsBody parts={parts} left />,
+  "verticals-right": (parts) => <VerticalsBody parts={parts} left={false} />,
+};
+
 /** The page's photos and captions, laid out as its layout says. */
 export function PageBody(props: BodyProps) {
-  const parts = pageParts(props);
   const { layout } = props.page;
-  if (layout === "full") return <FullBody parts={parts} />;
-  if (layout === "verticals-left" || layout === "verticals-right") {
-    return <VerticalsBody parts={parts} left={photosLeft(layout)} />;
-  }
-  return <PairBody parts={parts} left={photosLeft(layout)} />;
+  if (layout === "other") return <OtherBody name={pageName(props.page)} />;
+  const parts = pageParts(props);
+  const custom = customPageLook(props.layouts, props.page, props.sides, props.side);
+  if (custom) return <CustomBody parts={parts} look={custom} />;
+  return (BODIES[layout as BuiltInLayout] ?? BODIES.full)(parts);
 }

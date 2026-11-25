@@ -1,4 +1,5 @@
 import { albumAndSubAlbums, genreAndSubGenres, tagAndSubTags } from "@portfolio/lib/groups";
+import { likedBy } from "@portfolio/lib/liked-by";
 import type { Photo } from "@portfolio/lib/photos";
 import {
   matchesWhen,
@@ -15,10 +16,11 @@ export const LOCATION_KEYS = ["country", "state", "city", "place"] as const;
 export type LocationKey = (typeof LOCATION_KEYS)[number];
 
 /**
- * The album, tag and genre filters' keys; an album also matches the photos in its sub-albums, a
- * tag the tags under it, and a genre its subgenres.
+ * The album, tag, genre and Likes filters' keys; an album also matches the photos in its
+ * sub-albums, a tag the tags under it, and a genre its subgenres. `liked` is a person's ID, or
+ * `ANYONE`, and only the pipeline's Gallery offers it.
  */
-export const GROUP_KEYS = ["album", "tag", "genre"] as const;
+export const GROUP_KEYS = ["album", "tag", "genre", "liked"] as const;
 
 type GroupKey = (typeof GROUP_KEYS)[number];
 
@@ -133,6 +135,7 @@ const MATCHES: Record<FilterKey, (photo: Photo, value: string) => boolean> = {
   album: inAlbum,
   tag: hasTag,
   genre: inGenre,
+  liked: likedBy,
 };
 
 /** The chosen countries, cities and places, as pairs of a key and a value. */

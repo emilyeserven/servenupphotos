@@ -1,8 +1,10 @@
-import { PanelRightCloseIcon } from "lucide-react";
+import { CornerDownRightIcon, PanelRightCloseIcon } from "lucide-react";
 import { type DragEvent, type ReactNode, useMemo, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
+import { GridFilterButton } from "@/components/gallery/grid-filter-button";
 import { GridFilterBar, useGridFilters } from "@/components/gallery/grid-filters";
+import { OrientationButtons } from "@/components/gallery/orientation-buttons";
 import { PhotoImage } from "@/components/instagram-picker/photo-image";
 import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
@@ -12,6 +14,7 @@ import { takenDay } from "@/lib/social-focus";
 import { photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
 import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
+import type { Photo } from "@portfolio/lib/photos";
 
 /** The words a page's photo drawer uses for what it adds photos to. */
 interface DrawerWords {
@@ -44,12 +47,22 @@ interface PhotoDrawerPanelProps {
   /** Dropping a photo from the page here takes it out; left out, the drawer takes no drops. */
   takeOff?: TakeOff;
   /**
-   * True to list the photos in the order given, such as a photo book's album's, without the
-   * portfolio Grid's filters; left out, newest taken first, with the filters.
+   * True to list the photos in the order given, such as a photo book's album's, with the portfolio
+   * Grid's filters behind a **Filter** button beside the search; left out, newest taken first,
+   * with the filters' bar under it.
    */
   inOrder?: boolean;
   /** What the drawer says with no photos given at all, such as before an album is picked. */
   empty?: ReactNode;
+  /** The paths of photos to show faded, such as ones already on a photo book's page. */
+  dimmed?: Set<string>;
+  /**
+   * Goes to the next page with the photo, from a button on a faded photo when it's pointed at;
+   * left out, faded photos have none.
+   */
+  onJump?: (photo: SocialPhoto) => void;
+  /** Under Show used: a control for which photos are faded, such as a photo book's tags. */
+  fadeBy?: ReactNode;
 }
 
 /** Newest taken first, then by name. */
@@ -107,23 +120,35 @@ function useDrawerList(photos: SocialPhoto[], used: Set<string>, inOrder = false
     setSearch,
     showUsed,
     setShowUsed,
-    shown: inOrder ? listed : grid.shown,
+    shown: grid.shown,
     filterPhotos: grid.photos,
+    filterCount: grid.count,
   };
 }
 
 /**
  * A panel beside a page's content, like the Instagram calendar's photo drawer, listing the photos to
- * drag onto it, with a search and the portfolio Grid's filters (or, inOrder, in the order given).
+ * drag onto it, with a search and the portfolio Grid's filters (or, inOrder, in the order given,
+ * with the filters in a flyout).
  * Clicking a photo adds it; with takeOff, a photo dropped here from the page comes out.
  */
 export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
-  const { photos, used, onPick, onClose, dragType, words, takeOff, inOrder, empty } = props;
-  const { search, setSearch, showUsed, setShowUsed, shown, filterPhotos } = useDrawerList(
+  const {
     photos,
     used,
+    onPick,
+    onClose,
+    dragType,
+    words,
+    takeOff,
     inOrder,
-  );
+    empty,
+    dimmed,
+    fadeBy,
+    onJump,
+  } = props;
+  const { search, setSearch, showUsed, setShowUsed, shown, filterPhotos, filterCount } =
+    useDrawerList(photos, used, inOrder);
   const { over, handlers } = useTakeOffDrop(dragType, takeOff);
   return (
     <aside
@@ -145,12 +170,10 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
           <PanelRightCloseIcon />
         </Button>
       </div>
-      <Input
-        type="search"
-        placeholder="Search by title or file name"
-        aria-label="Search photos"
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
+      <DrawerSearch
+        search={search}
+        onSearch={setSearch}
+        filters={inOrder ? { photos: filterPhotos, count: filterCount } : undefined}
       />
       <label className="flex items-center gap-2 text-sm">
         <input
@@ -161,6 +184,7 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
         />
         {words.showUsed}
       </label>
+      {fadeBy}
       {!inOrder && (
         <div className="shrink-0">
           <GridFilterBar photos={filterPhotos} />
@@ -171,12 +195,41 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
           photos={shown}
           empty={emptyNote(photos.length, empty)}
           used={used}
+          dimmed={dimmed}
+          onJump={onJump}
           onPick={onPick}
           dragType={dragType}
           usedBadge={words.usedBadge}
         />
       </div>
     </aside>
+  );
+}
+
+/**
+ * The drawer's search, and with filters, **Filter** beside it (the portfolio Grid's filters in a
+ * flyout, counted out of filters.photos) and the quick orientation buttons under it.
+ */
+function DrawerSearch(props: {
+  search: string;
+  onSearch: (search: string) => void;
+  filters: { photos: Photo[]; count: number } | undefined;
+}) {
+  const { search, onSearch, filters } = props;
+  return (
+    <>
+      <div className="flex items-center gap-2">
+        <Input
+          type="search"
+          placeholder="Search by title or file name"
+          aria-label="Search photos"
+          value={search}
+          onChange={(event) => onSearch(event.target.value)}
+        />
+        {filters && <GridFilterButton photos={filters.photos} count={filters.count} />}
+      </div>
+      {filters && <OrientationButtons />}
+    </>
   );
 }
 
@@ -189,18 +242,20 @@ function DrawerPhotos(props: {
   photos: SocialPhoto[];
   empty: ReactNode;
   used: Set<string>;
+  dimmed: Set<string> | undefined;
+  onJump: ((photo: SocialPhoto) => void) | undefined;
   onPick: (photo: SocialPhoto) => void;
   dragType: string;
   usedBadge: string;
 }) {
-  const { photos, empty, used, onPick, dragType, usedBadge } = props;
+  const { photos, empty, used, dimmed, onJump, onPick, dragType, usedBadge } = props;
   if (photos.length === 0) {
     return <EmptyNote className="py-6 text-center">{empty}</EmptyNote>;
   }
   return (
     <ul className="grid grid-cols-3 gap-2" aria-label="Photos to add">
       {photos.map((photo) => (
-        <li key={photo.path}>
+        <li key={photo.path} className="group/tile relative">
           <button
             type="button"
             draggable
@@ -209,7 +264,10 @@ function DrawerPhotos(props: {
               event.dataTransfer.effectAllowed = "move";
             }}
             onClick={() => onPick(photo)}
-            className="group focus-visible:ring-ring flex w-full cursor-grab flex-col gap-1 rounded-md text-left outline-none focus-visible:ring-2 active:cursor-grabbing"
+            className={cn(
+              "group focus-visible:ring-ring flex w-full cursor-grab flex-col gap-1 rounded-md text-left outline-none focus-visible:ring-2 active:cursor-grabbing",
+              dimmed?.has(photo.path) && "opacity-40 hover:opacity-100",
+            )}
           >
             <span className="relative aspect-square overflow-hidden rounded-md border">
               <PhotoImage photo={photo} />
@@ -227,8 +285,33 @@ function DrawerPhotos(props: {
             </span>
             <span className="truncate text-xs group-hover:underline">{photoName(photo)}</span>
           </button>
+          <JumpButton photo={photo} onJump={dimmed?.has(photo.path) ? onJump : undefined} />
         </li>
       ))}
     </ul>
+  );
+}
+
+/**
+ * On a faded photo, shown while it's pointed at: a button that goes to the next page with it, and
+ * on each click the one after; nothing without onJump.
+ */
+function JumpButton(props: {
+  photo: SocialPhoto;
+  onJump: ((photo: SocialPhoto) => void) | undefined;
+}) {
+  const { photo, onJump } = props;
+  if (!onJump) return null;
+  return (
+    <Button
+      size="icon-xs"
+      variant="secondary"
+      aria-label={`Go to the next page with ${photoName(photo)}`}
+      title="Go to the next page with this photo"
+      onClick={() => onJump(photo)}
+      className="absolute top-1 right-1 opacity-0 shadow group-hover/tile:opacity-100 focus-visible:opacity-100"
+    >
+      <CornerDownRightIcon />
+    </Button>
   );
 }

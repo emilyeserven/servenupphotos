@@ -22,7 +22,7 @@ export function PhotoBookPage({ id, part }: { id: string; part: BookPart }) {
     <Page
       wide
       title={book?.name ?? "Photo book"}
-      description="A rough mockup of the book. Pick the album its photos come from. On Pages, make pages that could be used, in any layout, from the album's photos, trying out as many as you like. On Book, put the ones that will be used in order. Captions fill in from a caption template."
+      description="A rough mockup of the book. On Info, pick the album its photos come from, its caption template and its page size. On Photo Pages, make pages that could be used, in any layout, from the album's photos, trying out as many as you like, and link pages into spreads. On Book, put the ones that will be used in order, add other pages, and page through it."
       action={<BackToBooks />}
     >
       <GitHubGate>{() => <BookContent id={id} part={part} />}</GitHubGate>

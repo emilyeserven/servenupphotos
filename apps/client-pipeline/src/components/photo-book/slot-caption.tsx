@@ -77,7 +77,7 @@ function FromTemplate({ slot, onChange }: Pick<SlotCaptionProps, "slot" | "onCha
       type="button"
       onClick={() => onChange(null)}
       title="Fill the caption in from the caption template again"
-      className="flex items-center gap-1 self-start text-[10px] text-neutral-400 hover:text-white"
+      className="flex items-center gap-1 self-start text-[10px] text-neutral-400 hover:text-white in-data-[preview]:hidden"
     >
       <RotateCcwIcon className="size-3" />
       From template
