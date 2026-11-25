@@ -7,6 +7,7 @@ import {
   changeLayout,
   layoutName,
   layoutChoices,
+  photoShape,
   pagesUsing,
   removeLayout,
   textBeside,
@@ -60,4 +61,11 @@ test("the text's side says whether it's beside the photos and whether it comes f
       [false, false],
     ],
   );
+});
+
+test("a layout's photos keep their shape's ratio, a custom one's own, or fill their room", () => {
+  assert.equal(photoShape({ shape: "landscape" }), 1.5);
+  assert.equal(photoShape({ shape: "ratio", ratio: { width: 4, height: 5 } }), 0.8);
+  assert.equal(photoShape({ shape: "ratio", ratio: { width: 4, height: 0 } }), 1);
+  assert.equal(photoShape({ shape: "fill" }), "fill");
 });

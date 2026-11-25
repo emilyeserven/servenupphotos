@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { RatioFields } from "@/components/photo-book/ratio-fields";
 import { Button } from "@/components/ui/button";
 import { type LayoutLook, textBeside } from "@/lib/photo-book-layouts";
 
@@ -68,6 +69,9 @@ function Percent(props: {
   );
 }
 
+/** The ratio a layout's photos start with when Custom ratio is picked: 4:5, a common print size. */
+const DEFAULT_RATIO = { width: 4, height: 5 };
+
 /** The photo settings: how many, how they're arranged, and their shape. */
 function PhotoFields({ look, onChange }: LayoutFieldsProps) {
   return (
@@ -94,10 +98,19 @@ function PhotoFields({ look, onChange }: LayoutFieldsProps) {
           ["landscape", "Landscape 3:2"],
           ["portrait", "Portrait 2:3"],
           ["square", "Square"],
+          ["ratio", "Custom ratio"],
           ["fill", "Fill the room"],
         ]}
-        onChange={(shape) => onChange({ shape })}
+        onChange={(shape) =>
+          onChange(shape === "ratio" ? { shape, ratio: look.ratio ?? DEFAULT_RATIO } : { shape })
+        }
       />
+      {look.shape === "ratio" && (
+        <RatioFields
+          ratio={look.ratio ?? DEFAULT_RATIO}
+          onChange={(ratio) => onChange({ ratio })}
+        />
+      )}
     </>
   );
 }

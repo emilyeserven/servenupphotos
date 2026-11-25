@@ -9,7 +9,7 @@ import (
 
 // bigPair is a layout from the Layouts tab: two portrait photos filling a
 // row, the text on the left.
-var bigPair = PhotoBookLayout{ID: "custom-1", Name: " Big pair ", Photos: 2, Arrange: "row", Shape: "fill", Text: "left", Captions: "column", TextShare: 80, Align: "center", Gap: -1, Margin: 3}
+var bigPair = PhotoBookLayout{ID: "custom-1", Name: " Big pair ", Photos: 2, Arrange: "row", Shape: "fill", Ratio: &PhotoBookRatio{Width: 4, Height: 5}, Text: "left", Captions: "column", TextShare: 80, Align: "center", Gap: -1, Margin: 3}
 
 func TestSavePhotoBookLayouts(t *testing.T) {
 	_, c := newMainRepo(t, map[string]string{})
@@ -26,6 +26,14 @@ func TestSavePhotoBookLayouts(t *testing.T) {
 		if !strings.Contains(saved, want) {
 			t.Errorf("saved %s, want %s in it", saved, want)
 		}
+	}
+	if strings.Contains(saved, `"ratio"`) {
+		t.Errorf("saved %s, want no ratio on a layout whose photos fill their room", saved)
+	}
+	l := bigPair
+	l.Shape = "ratio"
+	if _, err := c.SavePhotoBook(t.Context(), placesGH, PhotoBook{ID: "korea", Name: "Korea", Layouts: []PhotoBookLayout{l}}); err != nil {
+		t.Errorf("SavePhotoBook() with a 4:5 ratio error = %v", err)
 	}
 	if strings.Count(saved, `"photo": `) != 2 {
 		t.Errorf("saved %s, want the page to have two places", saved)
@@ -44,6 +52,8 @@ func TestSavePhotoBookLayouts(t *testing.T) {
 		{"five photos", with(func(l *PhotoBookLayout) { l.Photos = 5 })},
 		{"bad shape", with(func(l *PhotoBookLayout) { l.Shape = "round" })},
 		{"bad text side", with(func(l *PhotoBookLayout) { l.Text = "middle" })},
+		{"ratio without sides", with(func(l *PhotoBookLayout) { l.Shape, l.Ratio = "ratio", nil })},
+		{"ratio of 0", with(func(l *PhotoBookLayout) { l.Shape, l.Ratio = "ratio", &PhotoBookRatio{Width: 0, Height: 5} })},
 		{"same layout id", PhotoBook{ID: "korea", Name: "Korea", Layouts: []PhotoBookLayout{bigPair, bigPair}}},
 		{"page with a gone layout", PhotoBook{ID: "korea", Name: "Korea", Pages: []PhotoBookPage{{ID: "p1", Layout: "custom-1"}}}},
 	}

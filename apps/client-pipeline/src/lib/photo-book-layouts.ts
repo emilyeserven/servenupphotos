@@ -104,6 +104,7 @@ const SHAPE_WORDS: Record<LayoutLook["shape"], string> = {
   landscape: "3:2",
   portrait: "2:3",
   square: "square",
+  ratio: "custom ratio",
   fill: "filling their room",
 };
 
@@ -113,7 +114,11 @@ function describeLook(look: LayoutLook): string {
   const arrange = look.photos === 1 ? "" : look.arrange === "row" ? " in a row" : " stacked";
   const captions = look.captions === "photo" ? ", each caption beside its photo" : "";
   const side = look.text === "above" || look.text === "below" ? look.text : `on the ${look.text}`;
-  return `${photos}${arrange}, ${SHAPE_WORDS[look.shape]}, text ${side}${captions}.`;
+  const shape =
+    look.shape === "ratio" && look.ratio
+      ? `${look.ratio.width}:${look.ratio.height}`
+      : SHAPE_WORDS[look.shape];
+  return `${photos}${arrange}, ${shape}, text ${side}${captions}.`;
 }
 
 /** Every layout a photo page can have: the built-in ones, then the book's own, oldest first. */
@@ -191,4 +196,22 @@ export function textBeside(look: Pick<LayoutLook, "text">): boolean {
 /** Whether the layout's text comes before its photos: on the left or above them. */
 export function textFirst(look: Pick<LayoutLook, "text">): boolean {
   return look.text === "left" || look.text === "above";
+}
+
+/** Each kept photo shape's width over its height. */
+const SHAPE_RATIOS: Record<"landscape" | "portrait" | "square", number> = {
+  landscape: 3 / 2,
+  portrait: 2 / 3,
+  square: 1,
+};
+
+/**
+ * The shape the layout's photo places keep, as their width over their height, or `fill` for all
+ * the room they're given. A ratio without both sides more than 0 is square.
+ */
+export function photoShape(look: Pick<LayoutLook, "shape" | "ratio">): number | "fill" {
+  if (look.shape === "fill") return "fill";
+  if (look.shape !== "ratio") return SHAPE_RATIOS[look.shape];
+  const { width = 0, height = 0 } = look.ratio ?? {};
+  return width > 0 && height > 0 ? width / height : 1;
 }

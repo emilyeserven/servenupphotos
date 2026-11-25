@@ -32,10 +32,10 @@ export function fromPlace(text: string): SlotPlace | undefined {
 }
 
 /**
- * The shape a photo's place keeps on the page, whatever room the page gives it, or `fill` for all
- * the room, the photo cropped to fill it.
+ * The shape a photo's place keeps on the page, whatever room the page gives it (a named one, or a
+ * number for its width over its height), or `fill` for all the room, the photo cropped to fill it.
  */
-export type SlotShape = "landscape" | "portrait" | "square" | "fill";
+export type SlotShape = "landscape" | "portrait" | "square" | "fill" | number;
 
 /** Each kept shape's width over its height: 3:2, as the camera takes them, 2:3 turned, and 1:1. */
 const SHAPE_RATIO: Record<Exclude<SlotShape, "fill">, number> = {
@@ -47,7 +47,7 @@ const SHAPE_RATIO: Record<Exclude<SlotShape, "fill">, number> = {
 /** The size of a place with shape in the room it's given, which is a size container. */
 function shapeStyle(shape: SlotShape): CSSProperties {
   if (shape === "fill") return { width: "100%", height: "100%" };
-  const ratio = SHAPE_RATIO[shape];
+  const ratio = typeof shape === "number" ? shape : SHAPE_RATIO[shape];
   return { width: `min(100cqw, ${ratio * 100}cqh)`, aspectRatio: ratio };
 }
 

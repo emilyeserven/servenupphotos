@@ -26,8 +26,10 @@ export interface CustomLayout {
   photos: number;
   /** The photos one under another, or side by side. */
   arrange: "stack" | "row";
-  /** Each photo's place: 3:2, 2:3, square, or all the room it's given, cropping the photo. */
-  shape: "landscape" | "portrait" | "square" | "fill";
+  /** Each photo's place: 3:2, 2:3, square, `ratio`'s, or all the room it's given, cropping the photo. */
+  shape: "landscape" | "portrait" | "square" | "ratio" | "fill";
+  /** The photos' width to height, such as 4 to 5, when shape is `ratio`; absent otherwise. */
+  ratio?: { width: number; height: number };
   /** The side the title and captions go on. */
   text: "left" | "right" | "above" | "below";
   /** The title and every caption together on one side, or each caption beside its own photo. */

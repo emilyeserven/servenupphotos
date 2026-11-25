@@ -27,7 +27,7 @@ Built-in layouts stay as they are. The copy button beside any layout (or **Custo
 
 - **Photos:** 1 to 4.
 - **Arrange the photos:** one under another, or side by side.
-- **Photo size:** landscape 3:2, portrait 2:3, square, or **Fill the room**, which gives each photo all the room it has and crops it to fill.
+- **Photo size:** landscape 3:2, portrait 2:3, square, **Custom ratio** (a width and height typed in, such as 4 : 5, or one of the common ratios under them: 4:5, 5:4, 4:3, 3:4, 16:9, 9:16, 2:1), or **Fill the room**, which gives each photo all the room it has and crops it to fill.
 - **Title and captions:** on the left, right, above or below the photos, **Together in one column** or **Beside each photo**, and where they sit in their room (top, middle or bottom).
 - **Room for the text**, **Gap** and **Margin**: shares of the page, as sliders.
 
@@ -122,7 +122,7 @@ Each book is one file, `photobooks/<id>.json`, and **Commit** combines them into
 - **`album`** is the ID of the album the book's photos come from, or `""` (or missing, in a book made before) while none is picked.
 - **`size`** is the page size from **Info**, `unit` one of `in`, `cm`, `mm`, `pt` or `px`; a book without one uses 12.5 × 10.625 in.
 - **`layout`** is `full`, `pair-left`, `pair-right`, `verticals-left` or `verticals-right`, `other` for an other page, or the ID of one of the book's `layouts`; the backend fills or cuts `slots` to the layout's count (none for `other`).
-- **`layouts`** are the book's own layouts from the **Layouts** tab, each `{ id: "custom-<n>", name, photos (1–4), arrange: "stack" | "row", shape: "landscape" | "portrait" | "square" | "fill", text: "left" | "right" | "above" | "below", captions: "column" | "photo", textShare (10–60), align: "start" | "center" | "end", gap (0–20), margin (0–20) }`, the numbers in percent of the page; left out while there are none. A page whose layout isn't there is refused.
+- **`layouts`** are the book's own layouts from the **Layouts** tab, each `{ id: "custom-<n>", name, photos (1–4), arrange: "stack" | "row", shape: "landscape" | "portrait" | "square" | "ratio" | "fill", ratio: { width, height } (only with "ratio", each more than 0 and at most 100), text: "left" | "right" | "above" | "below", captions: "column" | "photo", textShare (10–60), align: "start" | "center" | "end", gap (0–20), margin (0–20) }`, the numbers in percent of the page; left out while there are none. A page whose layout isn't there is refused.
 - **`name`** is the page's name, left out until it has one.
 - **`linkNext`** is `true` on a photo page linked with the photo page after it into a spread, in the order of `pages`.
 - **`pages`** is every page made for the book, and **`order`** the IDs of the pages and spreads in the book, in its order, a spread listed by its first page. A book made before `order` has none, and then every page is in it, in their order; adding a page writes it. A spread's second page listed too (as **Import Book** writes every page) counts as the spread.

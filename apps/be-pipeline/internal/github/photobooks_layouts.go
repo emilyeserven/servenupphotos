@@ -21,8 +21,12 @@ type PhotoBookLayout struct {
 	// side by side.
 	Arrange string `json:"arrange"`
 	// Shape is each photo's place: "landscape" (3:2), "portrait" (2:3),
-	// "square", or "fill" for all the room it's given, cropping the photo.
+	// "square", "ratio" for Ratio's, or "fill" for all the room it's given,
+	// cropping the photo.
 	Shape string `json:"shape"`
+	// Ratio is the photos' width and height, such as 4 and 5, when Shape is
+	// "ratio"; nil otherwise.
+	Ratio *PhotoBookRatio `json:"ratio,omitempty"`
 	// Text is the side the title and captions go on: "left", "right",
 	// "above" or "below".
 	Text string `json:"text"`
@@ -42,13 +46,21 @@ type PhotoBookLayout struct {
 	Margin float64 `json:"margin"`
 }
 
+// PhotoBookRatio is a photo place's aspect ratio, its width to its height.
+type PhotoBookRatio struct {
+	// Width is more than 0 and at most 100.
+	Width float64 `json:"width"`
+	// Height is more than 0 and at most 100.
+	Height float64 `json:"height"`
+}
+
 // The most layouts a book can have, and what each of a layout's choices
 // can be.
 var (
 	maxPhotoBookLayouts = 50
 	layoutChoices       = map[string][]string{
 		"arrange":  {"stack", "row"},
-		"shape":    {"landscape", "portrait", "square", "fill"},
+		"shape":    {"landscape", "portrait", "square", "ratio", "fill"},
 		"text":     {"left", "right", "above", "below"},
 		"captions": {"column", "photo"},
 		"align":    {"start", "center", "end"},
@@ -93,6 +105,11 @@ func validPhotoBookLayout(l PhotoBookLayout, n int) (PhotoBookLayout, *PublishEr
 			return l, publishErr(http.StatusBadRequest, "Layout %d's %s has to be one of %s.", n, field, strings.Join(layoutChoices[field], ", "))
 		}
 	}
+	if l.Shape != "ratio" {
+		l.Ratio = nil
+	} else if l.Ratio == nil || !validRatioSide(l.Ratio.Width) || !validRatioSide(l.Ratio.Height) {
+		return l, publishErr(http.StatusBadRequest, "Give layout %d's photo ratio a width and height from 0 to 100.", n)
+	}
 	l.TextShare = min(max(l.TextShare, 10), 60)
 	l.Gap = min(max(l.Gap, 0), 20)
 	l.Margin = min(max(l.Margin, 0), 20)
@@ -110,4 +127,9 @@ func photoBookSlotCounts(layouts []PhotoBookLayout) map[string]int {
 		counts[l.ID] = l.Photos
 	}
 	return counts
+}
+
+// validRatioSide reports whether side can be one side of a photo ratio.
+func validRatioSide(side float64) bool {
+	return side > 0 && side <= 100
 }

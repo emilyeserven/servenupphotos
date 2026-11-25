@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { PageParts } from "@/components/photo-book/page-types";
-import { type LayoutLook, textBeside, textFirst } from "@/lib/photo-book-layouts";
+import { type LayoutLook, photoShape, textBeside, textFirst } from "@/lib/photo-book-layouts";
 import { cn } from "@/lib/utils";
 
 /** How each text alignment sits in its room, as flexbox's justify-content. */
@@ -77,7 +77,7 @@ export function CustomBody({ parts, look }: { parts: PageParts; look: LayoutLook
           }
           photos={
             <PhotoRoom key="photos" look={look}>
-              {indexes.map((i) => parts.slot(i, look.shape, "flex-1"))}
+              {indexes.map((i) => parts.slot(i, photoShape(look), "flex-1"))}
             </PhotoRoom>
           }
         />
@@ -94,7 +94,7 @@ export function CustomBody({ parts, look }: { parts: PageParts; look: LayoutLook
                     {parts.caption(i)}
                   </TextRoom>
                 }
-                photos={parts.slot(i, look.shape, "flex-1")}
+                photos={parts.slot(i, photoShape(look), "flex-1")}
               />
             ))}
           </PhotoRoom>
