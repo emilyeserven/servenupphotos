@@ -38,7 +38,7 @@ func TestSavePhotoBookLayouts(t *testing.T) {
 		t.Errorf("saved %s, want no ratio on a layout whose photos fill their room", saved)
 	}
 	l := bigPair
-	l.Shape, l.LeftPages, l.Left = "ratio", "mirror", &left
+	l.Shape, l.LeftPages, l.Left, l.AlignTo = "ratio", "mirror", &left, "photo"
 	if _, err := c.SavePhotoBook(t.Context(), placesGH, PhotoBook{ID: "korea", Name: "Korea", Layouts: []PhotoBookLayout{l}}); err != nil {
 		t.Errorf("SavePhotoBook() with a 4:5 ratio error = %v", err)
 	}
@@ -59,6 +59,7 @@ func TestSavePhotoBookLayouts(t *testing.T) {
 		{"five photos", with(func(l *PhotoBookLayout) { l.Photos = 5 })},
 		{"bad shape", with(func(l *PhotoBookLayout) { l.Shape = "round" })},
 		{"bad text side", with(func(l *PhotoBookLayout) { l.Text = "middle" })},
+		{"bad align to", with(func(l *PhotoBookLayout) { l.AlignTo = "page" })},
 		{"ratio without sides", with(func(l *PhotoBookLayout) { l.Shape, l.Ratio = "ratio", nil })},
 		{"ratio of 0", with(func(l *PhotoBookLayout) { l.Shape, l.Ratio = "ratio", &PhotoBookRatio{Width: 0, Height: 5} })},
 		{"bad left pages", with(func(l *PhotoBookLayout) { l.LeftPages = "flipped" })},
