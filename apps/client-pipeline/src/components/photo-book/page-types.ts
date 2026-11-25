@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { SocialPhoto } from "@/api/publish";
-import type { BookPage as Page, SlotPlace } from "@/lib/photo-book";
+import type { SlotShape } from "@/components/photo-book/page-slot";
+import type { CustomLayout, BookPage as Page, SlotPlace } from "@/lib/photo-book";
 
 /** What the page itself can do to its book: its title, photos and captions. */
 export interface PageActions {
@@ -25,6 +26,8 @@ export interface BookPageProps {
   actions: PageActions;
   /** The page's width over its height, from the book's size. */
   aspect: number;
+  /** The layouts made on the book's Layouts tab, which pages can have besides the built-in ones. */
+  layouts: CustomLayout[];
   /** The buttons above the page; none on a preview. */
   controls?: ReactNode;
 }
@@ -37,4 +40,12 @@ export function pageName(page: Page): string {
 /** What a page or spread is called: its page's name, or its two pages' names joined. */
 export function unitName(unit: { pages: Page[] }): string {
   return unit.pages.map(pageName).join(" + ");
+}
+
+/** Draws the page's photo places and captions, by their place on the page, and its title. */
+export interface PageParts {
+  /** The page's title, typed on the page; nothing for a page without one. */
+  title: ReactNode;
+  slot: (i: number, shape: SlotShape, className?: string) => ReactNode;
+  caption: (i: number, className?: string) => ReactNode;
 }

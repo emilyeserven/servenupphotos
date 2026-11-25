@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { PageLayout } from "@/lib/photo-book";
+import { type LayoutLook, textBeside, textFirst } from "@/lib/photo-book-layouts";
 import { cn } from "@/lib/utils";
 
 const PHOTO = "rounded-[1px] bg-current opacity-70";
@@ -59,17 +60,50 @@ function glyphBody(layout: PageLayout): ReactNode {
   );
 }
 
+/** A layout made on the Layouts tab, drawn from its settings: its photos, and lines on the text's side. */
+function customGlyph(look: LayoutLook): ReactNode {
+  const photos = (
+    <span
+      key="photos"
+      className="flex min-h-0 min-w-0 flex-1 gap-[2px]"
+      style={{ flexDirection: look.arrange === "row" ? "row" : "column" }}
+    >
+      {Array.from({ length: look.photos }, (_, i) => (
+        <span key={i} className={cn(PHOTO, "min-h-0 min-w-0 flex-1")} />
+      ))}
+    </span>
+  );
+  const text = (
+    <span key="text" className="flex shrink-0" style={{ flexBasis: `${look.textShare}%` }}>
+      {LINES}
+    </span>
+  );
+  return (
+    <span
+      className="flex w-full gap-[2px]"
+      style={{ flexDirection: textBeside(look) ? "row" : "column" }}
+    >
+      {textFirst(look) ? [text, photos] : [photos, text]}
+    </span>
+  );
+}
+
 /**
  * A small drawing of a page layout: filled boxes for its photos and lines for its captions, for
- * the layout buttons and the Add page picker.
+ * the layout buttons and the Add page picker. A layout made on the Layouts tab is drawn from look.
  */
-export function LayoutGlyph({ layout, className }: { layout: PageLayout; className?: string }) {
+export function LayoutGlyph(props: {
+  layout: PageLayout;
+  look?: LayoutLook | null;
+  className?: string;
+}) {
+  const { layout, look, className } = props;
   return (
     <span
       aria-hidden
       className={cn("inline-flex rounded-[2px] border border-current p-[2px]", className)}
     >
-      {glyphBody(layout)}
+      {layout.startsWith("custom-") && look ? customGlyph(look) : glyphBody(layout)}
     </span>
   );
 }

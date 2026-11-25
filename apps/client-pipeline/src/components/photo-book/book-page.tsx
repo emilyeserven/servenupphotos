@@ -26,7 +26,10 @@ function PageSheet({ aspect, children }: { aspect: number; children: React.React
   return (
     <div
       style={{ containerType: "inline-size", aspectRatio: aspect }}
-      className={cn("w-full rounded-sm border border-neutral-800 shadow-sm", PAGE_CLASS)}
+      className={cn(
+        "w-full overflow-hidden rounded-sm border border-neutral-800 shadow-sm",
+        PAGE_CLASS,
+      )}
     >
       <div className="flex size-full flex-col">{children}</div>
     </div>
