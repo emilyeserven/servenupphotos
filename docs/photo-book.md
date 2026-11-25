@@ -75,7 +75,7 @@ Pages have no numbers here. Above each page, its name, typed in (**Untitled page
 
 **Edit pages** and **Grid to reorder**, above the pages, switch views. The grid shows every photo page and spread as a small preview, numbered in order and marked **In book**; drag one onto another to put it before that one, or onto the box at the end. A spread moves as one, and the book's own order (on **The book**) doesn't change. Clicking one opens **Edit pages** scrolled to it, and clicking its number opens **Move to…**. Check two or more with the box by their names and **Set as alternates**, above the grid, puts them in one alternates group, bringing along any group one was already in.
 
-Once the page is scrolled down a little, a round **Back to top** button at the bottom right scrolls smoothly back to the top. It's the same button as the portfolio's.
+Two round buttons at the bottom right scroll smoothly to either end of the page: **Jump to bottom**, shown while the page is more than a little way from its end, and **Back to top** above it, shown once it's scrolled down a little. They're the portfolio's **Back to top** button, which can go either way. A second **Add page**, at the right end of the row above the pages, adds a page the same way as the one at the end and scrolls down to it.
 
 ### Alternates
 
