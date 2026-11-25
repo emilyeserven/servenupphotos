@@ -33,7 +33,7 @@ function PageSheet({ aspect, children }: { aspect: number; children: React.React
       {...{ [PAGE_SHEET_ATTRIBUTE]: "" }}
       style={{ containerType: "inline-size", aspectRatio: aspect }}
       className={cn(
-        "w-full overflow-hidden rounded-sm border border-neutral-800 shadow-sm",
+        "w-full overflow-hidden rounded-sm border border-neutral-800 shadow-sm in-data-[print]:rounded-none in-data-[print]:border-0 in-data-[print]:shadow-none",
         PAGE_CLASS,
       )}
     >
