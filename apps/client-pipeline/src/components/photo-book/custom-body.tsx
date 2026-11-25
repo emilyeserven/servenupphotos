@@ -1,5 +1,6 @@
-import type { CSSProperties, ReactNode } from "react";
+import { type CSSProperties, type ReactNode, useRef } from "react";
 import type { PageParts } from "@/components/photo-book/page-types";
+import { usePhotoEdges } from "@/components/photo-book/photo-edges";
 import { type LayoutLook, photoShape, textBeside, textFirst } from "@/lib/photo-book-layouts";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +11,11 @@ const ALIGN: Record<LayoutLook["align"], CSSProperties["justifyContent"]> = {
   end: "flex-end",
 };
 
-/** The text and the photos side by side or one over the other, the text on its side, gap apart. */
+/**
+ * The text and the photos side by side or one over the other, the text in its room on its side,
+ * gap apart. With the layout lining the text up with the photos, its room is only as long as the
+ * photos are drawn.
+ */
 function Split(props: {
   look: LayoutLook;
   text: ReactNode;
@@ -18,23 +23,32 @@ function Split(props: {
   className?: string;
 }) {
   const { look, text, photos, className } = props;
+  const root = useRef<HTMLDivElement>(null);
+  const beside = textBeside(look);
+  const edges = usePhotoEdges(root, look.alignTo === "photo", beside);
+  const room = (
+    <TextRoom key="text" look={look} style={edges}>
+      {text}
+    </TextRoom>
+  );
   return (
     <div
+      ref={root}
       className={cn("flex min-h-0 min-w-0 flex-1", className)}
-      style={{ flexDirection: textBeside(look) ? "row" : "column", gap: `${look.gap}cqw` }}
+      style={{ flexDirection: beside ? "row" : "column", gap: `${look.gap}cqw` }}
     >
-      {textFirst(look) ? [text, photos] : [photos, text]}
+      {textFirst(look) ? [room, photos] : [photos, room]}
     </div>
   );
 }
 
 /** The text's room: its share of the page, the text in it where the layout aligns it. */
-function TextRoom({ look, children }: { look: LayoutLook; children: ReactNode }) {
+function TextRoom(props: { look: LayoutLook; style: CSSProperties; children: ReactNode }) {
+  const { look, style, children } = props;
   return (
     <div
-      key="text"
       className="flex min-h-0 min-w-0 shrink-0 flex-col gap-[2.5cqw] overflow-hidden [&>*]:shrink-0"
-      style={{ flexBasis: `${look.textShare}%`, justifyContent: ALIGN[look.align] }}
+      style={{ flexBasis: `${look.textShare}%`, justifyContent: ALIGN[look.align], ...style }}
     >
       {children}
     </div>
@@ -70,10 +84,10 @@ export function CustomBody({ parts, look }: { parts: PageParts; look: LayoutLook
         <Split
           look={look}
           text={
-            <TextRoom key="text" look={look}>
+            <>
               {parts.title}
               {indexes.map((i) => parts.caption(i))}
-            </TextRoom>
+            </>
           }
           photos={
             <PhotoRoom key="photos" look={look}>
@@ -89,11 +103,7 @@ export function CustomBody({ parts, look }: { parts: PageParts; look: LayoutLook
               <Split
                 key={i}
                 look={look}
-                text={
-                  <TextRoom key="text" look={look}>
-                    {parts.caption(i)}
-                  </TextRoom>
-                }
+                text={parts.caption(i)}
                 photos={parts.slot(i, photoShape(look), "flex-1")}
               />
             ))}

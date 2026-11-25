@@ -1,6 +1,7 @@
 import { ImageIcon, XIcon } from "lucide-react";
 import { type CSSProperties, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
+import { PHOTO_BOX_ATTRIBUTE } from "@/components/photo-book/photo-edges";
 import { usePrintedSize } from "@/components/photo-book/printing";
 import { useSlotDpi } from "@/components/photo-book/use-slot-dpi";
 import { Button } from "@/components/ui/button";
@@ -109,6 +110,7 @@ export function PhotoSlot(props: PhotoSlotProps) {
       <div
         ref={box}
         {...handlers}
+        {...{ [PHOTO_BOX_ATTRIBUTE]: "" }}
         style={shapeStyle(shape)}
         className={cn(
           "group/slot relative overflow-hidden rounded-sm",
