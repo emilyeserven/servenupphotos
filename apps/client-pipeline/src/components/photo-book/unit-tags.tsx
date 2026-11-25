@@ -160,3 +160,31 @@ export function TagFilter(props: {
     </div>
   );
 }
+
+/**
+ * The drawer's tag filter as a dropdown: **All tags**, then each of the book's tags; nothing when
+ * the book has none.
+ */
+export function TagSelect(props: {
+  tags: string[];
+  value: string | null;
+  onChange: (tag: string | null) => void;
+}) {
+  const { tags, value, onChange } = props;
+  if (tags.length === 0) return null;
+  return (
+    <select
+      aria-label="Show pages tagged"
+      value={value ?? ""}
+      onChange={(event) => onChange(event.target.value || null)}
+      className="border-input dark:bg-input/30 h-7 min-w-0 rounded-md border bg-transparent px-1.5 text-xs shadow-xs"
+    >
+      <option value="">All tags</option>
+      {tags.map((tag) => (
+        <option key={tag} value={tag}>
+          {tag}
+        </option>
+      ))}
+    </select>
+  );
+}

@@ -5,7 +5,7 @@ import { InBookBadge } from "@/components/photo-book/page-controls";
 import { unitName } from "@/components/photo-book/page-types";
 import { BOOK_UNIT_DRAG_TYPE, dragUnit } from "@/components/photo-book/unit-drag";
 import { UnitSheets } from "@/components/photo-book/unit-sheets";
-import { TagFilter } from "@/components/photo-book/unit-tags";
+import { TagSelect } from "@/components/photo-book/unit-tags";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDropTarget } from "@/hooks/use-drop-target";
@@ -51,8 +51,7 @@ export function UnitsDrawer(props: UnitsDrawerProps) {
         drop.over && "ring-primary ring-2",
       )}
     >
-      <DrawerHeader {...props} />
-      {open && <TagFilter tags={tags} value={filter} onChange={setPicked} />}
+      <DrawerHeader {...props} filter={filter} onFilter={setPicked} />
       {open && (
         <ul className="flex gap-3 overflow-x-auto pb-1">
           {shown.map((unit) => (
@@ -64,8 +63,14 @@ export function UnitsDrawer(props: UnitsDrawerProps) {
   );
 }
 
-/** The drawer's name, how many pages and spreads it has, and, open, the other page form. */
-function DrawerHeader({ units, inBook, open, onOpen, onAddOther }: UnitsDrawerProps) {
+/**
+ * The drawer's name, how many pages and spreads it has, and, open, the tag dropdown beside them and
+ * the other page form.
+ */
+function DrawerHeader(
+  props: UnitsDrawerProps & { filter: string | null; onFilter: (tag: string | null) => void },
+) {
+  const { units, inBook, open, onOpen, onAddOther, tags, filter, onFilter } = props;
   const Icon = open ? ChevronDownIcon : ChevronUpIcon;
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -81,6 +86,7 @@ function DrawerHeader({ units, inBook, open, onOpen, onAddOther }: UnitsDrawerPr
           {count(units.length, "page or spread", "pages and spreads")} · {inBook.size} in the book
         </span>
       </button>
+      {open && <TagSelect tags={tags} value={filter} onChange={onFilter} />}
       {open && <OtherPageForm onAdd={onAddOther} />}
     </div>
   );
