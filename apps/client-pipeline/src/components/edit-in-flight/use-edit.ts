@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { cameraOverrides } from "@/api/cameras";
+import { allOverrides } from "@/api/cameras";
 import { customLenses } from "@/api/lenses";
 import { savedGroups } from "@/api/organize";
 import {
@@ -51,10 +51,10 @@ function startingLensEdit(data: PhotoJson): LensEdit {
   return { ...savedLensChoice(data), apply: false };
 }
 
-/** The camera overrides and custom lenses as the next Commit will have them. */
+/** The camera and lens overrides and custom lenses as the next Commit will have them. */
 export function useLensSettings(): LensSettings {
   const { data } = useCombinedData();
-  return { overrides: cameraOverrides(data), lenses: customLenses(data) };
+  return { overrides: allOverrides(data), lenses: customLenses(data) };
 }
 
 /** The crop, title, place name, comment, albums, tags, social media posts, re-edit mark, Lower Tier mark, hand-picked related photos, custom lens and camera overrides being edited, against the last ones saved, and the JSON saving them would write. */

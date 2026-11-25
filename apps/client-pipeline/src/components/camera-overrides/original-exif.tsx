@@ -13,15 +13,17 @@ import { ErrorNote } from "@/components/error-note";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { exifValue } from "@/lib/camera-overrides";
+import { exifValue, type OverrideSubject } from "@/lib/camera-overrides";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
 /** EXIF tags about the camera, lens and settings, which the list shows unless asked for all. */
 const CAMERA_TAG = /make|model|lens|focal|camera|aperture|fnumber|serial|mount|adapter/i;
 
 interface OriginalExifProps {
-  /** The camera's photos, one of which is read. */
+  /** The camera's (or lens's) photos, one of which is read. */
   photos: CombinedPhoto[];
+  /** Whether the override is for a camera or a lens. */
+  subject: OverrideSubject;
   /** Adds a rule writing a tag's value into a field. */
   onUse: (rule: OverrideRule) => void;
 }
@@ -38,11 +40,17 @@ function photoLabel(photo: CombinedPhoto): string {
   return `${name} (${showValue(exifValue(photo, "lens"))})`;
 }
 
+/** Which photos a rule added from the list is for, by what the override is for. */
+const USE_FOR_WHOM: Record<OverrideSubject, string> = {
+  camera: "for the photos with this photo's lens (or, for the camera's name, every photo)",
+  lens: "for every photo taken with this lens",
+};
+
 /**
- * Reads every EXIF tag of one of the camera's originals in R2, so a value the photo data doesn't
- * keep, such as LensMake or LensSpecification, can be written into a field with a rule.
+ * Reads every EXIF tag of one of the camera's (or lens's) originals in R2, so a value the photo
+ * data doesn't keep, such as LensMake or LensSpecification, can be written into a field with a rule.
  */
-export function OriginalExif({ photos, onUse }: OriginalExifProps) {
+export function OriginalExif({ photos, subject, onUse }: OriginalExifProps) {
   const withKeys = photos.filter(photoKey);
   const [key, setKey] = useState(() => firstKey(withKeys));
   const read = useMutation(bucketExifMutation);
@@ -52,7 +60,7 @@ export function OriginalExif({ photos, onUse }: OriginalExifProps) {
         <CardTitle>Original EXIF</CardTitle>
         <CardDescription>
           Reads every tag of a photo&apos;s original in R2. <strong>Use for</strong> adds a rule
-          writing that tag&apos;s value into a field, for the photos with this photo&apos;s lens.
+          writing that tag&apos;s value into a field, {USE_FOR_WHOM[subject]}.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -70,6 +78,7 @@ export function OriginalExif({ photos, onUse }: OriginalExifProps) {
           error={read.error}
           tags={read.data?.exif}
           photo={withKeys.find((p) => photoKey(p) === key)}
+          subject={subject}
           onUse={onUse}
         />
       </CardContent>
@@ -119,23 +128,25 @@ interface ExifResultProps {
   /** Every tag exiftool read; undefined until it's read. */
   tags?: Record<string, unknown> | null;
   photo?: CombinedPhoto;
+  subject: OverrideSubject;
   onUse: (rule: OverrideRule) => void;
 }
 
 /** Why the read failed, or the tags it read. */
-function ExifResult({ error, tags, photo, onUse }: ExifResultProps) {
+function ExifResult({ error, tags, photo, subject, onUse }: ExifResultProps) {
   if (error) return <ErrorNote error={error} />;
   if (!tags || !photo) return null;
-  return <TagTable tags={tags} photo={photo} onUse={onUse} />;
+  return <TagTable tags={tags} photo={photo} subject={subject} onUse={onUse} />;
 }
 
 interface TagTableProps {
   tags: Record<string, unknown>;
   photo: CombinedPhoto;
+  subject: OverrideSubject;
   onUse: (rule: OverrideRule) => void;
 }
 
-function TagTable({ tags, photo, onUse }: TagTableProps) {
+function TagTable({ tags, photo, subject, onUse }: TagTableProps) {
   const id = useId();
   const [all, setAll] = useState(false);
   const shown = Object.entries(tags)
@@ -168,7 +179,7 @@ function TagTable({ tags, photo, onUse }: TagTableProps) {
                 <td className="px-3 py-1.5 font-mono text-xs">{tag}</td>
                 <td className="px-3 py-1.5 break-all">{String(value)}</td>
                 <td className="px-3 py-1.5">
-                  <UseFor tag={tag} onPick={(f) => onUse(ruleFor(photo, f, value))} />
+                  <UseFor tag={tag} onPick={(f) => onUse(ruleFor(photo, subject, f, value))} />
                 </td>
               </tr>
             ))}
@@ -188,12 +199,17 @@ function asFieldValue(field: OverrideField, value: unknown): OverrideValue {
 }
 
 /**
- * A rule writing value into field: for every photo from the camera when it's the camera's name,
- * else for the photos with the same EXIF lens as photo.
+ * A rule writing value into field: for every photo with the lens, in a lens override, or from the
+ * camera when it's the camera's name; else for the photos with the same EXIF lens as photo.
  */
-function ruleFor(photo: CombinedPhoto, field: OverrideField, value: unknown): OverrideRule {
-  const when =
-    field === "camera" ? null : { field: "lens" as const, value: exifValue(photo, "lens") };
+function ruleFor(
+  photo: CombinedPhoto,
+  subject: OverrideSubject,
+  field: OverrideField,
+  value: unknown,
+): OverrideRule {
+  const forEvery = subject === "lens" || field === "camera";
+  const when = forEvery ? null : { field: "lens" as const, value: exifValue(photo, "lens") };
   return { when, set: { [field]: asFieldValue(field, value) } };
 }
 

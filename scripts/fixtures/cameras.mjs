@@ -18,6 +18,20 @@ export function camerasFixtures() {
       before: added.cameras[0].data,
       changed: true,
     }),
+    "DELETE /api/lensoverrides/xf35mmf2-r-wr": () => ({
+      ...pendingSave(),
+      path: `${FOLDER}/lensoverrides/xf35mmf2-r-wr.json`,
+      data: null,
+      before: added.lensoverrides[0].data,
+      changed: true,
+    }),
+    "PUT /api/lensoverrides/xf35mmf2-r-wr": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/lensoverrides/xf35mmf2-r-wr.json`,
+      data: body,
+      before: added.lensoverrides[0].data,
+      changed: true,
+    }),
     "DELETE /api/lenses/7artisans-12mm-f2-8": () => ({
       ...pendingSave(),
       path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,

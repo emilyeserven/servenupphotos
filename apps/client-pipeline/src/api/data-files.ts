@@ -4,9 +4,10 @@ import { entryId } from "@/api/places";
 import { del, put } from "@/api/request";
 import type { FileChange } from "@/lib/optimistic";
 
-/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets, gear pictures, Not Stored posts, photo books, the bio or Photo Sets. */
+/** A kind of setting file saved one per entry and combined by Commit: camera overrides, lens overrides, custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets, gear pictures, Not Stored posts, photo books, the bio or Photo Sets. */
 type SettingKind =
   | "cameras"
+  | "lensoverrides"
   | "lenses"
   | "captions"
   | "timeline"

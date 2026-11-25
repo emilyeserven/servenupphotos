@@ -7,6 +7,7 @@
   { "folder": "localizations", "all": "LOCALIZATIONS.json" },
   { "folder": "metainfo", "all": "METAINFO.json" },
   { "folder": "cameras", "all": "CAMERAS.json" },
+  { "folder": "lensoverrides", "all": "LENSOVERRIDES.json" },
   { "folder": "lenses", "all": "LENSES.json" },
   { "folder": "captions", "all": "CAPTIONS.json" },
   { "folder": "timeline", "all": "TIMELINE.json" },

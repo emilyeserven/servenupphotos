@@ -15,18 +15,19 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// OverrideFields are the photo JSON fields a camera override can set: the
-// ones Sanitize reads from EXIF, except the photo's size, and manualAperture.
+// OverrideFields are the photo JSON fields a camera or lens override can
+// set: the ones Sanitize reads from EXIF, except the photo's size, and
+// manualAperture.
 var OverrideFields = []string{
 	"camera", "lens", "aperture", "manualAperture", "exposure", "iso", "focalLength", "gpsPosition", "createDate",
 	"country", "state", "city",
 }
 
 // exifOriginalsField is the photo JSON field that keeps the EXIF values of
-// the fields a camera override changed.
+// the fields a camera or lens override changed.
 const exifOriginalsField = "exifOriginals"
 
-// maxOverrideRules is how many rules one camera override can have.
+// maxOverrideRules is how many rules one camera or lens override can have.
 const maxOverrideRules = 200
 
 // CameraOverride is a camera override file: what to write instead of the
@@ -40,11 +41,11 @@ type CameraOverride struct {
 	Rules []OverrideRule `json:"rules"`
 }
 
-// OverrideRule sets fields of the photos taken with a camera, all of them or
-// only those whose EXIF has one value, such as one lens.
+// OverrideRule sets fields of the photos taken with a camera (or lens), all
+// of them or only those whose EXIF has one value, such as one lens.
 type OverrideRule struct {
 	// When limits the rule to photos whose EXIF has Field set to Value; nil
-	// for every photo taken with the camera.
+	// for every photo taken with the camera (or lens).
 	When *OverrideCondition `json:"when"`
 	// Set are the fields the rule writes, by field, such as
 	// {"lens": "7Artisans 12mm f/2.8", "aperture": 2.8}.
@@ -93,10 +94,41 @@ func parseOverrides(entries []Entry) []CameraOverride {
 	return out
 }
 
-// ApplyCameraOverrides is s with the camera overrides for its camera made
-// over its EXIF values, as a new photo's JSON gets them, and the values they
-// replaced kept in ExifOriginals.
-func ApplyCameraOverrides(overrides []CameraOverride, s exif.Sanitized) exif.Sanitized {
+// Overrides are the camera and lens overrides as one set, which a photo's
+// fields are worked out with.
+type Overrides struct {
+	Cameras []CameraOverride
+	Lenses  []LensOverride
+}
+
+// count is how many overrides there are, camera and lens.
+func (o Overrides) count() int {
+	return len(o.Cameras) + len(o.Lenses)
+}
+
+// rules are the rules for a photo with the EXIF values original, in the
+// order they're made: its lens's override's, then its camera's, so a rule
+// for the camera wins over one for the lens when both set a field.
+func (o Overrides) rules(original map[string]json.RawMessage) []OverrideRule {
+	var rules []OverrideRule
+	if l := lensOverrideFor(o.Lenses, original["lens"]); l != nil {
+		rules = append(rules, l.Rules...)
+	}
+	if c := overrideFor(o.Cameras, original["camera"]); c != nil {
+		rules = append(rules, c.Rules...)
+	}
+	return rules
+}
+
+// readOverrides is the camera and lens overrides in w.
+func readOverrides(w *workspace) Overrides {
+	return Overrides{Cameras: parseOverrides(w.entries(Cameras)), Lenses: parseLensOverrides(w.entries(LensOverrides))}
+}
+
+// ApplyOverrides is s with the lens and camera overrides for its lens and
+// camera made over its EXIF values, as a new photo's JSON gets them, and the
+// values they replaced kept in ExifOriginals.
+func ApplyOverrides(overrides Overrides, s exif.Sanitized) exif.Sanitized {
 	raw, err := json.Marshal(s)
 	if err != nil {
 		return s
@@ -116,19 +148,17 @@ func ApplyCameraOverrides(overrides []CameraOverride, s exif.Sanitized) exif.San
 
 // overriddenFields is every OverrideFields value of a photo with the
 // fields, top-level JSON values as its file has them, once the overrides are
-// made over its EXIF values, then its custom lens's (see lensFields), and
-// its exifOriginalsField. The EXIF values
+// made over its EXIF values (see Overrides.rules), then its custom lens's
+// (see lensFields), and its exifOriginalsField. The EXIF values
 // are the fields' own, or the ones exifOriginalsField kept when an override
 // changed them, so applying the overrides again starts from EXIF, and a field
 // no override sets any more goes back to its EXIF value.
-func overriddenFields(overrides []CameraOverride, lenses []CustomLens, fields map[string]json.RawMessage) map[string]json.RawMessage {
+func overriddenFields(overrides Overrides, lenses []CustomLens, fields map[string]json.RawMessage) map[string]json.RawMessage {
 	original := exifValues(fields)
 	out := maps.Clone(original)
-	if o := overrideFor(overrides, original["camera"]); o != nil {
-		for _, rule := range o.Rules {
-			if rule.When == nil || sameJSON(original[rule.When.Field], rule.When.Value) {
-				maps.Copy(out, rule.Set)
-			}
+	for _, rule := range overrides.rules(original) {
+		if rule.When == nil || sameJSON(original[rule.When.Field], rule.When.Value) {
+			maps.Copy(out, rule.Set)
 		}
 	}
 	maps.Copy(out, lensFields(lenses, fields[customLensField]))
@@ -202,15 +232,24 @@ func validCameraOverride(o CameraOverride) (CameraOverride, *PublishError) {
 	if utf8.RuneCountInString(out.Camera) > maxEntryTextLength {
 		return out, publishErr(http.StatusBadRequest, "Keep the camera to %d characters.", maxEntryTextLength)
 	}
-	if len(o.Rules) > maxOverrideRules {
+	rules, perr := validOverrideRules(o.Rules)
+	out.Rules = rules
+	return out, perr
+}
+
+// validOverrideRules checks an override's rules and returns them with their
+// values compacted.
+func validOverrideRules(rules []OverrideRule) ([]OverrideRule, *PublishError) {
+	out := []OverrideRule{}
+	if len(rules) > maxOverrideRules {
 		return out, publishErr(http.StatusBadRequest, "Keep an override to %d rules.", maxOverrideRules)
 	}
-	for i, rule := range o.Rules {
+	for i, rule := range rules {
 		r, perr := validOverrideRule(rule)
 		if perr != nil {
 			return out, publishErr(perr.Status, "Rule %d: %s", i+1, perr.Message)
 		}
-		out.Rules = append(out.Rules, r)
+		out = append(out, r)
 	}
 	return out, nil
 }

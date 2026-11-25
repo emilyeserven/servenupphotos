@@ -39,6 +39,9 @@ var (
 	MetaInfo      = EntryKind{Name: "metadata group", Folder: "metainfo", AllFile: "METAINFO.json"}
 	Cameras       = EntryKind{Name: "camera override", Folder: "cameras", AllFile: "CAMERAS.json"}
 	Lenses        = EntryKind{Name: "custom lens", Folder: "lenses", AllFile: "LENSES.json"}
+	// LensOverrides rename one lens's EXIF values, such as its name, in the
+	// photos taken with it, whatever the camera.
+	LensOverrides = EntryKind{Name: "lens override", Folder: "lensoverrides", AllFile: "LENSOVERRIDES.json"}
 	Captions      = EntryKind{Name: "caption template", Folder: "captions", AllFile: "CAPTIONS.json"}
 	// Trips name runs of days, such as "Japan", which the portfolio's
 	// Timeline shows beside those days, with the legs travelled between them.
@@ -68,7 +71,7 @@ var (
 	// PhotoSets are photos the portfolio's map always shows as one marker,
 	// one file per set.
 	PhotoSets  = EntryKind{Name: "Photo Set", Folder: "sets", AllFile: "SETS.json"}
-	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind, PhotoBooks, BioKind, PhotoSets}
+	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, LensOverrides, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind, PhotoBooks, BioKind, PhotoSets}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as

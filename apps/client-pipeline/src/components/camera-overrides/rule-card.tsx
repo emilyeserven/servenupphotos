@@ -9,7 +9,7 @@ import {
 import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { exifValueCounts } from "@/lib/camera-overrides";
+import { exifValueCounts, type OverrideSubject } from "@/lib/camera-overrides";
 import { canonicalJson } from "@/lib/combined";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
@@ -18,14 +18,22 @@ const selectClass = "border-input bg-background h-9 min-w-0 rounded-md border px
 interface RuleCardProps {
   index: number;
   rule: OverrideRule;
-  /** The camera's photos, whose EXIF values a rule can be limited to. */
+  /** The camera's (or lens's) photos, whose EXIF values a rule can be limited to. */
   photos: CombinedPhoto[];
+  /** Whether the override is for a camera or a lens. */
+  subject: OverrideSubject;
   /** With the changed rule, or null to remove it. */
   onChange: (rule: OverrideRule | null) => void;
 }
 
-/** One rule: which of the camera's photos it's for, and the fields it sets on them. */
-export function RuleCard({ index, rule, photos, onChange }: RuleCardProps) {
+/** What "every photo" means for an override's rule, by what the override is for. */
+const EVERY_PHOTO: Record<OverrideSubject, string> = {
+  camera: "every photo from this camera",
+  lens: "every photo taken with this lens",
+};
+
+/** One rule: which of the camera's (or lens's) photos it's for, and the fields it sets on them. */
+export function RuleCard({ index, rule, photos, subject, onChange }: RuleCardProps) {
   return (
     <section aria-label={`Rule ${index + 1}`} className="flex flex-col gap-3 rounded-md border p-3">
       <div className="flex items-center justify-between gap-2">
@@ -39,7 +47,7 @@ export function RuleCard({ index, rule, photos, onChange }: RuleCardProps) {
           <XIcon />
         </Button>
       </div>
-      <WhenField rule={rule} photos={photos} onChange={onChange} />
+      <WhenField rule={rule} photos={photos} subject={subject} onChange={onChange} />
       <SetFields rule={rule} onChange={onChange} />
     </section>
   );
@@ -48,7 +56,12 @@ export function RuleCard({ index, rule, photos, onChange }: RuleCardProps) {
 type RuleProps = Pick<RuleCardProps, "rule" | "onChange">;
 
 /** "For every photo", or for the photos whose EXIF has one value of a field. */
-function WhenField({ rule, photos, onChange }: RuleProps & { photos: CombinedPhoto[] }) {
+function WhenField({
+  rule,
+  photos,
+  subject,
+  onChange,
+}: RuleProps & Pick<RuleCardProps, "photos" | "subject">) {
   const field = rule.when?.field ?? "";
   const chooseField = (f: string) => {
     const values = exifValueCounts(photos, f as OverrideField);
@@ -66,8 +79,8 @@ function WhenField({ rule, photos, onChange }: RuleProps & { photos: CombinedPho
         value={field}
         onChange={(e) => chooseField(e.target.value)}
       >
-        <option value="">every photo from this camera</option>
-        {OVERRIDE_FIELDS.filter((f) => f.field !== "camera").map((f) => (
+        <option value="">{EVERY_PHOTO[subject]}</option>
+        {OVERRIDE_FIELDS.filter((f) => f.field !== subject).map((f) => (
           <option key={f.field} value={f.field}>
             photos whose EXIF {f.label.toLowerCase()} is
           </option>
@@ -83,7 +96,7 @@ export function showValue(value: unknown): string {
   return value === null || value === undefined ? "(none)" : String(value);
 }
 
-/** The value a rule is limited to, from those the camera's photos have. */
+/** The value a rule is limited to, from those the camera's (or lens's) photos have. */
 function WhenValue({ rule, photos, onChange }: RuleProps & { photos: CombinedPhoto[] }) {
   const when = rule.when!;
   const counts = exifValueCounts(photos, when.field);

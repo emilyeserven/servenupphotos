@@ -35,7 +35,7 @@ type OverridesPreview struct {
 	Branch      string              `json:"branch"`
 	PullRequest *BaseURLPullRequest `json:"pullRequest"`
 	PhotoFiles  int                 `json:"photoFiles"`
-	// Overrides is how many camera overrides there are.
+	// Overrides is how many camera and lens overrides there are.
 	Overrides  int                 `json:"overrides"`
 	Files      []OverrideFile      `json:"files"`
 	Unreadable []BaseURLUnreadable `json:"unreadable"`
@@ -59,9 +59,9 @@ func (c *Client) PreviewReapplyOverrides(ctx context.Context, gh settings.GitHub
 	if perr != nil {
 		return OverridesPreview{}, perr
 	}
-	overrides, lenses := parseOverrides(scan.w.entries(Cameras)), parseLenses(scan.w.entries(Lenses))
+	overrides, lenses := readOverrides(scan.w), parseLenses(scan.w.entries(Lenses))
 	preview := OverridesPreview{
-		Repo: scan.t.repo.FullName, Folder: scan.folder, Branch: scan.branch, Overrides: len(overrides),
+		Repo: scan.t.repo.FullName, Folder: scan.folder, Branch: scan.branch, Overrides: overrides.count(),
 		Files: []OverrideFile{}, Unreadable: []BaseURLUnreadable{},
 	}
 	if scan.pr != nil {
@@ -88,7 +88,7 @@ func (c *Client) ReapplyOverrides(ctx context.Context, gh settings.GitHub) (Over
 	if perr != nil {
 		return OverridesResult{}, perr
 	}
-	overrides, lenses := parseOverrides(scan.w.entries(Cameras)), parseLenses(scan.w.entries(Lenses))
+	overrides, lenses := readOverrides(scan.w), parseLenses(scan.w.entries(Lenses))
 	var entries []map[string]string
 	result := OverridesResult{}
 	for _, f := range scan.files {
@@ -120,7 +120,7 @@ func (c *Client) ReapplyOverrides(ctx context.Context, gh settings.GitHub) (Over
 // overrideFile is the fields the overrides change in f, and whether they
 // change any. A field the file doesn't have is only added when it gets a
 // value, so files from before exifOriginals aren't changed just to add it.
-func overrideFile(overrides []CameraOverride, lenses []CustomLens, f photoFile) (OverrideFile, bool) {
+func overrideFile(overrides Overrides, lenses []CustomLens, f photoFile) (OverrideFile, bool) {
 	var fields map[string]json.RawMessage
 	if json.Unmarshal(f.content, &fields) != nil {
 		return OverrideFile{}, false

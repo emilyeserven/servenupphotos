@@ -361,19 +361,19 @@ func (c *Client) ApplyLocationNames(ctx context.Context, gh settings.GitHub) (Lo
 }
 
 // ExifOverrides are what a new photo's sanitized EXIF gets made over it: the
-// camera overrides, then the names that win over other ways of writing its
+// lens and camera overrides, then the names that win over other ways of writing its
 // country, state and city.
 type ExifOverrides struct {
-	Cameras []CameraOverride
-	Names   LocationNames
+	Overrides Overrides
+	Names     LocationNames
 }
 
 // Apply is s with the overrides made over it.
 func (o ExifOverrides) Apply(s exif.Sanitized) exif.Sanitized {
-	return o.Names.Apply(ApplyCameraOverrides(o.Cameras, s))
+	return o.Names.Apply(ApplyOverrides(o.Overrides, s))
 }
 
-// ExifOverrides are the camera overrides and location names as the next
+// ExifOverrides are the lens and camera overrides and location names as the next
 // Commit will have them, so a photo read now gets the ones saved and not
 // committed yet.
 func (c *Client) ExifOverrides(ctx context.Context, gh settings.GitHub) (ExifOverrides, error) {
@@ -385,6 +385,6 @@ func (c *Client) ExifOverrides(ctx context.Context, gh settings.GitHub) (ExifOve
 		return ExifOverrides{}, perr
 	}
 	return ExifOverrides{
-		Cameras: parseOverrides(w.entries(Cameras)), Names: parseLocationNames(w.entries(Localizations)),
+		Overrides: readOverrides(w), Names: parseLocationNames(w.entries(Localizations)),
 	}, nil
 }

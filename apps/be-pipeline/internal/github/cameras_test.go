@@ -24,11 +24,11 @@ func xt5(t *testing.T) []CameraOverride {
 	return []CameraOverride{o}
 }
 
-func TestApplyCameraOverrides(t *testing.T) {
+func TestApplyOverrides(t *testing.T) {
 	s := exif.Sanitized{Camera: ref("X-T5"), Lens: ref("21.0 mm"), ISO: ref(200)}
-	got := ApplyCameraOverrides(xt5(t), s)
+	got := ApplyOverrides(Overrides{Cameras: xt5(t)}, s)
 	if *got.Camera != "Fujifilm X-T5" || *got.Lens != "7Artisans 21mm" || *got.Aperture != 1.4 || *got.ISO != 200 {
-		t.Errorf("ApplyCameraOverrides() = camera %v, lens %v, aperture %v", *got.Camera, *got.Lens, got.Aperture)
+		t.Errorf("ApplyOverrides() = camera %v, lens %v, aperture %v", *got.Camera, *got.Lens, got.Aperture)
 	}
 	want := map[string]string{"camera": `"X-T5"`, "lens": `"21.0 mm"`, "aperture": "null"}
 	if len(got.ExifOriginals) != len(want) {
@@ -41,11 +41,11 @@ func TestApplyCameraOverrides(t *testing.T) {
 	}
 
 	// Another lens only gets the camera's name; another camera nothing.
-	other := ApplyCameraOverrides(xt5(t), exif.Sanitized{Camera: ref("X-T5"), Lens: ref("XF35mmF1.4 R")})
+	other := ApplyOverrides(Overrides{Cameras: xt5(t)}, exif.Sanitized{Camera: ref("X-T5"), Lens: ref("XF35mmF1.4 R")})
 	if *other.Camera != "Fujifilm X-T5" || *other.Lens != "XF35mmF1.4 R" || other.Aperture != nil {
 		t.Errorf("other lens = %v, %v, %v", *other.Camera, *other.Lens, other.Aperture)
 	}
-	none := ApplyCameraOverrides(xt5(t), exif.Sanitized{Camera: ref("Canon EOS 80D")})
+	none := ApplyOverrides(Overrides{Cameras: xt5(t)}, exif.Sanitized{Camera: ref("Canon EOS 80D")})
 	if *none.Camera != "Canon EOS 80D" || len(none.ExifOriginals) != 0 {
 		t.Errorf("other camera = %v, %s", *none.Camera, none.ExifOriginals)
 	}
