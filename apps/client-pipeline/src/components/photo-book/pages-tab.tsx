@@ -16,6 +16,7 @@ import { PhotoDrawerPanel } from "@/components/photo-drawer-panel";
 import {
   type PhotoBook,
   firstEmptySlot,
+  photosOnPages,
   isOtherPage,
   placePhoto,
   removePhoto,
@@ -40,7 +41,7 @@ import { EmptyNote } from "@portfolio/components/empty-note";
 
 /** What the photo drawer says beside the pages. */
 const DRAWER_WORDS = {
-  help: "The album's photos, in its order. Drag one onto a page, or click it to fill the first empty place. Drop a photo from a page here to take it off.",
+  help: "The album's photos, in its order; ones already on a page are faded. Drag one onto a page, or click it to fill the first empty place. Drop a photo from a page here to take it off.",
   showUsed: "Show photos already in the book",
   usedBadge: "In book",
 };
@@ -83,6 +84,7 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
         <PhotoDrawerPanel
           photos={albumPhotos}
           used={inBook}
+          dimmed={photosOnPages(book)}
           onPick={pick}
           onClose={drawer}
           dragType={BOOK_PHOTO_DRAG_TYPE}

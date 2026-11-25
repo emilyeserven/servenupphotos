@@ -9,6 +9,7 @@ import {
   bookOrder,
   bookPages,
   bookUnits,
+  bookTags,
   bookViews,
   moveInBook,
   movePhotoUnit,
@@ -17,8 +18,11 @@ import {
   removePage,
   repeatedPhotos,
   setLinkNext,
+  setUnitTags,
   takeOutOfBook,
+  unitTags,
   unitsInBook,
+  unitsTagged,
   viewOf,
 } from "@/lib/photo-book-order";
 
@@ -104,4 +108,25 @@ test("the preview shows units one at a time, or facing: spreads alone, other pag
   assert.deepEqual(ids(false), [["Bio"], [p1], ["Credits"], [p2, p3]]);
   assert.deepEqual(ids(true), [["Bio", p1], ["Credits"], [p2, p3]]);
   assert.equal(viewOf(bookViews(unitsInBook(b), true), p2 as string), 2);
+});
+
+test("tagging a spread tags both its pages, and the book lists every tag once", () => {
+  let b = book();
+  const [p1, p2, p3] = b.pages.map((p) => p.id) as [string, string, string];
+  b = setLinkNext(b, p1, true);
+  b = setUnitTags(b, p1, [" by place ", "draft", "by place", ""]);
+  b = setUnitTags(b, p3, ["by theme"]);
+  assert.deepEqual(
+    b.pages.map((p) => p.tags),
+    [["by place", "draft"], ["by place", "draft"], ["by theme"]],
+  );
+  assert.deepEqual(unitTags(bookUnits(b)[0]!), ["by place", "draft"]);
+  assert.deepEqual(bookTags(b), ["by place", "by theme", "draft"]);
+  const tagged = (tag: string | null) => {
+    const { filter, shown } = unitsTagged(bookUnits(b), bookTags(b), tag);
+    return [filter, shown.map((u) => u.id)];
+  };
+  assert.deepEqual(tagged("by theme"), ["by theme", [p3]]);
+  assert.deepEqual(tagged("gone"), [null, [p1, p3]]);
+  assert.equal(p2, b.pages[1]?.id);
 });

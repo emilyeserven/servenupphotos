@@ -209,3 +209,40 @@ export function addToBookBefore(book: PhotoBook, id: string, before: string | nu
   const at = before === null ? -1 : rest.indexOf(before);
   return addToBook(book, id, at < 0 ? rest.length : at);
 }
+
+/** The unit's tags: its pages' together, each once, in the order they were added. */
+export function unitTags(unit: BookUnit): string[] {
+  return [...new Set(unit.pages.flatMap((page) => page.tags ?? []))];
+}
+
+/** The book with the unit with ID id tagged tags, on each of its pages, trimmed, each once. */
+export function setUnitTags(book: PhotoBook, id: string, tags: string[]): PhotoBook {
+  const unit = bookUnits(book).find((u) => u.id === id);
+  if (!unit) return book;
+  const clean = [...new Set(tags.map((tag) => tag.trim()).filter(Boolean))];
+  const ids = new Set(unit.pages.map((page) => page.id));
+  return {
+    ...withOrder(book),
+    pages: book.pages.map((page) => (ids.has(page.id) ? { ...page, tags: clean } : page)),
+  };
+}
+
+/** Every tag on the book's pages, in alphabetical order. */
+export function bookTags(book: PhotoBook): string[] {
+  return [...new Set(book.pages.flatMap((page) => page.tags ?? []))].toSorted((a, b) =>
+    a.localeCompare(b),
+  );
+}
+
+/**
+ * The units tagged tag, and the tag the filter is on: none (every unit) when tag is null or no
+ * longer on any page of the book, whose tags are tags.
+ */
+export function unitsTagged(
+  units: BookUnit[],
+  tags: string[],
+  tag: string | null,
+): { filter: string | null; shown: BookUnit[] } {
+  if (tag === null || !tags.includes(tag)) return { filter: null, shown: units };
+  return { filter: tag, shown: units.filter((unit) => unitTags(unit).includes(tag)) };
+}

@@ -63,6 +63,8 @@ export interface BookPage {
    * together; absent or false otherwise.
    */
   linkNext?: boolean;
+  /** Free-form labels for sorting pages into alternatives, such as "by place"; a spread's are its pages' together. */
+  tags?: string[];
   layout: PageLayout;
   /** Shown above the page's top photo; null for none. */
   title: string | null;
@@ -283,4 +285,9 @@ export function firstEmptySlot(book: PhotoBook): SlotPlace | null {
 /** The book with the page at index named name. */
 export function renamePage(book: PhotoBook, index: number, name: string): PhotoBook {
   return changePage(book, index, (page) => ({ ...page, name }));
+}
+
+/** The paths of every photo on any of the book's pages, in the book or not. */
+export function photosOnPages(book: PhotoBook): Set<string> {
+  return new Set(book.pages.flatMap((page) => page.slots.map((s) => s.photo)).filter(Boolean));
 }

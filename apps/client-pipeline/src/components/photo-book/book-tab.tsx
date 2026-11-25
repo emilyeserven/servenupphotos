@@ -10,11 +10,13 @@ import {
   addOtherPage,
   addToBook,
   addToBookBefore,
+  bookTags,
   bookUnits,
   bookViews,
   moveInBook,
   pageNumbers,
   removePage,
+  setUnitTags,
   takeOutOfBook,
   unitsInBook,
   viewOf,
@@ -105,6 +107,8 @@ export function BookTab({ book, update, look }: BookTabProps) {
             ),
           )
         }
+        tags={bookTags(book)}
+        onTags={(id, tags) => update(setUnitTags(book, id, tags))}
         open={drawerOpen && !preview.on}
         onOpen={panel(setDrawerOpen)}
       />

@@ -52,6 +52,8 @@ interface PhotoDrawerPanelProps {
   inOrder?: boolean;
   /** What the drawer says with no photos given at all, such as before an album is picked. */
   empty?: ReactNode;
+  /** The paths of photos to show faded, such as ones already on a photo book's page. */
+  dimmed?: Set<string>;
 }
 
 /** Newest taken first, then by name. */
@@ -122,7 +124,7 @@ function useDrawerList(photos: SocialPhoto[], used: Set<string>, inOrder = false
  * Clicking a photo adds it; with takeOff, a photo dropped here from the page comes out.
  */
 export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
-  const { photos, used, onPick, onClose, dragType, words, takeOff, inOrder, empty } = props;
+  const { photos, used, onPick, onClose, dragType, words, takeOff, inOrder, empty, dimmed } = props;
   const { search, setSearch, showUsed, setShowUsed, shown, filterPhotos, filterCount } =
     useDrawerList(photos, used, inOrder);
   const { over, handlers } = useTakeOffDrop(dragType, takeOff);
@@ -175,6 +177,7 @@ export function PhotoDrawerPanel(props: PhotoDrawerPanelProps) {
           photos={shown}
           empty={emptyNote(photos.length, empty)}
           used={used}
+          dimmed={dimmed}
           onPick={onPick}
           dragType={dragType}
           usedBadge={words.usedBadge}
@@ -193,11 +196,12 @@ function DrawerPhotos(props: {
   photos: SocialPhoto[];
   empty: ReactNode;
   used: Set<string>;
+  dimmed: Set<string> | undefined;
   onPick: (photo: SocialPhoto) => void;
   dragType: string;
   usedBadge: string;
 }) {
-  const { photos, empty, used, onPick, dragType, usedBadge } = props;
+  const { photos, empty, used, dimmed, onPick, dragType, usedBadge } = props;
   if (photos.length === 0) {
     return <EmptyNote className="py-6 text-center">{empty}</EmptyNote>;
   }
@@ -213,7 +217,10 @@ function DrawerPhotos(props: {
               event.dataTransfer.effectAllowed = "move";
             }}
             onClick={() => onPick(photo)}
-            className="group focus-visible:ring-ring flex w-full cursor-grab flex-col gap-1 rounded-md text-left outline-none focus-visible:ring-2 active:cursor-grabbing"
+            className={cn(
+              "group focus-visible:ring-ring flex w-full cursor-grab flex-col gap-1 rounded-md text-left outline-none focus-visible:ring-2 active:cursor-grabbing",
+              dimmed?.has(photo.path) && "opacity-40 hover:opacity-100",
+            )}
           >
             <span className="relative aspect-square overflow-hidden rounded-md border">
               <PhotoImage photo={photo} />
