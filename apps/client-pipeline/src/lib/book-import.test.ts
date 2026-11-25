@@ -76,6 +76,7 @@ test("the imported book has every place its layouts hold, with the album and cap
   const book = importedBook(read, { id: "vol-3", name: "Vol. 3", album: "vol-3" });
   assert.equal(book.album, "vol-3");
   assert.equal(book.template, "");
+  assert.deepEqual(book.order, ["page-1", "page-2", "page-3", "page-4"]);
   assert.deepEqual(book.pages[0], {
     id: "page-1",
     layout: "pair-left",

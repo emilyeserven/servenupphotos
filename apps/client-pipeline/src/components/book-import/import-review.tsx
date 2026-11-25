@@ -47,14 +47,25 @@ function savesFor(
 }
 
 /**
+ * The save of an import, and what it saves: `planned` until it's saved, then what was saved, so
+ * the review doesn't change to the album and book it just made. Busy from the press on.
+ */
+function useImportSaves(planned: ImportSaves) {
+  const save = useImportBook();
+  return {
+    save,
+    saves: save.variables ?? planned,
+    busy: save.isPending || save.isSuccess,
+  };
+}
+
+/**
  * What the answer makes: the pages, the printed photos that aren't on the website, the name for
  * the album and book, and the button that saves the album and the book for Commit.
  */
 export function ImportReview({ read, data, photos }: ImportReviewProps) {
   const [choices, setChoices] = useState(() => startChoices(read));
-  const save = useImportBook();
-  const busy = save.isPending || save.isSuccess;
-  const saves = savesFor(read, choices, data, photos);
+  const { save, saves, busy } = useImportSaves(savesFor(read, choices, data, photos));
   return (
     <div className="bg-muted/50 flex flex-col gap-4 rounded-md border p-3 text-sm">
       <p>{summary(read)}</p>
@@ -69,7 +80,7 @@ export function ImportReview({ read, data, photos }: ImportReviewProps) {
         error={save.error}
         onClick={() => save.mutate(saves)}
       />
-      {save.data && <Saved bookId={saves.book.id} />}
+      {save.isSuccess && <Saved bookId={saves.book.id} />}
     </div>
   );
 }
@@ -153,7 +164,11 @@ function Saved({ bookId }: { bookId: string }) {
   return (
     <p>
       Saved the album and the{" "}
-      <Link to="/photo-books/$id" params={{ id: bookId }} className="underline underline-offset-4">
+      <Link
+        to="/photo-books/$id/$part"
+        params={{ id: bookId, part: "book" }}
+        className="underline underline-offset-4"
+      >
         photo book
       </Link>{" "}
       in the app. <WaitingForCommit what="They" />

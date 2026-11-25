@@ -152,10 +152,14 @@ function bookPage(page: ImportedPage, index: number): BookPage {
   return { id: `page-${index + 1}`, layout: page.layout, title: page.title, slots };
 }
 
-/** The photo book an import makes: its pages as the old book had them, with its photos from album. */
+/**
+ * The photo book an import makes: its pages as the old book had them, every one in the book in
+ * that order, with its photos from album.
+ */
 export function importedBook(
   read: BookImport,
   book: { id: string; name: string; album: string },
 ): PhotoBook {
-  return { ...book, template: "", pages: read.pages.map(bookPage) };
+  const pages = read.pages.map(bookPage);
+  return { ...book, template: "", pages, order: pages.map((page) => page.id) };
 }

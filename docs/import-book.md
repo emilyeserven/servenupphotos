@@ -62,8 +62,8 @@ The review shows how many pages and photos there are, the photos not on the webs
 
 1. The album, with every matched photo. A new album gets the answer's description and starts hidden on the portfolio, as working albums do ([Showing or hiding on the portfolio](albums-and-tags.md#showing-or-hiding-on-the-portfolio)), unless **Hide the new album on the portfolio** is unticked. When an album already has the name, the photos are added to it instead. The photos go 50 at a time, the most one save takes (`POST /api/data/album-suggestions`, the same save [Album suggestions](update-data.md#album-suggestions) uses).
 2. A new album's photo order, the book's order (`PUT /api/organize/albums/<id>/photo-order`), so the book's photo drawer lists them in it.
-3. The photo book (`PUT /api/photobooks/<id>`), its ID made from the name, with the album picked and every page as the answer laid it out. Empty places stay empty for the photos not on the website.
+3. The photo book (`PUT /api/photobooks/<id>`), its ID made from the name, with the album picked and every page as the answer laid it out, all of them in the book (`order`) in the old book's order. Empty places stay empty for the photos not on the website.
 
-With no matched photos, only the book is saved, with no album. Once saved, the page links to the new book.
+With no matched photos, only the book is saved, with no album. Once saved, the page links to the new book's **Book** tab.
 
 > **Frontend analogy:** it's three `mutateAsync` calls in a row inside one mutation, rather than one endpoint that does it all. Each one is still its own mutation with `meta.saves`, so the combined lists show each change as soon as it's saved, as any other save does.
