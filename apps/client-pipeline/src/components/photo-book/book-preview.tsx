@@ -1,4 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon, MaximizeIcon, MinimizeIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { pageName } from "@/components/photo-book/page-types";
@@ -36,11 +37,23 @@ export function BookPreview(props: BookPreviewProps) {
       </EmptyNote>
     );
   }
-  const ratio = sheetsAspect(view.pages, look);
-  // In Preview Mode the preview covers the window, so the pages take all of its height but the
-  // control strip's.
+  return (
+    <PreviewFrame previewMode={previewMode} ratio={sheetsAspect(view.pages, look)}>
+      <UnitSheets pages={view.pages} look={look} className="gap-px" />
+      <PreviewControls {...props} view={view} />
+    </PreviewFrame>
+  );
+}
+
+/**
+ * Around the preview: as wide as its pages at its height, 52vh; in Preview Mode, over the whole
+ * window on the body, so nothing on the page around it can clip or cover it, the pages taking all
+ * of its height but the control strip's.
+ */
+function PreviewFrame(props: { previewMode: boolean; ratio: number; children: ReactNode }) {
+  const { previewMode, ratio, children } = props;
   const tall = previewMode ? "(100vh - 5rem)" : "52vh";
-  const preview = (
+  const frame = (
     <div
       className={cn(
         "flex flex-col items-center gap-3",
@@ -48,13 +61,11 @@ export function BookPreview(props: BookPreviewProps) {
       )}
     >
       <div className="flex w-full flex-col gap-3" style={{ maxWidth: `calc(${ratio} * ${tall})` }}>
-        <UnitSheets pages={view.pages} look={look} className="gap-px" />
-        <PreviewControls {...props} view={view} />
+        {children}
       </div>
     </div>
   );
-  // Drawn on the body in Preview Mode, so nothing on the page around it can clip or cover it.
-  return previewMode ? createPortal(preview, document.body) : preview;
+  return previewMode ? createPortal(frame, document.body) : frame;
 }
 
 /**
