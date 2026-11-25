@@ -18,8 +18,8 @@ The **Pages** tab holds every page made for the book, newest last, so other ways
 - **Full page:** one photo over the page, the title above it and its caption under it.
 - **Two photos on the left:** two photos down the left side, each with its caption beside it on the right, toward the gap between them (the top one low beside its photo, under the title; the bottom one at its photo's top), as the printed books have them.
 - **Two photos on the right:** the same, mirrored: photos on the right, captions on the left.
-- **Two portrait photos, info on the right:** one row of three columns: the two portrait photos side by side, then an info column with the title and both captions, in the photos' order.
-- **Two portrait photos, info on the left:** the same, mirrored: info, photo 1, photo 2.
+- **Two portrait photos on the left:** two portrait photos side by side on the left, each caption under its own photo, and the title at the top of the right side.
+- **Two portrait photos on the right:** the same, mirrored.
 
 Each photo place keeps its shape whatever room the page gives it: 3:2 for the landscape places, 2:3 for the portrait ones, as large as fits, with the photo cropped to fill it.
 

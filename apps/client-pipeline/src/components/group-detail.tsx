@@ -1,13 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import {
-  ArrowDownUpIcon,
-  ArrowLeftIcon,
-  CheckIcon,
-  CornerDownRightIcon,
-  MinusIcon,
-} from "lucide-react";
-import { useState } from "react";
+import { ArrowDownUpIcon, ArrowLeftIcon, CheckIcon, MinusIcon } from "lucide-react";
+import { type ReactNode, useState } from "react";
 import {
   GROUP_KINDS,
   type Group,
@@ -15,7 +9,6 @@ import {
   type OrganizeResponse,
   albumAncestry,
   albumDescendants,
-  albumTree,
   groupLabel,
   organizeQuery,
   setGroupParentMutation,
@@ -26,8 +19,6 @@ import {
   AlbumAddPhotos,
   useAlbumAdd,
 } from "@/components/album-add-photos";
-import { AlbumDeleteCard } from "@/components/album-delete";
-import { AlbumLayoutCard } from "@/components/album-layout/album-layout-card";
 import { AlbumPhotoReorder } from "@/components/album-photo-reorder";
 import { AlbumPhotoGrid } from "@/components/album-remove-one";
 import {
@@ -36,15 +27,14 @@ import {
   AlbumRemovePhotos,
   useAlbumRemove,
 } from "@/components/album-remove-photos";
-import { AlbumVisibilityCard } from "@/components/album-visibility-card";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { ErrorNote } from "@/components/error-note";
 import { type GroupPhotos, useGroupPhotos } from "@/components/group-photo-grid";
 import { GitHubGate, GroupStatus } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { GroupCombobox } from "@/components/photo-groups-card";
+import { PhotoShapeFilter } from "@/components/photo-shape-filter";
 import { QueryResult } from "@/components/query-result";
-import { SmartAlbumCard } from "@/components/smart-album/smart-album-card";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -56,14 +46,23 @@ import {
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
-import { currentPhotos, photoCounts } from "@/lib/group-photos";
-import { useCombinedData } from "@/stores/combined-data";
-import { EmptyNote } from "@portfolio/components/empty-note";
+import type { PhotoShape } from "@/lib/aspect-ratio";
+import { photosOfShape } from "@/lib/photo-shapes";
+import { EmptyNote, NO_PHOTOS_MATCH } from "@portfolio/components/empty-note";
 import { isSmartAlbum } from "@portfolio/lib/smart-albums";
-import { count } from "@portfolio/lib/words";
 
-/** One album's or tag's page: what it is, where an album sits, and the photos in it. */
-export function GroupDetailPage({ kind, id }: { kind: GroupKind; id: string }) {
+interface GroupDetailPageProps {
+  kind: GroupKind;
+  /** The album's, tag's or genre's ID, from the address. */
+  id: string;
+  /** Links to the page's tabs, under the back button, such as an album's Photos, Info and Layout. */
+  tabs?: ReactNode;
+  /** What shows once the album, tag or genre is found; a tag's or genre's cards when left out. */
+  children?: (found: GroupDetailProps) => ReactNode;
+}
+
+/** One album's, tag's or genre's page: what it is, where it sits, and the photos in it. */
+export function GroupDetailPage({ kind, id, tabs, children = GroupColumns }: GroupDetailPageProps) {
   const organize = useQuery(organizeQuery);
   const group = organize.data?.[kind].find((g) => g.id === id);
   return (
@@ -74,10 +73,13 @@ export function GroupDetailPage({ kind, id }: { kind: GroupKind; id: string }) {
           {capitalized(kind)}
         </Link>
       </Button>
+      {tabs}
       <GitHubGate>
         {() => (
           <QueryResult query={organize} pendingLabel={`Reading the ${GROUP_KINDS[kind].singular}…`}>
-            {(data) => <GroupFound kind={kind} id={id} group={group} organize={data} />}
+            {(data) => (
+              <GroupFound kind={kind} id={id} group={group} organize={data} render={children} />
+            )}
           </QueryResult>
         )}
       </GitHubGate>
@@ -99,13 +101,14 @@ function pageHeading(kind: GroupKind, id: string, group?: Group) {
   };
 }
 
-function GroupFound({
-  kind,
-  id,
-  group,
-  organize,
-}: { id: string; group?: Group } & Omit<GroupDetailProps, "group">) {
-  if (group) return <GroupDetail kind={kind} group={group} organize={organize} />;
+interface GroupFoundProps extends Omit<GroupDetailProps, "group"> {
+  id: string;
+  group?: Group;
+  render: (found: GroupDetailProps) => ReactNode;
+}
+
+function GroupFound({ kind, id, group, organize, render }: GroupFoundProps) {
+  if (group) return render({ kind, group, organize });
   return (
     <Card>
       <CardContent>
@@ -121,42 +124,36 @@ function capitalized(word: string): string {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-interface GroupDetailProps {
+/** The album, tag or genre a page shows, with every album, tag and genre it was read with. */
+export interface GroupDetailProps {
+  /** Whether it's an album, a tag or a genre. */
   kind: GroupKind;
+  /** The album, tag or genre itself. */
   group: Group;
+  /** Every album, tag and genre, and the open photo data pull request. */
   organize: OrganizeResponse;
 }
 
-function GroupDetail({ kind, group, organize }: GroupDetailProps) {
-  const album = isReadableAlbum(kind, group);
-  return (
-    <>
-      {album && <SmartAlbumCard album={group} />}
-      <GroupColumns kind={kind} group={group} organize={organize} />
-      {byHand(kind, group) && <AlbumLayoutCard album={group} albums={organize.albums} />}
-    </>
-  );
-}
-
 /** Whether the group is an album whose file could be read. */
-function isReadableAlbum(kind: GroupKind, group: Group): boolean {
+export function isReadableAlbum(kind: GroupKind, group: Group): boolean {
   return kind === "albums" && !group.error;
 }
 
+/** A tag's or genre's cards: what it is and its parent beside its photos. */
 function GroupColumns({ kind, group, organize }: GroupDetailProps) {
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <div className="flex min-w-0 flex-col gap-6">
         <AboutCard kind={kind} group={group} organize={organize} />
         {!group.error && <ParentCard kind={kind} group={group} organize={organize} />}
-        {kind === "albums" && <AlbumSideCards album={group} albums={organize.albums} />}
       </div>
-      <GroupPhotos kind={kind} group={group} albums={organize.albums} />
+      <GroupPhotosCard kind={kind} group={group} albums={organize.albums} />
     </div>
   );
 }
 
-function AboutCard({ kind, group, organize }: GroupDetailProps) {
+/** What the album, tag or genre is: its ID, file, status and the ones it sits in. */
+export function AboutCard({ kind, group, organize }: GroupDetailProps) {
   const { singular } = GROUP_KINDS[kind];
   return (
     <Card>
@@ -197,20 +194,6 @@ const PLACE_TEXT: Record<GroupKind, { label: string; top: string }> = {
   genres: { label: "Under", top: "Nothing: it's a top-level genre" },
 };
 
-/**
- * An album's cards under its parent: whether the portfolio shows it, its sub-albums, and deleting
- * it.
- */
-function AlbumSideCards({ album, albums }: { album: Group; albums: Group[] }) {
-  return (
-    <>
-      {!album.error && <AlbumVisibilityCard album={album} albums={albums} />}
-      <SubAlbumsCard album={album} albums={albums} />
-      {!album.error && <AlbumDelete album={album} albums={albums} />}
-    </>
-  );
-}
-
 /** The albums an album is inside, or the tags or genres one is under, as rows of AboutCard's list. */
 function GroupPlace({ kind, group, list }: { kind: GroupKind; group: Group; list: Group[] }) {
   const parents = albumAncestry(list, group.id).slice(0, -1);
@@ -246,86 +229,11 @@ function NoParent({ kind, parent }: { kind: GroupKind; parent?: string }) {
   );
 }
 
-/** Every album inside this one, at any depth, each under its parent, with how many photos it has. */
-function SubAlbumsCard({ album, albums }: { album: Group; albums: Group[] }) {
-  const inside = albumDescendants(albums, album.id);
-  // The album's own row comes first; the rest are its sub-albums, one level less deep.
-  const rows = albumTree(albums.filter((a) => a.id === album.id || inside.has(a.id))).slice(1);
-  const countOf = useAlbumPhotoCounts();
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Sub-albums{rows.length > 0 && ` (${rows.length})`}</CardTitle>
-        <CardDescription>
-          Albums inside this one. To add one, give it this album as its parent.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="text-sm">
-        {rows.length === 0 ? (
-          <EmptyNote>No sub-albums yet.</EmptyNote>
-        ) : (
-          <ul className="flex flex-col divide-y">
-            {rows.map(({ group, depth }) => (
-              <SubAlbumRow
-                key={group.id}
-                album={group}
-                depth={depth - 1}
-                count={countOf?.(group.id)}
-              />
-            ))}
-          </ul>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-/** The album's Delete album card, with how many photos list it. */
-function AlbumDelete({ album, albums }: { album: Group; albums: Group[] }) {
-  const countOf = useAlbumPhotoCounts();
-  return <AlbumDeleteCard album={album} albums={albums} photoCount={countOf?.(album.id)} />;
-}
-
-/** How many photos in ALLPHOTOS.json list an album, by ID; undefined until it's read. */
-function useAlbumPhotoCounts(): ((id: string) => number) | undefined {
-  const combined = useCombinedData();
-  const current = combined.data ? currentPhotos(combined.data) : undefined;
-  if (!current) return undefined;
-  const counts = photoCounts(current.photos, "albums");
-  return (id) => counts.get(id) ?? 0;
-}
-
-function SubAlbumRow({ album, depth, count }: { album: Group; depth: number; count?: number }) {
-  return (
-    <li
-      className="flex items-start gap-2 py-2 first:pt-0 last:pb-0"
-      style={{ paddingLeft: `${depth * 1.25}rem` }}
-    >
-      {depth > 0 && (
-        <CornerDownRightIcon className="text-muted-foreground mt-0.5 size-3.5 shrink-0" />
-      )}
-      <div className="min-w-0 flex-1">
-        <GroupLink kind="albums" group={album} />
-        {album.description && (
-          <p className="text-muted-foreground truncate text-xs">{album.description}</p>
-        )}
-      </div>
-      <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
-        {photoCountText(count)}
-      </span>
-    </li>
-  );
-}
-
-function photoCountText(n?: number): string {
-  if (n === undefined) return "…";
-  return count(n, "photo");
-}
-
 /** Each kind's page for one album, tag or genre. */
 const GROUP_LINKS = { albums: "/albums/$id", tags: "/tags/$id", genres: "/genres/$id" } as const;
 
-function GroupLink({ kind, group }: { kind: GroupKind; group: Group }) {
+/** The album's, tag's or genre's name, linked to its page. */
+export function GroupLink({ kind, group }: { kind: GroupKind; group: Group }) {
   return (
     <Link
       to={GROUP_LINKS[kind]}
@@ -359,7 +267,7 @@ const PARENT_TEXT: Record<GroupKind, { title: string; description: string; none:
 };
 
 /** Picks the album's, tag's or genre's one parent, leaving out itself and the ones under it, and saves it. */
-function ParentCard({
+export function ParentCard({
   kind,
   group,
   organize,
@@ -484,10 +392,19 @@ function ParentSavedText({ result }: { result: NonNullable<ParentSave["save"]["d
  * The photos ALLPHOTOS.json lists in the album or tag, in the album's order; for an album,
  * optionally with the ones in its sub-albums too, and a way to put them in order.
  */
-function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; albums: Group[] }) {
+export function GroupPhotosCard({
+  kind,
+  group,
+  albums,
+}: {
+  kind: GroupKind;
+  group: Group;
+  albums: Group[];
+}) {
   const subAlbums = subAlbumIds(kind, group, albums);
   const [withSubAlbums, setWithSubAlbums] = useState(false);
   const [mode, setMode] = useState<PhotosMode>("view");
+  const [shape, setShape] = useState<PhotoShape>();
   const ids = new Set([group.id, ...(withSubAlbums ? subAlbums : [])]);
   const { combined, current, photos } = useGroupPhotos(kind, ids);
   const adding = useAlbumAdd();
@@ -529,6 +446,8 @@ function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; a
           group={group}
           combined={combined}
           photos={photos}
+          shape={shape}
+          onShape={setShape}
           mode={mode}
           remove={removing}
           removable={byHand(kind, group)}
@@ -561,12 +480,15 @@ function canRemove(kind: GroupKind, group: Group, photos: unknown[] = []): boole
  * Whether the group is a readable album whose photos are chosen by hand, not a Smart Album, whose
  * photos, covers and layout only its rules decide.
  */
-function byHand(kind: GroupKind, group: Group): boolean {
+export function byHand(kind: GroupKind, group: Group): boolean {
   return isReadableAlbum(kind, group) && !isSmartAlbum(group);
 }
 
 interface PhotosOrReorderProps extends Pick<GroupPhotos, "combined" | "photos"> {
   group: Group;
+  /** The shape the quick filter shows alone while viewing, or undefined for every photo. */
+  shape?: PhotoShape;
+  onShape: (shape?: PhotoShape) => void;
   mode: PhotosMode;
   remove: AlbumRemove;
   /** Whether each of the album's own photos gets a button that takes it out of the album. */
@@ -580,11 +502,27 @@ interface PhotosOrReorderProps extends Pick<GroupPhotos, "combined" | "photos"> 
  */
 function PhotosOrReorder(props: PhotosOrReorderProps) {
   const { group, photos, mode, remove, onDone } = props;
-  if (mode === "view" || !photos) return <AlbumPhotoGrid {...props} album={group} />;
+  if (mode === "view" || !photos) return <ShapePhotoGrid {...props} />;
   if (mode === "reorder") {
     return <AlbumPhotoReorder album={group} photos={photos} onDone={onDone} />;
   }
   return <AlbumRemovePhotos album={group} photos={photos} remove={remove} onDone={onDone} />;
+}
+
+/** The orientation quick filter over the photos of the shape it picked, or a note when none match. */
+function ShapePhotoGrid(props: PhotosOrReorderProps) {
+  const { group, photos = [], shape, onShape } = props;
+  const shown = photosOfShape(props.photos, shape);
+  return (
+    <>
+      <PhotoShapeFilter photos={photos} value={shape} onChange={onShape} />
+      {shown?.length === 0 && shape ? (
+        <EmptyNote>{NO_PHOTOS_MATCH}</EmptyNote>
+      ) : (
+        <AlbumPhotoGrid {...props} photos={shown} album={group} />
+      )}
+    </>
+  );
 }
 
 /** An album's Add photos button; none for a tag or genre, or an album that couldn't be read. */

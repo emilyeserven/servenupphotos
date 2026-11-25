@@ -110,27 +110,26 @@ function FullBody({ parts }: { parts: PageParts }) {
 }
 
 /**
- * One row of three columns: an info column with the page's title and both captions, in the photos'
- * order, then the two portrait photos; mirrored, the photos come first and the info column last.
+ * Two portrait photos side by side on one side, each caption under its own photo, and the page's
+ * title at the top of the other side.
  */
 function VerticalsBody({ parts, left }: { parts: PageParts; left: boolean }) {
-  const info = (
-    <div key="info" className="flex min-h-0 flex-col justify-center gap-[6%]">
-      {parts.title}
-      {parts.caption(0)}
-      {parts.caption(1)}
-    </div>
-  );
-  const photos = [parts.slot(0, "portrait"), parts.slot(1, "portrait")];
   return (
-    <div
-      className={cn(
-        "grid min-h-0 flex-1 gap-[2%]",
-        left ? "grid-cols-[37fr_37fr_26fr]" : "grid-cols-[26fr_37fr_37fr]",
-      )}
-    >
-      {left ? [...photos, info] : [info, ...photos]}
-    </div>
+    <Sides
+      left={left}
+      className="flex-1"
+      photos={
+        <div className="grid min-h-0 grid-cols-2 gap-[4%]">
+          {[0, 1].map((i) => (
+            <div key={i} className="flex min-h-0 flex-col gap-[3%]">
+              {parts.slot(i, "portrait", "flex-1 items-end")}
+              {parts.caption(i, "h-[22%] shrink-0")}
+            </div>
+          ))}
+        </div>
+      }
+      captions={<div>{parts.title}</div>}
+    />
   );
 }
 

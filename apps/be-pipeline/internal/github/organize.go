@@ -71,6 +71,10 @@ type NewGroup struct {
 	// (the more general tag it's a kind of), or of a subgenre's genre, such as
 	// "architecture" for "traditional-architecture"; empty for none.
 	Parent string `json:"parent,omitempty"`
+	// Hidden makes a new album hidden on the portfolio from the start, so it
+	// isn't listed or given a page until it's shown on its album page. Only
+	// albums can be hidden.
+	Hidden bool `json:"hidden,omitempty"`
 }
 
 // HasParents says whether kind's files can name a parent of the same kind:
@@ -294,6 +298,12 @@ func validGroup(kind Kind, group NewGroup) (groupJSON, *PublishError) {
 			return g, publishErr(http.StatusBadRequest, "Only albums, tags and genres can have a parent.")
 		}
 		g.Parent = &parent
+	}
+	if group.Hidden {
+		if kind != Albums {
+			return g, publishErr(http.StatusBadRequest, "Only albums can be hidden on the portfolio.")
+		}
+		g.Hidden = true
 	}
 	return g, nil
 }

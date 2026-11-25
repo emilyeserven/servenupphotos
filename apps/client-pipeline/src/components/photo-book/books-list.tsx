@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { PlusIcon } from "lucide-react";
+import { ImportIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { photoBooks } from "@/api/photo-books";
 import type { CombinedData } from "@/api/photos";
@@ -39,10 +39,18 @@ function Books({ data }: { data: CombinedData }) {
             onMade={(id) => void navigate({ to: "/photo-books/$id", params: { id } })}
           />
         ) : (
-          <Button variant="outline" size="sm" onClick={() => setNaming(true)}>
-            <PlusIcon />
-            New book
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={() => setNaming(true)}>
+              <PlusIcon />
+              New book
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/photo-books/import">
+                <ImportIcon />
+                Import Book
+              </Link>
+            </Button>
+          </div>
         )}
       </div>
       {books.length === 0 && <EmptyNote>No photo books yet.</EmptyNote>}

@@ -78,16 +78,14 @@ export const LAYOUTS: LayoutInfo[] = [
   },
   {
     id: "verticals-left",
-    label: "Two portrait photos, info on the right",
-    description:
-      "One row: two portrait photos side by side, then a column with the title and both captions.",
+    label: "Two portrait photos on the left",
+    description: "Two portrait photos side by side on the left, their captions on the right.",
     slots: 2,
   },
   {
     id: "verticals-right",
-    label: "Two portrait photos, info on the left",
-    description:
-      "One row: a column with the title and both captions, then two portrait photos side by side.",
+    label: "Two portrait photos on the right",
+    description: "Two portrait photos side by side on the right, their captions on the left.",
     slots: 2,
   },
 ];

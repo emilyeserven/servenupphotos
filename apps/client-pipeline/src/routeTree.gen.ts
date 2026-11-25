@@ -57,6 +57,7 @@ import { Route as GenresIdRouteImport } from './routes/genres.$id'
 import { Route as LightroomAlbumsIndexRouteImport } from './routes/lightroom-albums.index'
 import { Route as LightroomAlbumsImportRouteImport } from './routes/lightroom-albums.import'
 import { Route as PhotoBooksIndexRouteImport } from './routes/photo-books.index'
+import { Route as PhotoBooksImportRouteImport } from './routes/photo-books.import'
 import { Route as SettingsStatusRouteImport } from './routes/settings_.status'
 import { Route as TagDataIndexRouteImport } from './routes/tag-data.index'
 import { Route as TagDataSectionRouteImport } from './routes/tag-data.$section'
@@ -66,6 +67,9 @@ import { Route as TagsIdRouteImport } from './routes/tags.$id'
 import { Route as TripLinesIndexRouteImport } from './routes/trip-lines.index'
 import { Route as UpdateDataIndexRouteImport } from './routes/update-data.index'
 import { Route as UpdateDataSectionRouteImport } from './routes/update-data.$section'
+import { Route as AlbumsIdIndexRouteImport } from './routes/albums.$id.index'
+import { Route as AlbumsIdInfoRouteImport } from './routes/albums.$id.info'
+import { Route as AlbumsIdLayoutRouteImport } from './routes/albums.$id.layout'
 import { Route as PhotoBooksIdIndexRouteImport } from './routes/photo-books.$id.index'
 import { Route as PhotoBooksIdPartRouteImport } from './routes/photo-books.$id.$part'
 import { Route as TripLinesDayIndexRouteImport } from './routes/trip-lines.$day.index'
@@ -312,6 +316,11 @@ const PhotoBooksIndexRoute = PhotoBooksIndexRouteImport.update({
   path: '/photo-books/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PhotoBooksImportRoute = PhotoBooksImportRouteImport.update({
+  id: '/photo-books/import',
+  path: '/photo-books/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsStatusRoute = SettingsStatusRouteImport.update({
   id: '/settings_/status',
   path: '/settings/status',
@@ -356,6 +365,21 @@ const UpdateDataSectionRoute = UpdateDataSectionRouteImport.update({
   id: '/$section',
   path: '/$section',
   getParentRoute: () => UpdateDataRoute,
+} as any)
+const AlbumsIdIndexRoute = AlbumsIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AlbumsIdRoute,
+} as any)
+const AlbumsIdInfoRoute = AlbumsIdInfoRouteImport.update({
+  id: '/info',
+  path: '/info',
+  getParentRoute: () => AlbumsIdRoute,
+} as any)
+const AlbumsIdLayoutRoute = AlbumsIdLayoutRouteImport.update({
+  id: '/layout',
+  path: '/layout',
+  getParentRoute: () => AlbumsIdRoute,
 } as any)
 const PhotoBooksIdIndexRoute = PhotoBooksIdIndexRouteImport.update({
   id: '/photo-books/$id/',
@@ -424,10 +448,11 @@ export interface FileRoutesByFullPath {
   '/trips': typeof TripsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
-  '/albums/$id': typeof AlbumsIdRoute
+  '/albums/$id': typeof AlbumsIdRouteWithChildren
   '/compare/autogroup': typeof CompareAutogroupRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
+  '/photo-books/import': typeof PhotoBooksImportRoute
   '/settings/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
   '/tag-tools/$section': typeof TagToolsSectionRoute
@@ -441,9 +466,12 @@ export interface FileRoutesByFullPath {
   '/tags/': typeof TagsIndexRoute
   '/trip-lines/': typeof TripLinesIndexRoute
   '/update-data/': typeof UpdateDataIndexRoute
+  '/albums/$id/info': typeof AlbumsIdInfoRoute
+  '/albums/$id/layout': typeof AlbumsIdLayoutRoute
   '/photo-books/$id/$part': typeof PhotoBooksIdPartRoute
   '/trip-lines/$day/$part': typeof TripLinesDayPartRoute
   '/trip-lines/trips/$id': typeof TripLinesTripsIdRoute
+  '/albums/$id/': typeof AlbumsIdIndexRoute
   '/photo-books/$id/': typeof PhotoBooksIdIndexRoute
   '/trip-lines/$day/': typeof TripLinesDayIndexRoute
 }
@@ -487,10 +515,10 @@ export interface FileRoutesByTo {
   '/timeline-labels': typeof TimelineLabelsRoute
   '/trips': typeof TripsRoute
   '/viewer-likes': typeof ViewerLikesRoute
-  '/albums/$id': typeof AlbumsIdRoute
   '/compare/autogroup': typeof CompareAutogroupRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
+  '/photo-books/import': typeof PhotoBooksImportRoute
   '/settings/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
   '/tag-tools/$section': typeof TagToolsSectionRoute
@@ -504,9 +532,12 @@ export interface FileRoutesByTo {
   '/tags': typeof TagsIndexRoute
   '/trip-lines': typeof TripLinesIndexRoute
   '/update-data': typeof UpdateDataIndexRoute
+  '/albums/$id/info': typeof AlbumsIdInfoRoute
+  '/albums/$id/layout': typeof AlbumsIdLayoutRoute
   '/photo-books/$id/$part': typeof PhotoBooksIdPartRoute
   '/trip-lines/$day/$part': typeof TripLinesDayPartRoute
   '/trip-lines/trips/$id': typeof TripLinesTripsIdRoute
+  '/albums/$id': typeof AlbumsIdIndexRoute
   '/photo-books/$id': typeof PhotoBooksIdIndexRoute
   '/trip-lines/$day': typeof TripLinesDayIndexRoute
 }
@@ -552,10 +583,11 @@ export interface FileRoutesById {
   '/trips': typeof TripsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
-  '/albums/$id': typeof AlbumsIdRoute
+  '/albums/$id': typeof AlbumsIdRouteWithChildren
   '/compare_/autogroup': typeof CompareAutogroupRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
+  '/photo-books/import': typeof PhotoBooksImportRoute
   '/settings_/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
   '/tag-tools/$section': typeof TagToolsSectionRoute
@@ -569,9 +601,12 @@ export interface FileRoutesById {
   '/tags/': typeof TagsIndexRoute
   '/trip-lines/': typeof TripLinesIndexRoute
   '/update-data/': typeof UpdateDataIndexRoute
+  '/albums/$id/info': typeof AlbumsIdInfoRoute
+  '/albums/$id/layout': typeof AlbumsIdLayoutRoute
   '/photo-books/$id/$part': typeof PhotoBooksIdPartRoute
   '/trip-lines/$day/$part': typeof TripLinesDayPartRoute
   '/trip-lines_/trips/$id': typeof TripLinesTripsIdRoute
+  '/albums/$id/': typeof AlbumsIdIndexRoute
   '/photo-books/$id/': typeof PhotoBooksIdIndexRoute
   '/trip-lines/$day/': typeof TripLinesDayIndexRoute
 }
@@ -622,6 +657,7 @@ export interface FileRouteTypes {
     | '/compare/autogroup'
     | '/genres/$id'
     | '/lightroom-albums/import'
+    | '/photo-books/import'
     | '/settings/status'
     | '/tag-data/$section'
     | '/tag-tools/$section'
@@ -635,9 +671,12 @@ export interface FileRouteTypes {
     | '/tags/'
     | '/trip-lines/'
     | '/update-data/'
+    | '/albums/$id/info'
+    | '/albums/$id/layout'
     | '/photo-books/$id/$part'
     | '/trip-lines/$day/$part'
     | '/trip-lines/trips/$id'
+    | '/albums/$id/'
     | '/photo-books/$id/'
     | '/trip-lines/$day/'
   fileRoutesByTo: FileRoutesByTo
@@ -681,10 +720,10 @@ export interface FileRouteTypes {
     | '/timeline-labels'
     | '/trips'
     | '/viewer-likes'
-    | '/albums/$id'
     | '/compare/autogroup'
     | '/genres/$id'
     | '/lightroom-albums/import'
+    | '/photo-books/import'
     | '/settings/status'
     | '/tag-data/$section'
     | '/tag-tools/$section'
@@ -698,9 +737,12 @@ export interface FileRouteTypes {
     | '/tags'
     | '/trip-lines'
     | '/update-data'
+    | '/albums/$id/info'
+    | '/albums/$id/layout'
     | '/photo-books/$id/$part'
     | '/trip-lines/$day/$part'
     | '/trip-lines/trips/$id'
+    | '/albums/$id'
     | '/photo-books/$id'
     | '/trip-lines/$day'
   id:
@@ -749,6 +791,7 @@ export interface FileRouteTypes {
     | '/compare_/autogroup'
     | '/genres/$id'
     | '/lightroom-albums/import'
+    | '/photo-books/import'
     | '/settings_/status'
     | '/tag-data/$section'
     | '/tag-tools/$section'
@@ -762,9 +805,12 @@ export interface FileRouteTypes {
     | '/tags/'
     | '/trip-lines/'
     | '/update-data/'
+    | '/albums/$id/info'
+    | '/albums/$id/layout'
     | '/photo-books/$id/$part'
     | '/trip-lines/$day/$part'
     | '/trip-lines_/trips/$id'
+    | '/albums/$id/'
     | '/photo-books/$id/'
     | '/trip-lines/$day/'
   fileRoutesById: FileRoutesById
@@ -810,10 +856,11 @@ export interface RootRouteChildren {
   TripsRoute: typeof TripsRoute
   UpdateDataRoute: typeof UpdateDataRouteWithChildren
   ViewerLikesRoute: typeof ViewerLikesRoute
-  AlbumsIdRoute: typeof AlbumsIdRoute
+  AlbumsIdRoute: typeof AlbumsIdRouteWithChildren
   CompareAutogroupRoute: typeof CompareAutogroupRoute
   GenresIdRoute: typeof GenresIdRoute
   LightroomAlbumsImportRoute: typeof LightroomAlbumsImportRoute
+  PhotoBooksImportRoute: typeof PhotoBooksImportRoute
   SettingsStatusRoute: typeof SettingsStatusRoute
   TagDataSectionRoute: typeof TagDataSectionRoute
   TagToolsSectionRoute: typeof TagToolsSectionRoute
@@ -1170,6 +1217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PhotoBooksIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/photo-books/import': {
+      id: '/photo-books/import'
+      path: '/photo-books/import'
+      fullPath: '/photo-books/import'
+      preLoaderRoute: typeof PhotoBooksImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings_/status': {
       id: '/settings_/status'
       path: '/settings/status'
@@ -1233,6 +1287,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UpdateDataSectionRouteImport
       parentRoute: typeof UpdateDataRoute
     }
+    '/albums/$id/': {
+      id: '/albums/$id/'
+      path: '/'
+      fullPath: '/albums/$id/'
+      preLoaderRoute: typeof AlbumsIdIndexRouteImport
+      parentRoute: typeof AlbumsIdRoute
+    }
+    '/albums/$id/info': {
+      id: '/albums/$id/info'
+      path: '/info'
+      fullPath: '/albums/$id/info'
+      preLoaderRoute: typeof AlbumsIdInfoRouteImport
+      parentRoute: typeof AlbumsIdRoute
+    }
+    '/albums/$id/layout': {
+      id: '/albums/$id/layout'
+      path: '/layout'
+      fullPath: '/albums/$id/layout'
+      preLoaderRoute: typeof AlbumsIdLayoutRouteImport
+      parentRoute: typeof AlbumsIdRoute
+    }
     '/photo-books/$id/': {
       id: '/photo-books/$id/'
       path: '/photo-books/$id'
@@ -1285,6 +1360,22 @@ const UpdateDataRouteWithChildren = UpdateDataRoute._addFileChildren(
   UpdateDataRouteChildren,
 )
 
+interface AlbumsIdRouteChildren {
+  AlbumsIdInfoRoute: typeof AlbumsIdInfoRoute
+  AlbumsIdLayoutRoute: typeof AlbumsIdLayoutRoute
+  AlbumsIdIndexRoute: typeof AlbumsIdIndexRoute
+}
+
+const AlbumsIdRouteChildren: AlbumsIdRouteChildren = {
+  AlbumsIdInfoRoute: AlbumsIdInfoRoute,
+  AlbumsIdLayoutRoute: AlbumsIdLayoutRoute,
+  AlbumsIdIndexRoute: AlbumsIdIndexRoute,
+}
+
+const AlbumsIdRouteWithChildren = AlbumsIdRoute._addFileChildren(
+  AlbumsIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AlbumSuggestionsRoute: AlbumSuggestionsRoute,
@@ -1326,10 +1417,11 @@ const rootRouteChildren: RootRouteChildren = {
   TripsRoute: TripsRoute,
   UpdateDataRoute: UpdateDataRouteWithChildren,
   ViewerLikesRoute: ViewerLikesRoute,
-  AlbumsIdRoute: AlbumsIdRoute,
+  AlbumsIdRoute: AlbumsIdRouteWithChildren,
   CompareAutogroupRoute: CompareAutogroupRoute,
   GenresIdRoute: GenresIdRoute,
   LightroomAlbumsImportRoute: LightroomAlbumsImportRoute,
+  PhotoBooksImportRoute: PhotoBooksImportRoute,
   SettingsStatusRoute: SettingsStatusRoute,
   TagDataSectionRoute: TagDataSectionRoute,
   TagToolsSectionRoute: TagToolsSectionRoute,

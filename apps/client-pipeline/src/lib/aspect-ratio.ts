@@ -51,7 +51,7 @@ export interface AspectProblem {
 }
 
 /** The photo's shape from its width and height. */
-function shapeOf(width: number, height: number): PhotoShape {
+export function shapeOf(width: number, height: number): PhotoShape {
   if (width === height) return "square";
   return width > height ? "landscape" : "portrait";
 }

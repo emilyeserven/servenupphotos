@@ -4,6 +4,7 @@ import {
   deleteViewerMutation,
   type ViewerLikes,
   viewerId,
+  viewerNamed,
   importedText,
   type ParsedLikes,
   parseLikes,
@@ -34,9 +35,14 @@ function nextPhotos(parsed: ParsedLikes, text: string, viewer?: ViewerLikes): nu
 }
 
 /** What saving would write: the typed name and the photos, keeping a saved person's ID. */
-function nextViewer(name: string, photos: number[], viewer?: ViewerLikes): ViewerLikes {
+function nextViewer(
+  name: string,
+  photos: number[],
+  viewer: ViewerLikes | undefined,
+  viewers: ViewerLikes[],
+): ViewerLikes {
   const trimmed = name.trim();
-  return { id: viewer ? viewer.id : viewerId(trimmed), name: trimmed, photos };
+  return { id: viewer ? viewer.id : viewerId(trimmed, viewers), name: trimmed, photos };
 }
 
 /** Pastes or uploads one person's list of liked photos, new or replacing the one they sent before. */
@@ -44,7 +50,7 @@ export function ViewerImporter({ viewer, viewers, titles, onSaved }: ViewerImpor
   const [name, setName] = useState(() => (viewer ? viewer.name : ""));
   const [text, setText] = useState("");
   const parsed = parseLikes(text);
-  const next = nextViewer(name, nextPhotos(parsed, text, viewer), viewer);
+  const next = nextViewer(name, nextPhotos(parsed, text, viewer), viewer, viewers);
   return (
     <Card>
       <ImporterHeader viewer={viewer} />
@@ -167,10 +173,10 @@ function whyNot(
   return viewer ? "" : newViewerProblem(next, viewers);
 }
 
-/** Why a new person can't be saved yet: they have no list, or someone saved has their ID. */
+/** Why a new person can't be saved yet: they have no list, or someone saved has their name. */
 function newViewerProblem(next: ViewerLikes, viewers: ViewerLikes[]): string {
   if (next.photos.length === 0) return "Paste or upload their list.";
-  const taken = viewers.find((f) => f.id === next.id);
+  const taken = viewerNamed(next.name, viewers);
   return taken
     ? `“${taken.name}” is already here. Pick them on the left to replace their likes.`
     : "";

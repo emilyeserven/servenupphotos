@@ -5,6 +5,7 @@ import { type OrganizeResponse, savedGroups } from "@/api/organize";
 import type { ViewerLikes } from "@/api/viewer-likes";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
 import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
+import { HideOnPortfolioCheckbox } from "@/components/hide-on-portfolio-checkbox";
 import { Segmented } from "@/components/lightroom-albums/segmented";
 import type { SavedPhoto } from "@/components/saved-photo-picker";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import {
   groupByLocation,
   groupByTheme,
   idAsName,
+  oneAlbum,
   sharedAlbumsToSave,
 } from "@/lib/shared-likes";
 import { textOf } from "@portfolio/lib/values";
@@ -26,9 +28,24 @@ import { count } from "@portfolio/lib/words";
 const route = getRouteApi("/shared-likes");
 
 const GROUPINGS: { value: GroupBy; label: string }[] = [
+  { value: "one", label: "One album" },
   { value: "location", label: "By location" },
   { value: "theme", label: "By theme" },
 ];
+
+/** What each grouping does, under the card's title. */
+const GROUPING_NOTES: Record<GroupBy, string> = {
+  one: "Every chosen photo goes in one album.",
+  location: "Grouped by city when two or more photos share one, else by country.",
+  theme: "Grouped by the tag the most photos share, again and again, then by genre.",
+};
+
+/** The chosen photos as suggested albums, grouped the chosen way. */
+function groupsFor(by: GroupBy, facts: PhotoFacts[], organize: OrganizeResponse) {
+  if (by === "theme") return groupByTheme(facts, namer(organize));
+  if (by === "location") return groupByLocation(facts);
+  return oneAlbum(facts.map((fact) => fact.id));
+}
 
 interface SuggestedAlbumsProps {
   /** The IDs of the chosen overlapping Likes. */
@@ -39,24 +56,22 @@ interface SuggestedAlbumsProps {
 }
 
 /**
- * The chosen photos grouped into suggested albums, by location (city, else country) or by theme
- * (shared tag, else genre). Each can be renamed, unticked or have photos unticked, then saved as
- * new or existing albums, waiting for Commit.
+ * The chosen photos as suggested albums: all in one album (the default), or split by location
+ * (city, else country) or by theme (shared tag, else genre). Each can be renamed, unticked or have
+ * photos unticked, then saved as new or existing albums, waiting for Commit.
  */
 export function SuggestedAlbums({ photos, lists, saved, organize }: SuggestedAlbumsProps) {
   const navigate = route.useNavigate();
-  const by: GroupBy = route.useSearch().by ?? "location";
+  const by: GroupBy = route.useSearch().by ?? "one";
   const facts = photos.map((id) => photoFacts(id, saved.get(id)));
-  const groups = by === "theme" ? groupByTheme(facts, namer(organize)) : groupByLocation(facts);
+  const groups = groupsFor(by, facts, organize);
   return (
     <Card>
       <CardHeader>
         <CardTitle>Suggested albums</CardTitle>
         <CardDescription>
-          {by === "theme"
-            ? "Grouped by the tag the most photos share, again and again, then by genre."
-            : "Grouped by city when two or more photos share one, else by country."}{" "}
-          Rename any of them; a name that matches an album adds the photos to it.
+          {GROUPING_NOTES[by]} Rename an album to change it; a name that matches an existing album
+          adds the photos to that one.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 text-sm">
@@ -67,7 +82,7 @@ export function SuggestedAlbums({ photos, lists, saved, organize }: SuggestedAlb
             value={by}
             onChange={(value) =>
               void navigate({
-                search: (s) => ({ ...s, by: value === "theme" ? "theme" : undefined }),
+                search: (s) => ({ ...s, by: value === "one" ? undefined : value }),
                 replace: true,
               })
             }
@@ -123,12 +138,13 @@ interface GroupReviewProps {
 /** The suggested albums to tick, rename and trim, and the button that saves them. */
 function GroupReview({ groups, lists, saved, organize }: GroupReviewProps) {
   const [names, setNames] = useState<Record<string, string>>({});
-  // A group of one photo starts unticked: it's rarely an album on its own.
+  // When split, a group of one photo starts unticked: it's rarely an album on its own.
   const [dropped, setDropped] = useState<ReadonlySet<string>>(
-    () =>
-      new Set(groups.filter((g) => g.photos.length < 2 || g.source === "none").map((g) => g.key)),
+    () => new Set(groups.filter(startsUnticked).map((g) => g.key)),
   );
   const [removed, setRemoved] = useState<ReadonlySet<string>>(new Set());
+  // Albums of other people's likes are usually working albums, not ones for the website.
+  const [hidden, setHidden] = useState(true);
   const apply = useReviewedSave(applyAlbumSuggestionsMutation);
   const busy = apply.isPending || apply.isSuccess;
   const nameOf = (group: SuggestedGroup) => names[group.key] ?? group.name;
@@ -139,7 +155,10 @@ function GroupReview({ groups, lists, saved, organize }: GroupReviewProps) {
       photos: group.photos.filter((id) => !removed.has(`${group.key}|${id}`)),
     }));
   const paths = new Map([...saved].map(([id, photo]) => [id, photo.path]));
-  const save = sharedAlbumsToSave(reviewed, paths, organize.albums, likedBy(lists));
+  const save = sharedAlbumsToSave(reviewed, paths, organize.albums, {
+    description: likedBy(lists),
+    hidden,
+  });
   return (
     <div className="flex flex-col gap-4">
       <ul className="flex flex-col gap-3">
@@ -159,6 +178,12 @@ function GroupReview({ groups, lists, saved, organize }: GroupReviewProps) {
           />
         ))}
       </ul>
+      <HideOnPortfolioCheckbox
+        what="the new albums"
+        checked={hidden}
+        disabled={busy}
+        onChange={setHidden}
+      />
       <SaveReviewed
         noun="albums"
         apply={apply}
@@ -170,6 +195,12 @@ function GroupReview({ groups, lists, saved, organize }: GroupReviewProps) {
       />
     </div>
   );
+}
+
+/** Whether a suggested album starts unticked: a split-off group of one photo, or the left-over photos. */
+function startsUnticked(group: SuggestedGroup): boolean {
+  if (group.source === "all") return false;
+  return group.photos.length < 2 || group.source === "none";
 }
 
 interface GroupRowProps {
