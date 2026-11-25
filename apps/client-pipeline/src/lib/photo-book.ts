@@ -317,3 +317,14 @@ export function photosOnPages(book: PhotoBook, tag?: string | null): Set<string>
   const pages = tag ? book.pages.filter((page) => page.tags?.includes(tag)) : book.pages;
   return new Set(pages.flatMap((page) => page.slots.map((s) => s.photo)).filter(Boolean));
 }
+
+/** The IDs of the pages with the photo at path, in their order on Photo Pages. */
+export function pagesWithPhoto(book: PhotoBook, path: string): string[] {
+  return book.pages.filter((page) => page.slots.some((s) => s.photo === path)).map((p) => p.id);
+}
+
+/** The ID after last among ids, going back to the first after the end or when last isn't there. */
+export function nextId(ids: string[], last: string | undefined): string | undefined {
+  const at = last === undefined ? -1 : ids.indexOf(last);
+  return ids[(at + 1) % ids.length];
+}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { CombinedData } from "@/api/photos";
 import type { SocialPhoto } from "@/api/publish";
 import { AddPageButton } from "@/components/photo-book/add-page-button";
@@ -22,6 +22,8 @@ import {
   type PhotoBook,
   firstEmptySlot,
   photosOnPages,
+  pagesWithPhoto,
+  nextId,
   isOtherPage,
   placePhoto,
   removePhoto,
@@ -76,6 +78,7 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
   const albumPhotos = useAlbumPhotos(data, photos, book.album);
   const inBook = useMemo(() => photosInBook(book), [book]);
   const fade = useFadeTag(book);
+  const jump = useJumpToPhoto(book);
   const pick = (photo: SocialPhoto) => {
     const place = firstEmptySlot(book);
     if (place) update(placePhoto(book, place, photo.path));
@@ -96,6 +99,7 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
           photos={albumPhotos}
           used={inBook}
           dimmed={photosOnPages(book, fade.tag)}
+          onJump={jump}
           fadeBy={<FadeByTag {...fade} />}
           onPick={pick}
           onClose={drawer}
@@ -309,4 +313,29 @@ function UnitTagsControl({ unit, book, update }: Pick<PhotoUnitProps, "unit" | "
       />
     </span>
   );
+}
+
+/** The page with ID id as drawn on Photo Pages, not a small preview of it; null when it isn't drawn. */
+function drawnPage(id: string): HTMLElement | null {
+  const pages = document.querySelectorAll<HTMLElement>(`[data-page-id="${CSS.escape(id)}"]`);
+  return [...pages].find((page) => !page.closest("[data-preview]")) ?? null;
+}
+
+/**
+ * Goes to the next page drawn on Photo Pages with a photo, scrolling to it and flashing its
+ * outline, and on the next call for the same photo to the one after, back to the first at the end.
+ */
+function useJumpToPhoto(book: PhotoBook) {
+  const last = useRef(new Map<string, string>());
+  return (photo: SocialPhoto) => {
+    const ids = pagesWithPhoto(book, photo.path).filter((id) => drawnPage(id));
+    const id = nextId(ids, last.current.get(photo.path));
+    const page = id === undefined ? null : drawnPage(id);
+    if (!id || !page) return;
+    last.current.set(photo.path, id);
+    page.scrollIntoView({ behavior: "smooth", block: "center" });
+    page.animate([{ outline: "3px solid rgb(245 158 11)" }, { outline: "3px solid transparent" }], {
+      duration: 1500,
+    });
+  };
 }
