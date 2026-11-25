@@ -3,7 +3,7 @@ import type { PageLook } from "@/components/photo-book/page-actions";
 import { pageName } from "@/components/photo-book/page-types";
 import { UnitSheets, sheetsAspect } from "@/components/photo-book/unit-sheets";
 import { Button } from "@/components/ui/button";
-import type { BookView } from "@/lib/photo-book-order";
+import { type BookView, isInsideCover } from "@/lib/photo-book-order";
 import { EmptyNote } from "@portfolio/components/empty-note";
 
 interface BookPreviewProps {
@@ -12,14 +12,14 @@ interface BookPreviewProps {
   at: number;
   onAt: (at: number) => void;
   look: PageLook;
-  /** Each page's number in the book, by its ID. */
-  numbers: Map<string, number>;
+  /** How many pages the printed book has, blank placeholders too. */
+  total: number;
   previewMode: boolean;
   onPreviewMode: (on: boolean) => void;
 }
 
 /**
- * The book's preview: the page or spread shown, in the book's shape, as large as fits, with
+ * The book's preview: the two facing pages shown, in the book's shape, as large as fits, with
  * controls under it to page through the book and to turn Preview Mode on or off.
  */
 export function BookPreview(props: BookPreviewProps) {
@@ -45,16 +45,21 @@ export function BookPreview(props: BookPreviewProps) {
   );
 }
 
-/** "Pages 3–4 of 12 · Spotlight + Chapter one". */
-function viewText(view: BookView, numbers: Map<string, number>, total: number): string {
-  const ns = view.pages.flatMap((page) => numbers.get(page.id) ?? []);
-  const pages = ns.length > 1 ? `Pages ${ns[0]}–${ns.at(-1)}` : `Page ${ns[0]}`;
-  return `${pages} of ${total} · ${view.pages.map(pageName).join(" + ")}`;
+/**
+ * "Pages 2–3 of 12 · Spotlight + Blank page": view at shows pages 2 × at and the one after, page 1
+ * facing the inside front cover and the last page the inside back cover.
+ */
+function viewText(view: BookView, at: number, total: number): string {
+  const first = Math.max(1, 2 * at);
+  const last = Math.min(total, 2 * at + 1);
+  const pages = first === last ? `Page ${first}` : `Pages ${first}–${last}`;
+  const names = view.pages.filter((page) => !isInsideCover(page)).map(pageName);
+  return `${pages} of ${total} · ${names.join(" + ")}`;
 }
 
 /** Previous and Next, where the preview is in the book, and Preview Mode. */
 function PreviewControls(props: BookPreviewProps & { view: BookView }) {
-  const { views, at, onAt, numbers, previewMode, onPreviewMode, view } = props;
+  const { views, at, onAt, total, previewMode, onPreviewMode, view } = props;
   const ModeIcon = previewMode ? MinimizeIcon : MaximizeIcon;
   return (
     <div className="flex w-full flex-wrap items-center justify-center gap-2">
@@ -68,7 +73,7 @@ function PreviewControls(props: BookPreviewProps & { view: BookView }) {
         <ChevronLeftIcon />
       </Button>
       <span className="text-muted-foreground min-w-0 text-center text-sm">
-        {viewText(view, numbers, numbers.size)}
+        {viewText(view, at, total)}
       </span>
       <Button
         size="sm"

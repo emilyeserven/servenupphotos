@@ -4,7 +4,10 @@ import type { PhotoBook } from "@/lib/photo-book";
 import { budgetMeterParts, budgetStatus, budgetText, readBudget } from "@/lib/photo-book-budget";
 import { addOtherPage, addPage, addToBook, setLinkNext } from "@/lib/photo-book-order";
 
-/** A book with a spread and a page in it, a page out of it, and an other page in it: 4 placed. */
+/**
+ * A book with a spread and a page in it, a page out of it, and an other page in it: 6 printed
+ * pages, with a blank one before the spread (so it starts on a left page) and one at the end.
+ */
 const book = (budget?: PhotoBook["budget"]): PhotoBook => {
   let b: PhotoBook = { id: "b", name: "B", template: "", pages: [], budget };
   for (let i = 0; i < 4; i++) b = addPage(b, "full");
@@ -14,18 +17,18 @@ const book = (budget?: PhotoBook["budget"]): PhotoBook => {
   return addToBook(b, b.pages.at(-1)!.id);
 };
 
-test("the pages placed count a spread as two and other pages, against the target and max", () => {
+test("the printed pages count a spread as two, other pages and blank placeholders, against the target and max", () => {
   assert.equal(budgetStatus(book()), null);
   assert.equal(budgetStatus(book({})), null);
-  assert.deepEqual(budgetStatus(book({ target: 6, max: 8 })), {
-    placed: 4,
-    target: 6,
-    max: 8,
+  assert.deepEqual(budgetStatus(book({ target: 8, max: 10 })), {
+    placed: 6,
+    target: 8,
+    max: 10,
     state: "under",
   });
-  assert.equal(budgetStatus(book({ target: 4 }))?.state, "reached");
-  assert.equal(budgetStatus(book({ max: 4 }))?.state, "under");
-  assert.equal(budgetStatus(book({ target: 2, max: 3 }))?.state, "over-max");
+  assert.equal(budgetStatus(book({ target: 6 }))?.state, "reached");
+  assert.equal(budgetStatus(book({ max: 6 }))?.state, "under");
+  assert.equal(budgetStatus(book({ target: 2, max: 5 }))?.state, "over-max");
 });
 
 test("the Info tab's boxes become a budget, leaving out empty ones and refusing bad ones", () => {

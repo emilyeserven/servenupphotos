@@ -1,12 +1,12 @@
 import type { PageBudget, PhotoBook } from "@/lib/photo-book";
-import { bookPages } from "@/lib/photo-book-order";
+import { printedPages, unitsInBook } from "@/lib/photo-book-order";
 
 /** The most pages a book can have, which a page budget can't go past (the backend's limit too). */
 export const MAX_BUDGET_PAGES = 500;
 
 /** How the pages placed in the book stand against its page budget. */
 export interface BudgetStatus {
-  /** The pages placed in the book, a spread counting as two and other pages too. */
+  /** The printed book's pages: a spread counts as two, and other pages and blank placeholders count too. */
   placed: number;
   /** The target, or null when none is set. */
   target: number | null;
@@ -26,7 +26,7 @@ export function budgetStatus(book: PhotoBook): BudgetStatus | null {
   const target = budgetNumber(book.budget?.target);
   const max = budgetNumber(book.budget?.max);
   if (target === null && max === null) return null;
-  const placed = bookPages(book).length;
+  const placed = printedPages(unitsInBook(book)).length;
   const state =
     max !== null && placed > max
       ? "over-max"

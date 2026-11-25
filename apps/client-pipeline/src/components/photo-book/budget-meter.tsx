@@ -28,7 +28,7 @@ export function BudgetMeter({ book }: { book: PhotoBook }) {
   return (
     <section aria-label="Page budget" className="flex flex-col gap-1.5 text-xs">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="text-sm font-medium">{count(status.placed, "page")} placed</span>
+        <span className="text-sm font-medium">{count(status.placed, "page")} in the book</span>
         {parts.gaps.map((gap) => (
           <span key={gap} className="text-muted-foreground">
             {gap}
