@@ -1,42 +1,81 @@
 import { BookPage } from "@/components/photo-book/book-page";
-import { NO_ACTIONS, type PageLook } from "@/components/photo-book/page-actions";
-import type { BookPage as Page } from "@/lib/photo-book";
+import { NO_ACTIONS, type PageLook, pageActions } from "@/components/photo-book/page-actions";
+import type { PageActions } from "@/components/photo-book/page-types";
+import type { BookPage as Page, PageSide, PhotoBook } from "@/lib/photo-book";
 import { isInsideCover, isPlaceholder } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
 
 /** No photo is marked as on another page in a preview. */
 const NOT_REPEATED = new Map<string, number[]>();
 
+/** The book and its update, to let photos be dragged between the pages shown. */
+interface SheetsEditing {
+  book: PhotoBook;
+  update: (book: PhotoBook) => void;
+}
+
 /**
- * Pages side by side as the book shows them, left first, only to look at: a page, a spread, or two
- * facing pages. Fills its width, keeping the pages' shape.
+ * Pages side by side as the book shows them, left first: a page, a spread, or two facing pages.
+ * Fills its width, keeping the pages' shape. They're only to look at, unless editing is given:
+ * then a photo can be dragged to another place on them, moving or swapping it, and nothing else
+ * can be changed (titles, captions and the buttons on photos don't respond).
  */
-export function UnitSheets(props: { pages: Page[]; look: PageLook; className?: string }) {
-  const { pages, look, className } = props;
+export function UnitSheets(props: {
+  pages: Page[];
+  look: PageLook;
+  className?: string;
+  editing?: SheetsEditing;
+}) {
+  const { pages, look, className, editing } = props;
   return (
     <div
-      inert
+      inert={!editing}
       data-preview
-      className={cn("grid", className)}
+      className={cn(
+        "grid",
+        editing &&
+          "[&_button]:pointer-events-none [&_input]:pointer-events-none [&_textarea]:pointer-events-none",
+        className,
+      )}
       style={{ gridTemplateColumns: `repeat(${pages.length}, minmax(0, 1fr))` }}
     >
-      {pages.map((page, i) =>
-        isPlaceholder(page) ? (
-          <PlaceholderSheet key={page.id} page={page} aspect={look.aspect} />
-        ) : (
-          <BookPage
-            key={page.id}
-            page={page}
-            index={-1}
-            number={null}
-            repeated={NOT_REPEATED}
-            {...look}
-            side={pages.length > 1 ? (i === 0 ? "left" : "right") : undefined}
-            actions={NO_ACTIONS}
-          />
-        ),
-      )}
+      {pages.map((page, i) => (
+        <Sheet
+          key={page.id}
+          page={page}
+          look={look}
+          side={pages.length > 1 ? sideAt(i) : undefined}
+          editing={editing}
+        />
+      ))}
     </div>
+  );
+}
+
+/** The side of the open book the page at place i of two facing pages is on. */
+function sideAt(i: number): PageSide {
+  return i === 0 ? "left" : "right";
+}
+
+/** One page of the sheets: a placeholder, or a book page that only shows, or only takes photos moved. */
+function Sheet(props: {
+  page: Page;
+  look: PageLook;
+  side: PageSide | undefined;
+  editing: SheetsEditing | undefined;
+}) {
+  const { page, look, side, editing } = props;
+  if (isPlaceholder(page)) return <PlaceholderSheet page={page} aspect={look.aspect} />;
+  return (
+    <BookPage
+      page={page}
+      index={editing ? editing.book.pages.indexOf(page) : -1}
+      number={null}
+      repeated={NOT_REPEATED}
+      {...look}
+      side={side}
+      actions={editing ? moveOnly(editing, page) : NO_ACTIONS}
+    />
   );
 }
 
@@ -64,4 +103,10 @@ function PlaceholderSheet({ page, aspect }: { page: Page; aspect: number }) {
       {cover ? page.name : `${page.name} · placeholder`}
     </div>
   );
+}
+
+/** What a page does while editing: only taking a photo dropped on it, moved or swapped from another place. */
+function moveOnly({ book, update }: SheetsEditing, page: Page): PageActions {
+  const index = book.pages.indexOf(page);
+  return { ...NO_ACTIONS, onDropPhoto: pageActions(book, index, update).onDropPhoto };
 }

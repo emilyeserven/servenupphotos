@@ -196,7 +196,7 @@ function FilledSlot(props: {
         variant="secondary"
         aria-label={`Take ${name} off the page`}
         onClick={onRemove}
-        className="absolute top-1 right-1 opacity-0 group-hover/slot:opacity-100 focus-visible:opacity-100"
+        className="absolute top-1 right-1 opacity-0 group-hover/slot:opacity-100 focus-visible:opacity-100 in-data-[preview]:hidden"
       >
         <XIcon />
       </Button>
