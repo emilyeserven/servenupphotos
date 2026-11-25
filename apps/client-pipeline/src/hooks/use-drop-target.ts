@@ -1,10 +1,10 @@
 import { type DragEvent, useState } from "react";
 
 /**
- * Drag handlers that take what's dropped here as the drag's `type` data, and whether something of
- * that type is being dragged over it. Moving onto the target's own children isn't leaving it.
+ * Drag handlers that take what's dropped here as the drag's `type` data, with the drop for its other
+ * data, and whether something of that type is being dragged over it. Moving onto the target's own children isn't leaving it.
  */
-export function useDropTarget(type: string, onDropData: (data: string) => void) {
+export function useDropTarget(type: string, onDropData: (data: string, event: DragEvent) => void) {
   const [over, setOver] = useState(false);
   const handlers = {
     onDragOver: (event: DragEvent) => {
@@ -20,7 +20,7 @@ export function useDropTarget(type: string, onDropData: (data: string) => void) 
       event.preventDefault();
       setOver(false);
       const data = event.dataTransfer.getData(type);
-      if (data !== "") onDropData(data);
+      if (data !== "") onDropData(data, event);
     },
   };
   return { over, handlers };

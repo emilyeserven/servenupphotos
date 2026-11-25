@@ -152,7 +152,7 @@ export const navGroups: readonly NavGroup[] = [
         children: [{ title: "Planned Posts", url: "/instagram-planned", icon: ListChecksIcon }],
       },
       { title: "Captions", url: "/caption-templates", icon: MessageSquareTextIcon },
-      { title: "Photo Book", url: "/photo-book", icon: BookOpenIcon },
+      { title: "Photo Books", url: "/photo-books", icon: BookOpenIcon },
       { title: "Bio", url: "/bio", icon: UserRoundIcon },
       { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
       { title: "Related Photos", url: "/related-photos", icon: GalleryHorizontalIcon },

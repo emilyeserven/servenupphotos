@@ -1,61 +1,18 @@
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { PlusIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
+import { Trash2Icon } from "lucide-react";
 import type { CaptionTemplate } from "@/api/captions";
 import { deletePhotoBookMutation, photoBookId, savePhotoBookMutation } from "@/api/photo-books";
 import { NewEntryForm } from "@/components/new-entry-form";
+import { AlbumSelect } from "@/components/photo-book/album-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { PhotoBook } from "@/lib/photo-book";
+import type { BookAlbum } from "@/lib/photo-book-album";
 import { askFirst } from "@/stores/confirm";
 
 const SELECT =
   "border-input dark:bg-input/30 h-9 min-w-0 rounded-md border bg-transparent px-2 text-sm shadow-xs";
-
-interface BookChooserProps {
-  books: PhotoBook[];
-  chosen: PhotoBook | undefined;
-  onChoose: (id: string | undefined) => void;
-}
-
-/** The book being worked on, chosen from the saved ones, and **New book** to start another. */
-export function BookChooser({ books, chosen, onChoose }: BookChooserProps) {
-  const [naming, setNaming] = useState(books.length === 0);
-  if (naming || !chosen) {
-    return (
-      <NewBookForm
-        books={books}
-        onCancel={books.length > 0 ? () => setNaming(false) : undefined}
-        onMade={(id) => {
-          setNaming(false);
-          onChoose(id);
-        }}
-      />
-    );
-  }
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <select
-        aria-label="Photo book"
-        value={chosen.id}
-        onChange={(event) => onChoose(event.target.value)}
-        className={SELECT}
-      >
-        {books.map((book) => (
-          <option key={book.id} value={book.id}>
-            {book.name}
-          </option>
-        ))}
-      </select>
-      <Button variant="outline" onClick={() => setNaming(true)}>
-        <PlusIcon />
-        New book
-      </Button>
-      <DeleteBookButton book={chosen} onDeleted={() => onChoose(undefined)} />
-    </div>
-  );
-}
 
 interface NewBookFormProps {
   books: PhotoBook[];
@@ -63,15 +20,15 @@ interface NewBookFormProps {
   onMade: (id: string) => void;
 }
 
-/** A name for a new book, saved with no pages to start from. */
-function NewBookForm({ books, onCancel, onMade }: NewBookFormProps) {
+/** A name for a new book, saved with no album or pages to start from. */
+export function NewBookForm({ books, onCancel, onMade }: NewBookFormProps) {
   const save = useMutation(savePhotoBookMutation);
   const make = (name: string) => {
     const id = photoBookId(
       name,
       books.map((b) => b.id),
     );
-    save.mutate({ id, name, template: "", pages: [] }, { onSuccess: () => onMade(id) });
+    save.mutate({ id, name, template: "", album: "", pages: [] }, { onSuccess: () => onMade(id) });
   };
   return (
     <NewEntryForm
@@ -87,7 +44,7 @@ function NewBookForm({ books, onCancel, onMade }: NewBookFormProps) {
 }
 
 /** Removes the book, after asking, as a change waiting for Commit. */
-function DeleteBookButton({ book, onDeleted }: { book: PhotoBook; onDeleted: () => void }) {
+export function DeleteBookButton({ book, onDeleted }: { book: PhotoBook; onDeleted: () => void }) {
   const remove = useMutation(deletePhotoBookMutation);
   return (
     <Button
@@ -109,14 +66,16 @@ function DeleteBookButton({ book, onDeleted }: { book: PhotoBook; onDeleted: () 
 
 interface BookSettingsProps {
   book: PhotoBook;
+  /** The albums the book can take its photos from. */
+  albums: BookAlbum[];
   templates: CaptionTemplate[];
   /** The template the captions are filled in with now. */
   template: CaptionTemplate | undefined;
   onChange: (book: PhotoBook) => void;
 }
 
-/** The book's name and the caption template its captions are filled in with. */
-export function BookSettings({ book, templates, template, onChange }: BookSettingsProps) {
+/** The book's name, the album its photos come from, and the caption template for its captions. */
+export function BookSettings({ book, albums, templates, template, onChange }: BookSettingsProps) {
   return (
     <div className="flex flex-wrap items-end gap-3">
       <label className="flex flex-col gap-1 text-sm">
@@ -125,6 +84,15 @@ export function BookSettings({ book, templates, template, onChange }: BookSettin
           value={book.name}
           onChange={(event) => onChange({ ...book, name: event.target.value })}
           className="w-64"
+        />
+      </label>
+      <label className="flex flex-col gap-1 text-sm">
+        <span className="font-medium">Photos from</span>
+        <AlbumSelect
+          albums={albums}
+          value={book.album}
+          onChange={(album) => onChange({ ...book, album })}
+          className={SELECT}
         />
       </label>
       <label className="flex flex-col gap-1 text-sm">

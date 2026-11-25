@@ -8,6 +8,7 @@ import {
   type OrganizeResponse,
   organizeQuery,
 } from "@/api/organize";
+import { photoBooks } from "@/api/photo-books";
 import { trips } from "@/api/trips";
 import { PART_LABELS } from "@/components/trip-lines/day-page";
 import { NEW_TRIP_ID } from "@/components/trips/trips-panel";
@@ -102,6 +103,14 @@ function tripTitle(id: string, name: string | undefined): string {
   if (id === NEW_TRIP_ID) return "New Trip";
   return name || id;
 }
+
+/** A photo book's breadcrumb: its name, or its ID until the books are read. */
+export const PhotoBookCrumbs: RouteCrumbs = ({ children }) => {
+  const { id } = useParams({ from: "/photo-books/$id" });
+  const combined = useCombinedData();
+  const book = photoBooks(combined.data).find((b) => b.id === id);
+  return children([{ title: book?.name || id }]);
+};
 
 /** A day's breadcrumbs on Trip Lines: the day, linking to its first page, then the page open. */
 export const TripDayCrumbs: RouteCrumbs = ({ children }) => {
