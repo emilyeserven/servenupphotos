@@ -58,6 +58,7 @@ import { Route as LightroomAlbumsIndexRouteImport } from './routes/lightroom-alb
 import { Route as LightroomAlbumsImportRouteImport } from './routes/lightroom-albums.import'
 import { Route as PhotoBooksIndexRouteImport } from './routes/photo-books.index'
 import { Route as PhotoBooksIdRouteImport } from './routes/photo-books.$id'
+import { Route as PhotoBooksImportRouteImport } from './routes/photo-books.import'
 import { Route as SettingsStatusRouteImport } from './routes/settings_.status'
 import { Route as TagDataIndexRouteImport } from './routes/tag-data.index'
 import { Route as TagDataSectionRouteImport } from './routes/tag-data.$section'
@@ -319,6 +320,11 @@ const PhotoBooksIdRoute = PhotoBooksIdRouteImport.update({
   path: '/photo-books/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PhotoBooksImportRoute = PhotoBooksImportRouteImport.update({
+  id: '/photo-books/import',
+  path: '/photo-books/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsStatusRoute = SettingsStatusRouteImport.update({
   id: '/settings_/status',
   path: '/settings/status',
@@ -441,6 +447,7 @@ export interface FileRoutesByFullPath {
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/photo-books/$id': typeof PhotoBooksIdRoute
+  '/photo-books/import': typeof PhotoBooksImportRoute
   '/settings/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
   '/tag-tools/$section': typeof TagToolsSectionRoute
@@ -505,6 +512,7 @@ export interface FileRoutesByTo {
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/photo-books/$id': typeof PhotoBooksIdRoute
+  '/photo-books/import': typeof PhotoBooksImportRoute
   '/settings/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
   '/tag-tools/$section': typeof TagToolsSectionRoute
@@ -572,6 +580,7 @@ export interface FileRoutesById {
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/photo-books/$id': typeof PhotoBooksIdRoute
+  '/photo-books/import': typeof PhotoBooksImportRoute
   '/settings_/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
   '/tag-tools/$section': typeof TagToolsSectionRoute
@@ -640,6 +649,7 @@ export interface FileRouteTypes {
     | '/genres/$id'
     | '/lightroom-albums/import'
     | '/photo-books/$id'
+    | '/photo-books/import'
     | '/settings/status'
     | '/tag-data/$section'
     | '/tag-tools/$section'
@@ -704,6 +714,7 @@ export interface FileRouteTypes {
     | '/genres/$id'
     | '/lightroom-albums/import'
     | '/photo-books/$id'
+    | '/photo-books/import'
     | '/settings/status'
     | '/tag-data/$section'
     | '/tag-tools/$section'
@@ -770,6 +781,7 @@ export interface FileRouteTypes {
     | '/genres/$id'
     | '/lightroom-albums/import'
     | '/photo-books/$id'
+    | '/photo-books/import'
     | '/settings_/status'
     | '/tag-data/$section'
     | '/tag-tools/$section'
@@ -837,6 +849,7 @@ export interface RootRouteChildren {
   GenresIdRoute: typeof GenresIdRoute
   LightroomAlbumsImportRoute: typeof LightroomAlbumsImportRoute
   PhotoBooksIdRoute: typeof PhotoBooksIdRoute
+  PhotoBooksImportRoute: typeof PhotoBooksImportRoute
   SettingsStatusRoute: typeof SettingsStatusRoute
   TagDataSectionRoute: typeof TagDataSectionRoute
   TagToolsSectionRoute: typeof TagToolsSectionRoute
@@ -1198,6 +1211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PhotoBooksIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/photo-books/import': {
+      id: '/photo-books/import'
+      path: '/photo-books/import'
+      fullPath: '/photo-books/import'
+      preLoaderRoute: typeof PhotoBooksImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings_/status': {
       id: '/settings_/status'
       path: '/settings/status'
@@ -1382,6 +1402,7 @@ const rootRouteChildren: RootRouteChildren = {
   GenresIdRoute: GenresIdRoute,
   LightroomAlbumsImportRoute: LightroomAlbumsImportRoute,
   PhotoBooksIdRoute: PhotoBooksIdRoute,
+  PhotoBooksImportRoute: PhotoBooksImportRoute,
   SettingsStatusRoute: SettingsStatusRoute,
   TagDataSectionRoute: TagDataSectionRoute,
   TagToolsSectionRoute: TagToolsSectionRoute,
