@@ -77,6 +77,8 @@ export function BookTab({ book, update, look }: BookTabProps) {
             total={printedPages(used).length}
             previewMode={preview.on}
             onPreviewMode={turnPreview}
+            book={book}
+            update={update}
           />
           <LowResolutionList
             book={book}

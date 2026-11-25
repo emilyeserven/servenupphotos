@@ -1,4 +1,4 @@
-import { PanelRightCloseIcon, PanelRightOpenIcon, XIcon } from "lucide-react";
+import { EyeIcon, PanelRightCloseIcon, PanelRightOpenIcon, XIcon } from "lucide-react";
 import { MoveArrows } from "@/components/move-arrows";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { unitName } from "@/components/photo-book/page-types";
@@ -99,7 +99,10 @@ function numbersText(unit: BookUnit, numbers: Map<string, number>): string {
   return ns.length > 1 ? `Pages ${ns[0]}–${ns.at(-1)}` : `Page ${ns[0]}`;
 }
 
-/** One page or spread in Used page spreads. */
+/**
+ * One page or spread in Used page spreads. Clicking its preview, or the eye button that shows on
+ * hover, shows it in the book's preview.
+ */
 function UsedUnit(props: UsedPanelProps & { unit: BookUnit; place: number }) {
   const { unit, place, units, shown, look, numbers, onShow, onPlace, onMove, onTakeOut } = props;
   const drop = useDropTarget(BOOK_UNIT_DRAG_TYPE, (id) => {
@@ -112,7 +115,7 @@ function UsedUnit(props: UsedPanelProps & { unit: BookUnit; place: number }) {
       draggable
       onDragStart={(event) => dragUnit(event, unit.id)}
       className={cn(
-        "bg-card flex cursor-grab flex-col gap-1 rounded-md border p-1.5",
+        "group/used bg-card relative flex cursor-grab flex-col gap-1 rounded-md border p-1.5",
         shown.includes(unit.id) && "ring-primary ring-2",
         drop.over && "border-t-primary border-t-4",
       )}
@@ -125,6 +128,16 @@ function UsedUnit(props: UsedPanelProps & { unit: BookUnit; place: number }) {
       >
         <UnitSheets pages={unit.pages} look={look} />
       </button>
+      <Button
+        size="icon-xs"
+        variant="secondary"
+        aria-label={`Show ${name} in the preview`}
+        title="Show in the preview"
+        onClick={() => onShow(unit.id)}
+        className="absolute top-2.5 right-2.5 opacity-0 shadow group-hover/used:opacity-100 focus-visible:opacity-100"
+      >
+        <EyeIcon />
+      </Button>
       <div className="flex items-center gap-0.5 text-xs">
         <span className="min-w-0 flex-1 truncate" title={name}>
           <span className="text-muted-foreground">{numbersText(unit, numbers)} · </span>

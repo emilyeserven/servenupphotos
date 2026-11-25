@@ -1,10 +1,17 @@
-import { ChevronLeftIcon, ChevronRightIcon, MaximizeIcon, MinimizeIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MaximizeIcon,
+  MinimizeIcon,
+  MoveIcon,
+} from "lucide-react";
+import { type ReactNode, useState } from "react";
 import { createPortal } from "react-dom";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { pageName } from "@/components/photo-book/page-types";
 import { UnitSheets, sheetsAspect } from "@/components/photo-book/unit-sheets";
 import { Button } from "@/components/ui/button";
+import type { PhotoBook } from "@/lib/photo-book";
 import { type BookView, isInsideCover } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
 import { EmptyNote } from "@portfolio/components/empty-note";
@@ -19,15 +26,21 @@ interface BookPreviewProps {
   total: number;
   previewMode: boolean;
   onPreviewMode: (on: boolean) => void;
+  /** The book and the function that changes it, for Edit mode's moving photos between pages. */
+  book: PhotoBook;
+  update: (book: PhotoBook) => void;
 }
 
 /**
  * The book's preview: the two facing pages shown, in the book's shape, as large as fits, with
- * controls under it to page through the book and to turn Preview Mode on or off. In Preview Mode
+ * controls under it to page through the book and to turn Edit mode and Preview Mode on or off.
+ * In Edit mode, photos can be dragged from one place to another on the pages shown, moving or
+ * swapping them; nothing else on the pages changes there. In Preview Mode
  * it covers the whole window, with nothing around it, so the pages are as large as they can be.
  */
 export function BookPreview(props: BookPreviewProps) {
-  const { views, at, look, previewMode } = props;
+  const { views, at, look, previewMode, book, update } = props;
+  const [editMode, setEditMode] = useState(false);
   const view = views[at];
   if (!view) {
     return (
@@ -39,8 +52,13 @@ export function BookPreview(props: BookPreviewProps) {
   }
   return (
     <PreviewFrame previewMode={previewMode} ratio={sheetsAspect(view.pages, look)}>
-      <UnitSheets pages={view.pages} look={look} className="gap-px" />
-      <PreviewControls {...props} view={view} />
+      <UnitSheets
+        pages={view.pages}
+        look={look}
+        editing={editMode ? { book, update } : undefined}
+        className="gap-px"
+      />
+      <PreviewControls {...props} view={view} editMode={editMode} onEditMode={setEditMode} />
     </PreviewFrame>
   );
 }
@@ -85,9 +103,14 @@ function viewText(view: BookView, at: number, total: number): string {
  * its right, so they stay put while paging; between them where the preview is in the book, and
  * Preview Mode.
  */
-function PreviewControls(props: BookPreviewProps & { view: BookView }) {
-  const { views, at, onAt, total, previewMode, onPreviewMode, view } = props;
-  const ModeIcon = previewMode ? MinimizeIcon : MaximizeIcon;
+function PreviewControls(
+  props: BookPreviewProps & {
+    view: BookView;
+    editMode: boolean;
+    onEditMode: (on: boolean) => void;
+  },
+) {
+  const { views, at, onAt, total, view } = props;
   return (
     <div className="flex w-full items-center gap-2">
       <Button
@@ -102,14 +125,7 @@ function PreviewControls(props: BookPreviewProps & { view: BookView }) {
       <span className="text-muted-foreground min-w-0 flex-1 truncate text-center text-sm">
         {viewText(view, at, total)}
       </span>
-      <Button
-        size="sm"
-        variant={previewMode ? "secondary" : "outline"}
-        onClick={() => onPreviewMode(!previewMode)}
-      >
-        <ModeIcon />
-        {previewMode ? "Leave Preview Mode" : "Preview Mode"}
-      </Button>
+      <ModeButtons {...props} />
       <Button
         size="sm"
         variant="outline"
@@ -120,5 +136,47 @@ function PreviewControls(props: BookPreviewProps & { view: BookView }) {
         <ChevronRightIcon />
       </Button>
     </div>
+  );
+}
+
+/** **Edit mode** (Done editing while on) and **Preview Mode** (Leave Preview Mode while on). */
+function ModeButtons(props: {
+  editMode: boolean;
+  onEditMode: (on: boolean) => void;
+  previewMode: boolean;
+  onPreviewMode: (on: boolean) => void;
+}) {
+  return (
+    <>
+      <EditModeButton on={props.editMode} onChange={props.onEditMode} />
+      <PreviewModeButton on={props.previewMode} onChange={props.onPreviewMode} />
+    </>
+  );
+}
+
+/** Turns Edit mode on, or off as Done editing. */
+function EditModeButton({ on, onChange }: { on: boolean; onChange: (on: boolean) => void }) {
+  return (
+    <Button
+      size="sm"
+      variant={on ? "secondary" : "outline"}
+      aria-pressed={on}
+      title="Drag photos between the pages shown to move or swap them"
+      onClick={() => onChange(!on)}
+    >
+      <MoveIcon />
+      {on ? "Done editing" : "Edit mode"}
+    </Button>
+  );
+}
+
+/** Turns Preview Mode on, or off as Leave Preview Mode. */
+function PreviewModeButton({ on, onChange }: { on: boolean; onChange: (on: boolean) => void }) {
+  const Icon = on ? MinimizeIcon : MaximizeIcon;
+  return (
+    <Button size="sm" variant={on ? "secondary" : "outline"} onClick={() => onChange(!on)}>
+      <Icon />
+      {on ? "Leave Preview Mode" : "Preview Mode"}
+    </Button>
   );
 }
