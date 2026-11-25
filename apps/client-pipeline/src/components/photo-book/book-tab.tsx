@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SavePdfButton } from "@/components/photo-book/book-pdf";
 import { BookPreview } from "@/components/photo-book/book-preview";
 import { BudgetMeter } from "@/components/photo-book/budget-meter";
 import { LowResolutionList } from "@/components/photo-book/low-resolution-list";
@@ -68,7 +69,12 @@ export function BookTab({ book, update, look }: BookTabProps) {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <div className="flex min-w-0 flex-1 flex-col gap-3">
-          <BudgetMeter book={book} />
+          <div className="flex flex-wrap items-start gap-3">
+            <div className="min-w-0 flex-1">
+              <BudgetMeter book={book} />
+            </div>
+            <SavePdfButton book={book} look={look} used={used} />
+          </div>
           <BookPreview
             views={views}
             at={at}
