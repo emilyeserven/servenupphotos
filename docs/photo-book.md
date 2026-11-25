@@ -6,12 +6,13 @@
 
 **Photo Books** lists every book as a card, with the album its photos come from, how many pages are in the book (and how many more could be used), and how many photos are on them; each card opens the book's own page, as the Trips do. **New book** names and makes another (its ID is made from the name, as caption templates' are) and opens it. An old `/photo-book` link opens the list, or the book its `?book=<id>` names.
 
-On a book's page, **All photo books** goes back to the list. Under it, three tabs, each a page of its own with a line under the tabs saying what it's for:
+On a book's page, **All photo books** goes back to the list. Under it, five tabs, each a page of its own with a line under the tabs saying what it's for:
 
 - **Info** (`/photo-books/<id>/info`): the book's name, album, caption template, page size and page budget.
 - **Layouts** (`/photo-books/<id>/layouts`): trying out page layouts at the book's page size.
 - **Photo Pages** (`/photo-books/<id>/pages`, where the book opens): making photo pages that could be used, and linking them into spreads.
 - **Book** (`/photo-books/<id>/book`): putting the pages that will be used in order, adding other pages, and paging through the book.
+- **List** (`/photo-books/<id>/list`): every photo in the book in printed order, to jump to editing one.
 
 ## Info
 
@@ -122,6 +123,10 @@ Other pages are pages without photos: one the publisher requires, a bio page, or
 **Save as PDF**, above the preview, draws every page of the book in its order, each on its own sheet of paper the book's page size from **Info**, and opens the browser's print dialog; pick **Save as PDF** there to make the file. Page 1 is a right page and they alternate from there, so a custom layout's left and right looks print as they show in the preview. Blank pages print blank, and the inside covers are left out, since they aren't pages of the book. Photos are loaded at about three times the size they're drawn, close to 300 dpi on paper (as large as the photo's biggest version allows), and the dialog waits for them, up to 30 seconds. Nothing that's only for editing is printed: no "Drop a photo here", dashed outlines, empty caption or title placeholders, or dpi marks.
 
 > **Frontend analogy:** it's `window.print()` on a portal of the pages, with `@page { size: 12.5in 10.625in; margin: 0 }`, `break-after: page` on each page and a print media query that hides the rest of the app. A React context tells each photo it's printing, so its `<img>` loads eagerly with a larger `sizes`.
+
+## List
+
+The **List** tab lists the book's pages in the order they're printed, as **Book** puts them, each headed by its page number, name and layout ("Page 4 · Spotlight left Two photos on the left"). A blank page the Book tab adds is left out, but its number is skipped, so the numbers match the printed book. Under each photo page, its photos in its layout's order: the place's number, the photo's Square Thumbnail, its name and its caption's first line, and **Edit info**, which opens the photo's editor (`/exif?edit=<path>`) to fix its title, Place or anything else its caption shows. An empty place says so; an other page says it has no photos. Above the pages, how many photos are on how many pages.
 
 ## The photo drawer
 
