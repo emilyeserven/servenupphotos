@@ -5,6 +5,7 @@ import { type OrganizeResponse, savedGroups } from "@/api/organize";
 import type { ViewerLikes } from "@/api/viewer-likes";
 import { PickedThumbnail } from "@/components/bulk-tagging/picked-photos";
 import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/review-parts";
+import { HideOnPortfolioCheckbox } from "@/components/hide-on-portfolio-checkbox";
 import { Segmented } from "@/components/lightroom-albums/segmented";
 import type { SavedPhoto } from "@/components/saved-photo-picker";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -129,6 +130,8 @@ function GroupReview({ groups, lists, saved, organize }: GroupReviewProps) {
       new Set(groups.filter((g) => g.photos.length < 2 || g.source === "none").map((g) => g.key)),
   );
   const [removed, setRemoved] = useState<ReadonlySet<string>>(new Set());
+  // Albums of other people's likes are usually working albums, not ones for the website.
+  const [hidden, setHidden] = useState(true);
   const apply = useReviewedSave(applyAlbumSuggestionsMutation);
   const busy = apply.isPending || apply.isSuccess;
   const nameOf = (group: SuggestedGroup) => names[group.key] ?? group.name;
@@ -139,7 +142,10 @@ function GroupReview({ groups, lists, saved, organize }: GroupReviewProps) {
       photos: group.photos.filter((id) => !removed.has(`${group.key}|${id}`)),
     }));
   const paths = new Map([...saved].map(([id, photo]) => [id, photo.path]));
-  const save = sharedAlbumsToSave(reviewed, paths, organize.albums, likedBy(lists));
+  const save = sharedAlbumsToSave(reviewed, paths, organize.albums, {
+    description: likedBy(lists),
+    hidden,
+  });
   return (
     <div className="flex flex-col gap-4">
       <ul className="flex flex-col gap-3">
@@ -159,6 +165,12 @@ function GroupReview({ groups, lists, saved, organize }: GroupReviewProps) {
           />
         ))}
       </ul>
+      <HideOnPortfolioCheckbox
+        what="the new albums"
+        checked={hidden}
+        disabled={busy}
+        onChange={setHidden}
+      />
       <SaveReviewed
         noun="albums"
         apply={apply}

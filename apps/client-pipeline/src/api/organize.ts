@@ -118,6 +118,8 @@ interface NewGroup {
   description: string;
   /** An album's parent album's ID, a tag's parent tag's ID, or a subgenre's genre's ID. */
   parent?: string;
+  /** True for a new album that starts hidden on the portfolio. Only albums can be hidden. */
+  hidden?: boolean;
 }
 
 /** Saves a new album, tag or genre as JSON, as a change waiting for Commit. */

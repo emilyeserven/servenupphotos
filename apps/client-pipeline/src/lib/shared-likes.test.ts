@@ -103,11 +103,16 @@ test("the save makes new albums and puts each photo file in its albums", () => {
     ],
     paths,
     [{ id: "kyoto", name: "Kyoto" }],
-    "Liked by Jane and Sam.",
+    { description: "Liked by Jane and Sam.", hidden: true },
   );
   assert.deepEqual(save, {
     newAlbums: [
-      { id: "our-favorites", name: "Our Favorites", description: "Liked by Jane and Sam." },
+      {
+        id: "our-favorites",
+        name: "Our Favorites",
+        description: "Liked by Jane and Sam.",
+        hidden: true,
+      },
     ],
     photos: [
       { path: "photos/a.json", albums: ["kyoto", "our-favorites"] },
