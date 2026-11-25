@@ -1,5 +1,5 @@
 import { PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { LayoutGlyph } from "@/components/photo-book/layout-glyph";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -18,16 +18,20 @@ export function AddPageButton(props: {
    * new page isn't undone by the page scrolling back to the button.
    */
   keepScroll?: boolean;
+  /** The button that opens the flyout, a Button; **Add page** when left out. */
+  trigger?: ReactNode;
 }) {
-  const { layouts, onAdd, keepScroll } = props;
+  const { layouts, onAdd, keepScroll, trigger } = props;
   const [open, setOpen] = useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline">
-          <PlusIcon />
-          Add page
-        </Button>
+        {trigger ?? (
+          <Button variant="outline">
+            <PlusIcon />
+            Add page
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent
         align="start"
