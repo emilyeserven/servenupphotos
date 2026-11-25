@@ -11,16 +11,16 @@ func TestSavePhotoBook(t *testing.T) {
 	_, c := newMainRepo(t, map[string]string{})
 	title := "  Seoul "
 	book := PhotoBook{ID: "korea", Name: " Korea ", Album: " korea-2026 ", Pages: []PhotoBookPage{
-		{ID: "p1", Layout: "full", Title: &title, Slots: []PhotoBookSlot{{Photo: "a.json"}, {Photo: "extra.json"}}},
+		{ID: "p1", Name: " By place ", LinkNext: true, Layout: "full", Title: &title, Slots: []PhotoBookSlot{{Photo: "a.json"}, {Photo: "extra.json"}}},
 		{ID: "p2", Layout: "verticals-left"},
-	}, Order: &[]string{"p2", "gone", "p2", "p1"}}
+	}, Order: &[]string{"p2", "gone", "p2", "p1"}, Size: &PhotoBookSize{Width: 12.5, Height: 10.625, Unit: "in"}}
 	if _, err := c.SavePhotoBook(t.Context(), placesGH, book); err != nil {
 		t.Fatalf("SavePhotoBook() error = %v", err)
 	}
 	saved := staged(t, c, dataRoot+"/photobooks/korea.json")
 	// The name, album and title are trimmed, the full page keeps one slot, and the
 	// pair gets its two empty ones.
-	for _, want := range []string{`"name": "Korea"`, `"album": "korea-2026"`, `"title": "Seoul"`, `"photo": "a.json"`, `"order": [
+	for _, want := range []string{`"name": "Korea"`, `"album": "korea-2026"`, `"name": "By place"`, `"linkNext": true`, `"unit": "in"`, `"title": "Seoul"`, `"photo": "a.json"`, `"order": [
     "p2",
     "p1"
   ]`} {
@@ -37,6 +37,8 @@ func TestSavePhotoBook(t *testing.T) {
 	}{
 		{"bad id", PhotoBook{ID: "Korea!", Name: "Korea"}},
 		{"no name", PhotoBook{ID: "korea"}},
+		{"bad unit", PhotoBook{ID: "korea", Name: "Korea", Size: &PhotoBookSize{Width: 1, Height: 1, Unit: "ft"}}},
+		{"no height", PhotoBook{ID: "korea", Name: "Korea", Size: &PhotoBookSize{Width: 1, Unit: "in"}}},
 		{"long album", PhotoBook{ID: "korea", Name: "Korea", Album: strings.Repeat("a", maxEntryTextLength+1)}},
 		{"unknown layout", PhotoBook{ID: "korea", Name: "Korea", Pages: []PhotoBookPage{{ID: "p1", Layout: "triptych"}}}},
 		{"page without id", PhotoBook{ID: "korea", Name: "Korea", Pages: []PhotoBookPage{{Layout: "full"}}}},

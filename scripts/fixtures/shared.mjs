@@ -515,16 +515,20 @@ added.photobooks = [
       name: "Sample book",
       template: "",
       album: bookAlbum,
-      order: ["p1", "p2", "p3"],
+      order: ["o1", "p1", "p2", "o2"],
+      size: { width: 12.5, height: 10.625, unit: "in" },
       pages: [
         {
           id: "p1",
+          name: "Opener",
           layout: "full",
           title: "Chapter one",
           slots: [{ photo: bookPhoto(0), caption: null }],
         },
         {
           id: "p2",
+          name: "Spotlight left",
+          linkNext: true,
           layout: "pair-left",
           title: "Spotlight",
           slots: [
@@ -534,6 +538,7 @@ added.photobooks = [
         },
         {
           id: "p3",
+          name: "Spotlight right",
           layout: "verticals-right",
           title: null,
           slots: [
@@ -543,6 +548,7 @@ added.photobooks = [
         },
         {
           id: "p4",
+          name: "Alternate pair",
           layout: "pair-right",
           title: null,
           slots: [
@@ -550,6 +556,8 @@ added.photobooks = [
             { photo: bookPhoto(4), caption: null },
           ],
         },
+        { id: "o1", name: "Title page", layout: "other", title: null, slots: [] },
+        { id: "o2", name: "About the photographer", layout: "other", title: null, slots: [] },
       ],
     },
   },

@@ -1,17 +1,44 @@
-import { useMemo } from "react";
-import { BookPage } from "@/components/photo-book/book-page";
-import { type PageLook, pageActions } from "@/components/photo-book/page-actions";
-import { OrderControls, SpareControls } from "@/components/photo-book/page-controls";
-import { SectionTitle } from "@/components/section-title";
+import { useState } from "react";
+import { BookPreview } from "@/components/photo-book/book-preview";
+import type { PageLook } from "@/components/photo-book/page-actions";
+import { usePreviewKeys, usePreviewMode } from "@/components/photo-book/preview-mode";
+import { UnitsDrawer } from "@/components/photo-book/units-drawer";
+import { UsedPanel } from "@/components/photo-book/used-panel";
+import type { PhotoBook } from "@/lib/photo-book";
 import {
-  type PhotoBook,
+  type BookUnit,
+  addOtherPage,
   addToBook,
-  bookOrder,
+  addToBookBefore,
+  bookUnits,
+  bookViews,
   moveInBook,
-  repeatedPhotos,
+  pageNumbers,
+  removePage,
   takeOutOfBook,
-} from "@/lib/photo-book";
-import { EmptyNote } from "@portfolio/components/empty-note";
+  unitsInBook,
+  viewOf,
+} from "@/lib/photo-book-order";
+
+/**
+ * What the preview shows and where it is: the views of the units in the book, one at a time or,
+ * in Preview Mode, facing; the one shown; and Preview Mode, which keeps the same pages shown when
+ * it's turned on or off.
+ */
+function useBookPreview(used: BookUnit[]) {
+  const [wanted, setAt] = useState(0);
+  const preview = usePreviewMode();
+  const views = bookViews(used, preview.on);
+  const at = Math.min(wanted, Math.max(0, views.length - 1));
+  const shown = views[at]?.units ?? [];
+  const turnPreview = (on: boolean) => {
+    preview.turn(on);
+    if (shown[0]) setAt(viewOf(bookViews(used, on), shown[0]));
+  };
+  const page = (by: -1 | 1) => setAt(Math.min(Math.max(0, at + by), views.length - 1));
+  usePreviewKeys(preview.on, () => turnPreview(false), page);
+  return { views, at, setAt, shown, preview, turnPreview };
+}
 
 interface BookTabProps {
   book: PhotoBook;
@@ -20,73 +47,67 @@ interface BookTabProps {
 }
 
 /**
- * A book's Book tab: the pages that will be used, numbered in the book's order, two to a row like
- * spreads, with arrows to move each and a button to take it out; then the pages made on the Pages
- * tab that aren't in the book, each with **Add to book**.
+ * A book's Book tab: a preview of the book as large as fits with controls under it, Used page
+ * spreads beside it with the book's pages and spreads in order, and the drawer along the bottom
+ * with every page and spread made for the book to drag in, where other pages are made too.
+ * Preview Mode collapses the app's sidebar, Used page spreads and the drawer, and shows the book
+ * as it opens, two facing pages at a time.
  */
 export function BookTab({ book, update, look }: BookTabProps) {
-  const order = bookOrder(book);
-  const repeated = useMemo(() => repeatedPhotos(book), [book]);
-  const indexOf = new Map(book.pages.map((page, i) => [page.id, i]));
-  const spare = book.pages.filter((page) => !order.includes(page.id));
-  const draw = (id: string, number: number | null, controls: React.ReactNode) => {
-    const index = indexOf.get(id) ?? -1;
-    const page = book.pages[index];
-    if (!page) return null;
-    return (
-      <BookPage
-        key={id}
-        page={page}
-        index={index}
-        number={number}
-        repeated={repeated}
-        {...look}
-        actions={pageActions(book, index, update)}
-        controls={controls}
-      />
-    );
+  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [usedCollapsed, setUsedCollapsed] = useState(false);
+  const used = unitsInBook(book);
+  const { views, at, setAt, shown, preview, turnPreview } = useBookPreview(used);
+  /** Opens or closes a panel, leaving Preview Mode first. */
+  const panel = (set: (open: boolean) => void) => (open: boolean) => {
+    if (preview.on) turnPreview(false);
+    set(open);
   };
   return (
-    <div className="flex flex-col gap-6">
-      {order.length === 0 && (
-        <EmptyNote>
-          No pages in the book yet. Add the pages to use from the ones below, or make some on the
-          Pages tab.
-        </EmptyNote>
-      )}
-      <div className="grid gap-x-1 gap-y-6 lg:grid-cols-2">
-        {order.map((id, i) =>
-          draw(
-            id,
-            i + 1,
-            <OrderControls
-              number={i + 1}
-              last={i === order.length - 1}
-              onMove={(from, to) => update(moveInBook(book, from, to))}
-              onTakeOut={() => update(takeOutOfBook(book, id))}
-            />,
-          ),
-        )}
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+        <div className="min-w-0 flex-1">
+          <BookPreview
+            views={views}
+            at={at}
+            onAt={setAt}
+            look={look}
+            numbers={pageNumbers(book)}
+            previewMode={preview.on}
+            onPreviewMode={turnPreview}
+          />
+        </div>
+        <UsedPanel
+          units={used}
+          shown={shown}
+          look={look}
+          numbers={pageNumbers(book)}
+          onShow={(id) => setAt(viewOf(views, id))}
+          onPlace={(id, before) => update(addToBookBefore(book, id, before))}
+          onMove={(from, to) => update(moveInBook(book, from, to))}
+          onTakeOut={(id) => update(takeOutOfBook(book, id))}
+          collapsed={preview.on || usedCollapsed}
+          onCollapsed={panel(setUsedCollapsed)}
+        />
       </div>
-      {spare.length > 0 && (
-        <section className="flex flex-col gap-3">
-          <SectionTitle as="h2" size="lg">
-            Pages not in the book
-          </SectionTitle>
-          <div className="grid gap-x-3 gap-y-6 sm:grid-cols-2 xl:grid-cols-3">
-            {spare.map((page) =>
-              draw(
-                page.id,
-                null,
-                <SpareControls
-                  index={indexOf.get(page.id) ?? 0}
-                  onAdd={() => update(addToBook(book, page.id))}
-                />,
-              ),
-            )}
-          </div>
-        </section>
-      )}
+      <UnitsDrawer
+        units={bookUnits(book)}
+        inBook={new Set(used.map((unit) => unit.id))}
+        look={look}
+        onAdd={(id) => update(addToBook(book, id))}
+        onTakeOut={(id) => update(takeOutOfBook(book, id))}
+        onAddOther={(name) => update(addOtherPage(book, name))}
+        onRemoveOther={(id) =>
+          update(
+            removePage(
+              book,
+              book.pages.findIndex((p) => p.id === id),
+            ),
+          )
+        }
+        open={drawerOpen && !preview.on}
+        onOpen={panel(setDrawerOpen)}
+      />
     </div>
   );
 }

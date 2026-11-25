@@ -24,6 +24,9 @@ var photoBookLayouts = map[string]int{
 	"verticals-left": 2,
 	// The same, mirrored: the photos on the right, their captions on the left.
 	"verticals-right": 2,
+	// One of the book's other pages, such as one the publisher requires or a
+	// bio page: no photos, only its name for now.
+	"other": 0,
 }
 
 // The most pages a photo book can have, and the most characters of a
@@ -51,14 +54,42 @@ type PhotoBook struct {
 	// newest last.
 	Pages []PhotoBookPage `json:"pages"`
 	// Order is the IDs of the pages that will be used, in the book's order;
-	// nil in a book made before, whose pages are then all in it.
+	// nil in a book made before, whose pages are then all in it. A spread is
+	// listed by its first page.
 	Order *[]string `json:"order,omitempty"`
+	// Size is the printed book's page size, which sets the shape the Photo
+	// Book page draws its pages in; nil for the default, BookWright's large
+	// landscape page.
+	Size *PhotoBookSize `json:"size,omitempty"`
 }
+
+// PhotoBookSize is a book's page size: its width and height in unit.
+type PhotoBookSize struct {
+	// Width is the page's width, more than 0.
+	Width float64 `json:"width"`
+	// Height is the page's height, more than 0.
+	Height float64 `json:"height"`
+	// Unit is "in", "cm", "mm", "pt" or "px".
+	Unit string `json:"unit"`
+}
+
+// The units a book's page size can be in, and the largest number a side
+// can be in any of them.
+var (
+	photoBookUnits      = []string{"in", "cm", "mm", "pt", "px"}
+	maxPhotoBookSideLen = 100000.0
+)
 
 // PhotoBookPage is one page of a photo book.
 type PhotoBookPage struct {
 	// ID tells the page from the others in its book.
 	ID string `json:"id"`
+	// Name is what the page is called on the Photo Book page, such as
+	// "Bicycles, by place"; "" for none.
+	Name string `json:"name,omitempty"`
+	// LinkNext is true when the page and the one after it among the pages
+	// make a two-page spread.
+	LinkNext bool `json:"linkNext,omitempty"`
 	// Layout is "full", "pair-left", "pair-right", "verticals-left" or
 	// "verticals-right".
 	Layout string `json:"layout"`
@@ -121,7 +152,25 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 		out.Pages = append(out.Pages, p)
 	}
 	out.Order = validPhotoBookOrder(b.Order, out.Pages)
-	return out, nil
+	size, perr := validPhotoBookSize(b.Size)
+	out.Size = size
+	return out, perr
+}
+
+// validPhotoBookSize checks a book's page size; nil stays nil.
+func validPhotoBookSize(size *PhotoBookSize) (*PhotoBookSize, *PublishError) {
+	if size == nil {
+		return nil, nil
+	}
+	if !slices.Contains(photoBookUnits, size.Unit) {
+		return nil, publishErr(http.StatusBadRequest, "Give the book's size in in, cm, mm, pt or px.")
+	}
+	for _, side := range []float64{size.Width, size.Height} {
+		if !(side > 0 && side <= maxPhotoBookSideLen) {
+			return nil, publishErr(http.StatusBadRequest, "Give the book's width and height as numbers more than 0.")
+		}
+	}
+	return size, nil
 }
 
 // validPhotoBookOrder returns order without the IDs of pages that aren't
@@ -152,9 +201,12 @@ func validPhotoBookPage(page PhotoBookPage, n int) (PhotoBookPage, *PublishError
 	if !ok {
 		return page, publishErr(http.StatusBadRequest, "Page %d has no layout the Photo Book knows.", n)
 	}
-	out := PhotoBookPage{ID: strings.TrimSpace(page.ID), Layout: page.Layout}
+	out := PhotoBookPage{ID: strings.TrimSpace(page.ID), Name: strings.TrimSpace(page.Name), LinkNext: page.LinkNext, Layout: page.Layout}
 	if out.ID == "" || utf8.RuneCountInString(out.ID) > maxEntryTextLength {
 		return out, publishErr(http.StatusBadRequest, "Page %d needs an ID.", n)
+	}
+	if tooLongEntryText(out.Name) {
+		return out, publishErr(http.StatusBadRequest, "Keep page %d's name to %d characters.", n, maxEntryTextLength)
 	}
 	if page.Title != nil {
 		title := strings.TrimSpace(*page.Title)
