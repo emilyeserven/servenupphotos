@@ -187,6 +187,16 @@ export const added = {
       data: { id: "short", name: "Short", platform: "", template: "{title} · {city}, {country}" },
     },
   ],
+  lensoverrides: [
+    {
+      path: `${FOLDER}/lensoverrides/xf35mmf2-r-wr.json`,
+      data: {
+        id: "xf35mmf2-r-wr",
+        lens: "XF35mmF2 R WR",
+        rules: [{ when: null, set: { lens: "Fujinon XF 35mm F2 R WR" } }],
+      },
+    },
+  ],
   lenses: [
     {
       path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,

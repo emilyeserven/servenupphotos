@@ -3,7 +3,7 @@ import { reapplyMutation, reapplyPreviewQuery } from "@/api/cameras";
 import { FieldChangesCard } from "@/components/field-changes-card";
 import { count } from "@portfolio/lib/words";
 
-/** Applies the camera overrides again to every photo file, after they've changed. */
+/** Applies the camera and lens overrides again to every photo file, after they've changed. */
 export function ReapplyOverridesCard() {
   return (
     <FieldChangesCard
@@ -12,7 +12,7 @@ export function ReapplyOverridesCard() {
         <>
           Applies the{" "}
           <Link to="/camera-overrides" className="text-foreground underline underline-offset-4">
-            camera overrides
+            camera and lens overrides
           </Link>{" "}
           to every photo file again, starting from each photo&apos;s EXIF values: its own, or the
           ones its <code>exifOriginals</code> kept when an override changed them. A field no
@@ -25,7 +25,7 @@ export function ReapplyOverridesCard() {
       renderUnchanged={(preview) => (
         <>
           All {count(preview.photoFiles, "photo file")} on <code>{preview.branch}</code> already
-          have the {count(preview.overrides, "camera override")}, so there&apos;s nothing to change.
+          have the {count(preview.overrides, "override")}, so there&apos;s nothing to change.
         </>
       )}
       total={(preview) => count(preview.photoFiles, "photo file")}

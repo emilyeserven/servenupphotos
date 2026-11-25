@@ -108,6 +108,8 @@ type InFlightResult struct {
 	Localizations InFlightGroups `json:"localizations"`
 	MetaInfo      InFlightGroups `json:"metainfo"`
 	Cameras       InFlightGroups `json:"cameras"`
+	// LensOverrides are the lens override files in the pull request.
+	LensOverrides InFlightGroups `json:"lensoverrides"`
 	Lenses        InFlightGroups `json:"lenses"`
 	Captions      InFlightGroups `json:"captions"`
 	Timeline      InFlightGroups `json:"timeline"`

@@ -1,4 +1,4 @@
-import { type CameraOverride } from "@/api/cameras";
+import { type Overrides } from "@/api/cameras";
 import { type CustomLens } from "@/api/lenses";
 import { overrideChanges } from "@/lib/camera-overrides";
 import { canonicalJson } from "@/lib/combined";
@@ -11,9 +11,9 @@ export interface LensEdit extends LensChoice {
   apply: boolean;
 }
 
-/** The camera overrides and custom lenses the fields are worked out with. */
+/** The camera and lens overrides and custom lenses the fields are worked out with. */
 export interface LensSettings {
-  overrides: CameraOverride[];
+  overrides: Overrides;
   lenses: CustomLens[];
 }
 

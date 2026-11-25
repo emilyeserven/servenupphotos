@@ -32,6 +32,7 @@ var dataKinds = []combinedKind{
 	{"localizations", Localizations.Folder, Localizations.AllFile},
 	{"metainfo", MetaInfo.Folder, MetaInfo.AllFile},
 	{"cameras", Cameras.Folder, Cameras.AllFile},
+	{"lensoverrides", LensOverrides.Folder, LensOverrides.AllFile},
 	{"lenses", Lenses.Folder, Lenses.AllFile},
 	{"captions", Captions.Folder, Captions.AllFile},
 	{"timeline", Trips.Folder, Trips.AllFile},

@@ -65,6 +65,10 @@ export function inflightFixtures() {
       },
       metainfo: { folder: `${FOLDER}/metainfo`, files: added.metainfo.map(groupFile) },
       cameras: { folder: `${FOLDER}/cameras`, files: added.cameras.map(groupFile) },
+      lensoverrides: {
+        folder: `${FOLDER}/lensoverrides`,
+        files: added.lensoverrides.map(groupFile),
+      },
       lenses: { folder: `${FOLDER}/lenses`, files: added.lenses.map(groupFile) },
       captions: { folder: `${FOLDER}/captions`, files: added.captions.map(groupFile) },
       timeline: { folder: `${FOLDER}/timeline`, files: added.timeline.map(groupFile) },

@@ -31,8 +31,26 @@ func handleDeleteCameraOverride(store *settings.Store, gh *github.Client) http.H
 	})
 }
 
-// handlePreviewReapplyOverrides lists what applying the camera overrides
-// again would change in each photo JSON file, as the Update Data page
+// handleSaveLensOverride saves the body as the path's lens override, new or
+// replacing the one there, as a change waiting for Commit.
+func handleSaveLensOverride(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return withGitHubBody(store, publishTimeout, "lens override", "Couldn't save the lens override.",
+		func(ctx context.Context, r *http.Request, cfg settings.GitHub, override github.LensOverride) (any, error) {
+			override.ID = r.PathValue("id")
+			return gh.SaveLensOverride(ctx, cfg, override)
+		})
+}
+
+// handleDeleteLensOverride removes the path's lens override as a change
+// waiting for Commit.
+func handleDeleteLensOverride(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return withGitHub(store, publishTimeout, "Couldn't remove the lens override.", func(ctx context.Context, r *http.Request, cfg settings.GitHub) (any, error) {
+		return gh.DeleteLensOverride(ctx, cfg, r.PathValue("id"))
+	})
+}
+
+// handlePreviewReapplyOverrides lists what applying the camera and lens
+// overrides again would change in each photo JSON file, as the Update Data page
 // previews it.
 func handlePreviewReapplyOverrides(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return withGitHub(store, reapplyTimeout, "Couldn't read the photo files.", func(ctx context.Context, _ *http.Request, cfg settings.GitHub) (any, error) {

@@ -27,6 +27,8 @@ const baseMetaInfo = readFolder("metainfo", "METAINFO");
 
 const baseCameras = readFolder("cameras", "CAMERAS");
 
+const baseLensOverrides = readFolder("lensoverrides", "LENSOVERRIDES");
+
 const baseLenses = readFolder("lenses", "LENSES");
 
 const baseCaptions = readFolder("captions", "CAPTIONS");
@@ -56,6 +58,8 @@ const headGenres = [...baseGenres, ...added.genres];
 const headMetaInfo = withAdded(baseMetaInfo, added.metainfo);
 
 const headCameras = withAdded(baseCameras, added.cameras);
+
+const headLensOverrides = withAdded(baseLensOverrides, added.lensoverrides);
 
 const headLenses = withAdded(baseLenses, added.lenses);
 
@@ -100,6 +104,7 @@ function combinedFiles(
     localizations,
     metainfo,
     cameras,
+    lensoverrides,
     lenses,
     captions,
     timeline,
@@ -123,6 +128,7 @@ function combinedFiles(
     localizations: combinedFile("localizations", "LOCALIZATIONS.json", localizations, branch),
     metainfo: combinedFile("metainfo", "METAINFO.json", metainfo, branch),
     cameras: combinedFile("cameras", "CAMERAS.json", cameras, branch),
+    lensoverrides: combinedFile("lensoverrides", "LENSOVERRIDES.json", lensoverrides, branch),
     lenses: combinedFile("lenses", "LENSES.json", lenses, branch),
     captions: combinedFile("captions", "CAPTIONS.json", captions, branch),
     timeline: combinedFile("timeline", "TIMELINE.json", timeline, branch),
@@ -165,6 +171,7 @@ export function photosFixtures() {
           baseLocalizations,
           baseMetaInfo,
           baseCameras,
+          baseLensOverrides,
           baseLenses,
           baseCaptions,
           baseTimeline,
@@ -190,6 +197,7 @@ export function photosFixtures() {
             headLocalizations,
             headMetaInfo,
             headCameras,
+            headLensOverrides,
             headLenses,
             headCaptions,
             headTimeline,

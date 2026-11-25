@@ -21,6 +21,8 @@ type CombinedFiles struct {
 	MetaInfo InFlightAllPhotos `json:"metainfo"`
 	// Cameras is CAMERAS.json, the camera overrides.
 	Cameras InFlightAllPhotos `json:"cameras"`
+	// LensOverrides is LENSOVERRIDES.json, the lens overrides.
+	LensOverrides InFlightAllPhotos `json:"lensoverrides"`
 	// Lenses is LENSES.json, the custom lenses.
 	Lenses InFlightAllPhotos `json:"lenses"`
 	// Captions is CAPTIONS.json, the caption templates.

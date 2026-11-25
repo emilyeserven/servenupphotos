@@ -7,11 +7,13 @@ import (
 )
 
 // registerCameraRoutes adds the routes for camera overrides, combined into
-// CAMERAS.json, custom lenses, combined into LENSES.json, and the cameras' and
+// CAMERAS.json, lens overrides, combined into LENSOVERRIDES.json, custom lenses, combined into LENSES.json, and the cameras' and
 // lenses' own pictures, combined into GEAR.json.
 func registerCameraRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("PUT /cameras/{id}", handleSaveCameraOverride(d.store, d.gh))
 	mux.HandleFunc("DELETE /cameras/{id}", handleDeleteCameraOverride(d.store, d.gh))
+	mux.HandleFunc("PUT /lensoverrides/{id}", handleSaveLensOverride(d.store, d.gh))
+	mux.HandleFunc("DELETE /lensoverrides/{id}", handleDeleteLensOverride(d.store, d.gh))
 	mux.HandleFunc("PUT /lenses/{id}", handleSaveCustomLens(d.store, d.gh))
 	mux.HandleFunc("DELETE /lenses/{id}", handleDeleteCustomLens(d.store, d.gh))
 	mux.HandleFunc("POST /gear/image", handleUploadGearImage(d.store.R2, storage.UploadGearOriginal))

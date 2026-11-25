@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { type LensSettings } from "@/components/edit-in-flight/lens-edit";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { exifCamera, overrideChanges } from "@/lib/camera-overrides";
+import { exifCamera, exifText, overrideChanges } from "@/lib/camera-overrides";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
 interface CameraOverridesCardProps {
@@ -21,7 +21,7 @@ interface CameraOverridesCardProps {
 }
 
 /**
- * What the camera overrides for the photo's camera would change in its JSON, as they stand now,
+ * What the camera and lens overrides for the photo's camera and lens would change in its JSON, as they stand now,
  * with a button putting those changes into the edit for Save changes to write, under the photo's
  * collapsible Lens section.
  */
@@ -41,11 +41,15 @@ export function CameraOverridesCard({
       <CardHeader>
         <CardTitle>Camera overrides</CardTitle>
         <CardDescription>
-          <Status camera={exifCamera(photo)} changes={fields.length} />{" "}
+          <Status
+            camera={exifCamera(photo)}
+            lens={exifText(photo, "lens")}
+            changes={fields.length}
+          />{" "}
           <Link to="/camera-overrides" className="text-foreground underline underline-offset-4">
             Camera Overrides
           </Link>{" "}
-          sets them for each camera.
+          sets them for each camera and lens.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -74,13 +78,14 @@ export function CameraOverridesCard({
   );
 }
 
-/** Whether the overrides for camera change anything in the photo. */
-function Status({ camera, changes }: { camera: string; changes: number }) {
-  if (!camera) return <>Its EXIF names no camera, so no override is for it.</>;
-  if (changes === 0) return <>The photo already has the overrides for {camera}, if it has any.</>;
+/** Whether the overrides for camera and lens change anything in the photo. */
+function Status({ camera, lens, changes }: { camera: string; lens: string; changes: number }) {
+  const subject = [camera, lens].filter(Boolean).join(" and ");
+  if (!subject) return <>Its EXIF names no camera or lens, so no override is for it.</>;
+  if (changes === 0) return <>The photo already has the overrides for {subject}, if it has any.</>;
   return (
     <>
-      The overrides for {camera} and the photo&apos;s custom lens change these fields from what the
+      The overrides for {subject} and the photo&apos;s custom lens change these fields from what the
       JSON has; picking another lens applies them.
     </>
   );
