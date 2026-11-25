@@ -35,6 +35,9 @@ test("a photo from the drawer fills a place, and one dragged from a page swaps w
   assert.deepEqual(b.pages[1]?.slots[1], { photo: "a.json", caption: "By hand" });
   assert.deepEqual(firstEmptySlot(b), { page: 1, slot: 0 });
   assert.deepEqual([...photosOnPages(b)].toSorted(), ["a.json", "b.json"]);
+  const tagged = { ...b, pages: b.pages.map((p, i) => (i === 1 ? { ...p, tags: ["Seoul"] } : p)) };
+  assert.deepEqual([...photosOnPages(tagged, "Seoul")], ["a.json"]);
+  assert.deepEqual([...photosOnPages(tagged, "Busan")], []);
   assert.equal(removePhoto(b, { page: 1, slot: 1 }).pages[1]?.slots[1]?.photo, "");
 });
 

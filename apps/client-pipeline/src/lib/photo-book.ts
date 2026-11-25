@@ -302,7 +302,11 @@ export function renamePage(book: PhotoBook, index: number, name: string): PhotoB
   return changePage(book, index, (page) => ({ ...page, name }));
 }
 
-/** The paths of every photo on any of the book's pages, in the book or not. */
-export function photosOnPages(book: PhotoBook): Set<string> {
-  return new Set(book.pages.flatMap((page) => page.slots.map((s) => s.photo)).filter(Boolean));
+/**
+ * The paths of every photo on any of the book's pages, in the book or not; with tag, only on the
+ * pages tagged with it.
+ */
+export function photosOnPages(book: PhotoBook, tag?: string | null): Set<string> {
+  const pages = tag ? book.pages.filter((page) => page.tags?.includes(tag)) : book.pages;
+  return new Set(pages.flatMap((page) => page.slots.map((s) => s.photo)).filter(Boolean));
 }
