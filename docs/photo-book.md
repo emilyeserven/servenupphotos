@@ -69,6 +69,10 @@ Pages have no numbers here. Above each page, its name, typed in (**Untitled page
 
 **Edit pages** and **Grid to reorder**, above the pages, switch views. The grid shows every photo page and spread as a small preview, numbered in order and marked **In book**; drag one onto another to put it before that one, or onto the box at the end. A spread moves as one, and the book's own order (on **The book**) doesn't change. Clicking one opens **Edit pages** scrolled to it.
 
+### Alternates
+
+**Alternates**, above each page or spread, makes others alternates of it: two or more versions of the same part of the book, grouped and lettered (**Alternate A**). Its flyout lists the group; **Pick** keeps that one and hides the others from Photo Pages (they're kept, marked **Alternate A · hidden**), and in the book the picked one takes the place of the first of its group there, the others coming out. **Show hidden alternates**, beside the views, shows the hidden ones again, to pick another; **Show all again** undoes the pick; **Leave group** takes one out (a group left with one ends). A spread is an alternate as one.
+
 ### Spreads
 
 **Link with next page**, above a page, links it with the photo page after it into a two-page spread, shown side by side across the row with **Unlink** above it; a spread's pages always follow each other, so the arrows beside it move the page or the whole spread one place earlier or later among the photo pages, to line up the two to link. A page before a spread can't link to it. **In book** marks a page or spread that's in the book. Its tags show beside that as chips (the × takes one off), and **Add tag** opens a flyout with this book's tags to add with a click and a box for a new one. Tags belong to the book: the ones offered are the ones on its pages, and no other book shares them. Removing one page of a spread leaves the other on its own, in the book where the spread was.
@@ -153,6 +157,7 @@ Each book is one file, `photobooks/<id>.json`, and **Commit** combines them into
 - **`layouts`** are the book's own layouts from the **Layouts** tab, each `{ id: "custom-<n>", name, photos (1–4), arrange: "stack" | "row", shape: "landscape" | "portrait" | "square" | "ratio" | "fill", ratio: { width, height } (only with "ratio", each more than 0 and at most 100), text: "left" | "right" | "above" | "below", captions: "column" | "photo", textShare (10–60), align: "start" | "center" | "end", gap (0–20), margin (0–20), leftPages: "mirror" | "same" | "own", left: { the same settings but id, name, photos and leftPages } (only with "own") }`, the numbers in percent of the page; left out while there are none. A layout without `leftPages` (made before) draws the same on both sides. A page whose layout isn't there is refused.
 - **`hiddenLayouts`** are the IDs of the built-in layouts hidden on **Layouts**, left out when none is.
 - **`name`** is the page's name, left out until it has one.
+- **`alternates`** is the page's alternates group, such as `alt-1`, shared by a spread's pages, and **`hidden`** is `true` on one that lost to the one picked; the backend keeps `hidden` only on an alternate. Both are left out when not set.
 - **`tags`** are the page's tags from the drawer, trimmed, each once, at most 20; left out when it has none.
 - **`linkNext`** is `true` on a photo page linked with the photo page after it into a spread, in the order of `pages`.
 - **`pages`** is every page made for the book, and **`order`** the IDs of the pages and spreads in the book, in its order, a spread listed by its first page. A book made before `order` has none, and then every page is in it, in their order; adding a page writes it. A spread's second page listed too (as **Import Book** writes every page) counts as the spread.

@@ -78,6 +78,13 @@ export interface BookPage {
   linkNext?: boolean;
   /** Free-form labels for sorting pages into alternatives, such as "by place"; a spread's are its pages' together. */
   tags?: string[];
+  /**
+   * The group of alternate pages and spreads the page is in, such as "alt-1", one of which is
+   * picked for the book; absent for none. A spread's pages share it.
+   */
+  alternates?: string;
+  /** True on an alternate that lost to the one picked: kept, but not shown on Photo Pages. */
+  hidden?: boolean;
   layout: PageLayout;
   /** Shown above the page's top photo; null for none. */
   title: string | null;

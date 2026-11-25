@@ -60,8 +60,8 @@ interface UnitControlsProps {
   last: boolean;
   onLink: (link: boolean) => void;
   onMove: (from: number, to: number) => void;
-  /** The page or spread's tags and the button that tags it, after its labels. */
-  tags?: ReactNode;
+  /** After its labels: the page or spread's tags and the button that tags it, and its alternates. */
+  extras?: ReactNode;
 }
 
 /**
@@ -69,11 +69,11 @@ interface UnitControlsProps {
  * page with the next one into a spread or unlinks the spread, and arrows that move it.
  */
 export function UnitControls(props: UnitControlsProps) {
-  const { name, spread, inBook, canLink, place, last, onLink, onMove, tags } = props;
+  const { name, spread, inBook, canLink, place, last, onLink, onMove, extras } = props;
   return (
     <div className="text-muted-foreground flex flex-wrap items-center gap-1 text-xs">
       <UnitLabels spread={spread} inBook={inBook} />
-      {tags}
+      {extras}
       <span className="ml-auto flex items-center gap-1">
         {canLink || spread ? <LinkButton spread={spread} name={name} onLink={onLink} /> : null}
         <MoveArrows name={name} place={place} last={last} onMove={onMove} />
