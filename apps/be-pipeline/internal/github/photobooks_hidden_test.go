@@ -6,14 +6,14 @@ import (
 )
 
 func TestValidHiddenParts(t *testing.T) {
-	got, perr := validHiddenParts([]string{" city ", "place:palace", "city", ""}, 1)
-	if perr != nil || !slices.Equal(got, []string{"city", "place:palace"}) {
+	got, perr := validHiddenParts([]string{" city ", "place:palace", "city", "", "line:2"}, 1)
+	if perr != nil || !slices.Equal(got, []string{"city", "place:palace", "line:2"}) {
 		t.Fatalf("got %v, %v", got, perr)
 	}
 	if got, perr := validHiddenParts(nil, 1); perr != nil || got != nil {
 		t.Fatalf("none: got %v, %v", got, perr)
 	}
-	for _, bad := range [][]string{{"street"}, {"place:"}} {
+	for _, bad := range [][]string{{"street"}, {"place:"}, {"line:"}, {"line:-1"}, {"line:01"}, {"line:a"}, {"line:200"}} {
 		if _, perr := validHiddenParts(bad, 2); perr == nil {
 			t.Errorf("%v: want an error", bad)
 		}

@@ -37,6 +37,12 @@ type CaptionTemplate struct {
 	// place name it makes that's written another way, such as "USA" for
 	// "United States of America". Left out while there are none.
 	PlaceReplacements []CaptionPlaceReplacement `json:"placeReplacements,omitempty"`
+	// NoBreak is the values that never break across lines in a caption, such
+	// as "San Francisco". Left out while there are none.
+	NoBreak []string `json:"noBreak,omitempty"`
+	// StateAbbreviations writes each US state in its standard abbreviation,
+	// such as CA for California. Left out while off.
+	StateAbbreviations bool `json:"stateAbbreviations,omitempty"`
 }
 
 // CaptionPlaceReplacement is an exception of a caption template's place name
@@ -222,6 +228,10 @@ func validCaptionTemplate(t CaptionTemplate) (CaptionTemplate, *PublishError) {
 	if out.Places, perr = validPlaceForms(t.Places); perr != nil {
 		return out, perr
 	}
-	out.PlaceReplacements, perr = validPlaceReplacements(t.PlaceReplacements)
+	if out.PlaceReplacements, perr = validPlaceReplacements(t.PlaceReplacements); perr != nil {
+		return out, perr
+	}
+	out.StateAbbreviations = t.StateAbbreviations
+	out.NoBreak, perr = validNoBreak(t.NoBreak)
 	return out, perr
 }

@@ -56,6 +56,21 @@ Each of `place`, `mainPlace`, `city`, `state` and `country` also has `…Local` 
 
 `<small>…</small>` around part of a template draws it at 80% of the size around it, and `<i>…</i>` draws it in italics; one inside the other is both, such as `<small><i>{places}</i></small>`. **Smaller** and **Italic** under the template's text box put them around what's selected. They're for the [Photo Book](photo-book.md)'s captions, on its pages and in its PDF, and for a caption typed over there; the Preview draws them too. Generate and the Instagram walkthrough leave them out, since a social media post's caption is plain text. A line that's smaller all through gets a line height to match, so its lines sit as close as larger text's. `<gap />`, a self-closing tag anywhere in a line, gives it a quarter line of room above it; **Space above** puts it at the start of the cursor's line. `<gap/>` and the older `<gap>` work too. It's a tag rather than a `{gap}` placeholder, since a placeholder no field is called would be empty and drop its line. A line whose placeholders are all empty is still left out with its marks (`apps/client-pipeline/src/lib/caption-styles.ts`).
 
+## Keeping words together
+
+A caption in the Photo Book wraps wherever its line runs out of room, which can split "ISO 400" or "San Francisco" across two lines. Two ways keep them on one line, both in the template, and both for the Photo Book and the Preview only, since a social media post's caption is plain text:
+
+- **Keep together**, next to **Space above**, puts `<nobr>…</nobr>` around what's selected, such as `<nobr>ISO {iso}</nobr>`, so that part of the template, whatever it fills in with, never breaks.
+- **Never break**, in the **Names** card, lists values that never break wherever they show up in a caption, such as `San Francisco`, whichever placeholder or place name form wrote them.
+
+Each part kept together has its spaces swapped for non-breaking spaces and a word joiner put after each hyphen, the characters that tell a browser not to break a line there; the marks are left out. Generate and the Instagram walkthrough write them as plain spaces and hyphens again (`apps/client-pipeline/src/lib/caption-keep-together.ts`).
+
+> **Frontend analogy:** it's `white-space: nowrap` on a few words, done with the `&nbsp;` and `&NoBreak;` characters so it survives in plain text and the PDF.
+
+## US state abbreviations
+
+**Abbreviate US states**, in the **Names** card, writes each US state (and Washington, D.C.) in its standard two-letter abbreviation, such as `CA` for `California`, in every state placeholder (`{state}`, `{stateLocal}`, `{stateRomanized}`, `{stateLocalized}` and `{customState}`) and in the place name builder's forms, the Placeholders table's examples and the Preview included. A state that isn't a US state written out in full is left as it is (`apps/client-pipeline/src/lib/us-states.ts`).
+
 ## Place name builder
 
 Place names have many shapes: one place or two, a city with a state or without. The **Place name builder**, between the preview and the placeholders, gives each template its own list of forms for the place name, and `{from_places_form}` in the template is replaced by the first form that fits the photo:
@@ -93,5 +108,7 @@ Each template is one file, `captions/<id>.json`, and **Commit** combines them in
 - **`template`** is up to 5,000 characters, saved without trailing blank lines.
 - **`places`** is the place name builder's forms in order, each `{ "has": ["city"], "lacks": ["state"], "text": "{city}, {country}", "more": ["{cityRomanized}"] }`, up to 20, each up to 200 characters with its lines, saved trimmed without empty ones; left out while there are none. `has`, `lacks` and `more` (up to 9 lines under the first) are left out when empty. A form saved before conditions had `"when": "any" | "0" | "1" | "2" | "3+"` for its number of places; it's read as the same condition on the numbered places (`"1"` is **has 1st place**, **no 2nd place**) and saved that way the next time.
 - **`placeReplacements`** is the builder's exceptions in order, each `{ "from": "United States of America", "to": "USA" }`, up to 50, without ones with nothing to find; left out while there are none.
+- **`noBreak`** is the values that never break, such as `["San Francisco"]`, up to 100, each up to 200 characters, saved trimmed without empty or repeated ones; left out while there are none.
+- **`stateAbbreviations`** is `true` when **Abbreviate US states** is on; left out while it's off.
 
 Filling templates in happens in the browser (`apps/client-pipeline/src/lib/caption-template.ts`, and `caption-place-form.ts` for the place name builder), so the backend only checks and saves the files.

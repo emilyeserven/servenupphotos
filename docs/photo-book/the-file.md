@@ -28,7 +28,7 @@ Each book is one file, `photobooks/<id>.json`, and **Commit** combines them into
 }
 ```
 
-- **`slots`** are a page's photo places, each `{ "photo", "caption" }`: the photo file's path (`""` while empty) and a caption typed over the template's, or `null`. **`hidden`**, the parts of the photo's location its caption leaves out (`"place:<id>"`, `"placeName"`, `"city"`, `"state"` or `"country"`, up to 20), is left out while there are none.
+- **`slots`** are a page's photo places, each `{ "photo", "caption" }`: the photo file's path (`""` while empty) and a caption typed over the template's, or `null`. **`hidden`**, the parts of the photo's location its caption leaves out and the lines it leaves out (`"place:<id>"`, `"placeName"`, `"city"`, `"state"`, `"country"` or `"line:<n>"`, 0 for the first line, up to 40), is left out while there are none.
 - **`template`** is the caption template's ID, or `""` for the default one.
 - **`album`** is the ID of the album the book's photos come from, or `""` (or missing, in a book made before) while none is picked.
 - **`budget`** is the page budget from **Info**, `{ target, max }`, each a whole number of printed pages up to 500 with `target` no more than `max`; a number not set is left out, and so is a budget with neither.
@@ -38,6 +38,7 @@ Each book is one file, `photobooks/<id>.json`, and **Commit** combines them into
 - **`layouts`** are the book's own layouts from the **Layouts** tab, each `{ id: "custom-<n>", name, photos (1–4), arrange: "stack" | "row", shape: "landscape" | "portrait" | "square" | "ratio" | "fill", ratio: { width, height } (only with "ratio", each more than 0 and at most 100), text: "left" | "right" | "above" | "below", captions: "column" | "photo", textShare (10–60), align: "start" | "center" | "end", alignTo: "room" | "photo", title: "text" | "top" | "off", gap (0–20), margin (0–20), leftPages: "mirror" | "same" | "own", left: { the same settings but id, name, photos and leftPages } (only with "own") }`, the numbers in percent of the page; left out while there are none. A layout without `leftPages` (made before) draws the same on both sides. A page whose layout isn't there is refused.
 - **`noTitles`** is `true` when **Show page titles** is off on **Info**, and left out otherwise.
 - **`lensPrefixes`** are **Lens names**' prefixes, each `{ "lens": "Fujinon XF35mmF2 R WR", "prefix": "Fujinon " }`: the lens as the photo's data has it, after overrides, and what the captions leave off it, up to 100 lenses, each once; left out while there are none.
+- **`cameraNames`** are **Camera names**' names, each `{ "camera": "Fujifilm X-T5", "name": "X-T5" }`: the camera as the photo's data has it, after overrides, and what the captions call it, both trimmed, up to 100 cameras, each once; one with an empty name or the camera's own is dropped, and the list is left out while there are none.
 - **`hiddenLayouts`** are the IDs of the built-in layouts hidden on **Layouts**, left out when none is.
 - **`name`** is the page's name, left out until it has one.
 - **`alternates`** is the page's alternates group, such as `alt-1`, shared by a spread's pages, and **`hidden`** is `true` on one that lost to the one picked; the backend keeps `hidden` only on an alternate. Both are left out when not set.

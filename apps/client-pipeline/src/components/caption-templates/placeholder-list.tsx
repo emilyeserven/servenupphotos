@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { withPlaceForm } from "@/lib/caption-place-form";
+import { templateValues } from "@/lib/caption-place-form";
 import {
   type CaptionValues,
   PLACEHOLDERS,
@@ -79,8 +79,8 @@ function PlaceholderRows({ names, help, values, onInsert }: PlaceholderRowsProps
 interface PlaceholderListProps {
   /** The combined lists, for the example photo and its places. */
   data: CombinedData;
-  /** The template's place name builder forms and exceptions, for `{from_places_form}`'s example. */
-  template: Pick<CaptionTemplate, "places" | "placeReplacements">;
+  /** The template's place name builder and state abbreviations, for the examples. */
+  template: Pick<CaptionTemplate, "places" | "placeReplacements" | "stateAbbreviations">;
   onInsert: (placeholder: string) => void;
 }
 
@@ -93,7 +93,7 @@ export function PlaceholderList({ data, template, onInsert }: PlaceholderListPro
   const photos = previewPhotos(data);
   const [index, setIndex] = useState(0);
   const photo = photos[index];
-  const values = withPlaceForm(
+  const values = templateValues(
     template,
     captionValues(photo ?? {}, captionLists(data), ["travelphotography"]),
   );

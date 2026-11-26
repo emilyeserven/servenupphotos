@@ -1,14 +1,18 @@
 import { savedPlaces } from "@/api/places";
+import { plainCaption } from "@/lib/caption-styles";
 import type { CaptionLists } from "@/lib/caption-template";
 import { textOf } from "@portfolio/lib/values";
 
-/** A part of a photo's location that a book photo's caption can leave out. */
+/** A part of a photo's location, or a line, that a book photo's caption can leave out. */
 export interface LocationPart {
-  /** How the book photo's `hidden` names it: `place:<id>`, `placeName`, `city`, `state` or `country`. */
+  /**
+   * How the book photo's `hidden` names it: `place:<id>`, `placeName`, `city`, `state` or
+   * `country`, or `line:<n>` for the caption's line n, 0 for the first.
+   */
   key: string;
   /** What it's called, such as "Gyeongbokgung" or "Seoul". */
   name: string;
-  /** What kind of part it is, such as "Place" or "City". */
+  /** What kind of part it is, such as "Place", "City" or "Line". */
   kind: string;
 }
 
@@ -70,4 +74,26 @@ export function withHiddenParts(
 export function toggledHidden(hidden: string[] | undefined, key: string): string[] {
   const list = hidden ?? [];
   return list.includes(key) ? list.filter((k) => k !== key) : [...list, key];
+}
+
+/** How a book photo's `hidden` names the caption's line i, 0 for the first. */
+function lineKey(i: number): string {
+  return `line:${i}`;
+}
+
+/** The caption's lines it can leave out, each with its text without style marks; none for a blank line. */
+export function captionLineParts(caption: string): LocationPart[] {
+  return caption.split("\n").flatMap((line, i) => {
+    const name = plainCaption(line).trim();
+    return name ? [{ key: lineKey(i), name, kind: "Line" }] : [];
+  });
+}
+
+/** The caption without the lines hidden for its photo in the book. */
+export function withoutHiddenLines(caption: string, hidden: string[] | undefined): string {
+  if (!hidden?.some((key) => key.startsWith("line:"))) return caption;
+  return caption
+    .split("\n")
+    .filter((_, i) => !hidden.includes(lineKey(i)))
+    .join("\n");
 }

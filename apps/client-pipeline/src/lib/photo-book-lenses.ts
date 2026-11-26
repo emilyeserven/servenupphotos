@@ -23,13 +23,16 @@ export function withLensPrefix(
   return prefix === "" ? others : [...others, { lens, prefix }];
 }
 
-/** Each lens named once, with how many of the names are it, the most first, then by name. */
-export function lensCounts(lenses: string[]): { lens: string; count: number }[] {
+/**
+ * Each name (a lens or a camera) once, with how many of the names are it, the most first, then by
+ * name.
+ */
+export function nameCounts(names: string[]): { name: string; count: number }[] {
   const counts = new Map<string, number>();
-  for (const lens of lenses) if (lens) counts.set(lens, (counts.get(lens) ?? 0) + 1);
+  for (const name of names) if (name) counts.set(name, (counts.get(name) ?? 0) + 1);
   return [...counts]
-    .map(([lens, count]) => ({ lens, count }))
-    .toSorted((a, b) => b.count - a.count || a.lens.localeCompare(b.lens));
+    .map(([name, count]) => ({ name, count }))
+    .toSorted((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
 /** The photo's fields with its lens written as the book's captions write it. */
