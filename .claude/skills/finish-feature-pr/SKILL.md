@@ -25,7 +25,7 @@ pnpm --filter @servenup/portfolio test       # when apps/portfolio/map-preview c
 
 - Every exported function, type and field has a doc comment in plain sentences saying what it is or does, in the user's words ("the photo data pull request", "Square Thumbnail"), at the density of the file around it.
 - Go errors are `writeError(w, status, message)` with a message a user can read; GitHub errors the user should see are `*github.PublishError`.
-- New UI went into a new component file rather than growing `in-flight.tsx`, `instagram-calendar.tsx`, `organize-page.tsx` or `group-detail.tsx`.
+- New UI went into a new component file rather than growing `instagram-calendar.tsx` or any other file near 600 lines.
 - A pipeline mutation that saves a change waiting for Commit has `meta: { saves: true }`; a new `/api` route has a fixture in `scripts/fixtures/<area>.mjs`.
 
 ## 3. Docs

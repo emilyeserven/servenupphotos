@@ -1,5 +1,5 @@
 import { useAlbumPage } from "@/components/album-page/album-page";
-import { GroupPhotosCard, isReadableAlbum } from "@/components/group-detail";
+import { GroupPhotosCard, isReadableAlbum } from "@/components/group-detail/photos-card";
 import { SmartAlbumCard } from "@/components/smart-album/smart-album-card";
 
 /** An album's Photos tab: its Smart Album rules, then the photos in it. */
