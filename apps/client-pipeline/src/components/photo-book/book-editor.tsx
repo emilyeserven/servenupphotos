@@ -3,7 +3,7 @@ import { type ReactNode, useMemo, useState } from "react";
 import type { CombinedData } from "@/api/photos";
 import type { SocialPhoto } from "@/api/publish";
 import { PhotoDrawerToggle } from "@/components/instagram-picker/photo-drawer";
-import { useBookTemplate, useCaptionFor } from "@/components/photo-book/book-captions";
+import { useBookTemplate, useCaptionFor, usePartsFor } from "@/components/photo-book/book-captions";
 import { BookTab } from "@/components/photo-book/book-tab";
 import { InfoTab } from "@/components/photo-book/info-tab";
 import { LayoutsTab } from "@/components/photo-book/layouts-tab";
@@ -93,6 +93,7 @@ export function BookEditor({ saved, photos, data, part, onRemoved }: BookEditorP
   const look: PageLook = {
     photos: byPath,
     captionFor: useCaptionFor(byPath, template, book.lensPrefixes),
+    partsFor: usePartsFor(byPath),
     aspect: pageAspect(book),
     layouts: book.layouts ?? [],
     sides: pageSides(book),

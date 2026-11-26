@@ -7,6 +7,7 @@ import { overrideChanges } from "@/lib/camera-overrides";
 import { fillTemplate } from "@/lib/caption-place-form";
 import { captionLists, captionValues } from "@/lib/caption-template";
 import type { BookSlot, PhotoBook } from "@/lib/photo-book";
+import { type LocationPart, locationParts, withHiddenParts } from "@/lib/photo-book-hidden";
 import { type LensPrefix, withStrippedLens } from "@/lib/photo-book-lenses";
 import { PHOTO_BOOK_PLATFORM } from "@/lib/social-posts";
 import { currentData } from "@/lib/social-schedule";
@@ -45,7 +46,8 @@ export function usePhotoFields() {
 
 /**
  * What each photo place's caption says: the one written by hand, or else the template filled in
- * from the photo's fields (see usePhotoFields), its lens without the prefix the book takes off it;
+ * from the photo's fields (see usePhotoFields), its lens without the prefix the book takes off it
+ * and without the parts of its location hidden for it in the book;
  * "" without a photo or a template.
  */
 export function useCaptionFor(
@@ -56,12 +58,22 @@ export function useCaptionFor(
   const { data } = useCombinedData();
   const lists = useMemo(() => captionLists(data), [data]);
   const fieldsOf = usePhotoFields();
-  const filled = (photo: SocialPhoto | undefined): string => {
+  const filled = (slot: BookSlot): string => {
+    const photo = photos.get(slot.photo);
     if (!photo || !template) return "";
-    return fillTemplate(
-      template,
-      captionValues(withStrippedLens(fieldsOf(photo), prefixes), lists),
-    );
+    const fields = withHiddenParts(withStrippedLens(fieldsOf(photo), prefixes), slot.hidden);
+    return fillTemplate(template, captionValues(fields, lists));
   };
-  return (slot: BookSlot): string => slot.caption ?? filled(photos.get(slot.photo));
+  return (slot: BookSlot): string => slot.caption ?? filled(slot);
+}
+
+/** The parts of each slot's photo's location its caption can leave out; none without a photo. */
+export function usePartsFor(photos: Map<string, SocialPhoto>) {
+  const { data } = useCombinedData();
+  const lists = useMemo(() => captionLists(data), [data]);
+  const fieldsOf = usePhotoFields();
+  return (slot: BookSlot): LocationPart[] => {
+    const photo = photos.get(slot.photo);
+    return photo ? locationParts(fieldsOf(photo), lists) : [];
+  };
 }

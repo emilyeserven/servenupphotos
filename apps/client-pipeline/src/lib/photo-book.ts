@@ -80,6 +80,11 @@ export interface BookSlot {
   photo: string;
   /** A caption written by hand; null to fill it in from the photo with the book's caption template. */
   caption: string | null;
+  /**
+   * Parts of the photo's location its caption fills in without in this book, to keep a long
+   * place name short: `place:<id>`, `placeName`, `city`, `state` or `country`. Absent for none.
+   */
+  hidden?: string[];
 }
 
 /** One page of a photo book. */
@@ -307,6 +312,15 @@ function changeSlot(
     ...p,
     slots: p.slots.map((s, i) => (i === slot ? change(s) : s)),
   }));
+}
+
+/** The book with the photo at place's caption filled in without the hidden parts of its location. */
+export function setHiddenParts(book: PhotoBook, place: SlotPlace, hidden: string[]): PhotoBook {
+  return changeSlot(book, place, (slot) => {
+    const next: BookSlot = { ...slot, hidden };
+    if (hidden.length === 0) delete next.hidden;
+    return next;
+  });
 }
 
 /** The book with the caption at place written by hand, or filled in from the template when null. */

@@ -163,6 +163,10 @@ Drag a photo onto any place on a page, or click it to fill the first empty place
 
 Each photo's caption is filled in from its data with the book's caption template, the same templates and placeholders the Photo page's **Generate** uses for social media posts, including changes not committed yet. The [camera and lens overrides](camera-overrides.md) and the photo's custom lens are made over its data first, as **Apply overrides** would, so a caption's camera, lens, focal length and aperture are the overridden ones even for a photo whose file doesn't have them applied yet. With no template picked, the book uses the first template for the **Photo Book** platform, or else the first one for any platform. A template's [smaller and italic text](caption-templates.md#smaller-and-italic-text) is drawn that way here and in the PDF. Typing in a caption keeps what's typed instead, and **From template** under it goes back to the template's. Captions are filled in from the template and the photos' data each time they're drawn, so a change saved in the same tab shows right away. **Refresh all captions**, on the **Info** tab, is always there: it reads the changes waiting for Commit from the backend again, so a template or photo saved in another tab or window reaches the captions too, and, after asking, does what **From template** does for every caption typed over at once. A caption on an empty place keeps what's typed, since there's no photo to fill it in from.
 
+### Hiding places
+
+**Hide places**, under a caption, lists the parts of the photo's location: each of its places (or its place name when it has none), its city, its state and its country. Clicking one leaves it out of the caption in this book only, as if the photo didn't have it, to keep a long place name short where there's little room. Everything that reads the location fills in without it: `{places}`, the numbered places (a hidden 1st place makes the 2nd the 1st), `{city}` and the rest, and the [place name builder](caption-templates.md#place-name-builder)'s forms and conditions, so a form that needs a state no longer fits once the state is hidden. The button says how many parts are hidden. The photo's own data doesn't change, and a caption typed over shows the change once **From template** puts the template's back (`apps/client-pipeline/src/lib/photo-book-hidden.ts`).
+
 ## The file
 
 Each book is one file, `photobooks/<id>.json`, and **Commit** combines them into `photobooks/PHOTOBOOKS.json`, as it does caption templates. Every change on the page is saved as a [change waiting for Commit](pending-changes.md) (`PUT /api/photobooks/<id>`, `DELETE /api/photobooks/<id>`) under a second after the last one, so typing a caption saves once; the note beside **Photos** says **Saving…** until it has.
@@ -193,6 +197,7 @@ Each book is one file, `photobooks/<id>.json`, and **Commit** combines them into
 }
 ```
 
+- **`slots`** are a page's photo places, each `{ "photo", "caption" }`: the photo file's path (`""` while empty) and a caption typed over the template's, or `null`. **`hidden`**, the parts of the photo's location its caption leaves out (`"place:<id>"`, `"placeName"`, `"city"`, `"state"` or `"country"`, up to 20), is left out while there are none.
 - **`template`** is the caption template's ID, or `""` for the default one.
 - **`album`** is the ID of the album the book's photos come from, or `""` (or missing, in a book made before) while none is picked.
 - **`budget`** is the page budget from **Info**, `{ target, max }`, each a whole number of printed pages up to 500 with `target` no more than `max`; a number not set is left out, and so is a budget with neither.
