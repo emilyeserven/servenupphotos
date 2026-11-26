@@ -152,6 +152,43 @@ test("a Places Index writes names in Latin letters, their own script, or both ei
   assert.equal(lines(index).at(-1), "  Gyeongbokgung Palace (경복궁)");
 });
 
+test("a photo missing its state goes under the state its city is in on other photos", () => {
+  const withState = { country: "Japan", state: "Hyōgo", city: "Kobe" };
+  const without = { country: "Japan", city: "Kobe", places: [{ relation: "", id: "bridge" }] };
+  const index = placesIndex([withState, without], lists, { kind: "places-index" });
+  assert.deepEqual(lines(index), ["Japan", "  Hyōgo", "    Kobe", "      Golden Gate Bridge"]);
+});
+
+test("a state and a city of the same name are one entry, named as the city", () => {
+  const egypt = (state: string, city: string, id: string) => ({
+    country: "Egypt",
+    state,
+    city,
+    places: [{ relation: "", id }],
+  });
+  const photos = [
+    { country: "Egypt", city: "Cairo", places: [{ relation: "", id: "bridge" }] },
+    egypt("Cairo", "Al Khalifa", "palace"),
+    egypt("Cairo", "Cairo", "gate"),
+  ];
+  const index = placesIndex(photos, lists, { kind: "places-index" });
+  assert.deepEqual(lines(index), [
+    "Egypt",
+    "  Cairo",
+    "    Al Khalifa",
+    "      Gyeongbokgung",
+    "    Golden Gate Bridge",
+    "    Gyeongbokgung",
+    "      Geunjeongmun Gate",
+  ]);
+  assert.equal(index[0]?.children[0]?.key, "state:Cairo");
+  // Hiding it by either key lifts everything in it up to Egypt.
+  for (const hidden of [["state:Cairo"], ["city:Cairo"]]) {
+    const lifted = placesIndex(photos, lists, { kind: "places-index", hidden, depth: "city" });
+    assert.deepEqual(lines(lifted), ["Egypt", "  Al Khalifa"]);
+  }
+});
+
 test("photos without a location add nothing", () => {
   assert.deepEqual(placesIndex([{}, { places: [] }], lists, { kind: "places-index" }), []);
 });
