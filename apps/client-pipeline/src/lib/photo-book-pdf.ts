@@ -5,18 +5,39 @@ import { count } from "@portfolio/lib/words";
 /** The ID of the element **Save as PDF** draws the book's pages in. */
 export const PRINT_ROOT_ID = "photo-book-print";
 
-/** The book's page width and height as CSS lengths in its own unit, such as `12.5in`. */
-export function printSize(book: Pick<PhotoBook, "size">): { width: string; height: string } {
+/**
+ * The width and height of a sheet of the PDF as CSS lengths in the book's own unit, such as
+ * `12.5in`: the book's page, or two of them side by side when spreads are printed as one sheet.
+ */
+export function printSize(
+  book: Pick<PhotoBook, "size">,
+  spreads = false,
+): { width: string; height: string } {
   const size: BookSize = book.size ?? DEFAULT_SIZE;
-  return { width: `${size.width}${size.unit}`, height: `${size.height}${size.unit}` };
+  const width = spreads ? size.width * 2 : size.width;
+  return { width: `${width}${size.unit}`, height: `${size.height}${size.unit}` };
 }
 
 /**
- * The style sheet for **Save as PDF**: each sheet of paper the book's page size with no margin;
+ * The printed pages, by their place (0 for page 1), as the open book shows them: page 1 alone on
+ * the right, opposite the inside front cover, then each left page with the right page after it,
+ * and a last left page alone. null is a half with no page of the book, left blank.
+ */
+export function spreadSheets(pages: number): [number | null, number | null][] {
+  if (pages === 0) return [];
+  const sheets: [number | null, number | null][] = [[null, 0]];
+  for (let left = 1; left < pages; left += 2)
+    sheets.push([left, left + 1 < pages ? left + 1 : null]);
+  return sheets;
+}
+
+/**
+ * The style sheet for **Save as PDF**: each sheet of paper the book's page size (two pages wide
+ * for spreads) with no margin;
  * printed, only the book's pages; on the screen, the pages kept out of sight while they're drawn.
  */
-export function printCss(book: Pick<PhotoBook, "size">): string {
-  const { width, height } = printSize(book);
+export function printCss(book: Pick<PhotoBook, "size">, spreads = false): string {
+  const { width, height } = printSize(book, spreads);
   return [
     `@page { size: ${width} ${height}; margin: 0; }`,
     `@media print { body > :not(#${PRINT_ROOT_ID}) { display: none !important; } }`,
@@ -73,4 +94,27 @@ export function pdfProgressText(drawing: boolean, progress: BookPdfProgress | un
     default:
       return "Starting Chrome…";
   }
+}
+
+/**
+ * What a PDF of the book is called, how many sheets it has, and its button's words when idle and
+ * tooltip.
+ */
+export function pdfFile(id: string, printed: number, spreads: boolean) {
+  if (!spreads) {
+    return {
+      name: `${id}.pdf`,
+      sheets: printed,
+      label: "Save as PDF",
+      title:
+        "Makes a PDF of every page of the book at its page size, with sharp photos, and downloads it",
+    };
+  }
+  return {
+    name: `${id}-spreads.pdf`,
+    sheets: spreadSheets(printed).length,
+    label: "Save spreads as PDF",
+    title:
+      "Makes a PDF of the book as it opens, each two-page spread on one sheet two pages wide, and downloads it",
+  };
 }

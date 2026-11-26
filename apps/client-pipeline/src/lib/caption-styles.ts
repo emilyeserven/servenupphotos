@@ -34,9 +34,60 @@ export function captionRuns(text: string): CaptionRun[] {
   return runs;
 }
 
+/** The mark that gives a caption line half a line of room above it. */
+const GAP = "<gap>";
+
 /** The caption without its style marks, as a social media post takes it. */
 export function plainCaption(text: string): string {
-  return text.replace(MARK, "");
+  return text.replace(MARK, "").replaceAll(GAP, "");
+}
+
+/** One line of a caption as it's drawn. */
+export interface CaptionLine {
+  /** Its stretches of text, without the marks. */
+  runs: CaptionRun[];
+  /** Every stretch of it is smaller, so the whole line is, with its line height to match. */
+  small: boolean;
+  /** It has `<gap>` in it, for half a line of room above it. */
+  gap: boolean;
+}
+
+/** A line's stretches without `<gap>`, whether it had one, and whether it's all smaller. */
+function finishLine(runs: CaptionRun[]): CaptionLine {
+  const gap = runs.some((r) => r.text.includes(GAP));
+  const kept = runs.map((r) => ({ ...r, text: r.text.replaceAll(GAP, "") })).filter((r) => r.text);
+  const small = kept.length > 0 && kept.every((r) => r.small);
+  return { gap, small, runs: small ? kept.map((r) => ({ ...r, small: false })) : kept };
+}
+
+/**
+ * The caption's lines, each with its stretches of styled text. A line that's smaller all through is
+ * marked small as a whole, its stretches not, so it's drawn smaller with a line height to match
+ * instead of keeping the larger text's.
+ */
+export function captionLines(text: string): CaptionLine[] {
+  const lines: CaptionRun[][] = [[]];
+  for (const run of captionRuns(text)) {
+    run.text.split("\n").forEach((part, i) => {
+      if (i > 0) lines.push([]);
+      if (part) lines.at(-1)?.push({ ...run, text: part });
+    });
+  }
+  return lines.map(finishLine);
+}
+
+/** The Tailwind classes that draw a line: a block, smaller all through, with half a line above. */
+export function lineClass(line: CaptionLine): string {
+  return ["block", line.small && "text-[0.8em]", line.gap && "mt-[0.5lh]"]
+    .filter(Boolean)
+    .join(" ");
+}
+
+/** The text with `<gap>` put at the start of the line the cursor is on, or of the last line. */
+export function withGap(text: string, at: Selection | null): string {
+  const cursor = at?.selectionStart ?? text.length;
+  const start = text.lastIndexOf("\n", cursor - 1) + 1;
+  return `${text.slice(0, start)}${GAP}${text.slice(start)}`;
 }
 
 /** Where a text box's selection starts and ends; null or missing when it isn't known. */
