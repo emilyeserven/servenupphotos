@@ -33,7 +33,7 @@ export function pageActions(
 export interface PageLook {
   photos: Map<string, SocialPhoto>;
   captionFor: ReturnType<typeof useCaptionFor>;
-  /** The parts of each slot's photo's location its caption can leave out. */
+  /** The parts of each slot's photo's location, and the lines, its caption can leave out. */
   partsFor: ReturnType<typeof usePartsFor>;
   /** The page's width over its height, from the book's size. */
   aspect: number;

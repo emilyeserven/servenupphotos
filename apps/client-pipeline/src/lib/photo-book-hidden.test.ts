@@ -2,7 +2,13 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { fillTemplate } from "@/lib/caption-place-form";
 import { captionValues } from "@/lib/caption-template";
-import { locationParts, toggledHidden, withHiddenParts } from "@/lib/photo-book-hidden";
+import {
+  captionLineParts,
+  locationParts,
+  toggledHidden,
+  withHiddenParts,
+  withoutHiddenLines,
+} from "@/lib/photo-book-hidden";
 
 const lists = {
   places: [
@@ -52,4 +58,18 @@ test("hidden parts fill the caption in as if the photo didn't have them", () => 
   assert.equal(fill(["place:palace"]), "Gwanghwamun, Seoul Special City, South Korea");
   assert.deepEqual(toggledHidden(["city"], "state"), ["city", "state"]);
   assert.deepEqual(toggledHidden(["city", "state"], "city"), ["state"]);
+});
+
+test("a caption's lines are listed by their text, without blank ones", () => {
+  assert.deepEqual(captionLineParts("Night market\n<i>2026.05.19</i>\n\nX-T5"), [
+    { key: "line:0", name: "Night market", kind: "Line" },
+    { key: "line:1", name: "2026.05.19", kind: "Line" },
+    { key: "line:3", name: "X-T5", kind: "Line" },
+  ]);
+});
+
+test("a hidden line is left out of the caption", () => {
+  assert.equal(withoutHiddenLines("a\nb\nc", ["line:1", "city"]), "a\nc");
+  assert.equal(withoutHiddenLines("a\nb", ["city"]), "a\nb");
+  assert.equal(withoutHiddenLines("a\nb", undefined), "a\nb");
 });
