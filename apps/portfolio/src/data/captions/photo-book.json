@@ -2,5 +2,5 @@
   "id": "photo-book",
   "name": "Photo Book",
   "platform": "photobook",
-  "template": "{title}\n\n{date} - {camera}[, {lensShort} @ {focalLength}mm][, {exposure}sec][, ƒ{aperture}][, ISO {iso}]\n{places|cityLocalized}"
+  "template": "{title}\n\n{places|cityLocalized}\n{date} - {camera}[, {lensShort} @ {focalLength}mm][, {exposure}sec][, ƒ{aperture}][, ISO {iso}]"
 }

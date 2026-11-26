@@ -1309,11 +1309,26 @@
         "title": null,
         "slots": [
           {
-            "photo": "",
+            "photo": "apps/portfolio/src/data/photos/medieval-street.json",
             "caption": null
           },
           {
-            "photo": "",
+            "photo": "apps/portfolio/src/data/photos/20250704_141758.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-96",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/one-red-car.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf1997.json",
             "caption": null
           }
         ]
@@ -1345,7 +1360,9 @@
       "page-20",
       "page-73",
       "page-19",
+      "page-96",
       "page-61",
+      "page-95",
       "page-85",
       "page-60",
       "page-57",

@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["2026-photo-book-candidates"],
   "tags": ["facade", "statues", "tourists", "umbrellas", "windows", "pedestrians"],
   "genres": ["architecture", "street"],
   "places": [
@@ -267,5 +267,7 @@
     "samples": 9694
   },
   "notes": "Shows the Grand Place guildhalls; 'guildhall' isn't a tag, since only 1 photo has one.",
-  "similarPhotos": [127, 297, 272, 210, 216, 167]
+  "similarPhotos": [127, 297, 272, 210, 216, 167],
+  "noGps": false,
+  "altText": null
 }
