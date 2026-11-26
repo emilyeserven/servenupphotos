@@ -1,4 +1,4 @@
-import { type BookPage, type PhotoBook, TEXT_PAGE_PHOTOS } from "@/lib/photo-book";
+import { type BookPage, type PhotoBook, TEXT_PAGE_PHOTOS, type TextSide } from "@/lib/photo-book";
 
 /** The most columns a text page's text flows into. */
 export const TEXT_PAGE_COLUMNS = 3;
@@ -46,4 +46,28 @@ export function setPhotoPlaces(book: PhotoBook, index: number, count: number): P
     ...page,
     slots: Array.from({ length: n }, (_, i) => page.slots[i] ?? { photo: "", caption: null }),
   }));
+}
+
+/** Where a text page's text goes: beside its photos on the left or right, or above them. */
+export type TextPlace = TextSide | "above";
+
+/** Where the page's text goes: its text side, or above its photos when it has none. */
+export function textPlace(page: Pick<BookPage, "textSide">): TextPlace {
+  return page.textSide === "left" || page.textSide === "right" ? page.textSide : "above";
+}
+
+/** The book with the text page at index's text put above its photos, or beside them on the left or right. */
+export function setTextPlace(book: PhotoBook, index: number, place: TextPlace): PhotoBook {
+  return changePage(book, index, (page) => {
+    const { textSide: _textSide, ...rest } = page;
+    return place === "above" ? rest : { ...rest, textSide: place };
+  });
+}
+
+/**
+ * How many columns a text page's photos are drawn in beside its text: one for up to 2, two for 3
+ * or 4, so they stay a usable size.
+ */
+export function sidePhotoColumns(count: number): number {
+  return count > 2 ? 2 : 1;
 }

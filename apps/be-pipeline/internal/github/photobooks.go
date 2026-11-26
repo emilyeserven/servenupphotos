@@ -154,6 +154,9 @@ type PhotoBookPage struct {
 	// Columns is how many columns a text page's text flows into, 1 to
 	// maxTextPageColumns; 0 (absent) for one.
 	Columns int `json:"columns,omitempty"`
+	// TextSide is the side of its photos a text page's text goes on, "left"
+	// or "right", set on the page; "" (absent) for above them.
+	TextSide string `json:"textSide,omitempty"`
 	// Generated is what one of the book's other pages draws from the
 	// book's data, such as a Places Index; nil for a page that shows only
 	// its name, and on every page that isn't an other page.
@@ -326,6 +329,9 @@ func validPhotoBookPage(page PhotoBookPage, n int, counts map[string]int) (Photo
 		out.Title = &title
 	}
 	if out.Text, out.Columns, perr = validPhotoBookPageText(page, n); perr != nil {
+		return out, perr
+	}
+	if out.TextSide, perr = validTextSide(page, n); perr != nil {
 		return out, perr
 	}
 	if out.Generated, perr = validGeneratedPage(page, n); perr != nil {

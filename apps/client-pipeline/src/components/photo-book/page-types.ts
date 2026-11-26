@@ -4,6 +4,7 @@ import type { SlotShape } from "@/components/photo-book/page-slot";
 import type { CustomLayout, BookPage as Page, PageSide, SlotPlace } from "@/lib/photo-book";
 import type { GeneratedPage } from "@/lib/photo-book-generated";
 import type { IndexEntry } from "@/lib/photo-book-places-index";
+import type { TextPlace } from "@/lib/photo-book-text";
 
 /** What the page itself can do to its book: its title, photos and captions, and a text page's text. */
 export interface PageActions {
@@ -16,6 +17,8 @@ export interface PageActions {
   onText: (text: string) => void;
   /** Sets how many columns a text page's text flows into. */
   onColumns: (columns: number) => void;
+  /** Puts a text page's text above its photos, or beside them on the left or right. */
+  onTextPlace: (place: TextPlace) => void;
   /** Sets how many photo places a text page has. */
   onPhotoPlaces: (count: number) => void;
 }
