@@ -18,7 +18,27 @@ Each photo is checked against the book's page size from **Info**: its original's
 
 ## Other pages
 
-Other pages are pages without photos: one the publisher requires, a bio page, or anything else. For now each shows only its name, as a placeholder. Type a name in the drawer and **Add other page** makes one and adds it at the end of the book; each has a bin in the drawer that removes it. They're not on **Photo Pages** and are never part of a spread.
+Other pages are pages without photos: one the publisher requires, a bio page, or anything else. Each shows only its name, as a placeholder, unless it's a [generated page](#generated-pages). Type a name in the drawer and **Add other page** makes one and adds it at the end of the book; each has a bin in the drawer that removes it. They're not on **Photo Pages** and are never part of a spread.
+
+## Generated pages
+
+A generated page is an other page drawn from the book's own data each time it's shown, so it stays current as photos, their places and the pages in the book change. **Generate page**, in the drawer beside **Add other page**, lists the kinds and adds one at the end of the book; for now there's one kind, the **Places Index**. Like any other page, it can be dragged anywhere in the book, taken out, removed with its bin, and prints in the PDF as drawn.
+
+The **Places Index** lists every place the photos on the pages in the book show, with no photo names: each country, then its states, cities and places, each indented under the one it's in. Each photo's country, state and city are its custom ones first, as captions use them, and its places come from the places list, each under the places it's in (a gate under its palace). A level a photo doesn't have is skipped, so a city with no state sits right under its country, and a level named the same as the one under it is left out, so Seoul the city doesn't sit under Seoul the province. A photo with only a place name lists that name. Photos on pages that aren't in the book don't count.
+
+Its options button (the sliders, in the drawer beside its bin) sets:
+
+- **Heading**, which starts as "Places"; an empty one leaves the page without one, and **Show page titles** on **Info** doesn't hide it.
+- **Names in their own script, with romanization**, which writes each name the way captions' `{placeLocalized}` does, such as 경복궁 (Gyeongbokgung), from its [localization](../places-and-localizations.md).
+- **Abbreviate US states**, such as CA for California.
+- **List down to** every place, cities, states or countries.
+- **Order**: alphabetical at every level, or the order the book first shows each place.
+- **Columns**: 1 to 3, the list flowing from one to the next.
+- **Places**: every entry it could show, each a button that leaves it out of this page. The entries under one left out move up a level, so leaving out California puts its cities right under the United States.
+
+Hidden places on **Photo Pages** only shorten captions, so the index still lists them.
+
+> **Frontend analogy:** the page is derived state, like a `useMemo` over the book: only its options are saved, and the tree is rebuilt from the pages in the book on every render (`lib/photo-book-places-index.ts`), each photo contributing a path such as Japan › Shimane › Matsue › Matsue Castle that's merged into the tree, like building a file tree from a list of paths. A new kind of generated page is a new entry in `GENERATED_KINDS` (`lib/photo-book-generated.ts`) with its own body in `generated-body.tsx`.
 
 ## Preview Mode
 

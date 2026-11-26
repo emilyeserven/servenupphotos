@@ -1,6 +1,11 @@
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { DrawerFilters, useDrawerFilters } from "@/components/photo-book/drawer-filters";
+import { GeneratePageMenu } from "@/components/photo-book/generate-page-menu";
+import {
+  type GeneratedPageChanges,
+  GeneratedPageOptions,
+} from "@/components/photo-book/generated-page-options";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { InBookBadge } from "@/components/photo-book/page-controls";
 import { unitName } from "@/components/photo-book/page-types";
@@ -10,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { isOtherPage } from "@/lib/photo-book";
+import type { GeneratedKind } from "@/lib/photo-book-generated";
 import type { LayoutOption } from "@/lib/photo-book-layout-filter";
 import type { BookUnit } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
@@ -27,6 +33,10 @@ interface UnitsDrawerProps {
   onAddOther: (name: string) => void;
   /** Removes the other page with ID id. */
   onRemoveOther: (id: string) => void;
+  /** Adds a generated page of the kind at the end of the book. */
+  onGenerate: (kind: GeneratedKind) => void;
+  /** Changes a generated page's options and heading. */
+  generated: GeneratedPageChanges;
   open: boolean;
   onOpen: (open: boolean) => void;
   /** Every tag in the book, to filter by. */
@@ -79,11 +89,11 @@ function DrawerList(props: UnitsDrawerProps & { listed: BookUnit[] }) {
 }
 
 /**
- * The drawer's name, how many pages and spreads it has, and, open, its filters beside them and the
- * other page form.
+ * The drawer's name, how many pages and spreads it has, and, open, its filters beside them, the
+ * other page form and **Generate page**.
  */
 function DrawerHeader(props: UnitsDrawerProps & { filters: ReactNode }) {
-  const { units, inBook, open, onOpen, onAddOther, filters } = props;
+  const { units, inBook, open, onOpen, onAddOther, onGenerate, filters } = props;
   const Icon = open ? ChevronDownIcon : ChevronUpIcon;
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -99,8 +109,13 @@ function DrawerHeader(props: UnitsDrawerProps & { filters: ReactNode }) {
           {count(units.length, "page or spread", "pages and spreads")} · {inBook.size} in the book
         </span>
       </button>
-      {open && filters}
-      {open && <OtherPageForm onAdd={onAddOther} />}
+      {open && (
+        <>
+          {filters}
+          <OtherPageForm onAdd={onAddOther} />
+          <GeneratePageMenu onAdd={onGenerate} />
+        </>
+      )}
     </div>
   );
 }
@@ -133,9 +148,9 @@ function DrawerUnit(props: UnitsDrawerProps & { unit: BookUnit }) {
   );
 }
 
-/** **+**, which adds the page or spread at the end of the book, or In book; and an other page's bin. */
+/** **+**, which adds the page or spread at the end of the book, or In book; a generated page's options; and an other page's bin. */
 function UnitActions(props: UnitsDrawerProps & { unit: BookUnit; name: string }) {
-  const { unit, name, inBook, onAdd, onRemoveOther } = props;
+  const { unit, name, inBook, onAdd, onRemoveOther, look, generated } = props;
   return (
     <>
       {inBook.has(unit.id) ? (
@@ -151,6 +166,7 @@ function UnitActions(props: UnitsDrawerProps & { unit: BookUnit; name: string })
           <PlusIcon />
         </Button>
       )}
+      <GeneratedPageOptions pages={unit.pages} look={look} changes={generated} />
       {unit.pages.some(isOtherPage) && (
         <Button
           size="icon-xs"

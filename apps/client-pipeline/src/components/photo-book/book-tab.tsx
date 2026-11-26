@@ -13,6 +13,7 @@ import { UnitsDrawer } from "@/components/photo-book/units-drawer";
 import { UsedPanel } from "@/components/photo-book/used-panel";
 import { type PageLayout, type PhotoBook, placePhoto } from "@/lib/photo-book";
 import { firstEmptySlotOn, insertNewPage, insertPoints } from "@/lib/photo-book-edit";
+import { addGeneratedPage, changeGenerated, setGeneratedTitle } from "@/lib/photo-book-generated";
 import { unitLayouts } from "@/lib/photo-book-layout-filter";
 import { layoutChoices } from "@/lib/photo-book-layouts";
 import {
@@ -213,6 +214,11 @@ function BookUnitsDrawer(
       onAdd={(id) => update(addToBook(book, id))}
       onTakeOut={(id) => update(takeOutOfBook(book, id))}
       onAddOther={(name) => update(addOtherPage(book, name))}
+      onGenerate={(kind) => update(addGeneratedPage(book, kind))}
+      generated={{
+        onChange: (id, change) => update(changeGenerated(book, id, change)),
+        onTitle: (id, title) => update(setGeneratedTitle(book, id, title)),
+      }}
       onRemoveOther={(id) =>
         update(
           removePage(

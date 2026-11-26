@@ -1,6 +1,7 @@
 import type { SocialPhoto } from "@/api/publish";
 import type { useCaptionFor, usePartsFor } from "@/components/photo-book/book-captions";
 import type { PageActions } from "@/components/photo-book/page-types";
+import type { usePlacesIndexFor } from "@/components/photo-book/use-places-index";
 import {
   type CustomLayout,
   type PageSide,
@@ -46,6 +47,8 @@ export interface PageLook {
   printWidth: number | null;
   /** True when the book shows no page titles, set on its Info tab. */
   noTitles: boolean;
+  /** The Places Index a generated page shows, with its options, from the pages in the book. */
+  placesIndexFor: ReturnType<typeof usePlacesIndexFor>;
 }
 
 /** Actions for a page that's only shown, such as a small preview: they do nothing. */

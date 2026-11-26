@@ -60,7 +60,7 @@ const US_STATES: Record<string, string> = {
 const STATE_KEYS = ["state", "stateLocal", "stateRomanized", "stateLocalized", "customState"];
 
 /** The state's standard abbreviation when it's a US state written out, such as CA for California; else the name as it is. */
-function stateAbbreviation(name: string): string {
+export function stateAbbreviation(name: string): string {
   return US_STATES[name.trim()] ?? name;
 }
 

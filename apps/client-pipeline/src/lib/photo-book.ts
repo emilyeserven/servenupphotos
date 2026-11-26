@@ -1,4 +1,5 @@
 import type { CameraName } from "@/lib/photo-book-cameras";
+import type { GeneratedPage } from "@/lib/photo-book-generated";
 import type { LensPrefix } from "@/lib/photo-book-lenses";
 /** A built-in page layout: one photo over the page, two down one side, or two portrait photos beside an info column. */
 export type BuiltInLayout =
@@ -122,6 +123,11 @@ export interface BookPage {
   textSide?: TextSide;
   /** The page's photo places, as many as its layout holds; a text page's, as many as it was given. */
   slots: BookSlot[];
+  /**
+   * What an other page draws from the book's data each time it's shown, such as a Places Index;
+   * absent on a page that shows only its name, and on every page that isn't an other page.
+   */
+  generated?: GeneratedPage;
 }
 
 /**

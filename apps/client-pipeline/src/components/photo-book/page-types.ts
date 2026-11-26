@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import type { SlotShape } from "@/components/photo-book/page-slot";
 import type { CustomLayout, BookPage as Page, PageSide, SlotPlace } from "@/lib/photo-book";
+import type { GeneratedPage } from "@/lib/photo-book-generated";
+import type { IndexEntry } from "@/lib/photo-book-places-index";
 import type { TextPlace } from "@/lib/photo-book-text";
 
 /** What the page itself can do to its book: its title, photos and captions, and a text page's text. */
@@ -45,6 +47,8 @@ export interface BookPageProps {
   noTitles?: boolean;
   /** The side to draw the page on, over the one sides gives, such as in a spread shown on its own. */
   side?: PageSide;
+  /** The Places Index a generated page shows, with its options; none where no page is generated. */
+  placesIndexFor?: (generated: GeneratedPage) => IndexEntry[];
   /** The buttons above the page; none on a preview. */
   controls?: ReactNode;
 }
