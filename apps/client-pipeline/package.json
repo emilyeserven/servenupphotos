@@ -4,10 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --logLevel warn",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node --import ../../scripts/test-aliases-register.mjs --test src/lib/*.test.ts"
+    "test": "node --import ../../scripts/test-aliases-register.mjs --test --test-reporter=dot src/lib/*.test.ts"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "catalog:",

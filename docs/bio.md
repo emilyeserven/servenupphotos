@@ -11,7 +11,7 @@
 Under **Photos**, the bio's photos are lined up in the order the bio shows them, numbered from 1. Drag a photo to another place, or move it one place with its arrows; the **×** takes it off the bio. A photo can be one of two kinds, mixed in any order:
 
 - **Self-portraits**, marked **Bio only**. They aren't photo files, so they never show up on any other page of the portfolio or the pipeline (the Gallery, the Grid, albums, the map…). **Upload self-portraits** picks one or more pictures (a JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF of up to 50 MB), and each is added at the end once it's uploaded. The box under each one is its alt text.
-- **Portfolio photos**, marked **Portfolio photo**: any photo file, which stays everywhere else on the site too. The **Photos** drawer beside the bio lists them like the [Photo Book's](photo-book.md#the-photo-drawer), with a search, **Show photos already on the bio** (off at first, so each is added once) and the portfolio Grid's filters. Click a photo to add it at the end, or drag it onto the bio's photos. The drawer leaves out the [Undecided](photos-in-flight.md#undecided) photos.
+- **Portfolio photos**, marked **Portfolio photo**: any photo file, which stays everywhere else on the site too. The **Photos** drawer beside the bio lists them like the [Photo Book's](photo-book/photo-drawer.md), with a search, **Show photos already on the bio** (off at first, so each is added once) and the portfolio Grid's filters. Click a photo to add it at the end, or drag it onto the bio's photos. The drawer leaves out the [Undecided](photos-in-flight.md#undecided) photos.
 
 ## Uploading a self-portrait
 

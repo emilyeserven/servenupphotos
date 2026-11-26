@@ -1,0 +1,50 @@
+# The photo book file
+
+Each book is one file, `photobooks/<id>.json`, and **Commit** combines them into `photobooks/PHOTOBOOKS.json`, as it does caption templates. Every change on the page is saved as a [change waiting for Commit](../pending-changes.md) (`PUT /api/photobooks/<id>`, `DELETE /api/photobooks/<id>`) under a second after the last one, so typing a caption saves once; the note beside **Photos** says **Saving…** until it has.
+
+```json
+{
+  "id": "korea-2026",
+  "name": "Korea 2026",
+  "template": "",
+  "album": "korea",
+  "size": { "width": 12.5, "height": 10.625, "unit": "in" },
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "Seoul opener",
+      "layout": "full",
+      "title": "Seoul",
+      "linkNext": true,
+      "tags": ["Seoul"],
+      "slots": [{ "photo": "apps/portfolio/src/data/photos/DSCF4800.json", "caption": null }]
+    },
+    { "id": "page-2", "name": "Seoul pair", "layout": "pair-left", "title": null, "slots": […] },
+    { "id": "page-3", "name": "Bio", "layout": "other", "title": null, "slots": [] },
+    { "id": "page-4", "layout": "text", "title": "Getting around", "text": "## The subway\n\nNine lines…", "columns": 2, "slots": […] }
+  ],
+  "order": ["page-3", "page-1"],
+  "hiddenLayouts": ["pair-left"]
+}
+```
+
+- **`slots`** are a page's photo places, each `{ "photo", "caption" }`: the photo file's path (`""` while empty) and a caption typed over the template's, or `null`. **`hidden`**, the parts of the photo's location its caption leaves out (`"place:<id>"`, `"placeName"`, `"city"`, `"state"` or `"country"`, up to 20), is left out while there are none.
+- **`template`** is the caption template's ID, or `""` for the default one.
+- **`album`** is the ID of the album the book's photos come from, or `""` (or missing, in a book made before) while none is picked.
+- **`budget`** is the page budget from **Info**, `{ target, max }`, each a whole number of printed pages up to 500 with `target` no more than `max`; a number not set is left out, and so is a budget with neither.
+- **`size`** is the page size from **Info**, `unit` one of `in`, `cm`, `mm`, `pt` or `px`; a book without one uses 12.5 × 10.625 in.
+- **`layout`** is `full`, `pair-left`, `pair-right`, `verticals-left` or `verticals-right`, `text` for a text page, `other` for an other page, or the ID of one of the book's `layouts`; the backend fills or cuts `slots` to the layout's count (none for `other`, as many as were sent up to 4 for `text`).
+- **`text`** is a text page's text in Markdown, trimmed, up to 5,000 characters, and **`columns`** how many columns it flows into, 2 or 3; both are left out on one without (one column) and on every other page.
+- **`layouts`** are the book's own layouts from the **Layouts** tab, each `{ id: "custom-<n>", name, photos (1–4), arrange: "stack" | "row", shape: "landscape" | "portrait" | "square" | "ratio" | "fill", ratio: { width, height } (only with "ratio", each more than 0 and at most 100), text: "left" | "right" | "above" | "below", captions: "column" | "photo", textShare (10–60), align: "start" | "center" | "end", alignTo: "room" | "photo", title: "text" | "top" | "off", gap (0–20), margin (0–20), leftPages: "mirror" | "same" | "own", left: { the same settings but id, name, photos and leftPages } (only with "own") }`, the numbers in percent of the page; left out while there are none. A layout without `leftPages` (made before) draws the same on both sides. A page whose layout isn't there is refused.
+- **`noTitles`** is `true` when **Show page titles** is off on **Info**, and left out otherwise.
+- **`lensPrefixes`** are **Lens names**' prefixes, each `{ "lens": "Fujinon XF35mmF2 R WR", "prefix": "Fujinon " }`: the lens as the photo's data has it, after overrides, and what the captions leave off it, up to 100 lenses, each once; left out while there are none.
+- **`hiddenLayouts`** are the IDs of the built-in layouts hidden on **Layouts**, left out when none is.
+- **`name`** is the page's name, left out until it has one.
+- **`alternates`** is the page's alternates group, such as `alt-1`, shared by a spread's pages, and **`hidden`** is `true` on one that lost to the one picked; the backend keeps `hidden` only on an alternate. Both are left out when not set.
+- **`tags`** are the page's tags from **Photo Pages**, trimmed, each once, at most 20; left out when it has none.
+- **`linkNext`** is `true` on a photo page linked with the photo page after it into a spread, in the order of `pages`.
+- **`pages`** is every page made for the book, and **`order`** the IDs of the pages and spreads in the book, in its order, a spread listed by its first page. A book made before `order` has none, and then every page is in it, in their order; adding a page writes it. A spread's second page listed too (as **Import Book** writes every page) counts as the spread.
+- **`title`** is `null` for a page without one.
+- **`photo`** is the photo file's path, or `""` for an empty place. **`caption`** is `null` to fill it in from the template, or the text typed instead.
+
+`apps/client-pipeline/src/lib/photo-book.ts` makes the changes to a page (`placePhoto`, `setLayout`, `renamePage`, …), `src/lib/photo-book-text.ts` a text page's text, columns and photo places, `src/lib/photo-book-layouts.ts` the book's layouts (`addLayout`, `changeLayout`, `removeLayout`, `sideLook`, `setLeftPages`, `setHidden`), `src/lib/photo-book-order.ts` the changes to which pages make spreads and which are in the book (`bookUnits`, `addToBook`, `setLinkNext`, `bookViews`, …), `src/lib/photo-book-album.ts` and `components/photo-book/album-photos.ts` find the album's photos, and `apps/be-pipeline/internal/github/photobooks.go` checks and saves the files.
