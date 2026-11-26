@@ -39,6 +39,7 @@ test("a generated page's options are changed and tidied, its title set", () => {
     ...g,
     columns: 5,
     pages: 40,
+    textSize: 333,
     localized: true,
     hidden: ["city:Seoul"],
   }));
@@ -47,6 +48,7 @@ test("a generated page's options are changed and tidied, its title set", () => {
     kind: "places-index",
     columns: 3,
     pages: 20,
+    textSize: 200,
     names: "localRomanized",
     hidden: ["city:Seoul"],
   });
@@ -54,6 +56,7 @@ test("a generated page's options are changed and tidied, its title set", () => {
     ...g,
     columns: 1,
     pages: 1,
+    textSize: 100,
     names: undefined,
     hidden: [],
   }));

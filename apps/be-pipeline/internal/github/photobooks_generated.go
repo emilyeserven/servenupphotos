@@ -38,6 +38,10 @@ type PhotoBookGenerated struct {
 	// Pages is how many linked pages the list runs on across, 2 to
 	// maxGeneratedPages; 0 (absent) for one.
 	Pages int `json:"pages,omitempty"`
+	// TextSize is the list's text size in percent of the usual size,
+	// minGeneratedTextSize to maxGeneratedTextSize in steps of 10; 0
+	// (absent) for 100.
+	TextSize int `json:"textSize,omitempty"`
 	// Hidden are the entries left out of the index, their places lifted
 	// into the entry above: "country:<name>", "state:<name>",
 	// "city:<name>", "place:<place ID>" or "placeName:<text>".
@@ -50,7 +54,7 @@ var (
 	generatedPageKinds  = []string{"places-index"}
 	placesIndexDepths   = []string{"", "country", "state", "city"}
 	placesIndexOrders   = []string{"", "book"}
-	placesIndexNames    = []string{"", "romanized", "romanizedLocal", "localRomanized", "local"}
+	placesIndexNames    = []string{"", "romanized", "romanizedLocal", "localRomanized", "local", "namedLocal"}
 	placesIndexHideKind = []string{"country:", "state:", "city:", "place:", "placeName:"}
 )
 
@@ -59,6 +63,10 @@ var (
 const (
 	maxGeneratedHidden = 500
 	maxGeneratedPages  = 20
+	// The smallest and largest text size a generated page's list can have,
+	// in percent.
+	minGeneratedTextSize = 50
+	maxGeneratedTextSize = 200
 )
 
 // validGeneratedPage returns page n's generated settings as they'll be
@@ -87,9 +95,24 @@ func validGeneratedPage(page PhotoBookPage, n int) (*PhotoBookGenerated, *Publis
 	out.Localized = false
 	out.Columns = oneAsZero(min(max(g.Columns, 1), maxTextPageColumns))
 	out.Pages = oneAsZero(min(max(g.Pages, 1), maxGeneratedPages))
+	out.TextSize = validGeneratedTextSize(g.TextSize)
 	hidden, perr := validGeneratedHidden(g.Hidden, n)
 	out.Hidden = hidden
 	return &out, perr
+}
+
+// validGeneratedTextSize is a text size rounded to steps of 10, from
+// minGeneratedTextSize to maxGeneratedTextSize, with 100 (and 0, none set)
+// as 0.
+func validGeneratedTextSize(size int) int {
+	if size == 0 {
+		return 0
+	}
+	size = min(max((size+5)/10*10, minGeneratedTextSize), maxGeneratedTextSize)
+	if size == 100 {
+		return 0
+	}
+	return size
 }
 
 // oneAsZero is n, with 1 as 0, so a count left at one isn't saved.

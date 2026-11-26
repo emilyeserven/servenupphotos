@@ -95,8 +95,22 @@ function shownSteps(path: Step[], options: GeneratedPage): Step[] {
   return path.filter((step) => LEVELS.indexOf(step.level) <= deepest && !hidden.has(step.key));
 }
 
-/** A name in its own script and Latin letters, as the style writes it; Latin letters alone without its own script. */
-function styled(style: NameStyle, { local, romanized }: { local: string; romanized: string }) {
+/** How a name is written: as named, in its own script ("" for none) and in Latin letters. */
+interface Written {
+  name: string;
+  local: string;
+  romanized: string;
+}
+
+/** The name as named, with its own script after it when it has one that differs, such as Gyeongbokgung Palace (경복궁). */
+function namedLocal({ name, local }: Written): string {
+  return local && local !== name ? `${name} (${local})` : name;
+}
+
+/** A name as the style writes it; one with no own script is written in Latin letters (or as named for `namedLocal`). */
+function styled(style: NameStyle, written: Written): string {
+  const { local, romanized } = written;
+  if (style === "namedLocal") return namedLocal(written);
   if (style === "romanized" || !local || local === romanized) return romanized;
   if (style === "local") return local;
   return style === "localRomanized" ? `${local} (${romanized})` : `${romanized} (${local})`;
@@ -115,7 +129,10 @@ function writtenName(step: Step, options: GeneratedPage, lists: CaptionLists): s
   }
   const style = nameStyle(options);
   if (!style) return step.name;
-  return styled(style, placeScripts(lists, step.level, step.name, step.place?.id));
+  return styled(style, {
+    name: step.name,
+    ...placeScripts(lists, step.level, step.name, step.place?.id),
+  });
 }
 
 /** Puts the path into entries, under the entry each step before it made, each key once in its entry. */
