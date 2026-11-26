@@ -6,6 +6,7 @@ import {
   saveCaptionTemplateMutation,
 } from "@/api/captions";
 import type { CombinedData } from "@/api/photos";
+import { PlaceFormBuilder } from "@/components/caption-templates/place-form-builder";
 import { PlaceholderList } from "@/components/caption-templates/placeholder-list";
 import { TemplatePreview } from "@/components/caption-templates/preview";
 import { EntryEditorButtons } from "@/components/entry-buttons";
@@ -24,7 +25,16 @@ function templateOf(draft: CaptionTemplate, saved?: CaptionTemplate): CaptionTem
     name: draft.name.trim(),
     platform: draft.platform,
     template: draft.template.trimEnd(),
+    ...placesOf(draft),
   };
+}
+
+/** The place name builder's forms to save, without empty ones; none while there are none. */
+function placesOf(draft: CaptionTemplate): Pick<CaptionTemplate, "places"> {
+  const places = (draft.places ?? [])
+    .map((form) => ({ ...form, text: form.text.trim() }))
+    .filter((form) => form.text !== "");
+  return places.length > 0 ? { places } : {};
 }
 
 interface TemplateEditorProps {
@@ -43,58 +53,78 @@ export function TemplateEditor({ template, data, onSaved }: TemplateEditorProps)
   const set = (part: Partial<CaptionTemplate>) => setDraft({ ...draft, ...part });
   return (
     <div className="flex min-w-0 flex-col gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>{template?.name ?? "New caption template"}</CardTitle>
-          <CardDescription>
-            Put a field in braces, such as <code>{"{camera}"}</code>. Square brackets around a part,
-            such as <code>{"[, ƒ {aperture}]"}</code>, leave it out when a field in it is empty, and
-            a line whose fields are all empty is left out. <code>{"{placeLocal|place}"}</code> uses
-            the first field with a value.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Name">
-              <Input
-                value={draft.name}
-                placeholder="Instagram"
-                onChange={(e) => set({ name: e.target.value })}
-              />
-            </Field>
-            <Field label="Platform, which a post there starts with">
-              <PlatformSelect value={draft.platform} onChange={(platform) => set({ platform })} />
-            </Field>
-          </div>
-          <Field label="Template">
-            <Textarea
-              ref={text}
-              rows={10}
-              className="font-mono text-sm"
-              value={draft.template}
-              onChange={(e) => set({ template: e.target.value })}
-            />
-          </Field>
-          <EntryEditorButtons
-            next={templateOf(draft, template)}
-            saved={template}
-            save={saveCaptionTemplateMutation}
-            remove={deleteCaptionTemplateMutation}
-            whyNot={whyNot}
-            saveLabel="Save template"
-            removeLabel="Remove template"
-            onSaved={onSaved}
-          />
-        </CardContent>
-      </Card>
-      <TemplatePreview template={draft.template} data={data} />
+      <TemplateCard template={template} draft={draft} text={text} set={set} onSaved={onSaved} />
+      <TemplatePreview template={draft} data={data} />
+      <PlaceFormBuilder
+        forms={draft.places ?? []}
+        data={data}
+        onChange={(places) => set({ places })}
+      />
       <PlaceholderList
         data={data}
+        places={draft.places}
         onInsert={(placeholder) =>
           set({ template: inserted(text.current, draft.template, placeholder) })
         }
       />
     </div>
+  );
+}
+
+interface TemplateCardProps extends Pick<TemplateEditorProps, "template" | "onSaved"> {
+  draft: CaptionTemplate;
+  /** The template's text box, which placeholders clicked go in. */
+  text: React.RefObject<HTMLTextAreaElement | null>;
+  set: (part: Partial<CaptionTemplate>) => void;
+}
+
+/** The template's name, platform and text, with Save and Remove. */
+function TemplateCard({ template, draft, text, set, onSaved }: TemplateCardProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{template?.name ?? "New caption template"}</CardTitle>
+        <CardDescription>
+          Put a field in braces, such as <code>{"{camera}"}</code>. Square brackets around a part,
+          such as <code>{"[, ƒ {aperture}]"}</code>, leave it out when a field in it is empty, and a
+          line whose fields are all empty is left out. <code>{"{placeLocal|place}"}</code> uses the
+          first field with a value.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Name">
+            <Input
+              value={draft.name}
+              placeholder="Instagram"
+              onChange={(e) => set({ name: e.target.value })}
+            />
+          </Field>
+          <Field label="Platform, which a post there starts with">
+            <PlatformSelect value={draft.platform} onChange={(platform) => set({ platform })} />
+          </Field>
+        </div>
+        <Field label="Template">
+          <Textarea
+            ref={text}
+            rows={10}
+            className="font-mono text-sm"
+            value={draft.template}
+            onChange={(e) => set({ template: e.target.value })}
+          />
+        </Field>
+        <EntryEditorButtons
+          next={templateOf(draft, template)}
+          saved={template}
+          save={saveCaptionTemplateMutation}
+          remove={deleteCaptionTemplateMutation}
+          whyNot={whyNot}
+          saveLabel="Save template"
+          removeLabel="Remove template"
+          onSaved={onSaved}
+        />
+      </CardContent>
+    </Card>
   );
 }
 

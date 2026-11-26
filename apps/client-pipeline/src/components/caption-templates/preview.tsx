@@ -1,7 +1,9 @@
 import { useState } from "react";
+import type { CaptionTemplate } from "@/api/captions";
 import type { CombinedData } from "@/api/photos";
 import { ErrorNote } from "@/components/error-note";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { withPlaceForm } from "@/lib/caption-place-form";
 import {
   captionLists,
   captionValues,
@@ -23,10 +25,14 @@ export function previewPhotos(data: CombinedData): CombinedPhoto[] {
 }
 
 /** The caption the template makes for a photo picked from the portfolio's, with any placeholder it doesn't know. */
-export function TemplatePreview({ template, data }: { template: string; data: CombinedData }) {
+export function TemplatePreview(props: { template: CaptionTemplate; data: CombinedData }) {
+  const { template, data } = props;
   const photos = previewPhotos(data);
   const [index, setIndex] = useState(0);
-  const values = captionValues(photos[index] ?? {}, captionLists(data), ["travelphotography"]);
+  const values = withPlaceForm(
+    template,
+    captionValues(photos[index] ?? {}, captionLists(data), ["travelphotography"]),
+  );
   return (
     <Card>
       <CardHeader>
@@ -38,9 +44,9 @@ export function TemplatePreview({ template, data }: { template: string; data: Co
       <CardContent className="flex flex-col gap-3">
         <PhotoSelect photos={photos} index={index} onChange={setIndex} />
         <p className="bg-muted rounded-md p-3 text-sm whitespace-pre-wrap">
-          {fillCaption(template, values) || "Nothing yet."}
+          {fillCaption(template.template, values) || "Nothing yet."}
         </p>
-        <UnknownNote names={unknownPlaceholders(template, values)} />
+        <UnknownNote names={unknownPlaceholders(template.template, values)} />
       </CardContent>
     </Card>
   );

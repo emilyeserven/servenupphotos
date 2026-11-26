@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { type PlaceForm, withPlaceForm } from "@/lib/caption-place-form";
 import {
   type CaptionValues,
   PLACEHOLDERS,
@@ -19,8 +20,8 @@ import {
   captionValues,
 } from "@/lib/caption-template";
 
-/** Another photo's index than current, out of count; current when there's no other. */
-function shuffled(current: number, count: number): number {
+/** Another index than current, picked at random out of count; current when there's no other. */
+export function shuffled(current: number, count: number): number {
   if (count < 2) return current;
   const next = Math.floor(Math.random() * (count - 1));
   return next >= current ? next + 1 : next;
@@ -77,6 +78,8 @@ function PlaceholderRows({ names, help, values, onInsert }: PlaceholderRowsProps
 interface PlaceholderListProps {
   /** The combined lists, for the example photo and its places. */
   data: CombinedData;
+  /** The template's place name builder forms, for `{from_places_form}`'s example. */
+  places?: PlaceForm[];
   onInsert: (placeholder: string) => void;
 }
 
@@ -85,11 +88,14 @@ interface PlaceholderListProps {
  * it is, and what it's filled with for one of the portfolio's photos, which **Shuffle** swaps for
  * another.
  */
-export function PlaceholderList({ data, onInsert }: PlaceholderListProps) {
+export function PlaceholderList({ data, places, onInsert }: PlaceholderListProps) {
   const photos = previewPhotos(data);
   const [index, setIndex] = useState(0);
   const photo = photos[index];
-  const values = captionValues(photo ?? {}, captionLists(data), ["travelphotography"]);
+  const values = withPlaceForm(
+    { places },
+    captionValues(photo ?? {}, captionLists(data), ["travelphotography"]),
+  );
   return (
     <Card>
       <CardHeader className="flex flex-wrap items-start justify-between gap-3">

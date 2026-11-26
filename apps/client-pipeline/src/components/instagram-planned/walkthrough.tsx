@@ -7,7 +7,8 @@ import { PlannedPhotoView } from "@/components/instagram-planned/planned-photo";
 import { useMarkScheduled } from "@/components/instagram-planned/use-mark-scheduled";
 import { usePostedPhotoFiles } from "@/components/social-post-date-picker";
 import { Button } from "@/components/ui/button";
-import { captionLists, captionValues, fillCaption } from "@/lib/caption-template";
+import { fillTemplate } from "@/lib/caption-place-form";
+import { captionLists, captionValues } from "@/lib/caption-template";
 import { type PlannedPhoto, plannedPhotos } from "@/lib/instagram-planned";
 import { parseHashtags } from "@/lib/social-posts";
 import { useCombinedData } from "@/stores/combined-data";
@@ -34,7 +35,7 @@ function usePlannedCaption(planned: PlannedPhoto) {
   const written = writtenCaption(planned);
   if (written || !template) return { caption: written, template, written: written !== "" };
   const values = captionValues(planned.file.data, captionLists(data), plannedHashtags(planned));
-  return { caption: fillCaption(template.template, values), template, written: false };
+  return { caption: fillTemplate(template, values), template, written: false };
 }
 
 /**
