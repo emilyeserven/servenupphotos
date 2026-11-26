@@ -71,6 +71,7 @@ function pageParts(props: BodyProps): PageParts {
           slot={s}
           text={captionFor(s)}
           onChange={(text) => actions.onCaption(i, text)}
+          place={`${page.id}:${i}`}
           className={className}
         />
       );

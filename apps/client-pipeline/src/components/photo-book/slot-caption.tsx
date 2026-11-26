@@ -1,6 +1,7 @@
 import { RotateCcwIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CaptionRuns } from "@/components/caption-runs";
+import { useCaptionOverflow } from "@/components/photo-book/use-caption-overflow";
 import { plainCaption } from "@/lib/caption-styles";
 import type { BookSlot } from "@/lib/photo-book";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,8 @@ interface SlotCaptionProps {
   /** What the caption says: the one written by hand, or the template's. */
   text: string;
   onChange: (caption: string | null) => void;
+  /** Where it is, `<page ID>:<slot>`, to list it on the Book tab when it overflows; none on a page only shown. */
+  place?: string;
   className?: string;
 }
 
@@ -20,17 +23,35 @@ interface SlotCaptionProps {
  * className moves it, such as `justify-end` to sit at the bottom. Sizes are in `cqw`, shares of
  * the page's width, so the text scales with the page.
  */
-export function SlotCaption({ slot, text, onChange, className }: SlotCaptionProps) {
+export function SlotCaption({ slot, text, onChange, place, className }: SlotCaptionProps) {
+  if (slot.photo === "" && slot.caption === null) return <EmptyCaption className={className} />;
+  return (
+    <FilledCaption
+      slot={slot}
+      text={text}
+      onChange={onChange}
+      place={place}
+      className={className}
+    />
+  );
+}
+
+/** The word **Caption**, faint, where an empty place's caption goes; invisible in print. */
+function EmptyCaption({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn("text-[1.9cqw] text-neutral-600 italic in-data-[print]:invisible", className)}
+    >
+      Caption
+    </div>
+  );
+}
+
+/** A caption with text: drawn as printed, or typed in, with its overflow mark and **From template**. */
+function FilledCaption({ slot, text, onChange, place, className }: SlotCaptionProps) {
   const [editing, setEditing] = useState(false);
-  if (slot.photo === "" && slot.caption === null) {
-    return (
-      <div
-        className={cn("text-[1.9cqw] text-neutral-600 italic in-data-[print]:invisible", className)}
-      >
-        Caption
-      </div>
-    );
-  }
+  const textRef = useRef<HTMLButtonElement>(null);
+  const over = useCaptionOverflow(textRef, place, editing ? "" : text);
   return (
     <div className={cn("relative flex min-h-0 flex-col", className)}>
       {editing ? (
@@ -44,8 +65,9 @@ export function SlotCaption({ slot, text, onChange, className }: SlotCaptionProp
           className="field-sizing-content min-h-0 w-full resize-none rounded-sm bg-white/10 text-[1.9cqw] leading-snug outline-none"
         />
       ) : (
-        <CaptionText text={text} onEdit={() => setEditing(true)} />
+        <CaptionText ref={textRef} text={text} over={over} onEdit={() => setEditing(true)} />
       )}
+      <OverflowMark over={over && !editing} />
       <FromTemplate slot={slot} onChange={onChange} />
     </div>
   );
@@ -57,25 +79,65 @@ function captionLines(text: string): { title: string; rest: string } {
   return { title, rest: rest.join("\n").replace(/^\s*\n/, "") };
 }
 
+/** How the caption's text button looks. */
+const TEXT_CLASS =
+  "shrink-0 cursor-text rounded-sm text-left hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none";
+
+/** The red outline around a caption that overflows, off the printed page and Preview Mode. */
+const OVER_CLASS =
+  "outline-1 outline-red-600 in-data-[preview]:outline-none in-data-[print]:outline-none";
+
+interface CaptionTextProps {
+  ref: React.Ref<HTMLButtonElement>;
+  text: string;
+  /** Whether it overflows its room, which outlines it in red off the printed page. */
+  over: boolean;
+  onEdit: () => void;
+}
+
 /** The caption as printed, a button that starts typing over it. */
-function CaptionText({ text, onEdit }: { text: string; onEdit: () => void }) {
+function CaptionText({ ref, text, over, onEdit }: CaptionTextProps) {
   const { title, rest } = captionLines(text);
   return (
     <button
+      ref={ref}
       type="button"
       aria-label={`Edit the caption: ${plainCaption(title) || "empty"}`}
       onClick={onEdit}
-      className="cursor-text rounded-sm text-left hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"
+      className={cn(TEXT_CLASS, over && OVER_CLASS)}
     >
-      <span className="block text-[3cqw] leading-tight font-bold">
-        {title ? <CaptionRuns text={title} /> : "Caption"}
-      </span>
-      {rest && (
-        <span className="mt-[0.3cqw] block text-[1.9cqw] leading-snug whitespace-pre-line">
-          <CaptionRuns text={rest} />
-        </span>
-      )}
+      <CaptionTitle title={title} />
+      <CaptionRest rest={rest} />
     </button>
+  );
+}
+
+/** The caption's first line, the photo's title, in bold; "Caption" while it's empty. */
+function CaptionTitle({ title }: { title: string }) {
+  return (
+    <span className="block text-[3cqw] leading-tight font-bold">
+      {title ? <CaptionRuns text={title} /> : "Caption"}
+    </span>
+  );
+}
+
+/** The caption's lines under its title, small; none when there are none. */
+function CaptionRest({ rest }: { rest: string }) {
+  if (!rest) return null;
+  return (
+    <span className="mt-[0.3cqw] block text-[1.9cqw] leading-snug whitespace-pre-line">
+      <CaptionRuns text={rest} />
+    </span>
+  );
+}
+
+/** A mark under a caption that overflows its room; none when it fits, in Preview Mode and in print. */
+function OverflowMark({ over }: { over: boolean }) {
+  if (!over) return null;
+  return (
+    <span className="absolute top-0 right-0 rounded bg-red-600 px-1 text-[10px] font-medium text-white in-data-[preview]:hidden in-data-[print]:hidden">
+      Caption overflows
+    </span>
   );
 }
 
