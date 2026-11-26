@@ -6,7 +6,9 @@ import (
 )
 
 func TestValidEntrySizes(t *testing.T) {
-	got, perr := validEntrySizes(map[string]int{" place:okuhagi ": 92, "city:Hagi": 100, "city:Seoul": 10, "country:Japan": 300}, 1)
+	// A key saved with spaces around it is trimmed.
+	padded := " " + "place:okuhagi" + " "
+	got, perr := validEntrySizes(map[string]int{padded: 92, "city:Hagi": 100, "city:Seoul": 10, "country:Japan": 300}, 1)
 	want := map[string]int{"place:okuhagi": 90, "city:Seoul": minEntrySize}
 	if perr != nil || !maps.Equal(got, want) {
 		t.Fatalf("got %v, %v; want %v", got, perr, want)
