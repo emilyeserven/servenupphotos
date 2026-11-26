@@ -1,5 +1,5 @@
 {
-  "title": "From the Citadel, Looking Over Cairo",
+  "title": "Pyramids in the Skyline",
   "comment": null,
   "id": 276,
   "file": "20250118_140437.jpg",
@@ -271,5 +271,7 @@
     "samples": 9828
   },
   "notes": "Shows a minaret; 'minaret' isn't a tag, since only 1 photo has one.",
-  "similarPhotos": [44, 268, 458, 217, 395, 396]
+  "similarPhotos": [44, 268, 458, 217, 395, 396],
+  "noGps": false,
+  "altText": null
 }

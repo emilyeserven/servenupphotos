@@ -1,0 +1,274 @@
+{
+  "title": "Medieval Street",
+  "comment": null,
+  "id": 964,
+  "altText": null,
+  "notes": null,
+  "file": "20250706_181824.jpg",
+  "addedDate": "2026-11-26T00:27:22Z",
+  "camera": "Galaxy S24 Ultra",
+  "lens": "S24 Ultra Rear Wide Camera",
+  "aperture": 1.7,
+  "exposure": "1/180",
+  "iso": 32,
+  "focalLength": 6.3,
+  "gpsPosition": "43 deg 32' 57.07\" N, 11 deg 2' 43.19\" E",
+  "customGpsPosition": null,
+  "createDate": "2025:07:06 18:18:24",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "Italy",
+  "state": "Florence",
+  "city": "Certaldo",
+  "width": 4000,
+  "height": 2252,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824.jpg",
+    "key": "photos/978c2727132b-20250706-181824.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 874,
+      "y": 0,
+      "size": 2252,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera"
+  },
+  "manualAperture": false,
+  "customLens": null,
+  "albums": ["2026-photo-book-candidates"],
+  "tags": [],
+  "genres": [],
+  "places": [],
+  "noGps": false,
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "spotlightPlacement": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "pickedSimilar": [],
+  "pickedSimilarNotes": {},
+  "similarPhotos": [],
+  "perceptualHash": "b72fb39392d674c3",
+  "colors": {
+    "average": {
+      "hex": "#807077",
+      "lab": {
+        "l": 49.03,
+        "a": 7.31,
+        "b": -1.22
+      },
+      "hcl": {
+        "h": 350.55,
+        "c": 7.41,
+        "l": 49.03
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.1554
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.1156
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.0141
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.0008
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.0013
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0.0025
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.0066
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.0965
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.0655
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0.0299
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0.0219
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0.0411
+      }
+    ],
+    "neutrals": {
+      "share": 0.4486,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.0314
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0333
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0446
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.051
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0217
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0165
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0171
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0134
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0105
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0095
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0123
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0193
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.025
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0286
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0328
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0253
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0229
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0146
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0098
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0.0091
+        }
+      ]
+    },
+    "lightness": 49.03,
+    "chroma": 15.21,
+    "peakChroma": 26.35,
+    "samples": 9490
+  }
+}

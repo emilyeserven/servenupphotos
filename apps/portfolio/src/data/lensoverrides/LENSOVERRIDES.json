@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "id": "samsung-galaxy-s24-ultra-rear-super-telephoto-camera",
+    "lens": "Samsung Galaxy S24 Ultra Rear Super Telephoto Camera",
+    "rules": [
+      {
+        "when": null,
+        "set": {
+          "lens": "S24 Ultra Rear Super Telephoto Lens"
+        }
+      }
+    ]
+  },
+  {
+    "id": "samsung-galaxy-s24-ultra-rear-telephoto-camera",
+    "lens": "Samsung Galaxy S24 Ultra Rear Telephoto Camera",
+    "rules": [
+      {
+        "when": null,
+        "set": {
+          "lens": "S24 Ultra Rear Telephoto Lens"
+        }
+      }
+    ]
+  },
+  {
+    "id": "samsung-galaxy-s24-ultra-rear-ultrawide-camera",
+    "lens": "Samsung Galaxy S24 Ultra Rear Ultrawide Camera",
+    "rules": [
+      {
+        "when": null,
+        "set": {
+          "lens": "S24 Ultra Rear Ultrawide Camera"
+        }
+      }
+    ]
+  },
+  {
+    "id": "samsung-galaxy-s24-ultra-rear-wide-camera",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "rules": [
+      {
+        "when": null,
+        "set": {
+          "lens": "S24 Ultra Rear Wide Camera"
+        }
+      }
+    ]
+  },
+  {
+    "id": "samsung-galaxy-s7-rear-camera",
+    "lens": "Samsung Galaxy S7 Rear Camera",
+    "rules": [
+      {
+        "when": null,
+        "set": {
+          "lens": "S7 Rear Camera"
+        }
+      }
+    ]
+  }
+]
