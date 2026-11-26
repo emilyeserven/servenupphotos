@@ -88,6 +88,9 @@ type PhotoBook struct {
 	// NoTitles is true when no photo page of the book shows its title, set
 	// on its Info tab.
 	NoTitles bool `json:"noTitles,omitempty"`
+	// LensPrefixes are lenses whose names the book's captions write without
+	// the words they start with, set on its Info tab.
+	LensPrefixes []PhotoBookLensPrefix `json:"lensPrefixes,omitempty"`
 }
 
 // PhotoBookBudget is a book's page budget, counted in printed pages (a
@@ -199,6 +202,9 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 	}
 	out.Layouts = layouts
 	if out.HiddenLayouts, perr = validHiddenLayouts(b.HiddenLayouts); perr != nil {
+		return out, perr
+	}
+	if out.LensPrefixes, perr = validLensPrefixes(b.LensPrefixes); perr != nil {
 		return out, perr
 	}
 	counts := photoBookSlotCounts(layouts)
