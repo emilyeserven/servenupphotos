@@ -16,7 +16,7 @@
   "customCreateDate": null,
   "placeName": "Muhammad Ali Mosque",
   "customCity": "Al Khalifa",
-  "customState": null,
+  "customState": "Cairo",
   "customCountry": "Egypt",
   "country": null,
   "state": null,
@@ -272,5 +272,7 @@
   },
   "notes": "Shows stained glass; 'stained-glass' isn't a tag, since only 1 photo has it.",
   "similarPhotos": [278, 288, 295, 34, 274, 212],
-  "compareGroup": "Silhouettes in Mosque Doorway"
+  "compareGroup": "Silhouettes in Mosque Doorway",
+  "noGps": false,
+  "altText": null
 }
