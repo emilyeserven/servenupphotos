@@ -5,6 +5,7 @@ import { SavePdfButton } from "@/components/photo-book/book-pdf";
 import { BookPhotoDrawer } from "@/components/photo-book/book-photo-drawer";
 import { BookPreview } from "@/components/photo-book/book-preview";
 import { BudgetMeter } from "@/components/photo-book/budget-meter";
+import { CaptionOverflowList } from "@/components/photo-book/caption-overflow-list";
 import { LowResolutionList } from "@/components/photo-book/low-resolution-list";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { usePreviewKeys, usePreviewMode } from "@/components/photo-book/preview-mode";
@@ -149,6 +150,7 @@ export function BookTab(props: BookTabProps) {
             printWidth={look.printWidth}
             onShow={(id) => setAt(viewOf(views, id))}
           />
+          <CaptionOverflowList book={book} look={look} onShow={(id) => setAt(viewOf(views, id))} />
         </div>
         {edit.on && !preview.on ? (
           edit.drawer

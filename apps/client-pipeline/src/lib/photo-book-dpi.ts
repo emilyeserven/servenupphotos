@@ -1,5 +1,5 @@
 import { type BookPage, type BookSize, DEFAULT_SIZE, type PhotoBook } from "@/lib/photo-book";
-import { pageNumbers, unitsInBook } from "@/lib/photo-book-order";
+import { bookSlots } from "@/lib/photo-book-order";
 
 /** The resolution a printed photo needs to look sharp: 300 dots (pixels) per inch. */
 export const PRINT_DPI = 300;
@@ -66,15 +66,9 @@ export function lowResolution(
   book: PhotoBook,
   places: Map<string, { photo: string; dpi: number }>,
 ): LowPhoto[] {
-  const numbers = pageNumbers(book);
-  return unitsInBook(book).flatMap((unit) =>
-    unit.pages.flatMap((page) =>
-      page.slots.flatMap((slot, i) => {
-        const measured = places.get(`${page.id}:${i}`);
-        if (!slot.photo || measured?.photo !== slot.photo || measured.dpi >= PRINT_DPI) return [];
-        const number = numbers.get(page.id) ?? 0;
-        return [{ unit: unit.id, number, page, photo: slot.photo, dpi: measured.dpi }];
-      }),
-    ),
-  );
+  return bookSlots(book).flatMap(({ unit, number, page, slot, key }) => {
+    const measured = places.get(key);
+    if (!slot.photo || measured?.photo !== slot.photo || measured.dpi >= PRINT_DPI) return [];
+    return [{ unit, number, page, photo: slot.photo, dpi: measured.dpi }];
+  });
 }

@@ -1,5 +1,6 @@
 import {
   type BookPage,
+  type BookSlot,
   type PageLayout,
   type PageSide,
   type PhotoBook,
@@ -379,4 +380,32 @@ export function pageSides(book: PhotoBook): Map<string, PageSide> {
   }
   for (const [id, number] of pageNumbers(book)) sides.set(id, number % 2 === 0 ? "left" : "right");
   return sides;
+}
+
+/** A photo place in the book, with the page or spread it's on and the page's number. */
+export interface BookSlotAt {
+  /** The ID of the page or spread it's on, to show it. */
+  unit: string;
+  /** The page's number in the book, and the page. */
+  number: number;
+  page: BookPage;
+  slot: BookSlot;
+  /** Where it is, as `<page ID>:<slot>`. */
+  key: string;
+}
+
+/** Every photo place on the pages in the book, in its order. */
+export function bookSlots(book: PhotoBook): BookSlotAt[] {
+  const numbers = pageNumbers(book);
+  return unitsInBook(book).flatMap((unit) =>
+    unit.pages.flatMap((page) =>
+      page.slots.map((slot, i) => ({
+        unit: unit.id,
+        number: numbers.get(page.id) ?? 0,
+        page,
+        slot,
+        key: `${page.id}:${i}`,
+      })),
+    ),
+  );
 }
