@@ -92,6 +92,8 @@ function BuilderPlaceholders({ onInsert }: { onInsert: (placeholder: string) => 
 interface FocusedForm {
   index: number;
   input: HTMLInputElement;
+  /** Which line of the form it is, 0 for the first. */
+  line: number;
 }
 
 interface FormListProps {
@@ -133,7 +135,7 @@ function FormList({ forms, byForm, fallback, lastFocused, onChange }: FormListPr
           onChange={(next) => change(i, next)}
           onMove={(by) => move(i, by)}
           onRemove={() => onChange(forms.filter((_, j) => j !== i))}
-          onFocus={(input) => (lastFocused.current = { index: i, input })}
+          onFocus={(input, line) => (lastFocused.current = { index: i, input, line })}
         />
       ))}
     </ol>
@@ -181,7 +183,11 @@ export function PlaceFormBuilder({
   const lastFocused = useRef<FocusedForm | null>(null);
   const insert = (placeholder: string) => {
     const at = lastFocused.current;
-    const cursor = at && { start: at.input.selectionStart, end: at.input.selectionEnd };
+    const cursor = at && {
+      line: at.line,
+      start: at.input.selectionStart,
+      end: at.input.selectionEnd,
+    };
     onChange(withPlaceholder(forms, { index: at?.index ?? null, ...cursor }, placeholder));
   };
   return (

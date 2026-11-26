@@ -85,6 +85,11 @@ type CaptionPlaceForm struct {
 	When string `json:"when,omitempty"`
 	// Text is the place name, with placeholders, such as "{city}, {state}".
 	Text string `json:"text"`
+	// More is the lines under it, such as the romanized names under the
+	// local ones; the pipeline leaves one out for a photo when it can't fill
+	// it in or it reads the same as a line above it. Left out when there's
+	// none.
+	More []string `json:"more,omitempty"`
 }
 
 // The most forms a place name builder can have, what each one can be for
@@ -95,6 +100,22 @@ var (
 	maxPlaceFormConditions    = 20
 	placeFormConditionPattern = regexp.MustCompile(`^[A-Za-z]\w*$`)
 )
+
+// maxPlaceFormLines is the most lines a place name form can have under its
+// first.
+const maxPlaceFormLines = 9
+
+// trimmedLines returns the lines trimmed, without empty ones, or nil when
+// none are left.
+func trimmedLines(lines []string) []string {
+	var out []string
+	for _, line := range lines {
+		if line = strings.TrimSpace(line); line != "" {
+			out = append(out, line)
+		}
+	}
+	return out
+}
 
 // validPlaceFormCondition reports why a form's condition can't be saved, or
 // nil: too many fields, or one that isn't a field name.
@@ -126,7 +147,11 @@ func validPlaceForms(forms []CaptionPlaceForm) ([]CaptionPlaceForm, *PublishErro
 		if perr := validPlaceFormCondition(f); perr != nil {
 			return nil, perr
 		}
-		if utf8.RuneCountInString(f.Text) > maxEntryTextLength {
+		f.More = trimmedLines(f.More)
+		if len(f.More) > maxPlaceFormLines {
+			return nil, publishErr(http.StatusBadRequest, "A place name form can have up to %d lines.", maxPlaceFormLines+1)
+		}
+		if utf8.RuneCountInString(strings.Join(append([]string{f.Text}, f.More...), "\n")) > maxEntryTextLength {
 			return nil, publishErr(http.StatusBadRequest, "Keep each place name form to %d characters.", maxEntryTextLength)
 		}
 		out = append(out, f)

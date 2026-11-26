@@ -10,14 +10,14 @@ import (
 
 func TestSaveCaptionTemplate(t *testing.T) {
 	_, c := newMainRepo(t, map[string]string{})
-	template := CaptionTemplate{ID: "instagram", Name: " Instagram ", Platform: "instagram", Template: "{title}\n📷 {camera}\n\n", Places: []CaptionPlaceForm{{When: "2", Text: " {place1}, {place2} "}, {Has: []string{"city"}, Lacks: []string{"state"}, Text: " "}}, PlaceReplacements: []CaptionPlaceReplacement{{From: "United States of America", To: "USA"}, {From: " ", To: "x"}}}
+	template := CaptionTemplate{ID: "instagram", Name: " Instagram ", Platform: "instagram", Template: "{title}\n📷 {camera}\n\n", Places: []CaptionPlaceForm{{When: "2", Text: " {place1}, {place2} ", More: []string{" {place1Romanized} ", " "}}, {Has: []string{"city"}, Lacks: []string{"state"}, Text: " "}}, PlaceReplacements: []CaptionPlaceReplacement{{From: "United States of America", To: "USA"}, {From: " ", To: "x"}}}
 	if _, err := c.SaveCaptionTemplate(t.Context(), placesGH, template); err != nil {
 		t.Fatalf("SaveCaptionTemplate() error = %v", err)
 	}
 	saved := staged(t, c, dataRoot+"/captions/instagram.json")
 	// The name is trimmed, the text loses its trailing blank lines, and the
 	// place name forms are trimmed without the empty one.
-	if !strings.Contains(saved, `"name": "Instagram"`) || !strings.Contains(saved, `"template": "{title}\n📷 {camera}"`) || !strings.Contains(saved, `"text": "{place1}, {place2}"`) || strings.Count(saved, `"when"`) != 1 || !strings.Contains(saved, `"to": "USA"`) || strings.Count(saved, `"from"`) != 1 {
+	if !strings.Contains(saved, `"name": "Instagram"`) || !strings.Contains(saved, `"template": "{title}\n📷 {camera}"`) || !strings.Contains(saved, `"text": "{place1}, {place2}"`) || !strings.Contains(saved, `"{place1Romanized}"`) || strings.Count(saved, `"when"`) != 1 || !strings.Contains(saved, `"to": "USA"`) || strings.Count(saved, `"from"`) != 1 {
 		t.Errorf("saved %s", saved)
 	}
 	tests := []struct {
@@ -28,6 +28,7 @@ func TestSaveCaptionTemplate(t *testing.T) {
 		{"no text", CaptionTemplate{ID: "a", Name: "A", Template: "  \n"}},
 		{"too long", CaptionTemplate{ID: "a", Name: "A", Template: strings.Repeat("a", maxCaptionTemplateLength+1)}},
 		{"bad ID", CaptionTemplate{ID: "A A", Name: "A", Template: "{title}"}},
+		{"too many form lines", CaptionTemplate{ID: "a", Name: "A", Template: "{title}", Places: []CaptionPlaceForm{{Text: "{city}", More: slices.Repeat([]string{"{city}"}, maxPlaceFormLines+1)}}}},
 		{"bad condition field", CaptionTemplate{ID: "a", Name: "A", Template: "{title}", Places: []CaptionPlaceForm{{Has: []string{"city state"}, Text: "{city}"}}}},
 		{"bad place count", CaptionTemplate{ID: "a", Name: "A", Template: "{title}", Places: []CaptionPlaceForm{{When: "4", Text: "{place1}"}}}},
 		{"long place form", CaptionTemplate{ID: "a", Name: "A", Template: "{title}", Places: []CaptionPlaceForm{{When: "any", Text: strings.Repeat("a", maxEntryTextLength+1)}}}},

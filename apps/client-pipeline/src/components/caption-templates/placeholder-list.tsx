@@ -69,7 +69,7 @@ function PlaceholderRows({ names, help, values, onInsert }: PlaceholderRowsProps
           {help}
         </TableCell>
       )}
-      <TableCell className="align-top whitespace-normal">
+      <TableCell className="align-top whitespace-pre-line">
         <Example value={values[name]} />
       </TableCell>
     </TableRow>

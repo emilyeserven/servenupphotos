@@ -7,6 +7,7 @@ import {
   conditionState,
   formConditions,
   replacePlaces,
+  filledLines,
   withCondition,
   withPlaceholder,
 } from "@/lib/caption-place-form";
@@ -107,4 +108,23 @@ test("an older place count reads as conditions on the numbered places", () => {
   assert.deepEqual(form, { has: ["place2", "city"], lacks: ["place3"], text: "x" });
   assert.equal(conditionState(form, "place3"), "lacks");
   assert.deepEqual(withCondition(form, "place3", "off"), { has: ["place2", "city"], text: "x" });
+});
+
+test("a form's lines go one under another, each left out when it can't fill in or repeats one above", () => {
+  const form: PlaceForm = {
+    text: "{cityLocal|city}, {country}",
+    more: ["{cityRomanized}, {country}", "{city}, {country}", "{state}"],
+  };
+  const seoul = {
+    city: "Seoul",
+    cityLocal: "서울특별시",
+    cityRomanized: "Seoul",
+    country: "Korea",
+  };
+  assert.equal(pickPlaceForm([form], seoul)?.text, "서울특별시, Korea\nSeoul, Korea");
+  assert.deepEqual(filledLines(form, seoul), ["서울특별시, Korea", "Seoul, Korea", null, null]);
+  const plain = { city: "New York", country: "USA" };
+  assert.equal(pickPlaceForm([form], plain)?.text, "New York, USA");
+  const at = withPlaceholder([form], { index: 0, line: 2, start: 0 }, "{x}");
+  assert.equal(at[0]!.more?.[1], "{x}{city}, {country}");
 });
