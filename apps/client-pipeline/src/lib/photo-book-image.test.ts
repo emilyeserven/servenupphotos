@@ -24,29 +24,14 @@ test("no versions before the place is measured, or for a photo without a size", 
   assert.deepEqual(slotSources(undefined, { width: 600, height: 400 }), {});
 });
 
-test("for the PDF, the photo's original JPEG is its widest choice, in place of a version as wide", () => {
+test("for the PDF, the photo's original JPEG is its only choice", () => {
   const withFull = { ...photo, images: { ...photo.images, full: "o.jpg" } };
-  assert.equal(
-    slotSources(withFull, { width: 600, height: 400 }, true).srcSet,
-    "s.webp 500w, m.webp 1200w, xl.webp 2500w, o.jpg 3000w",
-  );
-  // A photo no wider than the X-Large version's edge: the original takes its place.
-  const narrow = {
-    width: 2000,
-    height: 1500,
-    images: { small: "s.webp", xlarge: "xl.webp", full: "o.jpg" },
-  };
-  assert.equal(
-    slotSources(narrow, { width: 600, height: 400 }, true).srcSet,
-    "s.webp 500w, o.jpg 2000w",
-  );
-  // Not for the PDF, or no original: the versions alone.
-  assert.equal(
-    slotSources(withFull, { width: 600, height: 400 }).srcSet,
-    "s.webp 500w, m.webp 1200w, xl.webp 2500w",
-  );
-  assert.equal(
-    slotSources(photo, { width: 600, height: 400 }, true).srcSet,
-    "s.webp 500w, m.webp 1200w, xl.webp 2500w",
-  );
+  assert.deepEqual(slotSources(withFull, { width: 200, height: 100 }, true), {
+    srcSet: "o.jpg 3000w",
+    sizes: "200px",
+  });
+  // Not for the PDF, or no original: the versions.
+  const versions = "s.webp 500w, m.webp 1200w, xl.webp 2500w";
+  assert.equal(slotSources(withFull, { width: 600, height: 400 }).srcSet, versions);
+  assert.equal(slotSources(photo, { width: 600, height: 400 }, true).srcSet, versions);
 });

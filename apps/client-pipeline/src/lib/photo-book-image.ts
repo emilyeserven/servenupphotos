@@ -24,26 +24,18 @@ function slotPhoto(data: unknown): SlotPhoto | null {
   return { width, height, images: images as SlotPhoto["images"] };
 }
 
-/**
- * srcSet with the photo's original JPEG in R2 (`images.full`) as its widest choice, at the photo's
- * own width: a resized version as wide as the original or wider is left out, since the original
- * is as sharp and isn't compressed again. srcSet as it is when the photo has no original.
- */
-function withOriginal(srcSet: string, photo: SlotPhoto): string {
+/** The photo's original JPEG in R2 (`images.full`) as a srcSet of its own width, or undefined when it has none. */
+function originalSrcSet(photo: SlotPhoto): string | undefined {
   const { full } = photo.images;
-  if (typeof full !== "string" || !full) return srcSet;
-  const smaller = srcSet
-    .split(", ")
-    .filter((candidate) => Number(/\s(\d+)w$/.exec(candidate)?.[1] ?? 0) < photo.width);
-  return [...smaller, `${full} ${photo.width}w`].join(", ");
+  return typeof full === "string" && full ? `${full} ${photo.width}w` : undefined;
 }
 
 /**
  * The photo's resized versions for a place of box's size on a Photo Book page, for an `<img>`'s
  * `srcSet` and `sizes`: `sizes` is how wide the photo is drawn once cropped to cover the place, so
  * the browser picks the smallest version at least that wide times the screen's pixel ratio. With
- * `original`, for **Save as PDF**, the photo's original JPEG is the widest choice, so a place the
- * X-Large version is too small for prints the original. Empty before the place is measured, or for
+ * `original`, for **Save as PDF**, the photo's original JPEG is its only choice, so the printed book
+ * has every photo at full resolution, never a resized WEBP; a photo without one keeps its versions. Empty before the place is measured, or for
  * no photo data or one whose JSON has no size or versions.
  */
 export function slotSources(
@@ -56,6 +48,6 @@ export function slotSources(
   const image = parseImage(photo);
   if (!image) return {};
   const scale = Math.max(box.width / photo.width, box.height / photo.height);
-  const srcSet = original ? withOriginal(image.srcSet, photo) : image.srcSet;
+  const srcSet = (original && originalSrcSet(photo)) || image.srcSet;
   return { srcSet, sizes: `${Math.ceil(photo.width * scale)}px` };
 }
