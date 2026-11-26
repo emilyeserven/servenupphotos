@@ -42,4 +42,4 @@ The Gallery imports the Grid's filters (`CameraFilterBar`, `VisualsPicker`, … 
 
 - [ ] Update `docs/portfolio-<view>.md` (or `docs/portfolio-filters.md`) for the change in behavior.
 - [ ] Look at it: `pnpm shot portfolio /<view> --out <dir>` (desktop, light); add `--mobile` only when the layout changes, and `pnpm shot pipeline /gallery --out <dir>` when a shared file changed.
-- [ ] `pnpm check` (oxlint, oxfmt, typecheck, fallow: functions at cyclomatic complexity 4 or under) and `pnpm build`.
+- [ ] `pnpm check` (oxlint, oxfmt, typecheck, fallow: functions within cyclomatic 20, cognitive 15 and 60 lines) and `pnpm build`.

@@ -4,10 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp dist/index.html dist/404.html",
+    "build": "vite build --logLevel warn && cp dist/index.html dist/404.html",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node --import ../../scripts/test-aliases-register.mjs --test map-preview/*.test.ts src/lib/*.test.ts",
+    "test": "node --import ../../scripts/test-aliases-register.mjs --test --test-reporter=dot map-preview/*.test.ts src/lib/*.test.ts",
     "map-attribution": "node map-preview/make-attribution.mjs"
   },
   "dependencies": {
