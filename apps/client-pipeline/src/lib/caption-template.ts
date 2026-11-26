@@ -324,8 +324,8 @@ const PLACEHOLDER = /\{([A-Za-z]\w*(?:\|[A-Za-z]\w*)*)\}/g;
 /** An optional part in square brackets, left out when a placeholder in it is empty. */
 const SECTION = /\[([^[\]]*)\]/g;
 
-/** The value of the first of the names that has one. */
-function valueOf(names: string, values: CaptionValues): string {
+/** A placeholder's value: the first of its names, split by `|`, that has one, or "". */
+export function placeholderValue(names: string, values: CaptionValues): string {
   return names.split("|").reduce((found, name) => found || (values[name] ?? ""), "");
 }
 
@@ -333,7 +333,7 @@ function valueOf(names: string, values: CaptionValues): string {
 function fill(text: string, values: CaptionValues): { text: string; empty: boolean } {
   let empty = false;
   const filled = text.replace(PLACEHOLDER, (_, names: string) => {
-    const value = valueOf(names, values);
+    const value = placeholderValue(names, values);
     empty ||= value === "";
     return value;
   });
@@ -349,7 +349,7 @@ function fillSection(section: string, values: CaptionValues): string {
 /** Whether the line has placeholders, and every one of them is empty. */
 function onlyEmpty(line: string, values: CaptionValues): boolean {
   const names = [...line.matchAll(PLACEHOLDER)].map((m) => m[1] ?? "");
-  return names.length > 0 && names.every((n) => valueOf(n, values) === "");
+  return names.length > 0 && names.every((n) => placeholderValue(n, values) === "");
 }
 
 /** A line filled, or null when all its placeholders are empty, so it's left out. */

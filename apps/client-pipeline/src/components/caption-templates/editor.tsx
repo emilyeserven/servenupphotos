@@ -14,6 +14,7 @@ import { EntryEditorButtons } from "@/components/entry-buttons";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { formConditions } from "@/lib/caption-place-form";
 import { STARTER_TEMPLATE } from "@/lib/caption-template";
 import { PHOTO_BOOK_PLATFORM, socialPlatforms } from "@/lib/social-posts";
 
@@ -27,15 +28,22 @@ function templateOf(draft: CaptionTemplate, saved?: CaptionTemplate): CaptionTem
     platform: draft.platform,
     template: draft.template.trimEnd(),
     ...placesOf(draft),
+    ...replacementsOf(draft),
   };
 }
 
 /** The place name builder's forms to save, without empty ones; none while there are none. */
 function placesOf(draft: CaptionTemplate): Pick<CaptionTemplate, "places"> {
   const places = (draft.places ?? [])
-    .map((form) => ({ ...form, text: form.text.trim() }))
+    .map((form) => formConditions({ ...form, text: form.text.trim() }))
     .filter((form) => form.text !== "");
   return places.length > 0 ? { places } : {};
+}
+
+/** The place name builder's exceptions to save, without ones replacing nothing; none while there are none. */
+function replacementsOf(draft: CaptionTemplate): Pick<CaptionTemplate, "placeReplacements"> {
+  const placeReplacements = (draft.placeReplacements ?? []).filter((r) => r.from !== "");
+  return placeReplacements.length > 0 ? { placeReplacements } : {};
 }
 
 interface TemplateEditorProps {
@@ -58,12 +66,13 @@ export function TemplateEditor({ template, data, onSaved }: TemplateEditorProps)
       <TemplatePreview template={draft} data={data} />
       <PlaceFormBuilder
         forms={draft.places ?? []}
+        replacements={draft.placeReplacements ?? []}
         data={data}
-        onChange={(places) => set({ places })}
+        onChange={set}
       />
       <PlaceholderList
         data={data}
-        places={draft.places}
+        template={draft}
         onInsert={(placeholder) =>
           set({ template: inserted(text.current, draft.template, placeholder) })
         }
