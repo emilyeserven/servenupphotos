@@ -32,8 +32,8 @@ test("a social media post gets the caption without marks, and a selection can be
   assert.equal(runClass({ text: "a", small: false, italic: false }), undefined);
 });
 
-test("a caption is drawn line by line, a line smaller all through as a whole, <gap> giving room above", () => {
-  const lines = captionLines("Gate\n<gap><small><i>Seoul</i>\n</small>Mixed <small>a</small>\n");
+test("a caption is drawn line by line, a line smaller all through as a whole, <gap /> giving room above", () => {
+  const lines = captionLines("Gate\n<gap /><small><i>Seoul</i>\n</small>Mixed <small>a</small>\n");
   assert.deepEqual(lines, [
     { gap: false, small: false, runs: [{ text: "Gate", small: false, italic: false }] },
     { gap: true, small: true, runs: [{ text: "Seoul", small: false, italic: true }] },
@@ -47,8 +47,9 @@ test("a caption is drawn line by line, a line smaller all through as a whole, <g
     },
     { gap: false, small: false, runs: [] },
   ]);
-  assert.equal(lineClass(lines[1]!), "block text-[0.8em] mt-[0.5lh]");
-  assert.equal(plainCaption("<gap>Seoul"), "Seoul");
-  assert.equal(withGap("A\nB", { selectionStart: 3 }), "A\n<gap>B");
-  assert.equal(withGap("A", null), "<gap>A");
+  assert.equal(lineClass(lines[1]!), "block text-[0.8em] mt-[0.25lh]");
+  assert.equal(plainCaption("<gap />Seoul <gap/>Busan <gap>Jeju"), "Seoul Busan Jeju");
+  assert.equal(captionLines("<gap>Old")[0]!.gap, true);
+  assert.equal(withGap("A\nB", { selectionStart: 3 }), "A\n<gap />B");
+  assert.equal(withGap("A", null), "<gap />A");
 });
