@@ -15,7 +15,7 @@ import {
   withStops,
 } from "@/lib/trip-gaps";
 
-const draft: GapDraft = { gaps: ["walk", "walk"] };
+const twoWalks: GapDraft = { gaps: ["walk", "walk"] };
 
 test("starts with every gap walking", () => {
   assert.deepEqual(walkingDraft([1, 2, 3]), { gaps: ["walk", "walk"] });
@@ -23,25 +23,25 @@ test("starts with every gap walking", () => {
 });
 
 test("changes one gap and leaves the draft it came from alone", () => {
-  const changed = withGap(draft, 1, "train");
+  const changed = withGap(twoWalks, 1, "train");
   assert.deepEqual(changed.gaps, ["walk", "train"]);
-  assert.deepEqual(draft.gaps, ["walk", "walk"]);
+  assert.deepEqual(twoWalks.gaps, ["walk", "walk"]);
 });
 
 test("adds an item to the end of a list, starting the list when there is none", () => {
   const visit = { name: "Cafe", kind: "cafe", latitude: 1, longitude: 2, after: 5 } as TripVisit;
-  const once = withItem(draft, "visits", visit);
+  const once = withItem(twoWalks, "visits", visit);
   assert.deepEqual(once.visits, [visit]);
   const twice = withItem(once, "visits", { ...visit, after: 6 });
   assert.deepEqual(
     twice.visits?.map((v) => v.after),
     [5, 6],
   );
-  assert.equal(draft.visits, undefined);
+  assert.equal(twoWalks.visits, undefined);
 });
 
 test("changes one item of a list, or removes it for null", () => {
-  const base = withItem(withItem(draft, "groups", "10"), "groups", "20");
+  const base = withItem(withItem(twoWalks, "groups", "10"), "groups", "20");
   assert.deepEqual(changedItem(base, "groups", 0, "11").groups, ["11", "20"]);
   assert.deepEqual(changedItem(base, "groups", 1, null).groups, ["10"]);
   assert.deepEqual(changedItem(base, "groups", 7, "x").groups, ["10", "20"]);

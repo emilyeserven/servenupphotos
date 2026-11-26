@@ -101,20 +101,23 @@ export function r2ExifPhotos() {
   return [fixed, renamed, edited];
 }
 
+/** A photo title as an image file name: lower case, dashes for anything else, at most 60 characters. */
+function titleStem(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
+
 /** Update Data's Image names preview: the first few titled photos, renamed after their titles. */
 export function imageNamesPreview() {
-  const stem = (title) =>
-    title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 60);
   const files = headPhotos
     .filter(({ data }) => data.title && /^photos\/[0-9a-f]{12}-/.test(data.images?.key ?? ""))
     .slice(0, 6)
     .map(({ path, data }) => {
       const from = data.images.key;
-      const to = `${from.slice(0, 20)}${stem(data.title)}.jpg`;
+      const to = `${from.slice(0, 20)}${titleStem(data.title)}.jpg`;
       const changes = Object.entries(data.images)
         .filter(([, v]) => typeof v === "string" && v.includes(from.replace(/\.jpg$/, "")))
         .map(([field, v]) => ({
@@ -288,16 +291,19 @@ export function tagLibraryExport() {
   };
 }
 
+/** The file name, without .json, of the ith photo of the open pull request. */
+function photoStem(i) {
+  return headPhotos[i].path
+    .split("/")
+    .pop()
+    .replace(/\.json$/, "");
+}
+
 /** What a Tag library answer would do: one of each kind of change. */
 export function tagLibraryPreview() {
   const prune = pruneTagsPreview();
-  const stem = (i) =>
-    headPhotos[i].path
-      .split("/")
-      .pop()
-      .replace(/\.json$/, "");
   const edit = (i, add, remove, reason) => ({
-    photo: stem(i),
+    photo: photoStem(i),
     path: headPhotos[i].path,
     add,
     remove,
@@ -332,14 +338,14 @@ export function tagLibraryPreview() {
     notes: [
       ...prune.notes,
       {
-        photo: stem(3),
+        photo: photoStem(3),
         path: headPhotos[3].path,
         note: "Has a koi pond; 'koi' wasn't made a tag, since only 2 photos have one.",
       },
     ],
     fewPhotos: [
-      { tag: "chochin", photos: 2, parent: "lanterns", photoNames: [stem(1), stem(3)] },
-      { tag: "torii", photos: 1, parent: "shrine", photoNames: [stem(2)] },
+      { tag: "chochin", photos: 2, parent: "lanterns", photoNames: [photoStem(1), photoStem(3)] },
+      { tag: "torii", photos: 1, parent: "shrine", photoNames: [photoStem(2)] },
     ],
     minPhotos: 3,
     skipped: [

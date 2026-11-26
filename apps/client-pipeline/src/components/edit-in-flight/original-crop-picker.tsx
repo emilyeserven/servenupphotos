@@ -36,6 +36,11 @@ interface Drag {
   start: OriginalCrop;
 }
 
+/** A length as a CSS percent of the whole it's part of. */
+function percent(value: number, of: number): string {
+  return `${(value / of) * 100}%`;
+}
+
 /**
  * The part of the unedited original the edit shows, for an edit that was cropped: a box in the
  * edit's shape over the original, dragged to move it and by its corner to size it. The Slider and
@@ -67,7 +72,6 @@ export function OriginalCropPicker(props: OriginalCropPickerProps) {
   const end = () => {
     drag.current = null;
   };
-  const percent = (value: number, of: number) => `${(value / of) * 100}%`;
 
   return (
     <div className="flex flex-col gap-3">

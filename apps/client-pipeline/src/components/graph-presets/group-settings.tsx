@@ -37,9 +37,9 @@ function useSaveAll(onDone: () => void) {
 }
 
 /** What the change does, or why there's nothing to save. */
-function whyNot(touched: boolean, count: number, already: string[]): string {
+function whyNot(touched: boolean, changing: number, already: string[]): string {
   if (!touched) return "Pick a setting above to change it in every preset.";
-  if (count === 0) return "Every preset in the group has these settings already.";
+  if (changing === 0) return "Every preset in the group has these settings already.";
   return alreadyNote(already);
 }
 

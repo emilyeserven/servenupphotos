@@ -32,7 +32,10 @@ test("finds Lower Tier photos with the local edits made, skipping files that cou
       fields: { lowerTier: null },
     },
   };
-  assert.deepEqual([...lowerTierPaths(files, edits)].sort(), ["photos/a.json", "photos/b.json"]);
+  assert.deepEqual([...lowerTierPaths(files, edits)].toSorted(), [
+    "photos/a.json",
+    "photos/b.json",
+  ]);
 });
 
 test("saves the mark as true, and taking it off sets null only on a file that had the field", () => {

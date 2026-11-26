@@ -23,7 +23,7 @@ function countText({ from }: DayRange, n: number): string {
 }
 
 /** The first and last day to list photos from, by the camera's clock. */
-export function DayRangeFields({ value, onChange, count }: DayRangeFieldsProps) {
+export function DayRangeFields({ value, onChange, count: n }: DayRangeFieldsProps) {
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex flex-wrap items-end gap-3">
@@ -45,7 +45,7 @@ export function DayRangeFields({ value, onChange, count }: DayRangeFieldsProps) 
           />
         </label>
       </div>
-      <span className="text-muted-foreground text-xs">{countText(value, count)}</span>
+      <span className="text-muted-foreground text-xs">{countText(value, n)}</span>
     </div>
   );
 }

@@ -115,9 +115,13 @@ export function pickPlaceForm(
   return null;
 }
 
+/** A line of a place name in lower case with its spaces evened out. */
+function plain(text: string): string {
+  return text.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
 /** Whether two lines of a place name read the same, ignoring case and spaces. */
 function sameText(a: string, b: string): boolean {
-  const plain = (text: string) => text.toLowerCase().replace(/\s+/g, " ").trim();
   return plain(a) === plain(b);
 }
 

@@ -94,7 +94,7 @@ export function sortPhotos<T extends Sortable>(photos: T[], spec: SortSpec): T[]
   const second = signOf(spec.secondaryOrder);
   return photos
     .map((photo) => ({ photo, a: primary(photo), b: secondary(photo) }))
-    .sort((x, y) => first * (x.a - y.a) || second * (x.b - y.b))
+    .toSorted((x, y) => first * (x.a - y.a) || second * (x.b - y.b))
     .map(({ photo }) => photo);
 }
 

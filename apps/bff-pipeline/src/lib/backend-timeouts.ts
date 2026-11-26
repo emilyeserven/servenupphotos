@@ -16,9 +16,13 @@ interface BackendTimeouts {
   prefixes: Record<string, number>;
 }
 
+/** The BFF's wait for one of the backend's times: a margin longer, in ms. */
+function waitMs(seconds: number): number {
+  return seconds * 1000 + MARGIN_MS;
+}
+
 /** The BFF's waits for the backend's times: each a margin longer, in ms. */
 function relayTimeouts(backend: BackendTimeouts): RelayTimeouts {
-  const waitMs = (seconds: number) => seconds * 1000 + MARGIN_MS;
   const prefixes = Object.fromEntries(
     Object.entries(backend.prefixes).map(([prefix, seconds]) => [prefix, waitMs(seconds)]),
   );

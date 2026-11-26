@@ -8,10 +8,14 @@ export interface ChangelogDay {
   entries: ChangelogEntry[];
 }
 
+/** A month or day number as two digits. */
+function pad(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
 /** The local YYYY-MM-DD of an RFC 3339 time. */
 function localDay(date: string): string {
   const d = new Date(date);
-  const pad = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 

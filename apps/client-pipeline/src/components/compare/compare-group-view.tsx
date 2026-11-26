@@ -13,8 +13,8 @@ import { cn } from "@/lib/utils";
 import { count } from "@portfolio/lib/words";
 
 /** Columns for a group of two, or three for a larger one, so photos sit side by side. */
-function columns(count: number): string {
-  return count <= 2 ? "md:grid-cols-2" : "md:grid-cols-2 xl:grid-cols-3";
+function columns(n: number): string {
+  return n <= 2 ? "md:grid-cols-2" : "md:grid-cols-2 xl:grid-cols-3";
 }
 
 /**

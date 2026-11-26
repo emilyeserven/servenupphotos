@@ -57,7 +57,7 @@ export function contactSheetSets<T extends { key: string; size: number; modified
   images: T[],
 ): ContactSheetSet<T>[] {
   const byName = new Map<string, T[]>();
-  for (const image of images.filter((image) => isContactSheetKey(image.key))) {
+  for (const image of images.filter((each) => isContactSheetKey(each.key))) {
     const name = image.key.slice(CONTACT_SHEETS_FOLDER.length).split("/")[0] ?? "";
     byName.set(name, [...(byName.get(name) ?? []), image]);
   }

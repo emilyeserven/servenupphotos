@@ -13,7 +13,7 @@ import { type ColorFilters, parseColorFilters, vividEnough } from "@/lib/color-s
 import type { VividMeasure } from "@/lib/color-sort";
 import { lightnessExtent } from "@/lib/lightness-range";
 import { isBlackAndWhite } from "@/lib/photo-colors";
-import { photos, type Photo, type PhotoImage } from "@/lib/photos";
+import { photos as allPhotos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useRememberViewOptions } from "@/lib/view-options";
 
@@ -61,12 +61,12 @@ function measureFor(search: ColorSearch): VividMeasure {
 }
 
 // Newest first.
-const colorPhotos = photos
+const colorPhotos = allPhotos
   .filter(
     (photo): photo is ColorPhoto =>
       photo.image !== null && photo.palette.length > 0 && hasVividness(photo),
   )
-  .sort((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
+  .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
 
 /** Whether the photo's colors were saved with how vivid they are. */
 function hasVividness(photo: Photo): boolean {

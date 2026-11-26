@@ -142,9 +142,9 @@ function SelectionBar({ chosen, shown, selection, onSelectionChange }: Selection
 
 /** A warning when adding albums would put chosen photos already in another one in more than one. */
 function alreadyInAlbum(chosen: PublishedFile[], adding: string[]): ReactNode {
-  const count = chosen.filter((file) => hasOtherAlbum(file, adding)).length;
-  if (adding.length === 0 || count === 0) return undefined;
-  return <AlreadyInAlbum photos={count} />;
+  const already = chosen.filter((file) => hasOtherAlbum(file, adding)).length;
+  if (adding.length === 0 || already === 0) return undefined;
+  return <AlreadyInAlbum photos={already} />;
 }
 
 function hasOtherAlbum(file: PublishedFile, adding: string[]): boolean {

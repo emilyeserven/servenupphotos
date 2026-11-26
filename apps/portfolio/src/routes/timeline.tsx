@@ -17,7 +17,7 @@ import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/
 import { type ColorFilters, filterByColors, parseColorFilters } from "@/lib/color-search";
 import { isoDate } from "@/lib/dates";
 import { hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { photos, type Photo, type PhotoImage } from "@/lib/photos";
+import { photos as allPhotos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import {
@@ -84,7 +84,7 @@ function TimelineView() {
   const navigate = Route.useNavigate();
   const { shown, show, close } = useShownPhoto();
   // What the filters, Gear & settings (orientation included) and the search leave, then the colors.
-  const filtered = searchPhotos(filterWithCamera(photos, search), search.q);
+  const filtered = searchPhotos(filterWithCamera(allPhotos, search), search.q);
   // Newest first, so the months and the photos in each read down from the latest.
   const inRange = filterByColors(filtered, search).toSorted(
     (a, b) => b.takenAt.getTime() - a.takenAt.getTime(),
@@ -106,7 +106,7 @@ function TimelineView() {
         </div>
         <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
         <CameraFilterBar
-          photos={photos}
+          photos={allPhotos}
           searchable
           end={
             <TimelineDisplayOptions

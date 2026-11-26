@@ -310,15 +310,15 @@ function SwitchComparison(props: ShownProps) {
         <CornerLabel side="left">{label}</CornerLabel>
       </button>
       <div role="group" aria-label="Show" className={CONTROL_FRAME}>
-        {[false, true].map((original) => (
+        {[false, true].map((isOriginal) => (
           <button
-            key={String(original)}
+            key={String(isOriginal)}
             type="button"
-            aria-pressed={showOriginal === original}
-            onClick={() => setShowOriginal(original)}
-            className={controlButtonClass(showOriginal === original)}
+            aria-pressed={showOriginal === isOriginal}
+            onClick={() => setShowOriginal(isOriginal)}
+            className={controlButtonClass(showOriginal === isOriginal)}
           >
-            {original ? "Original" : "Edited"}
+            {isOriginal ? "Original" : "Edited"}
           </button>
         ))}
       </div>

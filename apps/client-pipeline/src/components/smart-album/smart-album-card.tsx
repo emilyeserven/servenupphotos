@@ -166,15 +166,15 @@ function RuleFields({
   onCancel,
   tried,
 }: RuleEditorProps & { tried: RulePhotos }) {
-  const count = ruleCount(rules.draft);
+  const rulesSet = ruleCount(rules.draft);
   return (
     <>
       <DateRules rules={rules} labels={tried.labels} />
       <GridFilterBar photos={tried.photos} />
-      <MatchPreview tried={tried} rules={rules.draft} ruleTotal={count} />
+      <MatchPreview tried={tried} rules={rules.draft} ruleTotal={rulesSet} />
       <div className="flex flex-wrap gap-2">
         <Button
-          disabled={count === 0 || save.isPending}
+          disabled={rulesSet === 0 || save.isPending}
           onClick={() => save.mutate({ id: album.id, rules: rules.draft })}
         >
           {save.isPending && <Spinner />}

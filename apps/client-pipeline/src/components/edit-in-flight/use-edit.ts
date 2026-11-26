@@ -120,8 +120,8 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
       setBaseline((current) => current ?? next);
     },
     reset: () => setCrop(baseline),
-    onSaved: (saved: Crop | null, json: PhotoJson) => {
-      if (saved) setBaseline(saved);
+    onSaved: (newCrop: Crop | null, json: PhotoJson) => {
+      if (newCrop) setBaseline(newCrop);
       setSavedData(json);
       setLensEdit(startingLensEdit(json));
     },

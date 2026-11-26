@@ -49,12 +49,12 @@ export function MostLiked({ viewers, titles }: MostLikedProps) {
           <EmptyNote>No likes yet.</EmptyNote>
         ) : (
           <ol className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2 lg:grid-cols-3">
-            {known.slice(0, SHOWN).map(([id, count]) => (
+            {known.slice(0, SHOWN).map(([id, likes]) => (
               <li key={id} className="flex items-baseline justify-between gap-3">
                 <span className="min-w-0 truncate" title={titles.get(id)}>
                   {titles.get(id)} <span className="text-muted-foreground text-xs">#{id}</span>
                 </span>
-                <LikeCount count={count} />
+                <LikeCount count={likes} />
               </li>
             ))}
           </ol>

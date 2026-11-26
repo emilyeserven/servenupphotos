@@ -54,9 +54,9 @@ export function useDaySave(props: DaySaveProps) {
     const line = { ...base, ...plannedOf(ids), segments, ...lineStops(draft) };
     save.mutate(line, { onSuccess: () => onSaved(view) });
   };
+  const afterAuto = () => void refetchAuto().then(() => onSaved({ kind: "auto" }));
   const saveAuto = () => {
-    const done = () => void refetchAuto().then(() => onSaved({ kind: "auto" }));
-    save.mutate({ ...base, auto: true, segments: [], ...stops }, { onSuccess: done });
+    save.mutate({ ...base, auto: true, segments: [], ...stops }, { onSuccess: afterAuto });
   };
   const saveNone = () => {
     const done = { onSuccess: () => onSaved({ kind: "none" }) };
