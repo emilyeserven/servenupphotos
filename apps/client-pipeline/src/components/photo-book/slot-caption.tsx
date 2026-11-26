@@ -1,10 +1,8 @@
 import { RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
 import { CaptionRuns } from "@/components/caption-runs";
-import { HidePlaces } from "@/components/photo-book/hide-places";
 import { plainCaption } from "@/lib/caption-styles";
 import type { BookSlot } from "@/lib/photo-book";
-import type { LocationPart } from "@/lib/photo-book-hidden";
 import { cn } from "@/lib/utils";
 
 interface SlotCaptionProps {
@@ -12,9 +10,6 @@ interface SlotCaptionProps {
   /** What the caption says: the one written by hand, or the template's. */
   text: string;
   onChange: (caption: string | null) => void;
-  /** The parts of the photo's location its caption can leave out; none on a page only shown. */
-  parts?: LocationPart[];
-  onHidden?: (hidden: string[]) => void;
   className?: string;
 }
 
@@ -25,8 +20,7 @@ interface SlotCaptionProps {
  * className moves it, such as `justify-end` to sit at the bottom. Sizes are in `cqw`, shares of
  * the page's width, so the text scales with the page.
  */
-export function SlotCaption(props: SlotCaptionProps) {
-  const { slot, text, onChange, parts = [], onHidden = () => undefined, className } = props;
+export function SlotCaption({ slot, text, onChange, className }: SlotCaptionProps) {
   const [editing, setEditing] = useState(false);
   if (slot.photo === "" && slot.caption === null) {
     return (
@@ -52,10 +46,7 @@ export function SlotCaption(props: SlotCaptionProps) {
       ) : (
         <CaptionText text={text} onEdit={() => setEditing(true)} />
       )}
-      <div className="flex flex-wrap gap-x-3">
-        <FromTemplate slot={slot} onChange={onChange} />
-        <HidePlaces slot={slot} parts={parts} onHidden={onHidden} />
-      </div>
+      <FromTemplate slot={slot} onChange={onChange} />
     </div>
   );
 }
