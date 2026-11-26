@@ -6,7 +6,9 @@ import {
   pdfProgressText,
   printCss,
   printSide,
+  pdfFile,
   printSize,
+  spreadSheets,
 } from "@/lib/photo-book-pdf";
 
 test("the page size is written in the book's own unit, BookWright's large landscape when none is set", () => {
@@ -15,6 +17,7 @@ test("the page size is written in the book's own unit, BookWright's large landsc
     height: "297mm",
   });
   assert.deepEqual(printSize({}), { width: "12.5in", height: "10.625in" });
+  assert.deepEqual(printSize({}, true), { width: "25in", height: "10.625in" });
 });
 
 test("each sheet of paper is one page of the book, with no margin", () => {
@@ -26,6 +29,19 @@ test("each sheet of paper is one page of the book, with no margin", () => {
 
 test("page 1 is a right page, then they alternate", () => {
   assert.deepEqual([0, 1, 2, 3].map(printSide), ["right", "left", "right", "left"]);
+  assert.deepEqual(spreadSheets(4), [
+    [null, 0],
+    [1, 2],
+    [3, null],
+  ]);
+  assert.deepEqual(spreadSheets(3), [
+    [null, 0],
+    [1, 2],
+  ]);
+  assert.deepEqual(spreadSheets(0), []);
+  assert.equal(pdfFile("korea", 4, true).name, "korea-spreads.pdf");
+  assert.equal(pdfFile("korea", 4, true).sheets, 3);
+  assert.equal(pdfFile("korea", 4, false).name, "korea.pdf");
 });
 
 test("a srcset's URLs are made whole, keeping their widths", () => {
