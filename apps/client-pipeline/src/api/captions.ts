@@ -1,5 +1,6 @@
 import { overrideId } from "@/api/cameras";
 import { byName, settingEntries, settingMutations } from "@/api/data-files";
+import type { PlaceForm } from "@/lib/caption-place-form";
 
 /**
  * A caption template file: a social media post's caption with placeholders for the photo's
@@ -15,6 +16,11 @@ export interface CaptionTemplate {
   platform: string;
   /** The caption's text, with placeholders in braces. */
   template: string;
+  /**
+   * The place name builder's forms, in order: `{from_places_form}` is the first that fits the
+   * photo. Left out while there are none.
+   */
+  places?: PlaceForm[];
 }
 
 function isTemplate(value: unknown): value is CaptionTemplate {

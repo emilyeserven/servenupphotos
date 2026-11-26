@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"slices"
 	"strings"
 	"unicode/utf8"
 
@@ -27,6 +28,49 @@ type CaptionTemplate struct {
 	// Template is the caption's text, with each placeholder a photo field in
 	// braces, such as {camera}.
 	Template string `json:"template"`
+	// Places is the template's place name builder: forms for the place name,
+	// of which {from_places_form} is the first that fits the photo. Left out
+	// while there are none.
+	Places []CaptionPlaceForm `json:"places,omitempty"`
+}
+
+// CaptionPlaceForm is one form of a caption template's place name builder:
+// the photos it's for, by their number of places, and the text it makes.
+type CaptionPlaceForm struct {
+	// When is how many places the photo has to have: "any", "0", "1", "2" or
+	// "3+".
+	When string `json:"when"`
+	// Text is the place name, with placeholders, such as "{city}, {state}".
+	Text string `json:"text"`
+}
+
+// The most forms a place name builder can have, and what each one can be for.
+var (
+	maxCaptionPlaceForms = 20
+	placeFormCounts      = []string{"any", "0", "1", "2", "3+"}
+)
+
+// validPlaceForms returns forms trimmed, without empty ones, or why they
+// can't be saved.
+func validPlaceForms(forms []CaptionPlaceForm) ([]CaptionPlaceForm, *PublishError) {
+	var out []CaptionPlaceForm
+	for _, f := range forms {
+		f.Text = strings.TrimSpace(f.Text)
+		if f.Text == "" {
+			continue
+		}
+		if !slices.Contains(placeFormCounts, f.When) {
+			return nil, publishErr(http.StatusBadRequest, "A place name form has to be for any number of places, none, 1, 2 or 3 or more, not %q.", f.When)
+		}
+		if utf8.RuneCountInString(f.Text) > maxEntryTextLength {
+			return nil, publishErr(http.StatusBadRequest, "Keep each place name form to %d characters.", maxEntryTextLength)
+		}
+		out = append(out, f)
+	}
+	if len(out) > maxCaptionPlaceForms {
+		return nil, publishErr(http.StatusBadRequest, "A place name builder can have up to %d forms.", maxCaptionPlaceForms)
+	}
+	return out, nil
 }
 
 // SaveCaptionTemplate saves template as <folder>/captions/<id>.json, new or
@@ -85,5 +129,7 @@ func validCaptionTemplate(t CaptionTemplate) (CaptionTemplate, *PublishError) {
 	if utf8.RuneCountInString(out.Template) > maxCaptionTemplateLength {
 		return out, publishErr(http.StatusBadRequest, "Keep the template to %d characters.", maxCaptionTemplateLength)
 	}
-	return out, nil
+	places, perr := validPlaceForms(t.Places)
+	out.Places = places
+	return out, perr
 }

@@ -4,7 +4,8 @@ import { type CaptionTemplate, captionTemplates, defaultCaptionTemplate } from "
 import { customLenses } from "@/api/lenses";
 import type { SocialPhoto } from "@/api/publish";
 import { overrideChanges } from "@/lib/camera-overrides";
-import { captionLists, captionValues, fillCaption } from "@/lib/caption-template";
+import { fillTemplate } from "@/lib/caption-place-form";
+import { captionLists, captionValues } from "@/lib/caption-template";
 import type { BookSlot, PhotoBook } from "@/lib/photo-book";
 import { PHOTO_BOOK_PLATFORM } from "@/lib/social-posts";
 import { currentData } from "@/lib/social-schedule";
@@ -44,7 +45,7 @@ export function useCaptionFor(
     if (!photo || !template) return "";
     const saved = (currentData(photo, changed) ?? {}) as Record<string, unknown>;
     const fields = { ...saved, ...overrideChanges(settings.overrides, settings.lenses, saved) };
-    return fillCaption(template.template, captionValues(fields, lists));
+    return fillTemplate(template, captionValues(fields, lists));
   };
   return (slot: BookSlot): string => slot.caption ?? filled(photos.get(slot.photo));
 }

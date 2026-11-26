@@ -52,6 +52,18 @@ The thing about solo traveling…
 
 Each of `place`, `mainPlace`, `city`, `state` and `country` also has `…Local` (its own script, such as `경복궁`), `…Romanized` (`Gyeongbokgung`) and `…Localized` (`경복궁 (Gyeongbokgung)`, the romanization or else the English name after the local script), from [localizations](places-and-localizations.md). `…Local` and `…Romanized` are empty without a localization, and `…Localized` is then the English name.
 
+## Place name builder
+
+Place names have many shapes: one place or two, a city with a state or without. The **Place name builder**, between the preview and the placeholders, gives each template its own list of forms for the place name, and `{from_places_form}` in the template is replaced by the first form that fits the photo:
+
+- Each form is for **Any number of places**, **No places**, **1 place**, **2 places** or **3 or more places**, counted from the photo's places (a photo with only a place name has one).
+- A form fits when it's for the photo's number of places and every placeholder in it outside square brackets has a value, so `{city}, {state}` above `{city}` names the state only when there is one. Square brackets work as they do in the template.
+- A photo no form fits gets nothing for `{from_places_form}`, and its line is left out if that's all it has.
+
+Besides the place placeholders above, a form can use `{place1}`, `{place2}` and `{place3}` (the photo's first three places, each also `…Local`, `…Romanized` and `…Localized`), `{relation2}` and `{relation3}` (how the photo relates to them, such as `near`) and `{placeCount}`. The builder's placeholder buttons put one in the form last clicked. Forms move up and down with the arrows, and order matters.
+
+Each form shows what it makes, as the caption will show it, for one of the portfolio's photos it's the form for, and how many photos it's used for; its **Shuffle** shows another of them. A form no photo uses says so, and the builder counts the photos no form fits. `{from_places_form}`'s row in the Placeholders table and the Preview use the forms as they're typed.
+
 ## The file
 
 Each template is one file, `captions/<id>.json`, and **Commit** combines them into `captions/CAPTIONS.json` the way it combines custom lenses into `LENSES.json`. Saving or removing one (`PUT /api/captions/<id>` → `PUT /captions/{id}`, `DELETE /api/captions/<id>` → `DELETE /captions/{id}`) is a [change waiting for Commit](pending-changes.md), counted by the sync button as a caption template.
@@ -68,5 +80,6 @@ Each template is one file, `captions/<id>.json`, and **Commit** combines them in
 - **`name`** is how the picker lists it. Two templates can't share a name, ignoring case. The ID is made from it when the template is first saved, and kept after that.
 - **`platform`** is a platform ID from the Social media posts card, such as `instagram`, `photobook` for the Photo Book, or `""` for any. It only sets which template each place starts on; any template can be picked in either.
 - **`template`** is up to 5,000 characters, saved without trailing blank lines.
+- **`places`** is the place name builder's forms in order, each `{ "when": "any" | "0" | "1" | "2" | "3+", "text": "{city}, {state}" }`, up to 20, each up to 200 characters, saved trimmed without empty ones; left out while there are none.
 
-Filling templates in happens in the browser (`apps/client-pipeline/src/lib/caption-template.ts`), so the backend only checks and saves the files.
+Filling templates in happens in the browser (`apps/client-pipeline/src/lib/caption-template.ts`, and `caption-place-form.ts` for the place name builder), so the backend only checks and saves the files.

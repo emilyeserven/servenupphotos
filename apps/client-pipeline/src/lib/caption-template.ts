@@ -91,6 +91,22 @@ export const PLACEHOLDERS: Placeholder[] = [
   },
   one("file", "The original file's name, such as DSCF4800.jpg"),
   one("hashtags", "The post's hashtags, each with its #, such as #travelphotography"),
+  one(
+    "from_places_form",
+    "The place name the template's place name builder makes, from the first of its forms that fits the photo",
+  ),
+];
+
+/** The placeholders the place name builder lists, beside the place ones above. */
+export const PLACE_FORM_PLACEHOLDERS: Placeholder[] = [
+  one("placeCount", "How many places the photo has, such as 2"),
+  ...[1, 2, 3].map((n) =>
+    localPlaceholders(`place${n}`, `The photo's ${["first", "second", "third"][n - 1]} place`),
+  ),
+  {
+    names: ["relation2", "relation3"],
+    help: "How the photo relates to its second and third place, such as near",
+  },
 ];
 
 /** What each placeholder is filled with; a missing or empty one has nothing. */
@@ -236,6 +252,33 @@ function placeValues(photo: Record<string, unknown>, lists: CaptionLists): Capti
     places: allPlaces(places, lists),
   };
   if (!specific) values.place = values.placeLocalized = values.places = firstText(photo.placeName);
+  return { ...values, ...numberedPlaceValues(places, lists, firstText(photo.placeName)) };
+}
+
+/** The most numbered places a place name builder can name, as `{place1}` to `{place3}`. */
+const NUMBERED_PLACES = 3;
+
+/**
+ * Each of the photo's first places by number, each way it's written, and how the photo relates to
+ * it, such as `{place2Localized}` and `{relation2}`, and how many places it has, as `{placeCount}`.
+ * A photo with only a place name has that as its one place.
+ */
+function numberedPlaceValues(
+  places: RelatedPlace[],
+  lists: CaptionLists,
+  placeName: string,
+): CaptionValues {
+  const named = places.length > 0 ? places : [];
+  const names = named.length > 0 ? named.map((p) => p.place.name) : [placeName].filter(Boolean);
+  const values: CaptionValues = { placeCount: String(names.length) };
+  for (let n = 1; n <= NUMBERED_PLACES; n++) {
+    const place = named[n - 1]?.place;
+    Object.assign(
+      values,
+      localValues(`place${n}`, names[n - 1] ?? "", placeLocalization(lists, place)),
+    );
+    values[`relation${n}`] = named[n - 1]?.relation ?? "";
+  }
   return values;
 }
 
@@ -319,6 +362,18 @@ function fillLine(line: string, values: CaptionValues): string | null {
 }
 
 /**
+ * The text filled in, square-bracket parts left out when a placeholder in them is empty, as a
+ * caption line is; null when a placeholder outside them is empty, or the text has nothing in it.
+ */
+export function fillAll(text: string, values: CaptionValues): string | null {
+  const withSections = text.replace(SECTION, (whole, section: string) =>
+    PLACEHOLDER.test(section) ? fillSection(section, values) : whole,
+  );
+  const filled = fill(withSections, values);
+  return filled.empty || filled.text.trim() === "" ? null : filled.text.trim();
+}
+
+/**
  * The caption the template makes from the values: each placeholder filled, an optional part in
  * square brackets left out when a placeholder in it is empty, and a line left out when every
  * placeholder in it is empty, with no more than one blank line in a row.
@@ -333,7 +388,11 @@ export function fillCaption(template: string, values: CaptionValues): string {
 
 /** The template's placeholder names that aren't listed and that the photo has no field for. */
 export function unknownPlaceholders(template: string, values: CaptionValues): string[] {
-  const known = new Set([...PLACEHOLDERS.flatMap((p) => p.names), ...Object.keys(values)]);
+  const known = new Set([
+    ...PLACEHOLDERS.flatMap((p) => p.names),
+    ...PLACE_FORM_PLACEHOLDERS.flatMap((p) => p.names),
+    ...Object.keys(values),
+  ]);
   const names = [...template.matchAll(PLACEHOLDER)].flatMap((m) => (m[1] ?? "").split("|"));
   return [...new Set(names.filter((name) => !known.has(name)))];
 }
