@@ -127,6 +127,7 @@ export function BookTab(props: BookTabProps) {
               <BudgetMeter book={book} />
             </div>
             <SavePdfButton book={book} look={look} used={used} />
+            <SavePdfButton book={book} look={look} used={used} spreads />
           </div>
           <BookPreview
             views={views}

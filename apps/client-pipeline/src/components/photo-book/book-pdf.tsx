@@ -16,10 +16,12 @@ import {
   PRINT_ROOT_ID,
   absoluteSrcSet,
   pdfDocument,
+  pdfFile,
   pdfProgressText,
   printCss,
   printSide,
   printSize,
+  spreadSheets,
 } from "@/lib/photo-book-pdf";
 
 /** No photo is marked as on another page in the PDF. */
@@ -70,7 +72,7 @@ function drawnPages(): string | null {
  * Making the book's PDF: start draws the pages out of sight, sends them to the backend once drawn
  * and downloads the PDF it makes; text is the button's words, how far it has got while busy.
  */
-function useSavePdf(book: PhotoBook, used: BookUnit[]) {
+function useSavePdf({ book, used, spreads = false }: PdfProps) {
   const [drawing, setDrawing] = useState(false);
   const pdf = useMutation(bookPdfMutation);
   const progress = useQuery({ ...bookPdfProgressQuery(book.id), enabled: pdf.isPending });
@@ -81,31 +83,48 @@ function useSavePdf(book: PhotoBook, used: BookUnit[]) {
     const html = drawnPages();
     setDrawing(false);
     if (!html) return;
-    const pages = printedPages(used).length;
-    pdf.mutate(
-      { id: book.id, html, pages },
-      { onSuccess: ({ blob }) => downloadBlob(`${book.id}.pdf`, blob) },
-    );
+    const { name, sheets } = pdfFile(book.id, printedPages(used).length, spreads);
+    const done = ({ blob }: { blob: Blob }) => downloadBlob(name, blob);
+    pdf.mutate({ id: book.id, html, pages: sheets }, { onSuccess: done });
   };
   const busy = drawing || pdf.isPending;
-  const text = busy ? pdfProgressText(drawing, progress.data) : "Save as PDF";
-  return { start, drawing, busy, disabled: busy || used.length === 0, text, error: pdf.error };
+  const { label, title } = pdfFile(book.id, 0, spreads);
+  const text = busy ? pdfProgressText(drawing, progress.data) : label;
+  return {
+    start,
+    drawing,
+    busy,
+    disabled: busy || used.length === 0,
+    text,
+    title,
+    error: pdf.error,
+  };
+}
+
+interface PdfProps {
+  book: PhotoBook;
+  look: PageLook;
+  used: BookUnit[];
+  /** Each two-page spread on one sheet, two pages wide, instead of one page a sheet. */
+  spreads?: boolean;
 }
 
 /**
  * **Save as PDF**: draws every page of the book in its order, each the book's page size, and has
  * the backend print them to a PDF with a headless Chrome, saying how far it has got, then downloads
  * the PDF. Blank pages print blank; the inside covers aren't pages of the book, so they're left out.
+ * With spreads, **Save spreads as PDF**: each spread is one sheet, page 1 and a last left page with
+ * a blank half where the inside cover is.
  */
-export function SavePdfButton(props: { book: PhotoBook; look: PageLook; used: BookUnit[] }) {
-  const { start, drawing, busy, disabled, text, error } = useSavePdf(props.book, props.used);
+export function SavePdfButton(props: PdfProps) {
+  const { start, drawing, busy, disabled, text, title, error } = useSavePdf(props);
   return (
     <div className="flex flex-col items-end gap-1">
       <Button
         size="sm"
         variant="outline"
         disabled={disabled}
-        title="Makes a PDF of every page of the book at its page size, with sharp photos, and downloads it"
+        title={title}
         onClick={() => void start()}
       >
         {busy ? <Spinner /> : <FileDownIcon />}
@@ -117,9 +136,10 @@ export function SavePdfButton(props: { book: PhotoBook; look: PageLook; used: Bo
   );
 }
 
-/** The book's pages as printed, one sheet of paper each, out of sight on the screen. */
-function PrintBook({ book, look, used }: { book: PhotoBook; look: PageLook; used: BookUnit[] }) {
-  const { width, height } = printSize(book);
+/** The book's pages as printed, one sheet of paper each or two a sheet, out of sight on the screen. */
+function PrintBook({ book, look, used, spreads = false }: PdfProps) {
+  const { width, height } = printSize(book, spreads);
+  const pages = printedPages(used);
   return (
     <PrintingContext.Provider value>
       <div
@@ -129,15 +149,37 @@ function PrintBook({ book, look, used }: { book: PhotoBook; look: PageLook; used
         data-print
         style={{ width, printColorAdjust: "exact", WebkitPrintColorAdjust: "exact" }}
       >
-        <style>{printCss(book)}</style>
-        {printedPages(used).map((page, i) => (
-          <div key={page.id} style={{ width, height, breakAfter: "page", overflow: "hidden" }}>
-            <PrintPage page={page} look={look} at={i} />
-          </div>
-        ))}
+        <style>{printCss(book, spreads)}</style>
+        {spreads ? (
+          <PrintSpreads book={book} look={look} pages={pages} />
+        ) : (
+          pages.map((page, i) => (
+            <div key={page.id} style={{ width, height, breakAfter: "page", overflow: "hidden" }}>
+              <PrintPage page={page} look={look} at={i} />
+            </div>
+          ))
+        )}
       </div>
     </PrintingContext.Provider>
   );
+}
+
+/** The pages two to a sheet, as the open book shows them, a missing half left blank. */
+function PrintSpreads({ book, look, pages }: { book: PhotoBook; look: PageLook; pages: Page[] }) {
+  const page = printSize(book);
+  const sheet = printSize(book, true);
+  return spreadSheets(pages.length).map((halves) => (
+    <div
+      key={halves.join("-")}
+      style={{ ...sheet, display: "flex", breakAfter: "page", overflow: "hidden" }}
+    >
+      {halves.map((at, i) => (
+        <div key={i} style={{ ...page, flex: "none", overflow: "hidden" }}>
+          {at !== null && pages[at] && <PrintPage page={pages[at]} look={look} at={at} />}
+        </div>
+      ))}
+    </div>
+  ));
 }
 
 /** One printed page: nothing for a blank page, or the page as the book draws it. */
