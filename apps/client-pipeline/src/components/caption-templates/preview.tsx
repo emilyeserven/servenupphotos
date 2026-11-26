@@ -45,11 +45,7 @@ export function TemplatePreview(props: { template: CaptionTemplate; data: Combin
       <CardContent className="flex flex-col gap-3">
         <PhotoSelect photos={photos} index={index} onChange={setIndex} />
         <p className="bg-muted rounded-md p-3 text-sm whitespace-pre-wrap">
-<<<<<<< HEAD
           <CaptionRuns text={fillCaption(template.template, values) || "Nothing yet."} />
-=======
-          {fillCaption(template.template, values) || "Nothing yet."}
->>>>>>> origin/main
         </p>
         <UnknownNote names={unknownPlaceholders(template.template, values)} />
       </CardContent>
