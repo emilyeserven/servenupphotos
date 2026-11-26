@@ -82,7 +82,7 @@ func handleBookPdf(progress *pdfProgress, makePdf makePdfFunc) http.HandlerFunc 
 		defer progress.clear(id)
 		pdf, err := makePdf(ctx, body.HTML, body.Pages, func(pr bookpdf.Progress) { progress.set(id, pr) })
 		if err != nil {
-			status, message := bookPdfError(ctx, err)
+			status, message := bookPdfError(ctx, err, "the PDF", bookPdfTimeout)
 			slog.Error("making a photo book's PDF failed", "book", id, "err", err)
 			writeError(w, status, message)
 			return
@@ -96,16 +96,16 @@ func handleBookPdf(progress *pdfProgress, makePdf makePdfFunc) http.HandlerFunc 
 	})
 }
 
-// bookPdfError is the status and message for err from making a PDF under
-// ctx.
-func bookPdfError(ctx context.Context, err error) (int, string) {
+// bookPdfError is the status and message for err from making what, such as
+// "the PDF", under ctx, which stops after limit.
+func bookPdfError(ctx context.Context, err error, what string, limit time.Duration) (int, string) {
 	switch {
 	case errors.Is(err, bookpdf.ErrNoChrome):
-		return http.StatusServiceUnavailable, "Couldn't start Chrome to make the PDF. Install Google Chrome, or set CHROME_PATH to a Chrome or Chromium, and restart the pipeline."
+		return http.StatusServiceUnavailable, "Couldn't start Chrome to make " + what + ". Install Google Chrome, or set CHROME_PATH to a Chrome or Chromium, and restart the pipeline."
 	case errors.Is(ctx.Err(), context.DeadlineExceeded):
-		return http.StatusGatewayTimeout, "Making the PDF took longer than " + bookPdfTimeout.String() + ", so it was stopped. Try again, or take some pages out."
+		return http.StatusGatewayTimeout, "Making " + what + " took longer than " + limit.String() + ", so it was stopped. Try again, or take some pages out."
 	default:
-		return http.StatusInternalServerError, "Couldn't make the PDF (" + err.Error() + ")."
+		return http.StatusInternalServerError, "Couldn't make " + what + " (" + err.Error() + ")."
 	}
 }
 

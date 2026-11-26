@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { SaveSpreadImageButton } from "@/components/photo-book/book-spread-image";
 import { InsertPagePoints, type PageInserting } from "@/components/photo-book/insert-page-points";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { pageName } from "@/components/photo-book/page-types";
@@ -14,6 +15,7 @@ import { UnitSheets, sheetsAspect } from "@/components/photo-book/unit-sheets";
 import { Button } from "@/components/ui/button";
 import type { PhotoBook } from "@/lib/photo-book";
 import { type BookView, isInsideCover } from "@/lib/photo-book-order";
+import { viewPageRange } from "@/lib/photo-book-spread-image";
 import { cn } from "@/lib/utils";
 import { EmptyNote } from "@portfolio/components/empty-note";
 
@@ -98,8 +100,7 @@ function PreviewFrame(props: { previewMode: boolean; ratio: number; children: Re
  * facing the inside front cover and the last page the inside back cover.
  */
 function viewText(view: BookView, at: number, total: number): string {
-  const first = Math.max(1, 2 * at);
-  const last = Math.min(total, 2 * at + 1);
+  const { first, last } = viewPageRange(at, total);
   const pages = first === last ? `Page ${first}` : `Pages ${first}–${last}`;
   const names = view.pages.filter((page) => !isInsideCover(page)).map(pageName);
   return `${pages} of ${total} · ${names.join(" + ")}`;
@@ -107,11 +108,11 @@ function viewText(view: BookView, at: number, total: number): string {
 
 /**
  * The control strip under the preview, as wide as the pages: Previous at its left end and Next at
- * its right, so they stay put while paging; between them where the preview is in the book, and
- * Preview Mode.
+ * its right, so they stay put while paging; between them where the preview is in the book, the
+ * modes, and **Save as image** for the pages shown.
  */
 function PreviewControls(props: BookPreviewProps & { view: BookView }) {
-  const { views, at, onAt, total, view } = props;
+  const { views, at, onAt, total, view, book, look } = props;
   return (
     <div className="flex w-full items-center gap-2">
       <Button
@@ -127,6 +128,7 @@ function PreviewControls(props: BookPreviewProps & { view: BookView }) {
         {viewText(view, at, total)}
       </span>
       <ModeButtons {...props} />
+      <SaveSpreadImageButton book={book} look={look} view={view} at={at} total={total} />
       <Button
         size="sm"
         variant="outline"

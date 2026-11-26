@@ -10,7 +10,7 @@ import { PrintingContext } from "@/components/photo-book/printing";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { downloadBlob } from "@/lib/download-blob";
-import type { BookPage as Page, PhotoBook } from "@/lib/photo-book";
+import type { BookPage as Page, PageSide, PhotoBook } from "@/lib/photo-book";
 import { type BookUnit, isPlaceholder, printedPages } from "@/lib/photo-book-order";
 import {
   PRINT_ROOT_ID,
@@ -24,11 +24,11 @@ import {
   spreadSheets,
 } from "@/lib/photo-book-pdf";
 
-/** No photo is marked as on another page in the PDF. */
+/** No photo is marked as on another page in the PDF or a spread's image. */
 const NOT_REPEATED = new Map<string, number[]>();
 
 /** Waits a moment, for the pages to be measured and pick their photos' versions. */
-function settle(): Promise<void> {
+export function settle(): Promise<void> {
   return new Promise((done) => setTimeout(done, 500));
 }
 
@@ -61,9 +61,12 @@ function pagesHtml(root: HTMLElement): string {
   return copy.outerHTML;
 }
 
-/** The drawn pages as a whole page for the backend to print, or null when they aren't drawn. */
-function drawnPages(): string | null {
-  const root = document.getElementById(PRINT_ROOT_ID);
+/**
+ * The pages drawn in the element with ID rootId (the PDF's pages unless given) as a whole page for
+ * the backend's Chrome to open, or null when they aren't drawn.
+ */
+export function drawnPages(rootId = PRINT_ROOT_ID): string | null {
+  const root = document.getElementById(rootId);
   if (!root) return null;
   return pdfDocument({ styles: pageStyles(), pages: pagesHtml(root), base: document.baseURI });
 }
@@ -155,7 +158,7 @@ function PrintBook({ book, look, used, spreads = false }: PdfProps) {
         ) : (
           pages.map((page, i) => (
             <div key={page.id} style={{ width, height, breakAfter: "page", overflow: "hidden" }}>
-              <PrintPage page={page} look={look} at={i} />
+              <PrintPage page={page} look={look} side={printSide(i)} />
             </div>
           ))
         )}
@@ -175,15 +178,20 @@ function PrintSpreads({ book, look, pages }: { book: PhotoBook; look: PageLook; 
     >
       {halves.map((at, i) => (
         <div key={i} style={{ ...page, flex: "none", overflow: "hidden" }}>
-          {at !== null && pages[at] && <PrintPage page={pages[at]} look={look} at={at} />}
+          {at !== null && pages[at] && (
+            <PrintPage page={pages[at]} look={look} side={printSide(at)} />
+          )}
         </div>
       ))}
     </div>
   ));
 }
 
-/** One printed page: nothing for a blank page, or the page as the book draws it. */
-function PrintPage({ page, look, at }: { page: Page; look: PageLook; at: number }) {
+/**
+ * One page as printed on side of the open book, for the PDF or a spread's image: nothing for a
+ * blank page or an inside cover, or the page as the book draws it.
+ */
+export function PrintPage({ page, look, side }: { page: Page; look: PageLook; side: PageSide }) {
   if (isPlaceholder(page)) return null;
   return (
     <BookPage
@@ -192,7 +200,7 @@ function PrintPage({ page, look, at }: { page: Page; look: PageLook; at: number 
       number={null}
       repeated={NOT_REPEATED}
       {...look}
-      side={printSide(at)}
+      side={side}
       actions={NO_ACTIONS}
     />
   );

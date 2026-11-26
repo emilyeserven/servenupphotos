@@ -1,6 +1,8 @@
 // Package bookpdf makes a photo book's PDF with a headless Chrome: it opens
 // the book's pages, as the Book tab drew them, waits for their photos and
-// prints them, one sheet of paper the book's page size each.
+// prints them, one sheet of paper the book's page size each. It also draws
+// one spread as a small WEBP image (Image), with each photo's resized
+// version.
 //
 // Frontend analogy: it's Playwright's page.goto and page.pdf, run by the
 // backend instead of a test.
@@ -68,6 +70,20 @@ var ErrNoChrome = errors.New("couldn't start Chrome")
 // off Chrome's sandbox, which a container running it as an unprivileged user
 // needs.
 func Make(ctx context.Context, html string, pages int, report func(Progress)) ([]byte, error) {
+	var pdf []byte
+	err := openPages(ctx, html, nil, report, func(cctx context.Context) error {
+		report(Progress{Step: StepPrinting, Total: pages})
+		var err error
+		pdf, err = chromedp.Run(cctx, printPDF)
+		return err
+	})
+	return pdf, err
+}
+
+// openPages starts Chrome, runs setup on its tab when there is one, such as
+// sizing its window, opens html there, waits for its photos and fonts, then
+// runs use on the tab while the pages are still open.
+func openPages(ctx context.Context, html string, setup func(context.Context) error, report func(Progress), use func(context.Context) error) error {
 	report(Progress{Step: StepStarting})
 	actx, cancelAlloc := chromedp.NewExecAllocator(ctx, allocatorOptions()...)
 	defer cancelAlloc()
@@ -76,25 +92,35 @@ func Make(ctx context.Context, html string, pages int, report func(Progress)) ([
 
 	site, err := servePages(ctx, html)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer func() { _ = site.Close() }()
+	if setup != nil {
+		if err := setup(cctx); err != nil {
+			return chromeError(err, "setting up the tab")
+		}
+	}
 	// Opened without waiting for the page to load, which waits for every
 	// photo, so waitForPhotos can say how many have.
 	if _, err := chromedp.Call(cctx, page.Navigate, page.NavigateParams{URL: site.url}); err != nil {
-		if errors.Is(err, exec.ErrNotFound) || errors.Is(err, fs.ErrNotExist) {
-			return nil, fmt.Errorf("%w: %w", ErrNoChrome, err)
-		}
-		return nil, fmt.Errorf("opening the pages: %w", err)
+		return chromeError(err, "opening the pages")
 	}
 	if err := waitForPhotos(cctx, fmt.Sprintf(photosCountJS, site.url), report); err != nil {
-		return nil, err
+		return err
 	}
 	if _, err := chromedp.Run(cctx, chromedp.Evaluate[bool](fontsReadyJS, chromedp.EvalAwaitPromise)); err != nil {
-		return nil, fmt.Errorf("waiting for the fonts: %w", err)
+		return fmt.Errorf("waiting for the fonts: %w", err)
 	}
-	report(Progress{Step: StepPrinting, Total: pages})
-	return chromedp.Run(cctx, printPDF)
+	return use(cctx)
+}
+
+// chromeError is err from the first step on Chrome's tab, doing: ErrNoChrome
+// when Chrome couldn't be started.
+func chromeError(err error, doing string) error {
+	if errors.Is(err, exec.ErrNotFound) || errors.Is(err, fs.ErrNotExist) {
+		return fmt.Errorf("%w: %w", ErrNoChrome, err)
+	}
+	return fmt.Errorf("%s: %w", doing, err)
 }
 
 // allocatorOptions are Chrome's options: headless, as chromedp starts it,
