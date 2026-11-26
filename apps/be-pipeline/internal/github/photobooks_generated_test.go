@@ -42,7 +42,7 @@ func TestValidGeneratedPage(t *testing.T) {
 }
 
 func TestValidGeneratedTextSize(t *testing.T) {
-	for in, want := range map[int]int{0: 0, 100: 0, 104: 0, 125: 130, 10: minGeneratedTextSize, 900: maxGeneratedTextSize, 70: 70} {
+	for in, want := range map[int]int{0: 0, 100: 0, 102: 0, 125: 125, 127: 125, 128: 130, 10: minGeneratedTextSize, 900: maxGeneratedTextSize, 70: 70} {
 		if got := validGeneratedTextSize(in); got != want {
 			t.Errorf("validGeneratedTextSize(%d) = %d, want %d", in, got, want)
 		}

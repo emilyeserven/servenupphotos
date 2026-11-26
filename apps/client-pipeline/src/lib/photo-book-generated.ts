@@ -103,9 +103,9 @@ export function generatedColumns(generated: Pick<GeneratedPage, "columns">): num
 }
 
 /** The smallest and largest text size a generated page's list can have, in percent, and the step between sizes. */
-export const TEXT_SIZES = { min: 50, max: 200, step: 10 };
+export const TEXT_SIZES = { min: 50, max: 200, step: 5 };
 
-/** The list's text size, in percent of the usual size: 50 to 200 in steps of 10, 100 when none is set. */
+/** The list's text size, in percent of the usual size: 50 to 200 in steps of 5, 100 when none is set. */
 export function generatedTextSize(generated: Pick<GeneratedPage, "textSize">): number {
   const n = Math.round((generated.textSize ?? 100) / TEXT_SIZES.step) * TEXT_SIZES.step;
   return Number.isFinite(n) ? Math.min(Math.max(n, TEXT_SIZES.min), TEXT_SIZES.max) : 100;
