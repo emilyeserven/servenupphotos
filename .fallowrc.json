@@ -2,6 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "entry": ["scripts/checks/*.mjs", "scripts/lint/rules/*.mjs"],
   "ignorePatterns": ["**/routeTree.gen.ts"],
+  "ignoreDependencies": ["@fontsource/noto-sans-arabic"],
   "ignoreExports": [
     {
       "file": "apps/*/src/components/ui/**",

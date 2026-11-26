@@ -1,0 +1,31 @@
+/*
+ * Noto Sans Arabic for the photo book's Arabic, so its captions print in one font at a size that
+ * sits with the Helvetica around them, on the pages here and in the PDF: without it, each computer
+ * picks its own Arabic font, and a Mac's prints larger than the Latin lines. The copy installed in
+ * the backend's Docker image comes first, then the one bundled here. Only Arabic letters use it, so it comes first in the page's fonts without changing the rest.
+ */
+@font-face {
+  font-family: "Book Arabic";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src:
+    local("Noto Sans Arabic"),
+    local("NotoSansArabic-Regular"),
+    url("@fontsource/noto-sans-arabic/files/noto-sans-arabic-arabic-400-normal.woff2")
+      format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+@font-face {
+  font-family: "Book Arabic";
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src:
+    local("Noto Sans Arabic Bold"),
+    local("NotoSansArabic-Bold"),
+    url("@fontsource/noto-sans-arabic/files/noto-sans-arabic-arabic-700-normal.woff2")
+      format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
