@@ -16,6 +16,7 @@ type BodyProps = Pick<
   | "repeated"
   | "photos"
   | "captionFor"
+  | "partsFor"
   | "actions"
   | "layouts"
   | "sides"
@@ -71,6 +72,8 @@ function pageParts(props: BodyProps): PageParts {
           slot={s}
           text={captionFor(s)}
           onChange={(text) => actions.onCaption(i, text)}
+          parts={props.partsFor?.(s)}
+          onHidden={(hidden) => actions.onHidden(i, hidden)}
           className={className}
         />
       );

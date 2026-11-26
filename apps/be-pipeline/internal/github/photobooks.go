@@ -162,6 +162,10 @@ type PhotoBookSlot struct {
 	// Caption is a caption written by hand; nil to fill it in from the
 	// photo with the book's caption template.
 	Caption *string `json:"caption"`
+	// Hidden is the parts of the photo's location its caption fills in
+	// without in this book, to keep a long place name short: "place:<id>",
+	// "placeName", "city", "state" or "country". Left out when there are none.
+	Hidden []string `json:"hidden,omitempty"`
 }
 
 // SavePhotoBook saves book as <folder>/photobooks/<id>.json, new or
@@ -349,6 +353,11 @@ func validPhotoBookPageText(page PhotoBookPage, n int) (string, int, *PublishErr
 // validPhotoBookSlot checks a photo's place on page n.
 func validPhotoBookSlot(slot PhotoBookSlot, n int) (PhotoBookSlot, *PublishError) {
 	out := PhotoBookSlot{Photo: strings.TrimSpace(slot.Photo), Caption: slot.Caption}
+	hidden, perr := validHiddenParts(slot.Hidden, n)
+	if perr != nil {
+		return out, perr
+	}
+	out.Hidden = hidden
 	if len(out.Photo) > maxPhotoBookPathChars {
 		return out, publishErr(http.StatusBadRequest, "Page %d names a photo file that's too long.", n)
 	}

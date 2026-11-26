@@ -1,5 +1,5 @@
 import type { SocialPhoto } from "@/api/publish";
-import type { useCaptionFor } from "@/components/photo-book/book-captions";
+import type { useCaptionFor, usePartsFor } from "@/components/photo-book/book-captions";
 import type { PageActions } from "@/components/photo-book/page-types";
 import {
   type CustomLayout,
@@ -8,6 +8,7 @@ import {
   placePhoto,
   removePhoto,
   setCaption,
+  setHiddenParts,
   setTitle,
 } from "@/lib/photo-book";
 import { setPageText, setPhotoPlaces, setTextColumns } from "@/lib/photo-book-text";
@@ -23,6 +24,7 @@ export function pageActions(
     onDropPhoto: (slot, path, from) => update(placePhoto(book, { page: index, slot }, path, from)),
     onRemovePhoto: (slot) => update(removePhoto(book, { page: index, slot })),
     onCaption: (slot, caption) => update(setCaption(book, { page: index, slot }, caption)),
+    onHidden: (slot, hidden) => update(setHiddenParts(book, { page: index, slot }, hidden)),
     onText: (text) => update(setPageText(book, index, text)),
     onColumns: (columns) => update(setTextColumns(book, index, columns)),
     onPhotoPlaces: (count) => update(setPhotoPlaces(book, index, count)),
@@ -33,6 +35,8 @@ export function pageActions(
 export interface PageLook {
   photos: Map<string, SocialPhoto>;
   captionFor: ReturnType<typeof useCaptionFor>;
+  /** The parts of each slot's photo's location its caption can leave out. */
+  partsFor: ReturnType<typeof usePartsFor>;
   /** The page's width over its height, from the book's size. */
   aspect: number;
   /** The layouts made on the book's Layouts tab, which pages can have besides the built-in ones. */
@@ -51,6 +55,7 @@ export const NO_ACTIONS: PageActions = {
   onDropPhoto: () => undefined,
   onRemovePhoto: () => undefined,
   onCaption: () => undefined,
+  onHidden: () => undefined,
   onText: () => undefined,
   onColumns: () => undefined,
   onPhotoPlaces: () => undefined,
