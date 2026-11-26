@@ -93,6 +93,11 @@ export function publishFixtures() {
       ...body,
       id: "sample-book",
     })),
+    // Save as image: a moment of drawing the spread, then a stand-in answer.
+    "POST /api/photobooks/sample-book/spread-image": async () => {
+      await new Promise((done) => setTimeout(done, 1000));
+      return { status: 200, body: { image: "A screenshot doesn't draw a real image." } };
+    },
     // Save as PDF: a few seconds of making the PDF, to see its progress, then a stand-in answer.
     "POST /api/photobooks/sample-book/pdf": async () => {
       await new Promise((done) => setTimeout(done, 3000));

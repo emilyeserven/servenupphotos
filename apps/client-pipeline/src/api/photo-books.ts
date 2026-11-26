@@ -40,6 +40,38 @@ export const bookPdfMutation = mutationOptions({
     postForBlob(`/api/photobooks/${encodeURIComponent(id)}/pdf`, body),
 });
 
+/** The size of a spread drawn for **Save as image**, and the size of its image. */
+interface SpreadImageSheet {
+  /** The spread's width as drawn, in CSS pixels. */
+  width: number;
+  /** The spread's height as drawn, in CSS pixels. */
+  height: number;
+  /** How many pixels the image's longer side has. */
+  longest: number;
+}
+
+/** What **Save as image** sends to have one spread drawn as a small WEBP image. */
+interface SpreadImageRequest {
+  /** The book's ID. */
+  id: string;
+  /** A whole page holding the spread at its top left, with its style sheets. */
+  html: string;
+  /** The spread's size as drawn and the image's longer side. */
+  sheet: SpreadImageSheet;
+  /** What the image is called, such as `korea-2026-pages-4-5.webp`. */
+  name: string;
+}
+
+/**
+ * Has the backend draw one spread of a book as a small WEBP image with a headless Chrome, each
+ * photo its resized version, and gives the image.
+ */
+export const spreadImageMutation = mutationOptions({
+  mutationKey: ["photobooks", "spread-image"],
+  mutationFn: ({ id, ...body }: SpreadImageRequest) =>
+    postForBlob(`/api/photobooks/${encodeURIComponent(id)}/spread-image`, body),
+});
+
 /** How far the backend has got making a book's PDF: `done` of `total` in `step`. */
 export interface BookPdfProgress {
   /** False when no PDF of the book is being made. */
