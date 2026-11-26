@@ -1,8 +1,15 @@
 /** A space that a line never breaks at, which keeps the words on each side of it together. */
 const NBSP = " ";
 
-/** The word joiner, which keeps a line from breaking after the hyphen it follows. */
-const JOINER = "⁠";
+/** The word joiner, which keeps a line from breaking at the place it's put, such as after a hyphen. */
+const JOINER = "\u2060";
+
+/**
+ * A place between two letters where at least one is Korean, Chinese or Japanese, such as inside
+ * "대한민국": browsers break a line between any two of these letters, with no space needed.
+ */
+const CJK_GAP =
+  /(?<=[\p{Script=Hangul}\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}])(?=[^\s\u2060])|(?<=[^\s\u2060])(?=[\p{Script=Hangul}\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}])/gu;
 
 /** A **Keep together** mark around a part of a template: `<nobr>…</nobr>`. */
 const KEEP_MARK = /<nobr>([\s\S]*?)<\/nobr>/g;
@@ -10,9 +17,12 @@ const KEEP_MARK = /<nobr>([\s\S]*?)<\/nobr>/g;
 /** A start or end of the mark left over, such as one without the other. */
 const LONE_MARK = /<\/?nobr>/g;
 
-/** The text with no place a line could break inside it: its spaces unbreakable, its hyphens joined. */
+/**
+ * The text with no place a line could break inside it: its spaces unbreakable, its hyphens joined
+ * and its Korean, Chinese and Japanese letters joined to the letters next to them.
+ */
 function glued(text: string): string {
-  return text.replaceAll(" ", NBSP).replaceAll("-", `-${JOINER}`);
+  return text.replaceAll(" ", NBSP).replaceAll("-", `-${JOINER}`).replace(CJK_GAP, JOINER);
 }
 
 /**

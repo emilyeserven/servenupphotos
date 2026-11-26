@@ -63,7 +63,7 @@ A caption in the Photo Book wraps wherever its line runs out of room, which can 
 - **Keep together**, next to **Space above**, puts `<nobr>…</nobr>` around what's selected, such as `<nobr>ISO {iso}</nobr>`, so that part of the template, whatever it fills in with, never breaks.
 - **Never break**, in the **Names** card, lists values that never break wherever they show up in a caption, such as `San Francisco`, whichever placeholder or place name form wrote them.
 
-Each part kept together has its spaces swapped for non-breaking spaces and a word joiner put after each hyphen, the characters that tell a browser not to break a line there; the marks are left out. Generate and the Instagram walkthrough write them as plain spaces and hyphens again (`apps/client-pipeline/src/lib/caption-keep-together.ts`).
+Each part kept together has its spaces swapped for non-breaking spaces and a word joiner put after each hyphen, the characters that tell a browser not to break a line there; the marks are left out. Korean, Chinese and Japanese need no space for a line to break, so a browser can split `대한민국` between any two of its letters: each of those letters gets a word joiner between it and the letters next to it, which keeps `대한민국` whole on the page and in the PDF. Generate and the Instagram walkthrough write them as plain spaces and hyphens again (`apps/client-pipeline/src/lib/caption-keep-together.ts`).
 
 > **Frontend analogy:** it's `white-space: nowrap` on a few words, done with the `&nbsp;` and `&NoBreak;` characters so it survives in plain text and the PDF.
 
