@@ -34,12 +34,15 @@ export function captionRuns(text: string): CaptionRun[] {
   return runs;
 }
 
-/** The mark that gives a caption line half a line of room above it. */
-const GAP = "<gap>";
+/** The mark a Space above button writes: a self-closing tag giving its line a quarter line of room above it. */
+const GAP = "<gap />";
+
+/** Any way of writing the space-above mark: `<gap />`, `<gap/>`, or `<gap>` as older templates have it. */
+const GAP_MARK = /<gap\s*\/?>/g;
 
 /** The caption without its style marks, as a social media post takes it. */
 export function plainCaption(text: string): string {
-  return text.replace(MARK, "").replaceAll(GAP, "");
+  return text.replace(MARK, "").replace(GAP_MARK, "");
 }
 
 /** One line of a caption as it's drawn. */
@@ -48,14 +51,16 @@ export interface CaptionLine {
   runs: CaptionRun[];
   /** Every stretch of it is smaller, so the whole line is, with its line height to match. */
   small: boolean;
-  /** It has `<gap>` in it, for half a line of room above it. */
+  /** It has `<gap />` in it, for a quarter line of room above it. */
   gap: boolean;
 }
 
-/** A line's stretches without `<gap>`, whether it had one, and whether it's all smaller. */
+/** A line's stretches without `<gap />`, whether it had one, and whether it's all smaller. */
 function finishLine(runs: CaptionRun[]): CaptionLine {
-  const gap = runs.some((r) => r.text.includes(GAP));
-  const kept = runs.map((r) => ({ ...r, text: r.text.replaceAll(GAP, "") })).filter((r) => r.text);
+  const gap = runs.some((r) => r.text.search(GAP_MARK) >= 0);
+  const kept = runs
+    .map((r) => ({ ...r, text: r.text.replace(GAP_MARK, "") }))
+    .filter((r) => r.text);
   const small = kept.length > 0 && kept.every((r) => r.small);
   return { gap, small, runs: small ? kept.map((r) => ({ ...r, small: false })) : kept };
 }
@@ -76,14 +81,14 @@ export function captionLines(text: string): CaptionLine[] {
   return lines.map(finishLine);
 }
 
-/** The Tailwind classes that draw a line: a block, smaller all through, with half a line above. */
+/** The Tailwind classes that draw a line: a block, smaller all through, with a quarter line above. */
 export function lineClass(line: CaptionLine): string {
-  return ["block", line.small && "text-[0.8em]", line.gap && "mt-[0.5lh]"]
+  return ["block", line.small && "text-[0.8em]", line.gap && "mt-[0.25lh]"]
     .filter(Boolean)
     .join(" ");
 }
 
-/** The text with `<gap>` put at the start of the line the cursor is on, or of the last line. */
+/** The text with `<gap />` put at the start of the line the cursor is on, or of the last line. */
 export function withGap(text: string, at: Selection | null): string {
   const cursor = at?.selectionStart ?? text.length;
   const start = text.lastIndexOf("\n", cursor - 1) + 1;

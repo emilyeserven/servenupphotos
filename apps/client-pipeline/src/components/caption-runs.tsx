@@ -3,7 +3,7 @@ import { captionLines, lineClass, runClass } from "@/lib/caption-styles";
 /**
  * A caption's text drawn with its style marks, line by line: `<small>` stretches at 80% of the size
  * around them (a line smaller all through with a line height to match), `<i>` ones in italics, and
- * a line with `<gap>` half a line lower; the marks themselves not shown.
+ * a line with `<gap />` a quarter line lower; the marks themselves not shown.
  */
 export function CaptionRuns({ text }: { text: string }) {
   return captionLines(text).map((line, i) => (
