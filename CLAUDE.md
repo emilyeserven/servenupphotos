@@ -33,10 +33,12 @@ Everything here is fast; run the narrowest check while working and `pnpm check` 
 pnpm check                         # oxlint, oxfmt --check, typecheck, fallow and every file in scripts/checks/ (~6s); `pnpm fmt` fixes formatting
 pnpm check fixtures                # one check by name: every backend route has a fixture in scripts/fixtures/ and follows the route shape rules
 pnpm build                         # all three TS apps (~5s); CI runs it too
-pnpm test                          # node --test: the portfolio's map-preview and both apps' src/lib (~2s); CI runs it too
-cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes ~8s
+pnpm test                          # node --test: the portfolio's map-preview and both apps' src/lib (~5s); CI runs it too
+cd apps/be-pipeline && go test ./internal/github/   # one package (~3s); `./...` takes ~20s, most of it internal/storage and internal/versions
 cd apps/be-pipeline && golangci-lint run
 ```
+
+Passing checks print only a few lines, so a failure is easy to spot: oxlint shows errors only (`pnpm lint:warnings` lists its warnings, which never fail), fallow prints its summary and reruns with the full report only when it fails, tests print a dot each and the details of a failure, and builds print only warnings.
 
 `fallow` fails on dead code (unused exports, files and dependencies, duplicate exports), on any function over its health thresholds (cyclomatic 20, cognitive 15, CRAP 30, 60 lines; the "refactoring targets" it prints are advice only), and on any duplicate code block not in the committed baseline `fallow-baseline/dupes.json`. The five clone groups there today pass; a new one fails `pnpm check` (and CI, which runs the same script). Split or share the code instead of adding to the baseline. Only when a PR deliberately accepts a duplicate, run `pnpm check:fallow-baseline` and commit the changed file.
 

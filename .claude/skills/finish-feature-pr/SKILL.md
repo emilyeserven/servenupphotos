@@ -18,7 +18,7 @@ cd apps/be-pipeline && golangci-lint run     # when Go changed
 pnpm --filter @servenup/portfolio test       # when apps/portfolio/map-preview changed
 ```
 
-- `pnpm fmt` fixes formatting. `fallow` fails on dead exports, duplicated code and functions with cyclomatic complexity over 4 (every `?:`, `??`, `?.`, `&&` and `||` counts): split the function, don't add an ignore.
+- `pnpm fmt` fixes formatting. `fallow` fails on dead exports, duplicated code and functions over its health thresholds (cyclomatic 20, cognitive 15, CRAP 30, 60 lines; every `?:`, `??`, `?.`, `&&` and `||` counts toward cyclomatic): split the function, don't add an ignore.
 - Never edit `apps/client-pipeline/src/routeTree.gen.ts` or `components/ui` by hand; Vite regenerates the first.
 
 ## 2. Conventions
