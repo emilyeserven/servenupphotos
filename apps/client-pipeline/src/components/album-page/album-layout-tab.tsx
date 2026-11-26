@@ -1,6 +1,6 @@
 import { AlbumLayoutCard } from "@/components/album-layout/album-layout-card";
 import { useAlbumPage } from "@/components/album-page/album-page";
-import { byHand } from "@/components/group-detail";
+import { byHand } from "@/components/group-detail/photos-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyNote } from "@portfolio/components/empty-note";
 

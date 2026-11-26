@@ -11,12 +11,12 @@ import {
 import { Busy } from "@/components/entry-buttons";
 import { ErrorNote } from "@/components/error-note";
 import { GenreTreeRow } from "@/components/genre-tree/genre-tree-row";
-import { usePhotoCounts } from "@/components/organize-page";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { SavedInApp } from "@/components/waiting-for-commit";
+import { usePhotoCounts } from "@/hooks/use-photo-counts";
 import { genreDraft, genreTreeChanged, genreTreeProblem, genreTreeRows } from "@/lib/genre-tree";
 import { EmptyNote } from "@portfolio/components/empty-note";
 

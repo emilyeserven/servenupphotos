@@ -1,7 +1,8 @@
 import { Outlet } from "@tanstack/react-router";
 import { createContext, useContext } from "react";
 import { AlbumTabs } from "@/components/album-page/album-tabs";
-import { type GroupDetailProps, GroupDetailPage } from "@/components/group-detail";
+import { GroupDetailPage } from "@/components/group-detail";
+import type { GroupDetailProps } from "@/components/group-detail/types";
 
 const AlbumContext = createContext<GroupDetailProps | undefined>(undefined);
 
