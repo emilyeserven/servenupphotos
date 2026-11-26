@@ -4,6 +4,7 @@ import type { SocialPhoto } from "@/api/publish";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { pageName } from "@/components/photo-book/page-types";
 import { SectionTitle } from "@/components/section-title";
+import { plainCaption } from "@/lib/caption-styles";
 import { type BookSlot, type PhotoBook, isOtherPage } from "@/lib/photo-book";
 import { layoutName } from "@/lib/photo-book-layouts";
 import { type ListedPage, listedPages, photoCount } from "@/lib/photo-book-list";
@@ -100,11 +101,11 @@ function PhotoWords(props: { slot: BookSlot; photo: SocialPhoto | undefined; cap
       </span>
     );
   }
-  const [title = ""] = caption.split("\n");
+  const [title = ""] = plainCaption(caption).split("\n");
   return (
     <>
       <span className="truncate text-sm font-medium">{photoName(photo)}</span>
-      <span className="text-muted-foreground truncate text-xs" title={caption}>
+      <span className="text-muted-foreground truncate text-xs" title={plainCaption(caption)}>
         {title || "No caption"}
       </span>
     </>

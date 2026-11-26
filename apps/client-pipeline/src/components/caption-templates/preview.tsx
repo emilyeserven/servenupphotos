@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { CaptionTemplate } from "@/api/captions";
 import type { CombinedData } from "@/api/photos";
+import { CaptionRuns } from "@/components/caption-runs";
 import { ErrorNote } from "@/components/error-note";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { withPlaceForm } from "@/lib/caption-place-form";
@@ -44,7 +45,7 @@ export function TemplatePreview(props: { template: CaptionTemplate; data: Combin
       <CardContent className="flex flex-col gap-3">
         <PhotoSelect photos={photos} index={index} onChange={setIndex} />
         <p className="bg-muted rounded-md p-3 text-sm whitespace-pre-wrap">
-          {fillCaption(template.template, values) || "Nothing yet."}
+          <CaptionRuns text={fillCaption(template.template, values) || "Nothing yet."} />
         </p>
         <UnknownNote names={unknownPlaceholders(template.template, values)} />
       </CardContent>

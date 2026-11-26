@@ -9,6 +9,7 @@ import type { CombinedData } from "@/api/photos";
 import { PlaceFormBuilder } from "@/components/caption-templates/place-form-builder";
 import { PlaceholderList } from "@/components/caption-templates/placeholder-list";
 import { TemplatePreview } from "@/components/caption-templates/preview";
+import { StyleButtons } from "@/components/caption-templates/style-buttons";
 import { EntryEditorButtons } from "@/components/entry-buttons";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -113,6 +114,11 @@ function TemplateCard({ template, draft, text, set, onSaved }: TemplateCardProps
             onChange={(e) => set({ template: e.target.value })}
           />
         </Field>
+        <StyleButtons
+          field={text}
+          text={draft.template}
+          onChange={(template) => set({ template })}
+        />
         <EntryEditorButtons
           next={templateOf(draft, template)}
           saved={template}

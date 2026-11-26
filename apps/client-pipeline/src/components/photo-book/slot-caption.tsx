@@ -1,5 +1,7 @@
 import { RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
+import { CaptionRuns } from "@/components/caption-runs";
+import { plainCaption } from "@/lib/caption-styles";
 import type { BookSlot } from "@/lib/photo-book";
 import { cn } from "@/lib/utils";
 
@@ -61,14 +63,16 @@ function CaptionText({ text, onEdit }: { text: string; onEdit: () => void }) {
   return (
     <button
       type="button"
-      aria-label={`Edit the caption: ${title || "empty"}`}
+      aria-label={`Edit the caption: ${plainCaption(title) || "empty"}`}
       onClick={onEdit}
       className="cursor-text rounded-sm text-left hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"
     >
-      <span className="block text-[3cqw] leading-tight font-bold">{title || "Caption"}</span>
+      <span className="block text-[3cqw] leading-tight font-bold">
+        {title ? <CaptionRuns text={title} /> : "Caption"}
+      </span>
       {rest && (
         <span className="mt-[0.3cqw] block text-[1.9cqw] leading-snug whitespace-pre-line">
-          {rest}
+          <CaptionRuns text={rest} />
         </span>
       )}
     </button>
