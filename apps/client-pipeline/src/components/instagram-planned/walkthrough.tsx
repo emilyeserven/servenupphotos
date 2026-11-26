@@ -8,7 +8,10 @@ import { useMarkScheduled } from "@/components/instagram-planned/use-mark-schedu
 import { usePostedPhotoFiles } from "@/components/social-post-date-picker";
 import { Button } from "@/components/ui/button";
 import { fillTemplate } from "@/lib/caption-place-form";
+<<<<<<< HEAD
 import { plainCaption } from "@/lib/caption-styles";
+=======
+>>>>>>> origin/main
 import { captionLists, captionValues } from "@/lib/caption-template";
 import { type PlannedPhoto, plannedPhotos } from "@/lib/instagram-planned";
 import { parseHashtags } from "@/lib/social-posts";
@@ -36,7 +39,11 @@ function usePlannedCaption(planned: PlannedPhoto) {
   const written = writtenCaption(planned);
   if (written || !template) return { caption: written, template, written: written !== "" };
   const values = captionValues(planned.file.data, captionLists(data), plannedHashtags(planned));
+<<<<<<< HEAD
   return { caption: plainCaption(fillTemplate(template, values)), template, written: false };
+=======
+  return { caption: fillTemplate(template, values), template, written: false };
+>>>>>>> origin/main
 }
 
 /**

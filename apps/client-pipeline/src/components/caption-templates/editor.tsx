@@ -114,11 +114,14 @@ function TemplateCard({ template, draft, text, set, onSaved }: TemplateCardProps
             onChange={(e) => set({ template: e.target.value })}
           />
         </Field>
+<<<<<<< HEAD
         <StyleButtons
           field={text}
           text={draft.template}
           onChange={(template) => set({ template })}
         />
+=======
+>>>>>>> origin/main
         <EntryEditorButtons
           next={templateOf(draft, template)}
           saved={template}
