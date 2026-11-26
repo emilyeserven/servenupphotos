@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  lensCounts,
+  nameCounts,
   prefixNote,
   stripLensPrefix,
   withLensPrefix,
@@ -23,9 +23,9 @@ test("a lens's prefix is set, replaced or taken off, and lenses are counted", ()
   const one = withLensPrefix(undefined, "A", "x");
   assert.deepEqual(withLensPrefix(one, "A", "y"), [{ lens: "A", prefix: "y" }]);
   assert.deepEqual(withLensPrefix(one, "A", ""), []);
-  assert.deepEqual(lensCounts(["B", "A", "B", ""]), [
-    { lens: "B", count: 2 },
-    { lens: "A", count: 1 },
+  assert.deepEqual(nameCounts(["B", "A", "B", ""]), [
+    { name: "B", count: 2 },
+    { name: "A", count: 1 },
   ]);
 });
 

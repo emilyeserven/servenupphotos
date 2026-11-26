@@ -7,6 +7,7 @@ import { overrideChanges } from "@/lib/camera-overrides";
 import { fillTemplate } from "@/lib/caption-place-form";
 import { captionLists, captionValues } from "@/lib/caption-template";
 import type { BookSlot, PhotoBook } from "@/lib/photo-book";
+import { withBookCameraName } from "@/lib/photo-book-cameras";
 import {
   type LocationPart,
   captionLineParts,
@@ -14,7 +15,7 @@ import {
   withHiddenParts,
   withoutHiddenLines,
 } from "@/lib/photo-book-hidden";
-import { type LensPrefix, withStrippedLens } from "@/lib/photo-book-lenses";
+import { withStrippedLens } from "@/lib/photo-book-lenses";
 import { PHOTO_BOOK_PLATFORM } from "@/lib/social-posts";
 import { currentData } from "@/lib/social-schedule";
 import { useChangedPhotoFiles, useCombinedData } from "@/stores/combined-data";
@@ -50,15 +51,23 @@ export function usePhotoFields() {
   };
 }
 
+/** How a book's captions name cameras and lenses, set on its Info tab. */
+type BookNames = Pick<PhotoBook, "cameraNames" | "lensPrefixes">;
+
+/** A photo's fields with its camera called what the book calls it and its lens without its prefix. */
+function bookFields(fields: Record<string, unknown>, names: BookNames): Record<string, unknown> {
+  return withStrippedLens(withBookCameraName(fields, names.cameraNames), names.lensPrefixes);
+}
+
 /**
- * The template filled in for each photo place from the photo's fields (see usePhotoFields), its
- * lens without the prefix the book takes off it and without the parts of its location hidden for
- * it in the book, its hidden lines still in; "" without a photo or a template.
+ * The template filled in for each photo place from the photo's fields (see usePhotoFields), with its
+ * camera and lens as the book names them (see bookFields) and without the parts of its location
+ * hidden for it in the book, its hidden lines still in; "" without a photo or a template.
  */
 function useTemplateCaption(
   photos: Map<string, SocialPhoto>,
   template: CaptionTemplate | undefined,
-  prefixes: LensPrefix[] | undefined,
+  names: BookNames,
 ) {
   const { data } = useCombinedData();
   const lists = useMemo(() => captionLists(data), [data]);
@@ -66,7 +75,7 @@ function useTemplateCaption(
   return (slot: BookSlot): string => {
     const photo = photos.get(slot.photo);
     if (!photo || !template) return "";
-    const fields = withHiddenParts(withStrippedLens(fieldsOf(photo), prefixes), slot.hidden);
+    const fields = withHiddenParts(bookFields(fieldsOf(photo), names), slot.hidden);
     return fillTemplate(template, captionValues(fields, lists));
   };
 }
@@ -78,9 +87,9 @@ function useTemplateCaption(
 export function useCaptionFor(
   photos: Map<string, SocialPhoto>,
   template: CaptionTemplate | undefined,
-  prefixes: LensPrefix[] | undefined,
+  names: BookNames,
 ) {
-  const filled = useTemplateCaption(photos, template, prefixes);
+  const filled = useTemplateCaption(photos, template, names);
   return (slot: BookSlot): string => slot.caption ?? withoutHiddenLines(filled(slot), slot.hidden);
 }
 
@@ -91,12 +100,12 @@ export function useCaptionFor(
 export function usePartsFor(
   photos: Map<string, SocialPhoto>,
   template: CaptionTemplate | undefined,
-  prefixes: LensPrefix[] | undefined,
+  names: BookNames,
 ) {
   const { data } = useCombinedData();
   const lists = useMemo(() => captionLists(data), [data]);
   const fieldsOf = usePhotoFields();
-  const filled = useTemplateCaption(photos, template, prefixes);
+  const filled = useTemplateCaption(photos, template, names);
   return (slot: BookSlot): LocationPart[] => {
     const photo = photos.get(slot.photo);
     if (!photo) return [];

@@ -1,3 +1,4 @@
+import type { CameraName } from "@/lib/photo-book-cameras";
 import type { LensPrefix } from "@/lib/photo-book-lenses";
 /** A built-in page layout: one photo over the page, two down one side, or two portrait photos beside an info column. */
 export type BuiltInLayout =
@@ -153,6 +154,8 @@ export interface PhotoBook {
   noTitles?: boolean;
   /** Lenses whose names its captions write without the words they start with, from its Info tab. */
   lensPrefixes?: LensPrefix[];
+  /** Cameras its captions call by another name, from its Info tab. */
+  cameraNames?: CameraName[];
 }
 
 /** A book's page budget, in printed pages (a spread is two); a number left out isn't set. */
