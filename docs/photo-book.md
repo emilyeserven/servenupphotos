@@ -1,6 +1,6 @@
 # Photo Book
 
-`/photo-books`, **Photo Books** under **Publish** in the sidebar, is for roughing out a photo book before laying it out for real in the book maker's own software: which photos go on which page, in what layout, and what their captions say. The pages are drawn like the printed books (black, in Helvetica: a bold uppercase page title, each caption's first line bold and the lines under it small) in the shape the book's page size gives them, but only as a sketch, for reference while placing the photos and captions by hand. Text sizes are in `cqw`, shares of the page's width, so they scale with it.
+`/photo-books`, **Photo Books** under **Publish** in the sidebar, is for roughing out a photo book before laying it out for real in the book maker's own software: which photos go on which page, in what layout, and what their captions say. The pages are drawn like the printed books (black, in Helvetica: a bold uppercase page title, each caption's first line bold and the lines under it small) in the shape the book's page size gives them, but only as a sketch, for reference while placing the photos and captions by hand. Text sizes are in `cqw`, shares of the page's width, so they scale with it. Each caption line reads in the direction of its first letter, so a place name in Arabic or Hebrew reads right to left, with its parts and their commas in order, while the English lines around it stay left to right.
 
 ## Parts
 
