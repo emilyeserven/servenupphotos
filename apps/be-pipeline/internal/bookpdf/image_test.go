@@ -60,3 +60,39 @@ func TestSheetValid(t *testing.T) {
 		}
 	}
 }
+
+// twoSpreads is two 800 by 250 CSS pixel spreads one under the other, the
+// first black and the second white.
+const twoSpreads = `<!doctype html><html><head><style>
+body { margin: 0; }
+.sheet { width: 800px; height: 250px; }
+</style></head><body>
+<div class="sheet" style="background: black"></div>
+<div class="sheet" style="background: white"></div>
+</body></html>`
+
+func TestImagesDrawsEachSpreadWhenChromeIsThere(t *testing.T) {
+	if os.Getenv("CHROME_PATH") == "" {
+		t.Skip("set CHROME_PATH to a Chrome or Chromium to run this test")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+	images, err := Images(ctx, twoSpreads, Sheet{Width: 800, Height: 250, Longest: 800}, 2, func(Progress) {})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(images) != 2 {
+		t.Fatalf("got %d images, want 2", len(images))
+	}
+	for i, dark := range []bool{true, false} {
+		img, err := webp.Decode(bytes.NewReader(images[i]))
+		if err != nil {
+			t.Fatal(err)
+		}
+		// Lossy WEBP shifts colors a little, so black and white are only
+		// near black and white.
+		if r, _, _, _ := img.At(400, 125).RGBA(); (r < 0x4000) != dark {
+			t.Errorf("image %d: middle red %#x, want dark %v", i, r, dark)
+		}
+	}
+}

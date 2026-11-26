@@ -98,6 +98,17 @@ export function publishFixtures() {
       await new Promise((done) => setTimeout(done, 1000));
       return { status: 200, body: { image: "A screenshot doesn't draw a real image." } };
     },
+    // Save all as images: a few seconds of drawing the spreads, then a stand-in answer.
+    "POST /api/photobooks/sample-book/spread-images": async () => {
+      await new Promise((done) => setTimeout(done, 3000));
+      return { status: 200, body: { zip: "A screenshot doesn't draw real images." } };
+    },
+    "GET /api/photobooks/sample-book/spread-images/progress": {
+      running: true,
+      step: "drawing",
+      done: 2,
+      total: 4,
+    },
     // Save as PDF: a few seconds of making the PDF, to see its progress, then a stand-in answer.
     "POST /api/photobooks/sample-book/pdf": async () => {
       await new Promise((done) => setTimeout(done, 3000));

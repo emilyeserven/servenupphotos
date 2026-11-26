@@ -72,24 +72,46 @@ export const spreadImageMutation = mutationOptions({
     postForBlob(`/api/photobooks/${encodeURIComponent(id)}/spread-image`, body),
 });
 
+/** What **Save all as images** sends: every spread of the book, one under another. */
+interface SpreadImagesRequest {
+  /** The book's ID, which names the zip, such as `korea-2026-spreads.zip`. */
+  id: string;
+  /** A whole page holding the spreads one under another, with their style sheets. */
+  html: string;
+  /** One spread's size as drawn and each image's longer side. */
+  sheet: SpreadImageSheet;
+  /** What each spread's image is called in the zip, in the book's order. */
+  names: string[];
+}
+
+/** Has the backend draw every spread of a book as a small WEBP image, and gives them in one zip. */
+export const spreadImagesMutation = mutationOptions({
+  mutationKey: ["photobooks", "spread-images"],
+  mutationFn: ({ id, ...body }: SpreadImagesRequest) =>
+    postForBlob(`/api/photobooks/${encodeURIComponent(id)}/spread-images`, body),
+});
+
 /** How far the backend has got making a book's PDF: `done` of `total` in `step`. */
 export interface BookPdfProgress {
   /** False when no PDF of the book is being made. */
   running: boolean;
-  /** Starting Chrome, loading the pages' photos, or printing the pages. */
-  step: "" | "starting" | "photos" | "printing";
-  /** How many photos have loaded, while loading them. */
+  /** Starting Chrome, loading the pages' photos, printing the pages, or drawing spread images. */
+  step: "" | "starting" | "photos" | "printing" | "drawing";
+  /** How many photos have loaded, while loading them; how many images are drawn, while drawing. */
   done: number;
   /** How many photos the pages have while loading them; how many pages while printing. */
   total: number;
 }
 
-/** How far the book's PDF has got, asked every half second while it's made. */
-export const bookPdfProgressQuery = (id: string) =>
+/**
+ * How far the book's PDF has got, asked every half second while it's made; with `spread-images`,
+ * how far **Save all as images** has got.
+ */
+export const bookPdfProgressQuery = (id: string, what: "pdf" | "spread-images" = "pdf") =>
   queryOptions({
-    queryKey: ["photobooks", "pdf", "progress", id],
+    queryKey: ["photobooks", what, "progress", id],
     queryFn: () =>
-      requestJson<BookPdfProgress>(`/api/photobooks/${encodeURIComponent(id)}/pdf/progress`),
+      requestJson<BookPdfProgress>(`/api/photobooks/${encodeURIComponent(id)}/${what}/progress`),
     refetchInterval: 500,
     retry: false,
     staleTime: 0,

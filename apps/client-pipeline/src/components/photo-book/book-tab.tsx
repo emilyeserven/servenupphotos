@@ -4,6 +4,7 @@ import type { SocialPhoto } from "@/api/publish";
 import { SavePdfButton } from "@/components/photo-book/book-pdf";
 import { BookPhotoDrawer } from "@/components/photo-book/book-photo-drawer";
 import { BookPreview } from "@/components/photo-book/book-preview";
+import { SaveSpreadImagesButton } from "@/components/photo-book/book-spread-images";
 import { BudgetMeter } from "@/components/photo-book/budget-meter";
 import { CaptionOverflowList } from "@/components/photo-book/caption-overflow-list";
 import { LowResolutionList } from "@/components/photo-book/low-resolution-list";
@@ -130,6 +131,7 @@ export function BookTab(props: BookTabProps) {
             </div>
             <SavePdfButton book={book} look={look} used={used} />
             <SavePdfButton book={book} look={look} used={used} spreads />
+            <SaveSpreadImagesButton book={book} look={look} used={used} />
           </div>
           <BookPreview
             views={views}

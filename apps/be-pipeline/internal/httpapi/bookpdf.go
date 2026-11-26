@@ -42,8 +42,8 @@ type bookPdfProgress struct {
 	bookpdf.Progress
 }
 
-// pdfProgress keeps how far each book's PDF has got, by book ID, so Save as
-// PDF can ask while it's made.
+// pdfProgress keeps how far each book's PDF (or, in a second one, its spread
+// images) has got, by book ID, so Save as PDF can ask while it's made.
 type pdfProgress struct {
 	mu     sync.Mutex
 	byBook map[string]bookpdf.Progress
@@ -109,7 +109,8 @@ func bookPdfError(ctx context.Context, err error, what string, limit time.Durati
 	}
 }
 
-// handleBookPdfProgress answers how far the path's photo book's PDF has got.
+// handleBookPdfProgress answers how far the path's photo book's PDF, or its
+// spread images, have got.
 func handleBookPdfProgress(progress *pdfProgress) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, progress.get(r.PathValue("id")))

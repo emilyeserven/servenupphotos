@@ -1,8 +1,11 @@
 package httpapi
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -61,5 +64,64 @@ func TestSpreadImageErrors(t *testing.T) {
 				t.Errorf("got %d %s, want %d", rec.Code, rec.Body.String(), tt.status)
 			}
 		})
+	}
+}
+
+func TestSpreadImagesSendsAZipAndReportsProgress(t *testing.T) {
+	progress := newPdfProgress()
+	mux := http.NewServeMux()
+	var during bookPdfProgress
+	mux.HandleFunc("GET /photobooks/{id}/spread-images/progress", handleBookPdfProgress(progress))
+	mux.HandleFunc("POST /photobooks/{id}/spread-images", handleSpreadImages(progress, func(_ context.Context, html string, _ bookpdf.Sheet, count int, report func(bookpdf.Progress)) ([][]byte, error) {
+		if html != "<p>spreads</p>" || count != 2 {
+			t.Errorf("got %q and %d spreads", html, count)
+		}
+		report(bookpdf.Progress{Step: bookpdf.StepDrawing, Done: 1, Total: 2})
+		during = progress.get("korea-2026")
+		return [][]byte{[]byte("first"), []byte("second")}, nil
+	}))
+	body := `{"html":"<p>spreads</p>","sheet":{"width":1536,"height":960,"longest":1568},"names":["korea-2026-page-1.webp","korea-2026-pages-2-3.webp"]}`
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/photobooks/korea-2026/spread-images", strings.NewReader(body))
+	rec := httptest.NewRecorder()
+	mux.ServeHTTP(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("got %d %s", rec.Code, rec.Body.String())
+	}
+	if got := rec.Header().Get("Content-Disposition"); got != "attachment; filename=korea-2026-spreads.zip" {
+		t.Errorf("Content-Disposition %q", got)
+	}
+	zr, err := zip.NewReader(bytes.NewReader(rec.Body.Bytes()), int64(rec.Body.Len()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []string
+	for _, f := range zr.File {
+		r, err := f.Open()
+		if err != nil {
+			t.Fatal(err)
+		}
+		data, _ := io.ReadAll(r)
+		got = append(got, f.Name+"="+string(data))
+	}
+	if want := "korea-2026-page-1.webp=first korea-2026-pages-2-3.webp=second"; strings.Join(got, " ") != want {
+		t.Errorf("zip holds %v, want %s", got, want)
+	}
+	if !during.Running || during.Step != bookpdf.StepDrawing || during.Done != 1 {
+		t.Errorf("progress while drawing %+v", during)
+	}
+	if progress.get("korea-2026").Running {
+		t.Error("progress still running after")
+	}
+}
+
+func TestSpreadImagesNeedsNames(t *testing.T) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /photobooks/{id}/spread-images", handleSpreadImages(newPdfProgress(), nil))
+	body := `{"html":"x","sheet":{"width":1536,"height":960,"longest":1568}}`
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/photobooks/korea-2026/spread-images", strings.NewReader(body))
+	rec := httptest.NewRecorder()
+	mux.ServeHTTP(rec, req)
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("got %d, want 400", rec.Code)
 	}
 }

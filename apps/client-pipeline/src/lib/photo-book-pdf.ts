@@ -81,16 +81,23 @@ export function pdfDocument(parts: { styles: string; pages: string; base: string
 
 /**
  * What **Save as PDF** says while the PDF is made: drawing the pages here, then how far the backend
- * has got, from its progress when it has started.
+ * has got, from its progress when it has started, or making until it has. **Save all as images**
+ * says the same, with each image it draws.
  */
-export function pdfProgressText(drawing: boolean, progress: BookPdfProgress | undefined): string {
+export function pdfProgressText(
+  drawing: boolean,
+  progress: BookPdfProgress | undefined,
+  making = "Making the PDF…",
+): string {
   if (drawing) return "Drawing the pages…";
-  if (!progress?.running) return "Making the PDF…";
+  if (!progress?.running) return making;
   switch (progress.step) {
     case "photos":
       return `Loading photos: ${progress.done} of ${progress.total}`;
     case "printing":
       return `Printing ${count(progress.total, "page")}…`;
+    case "drawing":
+      return `Drawing image ${progress.done + 1} of ${progress.total}`;
     default:
       return "Starting Chrome…";
   }

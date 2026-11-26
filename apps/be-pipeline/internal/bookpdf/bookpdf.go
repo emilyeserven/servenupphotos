@@ -33,16 +33,20 @@ const (
 	StepPhotos = "photos"
 	// StepPrinting is Chrome printing the pages, Total of them, to the PDF.
 	StepPrinting = "printing"
+	// StepDrawing is Chrome drawing the spreads' images, Done of Total.
+	StepDrawing = "drawing"
 )
 
 // Progress is how far making a PDF has got: Done of Total in Step.
 type Progress struct {
-	// Step is StepStarting, StepPhotos or StepPrinting.
+	// Step is StepStarting, StepPhotos, StepPrinting or StepDrawing.
 	Step string `json:"step"`
-	// Done is how many photos have loaded, in StepPhotos.
+	// Done is how many photos have loaded, in StepPhotos, and how many
+	// images are drawn, in StepDrawing.
 	Done int `json:"done"`
 	// Total is how many photos the pages have in StepPhotos, and how many
-	// pages are printed in StepPrinting.
+	// pages are printed in StepPrinting, and how many images are drawn in
+	// StepDrawing.
 	Total int `json:"total"`
 }
 
