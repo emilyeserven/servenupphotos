@@ -190,6 +190,20 @@ function localizedName(name: string, found?: Localization): string {
   return local && local !== latin ? `${local} (${latin})` : name;
 }
 
+/**
+ * A country, state, city or place written in its own script with its romanization, as
+ * `{placeLocalized}` writes it, such as 경복궁 (Gyeongbokgung); its name when it has no localization.
+ * A place is found by its ID.
+ */
+export function localizedPlaceName(
+  lists: CaptionLists,
+  type: Localization["type"],
+  name: string,
+  id?: string,
+): string {
+  return localizedName(name, findLocalization(lists, type, name, id));
+}
+
 /** A name written each way, as the placeholders named after it. */
 function localValues(prefix: string, name: string, found?: Localization): CaptionValues {
   return {
