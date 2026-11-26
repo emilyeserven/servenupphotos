@@ -5,7 +5,7 @@ import type { BoxSize } from "@/lib/photo-book-image";
 export const PrintingContext = createContext(false);
 
 /** Whether the page is being drawn for **Save as PDF**. */
-function usePrinting(): boolean {
+export function usePrinting(): boolean {
   return useContext(PrintingContext);
 }
 
