@@ -1,5 +1,7 @@
 import type { CaptionTemplate } from "@/api/captions";
+import { keepTogether } from "@/lib/caption-keep-together";
 import { type CaptionValues, fillAll, fillCaption } from "@/lib/caption-template";
+import { withStateAbbreviations } from "@/lib/us-states";
 
 /** How many places an older place form is for: any number, or exactly none, one, two, or three or more. */
 export type PlaceCount = "any" | "0" | "1" | "2" | "3+";
@@ -162,7 +164,7 @@ function fillForm(
 }
 
 /** The values with `{from_places_form}`: the place name the template's builder makes, or "". */
-export function withPlaceForm(
+function withPlaceForm(
   template: Pick<CaptionTemplate, "places" | "placeReplacements">,
   values: CaptionValues,
 ): CaptionValues {
@@ -170,12 +172,35 @@ export function withPlaceForm(
   return { ...values, from_places_form: pick?.text ?? "" };
 }
 
-/** The caption the template makes from the values, its place name builder's place name included. */
-export function fillTemplate(
-  template: Pick<CaptionTemplate, "template" | "places" | "placeReplacements">,
+/** What of a template fills a caption in: its text, place name builder, state abbreviations and values kept together. */
+export type FillableTemplate = Pick<
+  CaptionTemplate,
+  "template" | "places" | "placeReplacements" | "noBreak" | "stateAbbreviations"
+>;
+
+/**
+ * The values the template fills in: US states abbreviated when it says to, and
+ * `{from_places_form}`, its place name builder's place name.
+ */
+export function templateValues(
+  template: Omit<FillableTemplate, "template" | "noBreak">,
   values: CaptionValues,
-): string {
-  return fillCaption(template.template, withPlaceForm(template, values));
+): CaptionValues {
+  return withPlaceForm(
+    template,
+    template.stateAbbreviations ? withStateAbbreviations(values) : values,
+  );
+}
+
+/**
+ * The caption the template makes from the values, its place name builder's place name included,
+ * with its parts marked Keep together and its values that never break kept on one line.
+ */
+export function fillTemplate(template: FillableTemplate, values: CaptionValues): string {
+  return keepTogether(
+    fillCaption(template.template, templateValues(template, values)),
+    template.noBreak,
+  );
 }
 
 /** A new form: for any photo, the first place written each way it can be. */
