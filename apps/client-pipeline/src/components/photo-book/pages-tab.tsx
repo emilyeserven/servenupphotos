@@ -7,6 +7,7 @@ import { BookOrderControls } from "@/components/photo-book/book-order-controls";
 import { BookPage } from "@/components/photo-book/book-page";
 import { BookPhotoDrawer } from "@/components/photo-book/book-photo-drawer";
 import { FilterSelect } from "@/components/photo-book/filter-select";
+import { HidePlaces } from "@/components/photo-book/hide-places";
 import { MoveToControl } from "@/components/photo-book/move-to-control";
 import { type PageLook, pageActions } from "@/components/photo-book/page-actions";
 import { PageControls, UnitControls } from "@/components/photo-book/page-controls";
@@ -255,6 +256,7 @@ function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
         onMove={(from, to) => update(movePhotoUnit(book, from, to > from ? 1 : -1))}
         extras={
           <>
+            <HidePlaces book={book} pages={unit.pages} look={look} update={update} />
             <UnitTagsControl unit={unit} book={book} update={update} />
             <AlternatesControl unit={unit} book={book} update={update} />
             <MoveToControl

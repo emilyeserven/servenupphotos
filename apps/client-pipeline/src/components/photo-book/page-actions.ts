@@ -8,7 +8,6 @@ import {
   placePhoto,
   removePhoto,
   setCaption,
-  setHiddenParts,
   setTitle,
 } from "@/lib/photo-book";
 import { setPageText, setPhotoPlaces, setTextColumns } from "@/lib/photo-book-text";
@@ -24,7 +23,6 @@ export function pageActions(
     onDropPhoto: (slot, path, from) => update(placePhoto(book, { page: index, slot }, path, from)),
     onRemovePhoto: (slot) => update(removePhoto(book, { page: index, slot })),
     onCaption: (slot, caption) => update(setCaption(book, { page: index, slot }, caption)),
-    onHidden: (slot, hidden) => update(setHiddenParts(book, { page: index, slot }, hidden)),
     onText: (text) => update(setPageText(book, index, text)),
     onColumns: (columns) => update(setTextColumns(book, index, columns)),
     onPhotoPlaces: (count) => update(setPhotoPlaces(book, index, count)),
@@ -55,7 +53,6 @@ export const NO_ACTIONS: PageActions = {
   onDropPhoto: () => undefined,
   onRemovePhoto: () => undefined,
   onCaption: () => undefined,
-  onHidden: () => undefined,
   onText: () => undefined,
   onColumns: () => undefined,
   onPhotoPlaces: () => undefined,

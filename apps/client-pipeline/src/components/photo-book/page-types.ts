@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import type { SlotShape } from "@/components/photo-book/page-slot";
 import type { CustomLayout, BookPage as Page, PageSide, SlotPlace } from "@/lib/photo-book";
-import type { LocationPart } from "@/lib/photo-book-hidden";
 
 /** What the page itself can do to its book: its title, photos and captions, and a text page's text. */
 export interface PageActions {
@@ -11,8 +10,6 @@ export interface PageActions {
   onDropPhoto: (slot: number, path: string, from: SlotPlace | undefined) => void;
   onRemovePhoto: (slot: number) => void;
   onCaption: (slot: number, caption: string | null) => void;
-  /** Sets the parts of the slot's photo's location its caption leaves out. */
-  onHidden: (slot: number, hidden: string[]) => void;
   /** Sets a text page's text, in Markdown. */
   onText: (text: string) => void;
   /** Sets how many columns a text page's text flows into. */
@@ -32,8 +29,6 @@ export interface BookPageProps {
   repeated: Map<string, number[]>;
   photos: Map<string, SocialPhoto>;
   captionFor: (slot: Page["slots"][number]) => string;
-  /** The parts of the slot's photo's location its caption can leave out; none on a page only shown. */
-  partsFor?: (slot: Page["slots"][number]) => LocationPart[];
   actions: PageActions;
   /** The page's width over its height, from the book's size. */
   aspect: number;
