@@ -213,7 +213,7 @@ function FilledSlot(props: {
  * The photo in its place, sharp at any size: the browser picks the resized version from R2 that
  * covers the place at the screen's pixel ratio, starting from the offline Small version, which it
  * goes back to when R2 can't be reached. For **Save as PDF** it asks for one three times as wide,
- * about 300 dpi on paper, with the photo's original JPEG as the widest choice.
+ * about 300 dpi on paper, or only the photo's original JPEG when it has one.
  */
 function SlotImage(props: {
   photo: SocialPhoto | undefined;
