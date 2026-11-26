@@ -92,7 +92,7 @@ export function BookEditor({ saved, photos, data, part, onRemoved }: BookEditorP
   const { templates, template } = useBookTemplate(book);
   const look: PageLook = {
     photos: byPath,
-    captionFor: useCaptionFor(byPath, template),
+    captionFor: useCaptionFor(byPath, template, book.lensPrefixes),
     aspect: pageAspect(book),
     layouts: book.layouts ?? [],
     sides: pageSides(book),
