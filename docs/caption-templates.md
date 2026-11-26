@@ -52,6 +52,10 @@ The thing about solo traveling…
 
 Each of `place`, `mainPlace`, `city`, `state` and `country` also has `…Local` (its own script, such as `경복궁`), `…Romanized` (`Gyeongbokgung`) and `…Localized` (`경복궁 (Gyeongbokgung)`, the romanization or else the English name after the local script), from [localizations](places-and-localizations.md). `…Local` and `…Romanized` are empty without a localization, and `…Localized` is then the English name.
 
+## Smaller and italic text
+
+`<small>…</small>` around part of a template draws it at 80% of the size around it, and `<i>…</i>` draws it in italics; one inside the other is both, such as `<small><i>{places}</i></small>`. **Smaller** and **Italic** under the template's text box put them around what's selected. They're for the [Photo Book](photo-book.md)'s captions, on its pages and in its PDF, and for a caption typed over there; the Preview draws them too. Generate and the Instagram walkthrough leave them out, since a social media post's caption is plain text. A line whose placeholders are all empty is still left out with its marks (`apps/client-pipeline/src/lib/caption-styles.ts`).
+
 ## Place name builder
 
 Place names have many shapes: one place or two, a city with a state or without. The **Place name builder**, between the preview and the placeholders, gives each template its own list of forms for the place name, and `{from_places_form}` in the template is replaced by the first form that fits the photo:

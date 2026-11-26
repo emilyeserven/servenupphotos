@@ -4,6 +4,7 @@ import { useState } from "react";
 import { captionTemplates, defaultCaptionTemplate } from "@/api/captions";
 import { Button } from "@/components/ui/button";
 import { fillTemplate } from "@/lib/caption-place-form";
+import { plainCaption } from "@/lib/caption-styles";
 import { captionLists, captionValues } from "@/lib/caption-template";
 import { parseHashtags, type SocialPostDraft } from "@/lib/social-posts";
 import { useCombinedData } from "@/stores/combined-data";
@@ -31,7 +32,7 @@ export function GenerateCaption({ post, photo, disabled, onGenerate }: GenerateC
   if (!template) return <NoTemplates />;
   const generate = async () => {
     const values = captionValues(photo, captionLists(data), parseHashtags(post.hashtags));
-    const caption = fillTemplate(template, values);
+    const caption = plainCaption(fillTemplate(template, values));
     const ask = { question: "Replace the caption with the generated one?", action: "Replace" };
     if (post.caption.trim() && !(await askFirst(ask))) return;
     onGenerate(caption);
