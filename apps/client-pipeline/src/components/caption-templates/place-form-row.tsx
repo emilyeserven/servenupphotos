@@ -1,10 +1,10 @@
-import { ArrowDownIcon, ArrowUpIcon, ShuffleIcon, XIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, PlusIcon, ShuffleIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { FormCondition } from "@/components/caption-templates/form-condition";
 import { FormView } from "@/components/caption-templates/form-view";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { PlaceForm } from "@/lib/caption-place-form";
+import { type PlaceForm, filledLines, formLines, withLine } from "@/lib/caption-place-form";
 import type { CaptionValues } from "@/lib/caption-template";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { count } from "@portfolio/lib/words";
@@ -32,8 +32,8 @@ interface PlaceFormRowProps {
   onChange: (form: PlaceForm) => void;
   onMove: (by: -1 | 1) => void;
   onRemove: () => void;
-  /** Notes the form's text box, so a placeholder clicked goes in it. */
-  onFocus: (input: HTMLInputElement) => void;
+  /** Notes the form's text box and which line it is (0 for the first), so a placeholder clicked goes in it. */
+  onFocus: (input: HTMLInputElement, line: number) => void;
   /** The values to draw the form with when no photo uses it. */
   fallback: CaptionValues;
 }
@@ -55,7 +55,9 @@ function FormPreview({
   }
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-      <span className="bg-muted rounded-md px-2 py-1 text-sm">{example.text}</span>
+      <span className="bg-muted rounded-md px-2 py-1 text-sm whitespace-pre-line">
+        {example.text}
+      </span>
       <span className="text-muted-foreground text-xs">
         {`for “${example.photo}”, one of ${count(examples.length, "photo")} it's used for`}
       </span>
@@ -112,34 +114,89 @@ function shownValues({ examples, shown, fallback }: PlaceFormRowProps): CaptionV
   return examples[shown % Math.max(examples.length, 1)]?.values ?? fallback;
 }
 
+interface FormTextProps extends PlaceFormRowProps {
+  /** Which line of the form, 0 for the first. */
+  line: number;
+  /** Whether the line is drawn struck through, as left out for the photo shown. */
+  dropped?: boolean;
+}
+
+/** A line's text, what its text box is called, and what that shows while empty. */
+function lineText({ form, index, line }: FormTextProps) {
+  const first = line === 0;
+  return {
+    text: formLines(form)[line] ?? "",
+    label: first ? `Form ${index + 1}` : `Form ${index + 1} line ${line + 1}`,
+    placeholder: first ? "{city}, {country}" : "{cityRomanized}, {countryRomanized}",
+  };
+}
+
 /**
- * The form's text: drawn as the caption shows it for the photo shown, until clicked, then typed in
- * with its placeholders in braces; typed in while it's empty.
+ * One line of the form: drawn as the caption shows it for the photo shown, until clicked, then
+ * typed in with its placeholders in braces; typed in while it's empty.
  */
-function FormText(props: PlaceFormRowProps) {
-  const { form, index, onChange, onFocus } = props;
+function FormText(props: FormTextProps) {
+  const { form, line, dropped, onChange, onFocus } = props;
   const [editing, setEditing] = useState(false);
-  if (!editing && form.text.trim() !== "") {
+  const { text, label, placeholder } = lineText(props);
+  if (!editing && text.trim()) {
     return (
       <FormView
-        text={form.text}
+        text={text}
         values={shownValues(props)}
-        label={`Form ${index + 1}: click to edit`}
+        dropped={dropped}
+        label={`${label}: click to edit`}
         onEdit={() => setEditing(true)}
       />
     );
   }
   return (
     <Input
-      aria-label={`Form ${index + 1}`}
+      aria-label={label}
       autoFocus={editing}
-      value={form.text}
-      placeholder="{city}, {country}"
-      onFocus={(event) => onFocus(event.currentTarget)}
+      value={text}
+      placeholder={placeholder}
+      onFocus={(event) => onFocus(event.currentTarget, line)}
       onBlur={() => setEditing(false)}
-      onChange={(event) => onChange({ ...form, text: event.target.value })}
+      onChange={(event) => onChange(withLine(form, line, event.target.value))}
       className="min-w-48 flex-1 font-mono text-sm"
     />
+  );
+}
+
+/**
+ * The form's lines under its first, each struck through for a photo it's left out for, with a
+ * button that takes it off; and a button that adds one.
+ */
+function MoreLines(props: PlaceFormRowProps) {
+  const { form, index, onChange } = props;
+  const more = form.more ?? [];
+  const shown = filledLines(form, shownValues(props));
+  return (
+    <>
+      {more.map((_, i) => (
+        <div key={i} className="flex flex-wrap items-center gap-2 pl-7">
+          <FormText {...props} line={i + 1} dropped={shown[i + 1] === null} />
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={`Remove form ${index + 1}'s line ${i + 2}`}
+            onClick={() => onChange({ ...form, more: more.filter((_, j) => j !== i) })}
+          >
+            <XIcon />
+          </Button>
+        </div>
+      ))}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="self-start"
+        onClick={() => onChange({ ...form, more: [...more, ""] })}
+      >
+        <PlusIcon />
+        Add a line
+      </Button>
+    </>
   );
 }
 
@@ -150,9 +207,10 @@ export function PlaceFormRow(props: PlaceFormRowProps) {
     <li className="flex flex-col gap-2 rounded-md border p-3">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-muted-foreground w-5 text-sm tabular-nums">{index + 1}.</span>
-        <FormText {...props} />
+        <FormText {...props} line={0} />
         <FormButtons {...props} />
       </div>
+      <MoreLines {...props} />
       <FormCondition form={form} index={index} onChange={onChange} />
       <FormPreview {...props} />
     </li>

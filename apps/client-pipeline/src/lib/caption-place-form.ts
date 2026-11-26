@@ -17,6 +17,12 @@ export interface PlaceForm {
   when?: PlaceCount;
   /** The place name, with placeholders, such as `{city}, {state}`. */
   text: string;
+  /**
+   * More lines under it, such as the romanized names under the local ones. Each is left out for a
+   * photo when a placeholder in it outside square brackets is empty, or when it reads the same as
+   * a line above it.
+   */
+  more?: string[];
 }
 
 /** The fields a form's condition can name, in the order the builder lists them. */
@@ -40,6 +46,7 @@ export function formConditions(form: PlaceForm): PlaceForm {
     ...(has.length > 0 && { has }),
     ...(lacks.length > 0 && { lacks }),
     text: form.text,
+    ...(form.more?.some((line) => line.trim()) && { more: form.more }),
   };
 }
 
@@ -54,12 +61,12 @@ export type ConditionState = "has" | "lacks" | "off";
 
 /** The form with the field's part of its condition set to state, an older place count turned into fields. */
 export function withCondition(form: PlaceForm, name: string, state: ConditionState): PlaceForm {
-  const { has = [], lacks = [], text } = formConditions(form);
+  const { has = [], lacks = [], ...rest } = formConditions(form);
   const next = {
     has: [...has.filter((n) => n !== name), ...(state === "has" ? [name] : [])],
     lacks: [...lacks.filter((n) => n !== name), ...(state === "lacks" ? [name] : [])],
   };
-  return formConditions({ ...next, text });
+  return formConditions({ ...rest, ...next });
 }
 
 /** What the field is in the form's condition. */
@@ -100,10 +107,58 @@ export function pickPlaceForm(
 ): PlaceFormPick | null {
   for (const [index, form] of forms.entries()) {
     if (!conditionFits(form, values)) continue;
-    const text = fillAll(form.text, values);
-    if (text !== null) return { index, text: replacePlaces(text, replacements) };
+    const text = fillForm(form, values, replacements);
+    if (text !== null) return { index, text };
   }
   return null;
+}
+
+/** Whether two lines of a place name read the same, ignoring case and spaces. */
+function sameText(a: string, b: string): boolean {
+  const plain = (text: string) => text.toLowerCase().replace(/\s+/g, " ").trim();
+  return plain(a) === plain(b);
+}
+
+/** The form's lines: its first, then the ones under it. */
+export function formLines(form: PlaceForm): string[] {
+  return [form.text, ...(form.more ?? [])];
+}
+
+/** The form with line i (0 for the first) set to text. */
+export function withLine(form: PlaceForm, i: number, text: string): PlaceForm {
+  if (i === 0) return { ...form, text };
+  return { ...form, more: (form.more ?? []).map((line, j) => (j === i - 1 ? text : line)) };
+}
+
+/**
+ * Each of the form's lines as filled in for the values, with the exceptions written their way, or
+ * null when it's left out: the first when a placeholder in it outside square brackets is empty,
+ * and one under it for that too, or when it reads the same as a line above it.
+ */
+export function filledLines(
+  form: PlaceForm,
+  values: CaptionValues,
+  replacements?: PlaceReplacement[],
+): (string | null)[] {
+  const shown: string[] = [];
+  return formLines(form).map((line) => {
+    const filled = line.trim() ? fillAll(line, values) : null;
+    const text = filled === null ? null : replacePlaces(filled, replacements);
+    if (text === null || shown.some((above) => sameText(above, text))) return null;
+    shown.push(text);
+    return text;
+  });
+}
+
+/** The place name the form makes: its lines that show, one under another; null when the first doesn't fill in. */
+function fillForm(
+  form: PlaceForm,
+  values: CaptionValues,
+  replacements?: PlaceReplacement[],
+): string | null {
+  const lines = filledLines(form, values, replacements);
+  if (lines[0] === null) return null;
+  return lines.filter((line) => line !== null).join("\n");
 }
 
 /** The values with `{from_places_form}`: the place name the template's builder makes, or "". */
@@ -129,6 +184,8 @@ export const NEW_FORM: PlaceForm = { text: "{place1Localized}" };
 /** The form a placeholder goes in, by index, and where its cursor is; null parts when unknown. */
 export interface FormCursor {
   index: number | null;
+  /** Which line of the form, 0 for the first. */
+  line?: number;
   start?: number | null;
   end?: number | null;
 }
@@ -147,8 +204,9 @@ export function withPlaceholder(
     cursor.index !== null && cursor.index < forms.length ? cursor : { index: forms.length - 1 };
   return forms.map((form, i) => {
     if (i !== at.index) return form;
-    const start = at.start ?? form.text.length;
-    const text = form.text.slice(0, start) + placeholder + form.text.slice(at.end ?? start);
-    return { ...form, text };
+    const line = "line" in at ? (at.line ?? 0) : 0;
+    const old = formLines(form)[line] ?? "";
+    const start = at.start ?? old.length;
+    return withLine(form, line, old.slice(0, start) + placeholder + old.slice(at.end ?? start));
   });
 }
