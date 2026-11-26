@@ -91,6 +91,9 @@ type PhotoBook struct {
 	// LensPrefixes are lenses whose names the book's captions write without
 	// the words they start with, set on its Info tab.
 	LensPrefixes []PhotoBookLensPrefix `json:"lensPrefixes,omitempty"`
+	// CameraNames are cameras the book's captions call by another name, set
+	// on its Info tab.
+	CameraNames []PhotoBookCameraName `json:"cameraNames,omitempty"`
 }
 
 // PhotoBookBudget is a book's page budget, counted in printed pages (a
@@ -209,6 +212,9 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 		return out, perr
 	}
 	if out.LensPrefixes, perr = validLensPrefixes(b.LensPrefixes); perr != nil {
+		return out, perr
+	}
+	if out.CameraNames, perr = validCameraNames(b.CameraNames); perr != nil {
 		return out, perr
 	}
 	counts := photoBookSlotCounts(layouts)
