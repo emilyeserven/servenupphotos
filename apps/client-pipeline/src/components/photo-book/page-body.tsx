@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
 import { CustomBody } from "@/components/photo-book/custom-body";
+import { GeneratedBody } from "@/components/photo-book/generated-body";
 import { PhotoSlot } from "@/components/photo-book/page-slot";
 import { type BookPageProps, type PageParts, pageName } from "@/components/photo-book/page-types";
 import { SlotCaption } from "@/components/photo-book/slot-caption";
 import { TextBody } from "@/components/photo-book/text-body";
 import type { BuiltInLayout } from "@/lib/photo-book";
+import { isGeneratedPage } from "@/lib/photo-book-generated";
 import { customPageLook } from "@/lib/photo-book-layouts";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +24,7 @@ type BodyProps = Pick<
   | "side"
   | "printWidth"
   | "noTitles"
+  | "placesIndexFor"
 >;
 
 /** The other pages in the book with the slot's photo; none for a page left out. */
@@ -192,9 +195,12 @@ function PhotosBody(props: BodyProps & { parts: PageParts }) {
   return (BODIES[props.page.layout as BuiltInLayout] ?? BODIES.full)(parts);
 }
 
-/** The page's photos and captions, laid out as its layout says; a text page's text too. */
+/** The page's photos and captions, laid out as its layout says; a text page's text too, and a generated page's contents. */
 export function PageBody(props: BodyProps) {
   const { layout } = props.page;
+  if (isGeneratedPage(props.page)) {
+    return <GeneratedBody page={props.page} placesIndexFor={props.placesIndexFor} />;
+  }
   if (layout === "other") return <OtherBody name={pageName(props.page)} />;
   const parts = pageParts(props);
   if (layout !== "text") return <PhotosBody {...props} parts={parts} />;

@@ -25,7 +25,7 @@ var photoBookLayouts = map[string]int{
 	// The same, mirrored: the photos on the right, their captions on the left.
 	"verticals-right": 2,
 	// One of the book's other pages, such as one the publisher requires or a
-	// bio page: no photos, only its name for now.
+	// bio page: no photos; its name, or what it is generated from (Generated).
 	"other": 0,
 	// A text page: a title and text, with as many photos under them as the
 	// page was given, up to maxTextPagePhotos.
@@ -154,6 +154,10 @@ type PhotoBookPage struct {
 	// Columns is how many columns a text page's text flows into, 1 to
 	// maxTextPageColumns; 0 (absent) for one.
 	Columns int `json:"columns,omitempty"`
+	// Generated is what one of the book's other pages draws from the
+	// book's data, such as a Places Index; nil for a page that shows only
+	// its name, and on every page that isn't an other page.
+	Generated *PhotoBookGenerated `json:"generated,omitempty"`
 	// Slots are the page's photo places, as many as its layout holds.
 	Slots []PhotoBookSlot `json:"slots"`
 }
@@ -322,6 +326,9 @@ func validPhotoBookPage(page PhotoBookPage, n int, counts map[string]int) (Photo
 		out.Title = &title
 	}
 	if out.Text, out.Columns, perr = validPhotoBookPageText(page, n); perr != nil {
+		return out, perr
+	}
+	if out.Generated, perr = validGeneratedPage(page, n); perr != nil {
 		return out, perr
 	}
 	if count == textPagePhotos {

@@ -6,6 +6,7 @@ import { pageName } from "@/components/photo-book/page-types";
 import { SectionTitle } from "@/components/section-title";
 import { plainCaption } from "@/lib/caption-styles";
 import { type BookSlot, type PhotoBook, isOtherPage } from "@/lib/photo-book";
+import { generatedKind, isGeneratedPage } from "@/lib/photo-book-generated";
 import { layoutName } from "@/lib/photo-book-layouts";
 import { type ListedPage, listedPages, photoCount } from "@/lib/photo-book-list";
 import { unitsInBook } from "@/lib/photo-book-order";
@@ -39,6 +40,12 @@ export function ListTab({ book, look }: { book: PhotoBook; look: PageLook }) {
   );
 }
 
+/** What an other page is: the kind of a generated one, such as "Places Index · generated", or "Other page". */
+function otherKind(page: PhotoBook["pages"][number]): string | undefined {
+  if (isGeneratedPage(page)) return `${generatedKind(page.generated.kind).name} · generated`;
+  return isOtherPage(page) ? "Other page" : undefined;
+}
+
 /** One page: its number, name and layout, then its photos, or a note for an other page. */
 function ListedPageRows(props: { book: PhotoBook; look: PageLook; listed: ListedPage }) {
   const { book, look, listed } = props;
@@ -49,7 +56,7 @@ function ListedPageRows(props: { book: PhotoBook; look: PageLook; listed: Listed
       <SectionTitle as="h2">
         Page {number} · {pageName(page)}
         <span className="text-muted-foreground ml-2 text-xs font-normal">
-          {other ? "Other page" : layoutName(book, page.layout)}
+          {otherKind(page) ?? layoutName(book, page.layout)}
         </span>
       </SectionTitle>
       {other ? (
