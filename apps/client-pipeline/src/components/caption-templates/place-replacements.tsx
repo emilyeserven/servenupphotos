@@ -1,6 +1,5 @@
-import { PlusIcon, XIcon } from "lucide-react";
+import { AddRowButton, RemoveRowButton } from "@/components/caption-templates/row-buttons";
 import { SectionTitle } from "@/components/section-title";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { PlaceReplacement } from "@/lib/caption-place-form";
 import { count } from "@portfolio/lib/words";
@@ -46,26 +45,16 @@ export function PlaceReplacements({ replacements, names, onChange }: PlaceReplac
           <span className="text-muted-foreground text-xs">
             {r.from ? `In ${count(names.filter((n) => n.includes(r.from)).length, "photo")}` : ""}
           </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Remove this exception"
+          <RemoveRowButton
+            label="Remove this exception"
             onClick={() => onChange(replacements.filter((_, j) => j !== i))}
-          >
-            <XIcon />
-          </Button>
+          />
         </div>
       ))}
-      <div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onChange([...replacements, { from: "", to: "" }])}
-        >
-          <PlusIcon />
-          Add an exception
-        </Button>
-      </div>
+      <AddRowButton
+        label="Add an exception"
+        onClick={() => onChange([...replacements, { from: "", to: "" }])}
+      />
     </div>
   );
 }

@@ -128,3 +128,15 @@ test("a form's lines go one under another, each left out when it can't fill in o
   const at = withPlaceholder([form], { index: 0, line: 2, start: 0 }, "{x}");
   assert.equal(at[0]!.more?.[1], "{x}{city}, {country}");
 });
+
+test("a template abbreviates US states and keeps its never-break values together", () => {
+  const template = {
+    template: "{city}, {state}",
+    noBreak: ["San Francisco"],
+    stateAbbreviations: true,
+  };
+  assert.equal(
+    fillTemplate(template, photo({ city: "San Francisco", state: "California" })),
+    "San Francisco, CA",
+  );
+});

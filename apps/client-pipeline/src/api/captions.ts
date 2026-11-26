@@ -26,6 +26,13 @@ export interface CaptionTemplate {
    * way, such as "USA" for "United States of America". Left out while there are none.
    */
   placeReplacements?: PlaceReplacement[];
+  /**
+   * Values that never break across lines in a caption, such as "San Francisco": their spaces and
+   * hyphens are kept together. Left out while there are none.
+   */
+  noBreak?: string[];
+  /** Writes each US state in its standard abbreviation, such as CA for California. Left out while off. */
+  stateAbbreviations?: boolean;
 }
 
 function isTemplate(value: unknown): value is CaptionTemplate {

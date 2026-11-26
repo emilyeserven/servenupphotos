@@ -6,6 +6,7 @@ import {
   saveCaptionTemplateMutation,
 } from "@/api/captions";
 import type { CombinedData } from "@/api/photos";
+import { NameOptions } from "@/components/caption-templates/name-options";
 import { PlaceFormBuilder } from "@/components/caption-templates/place-form-builder";
 import { PlaceholderList } from "@/components/caption-templates/placeholder-list";
 import { TemplatePreview } from "@/components/caption-templates/preview";
@@ -29,6 +30,18 @@ function templateOf(draft: CaptionTemplate, saved?: CaptionTemplate): CaptionTem
     template: draft.template.trimEnd(),
     ...placesOf(draft),
     ...replacementsOf(draft),
+    ...nameOptionsOf(draft),
+  };
+}
+
+/** The values that never break and the state abbreviations to save, each left out while empty or off. */
+function nameOptionsOf(
+  draft: CaptionTemplate,
+): Pick<CaptionTemplate, "noBreak" | "stateAbbreviations"> {
+  const noBreak = [...new Set((draft.noBreak ?? []).map((v) => v.trim()).filter(Boolean))];
+  return {
+    ...(noBreak.length > 0 ? { noBreak } : {}),
+    ...(draft.stateAbbreviations ? { stateAbbreviations: true } : {}),
   };
 }
 
@@ -64,6 +77,7 @@ export function TemplateEditor({ template, data, onSaved }: TemplateEditorProps)
     <div className="flex min-w-0 flex-col gap-6">
       <TemplateCard template={template} draft={draft} text={text} set={set} onSaved={onSaved} />
       <TemplatePreview template={draft} data={data} />
+      <NameOptions template={draft} onChange={set} />
       <PlaceFormBuilder
         forms={draft.places ?? []}
         replacements={draft.placeReplacements ?? []}

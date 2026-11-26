@@ -1,3 +1,5 @@
+import { unglued } from "@/lib/caption-keep-together";
+
 /** One stretch of a caption's text, with the styles marked around it. */
 export interface CaptionRun {
   text: string;
@@ -42,7 +44,7 @@ const GAP_MARK = /<gap\s*\/?>/g;
 
 /** The caption without its style marks, as a social media post takes it. */
 export function plainCaption(text: string): string {
-  return text.replace(MARK, "").replace(GAP_MARK, "");
+  return unglued(text.replace(MARK, "").replace(GAP_MARK, ""));
 }
 
 /** One line of a caption as it's drawn. */
@@ -101,11 +103,14 @@ export interface Selection {
   selectionEnd?: number | null;
 }
 
+/** The marks a button puts around the selected text: smaller, italics, or kept together on one line. */
+export type TextMark = "small" | "i" | "nobr";
+
 /**
  * The text with the selection put inside the mark, such as `i` for `<i>…</i>`; with nothing
  * selected, an empty pair at the cursor, or at the end when there's no cursor.
  */
-export function withMark(text: string, at: Selection | null, mark: "small" | "i"): string {
+export function withMark(text: string, at: Selection | null, mark: TextMark): string {
   const start = at?.selectionStart ?? text.length;
   const end = at?.selectionEnd ?? start;
   return `${text.slice(0, start)}<${mark}>${text.slice(start, end)}</${mark}>${text.slice(end)}`;
