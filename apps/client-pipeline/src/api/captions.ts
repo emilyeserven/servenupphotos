@@ -1,6 +1,6 @@
 import { overrideId } from "@/api/cameras";
 import { byName, settingEntries, settingMutations } from "@/api/data-files";
-import type { PlaceForm } from "@/lib/caption-place-form";
+import type { PlaceForm, PlaceReplacement } from "@/lib/caption-place-form";
 
 /**
  * A caption template file: a social media post's caption with placeholders for the photo's
@@ -21,6 +21,11 @@ export interface CaptionTemplate {
    * photo. Left out while there are none.
    */
   places?: PlaceForm[];
+  /**
+   * The place name builder's exceptions: text in the place name it makes that's written another
+   * way, such as "USA" for "United States of America". Left out while there are none.
+   */
+  placeReplacements?: PlaceReplacement[];
 }
 
 function isTemplate(value: unknown): value is CaptionTemplate {

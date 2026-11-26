@@ -1,5 +1,6 @@
 import { ShuffleIcon } from "lucide-react";
 import { useState } from "react";
+import type { CaptionTemplate } from "@/api/captions";
 import type { CombinedData } from "@/api/photos";
 import { photoLabel, previewPhotos } from "@/components/caption-templates/preview";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { type PlaceForm, withPlaceForm } from "@/lib/caption-place-form";
+import { withPlaceForm } from "@/lib/caption-place-form";
 import {
   type CaptionValues,
   PLACEHOLDERS,
@@ -78,8 +79,8 @@ function PlaceholderRows({ names, help, values, onInsert }: PlaceholderRowsProps
 interface PlaceholderListProps {
   /** The combined lists, for the example photo and its places. */
   data: CombinedData;
-  /** The template's place name builder forms, for `{from_places_form}`'s example. */
-  places?: PlaceForm[];
+  /** The template's place name builder forms and exceptions, for `{from_places_form}`'s example. */
+  template: Pick<CaptionTemplate, "places" | "placeReplacements">;
   onInsert: (placeholder: string) => void;
 }
 
@@ -88,12 +89,12 @@ interface PlaceholderListProps {
  * it is, and what it's filled with for one of the portfolio's photos, which **Shuffle** swaps for
  * another.
  */
-export function PlaceholderList({ data, places, onInsert }: PlaceholderListProps) {
+export function PlaceholderList({ data, template, onInsert }: PlaceholderListProps) {
   const photos = previewPhotos(data);
   const [index, setIndex] = useState(0);
   const photo = photos[index];
   const values = withPlaceForm(
-    { places },
+    template,
     captionValues(photo ?? {}, captionLists(data), ["travelphotography"]),
   );
   return (
