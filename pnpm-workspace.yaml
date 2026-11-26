@@ -6,6 +6,7 @@ packages:
 
 catalog:
   "@fontsource-variable/manrope": 5.3.0
+  "@fontsource/noto-sans-arabic": 5.3.0
   "@tailwindcss/vite": 4.3.4
   "@tanstack/react-query": 5.106.1
   "@tanstack/react-router": 1.170.46

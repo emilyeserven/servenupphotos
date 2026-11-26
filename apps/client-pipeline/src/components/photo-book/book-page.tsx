@@ -3,8 +3,9 @@ import { type BookPageProps, pageName } from "@/components/photo-book/page-types
 import { PAGE_SHEET_ATTRIBUTE } from "@/components/photo-book/use-slot-dpi";
 import { cn } from "@/lib/utils";
 
-/** The look of a printed page: black, Helvetica, white text, in the book's shape. */
-const PAGE_CLASS = "bg-black p-[2.5%] font-[Helvetica_Neue,Helvetica,Arial,sans-serif] text-white";
+/** The look of a printed page: black, Helvetica (Noto Sans Arabic for Arabic letters), white text, in the book's shape. */
+const PAGE_CLASS =
+  "bg-black p-[2.5%] font-[Book_Arabic,Helvetica_Neue,Helvetica,Arial,sans-serif] text-white";
 
 /**
  * One page of the book: its controls above it, and the page itself in its layout, styled like the

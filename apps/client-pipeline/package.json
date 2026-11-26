@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@fontsource-variable/manrope": "catalog:",
+    "@fontsource/noto-sans-arabic": "catalog:",
     "@tanstack/react-form": "1.33.5",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",

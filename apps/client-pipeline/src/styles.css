@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/manrope";
+/* The photo book's Arabic font. */
+@import "./book-fonts.css";
 /* The fade between pages, shared with the portfolio. */
 @import "../../portfolio/src/page-fade.css";
 
