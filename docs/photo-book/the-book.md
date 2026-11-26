@@ -35,7 +35,7 @@ Its options button (the sliders, in the drawer beside its bin) sets:
 - **Order**: alphabetical at every level, or the order the book first shows each place.
 - **Pages**: 1 to 20 pages, linked, the list running on from the last column of one page to the first of the next, as a long text does. They go into the book together, one after the other, wherever the first is put, and are numbered and printed as pages of the book (unlike a spread, they start on whichever side they fall, with no blank page added). The heading is on the first page only, with its room left empty on the others so every page's list starts level. On the last page, a red mark says when the list runs past it and how many pages it needs, and a grey one when it fits on fewer; neither prints.
 - **Columns**: 1 to 3 on each page, the list flowing from one to the next.
-- **Text size**: the list's text from 50% to 200% of its usual size, in steps of 10; the heading stays the same size. Larger text needs more pages, which the mark on the last page says.
+- **Text size**: the list's text from 50% to 200% of its usual size, in steps of 5; the heading stays the same size. Larger text needs more pages, which the mark on the last page says.
 - **Places**: every entry it could show, each a button that leaves it out of this page. The entries under one left out move up a level, so leaving out California puts its cities right under the United States.
 
 Hidden places on **Photo Pages** only shorten captions, so the index still lists them.

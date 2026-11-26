@@ -6,6 +6,7 @@ import {
   changeGenerated,
   generatedKind,
   isGeneratedPage,
+  generatedTextSize,
   setGeneratedTitle,
 } from "@/lib/photo-book-generated";
 
@@ -64,4 +65,13 @@ test("a generated page's options are changed and tidied, its title set", () => {
   assert.equal(setGeneratedTitle(added, "page-2", "Where").pages[1]?.title, "Where");
   // Other pages don't change.
   assert.equal(changeGenerated(added, "page-1", (g) => g).pages[0], added.pages[0]);
+});
+
+test("a generated page's text size steps by 5, from 50 to 200", () => {
+  assert.equal(generatedTextSize({}), 100);
+  assert.equal(generatedTextSize({ textSize: 85 }), 85);
+  assert.equal(generatedTextSize({ textSize: 87 }), 85);
+  assert.equal(generatedTextSize({ textSize: 88 }), 90);
+  assert.equal(generatedTextSize({ textSize: 10 }), 50);
+  assert.equal(generatedTextSize({ textSize: 999 }), 200);
 });

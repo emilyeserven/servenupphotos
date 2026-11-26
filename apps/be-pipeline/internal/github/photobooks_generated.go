@@ -39,7 +39,7 @@ type PhotoBookGenerated struct {
 	// maxGeneratedPages; 0 (absent) for one.
 	Pages int `json:"pages,omitempty"`
 	// TextSize is the list's text size in percent of the usual size,
-	// minGeneratedTextSize to maxGeneratedTextSize in steps of 10; 0
+	// minGeneratedTextSize to maxGeneratedTextSize in steps of 5; 0
 	// (absent) for 100.
 	TextSize int `json:"textSize,omitempty"`
 	// Hidden are the entries left out of the index, their places lifted
@@ -101,14 +101,14 @@ func validGeneratedPage(page PhotoBookPage, n int) (*PhotoBookGenerated, *Publis
 	return &out, perr
 }
 
-// validGeneratedTextSize is a text size rounded to steps of 10, from
+// validGeneratedTextSize is a text size rounded to steps of 5, from
 // minGeneratedTextSize to maxGeneratedTextSize, with 100 (and 0, none set)
 // as 0.
 func validGeneratedTextSize(size int) int {
 	if size == 0 {
 		return 0
 	}
-	size = min(max((size+5)/10*10, minGeneratedTextSize), maxGeneratedTextSize)
+	size = min(max((size+2)/5*5, minGeneratedTextSize), maxGeneratedTextSize)
 	if size == 100 {
 		return 0
 	}
