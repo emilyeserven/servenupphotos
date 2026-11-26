@@ -89,6 +89,7 @@ export function TemplateEditor({ template, data, onSaved }: TemplateEditorProps)
       </Card>
       <TemplatePreview template={draft.template} data={data} />
       <PlaceholderList
+        data={data}
         onInsert={(placeholder) =>
           set({ template: inserted(text.current, draft.template, placeholder) })
         }

@@ -13,12 +13,12 @@ import { FILE, TITLE } from "@/lib/photo-fields";
 import { shownPhotos } from "@/lib/place-seeds";
 
 /** A photo's name in the preview's list: its title, or else its file. */
-function photoLabel(photo: CombinedPhoto, index: number): string {
+export function photoLabel(photo: CombinedPhoto, index: number): string {
   return photoText(photo, TITLE) ?? photoText(photo, FILE) ?? `Photo ${index + 1}`;
 }
 
 /** The photos to preview with, newest first, as the portfolio lists them. */
-function previewPhotos(data: CombinedData): CombinedPhoto[] {
+export function previewPhotos(data: CombinedData): CombinedPhoto[] {
   return shownPhotos(data).toReversed();
 }
 
