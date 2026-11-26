@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Place } from "@/api/places";
 import type { CaptionLists } from "@/lib/caption-template";
+import type { GeneratedPage } from "@/lib/photo-book-generated";
 import { type IndexEntry, entryCount, placesIndex } from "@/lib/photo-book-places-index";
 
 const place = (id: string, name: string, parent?: string): Place => ({
@@ -130,6 +131,19 @@ test("a Places Index writes names localized and US states abbreviated when it sa
     "    San Francisco",
     "      Golden Gate Bridge",
   ]);
+});
+
+test("a Places Index writes names in Latin letters, their own script, or both either way round", () => {
+  const written = (names: GeneratedPage["names"]) =>
+    lines(placesIndex([seoulGate], lists, { kind: "places-index", names, depth: "city" }))[1];
+  assert.equal(written("localRomanized"), "  서울 (Seoul)");
+  assert.equal(written("romanizedLocal"), "  Seoul (서울)");
+  assert.equal(written("local"), "  서울");
+  assert.equal(written("romanized"), "  Seoul");
+  assert.equal(written(undefined), "  Seoul");
+  // Without its own script, a name is written in Latin letters whatever the style.
+  const gate = placesIndex([seoulGate], lists, { kind: "places-index", names: "local" });
+  assert.equal(lines(gate).at(-1), "      Geunjeongmun Gate");
 });
 
 test("photos without a location add nothing", () => {

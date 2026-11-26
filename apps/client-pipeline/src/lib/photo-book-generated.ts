@@ -1,8 +1,12 @@
 import { type BookPage, type PhotoBook, newPage } from "@/lib/photo-book";
+import { generatedPageCount } from "@/lib/photo-book-generated-pages";
 import { addToBook, bookOrder } from "@/lib/photo-book-order";
 
 /** What a generated page is made from: for now, the places the book's photos show. */
 export type GeneratedKind = "places-index";
+
+/** How a generated page writes names: see GeneratedPage's `names`. */
+export type NameStyle = "romanized" | "romanizedLocal" | "localRomanized" | "local";
 
 /** The most specific level a Places Index lists: countries, states, cities, or every place (absent). */
 export type IndexDepth = "country" | "state" | "city";
@@ -13,7 +17,14 @@ export type IndexDepth = "country" | "state" | "city";
  */
 export interface GeneratedPage {
   kind: GeneratedKind;
-  /** True to write places in their own script with their romanization, such as 경복궁 (Gyeongbokgung). */
+  /**
+   * How names are written, from their localizations: in Latin letters (`romanized`), with their own
+   * script after (`romanizedLocal`, Gyeongbokgung (경복궁)) or before (`localRomanized`, 경복궁
+   * (Gyeongbokgung)), or in their own script only (`local`); absent for the name as photos and
+   * places have it.
+   */
+  names?: NameStyle;
+  /** True in a page saved before `names`, for `localRomanized`; read once, then saved as `names`. */
   localized?: boolean;
   /** True to write US states in their standard abbreviation, such as CA for California. */
   stateAbbreviations?: boolean;
@@ -23,6 +34,11 @@ export interface GeneratedPage {
   order?: "book";
   /** How many columns the page flows into, 2 or 3; absent for one. */
   columns?: number;
+  /**
+   * How many pages it runs on across, linked so they go in the book together, 2 to 20; absent for
+   * one. Only the first is saved; the others are drawn after it.
+   */
+  pages?: number;
   /**
    * The entries left out, their places lifted into the entry above, such as `city:Seoul` or
    * `place:<place ID>`; absent for none.
@@ -90,8 +106,13 @@ function tidy(generated: GeneratedPage): GeneratedPage {
   const columns = generatedColumns(out);
   if (columns === 1) delete out.columns;
   else out.columns = columns;
+  const pages = generatedPageCount({ generated: out });
+  if (pages === 1) delete out.pages;
+  else out.pages = pages;
   if (!out.hidden?.length) delete out.hidden;
-  for (const key of ["localized", "stateAbbreviations", "depth", "order"] as const) {
+  if (out.localized && !out.names) out.names = "localRomanized";
+  delete out.localized;
+  for (const key of ["names", "stateAbbreviations", "depth", "order"] as const) {
     if (!out[key]) delete out[key];
   }
   return out;

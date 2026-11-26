@@ -38,19 +38,23 @@ test("a generated page's options are changed and tidied, its title set", () => {
   const changed = changeGenerated(added, "page-2", (g) => ({
     ...g,
     columns: 5,
+    pages: 40,
     localized: true,
     hidden: ["city:Seoul"],
   }));
+  // A page saved with `localized` is saved with `names` from then on.
   assert.deepEqual(changed.pages[1]?.generated, {
     kind: "places-index",
     columns: 3,
-    localized: true,
+    pages: 20,
+    names: "localRomanized",
     hidden: ["city:Seoul"],
   });
   const back = changeGenerated(changed, "page-2", (g) => ({
     ...g,
     columns: 1,
-    localized: false,
+    pages: 1,
+    names: undefined,
     hidden: [],
   }));
   assert.deepEqual(back.pages[1]?.generated, { kind: "places-index" });

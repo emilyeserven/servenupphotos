@@ -7,11 +7,11 @@ import (
 
 func TestValidGeneratedPage(t *testing.T) {
 	page := PhotoBookPage{Layout: "other", Generated: &PhotoBookGenerated{
-		Kind: "places-index", Localized: true, Depth: "city", Order: "book", Columns: 1,
+		Kind: "places-index", Localized: true, Depth: "city", Order: "book", Columns: 1, Pages: 40,
 		Hidden: []string{" city:Seoul ", "place:palace", "city:Seoul", ""},
 	}}
 	got, perr := validGeneratedPage(page, 1)
-	if perr != nil || got.Columns != 0 || !got.Localized || got.Depth != "city" || !slices.Equal(got.Hidden, []string{"city:Seoul", "place:palace"}) {
+	if perr != nil || got.Columns != 0 || got.Pages != maxGeneratedPages || got.Localized || got.Names != "localRomanized" || got.Depth != "city" || !slices.Equal(got.Hidden, []string{"city:Seoul", "place:palace"}) {
 		t.Fatalf("got %+v, %v", got, perr)
 	}
 	// Only an other page is generated.
@@ -23,6 +23,7 @@ func TestValidGeneratedPage(t *testing.T) {
 		{Kind: "photo-index"},
 		{Kind: "places-index", Depth: "street"},
 		{Kind: "places-index", Order: "date"},
+		{Kind: "places-index", Names: "kana"},
 		{Kind: "places-index", Hidden: []string{"street:Main"}},
 		{Kind: "places-index", Hidden: []string{"city:"}},
 	}

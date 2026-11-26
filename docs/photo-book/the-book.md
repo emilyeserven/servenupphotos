@@ -29,16 +29,17 @@ The **Places Index** lists every place the photos on the pages in the book show,
 Its options button (the sliders, in the drawer beside its bin) sets:
 
 - **Heading**, which starts as "Places"; an empty one leaves the page without one, and **Show page titles** on **Info** doesn't hide it.
-- **Names in their own script, with romanization**, which writes each name the way captions' `{placeLocalized}` does, such as 경복궁 (Gyeongbokgung), from its [localization](../places-and-localizations.md).
+- **Names**, from each name's [localization](../places-and-localizations.md): **As named** (as photos and places have it), **Romanized** (Gyeongbokgung), **Romanized (local)** (Gyeongbokgung (경복궁)), **Local (romanized)** (경복궁 (Gyeongbokgung), as captions' `{placeLocalized}` writes it) or **Local script** (경복궁). A name whose localization has no local script is written romanized in every style but **As named**. Alphabetical order sorts by the name as written.
 - **Abbreviate US states**, such as CA for California.
 - **List down to** every place, cities, states or countries.
 - **Order**: alphabetical at every level, or the order the book first shows each place.
-- **Columns**: 1 to 3, the list flowing from one to the next.
+- **Pages**: 1 to 20 pages, linked, the list running on from the last column of one page to the first of the next, as a long text does. They go into the book together, one after the other, wherever the first is put, and are numbered and printed as pages of the book (unlike a spread, they start on whichever side they fall, with no blank page added). The heading is on the first page only, with its room left empty on the others so every page's list starts level. On the last page, a red mark says when the list runs past it and how many pages it needs, and a grey one when it fits on fewer; neither prints.
+- **Columns**: 1 to 3 on each page, the list flowing from one to the next.
 - **Places**: every entry it could show, each a button that leaves it out of this page. The entries under one left out move up a level, so leaving out California puts its cities right under the United States.
 
 Hidden places on **Photo Pages** only shorten captions, so the index still lists them.
 
-> **Frontend analogy:** the page is derived state, like a `useMemo` over the book: only its options are saved, and the tree is rebuilt from the pages in the book on every render (`lib/photo-book-places-index.ts`), each photo contributing a path such as Japan › Shimane › Matsue › Matsue Castle that's merged into the tree, like building a file tree from a list of paths. A new kind of generated page is a new entry in `GENERATED_KINDS` (`lib/photo-book-generated.ts`) with its own body in `generated-body.tsx`.
+> **Frontend analogy:** the page is derived state, like a `useMemo` over the book: only its options are saved, and the tree is rebuilt from the pages in the book on every render (`lib/photo-book-places-index.ts`), each photo contributing a path such as Japan › Shimane › Matsue › Matsue Castle that's merged into the tree, like building a file tree from a list of paths. A new kind of generated page is a new entry in `GENERATED_KINDS` (`lib/photo-book-generated.ts`) with its own body in `generated-body.tsx`. Running on across pages is one CSS multi-column box as wide as all the pages side by side (`column-fill: auto`, so columns fill in order instead of balancing), each page showing its own window of it, like a carousel's track behind a viewport; the last page measures where the last line ends to say how many pages are needed (`use-pages-needed.ts`). Only the first page is in the file: `bookUnits` adds the pages it runs on to as copies with their own IDs (`lib/photo-book-generated-pages.ts`).
 
 ## Preview Mode
 

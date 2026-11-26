@@ -7,6 +7,7 @@ import {
   isOtherPage,
   newPage,
 } from "@/lib/photo-book";
+import { withRunOnPages } from "@/lib/photo-book-generated-pages";
 import { clamp } from "@portfolio/lib/values";
 
 /**
@@ -21,8 +22,8 @@ export interface BookUnit {
 
 /**
  * Every unit made for the book: the photo pages, each linked one with the photo page after it as a
- * spread, then the other pages, each on its own. A page that's the second of a spread can't link
- * on to a third.
+ * spread, then the other pages, each on its own, a generated page with the pages it runs on to. A
+ * page that's the second of a spread can't link on to a third.
  */
 export function bookUnits(book: PhotoBook): BookUnit[] {
   const photos = book.pages.filter((page) => !isOtherPage(page));
@@ -35,7 +36,9 @@ export function bookUnits(book: PhotoBook): BookUnit[] {
       i += 1;
     } else units.push({ id: page.id, pages: [page] });
   }
-  const others = book.pages.filter(isOtherPage).map((page) => ({ id: page.id, pages: [page] }));
+  const others = book.pages
+    .filter(isOtherPage)
+    .map((page) => ({ id: page.id, pages: withRunOnPages(page) }));
   return [...units, ...others];
 }
 
@@ -240,10 +243,16 @@ export function isInsideCover(page: BookPage): boolean {
   return page.id.startsWith(COVER_PREFIX);
 }
 
+/** Whether the unit is two photo pages linked into a spread, not a generated page run on across pages. */
+function isSpread(unit: BookUnit): boolean {
+  return unit.pages.length > 1 && !unit.pages.some(isOtherPage);
+}
+
 /**
  * The printed book's pages in order, page 1 first (a right page, so odd pages are right and even
  * ones left): the units' pages, with a blank placeholder before a spread that would start on a
- * right page, so it opens left and right, and one at the end when the count is odd, as a printed
+ * right page, so it opens left and right (a generated page run on across pages starts wherever it
+ * falls), and one at the end when the count is odd, as a printed
  * book has an even number of pages.
  */
 export function printedPages(units: BookUnit[]): BookPage[] {
@@ -251,7 +260,7 @@ export function printedPages(units: BookUnit[]): BookPage[] {
   const blank = () =>
     pages.push(placeholderPage(`${BLANK_PREFIX}${pages.length + 1}`, "Blank page"));
   for (const unit of units) {
-    if (unit.pages.length > 1 && pages.length % 2 === 0) blank();
+    if (isSpread(unit) && pages.length % 2 === 0) blank();
     pages.push(...unit.pages);
   }
   if (pages.length % 2 === 1) blank();
