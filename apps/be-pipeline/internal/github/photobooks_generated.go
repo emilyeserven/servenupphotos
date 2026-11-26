@@ -42,6 +42,13 @@ type PhotoBookGenerated struct {
 	// minGeneratedTextSize to maxGeneratedTextSize in steps of 5; 0
 	// (absent) for 100.
 	TextSize int `json:"textSize,omitempty"`
+	// EntrySizes are single entries' text sizes, in percent of the list's
+	// text size, minEntrySize to 95 in steps of 5, by the same keys as
+	// Hidden; an entry not in it is at 100.
+	EntrySizes map[string]int `json:"entrySizes,omitempty"`
+	// FitLines is true to shrink an entry a little, down to 80% of its
+	// size, when that keeps it on one line instead of wrapping.
+	FitLines bool `json:"fitLines,omitempty"`
 	// Hidden are the entries left out of the index, their places lifted
 	// into the entry above: "country:<name>", "state:<name>",
 	// "city:<name>", "place:<place ID>" or "placeName:<text>".
@@ -97,7 +104,12 @@ func validGeneratedPage(page PhotoBookPage, n int) (*PhotoBookGenerated, *Publis
 	out.Pages = oneAsZero(min(max(g.Pages, 1), maxGeneratedPages))
 	out.TextSize = validGeneratedTextSize(g.TextSize)
 	hidden, perr := validGeneratedHidden(g.Hidden, n)
+	if perr != nil {
+		return nil, perr
+	}
 	out.Hidden = hidden
+	sizes, perr := validEntrySizes(g.EntrySizes, n)
+	out.EntrySizes = sizes
 	return &out, perr
 }
 
@@ -123,6 +135,15 @@ func oneAsZero(n int) int {
 	return n
 }
 
+// knownEntryKey is whether key names an entry of a places index the way
+// Hidden and EntrySizes do, such as "city:Seoul", and isn't too long.
+func knownEntryKey(key string) bool {
+	known := slices.ContainsFunc(placesIndexHideKind, func(prefix string) bool {
+		return strings.HasPrefix(key, prefix) && len(key) > len(prefix)
+	})
+	return known && !tooLongEntryText(key)
+}
+
 // validGeneratedHidden returns a generated page's hidden entries trimmed,
 // each once, or why they can't be saved.
 func validGeneratedHidden(hidden []string, n int) ([]string, *PublishError) {
@@ -132,10 +153,7 @@ func validGeneratedHidden(hidden []string, n int) ([]string, *PublishError) {
 		if key == "" || slices.Contains(out, key) {
 			continue
 		}
-		known := slices.ContainsFunc(placesIndexHideKind, func(prefix string) bool {
-			return strings.HasPrefix(key, prefix) && len(key) > len(prefix)
-		})
-		if !known || tooLongEntryText(key) {
+		if !knownEntryKey(key) {
 			return nil, publishErr(http.StatusBadRequest, "Page %d hides an entry the places index doesn't have.", n)
 		}
 		out = append(out, key)

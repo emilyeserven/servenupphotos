@@ -1,6 +1,8 @@
 import { useRef } from "react";
+import { useFitScale } from "@/components/photo-book/use-fit-scale";
 import { usePagesNeeded } from "@/components/photo-book/use-pages-needed";
 import type { BookPage } from "@/lib/photo-book";
+import { entrySize, entryTextStyle } from "@/lib/photo-book-entry-sizes";
 import {
   type GeneratedPage,
   generatedColumns,
@@ -19,22 +21,46 @@ const DEPTH_CLASSES = [
   "text-neutral-300",
 ];
 
+/** How the index's lines are sized: each entry's own size, and whether lines shrink to fit. */
+type LineSizes = Pick<GeneratedPage, "entrySizes" | "fitLines">;
+
+/**
+ * One entry's line: its name at the entry's own size, shrunk a little more to stay on one line
+ * when **Shrink lines to fit** is on and that's enough.
+ */
+function EntryLine(props: { entry: IndexEntry; depth: number; sizes: LineSizes }) {
+  const { entry, depth, sizes } = props;
+  const line = useRef<HTMLSpanElement>(null);
+  const text = useRef<HTMLSpanElement>(null);
+  const size = entrySize(sizes, entry.key) / 100;
+  const fit = useFitScale(line, text, { on: sizes.fitLines === true, size, name: entry.name });
+  return (
+    <span
+      ref={line}
+      className={cn(
+        "block break-inside-avoid",
+        entry.children.length > 0 && "break-after-avoid",
+        DEPTH_CLASSES[Math.min(depth, DEPTH_CLASSES.length - 1)],
+      )}
+    >
+      <span ref={text} style={entryTextStyle(size, fit)}>
+        {entry.name}
+      </span>
+    </span>
+  );
+}
+
 /** The index's entries, each with the entries in it indented under it. */
-function Entries({ entries, depth }: { entries: IndexEntry[]; depth: number }) {
+function Entries(props: { entries: IndexEntry[]; depth: number; sizes: LineSizes }) {
+  const { entries, depth, sizes } = props;
   return (
     <ul className={cn(depth > 0 && "pl-[1.2em]")}>
       {entries.map((entry) => (
         <li key={entry.key}>
-          <span
-            className={cn(
-              "block break-inside-avoid",
-              entry.children.length > 0 && "break-after-avoid",
-              DEPTH_CLASSES[Math.min(depth, DEPTH_CLASSES.length - 1)],
-            )}
-          >
-            {entry.name}
-          </span>
-          {entry.children.length > 0 && <Entries entries={entry.children} depth={depth + 1} />}
+          <EntryLine entry={entry} depth={depth} sizes={sizes} />
+          {entry.children.length > 0 && (
+            <Entries entries={entry.children} depth={depth + 1} sizes={sizes} />
+          )}
         </li>
       ))}
     </ul>
@@ -99,13 +125,22 @@ function FitMark({ needed, count }: { needed: number | null; count: number }) {
   );
 }
 
+/** What the Places Index is drawn from: its entries, columns, text size, line sizes and which page this is. */
+interface IndexProps {
+  entries: IndexEntry[];
+  columns: number;
+  size: number;
+  sizes: LineSizes;
+  part: Part;
+}
+
 /**
  * The Places Index as one flow of columns, its text at size percent of the usual size, across all the pages it runs on, each page showing its
  * own window of it: the flow is as wide as every page's room side by side, and filled column by
  * column, so it runs on from one page to the next as a long text does.
  */
-function IndexFlow(props: { entries: IndexEntry[]; columns: number; size: number; part: Part }) {
-  const { entries, columns, size, part } = props;
+function IndexFlow(props: IndexProps) {
+  const { entries, columns, size, sizes, part } = props;
   const window = useRef<HTMLDivElement>(null);
   const flow = useRef<HTMLDivElement>(null);
   const last = part.at === part.count - 1;
@@ -124,7 +159,7 @@ function IndexFlow(props: { entries: IndexEntry[]; columns: number; size: number
         }}
         className="absolute inset-y-0 text-left leading-[1.4] break-words [&>ul>li:first-child>span]:mt-0"
       >
-        <Entries entries={entries} depth={0} />
+        <Entries entries={entries} depth={0} sizes={sizes} />
       </div>
       {last && <FitMark needed={needed} count={part.count} />}
     </div>
@@ -132,7 +167,7 @@ function IndexFlow(props: { entries: IndexEntry[]; columns: number; size: number
 }
 
 /** The Places Index, or a note, not printed, while it has no places. */
-function IndexColumns(props: { entries: IndexEntry[]; columns: number; size: number; part: Part }) {
+function IndexColumns(props: IndexProps) {
   if (props.entries.length > 0) return <IndexFlow {...props} />;
   if (props.part.at > 0) return null;
   return (
@@ -163,6 +198,7 @@ export function GeneratedBody(props: {
         entries={placesIndexFor(page.generated)}
         columns={generatedColumns(page.generated)}
         size={generatedTextSize(page.generated)}
+        sizes={page.generated}
         part={part}
       />
     </div>

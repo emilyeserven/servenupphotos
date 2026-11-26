@@ -1,4 +1,5 @@
 import { type BookPage, type PhotoBook, newPage } from "@/lib/photo-book";
+import { tidyEntrySizes } from "@/lib/photo-book-entry-sizes";
 import { generatedPageCount } from "@/lib/photo-book-generated-pages";
 import { addToBook, bookOrder } from "@/lib/photo-book-order";
 
@@ -41,6 +42,13 @@ export interface GeneratedPage {
   pages?: number;
   /** The list's text size, in percent of the usual size, 50 to 200; absent for 100. */
   textSize?: number;
+  /**
+   * Single entries' own text sizes, in percent of the list's, 50 to 95 in steps of 5, by the same
+   * keys as `hidden`; absent for every entry at 100.
+   */
+  entrySizes?: Record<string, number>;
+  /** True to shrink a line a little, down to 80%, when that keeps it from wrapping onto a second line. */
+  fitLines?: boolean;
   /**
    * The entries left out, their places lifted into the entry above, such as `city:Seoul` or
    * `place:<place ID>`; absent for none.
@@ -118,9 +126,12 @@ function tidy(generated: GeneratedPage): GeneratedPage {
   setCount(out, "pages", generatedPageCount({ generated: out }), 1);
   setCount(out, "textSize", generatedTextSize(out), 100);
   if (!out.hidden?.length) delete out.hidden;
+  const entrySizes = tidyEntrySizes(out.entrySizes);
+  if (entrySizes) out.entrySizes = entrySizes;
+  else delete out.entrySizes;
   if (out.localized && !out.names) out.names = "localRomanized";
   delete out.localized;
-  for (const key of ["names", "stateAbbreviations", "depth", "order"] as const) {
+  for (const key of ["names", "stateAbbreviations", "fitLines", "depth", "order"] as const) {
     if (!out[key]) delete out[key];
   }
   return out;
