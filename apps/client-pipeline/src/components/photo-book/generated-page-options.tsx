@@ -1,4 +1,4 @@
-import { Settings2Icon } from "lucide-react";
+import { MinusIcon, PlusIcon, Settings2Icon } from "lucide-react";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,10 @@ import {
   GENERATED_COLUMNS,
   type GeneratedPage,
   type IndexDepth,
+  type NameStyle,
   isGeneratedPage,
 } from "@/lib/photo-book-generated";
+import { MAX_GENERATED_PAGES } from "@/lib/photo-book-generated-pages";
 import { toggledHidden } from "@/lib/photo-book-hidden";
 import { type IndexEntry, entryCount } from "@/lib/photo-book-places-index";
 import { cn } from "@/lib/utils";
@@ -52,6 +54,39 @@ function Choices<T extends string | number>(props: {
   );
 }
 
+/** **Pages**: how many linked pages the list runs on across, with − and + buttons. */
+function PagesStepper({ value, onChange }: { value: number; onChange: (pages: number) => void }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-xs font-medium">Pages</span>
+      <div className="flex items-center gap-1">
+        <Button
+          size="icon-xs"
+          variant="outline"
+          aria-label="Fewer pages"
+          disabled={value <= 1}
+          onClick={() => onChange(value - 1)}
+        >
+          <MinusIcon />
+        </Button>
+        <span className="w-6 text-center tabular-nums">{value}</span>
+        <Button
+          size="icon-xs"
+          variant="outline"
+          aria-label="More pages"
+          disabled={value >= MAX_GENERATED_PAGES}
+          onClick={() => onChange(value + 1)}
+        >
+          <PlusIcon />
+        </Button>
+        <span className="text-muted-foreground text-xs">
+          linked, the list running on from one to the next
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /** A checkbox with its words. */
 function Check(props: { label: string; on: boolean; onChange: (on: boolean) => void }) {
   return (
@@ -65,6 +100,34 @@ function Check(props: { label: string; on: boolean; onChange: (on: boolean) => v
       {props.label}
     </label>
   );
+}
+
+/** The ways a generated page can write names, as the Names buttons offer them. */
+const NAME_STYLES: { value: NameStyle | "plain"; name: string }[] = [
+  { value: "plain", name: "As named" },
+  { value: "romanized", name: "Romanized" },
+  { value: "romanizedLocal", name: "Romanized (local)" },
+  { value: "localRomanized", name: "Local (romanized)" },
+  { value: "local", name: "Local script" },
+];
+
+/** **Names**: how the Places Index writes names, a page saved with `localized` on showing as Local (romanized). */
+function NamesChoice(props: { generated: GeneratedPage; onChange: (g: GeneratedPage) => void }) {
+  const { generated: g, onChange } = props;
+  const legacy = g.localized ? "localRomanized" : "plain";
+  return (
+    <Choices
+      label="Names"
+      choices={NAME_STYLES}
+      value={g.names ?? legacy}
+      onPick={(names) => onChange({ ...g, localized: undefined, names: nameStyle(names) })}
+    />
+  );
+}
+
+/** The name style picked, or none for names as the photos have them. */
+function nameStyle(value: NameStyle | "plain"): NameStyle | undefined {
+  return value === "plain" ? undefined : value;
 }
 
 const DEPTHS: { value: IndexDepth | "place"; name: string }[] = [
@@ -111,16 +174,34 @@ function EntryChips(props: {
   );
 }
 
+/** How many pages the list runs on across, and how many columns each has. */
+function PagesAndColumns(props: {
+  generated: GeneratedPage;
+  onChange: (g: GeneratedPage) => void;
+}) {
+  const { generated: g, onChange } = props;
+  return (
+    <>
+      <PagesStepper value={g.pages ?? 1} onChange={(pages) => onChange({ ...g, pages })} />
+      <Choices
+        label="Columns"
+        choices={Array.from({ length: GENERATED_COLUMNS }, (_, i) => ({
+          value: i + 1,
+          name: String(i + 1),
+        }))}
+        value={g.columns ?? 1}
+        onPick={(columns) => onChange({ ...g, columns })}
+      />
+    </>
+  );
+}
+
 /** The Places Index's options: how names are written, how deep and in what order, and its columns. */
 function IndexOptions(props: { generated: GeneratedPage; onChange: (g: GeneratedPage) => void }) {
   const { generated: g, onChange } = props;
   return (
     <>
-      <Check
-        label="Names in their own script, with romanization"
-        on={g.localized === true}
-        onChange={(localized) => onChange({ ...g, localized })}
-      />
+      <NamesChoice generated={g} onChange={onChange} />
       <Check
         label="Abbreviate US states"
         on={g.stateAbbreviations === true}
@@ -141,15 +222,7 @@ function IndexOptions(props: { generated: GeneratedPage; onChange: (g: Generated
         value={g.order ?? "alpha"}
         onPick={(order) => onChange({ ...g, order: order === "book" ? "book" : undefined })}
       />
-      <Choices
-        label="Columns"
-        choices={Array.from({ length: GENERATED_COLUMNS }, (_, i) => ({
-          value: i + 1,
-          name: String(i + 1),
-        }))}
-        value={g.columns ?? 1}
-        onPick={(columns) => onChange({ ...g, columns })}
-      />
+      <PagesAndColumns generated={g} onChange={onChange} />
     </>
   );
 }

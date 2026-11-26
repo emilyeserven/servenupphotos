@@ -1,6 +1,6 @@
 import { type Place, savedPlaces } from "@/api/places";
-import { type CaptionLists, localizedPlaceName } from "@/lib/caption-template";
-import type { GeneratedPage, IndexDepth } from "@/lib/photo-book-generated";
+import { type CaptionLists, placeScripts } from "@/lib/caption-template";
+import type { GeneratedPage, IndexDepth, NameStyle } from "@/lib/photo-book-generated";
 import { ancestors } from "@/lib/place-hierarchy";
 import { stateAbbreviation } from "@/lib/us-states";
 import { textOf } from "@portfolio/lib/values";
@@ -95,14 +95,27 @@ function shownSteps(path: Step[], options: GeneratedPage): Step[] {
   return path.filter((step) => LEVELS.indexOf(step.level) <= deepest && !hidden.has(step.key));
 }
 
-/** The step's name as the page writes it: a state abbreviated, or a name localized, when it says to. */
+/** A name in its own script and Latin letters, as the style writes it; Latin letters alone without its own script. */
+function styled(style: NameStyle, { local, romanized }: { local: string; romanized: string }) {
+  if (style === "romanized" || !local || local === romanized) return romanized;
+  if (style === "local") return local;
+  return style === "localRomanized" ? `${local} (${romanized})` : `${romanized} (${local})`;
+}
+
+/** How the page writes names: its `names`, or a page saved before it with `localized` on. */
+function nameStyle(options: GeneratedPage): NameStyle | undefined {
+  return options.names ?? (options.localized ? "localRomanized" : undefined);
+}
+
+/** The step's name as the page writes it: a US state abbreviated, or its localization, when it says to. */
 function writtenName(step: Step, options: GeneratedPage, lists: CaptionLists): string {
   if (step.level === "state" && options.stateAbbreviations) {
     const short = stateAbbreviation(step.name);
     if (short !== step.name) return short;
   }
-  if (!options.localized) return step.name;
-  return localizedPlaceName(lists, step.level, step.name, step.place?.id);
+  const style = nameStyle(options);
+  if (!style) return step.name;
+  return styled(style, placeScripts(lists, step.level, step.name, step.place?.id));
 }
 
 /** Puts the path into entries, under the entry each step before it made, each key once in its entry. */

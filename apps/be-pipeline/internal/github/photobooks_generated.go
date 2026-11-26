@@ -14,9 +14,14 @@ type PhotoBookGenerated struct {
 	// the book's photos show, as a hierarchy of countries, states, cities
 	// and places.
 	Kind string `json:"kind"`
-	// Localized is true when places are written in their own script with
-	// their romanization, such as 경복궁 (Gyeongbokgung), as captions'
-	// `{placeLocalized}` writes them.
+	// Names is how names are written, from their localizations:
+	// "romanized" in Latin letters, "romanizedLocal" with their own script
+	// after (Gyeongbokgung (경복궁)), "localRomanized" with it before
+	// (경복궁 (Gyeongbokgung)), "local" in their own script only, or ""
+	// (absent) as photos and places have them.
+	Names string `json:"names,omitempty"`
+	// Localized is true in a page saved before Names for "localRomanized";
+	// it's saved as Names.
 	Localized bool `json:"localized,omitempty"`
 	// StateAbbreviations is true when US states are written in their
 	// standard abbreviation, such as CA for California.
@@ -30,6 +35,9 @@ type PhotoBookGenerated struct {
 	// Columns is how many columns the index flows into, 2 or 3; 0 (absent)
 	// for one.
 	Columns int `json:"columns,omitempty"`
+	// Pages is how many linked pages the list runs on across, 2 to
+	// maxGeneratedPages; 0 (absent) for one.
+	Pages int `json:"pages,omitempty"`
 	// Hidden are the entries left out of the index, their places lifted
 	// into the entry above: "country:<name>", "state:<name>",
 	// "city:<name>", "place:<place ID>" or "placeName:<text>".
@@ -42,15 +50,21 @@ var (
 	generatedPageKinds  = []string{"places-index"}
 	placesIndexDepths   = []string{"", "country", "state", "city"}
 	placesIndexOrders   = []string{"", "book"}
+	placesIndexNames    = []string{"", "romanized", "romanizedLocal", "localRomanized", "local"}
 	placesIndexHideKind = []string{"country:", "state:", "city:", "place:", "placeName:"}
 )
 
-// maxGeneratedHidden is the most entries a generated page can leave out.
-const maxGeneratedHidden = 500
+// maxGeneratedHidden is the most entries a generated page can leave out,
+// and maxGeneratedPages the most pages it can run on across.
+const (
+	maxGeneratedHidden = 500
+	maxGeneratedPages  = 20
+)
 
 // validGeneratedPage returns page n's generated settings as they'll be
 // saved: none on a page that isn't an other page, and otherwise its options
-// checked, columns from 1 to maxTextPageColumns with 1 as 0, and its hidden
+// checked, `localized` saved as Names, columns from 1 to maxTextPageColumns
+// and pages from 1 to maxGeneratedPages, each with 1 as 0, and its hidden
 // entries trimmed, each once.
 func validGeneratedPage(page PhotoBookPage, n int) (*PhotoBookGenerated, *PublishError) {
 	g := page.Generated
@@ -63,14 +77,27 @@ func validGeneratedPage(page PhotoBookPage, n int) (*PhotoBookGenerated, *Publis
 	if !slices.Contains(placesIndexDepths, g.Depth) || !slices.Contains(placesIndexOrders, g.Order) {
 		return nil, publishErr(http.StatusBadRequest, "Page %d's places index has a level or order the Photo Book doesn't know.", n)
 	}
-	out := *g
-	out.Columns = min(max(g.Columns, 1), maxTextPageColumns)
-	if out.Columns == 1 {
-		out.Columns = 0
+	if !slices.Contains(placesIndexNames, g.Names) {
+		return nil, publishErr(http.StatusBadRequest, "Page %d's places index writes names in a way the Photo Book doesn't know.", n)
 	}
+	out := *g
+	if out.Localized && out.Names == "" {
+		out.Names = "localRomanized"
+	}
+	out.Localized = false
+	out.Columns = oneAsZero(min(max(g.Columns, 1), maxTextPageColumns))
+	out.Pages = oneAsZero(min(max(g.Pages, 1), maxGeneratedPages))
 	hidden, perr := validGeneratedHidden(g.Hidden, n)
 	out.Hidden = hidden
 	return &out, perr
+}
+
+// oneAsZero is n, with 1 as 0, so a count left at one isn't saved.
+func oneAsZero(n int) int {
+	if n == 1 {
+		return 0
+	}
+	return n
 }
 
 // validGeneratedHidden returns a generated page's hidden entries trimmed,
