@@ -140,10 +140,16 @@ test("a Places Index writes names in Latin letters, their own script, or both ei
   assert.equal(written("romanizedLocal"), "  Seoul (서울)");
   assert.equal(written("local"), "  서울");
   assert.equal(written("romanized"), "  Seoul");
+  assert.equal(written("namedLocal"), "  Seoul (서울)");
   assert.equal(written(undefined), "  Seoul");
   // Without its own script, a name is written in Latin letters whatever the style.
   const gate = placesIndex([seoulGate], lists, { kind: "places-index", names: "local" });
   assert.equal(lines(gate).at(-1), "      Geunjeongmun Gate");
+  // As named keeps the name as the place has it, not its romanization.
+  const named = { ...lists, places: [place("palace", "Gyeongbokgung Palace")] };
+  const palace = { country: "South Korea", places: [{ relation: "", id: "palace" }] };
+  const index = placesIndex([palace], named, { kind: "places-index", names: "namedLocal" });
+  assert.equal(lines(index).at(-1), "  Gyeongbokgung Palace (경복궁)");
 });
 
 test("photos without a location add nothing", () => {

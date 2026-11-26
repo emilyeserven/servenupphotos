@@ -6,7 +6,7 @@ import { addToBook, bookOrder } from "@/lib/photo-book-order";
 export type GeneratedKind = "places-index";
 
 /** How a generated page writes names: see GeneratedPage's `names`. */
-export type NameStyle = "romanized" | "romanizedLocal" | "localRomanized" | "local";
+export type NameStyle = "romanized" | "romanizedLocal" | "localRomanized" | "local" | "namedLocal";
 
 /** The most specific level a Places Index lists: countries, states, cities, or every place (absent). */
 export type IndexDepth = "country" | "state" | "city";
@@ -20,8 +20,8 @@ export interface GeneratedPage {
   /**
    * How names are written, from their localizations: in Latin letters (`romanized`), with their own
    * script after (`romanizedLocal`, Gyeongbokgung (경복궁)) or before (`localRomanized`, 경복궁
-   * (Gyeongbokgung)), or in their own script only (`local`); absent for the name as photos and
-   * places have it.
+   * (Gyeongbokgung)), in their own script only (`local`), or as named with their own script after
+   * (`namedLocal`, Gyeongbokgung Palace (경복궁)); absent for the name as photos and places have it.
    */
   names?: NameStyle;
   /** True in a page saved before `names`, for `localRomanized`; read once, then saved as `names`. */
@@ -39,6 +39,8 @@ export interface GeneratedPage {
    * one. Only the first is saved; the others are drawn after it.
    */
   pages?: number;
+  /** The list's text size, in percent of the usual size, 50 to 200; absent for 100. */
+  textSize?: number;
   /**
    * The entries left out, their places lifted into the entry above, such as `city:Seoul` or
    * `place:<place ID>`; absent for none.
@@ -100,15 +102,21 @@ export function generatedColumns(generated: Pick<GeneratedPage, "columns">): num
   return Number.isFinite(n) ? Math.min(Math.max(n, 1), GENERATED_COLUMNS) : 1;
 }
 
+/** The smallest and largest text size a generated page's list can have, in percent, and the step between sizes. */
+export const TEXT_SIZES = { min: 50, max: 200, step: 10 };
+
+/** The list's text size, in percent of the usual size: 50 to 200 in steps of 10, 100 when none is set. */
+export function generatedTextSize(generated: Pick<GeneratedPage, "textSize">): number {
+  const n = Math.round((generated.textSize ?? 100) / TEXT_SIZES.step) * TEXT_SIZES.step;
+  return Number.isFinite(n) ? Math.min(Math.max(n, TEXT_SIZES.min), TEXT_SIZES.max) : 100;
+}
+
 /** The options with columns from 1 to GENERATED_COLUMNS, one left out, and empty ones left out. */
 function tidy(generated: GeneratedPage): GeneratedPage {
   const out: GeneratedPage = { ...generated };
-  const columns = generatedColumns(out);
-  if (columns === 1) delete out.columns;
-  else out.columns = columns;
-  const pages = generatedPageCount({ generated: out });
-  if (pages === 1) delete out.pages;
-  else out.pages = pages;
+  setCount(out, "columns", generatedColumns(out), 1);
+  setCount(out, "pages", generatedPageCount({ generated: out }), 1);
+  setCount(out, "textSize", generatedTextSize(out), 100);
   if (!out.hidden?.length) delete out.hidden;
   if (out.localized && !out.names) out.names = "localRomanized";
   delete out.localized;
@@ -116,6 +124,17 @@ function tidy(generated: GeneratedPage): GeneratedPage {
     if (!out[key]) delete out[key];
   }
   return out;
+}
+
+/** Sets the count on the options, or leaves it out when it's the usual one. */
+function setCount(
+  out: GeneratedPage,
+  key: "columns" | "pages" | "textSize",
+  value: number,
+  usual: number,
+) {
+  if (value === usual) delete out[key];
+  else out[key] = value;
 }
 
 /** The book with the generated page with ID id's options changed by change; other pages as they are. */

@@ -6,9 +6,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import type { BookPage } from "@/lib/photo-book";
 import {
   GENERATED_COLUMNS,
+  TEXT_SIZES,
   type GeneratedPage,
   type IndexDepth,
   type NameStyle,
+  generatedTextSize,
   isGeneratedPage,
 } from "@/lib/photo-book-generated";
 import { MAX_GENERATED_PAGES } from "@/lib/photo-book-generated-pages";
@@ -54,38 +56,47 @@ function Choices<T extends string | number>(props: {
   );
 }
 
-/** **Pages**: how many linked pages the list runs on across, with − and + buttons. */
-function PagesStepper({ value, onChange }: { value: number; onChange: (pages: number) => void }) {
+/** A number with − and + buttons, between min and max, and a note after it. */
+function Stepper(props: {
+  label: string;
+  value: number;
+  shown: string;
+  range: { min: number; max: number; step: number };
+  note: string;
+  onChange: (value: number) => void;
+}) {
+  const { label, value, shown, range, note, onChange } = props;
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs font-medium">Pages</span>
+      <span className="text-xs font-medium">{label}</span>
       <div className="flex items-center gap-1">
         <Button
           size="icon-xs"
           variant="outline"
-          aria-label="Fewer pages"
-          disabled={value <= 1}
-          onClick={() => onChange(value - 1)}
+          aria-label={`Less ${label.toLowerCase()}`}
+          disabled={value <= range.min}
+          onClick={() => onChange(value - range.step)}
         >
           <MinusIcon />
         </Button>
-        <span className="w-6 text-center tabular-nums">{value}</span>
+        <span className="min-w-6 text-center tabular-nums">{shown}</span>
         <Button
           size="icon-xs"
           variant="outline"
-          aria-label="More pages"
-          disabled={value >= MAX_GENERATED_PAGES}
-          onClick={() => onChange(value + 1)}
+          aria-label={`More ${label.toLowerCase()}`}
+          disabled={value >= range.max}
+          onClick={() => onChange(value + range.step)}
         >
           <PlusIcon />
         </Button>
-        <span className="text-muted-foreground text-xs">
-          linked, the list running on from one to the next
-        </span>
+        <span className="text-muted-foreground text-xs">{note}</span>
       </div>
     </div>
   );
 }
+
+/** The range the Pages stepper steps through. */
+const PAGE_RANGE = { min: 1, max: MAX_GENERATED_PAGES, step: 1 };
 
 /** A checkbox with its words. */
 function Check(props: { label: string; on: boolean; onChange: (on: boolean) => void }) {
@@ -105,6 +116,7 @@ function Check(props: { label: string; on: boolean; onChange: (on: boolean) => v
 /** The ways a generated page can write names, as the Names buttons offer them. */
 const NAME_STYLES: { value: NameStyle | "plain"; name: string }[] = [
   { value: "plain", name: "As named" },
+  { value: "namedLocal", name: "As named (local script)" },
   { value: "romanized", name: "Romanized" },
   { value: "romanizedLocal", name: "Romanized (local)" },
   { value: "localRomanized", name: "Local (romanized)" },
@@ -174,7 +186,7 @@ function EntryChips(props: {
   );
 }
 
-/** How many pages the list runs on across, and how many columns each has. */
+/** How many pages the list runs on across, how many columns each has, and its text size. */
 function PagesAndColumns(props: {
   generated: GeneratedPage;
   onChange: (g: GeneratedPage) => void;
@@ -182,7 +194,14 @@ function PagesAndColumns(props: {
   const { generated: g, onChange } = props;
   return (
     <>
-      <PagesStepper value={g.pages ?? 1} onChange={(pages) => onChange({ ...g, pages })} />
+      <Stepper
+        label="Pages"
+        value={g.pages ?? 1}
+        shown={String(g.pages ?? 1)}
+        range={PAGE_RANGE}
+        note="linked, the list running on from one to the next"
+        onChange={(pages) => onChange({ ...g, pages })}
+      />
       <Choices
         label="Columns"
         choices={Array.from({ length: GENERATED_COLUMNS }, (_, i) => ({
@@ -191,6 +210,14 @@ function PagesAndColumns(props: {
         }))}
         value={g.columns ?? 1}
         onPick={(columns) => onChange({ ...g, columns })}
+      />
+      <Stepper
+        label="Text size"
+        value={generatedTextSize(g)}
+        shown={`${generatedTextSize(g)}%`}
+        range={TEXT_SIZES}
+        note="of the usual size"
+        onChange={(textSize) => onChange({ ...g, textSize })}
       />
     </>
   );

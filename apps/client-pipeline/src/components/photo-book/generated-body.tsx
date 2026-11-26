@@ -1,7 +1,11 @@
 import { useRef } from "react";
 import { usePagesNeeded } from "@/components/photo-book/use-pages-needed";
 import type { BookPage } from "@/lib/photo-book";
-import { type GeneratedPage, generatedColumns } from "@/lib/photo-book-generated";
+import {
+  type GeneratedPage,
+  generatedColumns,
+  generatedTextSize,
+} from "@/lib/photo-book-generated";
 import { generatedPageCount, generatedPart } from "@/lib/photo-book-generated-pages";
 import type { IndexEntry } from "@/lib/photo-book-places-index";
 import { cn } from "@/lib/utils";
@@ -96,12 +100,12 @@ function FitMark({ needed, count }: { needed: number | null; count: number }) {
 }
 
 /**
- * The Places Index as one flow of columns across all the pages it runs on, each page showing its
+ * The Places Index as one flow of columns, its text at size percent of the usual size, across all the pages it runs on, each page showing its
  * own window of it: the flow is as wide as every page's room side by side, and filled column by
  * column, so it runs on from one page to the next as a long text does.
  */
-function IndexFlow(props: { entries: IndexEntry[]; columns: number; part: Part }) {
-  const { entries, columns, part } = props;
+function IndexFlow(props: { entries: IndexEntry[]; columns: number; size: number; part: Part }) {
+  const { entries, columns, size, part } = props;
   const window = useRef<HTMLDivElement>(null);
   const flow = useRef<HTMLDivElement>(null);
   const last = part.at === part.count - 1;
@@ -116,8 +120,9 @@ function IndexFlow(props: { entries: IndexEntry[]; columns: number; part: Part }
           columnCount: part.count * columns,
           columnGap: COLUMN_GAP,
           columnFill: "auto",
+          fontSize: `${(2 * size) / 100}cqw`,
         }}
-        className="absolute inset-y-0 text-left text-[2cqw] leading-[1.4] break-words [&>ul>li:first-child>span]:mt-0"
+        className="absolute inset-y-0 text-left leading-[1.4] break-words [&>ul>li:first-child>span]:mt-0"
       >
         <Entries entries={entries} depth={0} />
       </div>
@@ -127,7 +132,7 @@ function IndexFlow(props: { entries: IndexEntry[]; columns: number; part: Part }
 }
 
 /** The Places Index, or a note, not printed, while it has no places. */
-function IndexColumns(props: { entries: IndexEntry[]; columns: number; part: Part }) {
+function IndexColumns(props: { entries: IndexEntry[]; columns: number; size: number; part: Part }) {
   if (props.entries.length > 0) return <IndexFlow {...props} />;
   if (props.part.at > 0) return null;
   return (
@@ -157,6 +162,7 @@ export function GeneratedBody(props: {
       <IndexColumns
         entries={placesIndexFor(page.generated)}
         columns={generatedColumns(page.generated)}
+        size={generatedTextSize(page.generated)}
         part={part}
       />
     </div>
