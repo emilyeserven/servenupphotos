@@ -2,5 +2,48 @@
   "id": "photo-book",
   "name": "Photo Book",
   "platform": "photobook",
-  "template": "{title}\n\n{places|cityLocalized}\n{date} - {camera}[, {lensShort} @ {focalLength}mm][, {exposure}sec][, ƒ{aperture}][, ISO {iso}]"
+  "template": "{title}\n{from_places_form}\n<gap />{date}\n<gap /><i><small>{camera}[, {lensShort} @ <nobr>{focalLength}mm</nobr>][, <nobr>{exposure}sec</nobr>][, <nobr>ƒ{aperture}</nobr>][, <nobr>ISO {iso}</nobr>]</small></i>",
+  "places": [
+    {
+      "has": ["place1", "place2"],
+      "text": "{place1Local}, {place2Local}[, {cityLocal}][, {stateLocal}][, {countryLocal}]",
+      "more": ["{place1} {relation2} {place2}[, {city}][, {state}][, {country}]"]
+    },
+    {
+      "has": ["place1"],
+      "lacks": ["place2"],
+      "text": "{place1Local}[, {cityLocal}][, {stateLocal}][, {countryLocal}]",
+      "more": ["{place1}[, {city}][, {state}][, {country}]"]
+    },
+    {
+      "has": ["place2"],
+      "text": "{place2Local}[, {cityLocal}][, {stateLocal}][, {countryLocal}]",
+      "more": ["{place2}[, {city}][, {state}][, {country}]"]
+    },
+    {
+      "has": ["city"],
+      "text": "{cityLocal}[, {stateLocal}][, {countryLocal}]",
+      "more": ["{city}[, {state}][, {country}]"]
+    },
+    {
+      "has": ["state"],
+      "lacks": ["city", "place3", "place2", "place1"],
+      "text": "{stateLocal}[, {countryLocal}]",
+      "more": ["{state}[, {country}]"]
+    },
+    {
+      "has": ["country"],
+      "lacks": ["place2", "place1", "place3", "city", "state"],
+      "text": "{countryLocal}",
+      "more": ["{country}"]
+    }
+  ],
+  "placeReplacements": [
+    {
+      "from": "United States of America",
+      "to": "USA"
+    }
+  ],
+  "noBreak": ["San Francisco", "대한민국"],
+  "stateAbbreviations": true
 }

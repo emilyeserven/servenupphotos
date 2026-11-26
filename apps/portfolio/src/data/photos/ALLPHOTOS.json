@@ -1365,10 +1365,10 @@
     "customGpsPosition": null,
     "createDate": "2025:01:18 13:52:30",
     "customCreateDate": null,
-    "placeName": "saladin-citadel",
-    "customCity": null,
+    "placeName": "Citadel of Salah al-Din al-Ayyubi",
+    "customCity": "Al Khalifa",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "Egypt",
     "country": "Egypt",
     "state": "Cairo",
     "city": "Al Khalifa",
@@ -1404,7 +1404,7 @@
     "places": [
       {
         "relation": "",
-        "id": "saladin-citadel"
+        "id": "citadel-of-salah-al-din-al-ayyubi"
       }
     ],
     "spotlightZones": [],
@@ -1619,7 +1619,9 @@
     },
     "notes": "Shows the arcaded gallery (riwaq) around a mosque courtyard; 'arcade' and 'riwaq' aren't tags, since only 2 photos have them.",
     "similarPhotos": [273, 272, 275, 288, 277, 279],
-    "compareGroup": "Citadel Mosque Arcade"
+    "compareGroup": "Citadel Mosque Arcade",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Door from the Mosque",
@@ -1639,7 +1641,7 @@
     "customCreateDate": null,
     "placeName": "Muhammad Ali Mosque",
     "customCity": "Al Khalifa",
-    "customState": null,
+    "customState": "Cairo",
     "customCountry": "Egypt",
     "country": null,
     "state": null,
@@ -1904,7 +1906,9 @@
     },
     "notes": "Shows stained glass; 'stained-glass' isn't a tag, since only 1 photo has it.",
     "similarPhotos": [278, 288, 295, 34, 274, 212],
-    "compareGroup": "Silhouettes in Mosque Doorway"
+    "compareGroup": "Silhouettes in Mosque Doorway",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Mosque's Lamp",
@@ -69506,7 +69510,7 @@
     }
   },
   {
-    "title": "ATM - Artistically Taken-over Machine",
+    "title": "Artistically Taken-over Machine",
     "comment": null,
     "id": 592,
     "altText": null,
@@ -83211,7 +83215,7 @@
     }
   },
   {
-    "title": "Miyukidori - Himeji Shopping Street",
+    "title": "Miyukidori Shopping Street",
     "comment": null,
     "id": 770,
     "altText": null,
@@ -112751,6 +112755,278 @@
     },
     "notes": "Shows a ferry terminal; 'ferry-terminal' isn't a tag, since only 1 photo has one.",
     "similarPhotos": [325, 441, 251, 326, 120, 250]
+  },
+  {
+    "title": "Photo on the Ferry",
+    "comment": null,
+    "id": 929,
+    "altText": null,
+    "notes": null,
+    "file": "DSCF7967.jpg",
+    "addedDate": "2026-11-26T04:17:20Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF35mmF2 R WR",
+    "aperture": 2,
+    "exposure": "1/125",
+    "iso": 800,
+    "focalLength": 35,
+    "gpsPosition": "35 deg 7' 0.24\" N, 129 deg 3' 4.09\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:09:21 19:26:53",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "South Korea",
+    "state": "Busan",
+    "city": "Busan",
+    "width": 7728,
+    "height": 5152,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/c6a76e08e4bb-dscf7967.jpg",
+      "key": "photos/c6a76e08e4bb-dscf7967.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/c6a76e08e4bb-dscf7967-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/c6a76e08e4bb-dscf7967-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/c6a76e08e4bb-dscf7967-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/c6a76e08e4bb-dscf7967-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/c6a76e08e4bb-dscf7967-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/c6a76e08e4bb-dscf7967-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/c6a76e08e4bb-dscf7967-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c6a76e08e4bb-dscf7967-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1288,
+        "y": 0,
+        "size": 5152,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": ["2026-photo-book-candidates"],
+    "tags": ["mirrors", "cameras", "ferry", "interior", "doorways"],
+    "genres": [],
+    "places": [],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "c085c19183c2c4cc",
+    "colors": {
+      "average": {
+        "hex": "#342f2d",
+        "lab": {
+          "l": 19.83,
+          "a": 1.88,
+          "b": 1.83
+        },
+        "hcl": {
+          "h": 44.18,
+          "c": 2.62,
+          "l": 19.83
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0005
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0117
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0038
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0005
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0007
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0004
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0001
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0085
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0011
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.9727,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.3036
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1088
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0747
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0675
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0606
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0845
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0793
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0655
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0476
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0393
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0177
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0101
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0053
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0031
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0013
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0006
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0007
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0005
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0003
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0016
+          }
+        ]
+      },
+      "lightness": 19.83,
+      "chroma": 4.93,
+      "peakChroma": 9.77,
+      "samples": 9801
+    }
   },
   {
     "title": "Station Platform",
@@ -199728,7 +200004,7 @@
     "similarPhotos": [274, 288, 301, 273, 175, 173]
   },
   {
-    "title": "Walking Through Arima on a Rainy Night",
+    "title": "Umbrellas in Arima",
     "comment": null,
     "id": 351,
     "file": "DSCF6109.jpg",
@@ -199996,7 +200272,9 @@
       "samples": 9912
     },
     "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered.",
-    "similarPhotos": [352, 353, 354, 377, 450, 449]
+    "similarPhotos": [352, 353, 354, 377, 450, 449],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "WATCH THE GAP",

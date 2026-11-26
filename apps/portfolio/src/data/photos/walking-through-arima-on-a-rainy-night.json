@@ -1,5 +1,5 @@
 {
-  "title": "Walking Through Arima on a Rainy Night",
+  "title": "Umbrellas in Arima",
   "comment": null,
   "id": 351,
   "file": "DSCF6109.jpg",
@@ -267,5 +267,7 @@
     "samples": 9912
   },
   "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered.",
-  "similarPhotos": [352, 353, 354, 377, 450, 449]
+  "similarPhotos": [352, 353, 354, 377, 450, 449],
+  "noGps": false,
+  "altText": null
 }
