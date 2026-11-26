@@ -23,11 +23,13 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf1861.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf5055.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
@@ -39,11 +41,13 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf1823.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf7906.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
@@ -56,11 +60,13 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf7323.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/from-the-mosque-looking-over-cairo.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["place:muhammad-ali-mosque"]
         }
       ]
     },
@@ -71,7 +77,8 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/20250118_140137.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["place:muhammad-ali-mosque"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/20250118_143456.json",
@@ -103,11 +110,13 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/hallway-of-the-mosque.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["place:muhammad-ali-mosque"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/karnak-scaffolding.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
@@ -118,7 +127,8 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/20250118_143611.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf5384.json",
@@ -202,7 +212,7 @@
           "caption": null
         },
         {
-          "photo": "apps/portfolio/src/data/photos/dscf0906.json",
+          "photo": "apps/portfolio/src/data/photos/dscf7394.json",
           "caption": null
         }
       ]
@@ -233,7 +243,7 @@
           "caption": null
         },
         {
-          "photo": "apps/portfolio/src/data/photos/dscf7394.json",
+          "photo": "apps/portfolio/src/data/photos/dscf0906.json",
           "caption": null
         }
       ]
@@ -355,7 +365,8 @@
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf3005.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["place:izumo-shrine"]
         }
       ]
     },
@@ -393,6 +404,22 @@
       ]
     },
     {
+      "id": "page-96",
+      "layout": "custom-2",
+      "title": null,
+      "slots": [
+        {
+          "photo": "apps/portfolio/src/data/photos/one-red-car.json",
+          "caption": null,
+          "hidden": ["line:1"]
+        },
+        {
+          "photo": "apps/portfolio/src/data/photos/dscf1997.json",
+          "caption": null
+        }
+      ]
+    },
+    {
       "id": "page-61",
       "tags": ["architecture"],
       "layout": "custom-2",
@@ -405,6 +432,23 @@
         {
           "photo": "apps/portfolio/src/data/photos/bays-looking-over-the-bay.json",
           "caption": null
+        }
+      ]
+    },
+    {
+      "id": "page-95",
+      "layout": "custom-2",
+      "title": null,
+      "slots": [
+        {
+          "photo": "apps/portfolio/src/data/photos/medieval-street.json",
+          "caption": null,
+          "hidden": ["line:1"]
+        },
+        {
+          "photo": "apps/portfolio/src/data/photos/20250704_141758.json",
+          "caption": null,
+          "hidden": ["line:1"]
         }
       ]
     },
@@ -677,11 +721,13 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf8058.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf7892.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
@@ -693,7 +739,8 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf8002.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/rainy-hot-spring-night.json",
@@ -709,7 +756,8 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf8110.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf8139.json",
@@ -829,7 +877,8 @@
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf4856.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
@@ -841,11 +890,13 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf7486.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf7239-2.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
@@ -856,11 +907,13 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf7261.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf7450.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
@@ -871,11 +924,13 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf7476.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf6609.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
@@ -982,7 +1037,8 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf9485.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf2846.json",
@@ -1061,7 +1117,8 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf7900.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf5365.json",
@@ -1081,7 +1138,8 @@
         },
         {
           "photo": "apps/portfolio/src/data/photos/20250120_143106.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
@@ -1092,7 +1150,8 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf0159.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/20250118_114107.json",
@@ -1107,11 +1166,13 @@
       "slots": [
         {
           "photo": "apps/portfolio/src/data/photos/dscf5675.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf0014.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
@@ -1303,34 +1364,53 @@
       "slots": []
     },
     {
-      "id": "page-95",
-      "layout": "custom-2",
-      "title": null,
+      "id": "page-97",
+      "layout": "text",
+      "title": "Afterword",
+      "textSide": "left",
       "slots": [
         {
-          "photo": "apps/portfolio/src/data/photos/medieval-street.json",
-          "caption": null
+          "photo": "apps/portfolio/src/data/photos/mirror-mirror-mirror.json",
+          "caption": null,
+          "hidden": ["state"]
         },
         {
-          "photo": "apps/portfolio/src/data/photos/20250704_141758.json",
-          "caption": null
+          "photo": "apps/portfolio/src/data/photos/dscf7967.json",
+          "caption": null,
+          "hidden": ["state"]
         }
       ]
     },
     {
-      "id": "page-96",
-      "layout": "custom-2",
-      "title": null,
-      "slots": [
-        {
-          "photo": "apps/portfolio/src/data/photos/one-red-car.json",
-          "caption": null
-        },
-        {
-          "photo": "apps/portfolio/src/data/photos/dscf1997.json",
-          "caption": null
-        }
-      ]
+      "id": "page-98",
+      "name": "Places Index",
+      "layout": "other",
+      "title": "Places",
+      "generated": {
+        "kind": "places-index",
+        "names": "namedLocal",
+        "columns": 3,
+        "textSize": 60,
+        "hidden": [
+          "state:Busan",
+          "place:muhammad-ali-mosque",
+          "place:former-kubota-family-residence",
+          "place:shizuki-shrine",
+          "place:mejima-island",
+          "place:izumo-taisha-kaguraden",
+          "place:statue-of-musubi",
+          "place:seidamari-torii",
+          "place:soga-no-yashiro-shrine",
+          "place:horikawa-moat",
+          "place:geunjeongmun-gate",
+          "place:mirror-pond",
+          "place:komfortabel-coffee-namsan",
+          "place:ocean-beach",
+          "city:Osaka-shi",
+          "state:Brussels-Capital"
+        ]
+      },
+      "slots": []
     }
   ],
   "order": [
@@ -1409,6 +1489,8 @@
     "page-84",
     "page-45",
     "page-94",
+    "page-98",
+    "page-97",
     "page-26"
   ],
   "size": {
@@ -1429,11 +1511,11 @@
       },
       "text": "below",
       "captions": "photo",
-      "textShare": 17,
+      "textShare": 18,
       "align": "start",
       "alignTo": "photo",
       "title": "off",
-      "gap": 2,
+      "gap": 1,
       "margin": 0
     },
     {
@@ -1468,10 +1550,31 @@
       },
       "text": "below",
       "captions": "photo",
-      "textShare": 18.5,
+      "textShare": 22,
       "align": "start",
-      "gap": 3,
+      "title": "off",
+      "gap": 0,
       "margin": 0
+    }
+  ],
+  "lensPrefixes": [
+    {
+      "lens": "S24 Ultra Rear Wide Camera",
+      "prefix": "S24 Ultra Rear"
+    },
+    {
+      "lens": "S24 Ultra Rear Super Telephoto Lens",
+      "prefix": "S24 Ultra Rear"
+    },
+    {
+      "lens": "S24 Ultra Rear Telephoto Lens",
+      "prefix": "S24 Ultra Rear"
+    }
+  ],
+  "cameraNames": [
+    {
+      "camera": "Galaxy S24 Ultra",
+      "name": "S24 Ultra"
     }
   ]
 }
