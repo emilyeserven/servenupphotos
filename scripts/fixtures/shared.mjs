@@ -515,7 +515,8 @@ const bookPhoto = (n) => bookPhotos[n]?.path ?? "";
 
 /**
  * A photo book on the Photo Books page, laid out with its album's first few photos: three pages in
- * the book, and a page not in it that tries the first photo another way.
+ * the book, a page not in it that tries the first photo another way, and a text page with its text
+ * beside its photos.
  */
 added.photobooks = [
   {
@@ -587,6 +588,18 @@ added.photobooks = [
           slots: [
             { photo: bookPhoto(0), caption: null },
             { photo: bookPhoto(4), caption: null },
+          ],
+        },
+        {
+          id: "t1",
+          name: "Arrival notes",
+          layout: "text",
+          title: "Arriving in Seoul",
+          text: "We landed on a **Tuesday** morning and took the train straight into the city.\n\nThe first afternoon went to walking: palaces, markets, and far too much coffee.",
+          textSide: "left",
+          slots: [
+            { photo: bookPhoto(1), caption: null },
+            { photo: bookPhoto(2), caption: null },
           ],
         },
         { id: "o1", name: "Title page", layout: "other", title: null, slots: [] },

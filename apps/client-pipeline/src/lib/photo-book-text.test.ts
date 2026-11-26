@@ -6,7 +6,10 @@ import {
   setPageText,
   setPhotoPlaces,
   setTextColumns,
+  setTextPlace,
+  sidePhotoColumns,
   textColumns,
+  textPlace,
 } from "@/lib/photo-book-text";
 
 /** A book whose only page is a full page with photo a. */
@@ -61,4 +64,17 @@ test("photo places are added empty and taken off from the end, 0 to 4", () => {
   ]);
   assert.equal(setPhotoPlaces(b, 0, 9).pages[0]!.slots.length, 4);
   assert.deepEqual(setPhotoPlaces(b, 0, 0).pages[0]!.slots, []);
+});
+
+test("the text goes above the photos, or beside them on the left or right", () => {
+  const b = setLayout(book(), 0, "text");
+  assert.equal(textPlace(b.pages[0]!), "above");
+  const left = setTextPlace(b, 0, "left");
+  assert.equal(left.pages[0]!.textSide, "left");
+  assert.equal(textPlace(setTextPlace(left, 0, "right").pages[0]!), "right");
+  assert.equal("textSide" in setTextPlace(left, 0, "above").pages[0]!, false);
+});
+
+test("photos beside the text are drawn in one column, or two for 3 or 4", () => {
+  assert.deepEqual([1, 2, 3, 4].map(sidePhotoColumns), [1, 1, 2, 2]);
 });

@@ -1,10 +1,16 @@
 import { MinusIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import Markdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import type { PageActions, PageParts } from "@/components/photo-book/page-types";
-import { type BookPage, TEXT_PAGE_PHOTOS } from "@/lib/photo-book";
-import { TEXT_PAGE_COLUMNS, textColumns } from "@/lib/photo-book-text";
+import { type BookPage, TEXT_PAGE_PHOTOS, type TextSide } from "@/lib/photo-book";
+import {
+  TEXT_PAGE_COLUMNS,
+  type TextPlace,
+  sidePhotoColumns,
+  textColumns,
+  textPlace,
+} from "@/lib/photo-book-text";
 import { cn } from "@/lib/utils";
 
 /** Keeps each line break written. */
@@ -106,12 +112,22 @@ function Stepper(props: {
   );
 }
 
-/** A text page's photos in a row under its text, each caption under its photo. */
-function TextPagePhotos({ parts, count }: { parts: PageParts; count: number }) {
+/** A text page's photos, each caption under its photo, in a grid of columns and rows. */
+function TextPagePhotos(props: {
+  parts: PageParts;
+  count: number;
+  columns: number;
+  className: string;
+}) {
+  const { parts, count, columns, className } = props;
+  const rows = Math.ceil(count / columns);
   return (
     <div
-      className="grid h-[42%] shrink-0 gap-[2%]"
-      style={{ gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))` }}
+      className={cn("grid gap-[2%]", className)}
+      style={{
+        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+        gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
+      }}
     >
       {Array.from({ length: count }, (_, i) => (
         <div key={i} className="flex min-h-0 min-w-0 flex-col gap-[3%]">
@@ -123,35 +139,123 @@ function TextPagePhotos({ parts, count }: { parts: PageParts; count: number }) {
   );
 }
 
+/** The choices of where a text page's text goes, in the order its buttons show. */
+const TEXT_PLACES: { place: TextPlace; label: string }[] = [
+  { place: "above", label: "Above" },
+  { place: "left", label: "Left" },
+  { place: "right", label: "Right" },
+];
+
+/** Buttons on the page, for editing only, putting its text above its photos or beside them. */
+function TextPlacePicker(props: { value: TextPlace; onChange: (place: TextPlace) => void }) {
+  const { value, onChange } = props;
+  return (
+    <span className="flex items-center gap-[0.4em]" role="group" aria-label="Text place">
+      Text
+      {TEXT_PLACES.map(({ place, label }) => (
+        <button
+          key={place}
+          type="button"
+          aria-pressed={value === place}
+          aria-label={place === "above" ? "Text above the photos" : `Text ${place} of the photos`}
+          onClick={() => onChange(place)}
+          className={cn(
+            "rounded-sm px-[0.4em] py-[0.2em] hover:bg-white/15",
+            value === place && "bg-white/20 text-white",
+          )}
+        >
+          {label}
+        </button>
+      ))}
+    </span>
+  );
+}
+
+/** A text page's controls under it, for editing only: where its text goes, its columns and its photos. */
+function TextControls(props: { page: BookPage; actions: PageActions }) {
+  const { page, actions } = props;
+  return (
+    <div className="flex shrink-0 flex-wrap justify-end gap-[3%] text-[1.4cqw] text-neutral-400 in-data-[preview]:hidden">
+      {page.slots.length > 0 && (
+        <TextPlacePicker value={textPlace(page)} onChange={actions.onTextPlace} />
+      )}
+      <Stepper
+        label="Columns"
+        value={textColumns(page)}
+        min={1}
+        max={TEXT_PAGE_COLUMNS}
+        onChange={actions.onColumns}
+      />
+      <Stepper
+        label="Photos"
+        value={page.slots.length}
+        min={0}
+        max={TEXT_PAGE_PHOTOS}
+        onChange={actions.onPhotoPlaces}
+      />
+    </div>
+  );
+}
+
+/** A text page's title and text above its photos, which sit in a row. */
+function TextAbove(props: { parts: PageParts; text: ReactNode; photos: number }) {
+  const { parts, text, photos } = props;
+  return (
+    <>
+      {parts.title}
+      {text}
+      {photos > 0 && (
+        <TextPagePhotos
+          parts={parts}
+          count={photos}
+          columns={photos}
+          className="h-[42%] shrink-0"
+        />
+      )}
+    </>
+  );
+}
+
+/** A text page's title and text beside its photos, which sit in one column, or two for 3 or 4. */
+function TextBeside(props: { parts: PageParts; text: ReactNode; photos: number; side: TextSide }) {
+  const { parts, text, photos, side } = props;
+  const columns = sidePhotoColumns(photos);
+  return (
+    <div className={cn("flex min-h-0 flex-1 gap-[4%]", side === "right" && "flex-row-reverse")}>
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-[3%]">
+        {parts.title}
+        {text}
+      </div>
+      <TextPagePhotos
+        parts={parts}
+        count={photos}
+        columns={columns}
+        className={cn("shrink-0", columns > 1 ? "w-[55%]" : "w-[42%]")}
+      />
+    </div>
+  );
+}
+
 /**
  * A text page: its title, its Markdown text in 1 to 3 columns, and up to 4 photos in a row under
- * it, with steppers for the columns and photos that only show while editing.
+ * it or beside it on the left or right, with controls for where the text goes, its columns and the
+ * photos that only show while editing.
  */
 export function TextBody(props: { parts: PageParts; page: BookPage; actions: PageActions }) {
   const { parts, page, actions } = props;
-  const columns = textColumns(page);
   const photos = page.slots.length;
+  const place = photos > 0 ? textPlace(page) : "above";
+  const text = (
+    <PageText text={page.text ?? ""} columns={textColumns(page)} onText={actions.onText} />
+  );
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-[3%]">
-      {parts.title}
-      <PageText text={page.text ?? ""} columns={columns} onText={actions.onText} />
-      {photos > 0 && <TextPagePhotos parts={parts} count={photos} />}
-      <div className="flex shrink-0 justify-end gap-[3%] text-[1.4cqw] text-neutral-400 in-data-[preview]:hidden">
-        <Stepper
-          label="Columns"
-          value={columns}
-          min={1}
-          max={TEXT_PAGE_COLUMNS}
-          onChange={actions.onColumns}
-        />
-        <Stepper
-          label="Photos"
-          value={photos}
-          min={0}
-          max={TEXT_PAGE_PHOTOS}
-          onChange={actions.onPhotoPlaces}
-        />
-      </div>
+      {place === "above" ? (
+        <TextAbove parts={parts} text={text} photos={photos} />
+      ) : (
+        <TextBeside parts={parts} text={text} photos={photos} side={place} />
+      )}
+      <TextControls page={page} actions={actions} />
     </div>
   );
 }

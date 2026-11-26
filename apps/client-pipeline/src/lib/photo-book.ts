@@ -16,6 +16,9 @@ export type BuiltInLayout =
  */
 export type PageLayout = BuiltInLayout | "other" | "text" | `custom-${string}`;
 
+/** The side of its photos a text page's text goes on, beside them instead of above. */
+export type TextSide = "left" | "right";
+
 /** The most photos a text page holds. */
 export const TEXT_PAGE_PHOTOS = 4;
 
@@ -115,6 +118,8 @@ export interface BookPage {
   text?: string;
   /** How many columns a text page's text flows into, 1 to 3; absent for one. */
   columns?: number;
+  /** The side of its photos a text page's text goes on; absent for above them. */
+  textSide?: TextSide;
   /** The page's photo places, as many as its layout holds; a text page's, as many as it was given. */
   slots: BookSlot[];
 }
