@@ -155,7 +155,39 @@
             "caption": null
           },
           {
+            "photo": "apps/portfolio/src/data/photos/dscf5217.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-9",
+        "name": "Suitorou Verticals",
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/walking-through-arima-on-a-rainy-night.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5023.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-75",
+        "tags": ["lanterns", "egypt", "japan", "nature", "desert"],
+        "layout": "custom-1",
+        "title": null,
+        "slots": [
+          {
             "photo": "apps/portfolio/src/data/photos/racing-through-kobe.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf7432.json",
             "caption": null
           }
         ]
@@ -167,11 +199,11 @@
         "title": null,
         "slots": [
           {
-            "photo": "apps/portfolio/src/data/photos/dscf7432.json",
+            "photo": "apps/portfolio/src/data/photos/dscf7374.json",
             "caption": null
           },
           {
-            "photo": "apps/portfolio/src/data/photos/dscf7374.json",
+            "photo": "apps/portfolio/src/data/photos/dscf0906.json",
             "caption": null
           }
         ]
@@ -843,7 +875,7 @@
             "caption": null
           },
           {
-            "photo": "apps/portfolio/src/data/photos/dscf7613.json",
+            "photo": "apps/portfolio/src/data/photos/dscf6609.json",
             "caption": null
           }
         ]
@@ -1023,16 +1055,17 @@
         ]
       },
       {
-        "id": "page-45",
+        "id": "page-58",
+        "tags": ["objects"],
         "layout": "custom-2",
         "title": null,
         "slots": [
           {
-            "photo": "apps/portfolio/src/data/photos/dscf5675.json",
+            "photo": "apps/portfolio/src/data/photos/dscf7900.json",
             "caption": null
           },
           {
-            "photo": "apps/portfolio/src/data/photos/dscf0014.json",
+            "photo": "apps/portfolio/src/data/photos/dscf5365.json",
             "caption": null
           }
         ]
@@ -1069,6 +1102,36 @@
         ]
       },
       {
+        "id": "page-45",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf5675.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf0014.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-94",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/kobe-sunset.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf1236.json",
+            "caption": null
+          }
+        ]
+      },
+      {
         "id": "page-26",
         "tags": ["grayscale", "rural", "japan"],
         "layout": "custom-4",
@@ -1076,22 +1139,6 @@
         "slots": [
           {
             "photo": "apps/portfolio/src/data/photos/dscf9679-2.json",
-            "caption": null
-          }
-        ]
-      },
-      {
-        "id": "page-58",
-        "tags": ["objects"],
-        "layout": "custom-2",
-        "title": null,
-        "slots": [
-          {
-            "photo": "apps/portfolio/src/data/photos/dscf7900.json",
-            "caption": null
-          },
-          {
-            "photo": "apps/portfolio/src/data/photos/dscf5365.json",
             "caption": null
           }
         ]
@@ -1139,38 +1186,6 @@
           },
           {
             "photo": "apps/portfolio/src/data/photos/dscf9305-2.json",
-            "caption": null
-          }
-        ]
-      },
-      {
-        "id": "page-9",
-        "name": "Suitorou Verticals",
-        "layout": "custom-1",
-        "title": null,
-        "slots": [
-          {
-            "photo": "apps/portfolio/src/data/photos/dscf5023.json",
-            "caption": null
-          },
-          {
-            "photo": "apps/portfolio/src/data/photos/dscf5217.json",
-            "caption": null
-          }
-        ]
-      },
-      {
-        "id": "page-75",
-        "tags": ["lanterns", "egypt", "japan", "nature", "desert"],
-        "layout": "custom-1",
-        "title": null,
-        "slots": [
-          {
-            "photo": "apps/portfolio/src/data/photos/dscf0906.json",
-            "caption": null
-          },
-          {
-            "photo": "apps/portfolio/src/data/photos/20250118_143432.json",
             "caption": null
           }
         ]
@@ -1287,6 +1302,36 @@
         "layout": "other",
         "title": null,
         "slots": []
+      },
+      {
+        "id": "page-95",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/medieval-street.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/20250704_141758.json",
+            "caption": null
+          }
+        ]
+      },
+      {
+        "id": "page-96",
+        "layout": "custom-2",
+        "title": null,
+        "slots": [
+          {
+            "photo": "apps/portfolio/src/data/photos/one-red-car.json",
+            "caption": null
+          },
+          {
+            "photo": "apps/portfolio/src/data/photos/dscf1997.json",
+            "caption": null
+          }
+        ]
       }
     ],
     "order": [
@@ -1300,6 +1345,8 @@
       "page-83",
       "page-13",
       "page-15",
+      "page-9",
+      "page-75",
       "page-8",
       "page-39",
       "page-72",
@@ -1313,7 +1360,9 @@
       "page-20",
       "page-73",
       "page-19",
+      "page-96",
       "page-61",
+      "page-95",
       "page-85",
       "page-60",
       "page-57",
@@ -1356,9 +1405,11 @@
       "page-70",
       "page-64",
       "page-65",
-      "page-45",
+      "page-58",
       "page-52",
       "page-84",
+      "page-45",
+      "page-94",
       "page-26"
     ],
     "size": {
@@ -1379,8 +1430,10 @@
         },
         "text": "below",
         "captions": "photo",
-        "textShare": 26,
+        "textShare": 17,
         "align": "start",
+        "alignTo": "photo",
+        "title": "off",
         "gap": 2,
         "margin": 0
       },
@@ -1396,8 +1449,10 @@
         },
         "text": "left",
         "captions": "photo",
-        "textShare": 37,
+        "textShare": 25,
         "align": "end",
+        "alignTo": "photo",
+        "title": "off",
         "gap": 3,
         "margin": 0,
         "leftPages": "mirror"

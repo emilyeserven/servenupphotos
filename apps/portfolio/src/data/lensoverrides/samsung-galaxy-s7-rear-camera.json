@@ -1,0 +1,12 @@
+{
+  "id": "samsung-galaxy-s7-rear-camera",
+  "lens": "Samsung Galaxy S7 Rear Camera",
+  "rules": [
+    {
+      "when": null,
+      "set": {
+        "lens": "S7 Rear Camera"
+      }
+    }
+  ]
+}

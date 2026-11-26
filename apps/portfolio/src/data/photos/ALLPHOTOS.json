@@ -5759,7 +5759,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["2026-photo-book-candidates"],
     "tags": ["facade", "statues", "tourists", "umbrellas", "windows", "pedestrians"],
     "genres": ["architecture", "street"],
     "places": [
@@ -5979,7 +5979,9 @@
       "samples": 9694
     },
     "notes": "Shows the Grand Place guildhalls; 'guildhall' isn't a tag, since only 1 photo has one.",
-    "similarPhotos": [127, 297, 272, 210, 216, 167]
+    "similarPhotos": [127, 297, 272, 210, 216, 167],
+    "noGps": false,
+    "altText": null
   },
   {
     "id": 6,
@@ -88522,7 +88524,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["2026-photo-book-candidates"],
     "tags": ["cafe", "silhouettes", "windows", "interior", "skyline", "city"],
     "genres": ["street"],
     "places": [
@@ -132245,7 +132247,7 @@
     "similarPhotos": [17, 250, 469, 437, 438, 282]
   },
   {
-    "title": "From the Citadel, Looking Over Cairo",
+    "title": "Pyramids in the Skyline",
     "comment": null,
     "id": 276,
     "file": "20250118_140437.jpg",
@@ -132517,7 +132519,9 @@
       "samples": 9828
     },
     "notes": "Shows a minaret; 'minaret' isn't a tag, since only 1 photo has one.",
-    "similarPhotos": [44, 268, 458, 217, 395, 396]
+    "similarPhotos": [44, 268, 458, 217, 395, 396],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Gamcheon Bowl",
@@ -162871,17 +162875,22 @@
     "width": 7548,
     "height": 4246,
     "images": {
-      "full": null,
-      "key": null,
-      "xlarge": null,
-      "large": null,
-      "medium": null,
-      "small": null,
-      "xsmall": null,
-      "preview": null,
-      "thumbnail": null,
-      "thumbnailpreview": null,
-      "thumbnailcrop": null
+      "full": "https://cdn.servenupphotos.net/photos/da07e2f7122b-dscf9445.jpg",
+      "key": "photos/da07e2f7122b-dscf9445.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/da07e2f7122b-dscf9445-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/da07e2f7122b-dscf9445-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/da07e2f7122b-dscf9445-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/da07e2f7122b-dscf9445-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/da07e2f7122b-dscf9445-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/da07e2f7122b-dscf9445-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/da07e2f7122b-dscf9445-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/da07e2f7122b-dscf9445-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1646,
+        "y": 0,
+        "size": 4246,
+        "outputSize": 500
+      }
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
@@ -162889,7 +162898,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["2026-photo-book-candidates"],
     "tags": [],
     "genres": [],
     "places": [],
@@ -169237,6 +169246,280 @@
     "similarPhotos": [355, 438, 162, 467, 262, 351]
   },
   {
+    "title": "Medieval Street",
+    "comment": null,
+    "id": 964,
+    "altText": null,
+    "notes": null,
+    "file": "20250706_181824.jpg",
+    "addedDate": "2026-11-26T00:27:22Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/180",
+    "iso": 32,
+    "focalLength": 6.3,
+    "gpsPosition": "43 deg 32' 57.07\" N, 11 deg 2' 43.19\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:07:06 18:18:24",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Italy",
+    "state": "Florence",
+    "city": "Certaldo",
+    "width": 4000,
+    "height": 2252,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824.jpg",
+      "key": "photos/978c2727132b-20250706-181824.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/978c2727132b-20250706-181824-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 874,
+        "y": 0,
+        "size": 2252,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {
+      "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera"
+    },
+    "manualAperture": false,
+    "customLens": null,
+    "albums": ["2026-photo-book-candidates"],
+    "tags": [],
+    "genres": [],
+    "places": [],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "b72fb39392d674c3",
+    "colors": {
+      "average": {
+        "hex": "#807077",
+        "lab": {
+          "l": 49.03,
+          "a": 7.31,
+          "b": -1.22
+        },
+        "hcl": {
+          "h": 350.55,
+          "c": 7.41,
+          "l": 49.03
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.1554
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1156
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0141
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0008
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0013
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0025
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0066
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0965
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0655
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0299
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0219
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0411
+        }
+      ],
+      "neutrals": {
+        "share": 0.4486,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0314
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0333
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0446
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.051
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0217
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0165
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0171
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0134
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0105
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0095
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0123
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0193
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.025
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0286
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0328
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0253
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0229
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0146
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0098
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0091
+          }
+        ]
+      },
+      "lightness": 49.03,
+      "chroma": 15.21,
+      "peakChroma": 26.35,
+      "samples": 9490
+    }
+  },
+  {
     "title": "Melting Pot",
     "comment": null,
     "id": 437,
@@ -173649,6 +173932,552 @@
     "similarPhotos": [47, 57, 189, 36, 100, 30],
     "compareGroup": "Sticker-Covered Alley Walls",
     "notes": "Quality Check (aspect ratio): the Small version is 500 × 292 (1.71:1), not the 16:9 crop for a landscape photo."
+  },
+  {
+    "title": "One Red Car",
+    "comment": null,
+    "id": 965,
+    "altText": null,
+    "notes": null,
+    "file": "20250706_185127.jpg",
+    "addedDate": "2026-11-26T00:27:11Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "S24 Ultra Rear Super Telephoto Lens",
+    "aperture": 3.4,
+    "exposure": "1/550",
+    "iso": 32,
+    "focalLength": 18.6,
+    "gpsPosition": "43 deg 32' 59.82\" N, 11 deg 2' 42.18\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:07:06 18:51:27",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Italy",
+    "state": "Florence",
+    "city": "Certaldo",
+    "width": 3647,
+    "height": 2051,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/2b9524b6a4d7-20250706-185127.jpg",
+      "key": "photos/2b9524b6a4d7-20250706-185127.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/2b9524b6a4d7-20250706-185127-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/2b9524b6a4d7-20250706-185127-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/2b9524b6a4d7-20250706-185127-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/2b9524b6a4d7-20250706-185127-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/2b9524b6a4d7-20250706-185127-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/2b9524b6a4d7-20250706-185127-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/2b9524b6a4d7-20250706-185127-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/2b9524b6a4d7-20250706-185127-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 798,
+        "y": 0,
+        "size": 2051,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {
+      "lens": "Samsung Galaxy S24 Ultra Rear Super Telephoto Camera"
+    },
+    "manualAperture": false,
+    "customLens": null,
+    "albums": ["2026-photo-book-candidates"],
+    "tags": [],
+    "genres": [],
+    "places": [],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "7f1f310f62023314",
+    "colors": {
+      "average": {
+        "hex": "#696a58",
+        "lab": {
+          "l": 44.38,
+          "a": -4.06,
+          "b": 10.2
+        },
+        "hcl": {
+          "h": 111.71,
+          "c": 10.98,
+          "l": 44.38
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0026
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1089
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.157
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0733
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0022
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0004
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0002
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0159
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0005
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0002
+        }
+      ],
+      "neutrals": {
+        "share": 0.6386,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.043
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.043
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0552
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0711
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0427
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0446
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0445
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0286
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0181
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0102
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.005
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0023
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0011
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0011
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0003
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0323
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.081
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.1129
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0014
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0004
+          }
+        ]
+      },
+      "lightness": 44.38,
+      "chroma": 16,
+      "peakChroma": 37.17,
+      "samples": 9694
+    }
+  },
+  {
+    "title": "One Red House",
+    "comment": null,
+    "id": 966,
+    "altText": null,
+    "notes": null,
+    "file": "IMG_1784.jpg",
+    "addedDate": "2026-11-26T00:27:13Z",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 7.1,
+    "exposure": "1/5000",
+    "iso": 1000,
+    "focalLength": 135,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2025:07:05 09:39:17",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 2467,
+    "height": 1388,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/3b968027dd1e-img-1784.jpg",
+      "key": "photos/3b968027dd1e-img-1784.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/3b968027dd1e-img-1784-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/3b968027dd1e-img-1784-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/3b968027dd1e-img-1784-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/3b968027dd1e-img-1784-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/3b968027dd1e-img-1784-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/3b968027dd1e-img-1784-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/3b968027dd1e-img-1784-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3b968027dd1e-img-1784-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 539,
+        "y": 0,
+        "size": 1388,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": ["2026-photo-book-candidates"],
+    "tags": [],
+    "genres": [],
+    "places": [],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "05030f2db933a911",
+    "colors": {
+      "average": {
+        "hex": "#7e817b",
+        "lab": {
+          "l": 53.54,
+          "a": -2.37,
+          "b": 2.83
+        },
+        "hcl": {
+          "h": 129.96,
+          "c": 3.69,
+          "l": 53.54
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0405
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.1285
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0477
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0002
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0151
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0011
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0009
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0007
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0001
+        }
+      ],
+      "neutrals": {
+        "share": 0.765,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0149
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0578
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.056
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0576
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0472
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0436
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0387
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0399
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0227
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0108
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0045
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0017
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0009
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0009
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0004
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0008
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0002
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0033
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0687
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.2944
+          }
+        ]
+      },
+      "lightness": 53.54,
+      "chroma": 8.32,
+      "peakChroma": 21.24,
+      "samples": 9620
+    }
   },
   {
     "title": "Only Goat Knows",
@@ -196955,6 +197784,280 @@
     "similarPhotos": [34, 263, 295, 296, 70, 68],
     "compareGroup": "Silhouettes at Riverside Windows",
     "notes": "Quality Check (aspect ratio): the Small version is 500 × 262 (1.91:1), not the 16:9 crop for a landscape photo."
+  },
+  {
+    "title": "View from the Villa",
+    "comment": null,
+    "id": 963,
+    "altText": null,
+    "notes": null,
+    "file": "20250706_132409.jpg",
+    "addedDate": "2026-11-26T00:27:30Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/250",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "43 deg 33' 49.58\" N, 11 deg 0' 14.61\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:07:06 13:24:09",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Italy",
+    "state": "Florence",
+    "city": "Gambassi Terme",
+    "width": 2024,
+    "height": 2834,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/4938e2caa6a8-20250706-132409.jpg",
+      "key": "photos/4938e2caa6a8-20250706-132409.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/4938e2caa6a8-20250706-132409-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/4938e2caa6a8-20250706-132409-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/4938e2caa6a8-20250706-132409-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/4938e2caa6a8-20250706-132409-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/4938e2caa6a8-20250706-132409-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/4938e2caa6a8-20250706-132409-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/4938e2caa6a8-20250706-132409-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4938e2caa6a8-20250706-132409-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 405,
+        "size": 2024,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {
+      "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera"
+    },
+    "manualAperture": false,
+    "customLens": null,
+    "albums": ["2026-photo-book-candidates"],
+    "tags": [],
+    "genres": [],
+    "places": [],
+    "noGps": false,
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "pickedSimilar": [],
+    "pickedSimilarNotes": {},
+    "similarPhotos": [],
+    "perceptualHash": "03060303330f1602",
+    "colors": {
+      "average": {
+        "hex": "#363530",
+        "lab": {
+          "l": 22.02,
+          "a": -0.69,
+          "b": 3.48
+        },
+        "hcl": {
+          "h": 101.25,
+          "c": 3.54,
+          "l": 22.02
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0009
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0241
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.001
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0381
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0016
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.9344,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.5587
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1072
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0246
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0145
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0086
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0069
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0062
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0073
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0047
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0039
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0049
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.008
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0103
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0132
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.014
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0196
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0092
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0286
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0567
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0271
+          }
+        ]
+      },
+      "lightness": 22.02,
+      "chroma": 4.44,
+      "peakChroma": 9.83,
+      "samples": 10115
+    }
   },
   {
     "title": "Volleyball Scene",

@@ -1,0 +1,12 @@
+{
+  "id": "samsung-galaxy-s24-ultra-rear-wide-camera",
+  "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+  "rules": [
+    {
+      "when": null,
+      "set": {
+        "lens": "S24 Ultra Rear Wide Camera"
+      }
+    }
+  ]
+}
