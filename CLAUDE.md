@@ -66,6 +66,6 @@ Take as few as show the change: one desktop screenshot, plus mobile only when th
 
 ## Sandbox notes
 
-- `.claude/hooks/session-start.sh` runs when a cloud session starts: `pnpm install`, exiftool, and a warm Go build cache. Add a step there when a new tool is needed in every session.
+- `.claude/hooks/session-start.sh` runs when a cloud session starts: `pnpm install`, exiftool, and a warm Go build cache. Add a step there when a new tool is needed in every session. It runs only when the session starts inside the repo; if `node_modules` or `exiftool` is missing, run it by hand from the repo root: `.claude/hooks/session-start.sh`.
 - R2 (`cdn.servenupphotos.net`), GitHub's API and map tiles usually can't be reached; `pnpm shot` covers for them.
 - Chromium for `pnpm shot` is already in `PLAYWRIGHT_BROWSERS_PATH`; `screenshot.mjs` falls back to its `chromium` link when the revision playwright-core wants is missing.

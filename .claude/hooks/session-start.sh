@@ -3,13 +3,19 @@
 # dependencies, exiftool (so the EXIF tests run instead of skipping), golangci-lint (the version
 # ci.yml pins, so `golangci-lint run` finds what CI would) and a warm Go build cache.
 # Each step is skipped when it's already done, and the container is cached after it runs.
+#
+# Claude Code runs it only when the session starts inside the repo, since that's where it reads
+# .claude/settings.json. A session started in a parent folder (as project threads are, in
+# /home/user) never runs it and has an empty CLAUDE_PROJECT_DIR, so the script finds the repo from
+# its own path and can be run by hand: `.claude/hooks/session-start.sh`.
 set -euo pipefail
 
 if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
 
-cd "$CLAUDE_PROJECT_DIR"
+cd "${CLAUDE_PROJECT_DIR:-$(dirname "$0")/../..}"
+echo "session-start: setting up $(pwd)" >&2
 
 pnpm install
 
