@@ -24,7 +24,7 @@ RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /out/api ./cmd/api
 
 # exiftool is a Perl program, so the runtime needs a distro that ships it (go-exiftool shells out to it).
-FROM alpine:3.22
+FROM alpine:3.24
 # Chromium makes the Photo Book's PDFs (internal/bookpdf), with fonts for Helvetica and Arial's stand-ins and for Arabic, Japanese, Chinese and Korean.
 RUN apk add --no-cache exiftool chromium font-liberation font-noto font-noto-arabic font-noto-cjk
 # Chrome's sandbox can't start as nobody in a container; it only opens the book's own pages.
