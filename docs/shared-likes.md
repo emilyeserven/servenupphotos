@@ -1,6 +1,6 @@
 # Shared Likes
 
-`/shared-likes`, **Shared Likes** under **Albums** in the sidebar, finds the photos that several people all liked, from the Like lists imported on [User Likes](viewer-likes.md), and puts them into one album, or splits them into suggested albums by where they were taken or by what they show. It reads the lists and photos the pipeline already has, so it adds no backend route and saves through the same `POST /api/data/album-suggestions` as [Album Suggestions](update-data.md#album-suggestions).
+`/shared-likes`, **Shared Likes** under **Albums** in the sidebar, finds the photos that several people all liked, from the Like lists imported on [User Likes](viewer-likes.md), and puts them into one album, or splits them into suggested albums by where they were taken or by what they show. It reads the lists and photos the pipeline already has, so it adds no backend route and saves through the same `POST /api/data/album-suggestions` as [Album Suggestions](update-data/album-suggestions.md).
 
 ## Choosing the lists
 

@@ -10,8 +10,8 @@
 | Color theme       | Light, Dark, System                   | System  | `servenup-theme`           |
 | Lower Tier photos | **Show Lower Tier photos** (checkbox) | off     | `servenup-show-lower-tier` |
 
-- **Script display** picks how place, city and country names are written. See [Places and localizations](places-and-localizations.md#on-the-portfolio).
+- **Script display** picks how place, city and country names are written. See [Places and localizations](places-and-localizations/on-the-portfolio.md).
 - **Color theme** picks light or dark colors, or follows the device with System.
 - **Show Lower Tier photos** brings back the photos marked Lower Tier in the pipeline. A Lower Tier photo keeps `"lowerTier": true` in its photo JSON and in `ALLPHOTOS.json`; `photos.ts` reads it as the photo's `lowerTier`, and `photos`, which every view reads, leaves those photos out unless this is on (`shownTiers` in `lib/lower-tier.ts`). Since every view reads the photos once as the page loads, changing it reloads the page. The build steps that run in Node (the map's place pages and link previews) can't read the setting, so they leave Lower Tier photos out. A link to a Lower Tier photo opens on the Grid without it while the setting is off.
 
-The page has its own spotlight zone, **Settings Header** (`"settings-header"`), picked on the pipeline's [Site Spotlight](publish.md#site-spotlight) page: with an album picked, its photos fade in and out above the title like the [Grid](portfolio-grid.md)'s header. It has no **Jump to Cover Image** button, since the page lists no photos.
+The page has its own spotlight zone, **Settings Header** (`"settings-header"`), picked on the pipeline's [Site Spotlight](publish/site-spotlight.md) page: with an album picked, its photos fade in and out above the title like the [Grid](portfolio-grid.md)'s header. It has no **Jump to Cover Image** button, since the page lists no photos.

@@ -2,7 +2,7 @@
 
 The portfolio's Grid (`/grid`, `routes/grid.tsx`) shows every photo with resized versions in R2, newest first, in one of three views picked at the top right (`?view=`): **Square** tiles (the default), **Natural** tiles, or a **Table**. Its **Show filters** panel has the filters in [Portfolio Filters](portfolio-filters.md), including the camera filters, and a **Visuals** button for colors and orientation (see [Portfolio Color](portfolio-color.md#on-the-grid-page)); they apply to every view. Clicking a photo opens the [photo viewer](photo-viewer.md).
 
-When an album is picked for the **Grid Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page, its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background, with the title and filters under them (see [Header spotlights](publish.md#header-spotlights)).
+When an album is picked for the **Grid Header** zone on the pipeline's [Site Spotlight](publish/site-spotlight.md) page, its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background, with the title and filters under them (see [Header spotlights](publish/site-spotlight.md#header-spotlights)).
 
 The tile views have **Sort** and **Display Options** at the right end of the row with the search and **Show filters** (the Table has neither).
 
@@ -105,4 +105,4 @@ It also picks how much of each photo's location the **Place** column shows, unde
 | Include state | Its places, its city and its state | `?placeDetail=state` |
 | Include country | Its places, its city, its state and its country | `?placeDetail=country` |
 
-A photo without places shows its city, state and country (whichever it has). The most specific place is the one inside the most others (see [Places](places-and-localizations.md#places)). Names are written the way the **Script display** setting says, and hovering a place shows its GPS position, and its state and country when the text leaves them out. The column sorts by the text it shows, in English. The choice stays with the Grid: the menu's links to other views don't carry it.
+A photo without places shows its city, state and country (whichever it has). The most specific place is the one inside the most others (see [Places](places-and-localizations/places.md)). Names are written the way the **Script display** setting says, and hovering a place shows its GPS position, and its state and country when the text leaves them out. The column sorts by the text it shows, in English. The choice stays with the Grid: the menu's links to other views don't carry it.

@@ -23,7 +23,7 @@ Every view's display options use `ViewOptionsButton` in `apps/portfolio/src/comp
 
 ## Filter pickers
 
-Build a filter picker on `SectionPicker` (`apps/portfolio/src/components/section-picker.tsx`) and follow [Picker conventions](../../../docs/portfolio-filters.md#picker-conventions):
+Build a filter picker on `SectionPicker` (`apps/portfolio/src/components/section-picker.tsx`) and follow [Picker conventions](../../../docs/portfolio-filters/clearing-filters.md#picker-conventions):
 
 - [ ] More about a section goes behind `InfoButton` (`components/info-button.tsx`), the last thing in the section's top row, and what it shows goes in `SectionPicker`'s `aside` panel on the right (pass a wider `width` while it shows). Never inside the controls or in a hover.
 - [ ] **Group by** and **Sort** are small `PickMenu` icon buttons (`components/pick-menu.tsx`) left of the (i), not tab rows or segmented controls.

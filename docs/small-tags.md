@@ -1,6 +1,6 @@
 # Small Tags
 
-**Small Tags** (`/small-tags`, under **Organize** in the sidebar, `components/small-tags/`) lists every tag and subtag that fewer than 3 photos show (`minTagPhotos`, the same rule as the [Tag library](update-data.md#tag-library)), so they can be cleaned up. A tag's count is what filtering by it shows: the photos that have it or any tag under it, so a parent whose own photos are few but whose subtags have plenty isn't listed. The fewest come first.
+**Small Tags** (`/small-tags`, under **Organize** in the sidebar, `components/small-tags/`) lists every tag and subtag that fewer than 3 photos show (`minTagPhotos`, the same rule as the [Tag library](update-data/tag-library.md)), so they can be cleaned up. A tag's count is what filtering by it shows: the photos that have it or any tag under it, so a parent whose own photos are few but whose subtags have plenty isn't listed. The fewest come first.
 
 It reads the same data as the Tag library (`POST /api/data/tag-library/export`): every tag and readable photo file as the next Commit will have them, changes waiting for Commit included. Each photo there has its file's `path`, which a save names it by, and its `id`, which finds its Square Thumbnail in `ALLPHOTOS.json` (`usePhotosById`). A photo not in `ALLPHOTOS.json` yet shows its name without an image. `lib/small-tags.ts` works out the list (`smallTags`).
 
