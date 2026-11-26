@@ -1,0 +1,7 @@
+# Picker layout
+
+**Groups**, **When**, **Gear & settings**, **Visuals** and the Graph page's **Graph type** share one layout, `SectionPicker` in `components/section-picker.tsx`: a list of sections on the left (`SectionTab` in `components/picker-section-tab.tsx`), each with its name, an icon for Groups, what it's set to under it and a dot while it's set, an optional footer under the list such as **Clear visuals** (`PickerClear`, whose words and X are one button), and the chosen section's controls on the right. The picker keeps 16px from the screen's edges and is at most 28rem tall, scrolling inside. On phones the list folds up above the controls, behind a button naming the chosen section and what it's set to; while it's open it takes the controls' place, and choosing a section folds it up again. The Grid's filter buttons open it through `FilterPickerButton`, which shows the filter's icon, name and how many of its filters are set, and takes the `onClear` its clear X calls (see [Clearing filters](clearing-filters.md)); `PickerPart` puts the line saying what a section is for over its controls.
+
+A name or value cut off with an ellipsis, in a picker's list, a choice such as a long album in **Groups**, the Places columns or the Places button, shows all of it on hover (`TruncatedText` in `components/truncated-text.tsx`, which adds the hover text only while the text is cut off).
+
+> **Frontend analogy:** it's a vertical tabs component whose tab list turns into an accordion header on small screens; each picker only supplies the tabs' labels and the panel.

@@ -2,7 +2,7 @@
 
 The portfolio's Numbers page (`/stats`, `apps/portfolio/src/routes/stats.tsx`), once called Stats, counts the photos by gear, place and time. It's in the site menu after Tags, with the other small views, and just before [Graph](portfolio-graph.md), which draws its counts as a graph of your own; like them, the homepage doesn't link to it. The page still lives at `/stats`, and its spotlight zone is still called **Stats Header**.
 
-When an album is picked for the **Stats Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page, its photos fade in and out across the top of the page, up to 30% of the screen's height, with the title under them (see [Header spotlights](publish.md#header-spotlights)). There's no Jump to Cover Image button here, since the page lists no photos to jump to.
+When an album is picked for the **Stats Header** zone on the pipeline's [Site Spotlight](publish/site-spotlight.md) page, its photos fade in and out across the top of the page, up to 30% of the screen's height, with the title under them (see [Header spotlights](publish/site-spotlight.md#header-spotlights)). There's no Jump to Cover Image button here, since the page lists no photos to jump to.
 
 At the top are six headline numbers: photos, countries, regions, cities, cameras and years. Each but photos is a link that jumps to its card, such as **Cities** to the Cities card, and shows a down arrow on hover. Under them, **Places**, **Gear** and **Time** jump to their sections.
 
@@ -22,7 +22,7 @@ Each section has groups, each a card listing its values with a bar as long as th
 | Gear | Shutter speed | the top-level shutter speed metadata groups, every one shown even with no photos |
 | Gear | ISO | the top-level ISO metadata groups, every one shown even with no photos |
 | Gear | Cameras | each camera, most photos first, or grouped by a camera category from its **Group by** control |
-| Time | Time of day | Late night to Night, as the [When](portfolio-filters.md#when) picker's Hours tab groups them |
+| Time | Time of day | Late night to Night, as the [When](portfolio-filters/when.md) picker's Hours tab groups them |
 | Time | Year | newest first |
 | Time | Season | Spring to Winter |
 | Time | Month | January to December |

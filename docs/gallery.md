@@ -65,7 +65,7 @@ The Gallery's **Groups** picker has a fourth section, **Likes** (`?liked=<person
 
 ### A place's photos
 
-On the [Places page](places-and-localizations.md#places), a place's photo count and **See photos in Gallery** at the top of its panel open the Gallery showing only the photos that list that place (`?placeId=<id>`). The filter bar then shows the place, with an × that shows every photo again, and a **Coordinates** filter for where each of its photos goes on the portfolio's map (`?placeGps=`):
+On the [Places page](places-and-localizations/places.md), a place's photo count and **See photos in Gallery** at the top of its panel open the Gallery showing only the photos that list that place (`?placeId=<id>`). The filter bar then shows the place, with an × that shows every photo again, and a **Coordinates** filter for where each of its photos goes on the portfolio's map (`?placeGps=`):
 
 - **Own** (`own`): the photo has its own GPS position, its custom one or its EXIF one, so it's placed exactly.
 - **From a place** (`place`): it has none, so it inherits the position of its first place that has one (or a place that place is in), the way the portfolio's map picks it.

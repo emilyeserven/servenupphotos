@@ -1,8 +1,8 @@
 # Portfolio Timeline
 
-The portfolio's Timeline (`/timeline`) lists the photos in a time range, newest first, grouped by month and then by day. The month and day headings stay at the top of the window while their photos scroll past, and clicking a month's heading folds it away. A day covered by a [Trip](trips.md), such as **Japan**, shows its name beside the date in its heading, so the Trip of the days in view sits just under the month's heading. Clicking a photo's thumbnail or title opens the photo viewer. The filters are described in [Portfolio Filters](portfolio-filters.md), including the [text search](portfolio-filters.md#text-search) box.
+The portfolio's Timeline (`/timeline`) lists the photos in a time range, newest first, grouped by month and then by day. The month and day headings stay at the top of the window while their photos scroll past, and clicking a month's heading folds it away. A day covered by a [Trip](trips.md), such as **Japan**, shows its name beside the date in its heading, so the Trip of the days in view sits just under the month's heading. Clicking a photo's thumbnail or title opens the photo viewer. The filters are described in [Portfolio Filters](portfolio-filters.md), including the [text search](portfolio-filters/text-search.md) box.
 
-When an album is picked for the **Timeline Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page, its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background, with the title and filters under them (see [Header spotlights](publish.md#header-spotlights)).
+When an album is picked for the **Timeline Header** zone on the pipeline's [Site Spotlight](publish/site-spotlight.md) page, its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background, with the title and filters under them (see [Header spotlights](publish/site-spotlight.md#header-spotlights)).
 
 ## Route sketches
 

@@ -1,6 +1,6 @@
 # Portfolio Tags
 
-The portfolio's Tags page (`/tags`, `apps/portfolio/src/routes/tags.tsx`) lists every tag that has photos, each as a card with its 3 newest photos as square thumbnails, its name followed by how many photos it has (`torii · 3 photos`), and its description when one is written. Clicking a card opens the [Grid](portfolio-grid.md) filtered to that tag (`/grid?tag=shotengai`), which uses the same [Tag filter](portfolio-filters.md#groups-album-tag-and-genre) as the Timeline and Map. It's in the site menu after Albums; like Albums, the homepage doesn't link to it.
+The portfolio's Tags page (`/tags`, `apps/portfolio/src/routes/tags.tsx`) lists every tag that has photos, each as a card with its 3 newest photos as square thumbnails, its name followed by how many photos it has (`torii · 3 photos`), and its description when one is written. Clicking a card opens the [Grid](portfolio-grid.md) filtered to that tag (`/grid?tag=shotengai`), which uses the same [Tag filter](portfolio-filters/groups.md) as the Timeline and Map. It's in the site menu after Albums; like Albums, the homepage doesn't link to it.
 
 ## Spotlight Tags
 

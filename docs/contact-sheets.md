@@ -2,7 +2,7 @@
 
 The prompts that link many photos can link a few **contact sheets** instead: each sheet is one JPEG with up to 30 of the prompt's photos as numbered tiles, labeled with the tile number and the name the prompt calls the photo by. An LLM looks through a handful of sheets instead of opening dozens or hundreds of links one by one.
 
-Pages with **Make contact sheets**: [Autogroup](compare-groups.md#autogroup), [Bulk Tagging](update-data.md#bulk-tagging), [Genre Suggestions](update-data.md#genre-suggestions), [Bulk Places](update-data.md#bulk-places), [Describe my style](describe-style.md#contact-sheets) and the [Quality Check](quality-check.md#license-plates-and-faces)'s pixelation prompt.
+Pages with **Make contact sheets**: [Autogroup](compare-groups.md#autogroup), [Bulk Tagging](update-data/bulk-tagging.md), [Genre Suggestions](update-data/genre-suggestions.md), [Bulk Places](update-data/bulk-places.md), [Describe my style](describe-style.md#contact-sheets) and the [Quality Check](quality-check.md#license-plates-and-faces)'s pixelation prompt.
 
 ## Using it
 

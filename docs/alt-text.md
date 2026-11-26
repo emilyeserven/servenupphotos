@@ -14,7 +14,7 @@ The field is in every new photo file (`newPhotoJSON`), so Update Data → **Miss
 
 ## Writing it for many photos
 
-**Alt Text** (`/alt-text`, under **Photo** in the sidebar, `components/alt-text/`) writes alt text for a batch of up to 50 photos with one LLM prompt, the way [Genre suggestions](update-data.md#genre-suggestions) works:
+**Alt Text** (`/alt-text`, under **Photo** in the sidebar, `components/alt-text/`) writes alt text for a batch of up to 50 photos with one LLM prompt, the way [Genre suggestions](update-data/genre-suggestions.md) works:
 
 1. **Pick photos** (`POST /api/data/alt-text/pick`, `{ skip, count }`, `PickAltTextPhotos` in `github/alttext.go`) reads every photo file as the next Commit will have it and picks the first `count` (20 at first, 1 to 50) without alt text, by file name. Blank alt text counts as none. **Pick other photos** leaves out the ones already shown; **Start over** picks from the start again.
 2. **Copy the alt text prompt** (`lib/alt-text-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a link to its Small version, its title, where it was taken and its tags, to help the LLM name what it sees. It asks for one or two plain sentences each, subject first, under 125 characters, without "Photo of", guesses at who people are, hashtags or opinions, as JSON:

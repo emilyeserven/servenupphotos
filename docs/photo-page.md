@@ -5,7 +5,7 @@ The Photo page, editing a saved photo (`/exif?edit=<path>`, or `/exif?photo=<id>
 | Section | Cards |
 | --- | --- |
 | **Details** | Title and comment (with date taken, alt text and [photographer notes](photo-notes.md)), Re-edit, [Lower Tier](lower-tier.md), [Delete photo](delete-photo.md) |
-| **Location** | Location: a map whose pin [can be dragged](places-and-localizations.md#moving-the-pin) to a custom GPS position, then places, and custom city, state and country |
+| **Location** | Location: a map whose pin [can be dragged](places-and-localizations/a-photos-places.md#moving-the-pin) to a custom GPS position, then places, and custom city, state and country |
 | **Albums & tags** | Albums, tags and genres |
 | **Image** | Square Thumbnail, [Pixelate faces](face-pixelation.md), [Replace image](replace-image.md) |
 | **Original** | [Unedited original](unedited-originals.md): comparison, the edit's crop, its pixelation and upload |

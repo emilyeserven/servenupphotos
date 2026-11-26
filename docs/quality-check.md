@@ -45,8 +45,8 @@ Each flagged photo links to **Pixelate faces**: the Photo page's Image section (
 
 The **Places** section lists every chosen photo with no place row that has an ID, the same test Bulk Places and the Dashboard's **Photos without a place** use, leaving out [casual photos](trip-lines/trip-stops.md#casual-photos), which only show with their place on a Trip page. It needs no button: it's worked out in the browser from the photo data, with local edits, so a photo given a place elsewhere drops off at once. Each row says why the photo has none, which says how to give it one:
 
-- **Has a GPS position**: [Bulk Places](update-data.md#bulk-places) can find its place. When any photo is like this, **Find places for N photos in Bulk Places** opens it.
-- **Bulk Places' LLM found no place for it**: remembered in this browser ([No place found](update-data.md#no-place-found)), so Bulk Places doesn't pick it again.
+- **Has a GPS position**: [Bulk Places](update-data/bulk-places.md) can find its place. When any photo is like this, **Find places for N photos in Bulk Places** opens it.
+- **Bulk Places' LLM found no place for it**: remembered in this browser ([No place found](update-data/bulk-places.md#no-place-found)), so Bulk Places doesn't pick it again.
 - **No GPS position**, or **Marked as going without GPS**: add a position or a place on the Photo page.
 
 Each row has **Open the photo**, and the list shows 30 until **Show all** is pressed. Nothing is flagged for re-edit here, since a missing place is fixed in the data, not in Lightroom. The test is `missingPlaces` in `lib/missing-places.ts`.
