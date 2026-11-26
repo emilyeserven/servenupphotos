@@ -25,6 +25,9 @@ export default defineConfig({
       },
     ],
     "no-alert": "error",
+    // A function passed as a prop that returns JSX (`tile={(photo) => <Tile … />}`) is a render
+    // prop the child calls, not a component React mounts, so it can't remount anything.
+    "react/no-unstable-nested-components": ["warn", { allowAsProps: true }],
     ...ownRules,
   },
   ignorePatterns: ["**/dist/**", "**/routeTree.gen.ts"],
@@ -45,6 +48,13 @@ export default defineConfig({
             ],
           },
         ],
+      },
+    },
+    {
+      // shadcn/ui's generated components, which aren't edited by hand.
+      files: ["**/components/ui/**"],
+      rules: {
+        "no-underscore-dangle": "off",
       },
     },
     {

@@ -55,10 +55,10 @@ export function privatePhotoNotes(): Plugin {
 /** The module that says how many photos have an unedited original shown on the portfolio. */
 const SHOWN_ORIGINALS = "virtual:shown-originals";
 
-/** The photos in a combined photo list at path, or none when it's missing or unreadable. */
-function readPhotos(path: string): object[] {
+/** The photos in a combined photo list at file, or none when it's missing or unreadable. */
+function readPhotos(file: string): object[] {
   try {
-    const photos: unknown = JSON.parse(readFileSync(path, "utf8"));
+    const photos: unknown = JSON.parse(readFileSync(file, "utf8"));
     return Array.isArray(photos) ? photos : [];
   } catch {
     return [];

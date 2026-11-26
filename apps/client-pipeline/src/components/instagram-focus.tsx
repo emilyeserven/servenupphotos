@@ -62,7 +62,7 @@ function DateFields() {
           value={takenFrom}
           max={takenTo}
           placeholder="Any day"
-          onChange={(day) => setFocus({ takenFrom: day })}
+          onChange={(picked) => setFocus({ takenFrom: picked })}
         />
       </Field>
       <Field label="Taken to">
@@ -70,7 +70,7 @@ function DateFields() {
           value={takenTo}
           min={takenFrom}
           placeholder="Any day"
-          onChange={(day) => setFocus({ takenTo: day })}
+          onChange={(picked) => setFocus({ takenTo: picked })}
         />
       </Field>
     </>

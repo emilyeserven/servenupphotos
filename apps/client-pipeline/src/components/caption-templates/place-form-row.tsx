@@ -181,7 +181,7 @@ function MoreLines(props: PlaceFormRowProps) {
             variant="ghost"
             size="icon"
             aria-label={`Remove form ${index + 1}'s line ${i + 2}`}
-            onClick={() => onChange({ ...form, more: more.filter((_, j) => j !== i) })}
+            onClick={() => onChange({ ...form, more: more.filter((_line, j) => j !== i) })}
           >
             <XIcon />
           </Button>

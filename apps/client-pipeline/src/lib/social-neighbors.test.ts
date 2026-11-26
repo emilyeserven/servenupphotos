@@ -16,7 +16,7 @@ function photo(file: string, createDate: string, date: string | null = null): So
 
 const all = () => true;
 const names = (result: ReturnType<typeof neighborsFor>) =>
-  result?.photos.map(({ photo, offset }) => `${photo.file}${offset}`);
+  result?.photos.map(({ photo: p, offset }) => `${p.file}${offset}`);
 
 /** Photos a to j taken a day apart, with e on the calendar on 2026-11-01. */
 const roll = "abcdefghij"
@@ -47,10 +47,12 @@ test("uses the last photo on the calendar before the day, with unsaved dates", (
   assert.equal(neighborsFor(roll, unsaved, "2026-11-01", new Map(), all), null);
 });
 
+/** A Focus that leaves out photos d and g. */
+const notDOrG = (p: SocialPhoto) => p.file !== "d" && p.file !== "g";
+
 test("skips photos the Focus leaves out and ones without a date", () => {
   const photos = [...roll, photo("undated", "")];
-  const allowed = (p: SocialPhoto) => p.file !== "d" && p.file !== "g";
-  assert.deepEqual(names(neighborsFor(photos, {}, "2026-11-02", new Map(), allowed)), [
+  assert.deepEqual(names(neighborsFor(photos, {}, "2026-11-02", new Map(), notDOrG)), [
     "a-3",
     "b-2",
     "c-1",

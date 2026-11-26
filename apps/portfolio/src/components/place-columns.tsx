@@ -117,6 +117,7 @@ function Columns(props: PanelProps) {
   useEffect(() => {
     const element = scroller.current;
     if (element) element.scrollLeft = element.scrollWidth;
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- scrolls each time a column opens
   }, [opened]);
   if (props.options.length === 0) return <Empty />;
   return (

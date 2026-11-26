@@ -178,14 +178,14 @@ function HeatCell({
 }) {
   const { pick, onPick } = useGraphPick();
   const picked = pickState(pick, xLabel, yLabel);
-  const { count, value } = cell;
+  const { count: n, value } = cell;
   const photos = cellText(cell, measure, measure === "series" ? yLabel : xLabel);
   const look = cn(
     "flex h-9 w-full items-center justify-center rounded-sm bg-muted/50 text-[11px] tabular-nums",
     textClass(value, most),
     picked !== null && PICKED_CLASS[`${picked}`],
   );
-  if (count === 0) {
+  if (n === 0) {
     return <div role="cell" aria-label={`${xLabel} · ${yLabel}: ${photos}`} className={look} />;
   }
   return (
@@ -220,12 +220,12 @@ function HeatCell({
 /** The heatmap's key: a strip from the faintest shade to the darkest, with what each end means. */
 function HeatmapKey({ most, measure }: { most: number; measure: Measure }) {
   const strip = { background: `linear-gradient(to right, ${shade(FAINTEST)}, ${shade(100)})` };
-  const count = measure === "count";
+  const byCount = measure === "count";
   return (
     <div className="flex items-center gap-2 text-xs text-muted-foreground tabular-nums">
-      <span>{count ? "1" : "0%"}</span>
+      <span>{byCount ? "1" : "0%"}</span>
       <span className="h-2.5 w-32 rounded-[3px]" style={strip} aria-hidden />
-      <span>{count ? `${most.toLocaleString()} photos` : formatValue(most, measure)}</span>
+      <span>{byCount ? `${most.toLocaleString()} photos` : formatValue(most, measure)}</span>
     </div>
   );
 }

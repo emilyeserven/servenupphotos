@@ -186,7 +186,7 @@ export function heatmapShapes(data: ScatterData, fill: string, empty: string): T
   const h = INNER_H / ny;
   const gap = Math.min(w, h) > 4 ? 0.6 : 0;
   return data.yLabels.flatMap((_, y) =>
-    data.xLabels.map((_, x): ThumbShape => {
+    data.xLabels.map((_xLabel, x): ThumbShape => {
       const count = counts.get(`${x}:${y}`) ?? 0;
       const rect = { kind: "rect" as const, x: round(PAD + x * w), y: round(PAD + y * h) };
       const size = { width: round(w - gap), height: round(h - gap) };

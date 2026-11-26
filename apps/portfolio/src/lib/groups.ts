@@ -181,11 +181,15 @@ export function albumTree(parent = "", seen = new Set<string>()): Group[] {
   return fresh.flatMap((album) => [album, ...albumTree(album.id, seen)]);
 }
 
+/** The album with the ID, if there is one. */
+function albumById(id?: string | null): Group | undefined {
+  return albums.find((album) => album.id === id);
+}
+
 /** The album with the ID and every album it's inside, nearest first; a loop stops where it comes back round. */
 function albumAncestry(id: string): Group[] {
   const chain: Group[] = [];
-  const byId = (at?: string | null) => albums.find((album) => album.id === at);
-  for (let at = byId(id); at && !chain.includes(at); at = byId(at.parent)) chain.push(at);
+  for (let at = albumById(id); at && !chain.includes(at); at = albumById(at.parent)) chain.push(at);
   return chain;
 }
 

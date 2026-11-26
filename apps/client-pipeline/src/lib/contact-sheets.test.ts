@@ -35,9 +35,12 @@ describe("lookAtPhotos", () => {
   });
 });
 
-describe("contactSheetSets", () => {
-  const image = (key: string, modified: string) => ({ key, size: 100, modified });
+/** An R2 image of 100 bytes at the key. */
+function image(key: string, modified: string) {
+  return { key, size: 100, modified };
+}
 
+describe("contactSheetSets", () => {
   it("puts each folder's sheets in a set, newest set first, leaving out other images", () => {
     const sets = contactSheetSets([
       image("photos/abc-dsc1.jpg", "2026-11-16T00:00:00Z"),

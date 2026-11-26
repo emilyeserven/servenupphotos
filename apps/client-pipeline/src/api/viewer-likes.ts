@@ -95,10 +95,14 @@ export function parseLikes(text: string): ParsedLikes {
   return { ...parseIdList(text), fromLinks: false };
 }
 
+/** Whether a part of the pasted list is a photo ID: a whole number above zero. */
+function isId(part: string): boolean {
+  return /^\d+$/.test(part.trim()) && Number(part) > 0;
+}
+
 /** The IDs in comma-separated text or a JSON array, and the parts that aren't IDs. */
 function parseIdList(text: string): Omit<ParsedLikes, "fromLinks"> {
   const parts = listParts(text);
-  const isId = (part: string) => /^\d+$/.test(part.trim()) && Number(part) > 0;
   return {
     ids: sortedIds(parts.filter(isId).map(Number)),
     skipped: parts.filter((part) => !isId(part)),

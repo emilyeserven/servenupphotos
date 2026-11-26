@@ -33,7 +33,7 @@ type ComparedPhoto = Photo & { image: PhotoImage; original: PhotoImage };
 /** The photos whose unedited original is shown on the portfolio, newest first. */
 const compared = photos
   .filter((photo): photo is ComparedPhoto => photo.image !== null && photo.original !== null)
-  .sort((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
+  .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
 
 /**
  * The photos shown next to their unedited originals, picked in the pipeline. The list of them, or
@@ -119,9 +119,9 @@ function ComparedList() {
   );
 }
 
-/** The photo's square, its left half the original and its right half the edit. */
-function ComparedTile({ photo }: { photo: ComparedPhoto }) {
-  const half = (image: PhotoImage, side: "left" | "right") => (
+/** One half of a compared photo's square: the image clipped to its left or right side. */
+function half(image: PhotoImage, side: "left" | "right") {
+  return (
     <img
       src={image.small}
       alt=""
@@ -130,6 +130,10 @@ function ComparedTile({ photo }: { photo: ComparedPhoto }) {
       style={{ clipPath: side === "left" ? "inset(0 50% 0 0)" : "inset(0 0 0 50%)" }}
     />
   );
+}
+
+/** The photo's square, its left half the original and its right half the edit. */
+function ComparedTile({ photo }: { photo: ComparedPhoto }) {
   return (
     <div className="relative aspect-square overflow-hidden rounded-md bg-muted">
       {half(photo.original, "left")}

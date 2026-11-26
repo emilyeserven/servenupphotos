@@ -147,17 +147,17 @@ interface MakeButtonProps {
 }
 
 /** Makes the ticked new tags. */
-function MakeButton({ count, disabled, onClick }: MakeButtonProps) {
+function MakeButton({ count: n, disabled, onClick }: MakeButtonProps) {
   return (
     <Button
       type="button"
       variant="outline"
       size="sm"
       className="self-start"
-      disabled={disabled || count === 0}
+      disabled={disabled || n === 0}
       onClick={onClick}
     >
-      {makeLabel(count)}
+      {makeLabel(n)}
     </Button>
   );
 }

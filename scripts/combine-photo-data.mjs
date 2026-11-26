@@ -227,7 +227,7 @@ async function fromDataFolder(kind) {
     )
     .map((entry) => entry.name)
     // Byte order, like `LC_ALL=C sort` in the workflow.
-    .sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b)));
+    .toSorted((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b)));
   const all = await Promise.all(
     files.map(async (name) => JSON.parse(await readFile(path.join(dataDir, name), "utf8"))),
   );

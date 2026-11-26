@@ -92,7 +92,7 @@ function useAlbumPhotoCounts(): ((id: string) => number) | undefined {
   return (id) => counts.get(id) ?? 0;
 }
 
-function SubAlbumRow({ album, depth, count }: { album: Group; depth: number; count?: number }) {
+function SubAlbumRow({ album, depth, count: n }: { album: Group; depth: number; count?: number }) {
   return (
     <li
       className="flex items-start gap-2 py-2 first:pt-0 last:pb-0"
@@ -108,7 +108,7 @@ function SubAlbumRow({ album, depth, count }: { album: Group; depth: number; cou
         )}
       </div>
       <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
-        {photoCountText(count)}
+        {photoCountText(n)}
       </span>
     </li>
   );

@@ -77,16 +77,18 @@ function SettingsPage() {
   );
 }
 
+/** Saves the Show Lower Tier photos choice and reloads the page so every view reads it. */
+function change(next: boolean) {
+  saveShowLowerTier(next);
+  window.location.reload();
+}
+
 /**
  * The **Show Lower Tier photos** checkbox. Every view reads the photos once as the page loads, so
  * changing it reloads the page.
  */
 function LowerTierSection() {
   const [show] = useState(readShowLowerTier);
-  const change = (next: boolean) => {
-    saveShowLowerTier(next);
-    window.location.reload();
-  };
   return (
     <SettingsSection
       id="lower-tier"

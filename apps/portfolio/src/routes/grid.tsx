@@ -33,7 +33,7 @@ import {
   sortGrid,
 } from "@/lib/grid-sort";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { photos, type Photo } from "@/lib/photos";
+import { photos as allPhotos, type Photo } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { parseTableSearch, type TableSearch } from "@/lib/table-search";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";
@@ -160,9 +160,9 @@ export const Route = createFileRoute("/grid")({
 });
 
 // Newest first. Only photos with resized versions in R2 have images.
-const newestFirst = photos
+const newestFirst = allPhotos
   .filter((photo): photo is ImagePhoto => photo.image !== null)
-  .sort((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
+  .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
 
 /** How the URL asks for the sort to run, with each default filled in. */
 function colorSpec(search: GridSearch): GridColorSpec {
@@ -178,7 +178,7 @@ function colorSpec(search: GridSearch): GridColorSpec {
 
 /** Where Distance measures from; Stamford, CT, unused, for the other sorts. */
 function distanceFrom(search: GridSearch): Point {
-  return search.sort === "distance" ? nearPoint(search.near, photos) : DEFAULT_NEAR;
+  return search.sort === "distance" ? nearPoint(search.near, allPhotos) : DEFAULT_NEAR;
 }
 
 /** The photos the text search, the filters and the camera filters leave, before the colors. */
@@ -239,7 +239,7 @@ function GridView() {
  * table, every photo (even those without resized versions in R2), which the table sorts itself.
  */
 function photosFor(search: GridSearch & Record<string, unknown>, mode: ViewMode): Photo[] {
-  if (mode === "table") return filteredPhotos(photos, search);
+  if (mode === "table") return filteredPhotos(allPhotos, search);
   return gridPhotosFor(search, search.sort ?? "newest");
 }
 

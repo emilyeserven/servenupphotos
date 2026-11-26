@@ -59,6 +59,7 @@ function PhotoRoute() {
   const deleted = useDeletedPhotoStore((state) => state.result);
   const setDeleted = useDeletedPhotoStore((state) => state.setResult);
   // A delete is about the photo it deleted: opening another one, or coming back, starts fresh.
+  // oxlint-disable-next-line react/exhaustive-effect-dependencies -- clears it whenever the photo changes
   useEffect(() => setDeleted(null), [edit, photo, setDeleted]);
   if (deleted) {
     return (

@@ -132,7 +132,7 @@ export function photoColors(colors: PhotoColorData | null | undefined): ColorSha
   return [...shares]
     .filter(([, share]) => share > 0)
     .map(([color, share]) => ({ color, share }))
-    .sort((a, b) => b.share - a.share);
+    .toSorted((a, b) => b.share - a.share);
 }
 
 /** The photo's hue buckets, as the pipeline saves them. */

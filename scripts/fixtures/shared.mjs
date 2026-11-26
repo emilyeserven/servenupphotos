@@ -94,9 +94,16 @@ function newPhoto() {
  * A graph preset file the pull request adds, in a group, with the rest of its graph's settings as
  * the Graph page starts them, and its description when it has one.
  */
-function graphPresetFile(id, name, order, group, graph, description) {
+function graphPresetFile(id, name, order, groupId, graph, description) {
   const settings = { measure: "count", y: "", split: "", stacked: false, sort: "group", limit: 0 };
-  const data = { id, kind: "preset", name, ...(description && { description }), order, group };
+  const data = {
+    id,
+    kind: "preset",
+    name,
+    ...(description && { description }),
+    order,
+    group: groupId,
+  };
   return {
     path: `${FOLDER}/graphs/${id}.json`,
     data: { ...data, graph: { ...settings, ...graph } },

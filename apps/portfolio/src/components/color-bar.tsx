@@ -3,12 +3,16 @@ import { type ColorShare, colorLabel, colorSwatch, percent } from "@/lib/photo-c
 /** How many of the biggest colors are named under the bar. */
 const NAMED = 3;
 
+/** A color's name and its share of the photo, such as "Blue 32%". */
+function named(c: ColorShare): string {
+  return `${colorLabel(c.color)} ${percent(c.share)}`;
+}
+
 /**
  * A photo's colors as one bar, each hue bucket and shade as wide as its share of the photo, with
  * the biggest few named under it.
  */
 export function ColorBar({ palette }: { palette: ColorShare[] }) {
-  const named = (c: ColorShare) => `${colorLabel(c.color)} ${percent(c.share)}`;
   return (
     <div className="flex flex-col gap-1">
       <div

@@ -250,9 +250,9 @@ function InRange({ info, inside }: { info: MetaFieldInfo; inside: MetaValueCount
   }
   return (
     <ul className="flex flex-wrap gap-1.5" aria-label="In the range">
-      {inside.map(({ value, count }) => (
+      {inside.map(({ value, count: n }) => (
         <li key={String(value)} className="bg-muted rounded-full px-2 py-0.5 text-xs">
-          {showValue(info.field, value)} <span className="text-muted-foreground">{count}</span>
+          {showValue(info.field, value)} <span className="text-muted-foreground">{n}</span>
         </li>
       ))}
     </ul>

@@ -22,7 +22,7 @@ interface SavedPromptsProps {
  * Saves the page's filters, count and question under a name in this browser's local storage, and
  * lists the saved ones to load again or delete.
  */
-export function SavedPrompts({ count, focus, onLoad }: SavedPromptsProps) {
+export function SavedPrompts({ count: n, focus, onLoad }: SavedPromptsProps) {
   const search = useSearch({ strict: false }) as Record<string, unknown>;
   const navigate = useNavigate();
   const { prompts, save, remove } = useStylePromptsStore();
@@ -40,7 +40,7 @@ export function SavedPrompts({ count, focus, onLoad }: SavedPromptsProps) {
       name: name.trim(),
       filters: parseGridFilters(search),
       published: parsePublishedOnly(search) ?? false,
-      count,
+      count: n,
       focus,
       savedAt: new Date().toISOString(),
     });

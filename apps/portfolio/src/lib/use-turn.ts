@@ -24,6 +24,7 @@ export function useTurn(count: number, ms: number, start = 0): Turn {
     if (count < 2 || reducedMotion()) return;
     const timer = setTimeout(() => setTurn((t) => t + 1), ms);
     return () => clearTimeout(timer);
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- each turn, and each step, starts the wait again
   }, [count, ms, turn]);
   const step = useCallback((by: number) => setTurn((t) => t + by), []);
   return { turn: count === 0 ? 0 : ((turn % count) + count) % count, step };

@@ -38,10 +38,12 @@ test("a photo's shape comes from its width and height", () => {
 /** Photos by name: w is wide, t is tall, ? has no size. */
 const aspects: Record<string, number | null> = { w1: 1.5, w2: 1.5, t1: 0.67, t2: 0.75, q: null };
 
+/** The photo's aspect ratio, from aspects. */
+const aspect = (p: string) => aspects[p] ?? null;
+
 test("frames are filled with photos of their shape, in order from the start, without repeats", () => {
   const photos = ["w1", "t1", "w2", "t2"];
   const used = new Set<string>();
-  const aspect = (p: string) => aspects[p] ?? null;
   assert.deepEqual(pickForFrames(photos, ["portrait", "portrait"], 0, aspect, used), ["t1", "t2"]);
   assert.deepEqual(pickForFrames(photos, ["landscape"], 0, aspect, used), ["w1"]);
   // With no tall photo left, the next one not used yet is taken.
@@ -50,7 +52,6 @@ test("frames are filled with photos of their shape, in order from the start, wit
 });
 
 test("the start goes round, and a photo without a size suits any frame", () => {
-  const aspect = (p: string) => aspects[p] ?? null;
   assert.deepEqual(pickForFrames(["w1", "q", "t1"], ["portrait"], 1, aspect, new Set()), ["q"]);
   assert.deepEqual(pickForFrames(["w1", "t1"], ["landscape"], 1, aspect, new Set()), ["w1"]);
 });

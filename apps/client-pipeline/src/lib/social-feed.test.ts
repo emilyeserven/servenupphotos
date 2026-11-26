@@ -59,9 +59,12 @@ test("steps a day forward and back across months and years", () => {
   assert.equal(shiftDay("2028-02-28", 1), "2028-02-29");
 });
 
+/** The step for a key press, with no other modifier held. */
+function press(key: string, shiftKey = false) {
+  return arrowStep({ key, shiftKey, altKey: false, ctrlKey: false, metaKey: false });
+}
+
 test("steps with the bare left and right arrow keys only", () => {
-  const press = (key: string, shiftKey = false) =>
-    arrowStep({ key, shiftKey, altKey: false, ctrlKey: false, metaKey: false });
   assert.equal(press("ArrowLeft"), -1);
   assert.equal(press("ArrowRight"), 1);
   assert.equal(press("ArrowRight", true), 0);

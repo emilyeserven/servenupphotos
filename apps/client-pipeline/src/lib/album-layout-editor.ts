@@ -170,11 +170,11 @@ function importedRow(row: unknown, n: number): AlbumRow {
   if (photos.length > MAX_ROW_PHOTOS) {
     throw new ImportError(`Row ${n} has ${photos.length} photos; a row can have at most 4.`);
   }
-  return { textAbove: text(row.textAbove, n), photos, textBelow: text(row.textBelow, n) };
+  return { textAbove: rowText(row.textAbove, n), photos, textBelow: rowText(row.textBelow, n) };
 }
 
 /** A row's text, or "" when it has none. */
-function text(value: unknown, n: number): string {
+function rowText(value: unknown, n: number): string {
   if (value === undefined || value === null) return "";
   if (typeof value !== "string") throw new ImportError(`Row ${n}'s text isn't a string.`);
   return value;

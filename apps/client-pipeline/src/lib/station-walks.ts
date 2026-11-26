@@ -27,10 +27,14 @@ export function walkOfKey(key: string): { end: WalkEnd; a: number } | undefined 
   return { end, a: Number(a) };
 }
 
+/** A point's latitude and longitude, or null without one. */
+function latLng(p?: TripPoint): [number, number] | null {
+  return p ? [p.latitude, p.longitude] : null;
+}
+
 /** What makes a station walk's path: its hop's photos, its station, and its via spots. */
 function walkPathKey(segment: TripSegment, end: WalkEnd, via: TripPoint[]): string {
-  const at = (p?: TripPoint) => (p ? [p.latitude, p.longitude] : null);
-  return JSON.stringify(["walk", end, segment.photos, at(segment[end]), via.map(at)]);
+  return JSON.stringify(["walk", end, segment.photos, latLng(segment[end]), via.map(latLng)]);
 }
 
 /**

@@ -52,7 +52,7 @@ const CARD =
  * description when one is written. A wide card, for Spotlight Tags, shows 6 thumbnails, not 3.
  */
 export function TagCard({ entry, wide = false }: { entry: TagEntry; wide?: boolean }) {
-  const { tag, between, count, previews } = entry;
+  const { tag, between, count: n, previews } = entry;
   return (
     <Link to="/grid" search={() => gridSearchFor(tag.id)} className={CARD}>
       <Thumbnails previews={previews} wide={wide} />
@@ -64,7 +64,7 @@ export function TagCard({ entry, wide = false }: { entry: TagEntry; wide?: boole
             </span>
           ))}
           <span className="underline-offset-4 group-hover:underline">{tag.name}</span>
-          <PhotoCount count={count} />
+          <PhotoCount count={n} />
         </p>
         <Description text={tag.description} className="mt-1 line-clamp-2" />
       </div>
@@ -87,7 +87,7 @@ export const SPOTLIGHT_GRID = "grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4";
  * for each tag under it.
  */
 export function ParentTagSection({ section }: { section: TagSection }) {
-  const { tag, count } = section.parent;
+  const { tag, count: n } = section.parent;
   return (
     <section aria-labelledby={`tag-${tag.id}`} className="flex flex-col gap-3">
       <div>
@@ -99,7 +99,7 @@ export function ParentTagSection({ section }: { section: TagSection }) {
           >
             <span>
               <span className="underline-offset-4 group-hover:underline">{tag.name}</span>
-              <PhotoCount count={count} />
+              <PhotoCount count={n} />
             </span>
             <ArrowRight className="size-4 text-muted-foreground" aria-hidden />
           </Link>

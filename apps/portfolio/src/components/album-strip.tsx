@@ -56,8 +56,8 @@ export function AlbumStrip({
 }
 
 /** The link at the end of the strip to the album's page, when it has more photos than it shows. */
-function SeeAll({ album, count, shown }: { album: Group; count: number; shown: number }) {
-  if (count <= shown) return null;
+function SeeAll({ album, count: n, shown }: { album: Group; count: number; shown: number }) {
+  if (n <= shown) return null;
   return (
     <li className="shrink-0 snap-start">
       <Link
@@ -66,7 +66,7 @@ function SeeAll({ album, count, shown }: { album: Group; count: number; shown: n
         className="flex h-48 w-40 flex-col items-center justify-center gap-2 rounded-md border text-sm font-medium hover:bg-muted sm:h-64"
       >
         <ArrowRight className="size-5" aria-hidden />
-        See all {count} photos
+        See all {n} photos
       </Link>
     </li>
   );
