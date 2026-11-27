@@ -1285,21 +1285,6 @@
       ]
     },
     {
-      "id": "page-48",
-      "layout": "custom-2",
-      "title": null,
-      "slots": [
-        {
-          "photo": "apps/portfolio/src/data/photos/dscf3817.json",
-          "caption": null
-        },
-        {
-          "photo": "apps/portfolio/src/data/photos/dscf0309-2.json",
-          "caption": null
-        }
-      ]
-    },
-    {
       "id": "page-68",
       "layout": "custom-1",
       "title": null,
@@ -1315,21 +1300,6 @@
       ]
     },
     {
-      "id": "page-69",
-      "layout": "custom-2",
-      "title": null,
-      "slots": [
-        {
-          "photo": "apps/portfolio/src/data/photos/dscf4444.json",
-          "caption": null
-        },
-        {
-          "photo": "apps/portfolio/src/data/photos/dscf2276.json",
-          "caption": null
-        }
-      ]
-    },
-    {
       "id": "page-71",
       "layout": "custom-1",
       "title": null,
@@ -1340,21 +1310,6 @@
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf7554.json",
-          "caption": null
-        }
-      ]
-    },
-    {
-      "id": "page-77",
-      "layout": "custom-1",
-      "title": null,
-      "slots": [
-        {
-          "photo": "apps/portfolio/src/data/photos/dscf6203.json",
-          "caption": null
-        },
-        {
-          "photo": "apps/portfolio/src/data/photos/dscf3640.json",
           "caption": null
         }
       ]
