@@ -77,13 +77,13 @@ export function withRopeway(
   const from = board ?? a;
   const to = alight ?? b;
   if (!from || !to) return draft;
-  const ride = {
-    line,
-    path: [spot(from), spot(to)],
-    ...(board && { board }),
-    ...(alight && { alight }),
-  };
+  const ride = { line, path: [spot(from), spot(to)], ...stationsSet(board, alight) };
   return withHopLine(draft, plain, key, ride);
+}
+
+/** The ropeway's stations that are set, leaving out a side that's at its photo. */
+function stationsSet(board?: TripPoint, alight?: TripPoint): Pick<RopewayRide, "board" | "alight"> {
+  return { ...(board && { board }), ...(alight && { alight }) };
 }
 
 /** What each side's station is called until it's named. */

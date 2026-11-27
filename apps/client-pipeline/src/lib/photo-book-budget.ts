@@ -27,13 +27,22 @@ export function budgetStatus(book: PhotoBook): BudgetStatus | null {
   const max = budgetNumber(book.budget?.max);
   if (target === null && max === null) return null;
   const placed = printedPages(unitsInBook(book)).length;
-  const state =
-    max !== null && placed > max
-      ? "over-max"
-      : target !== null && placed >= target
-        ? "reached"
-        : "under";
-  return { placed, target, max, state };
+  return { placed, target, max, state: budgetState(placed, target, max) };
+}
+
+/** Where placed pages stand: past the max, at or past the target, or under both. */
+function budgetState(
+  placed: number,
+  target: number | null,
+  max: number | null,
+): BudgetStatus["state"] {
+  if (max !== null && placed > max) return "over-max";
+  return target !== null && placed >= target ? "reached" : "under";
+}
+
+/** Whether a number typed in a budget box can be saved: a whole number from 0 to MAX_BUDGET_PAGES. */
+function isTypedBudget(n: number): boolean {
+  return Number.isInteger(n) && n >= 0 && n <= MAX_BUDGET_PAGES;
 }
 
 /**
@@ -43,12 +52,13 @@ export function budgetStatus(book: PhotoBook): BudgetStatus | null {
  */
 export function readBudget(target: string, max: string): PageBudget | undefined | string {
   const numbers = [target, max].map((text) => (text.trim() === "" ? 0 : Number(text)));
-  if (numbers.some((n) => !Number.isInteger(n) || n < 0 || n > MAX_BUDGET_PAGES)) {
+  if (!numbers.every(isTypedBudget)) {
     return `Give the page budget as whole numbers from 0 to ${MAX_BUDGET_PAGES}.`;
   }
-  const [t = 0, m = 0] = numbers;
-  if (t > 0 && m > 0 && t > m) return "Make the target no more than the max.";
-  if (t === 0 && m === 0) return undefined;
+  const [t, m] = numbers as [number, number];
+  // Neither is negative, so a target over a max that's set is set too, and a sum of 0 is both left out.
+  if (m > 0 && t > m) return "Make the target no more than the max.";
+  if (t + m === 0) return undefined;
   return { ...(t > 0 && { target: t }), ...(m > 0 && { max: m }) };
 }
 
