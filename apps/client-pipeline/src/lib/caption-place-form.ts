@@ -39,11 +39,16 @@ const COUNT_CONDITIONS: Record<PlaceCount, Pick<PlaceForm, "has" | "lacks">> = {
   "3+": { has: ["place3"] },
 };
 
+/** The fields in either list, each once, in the order they first come. */
+function union(a: string[] = [], b: string[] = []): string[] {
+  return [...new Set([...a, ...b])];
+}
+
 /** The form with an older place count turned into `has` and `lacks`, and empty lists left out. */
 export function formConditions(form: PlaceForm): PlaceForm {
   const old = COUNT_CONDITIONS[form.when ?? "any"] ?? {};
-  const has = [...new Set([...(old.has ?? []), ...(form.has ?? [])])];
-  const lacks = [...new Set([...(old.lacks ?? []), ...(form.lacks ?? [])])];
+  const has = union(old.has, form.has);
+  const lacks = union(old.lacks, form.lacks);
   return {
     ...(has.length > 0 && { has }),
     ...(lacks.length > 0 && { lacks }),

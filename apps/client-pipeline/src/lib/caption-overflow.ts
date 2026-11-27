@@ -58,6 +58,9 @@ interface Edges {
   bottom: number;
 }
 
+/** Edges that nothing reaches past, standing in for a room or printed area that isn't known. */
+const UNBOUNDED: Edges = { top: -Infinity, right: Infinity, bottom: Infinity };
+
 /**
  * How far the caption text's edges reach past the room its caption is given and the page's printed
  * area (each missing when unknown): positive when past, 0 or less inside.
@@ -67,12 +70,11 @@ export function pastEdges(
   room: Edges | undefined,
   area: Edges | null,
 ): Pick<CaptionBox, "pastTop" | "pastRight" | "pastBottom"> {
-  const top = Math.max(area?.top ?? -Infinity, room?.top ?? -Infinity);
-  const right = area?.right ?? Infinity;
-  const bottom = Math.min(area?.bottom ?? Infinity, room?.bottom ?? Infinity);
+  const a = area ?? UNBOUNDED;
+  const r = room ?? UNBOUNDED;
   return {
-    pastTop: top - text.top,
-    pastRight: text.right - right,
-    pastBottom: text.bottom - bottom,
+    pastTop: Math.max(a.top, r.top) - text.top,
+    pastRight: text.right - a.right,
+    pastBottom: text.bottom - Math.min(a.bottom, r.bottom),
   };
 }
