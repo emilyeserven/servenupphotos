@@ -1,21 +1,18 @@
-import { Link } from "@tanstack/react-router";
 import type { CombinedData } from "@/api/photos";
 import { bookAlbums } from "@/components/photo-book/album-photos";
 import { AlbumSelect } from "@/components/photo-book/album-select";
 import { MinPpiField } from "@/components/printing/min-ppi-field";
 import { PrintSizePicker } from "@/components/printing/print-size-picker";
-import { QueueItem } from "@/components/printing/queue-item";
+import { QueueCard } from "@/components/printing/queue-card";
 import { queuePhotos } from "@/components/printing/queue-photos";
 import { QueryResult } from "@/components/query-result";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { type CombinedPhoto, currentPhotos } from "@/lib/group-photos";
+import { Card, CardContent } from "@/components/ui/card";
+import { currentPhotos } from "@/lib/group-photos";
 import type { BookAlbum } from "@/lib/photo-book-album";
-import { photoKey } from "@/lib/print-queue";
 import { useCombinedData } from "@/stores/combined-data";
 import { printQueueAlbum } from "@/stores/printing";
 import { EmptyNote } from "@portfolio/components/empty-note";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
-import { count } from "@portfolio/lib/words";
 
 /**
  * The Print Queue page's content: the album used as the print queue, the print size, and the
@@ -68,40 +65,6 @@ function QueueSettings({ albums, albumId }: { albums: BookAlbum[]; albumId: stri
         </label>
         <PrintSizePicker />
         <MinPpiField />
-      </CardContent>
-    </Card>
-  );
-}
-
-/** The print queue album's photos, each with its print rating. */
-function QueueCard({ album, photos }: { album: BookAlbum; photos: CombinedPhoto[] }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{album.name || album.id}</CardTitle>
-        <CardDescription>
-          {count(photos.length, "photo")} to print.{" "}
-          <Link
-            to="/albums/$id"
-            params={{ id: album.id }}
-            className="text-foreground underline underline-offset-4"
-          >
-            Open the album
-          </Link>
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {photos.length === 0 ? (
-          <EmptyNote>
-            No photos in this album yet. Add some from the Gallery or the album's page.
-          </EmptyNote>
-        ) : (
-          <ul className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-6">
-            {photos.map((photo) => (
-              <QueueItem key={photoKey(photo)} photo={photo} />
-            ))}
-          </ul>
-        )}
       </CardContent>
     </Card>
   );
