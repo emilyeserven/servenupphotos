@@ -23,11 +23,11 @@
     "check": "node scripts/check.mjs"
   },
   "devDependencies": {
-    "concurrently": "10.0.6",
-    "fallow": "3.40.0",
-    "oxfmt": "0.76.0",
-    "oxlint": "1.91.0",
-    "playwright-core": "1.65.0",
+    "concurrently": "10.0.7",
+    "fallow": "3.48.0",
+    "oxfmt": "0.80.0",
+    "oxlint": "1.95.0",
+    "playwright-core": "1.65.1",
     "typescript": "catalog:"
   },
   "engines": {
