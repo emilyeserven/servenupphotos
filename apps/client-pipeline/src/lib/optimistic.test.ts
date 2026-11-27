@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { type FileChange, pendingText, summarizeChanges } from "@/lib/optimistic";
+import type { CombinedData } from "@/api/photos";
+import { GROUP_KINDS, byKind } from "@/lib/data-kinds";
+import { type FileChange, pendingText, summarizeChanges, withChanges } from "@/lib/optimistic";
 
 const photoAdded: FileChange = { kind: "photos", path: "a.json", after: { title: "A" } };
 const photoEdited: FileChange = {
@@ -76,4 +78,61 @@ test("says what's waiting, with plurals and in a fixed order", () => {
 
 test("says one image, not images", () => {
   assert.equal(pendingText(summarizeChanges([photoAdded], 0)), "1 image");
+});
+
+/** A combined file listing these entries; one that couldn't be read without them. */
+function listed(data?: unknown[]) {
+  return { path: "x", found: true, count: data?.length ?? 0, ...(data && { data }) };
+}
+
+/** The combined lists with these albums on the base branch and no pull request open. */
+function baseOnly(albums: unknown[]): CombinedData {
+  const base = {
+    branch: "main",
+    ...byKind(GROUP_KINDS, () => listed([])),
+    photos: listed([]),
+    albums: listed(albums),
+  };
+  return { base, head: null } as unknown as CombinedData;
+}
+
+const japan = { id: "japan", name: "Japan" };
+const korea = { id: "korea", name: "Korea" };
+
+/** The albums at the head once changes are made over baseOnly(albums). */
+function albumsAfter(albums: unknown[], changes: Omit<FileChange, "kind" | "path">[]) {
+  const data = withChanges(
+    baseOnly(albums),
+    changes.map((c) => ({ kind: "albums", path: "a.json", ...c })),
+  );
+  return data.head?.albums;
+}
+
+test("a change replaces its old entry, ignoring key order, or adds the new one at the end", () => {
+  assert.deepEqual(
+    albumsAfter(
+      [japan, korea],
+      [{ before: { name: "Japan", id: "japan" }, after: { ...japan, name: "日本" } }],
+    )?.data,
+    [{ ...japan, name: "日本" }, korea],
+  );
+  assert.deepEqual(albumsAfter([japan], [{ after: korea }]), listed([japan, korea]));
+  assert.deepEqual(albumsAfter([japan], [{ before: { id: "gone" }, after: korea }])?.data, [
+    japan,
+    korea,
+  ]);
+});
+
+test("a change that removed a file takes its entry out, and one never listed changes nothing", () => {
+  assert.deepEqual(albumsAfter([japan, korea], [{ before: japan, after: null }]), listed([korea]));
+  assert.deepEqual(albumsAfter([japan], [{ before: korea, after: null }])?.data, [japan]);
+  assert.deepEqual(albumsAfter([japan], [{ after: null }])?.data, [japan]);
+});
+
+test("with no pull request open the changes go over the base branch's lists, which stay as they are", () => {
+  const data = baseOnly([japan]);
+  const changed = withChanges(data, [{ kind: "albums", path: "a.json", after: korea }]);
+  assert.equal(changed.head?.pullRequest.number, 0);
+  assert.deepEqual(changed.base.albums.data, [japan]);
+  assert.equal(withChanges(data, []), data);
 });
