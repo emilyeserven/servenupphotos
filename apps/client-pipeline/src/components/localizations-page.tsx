@@ -19,13 +19,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { LocalizationRow } from "@/lib/place-seeds";
 import { EmptyNote } from "@portfolio/components/empty-note";
 
-/** The Localizations page: how each country, state, city and place is written and said where it is. */
+/**
+ * The Localizations page: how each country, state, city and place is written and said where it is,
+ * and each relation word, such as "near", in each country.
+ */
 export function LocalizationsPage() {
   return (
     <Page
       wide
       title="Localizations"
-      description="How each country, state, city and place is written and said where it is: its romanization, its local pronunciation (such as furigana) and its local script (such as hangeul or kanji). Countries, states and cities come from ALLPHOTOS.json, and places from the Places page. Each one is its own JSON file, combined into LOCALIZATIONS.json."
+      description="How each country, state, city and place is written and said where it is: its romanization, its local pronunciation (such as furigana) and its local script (such as hangeul or kanji). Countries, states and cities come from ALLPHOTOS.json, places from the Places page, and relation words from the photos' places. Each one is its own JSON file, combined into LOCALIZATIONS.json."
     >
       <GitHubGate>{() => <LocalizationTabs />}</GitHubGate>
     </Page>
@@ -37,6 +40,7 @@ const TABS: { type: LocalizationType; title: string }[] = [
   { type: "state", title: "States" },
   { type: "city", title: "Cities" },
   { type: "place", title: "Places" },
+  { type: "relation", title: "Relations" },
 ];
 
 function LocalizationTabs() {
@@ -98,6 +102,8 @@ const DESCRIPTIONS: Record<LocalizationType, string> = {
     "Every state, province or prefecture the photos show: the custom one written on the Photo page, or else the one from the EXIF.",
   city: "Every city the photos show: the custom one written on the Photo page, or else the one from the EXIF.",
   place: "Every place on the Places page.",
+  relation:
+    "Every relation word the photos use with their places, such as near, once for each country the photos are in, since a word is written one way in Japan and another in South Korea. Write {place} where the place goes when the word comes after it, such as {place}の近く or {place} 근처; without it, the word goes before the place, as in English.",
 };
 
 interface LocalizationCardProps {
@@ -129,6 +135,13 @@ function LocalizationCard({ type, title, rows, drafts }: LocalizationCardProps) 
 }
 
 function EmptyRows({ type }: { type: LocalizationType }) {
+  if (type === "relation") {
+    return (
+      <EmptyNote>
+        No photo has a relation word with a country yet. Give photos places on the Photo page.
+      </EmptyNote>
+    );
+  }
   if (type !== "place") {
     return <EmptyNote>None of the photos list one yet.</EmptyNote>;
   }

@@ -37,8 +37,8 @@ export interface Place {
   childRelation?: string;
 }
 
-/** What a localization is of. */
-export type LocalizationType = "country" | "state" | "city" | "place";
+/** What a localization is of: a relation is a relation word, such as "near", in one country. */
+export type LocalizationType = "country" | "state" | "city" | "place" | "relation";
 
 /** A localization file: how a country, city or place is written and said where it is. */
 export interface Localization {
@@ -63,7 +63,10 @@ export interface Localization {
    * Places page, so it's listed there before any photo or place has it. Only a city has one.
    */
   state?: string;
-  /** The country a city or state is in, the same way. Only a city or state has one. */
+  /**
+   * The country a city or state is in, the same way, or the country a relation word is localized
+   * for. Only a city, state or relation has one.
+   */
   country?: string;
 }
 
@@ -197,6 +200,14 @@ export function entryId(name: string): string {
 /** The ID of the localization of a country, city or place. A place's uses the place's own ID. */
 export function localizationId(type: LocalizationType, name: string, placeId?: string): string {
   return `${type}-${placeId ?? entryId(name)}`.slice(0, 100).replace(/-+$/, "");
+}
+
+/**
+ * The ID of a relation word's localization for one country, such as `relation-near-japan`, since
+ * "near" is written one way in Japan and another in South Korea.
+ */
+export function relationLocalizationId(word: string, country: string): string {
+  return localizationId("relation", `${word} ${country}`);
 }
 
 /**

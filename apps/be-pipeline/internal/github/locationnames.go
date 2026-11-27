@@ -148,7 +148,7 @@ func cleanOtherNames(l Localization, names []string) ([]string, *PublishError) {
 		out = append(out, name)
 	}
 	switch {
-	case len(out) > 0 && l.Type == LocalizationPlace:
+	case len(out) > 0 && (l.Type == LocalizationPlace || l.Type == LocalizationRelation):
 		return nil, publishErr(http.StatusBadRequest, "Only a country, state or city has other names.")
 	case len(out) > maxOtherNames:
 		return nil, publishErr(http.StatusBadRequest, "Keep a %s to %d other names.", l.Type, maxOtherNames)

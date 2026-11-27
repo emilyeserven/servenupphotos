@@ -42,10 +42,13 @@ export interface Place {
   childRelation?: string;
 }
 
-/** One entry of LOCALIZATIONS.json: how a country, city or place is written and said where it is. */
+/**
+ * One entry of LOCALIZATIONS.json: how a country, city or place is written and said where it is, or
+ * how a relation word, such as "near", is written in one country.
+ */
 interface Localization {
   id: string;
-  type: "country" | "state" | "city" | "place";
+  type: "country" | "state" | "city" | "place" | "relation";
   name: string;
   romanization?: string;
   pronunciation?: string;
@@ -55,6 +58,8 @@ interface Localization {
    * America, which the portfolio counts as this one.
    */
   otherNames?: string[];
+  /** The country a relation word is written this way in. */
+  country?: string;
 }
 
 /** The PLACES.local.json or other local combined file `pnpm photos:local` makes, when it's there. */
@@ -100,10 +105,21 @@ function key(type: Localization["type"], name: string): string {
   return `${type}:${name.trim().toLowerCase()}`;
 }
 
-/** Countries and cities are found by their name; places by their own ID, which the pipeline puts in the localization's. */
-const byKey = new Map(
-  localizations.map((l) => [l.type === "place" ? l.id : key(l.type, l.name), l]),
-);
+/** A relation word's key in one country. */
+function relationKey(word: string, country: string): string {
+  return `${key("relation", word)}:${country.trim().toLowerCase()}`;
+}
+
+/**
+ * Where a localization is found: a country or city by its name, a place by its own ID (which the
+ * pipeline puts in the localization's), and a relation word by the word and its country.
+ */
+function lookupKey(l: Localization): string {
+  if (l.type === "place") return l.id;
+  return l.type === "relation" ? relationKey(l.name, l.country ?? "") : key(l.type, l.name);
+}
+
+const byKey = new Map(localizations.map((l) => [lookupKey(l), l]));
 
 /** A place's localization ID, as the pipeline makes it. */
 function placeKey(placeId: string): string {
@@ -149,6 +165,18 @@ export function mainName(type: "country" | "state" | "city", name: string): stri
 export function localizeName(type: "country" | "state" | "city", name: string): Localized {
   const main = mainName(type, name);
   return localized(main, byKey.get(key(type, main)));
+}
+
+/**
+ * A relation word, such as "near", written each way for photos in the country, or null when it has
+ * no localization there. A way can have `{place}` where the place goes, such as `{place}の近く`.
+ */
+export function localizeRelation(word: string, country: string | null): Localized | null {
+  if (!country) return null;
+  const found =
+    byKey.get(relationKey(word, country)) ??
+    byKey.get(relationKey(word, mainName("country", country)));
+  return found ? localized(word, found) : null;
 }
 
 /** A place's name written each way, from LOCALIZATIONS.json. */

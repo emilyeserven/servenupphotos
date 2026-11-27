@@ -8,9 +8,14 @@ function needsLocalization(row: LocalizationRow): boolean {
   return !saved.romanization.trim() || !saved.localScript.trim();
 }
 
-/** The rows that need filling in, the ones the most photos show first. */
+/**
+ * The rows that need filling in, the ones the most photos show first. Relation words are left out:
+ * they're written with `{place}` where the place goes, which the prompt doesn't ask for.
+ */
 export function rowsToFill(rows: LocalizationRow[]): LocalizationRow[] {
-  return rows.filter(needsLocalization).toSorted((a, b) => b.photos - a.photos);
+  return rows
+    .filter((row) => row.type !== "relation" && needsLocalization(row))
+    .toSorted((a, b) => b.photos - a.photos);
 }
 
 /** Where a place is, such as "Seoul, South Korea", from its own city, state and country. */

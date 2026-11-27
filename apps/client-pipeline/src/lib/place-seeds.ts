@@ -8,14 +8,15 @@ import {
 } from "@/api/places";
 import { type CombinedPhoto, currentPhotos } from "@/lib/group-photos";
 import { photoGpsSource } from "@/lib/photo-map";
+import { relationUses } from "@/lib/relation-uses";
 import { textOf } from "@portfolio/lib/values";
 
-/** One country, city or place to localize, with how many photos list it. */
+/** One country, city, place or relation word to localize, with how many photos list it. */
 export interface LocalizationRow {
   id: string;
   type: LocalizationType;
   name: string;
-  /** Where it is, such as a city's country; empty when not known. */
+  /** Where it is, such as a city's country, or the country a relation word is for; empty when not known. */
   detail: string;
   photos: number;
   /** Its saved localization, when there is one. */
@@ -79,8 +80,16 @@ function addPlaces(set: RowSet, places: Place[], photos: CombinedPhoto[]) {
   }
 }
 
+/** Adds a row for each relation word the photos use in each country (see relationUses). */
+function addRelations(set: RowSet, photos: CombinedPhoto[]) {
+  for (const use of relationUses(photos)) {
+    set.add(use.id, "relation", use.word, use.country).photos = use.photos;
+  }
+}
+
 /**
- * Every country and city the photos show, and every place, each with its saved localization and
+ * Every country and city the photos show, every place, and every relation word the photos use in
+ * each country, each with its saved localization and
  * how many photos list it, then localizations saved for ones no longer listed, sorted by name.
  */
 export function localizationRows(
@@ -91,7 +100,8 @@ export function localizationRows(
   const set = new RowSet();
   addPhotos(set, photos);
   addPlaces(set, places, photos);
-  for (const saved of localizations) set.add(saved.id, saved.type, saved.name);
+  addRelations(set, photos);
+  for (const saved of localizations) set.add(saved.id, saved.type, saved.name, saved.country);
   return [...set.rows.values()]
     .map((row) => ({ ...row, saved: localizations.find((l) => l.id === row.id) }))
     .toSorted((a, b) => a.name.localeCompare(b.name));

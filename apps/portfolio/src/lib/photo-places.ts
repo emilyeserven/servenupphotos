@@ -3,6 +3,7 @@ import {
   localizeName,
   mainName,
   localizePlace,
+  localizeRelation,
   mapLocalized,
   type Place,
   placeAncestry,
@@ -55,12 +56,18 @@ function joinParts(...parts: (string | null | undefined)[]): string {
 
 /**
  * One of the photo's places, with the word before it, such as "by Geunjeongmun Gate", or ", Queens"
- * for a comma.
+ * for a comma. The word is written each way from its localization for the photo's country, when it
+ * has one, such as "근정문 근처" for `{place} 근처`.
  */
-function placePart(word: string, name: Localized): Localized {
-  return mapLocalized(name, (n, script) =>
-    [word, n[script]].filter(Boolean).join(" ").replace(/^, /, ","),
-  );
+function placePart(word: string, name: Localized, country: string | null): Localized {
+  const words = word === "," ? null : localizeRelation(word, country);
+  return mapLocalized(name, (n, script) => withWord(words?.[script] ?? word, n[script]));
+}
+
+/** The name with its word: put where the word says `{place}`, or else after the word. */
+function withWord(word: string, name: string): string {
+  if (word.includes("{place}")) return word.replace("{place}", name);
+  return [word, name].filter(Boolean).join(" ").replace(/^, /, ",");
 }
 
 /** The parts after each other: a space between them, but none before a comma. */
@@ -113,9 +120,10 @@ function capitalized(value: string): string {
  */
 function placeText(photo: PhotoEntry): Localized | null {
   const places = photo.places ?? [];
+  const country = custom(photo.customCountry, photo.country);
   const parts = places.flatMap(({ id }, index) => {
     const place = placeById(id);
-    return place ? [placePart(wordBefore(places, index), localizePlace(place))] : [];
+    return place ? [placePart(wordBefore(places, index), localizePlace(place), country)] : [];
   });
   if (parts.length === 0) return null;
   return mapLocalized(parts, (p, script) =>

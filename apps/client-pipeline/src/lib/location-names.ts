@@ -35,7 +35,7 @@ export function locationNames(localizations: Localization[]): LocationNames {
     city: new Map<string, string>(),
   };
   for (const l of localizations) {
-    if (l.type !== "place") addOtherNames(names[l.type], l);
+    if (l.type !== "place" && l.type !== "relation") addOtherNames(names[l.type], l);
   }
   return names;
 }

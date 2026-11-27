@@ -116,3 +116,19 @@ func TestSaveLocalizationRegion(t *testing.T) {
 		t.Errorf("saved %s, want no country on a country", saved)
 	}
 }
+
+func TestSaveRelationLocalization(t *testing.T) {
+	_, c := newMainRepo(t, map[string]string{})
+	near := Localization{ID: "relation-near-japan", Type: "relation", Name: "near", LocalScript: "{place}の近く", State: "X", Country: " Japan "}
+	if _, err := c.SaveLocalization(t.Context(), placesGH, near); err != nil {
+		t.Fatalf("SaveLocalization() error = %v", err)
+	}
+	saved := staged(t, c, dataRoot+"/localizations/relation-near-japan.json")
+	if !strings.Contains(saved, `"country": "Japan"`) || strings.Contains(saved, `"state": `) {
+		t.Errorf("saved %s, want the relation's country and no state", saved)
+	}
+	near.OtherNames = []string{"close to"}
+	if _, err := c.SaveLocalization(t.Context(), placesGH, near); err == nil {
+		t.Error("SaveLocalization() saved a relation's other names")
+	}
+}
