@@ -13,10 +13,10 @@
   "iso": 400,
   "focalLength": 83.3,
   "gpsPosition": "34 deg 33' 12.18\" N, 131 deg 31' 21.64\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.587521, 131.555992",
   "createDate": "2026:09:25 13:50:17",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Sōgō",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["rock-formations", "birds", "ocean", "pine-trees"],
   "genres": ["landscape", "wildlife"],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "sogo"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

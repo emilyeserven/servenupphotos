@@ -2281,6 +2281,14 @@
     "localScript": "素鵞社"
   },
   {
+    "id": "place-sogo",
+    "type": "place",
+    "name": "Sōgō",
+    "romanization": "Sōgō",
+    "pronunciation": "そうごう",
+    "localScript": "惣郷"
+  },
+  {
     "id": "place-soho",
     "type": "place",
     "name": "SoHo",
