@@ -11,6 +11,10 @@ linters:
     - forbidigo
     # Holds the line at today's longest function (SetSocialDates, 76 lines / 51 statements); tighten it over time.
     - funlen
+    # Cognitive complexity (branches weighted by how deeply they nest) over 15, the same limit fallow sets for
+    # the TypeScript apps. The functions already over it are listed at the end of the exclusions; split one
+    # to take its line off, and don't add new ones.
+    - gocognit
     - gocritic
     # Cyclomatic complexity (one per branch) over 20, the same limit fallow sets for the TypeScript apps.
     # The two functions already over it are listed in the exclusions below; split them to take them off.
@@ -32,6 +36,8 @@ linters:
     funlen:
       lines: 80
       statements: 55
+    gocognit:
+      min-complexity: 15
     gocyclo:
       min-complexity: 20
   exclusions:
@@ -40,6 +46,7 @@ linters:
       - path: _test\.go
         linters:
           - funlen
+          - gocognit
           - gocyclo
           - forbidigo
       # Over gocyclo's limit before it was lowered to fallow's: replaceTopLevel (24) and SetSocialDates (21).
@@ -54,6 +61,20 @@ linters:
       - path: internal/httpapi/respond\.go
         linters:
           - forbidigo
+      # Over gocognit's limit when it was added, with each one's complexity at the time.
+      - { path: internal/github/backfill\.go, linters: [gocognit], text: "\\.PreviewBackfill`" } # 16
+      - { path: internal/github/backfill\.go, linters: [gocognit], text: "`findPlans`" } # 21
+      - { path: internal/github/backfill\.go, linters: [gocognit], text: "`objectGaps`" } # 19
+      - { path: internal/github/baseurl\.go, linters: [gocognit], text: "`imageStrings`" } # 27
+      - { path: internal/github/baseurl\.go, linters: [gocognit], text: "`origins`" } # 17
+      - { path: internal/github/catchup\.go, linters: [gocognit], text: "\\.catchUp`" } # 17
+      - { path: internal/github/photobooks\.go, linters: [gocognit], text: "`validPhotoBookPage`" } # 17
+      - { path: internal/github/photogroups\.go, linters: [gocognit], text: "\\.AddPhotoGroups`" } # 17
+      - { path: internal/github/social\.go, linters: [gocognit], text: "\\.SetSocialDates`" } # 36
+      - { path: internal/github/social\.go, linters: [gocognit], text: "`replaceTopLevel`" } # 43
+      - { path: internal/httpapi/photo\.go, linters: [gocognit], text: "`receivePhoto`" } # 19
+      - { path: internal/storage/upload\.go, linters: [gocognit], text: "`uploadPhoto`" } # 17
+      - { path: internal/transit/osmrail_routes\.go, linters: [gocognit], text: "\\.add`" } # 16
 
 formatters:
   enable:
