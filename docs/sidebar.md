@@ -39,6 +39,9 @@ Below them every page is listed under its section, with the pages in its submenu
     - Describe my style
   - Site Spotlight
   - User Likes
+- **Printing**
+  - Print Quality
+  - Print Queue
 - **Configuration**
   - Settings
     - Status
