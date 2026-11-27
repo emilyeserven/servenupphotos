@@ -44,6 +44,6 @@ When a photo has two places and the second is one the first is in (at any depth)
 - **Word before …** (only with a parent) is this place's word before the place it's in. It's saved as `"parentRelation"`; **Default** leaves it out and uses the parent's word for the places in it.
 - **Word for places in it** is the default for every place in this one that doesn't pick its own, saved as `"childRelation"`; **Default** leaves it out, which is “in”.
 
-Under them, a preview shows the whole phrase: how the place reads with every place it's in (“Mirror Pond, National Museum of Korea”), and how a place in it reads. Either is one of the photo relations (in, at, by, near, …) or `,` for a comma. When the second place is a few levels up, the word is the one of the place just under it on the way up. Older place files have neither and read as “in”.
+Under them, a preview shows the whole phrase: how the place reads with every place it's in (“Mirror Pond, National Museum of Korea”), and how a place in it reads. Either is one of the photo relations (in, at, by, near, …) or `,` for a comma, but not **between** or **and**, which join two places a photo is between rather than a place to the one it's in. When the second place is a few levels up, the word is the one of the place just under it on the way up. Older place files have neither and read as “in”.
 
 > **Frontend analogy:** it's CSS inheritance: a child's own `parentRelation` wins, else it inherits the parent's `childRelation`, else the initial value “in”.

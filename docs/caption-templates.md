@@ -44,7 +44,8 @@ The thing about solo traveling…
 | `{date}`, `{year}`, `{month}`, `{day}`, `{time}` | When it was taken, the custom date first: `2026.05.17`, `2026`, `05`, `17`, `13:58` |
 | `{lens}`, `{lensShort}` | The lens after camera overrides and the custom lens, and only up to its focal length (`XF18-135mm`) |
 | `{focalLength}` | The real focal length (not the 35 mm equivalent), rounded to whole mm, or one decimal under 10mm |
-| `{places}` | Every place, each localized, the later ones after their relation: `경복궁 (Gyeongbokgung), near 장고 (Janggo)` |
+| `{places}` | Every place, each localized, the later ones after their relation: `경복궁 (Gyeongbokgung), near 장고 (Janggo)`, or `Kiyo and Uta` with no comma before **and** |
+| `{placesPhrase}` | The places as the Photo page reads them, in English, with their relations and connecting words: `In Gyeongbokgung Palace by Geunjeongmun Gate`, `Between Kiyo and Uta` |
 | `{place}`, `{mainPlace}` | The most specific place, and the outermost place the photo's places are in |
 | `{city}`, `{state}`, `{country}` | Each the custom one first |
 | `{albums}`, `{tags}`, `{genres}` | Their names, with commas between |
@@ -80,7 +81,7 @@ Place names have many shapes: one place or two, a city with a state or without. 
 - A form can have more lines: **Add a line** puts one under it, such as `{cityRomanized}, {countryRomanized}` under `{cityLocal}, {countryLocal}`, so `{from_places_form}` gives `서울특별시, 대한민국` with `Seoul, South Korea` on the line below. Only the first line decides whether the form fits. A line under it is left out for a photo when a placeholder in it outside square brackets is empty, or when it reads the same as a line above it (ignoring case and spaces), so a place with no local name of its own doesn't get its name twice. A line left out for the photo the form is shown for is struck through.
 - A photo no form fits gets nothing for `{from_places_form}`, and its line is left out if that's all it has.
 
-Besides the place placeholders above, a form can use `{place1}`, `{place2}` and `{place3}` (the photo's first three places, each also `…Local`, `…Romanized` and `…Localized`), `{relation2}` and `{relation3}` (how the photo relates to them, such as `near`) and `{placeCount}`. The builder's placeholder buttons put one in the form last clicked. Forms move up and down with the arrows, and order matters.
+Besides the place placeholders above, a form can use `{place1}`, `{place2}` and `{place3}` (the photo's first three places, each also `…Local`, `…Romanized` and `…Localized`), `{relation1}`, `{relation2}` and `{relation3}` (how the photo relates to them, such as `near`; `between` and then `and` for a photo between two places) and `{placeCount}`. The builder's placeholder buttons put one in the form last clicked. Forms move up and down with the arrows, and order matters.
 
 Each form is drawn as the caption shows it for the photo its example is from: each placeholder is its value, in a tinted box that names the placeholder when hovered, an empty one is a dashed box with its name, and a part in square brackets that's left out is struck through. Clicking the form types in it, with its placeholders in braces, until you click away.
 

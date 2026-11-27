@@ -199,7 +199,10 @@ export function localizationId(type: LocalizationType, name: string, placeId?: s
   return `${type}-${placeId ?? entryId(name)}`.slice(0, 100).replace(/-+$/, "");
 }
 
-/** How a photo can relate to a place, as a preposition: "In Gyeongbokgung Palace". */
+/**
+ * How a photo can relate to a place, as a preposition: "In Gyeongbokgung Palace". "between" takes
+ * two places, and the second is joined to it with "and": "Between Kiyo and Uta".
+ */
 export const RELATIONS = [
   "in",
   "at",
@@ -211,11 +214,21 @@ export const RELATIONS = [
   "behind",
   "in front of",
   "across from",
+  "between",
   "above",
   "below",
   "overlooking",
   "from",
+  "and",
 ] as const;
+
+/** The relation that takes two places, "between", and the word that joins the second place to it. */
+export const BETWEEN = { relation: "between", join: "and" } as const;
+
+/** The relations that need no other place to read right: all but "between" and "and". */
+export const ONE_PLACE_RELATIONS: readonly string[] = RELATIONS.filter(
+  (relation) => relation !== BETWEEN.relation && relation !== BETWEEN.join,
+);
 
 /** One place a photo was taken at, by its ID in PLACES.json, and how the photo relates to it. */
 export interface PhotoPlace {

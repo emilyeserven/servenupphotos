@@ -1,4 +1,4 @@
-import { type Place, type PhotoPlace, entryId, RELATIONS } from "@/api/places";
+import { type Place, type PhotoPlace, entryId, ONE_PLACE_RELATIONS } from "@/api/places";
 import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
 import { readPastedObject } from "@/lib/pasted-json";
 import { gpsText, writtenPosition } from "@/lib/place-gps";
@@ -81,7 +81,7 @@ export function listed(lines: string[], none: string): string {
 /** The rules for naming a place, which every location prompt gives. */
 export const PLACE_NAME_RULES = `- Write names as they're usually written in English, such as "Gyeongbokgung Palace", "Seoul" and "South Korea".
 - Leave a name empty ("") rather than guess.
-- "relation" is how the photo relates to the place, one of: ${RELATIONS.join(", ")}; or "" for none.`;
+- "relation" is how the photo relates to the place, one of: ${ONE_PLACE_RELATIONS.join(", ")}; or "" for none.`;
 
 /** The rules for the GPS position, how sure the LLM is, and why, which every location prompt gives. */
 export const POSITION_RULES = `- "latitude" and "longitude" are in decimal degrees, where the photo was taken from. Give your best estimate even when you've only inferred the place or the area, such as the middle of the place, and set "exact" to false; use null only when you can't tell even roughly.
@@ -115,7 +115,7 @@ ${listed(existing, "- None yet.")}`;
 /** Where the LLM says the photo was taken, as read from its answer; "" for each field it left empty. */
 export interface PastedLocation {
   place: string;
-  /** One of RELATIONS, or "" for none or one that isn't. */
+  /** One of ONE_PLACE_RELATIONS, or "" for none or one that isn't. */
   relation: string;
   city: string;
   state: string;
@@ -146,10 +146,10 @@ function answerGps(answer: Record<string, unknown>): string {
   return gpsText(writtenPosition(text) ?? {});
 }
 
-/** The answer's relation, when it's one of RELATIONS. */
+/** The answer's relation, when it's one of ONE_PLACE_RELATIONS. */
 function answerRelation(value: unknown): string {
   const relation = textOf(value).toLowerCase();
-  return (RELATIONS as readonly string[]).includes(relation) ? relation : "";
+  return ONE_PLACE_RELATIONS.includes(relation) ? relation : "";
 }
 
 /** The location in the LLM's answer. Throws a sentence a user can read when it has no JSON object to read. */

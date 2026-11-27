@@ -9,8 +9,8 @@ import { usePlaces } from "@/components/place-fields/use-places";
 import { PlaceGpsAdders } from "@/components/place-gps-adder";
 import { PlaceScopeNote, usePlaceScope } from "@/components/place-scope";
 import { Input } from "@/components/ui/input";
-import { placeCity, specificFirst, withParent } from "@/lib/place-hierarchy";
-import { placesJoin } from "@/lib/place-joins";
+import { placeCity, specificFirst, swappedPlaces, withParent } from "@/lib/place-hierarchy";
+import { rowJoin, withBetweenJoin } from "@/lib/place-joins";
 
 /**
  * What PlaceFields edits: the photo's places, the place name kept with them, and its custom city
@@ -106,8 +106,10 @@ export function PlaceFields({
   // The place name as the photo was saved, kept while editing even once places replace it.
   const [oldName] = useState(() => (hasOldPlaceName(value) ? value.placeName.trim() : ""));
   const rows = value.places.length > 0 ? value.places : [NO_PLACE];
-  const setRows = (places: PhotoPlace[], city = {}) =>
+  const setRows = (next: PhotoPlace[], city = {}) => {
+    const places = withBetweenJoin(next);
     onChange({ ...value, ...city, places, placeName: nextPlaceName(value, places, all.names) });
+  };
   const setRow = (index: number, row: PhotoPlace) => {
     if (row.id === rows[index]?.id) return setRows(rows.with(index, row));
     const next = afterChoosing(rows.with(index, row), index, all.places);
@@ -149,7 +151,7 @@ export function PlaceFields({
           onChange={(next) => setRow(index, next)}
           onRemove={index > 0 ? () => setRows(rows.toSpliced(index, 1)) : undefined}
           country={country}
-          joined={placesJoin(rows, index, all.places)}
+          joined={rowJoin(rows, index, all.places)}
           menu={scope.menuFor(index, row.id)}
         />
       ))}
@@ -178,15 +180,6 @@ function PlaceLabel({ prompt }: { prompt?: LocationPrompt }) {
       {prompt?.answer}
     </>
   );
-}
-
-/**
- * The two rows with their places swapped and each relation left where it was, so "In Gyeongbokgung
- * Palace by Geunjeongmun Gate" becomes "In Geunjeongmun Gate by Gyeongbokgung Palace".
- */
-function swappedPlaces(rows: PhotoPlace[]): PhotoPlace[] {
-  const ids = rows.map((row) => row.id).toReversed();
-  return rows.map((row, index) => ({ ...row, id: ids[index] ?? row.id }));
 }
 
 /** Whether the photo has a place name but no places, as photos saved before places do. */

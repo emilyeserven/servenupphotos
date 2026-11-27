@@ -1,7 +1,10 @@
-import { type PhotoPlace, type Place, RELATIONS } from "@/api/places";
+import { BETWEEN, ONE_PLACE_RELATIONS, type PhotoPlace, type Place } from "@/api/places";
 
-/** The words a place can be joined to the place it's in with: the relations, and a comma. */
-export const JOIN_WORDS = [...RELATIONS, ","] as const;
+/**
+ * The words a place can be joined to the place it's in with: the relations, and a comma. "between"
+ * and "and" join two places a photo is between, not a place to the one it's in, so they're left out.
+ */
+export const JOIN_WORDS = [...ONE_PLACE_RELATIONS, ","];
 
 /** A join word as a menu shows it, with the comma named. */
 export function joinLabel(word: string): string {
@@ -37,10 +40,39 @@ function chainUp(start: Place | undefined, places: Place[]): Place[] {
  * in, at any depth: the word of the place just under it on the way up. Undefined otherwise, so the
  * row keeps its own relation.
  */
-export function placesJoin(rows: PhotoPlace[], index: number, places: Place[]): string | undefined {
+function placesJoin(rows: PhotoPlace[], index: number, places: Place[]): string | undefined {
   const chain = rowChain(rows, index, places);
   const at = chain.findIndex((place) => place.id === rows[index]?.id);
   return at > 0 ? chain.slice(at - 1, at).map((below) => joinWord(below, places))[0] : undefined;
+}
+
+/** "and" for the row after one whose relation is "between", as in "Between Kiyo and Uta"; else undefined. */
+function betweenJoin(rows: PhotoPlace[], index: number): string | undefined {
+  return index > 0 && rows[index - 1]?.relation === BETWEEN.relation ? BETWEEN.join : undefined;
+}
+
+/**
+ * The word row `index` is shown with in place of its relation menu: "and" after "between", else the
+ * word from the places (see placesJoin); undefined when the row keeps its own relation.
+ */
+export function rowJoin(rows: PhotoPlace[], index: number, places: Place[]): string | undefined {
+  return betweenJoin(rows, index) ?? placesJoin(rows, index, places);
+}
+
+/** Whether the first place is "between" and the second isn't chosen yet, so the phrase isn't whole. */
+export function needsSecondPlace(rows: PhotoPlace[]): boolean {
+  return rows[0]?.relation === BETWEEN.relation && !rows[1]?.id;
+}
+
+/**
+ * The rows with the place after a "between" row given "and" as its relation, so the saved photo
+ * reads "Between Kiyo and Uta" wherever its relations are read on their own, such as `{relation2}`.
+ */
+export function withBetweenJoin(rows: PhotoPlace[]): PhotoPlace[] {
+  return rows.map((row, index) => {
+    const join = betweenJoin(rows, index);
+    return join && row.relation !== join ? { ...row, relation: join } : row;
+  });
 }
 
 /** The place in the row before `index` and every place it's in; none for the first row. */
@@ -67,9 +99,12 @@ export function chainPhrase(
   return chain.reduce((text, place, index) => joined(text, words[index] ?? "", place.name), name);
 }
 
-/** The word before each row's place: from the places when it's one the place before is in, else the row's own. */
+/**
+ * The word before each row's place: "and" after "between", from the places when it's one the place
+ * before is in, else the row's own.
+ */
 function rowWords(rows: PhotoPlace[], places: Place[]): string[] {
-  return rows.map((row, index) => placesJoin(rows, index, places) ?? row.relation);
+  return rows.map((row, index) => rowJoin(rows, index, places) ?? row.relation);
 }
 
 /** One place after the text before it: ", Queens" after a comma, else " in Queens". */

@@ -1,6 +1,6 @@
 import { XIcon } from "lucide-react";
 import { useState } from "react";
-import { type Place, type PhotoPlace, RELATIONS } from "@/api/places";
+import { BETWEEN, type Place, type PhotoPlace, RELATIONS } from "@/api/places";
 import { ErrorNote } from "@/components/error-note";
 import type { Places } from "@/components/place-fields/use-places";
 import { PlacesJoinWord } from "@/components/place-join-fields";
@@ -22,7 +22,10 @@ interface PlaceRowProps {
   onRemove?: () => void;
   /** The country the photo was taken in, when known, to offer localizing places outside the US. */
   country: string;
-  /** The word from the places, when this row's place is one the row above's is in; it replaces the relation menu. */
+  /**
+   * The word that replaces the relation menu: "and" when the row above is "between", or the word
+   * from the places when this row's place is one the row above's is in.
+   */
   joined: string | undefined;
   /** The places the menu lists, and what it says when none matches. */
   menu: PlaceMenu;
@@ -56,6 +59,8 @@ export function PlaceRow({
             disabled={disabled}
             onChange={(relation) => onChange({ ...row, relation })}
           />
+        ) : joined === BETWEEN.join ? (
+          <BetweenJoinWord />
         ) : (
           <PlacesJoinWord word={joined} />
         )}
@@ -73,6 +78,18 @@ export function PlaceRow({
       </div>
       <ErrorNote error={shown} />
     </div>
+  );
+}
+
+/** "and" in place of the relation menu, for the second of two places the photo is between. */
+function BetweenJoinWord() {
+  return (
+    <span
+      title="The place above is “between”, so this one follows “and”"
+      className="border-input text-muted-foreground flex h-9 w-32 shrink-0 items-center rounded-md border border-dashed px-2 text-sm"
+    >
+      {BETWEEN.join}
+    </span>
   );
 }
 
