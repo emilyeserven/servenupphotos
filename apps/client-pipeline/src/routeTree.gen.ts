@@ -36,6 +36,8 @@ import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
 import { Route as PhotoBookRouteImport } from './routes/photo-book'
 import { Route as PhotoSetsRouteImport } from './routes/photo-sets'
 import { Route as PlacesRouteImport } from './routes/places'
+import { Route as PrintQueueRouteImport } from './routes/print-queue'
+import { Route as PrintingRouteImport } from './routes/printing'
 import { Route as QuickEditRouteImport } from './routes/quick-edit'
 import { Route as ReEditRouteImport } from './routes/re-edit'
 import { Route as RelatedPhotosRouteImport } from './routes/related-photos'
@@ -209,6 +211,16 @@ const PhotoSetsRoute = PhotoSetsRouteImport.update({
 const PlacesRoute = PlacesRouteImport.update({
   id: '/places',
   path: '/places',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrintQueueRoute = PrintQueueRouteImport.update({
+  id: '/print-queue',
+  path: '/print-queue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrintingRoute = PrintingRouteImport.update({
+  id: '/printing',
+  path: '/printing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuickEditRoute = QuickEditRouteImport.update({
@@ -435,6 +447,8 @@ export interface FileRoutesByFullPath {
   '/photo-book': typeof PhotoBookRoute
   '/photo-sets': typeof PhotoSetsRoute
   '/places': typeof PlacesRoute
+  '/print-queue': typeof PrintQueueRoute
+  '/printing': typeof PrintingRoute
   '/quick-edit': typeof QuickEditRoute
   '/re-edit': typeof ReEditRoute
   '/related-photos': typeof RelatedPhotosRoute
@@ -503,6 +517,8 @@ export interface FileRoutesByTo {
   '/photo-book': typeof PhotoBookRoute
   '/photo-sets': typeof PhotoSetsRoute
   '/places': typeof PlacesRoute
+  '/print-queue': typeof PrintQueueRoute
+  '/printing': typeof PrintingRoute
   '/quick-edit': typeof QuickEditRoute
   '/re-edit': typeof ReEditRoute
   '/related-photos': typeof RelatedPhotosRoute
@@ -570,6 +586,8 @@ export interface FileRoutesById {
   '/photo-book': typeof PhotoBookRoute
   '/photo-sets': typeof PhotoSetsRoute
   '/places': typeof PlacesRoute
+  '/print-queue': typeof PrintQueueRoute
+  '/printing': typeof PrintingRoute
   '/quick-edit': typeof QuickEditRoute
   '/re-edit': typeof ReEditRoute
   '/related-photos': typeof RelatedPhotosRoute
@@ -640,6 +658,8 @@ export interface FileRouteTypes {
     | '/photo-book'
     | '/photo-sets'
     | '/places'
+    | '/print-queue'
+    | '/printing'
     | '/quick-edit'
     | '/re-edit'
     | '/related-photos'
@@ -708,6 +728,8 @@ export interface FileRouteTypes {
     | '/photo-book'
     | '/photo-sets'
     | '/places'
+    | '/print-queue'
+    | '/printing'
     | '/quick-edit'
     | '/re-edit'
     | '/related-photos'
@@ -774,6 +796,8 @@ export interface FileRouteTypes {
     | '/photo-book'
     | '/photo-sets'
     | '/places'
+    | '/print-queue'
+    | '/printing'
     | '/quick-edit'
     | '/re-edit'
     | '/related-photos'
@@ -843,6 +867,8 @@ export interface RootRouteChildren {
   PhotoBookRoute: typeof PhotoBookRoute
   PhotoSetsRoute: typeof PhotoSetsRoute
   PlacesRoute: typeof PlacesRoute
+  PrintQueueRoute: typeof PrintQueueRoute
+  PrintingRoute: typeof PrintingRoute
   QuickEditRoute: typeof QuickEditRoute
   ReEditRoute: typeof ReEditRoute
   RelatedPhotosRoute: typeof RelatedPhotosRoute
@@ -1068,6 +1094,20 @@ declare module '@tanstack/react-router' {
       path: '/places'
       fullPath: '/places'
       preLoaderRoute: typeof PlacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/print-queue': {
+      id: '/print-queue'
+      path: '/print-queue'
+      fullPath: '/print-queue'
+      preLoaderRoute: typeof PrintQueueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/printing': {
+      id: '/printing'
+      path: '/printing'
+      fullPath: '/printing'
+      preLoaderRoute: typeof PrintingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quick-edit': {
@@ -1404,6 +1444,8 @@ const rootRouteChildren: RootRouteChildren = {
   PhotoBookRoute: PhotoBookRoute,
   PhotoSetsRoute: PhotoSetsRoute,
   PlacesRoute: PlacesRoute,
+  PrintQueueRoute: PrintQueueRoute,
+  PrintingRoute: PrintingRoute,
   QuickEditRoute: QuickEditRoute,
   ReEditRoute: ReEditRoute,
   RelatedPhotosRoute: RelatedPhotosRoute,

@@ -26,6 +26,8 @@ import {
   MessageSquareTextIcon,
   PaletteIcon,
   PlaneIcon,
+  PrinterIcon,
+  PrinterCheckIcon,
   RefreshCwIcon,
   RotateCcwIcon,
   ScaleIcon,
@@ -163,6 +165,13 @@ export const navGroups: readonly NavGroup[] = [
       },
       { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
       { title: "User Likes", url: "/viewer-likes", icon: HeartIcon },
+    ],
+  },
+  {
+    title: "Printing",
+    items: [
+      { title: "Print Quality", url: "/printing", icon: PrinterCheckIcon },
+      { title: "Print Queue", url: "/print-queue", icon: PrinterIcon },
     ],
   },
   {
