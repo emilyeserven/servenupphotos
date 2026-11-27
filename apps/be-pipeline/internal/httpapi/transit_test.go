@@ -15,7 +15,7 @@ import (
 // fakeFinder answers the rail and bus maps' lines and tracks from its fields, keeping what it was asked.
 type fakeFinder struct {
 	mode     string
-	from, to [2]float64
+	from [2]float64
 	err      error
 	// downloads are the maps Downloads lists.
 	downloads []transit.Download

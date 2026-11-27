@@ -66,7 +66,8 @@ func New() *Client {
 	return &Client{HTTP: &http.Client{}}
 }
 
-// element is one OpenStreetMap element in an Overpass answer.
+// element is one OpenStreetMap element: a bus route, or a stop node, as the
+// bus map reads them.
 type element struct {
 	Type    string            `json:"type"`
 	ID      int64             `json:"id"`
@@ -75,20 +76,11 @@ type element struct {
 	// Lat and Lon are a node's spot.
 	Lat float64 `json:"lat"`
 	Lon float64 `json:"lon"`
-	// Center is a way's or relation's middle, when asked for with "out center".
-	Center *struct {
-		Lat float64 `json:"lat"`
-		Lon float64 `json:"lon"`
-	} `json:"center"`
 }
 
-// member is one member of a route relation, with its geometry.
+// member is one member of a route relation.
 type member struct {
-	Type     string `json:"type"`
-	Ref      int64  `json:"ref"`
-	Role     string `json:"role"`
-	Geometry []struct {
-		Lat float64 `json:"lat"`
-		Lon float64 `json:"lon"`
-	} `json:"geometry"`
+	Type string `json:"type"`
+	Ref  int64  `json:"ref"`
+	Role string `json:"role"`
 }

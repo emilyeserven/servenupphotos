@@ -2,8 +2,8 @@ package transit
 
 import "encoding/json"
 
-// geoJSON is a GeoJSON geometry: a line's LineString or MultiLineString, or
-// a station's Point, each point [longitude, latitude], as the MLIT and
+// geoJSON is a GeoJSON geometry, such as a line's LineString or
+// MultiLineString, each point [longitude, latitude], as the MLIT and
 // Geofabrik files write them.
 type geoJSON struct {
 	Type        string          `json:"type"`
@@ -25,15 +25,6 @@ func (g *geoJSON) lines() [][][2]float64 {
 		}
 	}
 	return out
-}
-
-// point is g's point when it's a Point.
-func (g *geoJSON) point() ([2]float64, bool) {
-	var p [2]float64
-	if g == nil || g.Type != "Point" || json.Unmarshal(g.Coordinates, &p) != nil {
-		return p, false
-	}
-	return p, true
 }
 
 // nearestIndex is the index of the point of line nearest p; 0 with none.

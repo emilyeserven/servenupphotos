@@ -20,22 +20,6 @@ type trackGraph struct {
 	edges  [][]int
 }
 
-// newTrackGraph builds the graph of members' ways, leaving out platforms.
-func newTrackGraph(members []member) *trackGraph {
-	var lines [][][2]float64
-	for _, m := range members {
-		if m.Type != "way" || isPlatform(m.Role) {
-			continue
-		}
-		line := make([][2]float64, 0, len(m.Geometry))
-		for _, p := range m.Geometry {
-			line = append(line, [2]float64{p.Lon, p.Lat})
-		}
-		lines = append(lines, line)
-	}
-	return newLinesGraph(lines)
-}
-
 // isPlatform reports whether a route member's role marks a platform, where
 // riders wait, rather than the way the line runs.
 func isPlatform(role string) bool {

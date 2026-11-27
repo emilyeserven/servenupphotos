@@ -14,8 +14,8 @@ import (
 // stops they name, then those ways, keeping the nodes they run through, and
 // then those nodes' spots and the stops' names.
 
-// osmBusRoutes are the route values read as bus routes, as an Overpass bus
-// look-up finds them (see routeKinds).
+// osmBusRoutes are the route values read as bus routes, as the BFF's
+// Overpass bus look-up finds them (ROUTE_KINDS in src/lib/overpass-lookups.ts).
 var osmBusRoutes = map[string]bool{"bus": true, "trolleybus": true, "coach": true}
 
 // osmBusTags are the route's tags kept, which name the line (see lineOf).
