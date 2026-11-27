@@ -1,5 +1,5 @@
 {
-  "title": "Mosque's Hanging Lights",
+  "title": "Mosque Lanterns",
   "comment": null,
   "id": 279,
   "file": "20250118_143611.jpg",
@@ -268,5 +268,7 @@
   },
   "notes": "Shows mishkat mosque lamps; 'mishkat' isn't a tag, since only 2 photos have them.",
   "similarPhotos": [277, 278, 288, 274, 290, 275],
-  "compareGroup": "Mosque Hanging Lamps"
+  "compareGroup": "Mosque Hanging Lamps",
+  "noGps": false,
+  "altText": null
 }

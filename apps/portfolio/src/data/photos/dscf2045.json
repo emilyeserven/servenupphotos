@@ -13,13 +13,13 @@
   "iso": 200,
   "focalLength": 18,
   "gpsPosition": "34 deg 33' 12.18\" N, 131 deg 31' 21.64\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.58291, 131.555055",
   "createDate": "2026:09:25 13:49:39",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Uta",
+  "customCity": "Abu District",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Yamaguchi",
   "city": "Abu District",
@@ -52,7 +52,12 @@
   "albums": [],
   "tags": ["kawara", "rooftops", "village", "houses", "coastline", "power-lines"],
   "genres": ["cityscape", "landscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "uta"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

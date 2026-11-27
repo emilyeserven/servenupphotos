@@ -1624,7 +1624,7 @@
     "altText": null
   },
   {
-    "title": "Door from the Mosque",
+    "title": "Mosque Door",
     "comment": null,
     "id": 275,
     "file": "20250118_140137.jpg",
@@ -2455,7 +2455,7 @@
     "compareGroup": "Silhouettes in Mosque Doorway"
   },
   {
-    "title": "Mosque's Hanging Lights",
+    "title": "Mosque Lanterns",
     "comment": null,
     "id": 279,
     "file": "20250118_143611.jpg",
@@ -2724,7 +2724,9 @@
     },
     "notes": "Shows mishkat mosque lamps; 'mishkat' isn't a tag, since only 2 photos have them.",
     "similarPhotos": [277, 278, 288, 274, 290, 275],
-    "compareGroup": "Mosque Hanging Lamps"
+    "compareGroup": "Mosque Hanging Lamps",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Geometric Window",
@@ -20644,7 +20646,7 @@
     "compareGroup": "Paper Tags on Pine Tree"
   },
   {
-    "title": "Avenue of Youth I",
+    "title": "Quiet Daytime at the Avenue of Youth",
     "comment": null,
     "id": 514,
     "altText": null,
@@ -32270,7 +32272,7 @@
     }
   },
   {
-    "title": "Small City Night Light",
+    "title": "Sunset on Hagi, Population: 43,000",
     "comment": null,
     "id": 769,
     "altText": null,
@@ -39866,7 +39868,7 @@
     ]
   },
   {
-    "title": "On the Way to Matsue II",
+    "title": "Between Kiyo and Uta",
     "comment": null,
     "id": 948,
     "altText": null,
@@ -39880,11 +39882,11 @@
     "iso": 160,
     "focalLength": 18.5,
     "gpsPosition": "34 deg 31' 24.65\" N, 131 deg 29' 13.69\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.5538, 131.5198",
     "createDate": "2026:09:25 13:43:41",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Kiyo",
+    "customCity": "Abu District",
     "customState": null,
     "customCountry": null,
     "country": "Japan",
@@ -39919,7 +39921,16 @@
     "albums": ["2026-photo-book-candidates"],
     "tags": ["islands", "coastline", "ocean", "road", "hills"],
     "genres": ["landscape"],
-    "places": [],
+    "places": [
+      {
+        "relation": "near",
+        "id": "kiyo"
+      },
+      {
+        "relation": "near",
+        "id": "uta"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -40152,13 +40163,13 @@
     "iso": 200,
     "focalLength": 18,
     "gpsPosition": "34 deg 33' 12.18\" N, 131 deg 31' 21.64\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.58291, 131.555055",
     "createDate": "2026:09:25 13:49:39",
     "customCreateDate": null,
-    "placeName": null,
-    "customCity": null,
+    "placeName": "Uta",
+    "customCity": "Abu District",
     "customState": null,
-    "customCountry": null,
+    "customCountry": "Japan",
     "country": "Japan",
     "state": "Yamaguchi",
     "city": "Abu District",
@@ -40191,7 +40202,12 @@
     "albums": [],
     "tags": ["kawara", "rooftops", "village", "houses", "coastline", "power-lines"],
     "genres": ["cityscape", "landscape"],
-    "places": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "uta"
+      }
+    ],
     "noGps": false,
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -40696,11 +40712,11 @@
     "iso": 250,
     "focalLength": 21.6,
     "gpsPosition": "34 deg 33' 12.18\" N, 131 deg 31' 21.64\" E",
-    "customGpsPosition": null,
+    "customGpsPosition": "34.618593, 131.599989",
     "createDate": "2026:09:25 13:56:51",
     "customCreateDate": null,
     "placeName": null,
-    "customCity": null,
+    "customCity": "Susa",
     "customState": null,
     "customCountry": null,
     "country": "Japan",
@@ -40954,7 +40970,7 @@
     }
   },
   {
-    "title": "Rainy Myeongdong Streets II",
+    "title": "Bright Signs from Both Sides",
     "comment": null,
     "id": 579,
     "altText": null,
@@ -41261,7 +41277,7 @@
     ]
   },
   {
-    "title": "Rainy Myeongdong Streets III",
+    "title": "Purple, Blue, and Umbrellas, Too",
     "comment": null,
     "id": 580,
     "altText": null,
@@ -60573,7 +60589,7 @@
     "similarPhotos": [246, 172, 374, 128, 175, 452]
   },
   {
-    "title": "Matsue Side Road",
+    "title": "Matsue Side Street",
     "comment": null,
     "id": 887,
     "altText": null,
@@ -65617,7 +65633,7 @@
     "similarPhotos": [247, 245, 370, 356, 323, 357]
   },
   {
-    "title": "Suitorou Bamboo Lanterns II",
+    "title": "Lanterns & Stars",
     "comment": null,
     "id": 901,
     "altText": null,
@@ -65644,16 +65660,16 @@
     "width": 5573,
     "height": 3135,
     "images": {
-      "full": "https://cdn.servenupphotos.net/photos/d9a174df975e-dscf5004.jpg",
-      "key": "photos/d9a174df975e-dscf5004.jpg",
-      "xlarge": "https://cdn.servenupphotos.net/photos/d9a174df975e-dscf5004-xlarge.webp",
-      "large": "https://cdn.servenupphotos.net/photos/d9a174df975e-dscf5004-large.webp",
-      "medium": "https://cdn.servenupphotos.net/photos/d9a174df975e-dscf5004-medium.webp",
-      "small": "https://cdn.servenupphotos.net/photos/d9a174df975e-dscf5004-small.webp",
-      "xsmall": "https://cdn.servenupphotos.net/photos/d9a174df975e-dscf5004-xsmall.webp",
-      "preview": "https://cdn.servenupphotos.net/photos/d9a174df975e-dscf5004-preview.webp",
-      "thumbnail": "https://cdn.servenupphotos.net/photos/d9a174df975e-dscf5004-thumbnail.webp?crop=0,0,3135",
-      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d9a174df975e-dscf5004-thumbnailpreview.webp?crop=0,0,3135",
+      "full": "https://cdn.servenupphotos.net/photos/ad8843b75ca4-dscf5004.jpg",
+      "key": "photos/ad8843b75ca4-dscf5004.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/ad8843b75ca4-dscf5004-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/ad8843b75ca4-dscf5004-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/ad8843b75ca4-dscf5004-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/ad8843b75ca4-dscf5004-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/ad8843b75ca4-dscf5004-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/ad8843b75ca4-dscf5004-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/ad8843b75ca4-dscf5004-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ad8843b75ca4-dscf5004-thumbnailpreview.webp",
       "thumbnailcrop": {
         "x": 0,
         "y": 0,
@@ -65894,7 +65910,7 @@
     }
   },
   {
-    "title": "Suitorou Bamboo Lanterns I",
+    "title": "Bamboo Arch",
     "comment": null,
     "id": 902,
     "altText": null,
@@ -70898,7 +70914,7 @@
     }
   },
   {
-    "title": "Lanterns Hanging From the Archway",
+    "title": "Festival Lanterns",
     "comment": null,
     "id": 911,
     "altText": null,
@@ -73697,7 +73713,7 @@
     }
   },
   {
-    "title": "Busy Night in Myeongdong",
+    "title": "City Population Does Not Account For Tourists",
     "comment": null,
     "id": 251,
     "file": "DSCF5675.jpg",
@@ -73973,7 +73989,10 @@
       "peakChroma": 35.47,
       "samples": 9900
     },
-    "similarPhotos": [307, 205, 327, 120, 250, 353]
+    "similarPhotos": [307, 205, 327, 120, 250, 353],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Autumn in Boston Commons",
@@ -77308,7 +77327,7 @@
     }
   },
   {
-    "title": "On the Way to Kobe II",
+    "title": "Clouds & Bridges",
     "comment": null,
     "id": 960,
     "altText": null,
@@ -83492,7 +83511,7 @@
     }
   },
   {
-    "title": "Himeji Side Street I",
+    "title": "Himeji Side Street",
     "comment": null,
     "id": 771,
     "altText": null,
@@ -83764,7 +83783,7 @@
     }
   },
   {
-    "title": "Himeji Side Street II",
+    "title": "Himeji Side Street - Quiet",
     "comment": null,
     "id": 772,
     "altText": null,
@@ -96011,7 +96030,7 @@
     }
   },
   {
-    "title": "Beacon Hill Stoop I",
+    "title": "Autumn Stoop in Beacon Hill",
     "comment": null,
     "id": 635,
     "altText": null,
@@ -102923,7 +102942,7 @@
     }
   },
   {
-    "title": "Dragon fountain",
+    "title": "Dragon Fountain",
     "comment": null,
     "id": 312,
     "file": "DSCF7394.jpg",
@@ -103191,7 +103210,9 @@
       "samples": 9828
     },
     "notes": "Shows a chozuya basin with a dragon spout; 'chozuya' and 'dragons' aren't tags, since only 1 photo has them.",
-    "similarPhotos": [324, 313, 315, 309, 464, 311]
+    "similarPhotos": [324, 313, 315, 309, 464, 311],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "To Engyoji",
@@ -106774,7 +106795,7 @@
     "similarPhotos": [3, 258, 319, 285, 454, 321]
   },
   {
-    "title": "Busan Street",
+    "title": "Busan Side Street",
     "comment": null,
     "id": 321,
     "file": "DSCF7565.jpg",
@@ -107036,7 +107057,10 @@
       "peakChroma": 20.55,
       "samples": 10115
     },
-    "similarPhotos": [225, 319, 454, 373, 304, 407]
+    "similarPhotos": [225, 319, 454, 373, 304, 407],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Studying So Hard, I'm Seeing Red",
@@ -123736,7 +123760,7 @@
     "similarPhotos": [338, 342, 341, 340, 124, 220]
   },
   {
-    "title": "Edo Period Street",
+    "title": "Unchanged Since the Edo Period",
     "comment": null,
     "id": 338,
     "file": "DSCF9413.jpg",
@@ -124004,7 +124028,9 @@
       "samples": 9711
     },
     "notes": "Shows samurai residences (bukeyashiki); 'bukeyashiki' isn't a tag, since only 2 photos have it.",
-    "similarPhotos": [337, 342, 341, 304, 330, 449]
+    "similarPhotos": [337, 342, 341, 304, 330, 449],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Offerings for Buddha",
@@ -125373,7 +125399,7 @@
     "similarPhotos": [342, 340, 337, 338, 395, 372]
   },
   {
-    "title": "Country Road",
+    "title": "Hagi Side Street",
     "comment": null,
     "id": 342,
     "file": "DSCF9569.jpg",
@@ -125644,7 +125670,10 @@
       "peakChroma": 8.37,
       "samples": 9828
     },
-    "similarPhotos": [341, 395, 337, 338, 304, 372]
+    "similarPhotos": [341, 395, 337, 338, 304, 372],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Relief Behind the Lanterns",
@@ -128209,7 +128238,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["2026-photo-book-candidates"],
     "tags": ["koshi", "shoji", "interior", "windows", "trees", "machiya"],
     "genres": [],
     "places": [
@@ -163124,9 +163153,9 @@
     "similarPhotos": [359, 292, 339, 290, 369, 289]
   },
   {
-    "id": 962,
-    "title": "Kobe Sunset",
+    "title": "Sunset on Kobe, Population: 1.5 Million",
     "comment": null,
+    "id": 962,
     "altText": null,
     "notes": null,
     "file": "DSCF9445.jpg",
@@ -175302,7 +175331,7 @@
     "similarPhotos": [366, 362, 365, 368, 359, 294]
   },
   {
-    "title": "Osakan Street",
+    "title": "Osakan Side Street",
     "comment": null,
     "id": 304,
     "file": "DSCF0186.jpg",
@@ -175569,7 +175598,10 @@
       "peakChroma": 14.81,
       "samples": 9711
     },
-    "similarPhotos": [306, 250, 449, 450, 319, 454]
+    "similarPhotos": [306, 250, 449, 450, 319, 454],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "id": 30,
@@ -185995,7 +186027,7 @@
     "similarPhotos": [486, 496, 480, 471, 484, 482]
   },
   {
-    "title": "Seal Rock Row II",
+    "title": "Coastal Row Houses",
     "comment": null,
     "id": 414,
     "file": "DSCF2488.jpg",
@@ -186268,10 +186300,12 @@
     },
     "similarPhotos": [430, 436, 372, 408, 412, 373],
     "compareGroup": "Seal Rock Row Houses",
-    "notes": "Quality Check (pixelation): The rear plate of the silver Nissan pickup in the foreground, right of centre, is readable."
+    "notes": "Quality Check (pixelation): The rear plate of the silver Nissan pickup in the foreground, right of centre, is readable.",
+    "noGps": false,
+    "altText": null
   },
   {
-    "title": "Seal Rock Row",
+    "title": "Seal Rock & 45th",
     "comment": null,
     "id": 412,
     "file": "DSCF2483.jpg",
@@ -186544,7 +186578,9 @@
     },
     "similarPhotos": [430, 436, 414, 409, 373, 445],
     "compareGroup": "Seal Rock Row Houses",
-    "notes": "Quality Check (pixelation): The front plate of the black minivan parked by the tree on the left is readable."
+    "notes": "Quality Check (pixelation): The front plate of the black minivan parked by the tree on the left is readable.",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Seaweed King",

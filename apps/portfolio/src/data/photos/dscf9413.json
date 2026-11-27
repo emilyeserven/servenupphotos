@@ -1,5 +1,5 @@
 {
-  "title": "Edo Period Street",
+  "title": "Unchanged Since the Edo Period",
   "comment": null,
   "id": 338,
   "file": "DSCF9413.jpg",
@@ -267,5 +267,7 @@
     "samples": 9711
   },
   "notes": "Shows samurai residences (bukeyashiki); 'bukeyashiki' isn't a tag, since only 2 photos have it.",
-  "similarPhotos": [337, 342, 341, 304, 330, 449]
+  "similarPhotos": [337, 342, 341, 304, 330, 449],
+  "noGps": false,
+  "altText": null
 }

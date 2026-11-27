@@ -1,5 +1,5 @@
 {
-  "title": "Country Road",
+  "title": "Hagi Side Street",
   "comment": null,
   "id": 342,
   "file": "DSCF9569.jpg",
@@ -261,5 +261,8 @@
     "peakChroma": 8.37,
     "samples": 9828
   },
-  "similarPhotos": [341, 395, 337, 338, 304, 372]
+  "similarPhotos": [341, 395, 337, 338, 304, 372],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

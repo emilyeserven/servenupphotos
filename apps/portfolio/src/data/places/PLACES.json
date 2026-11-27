@@ -1276,6 +1276,14 @@
     "exactLocation": true
   },
   {
+    "id": "kiyo",
+    "name": "Kiyo",
+    "description": "",
+    "parent": "",
+    "city": "Abu District",
+    "country": "Japan"
+  },
+  {
     "id": "komfortabel-coffee-namsan",
     "name": "Komfortabel coffee Namsan",
     "description": "",
@@ -1859,8 +1867,8 @@
     "name": "Outer Richmond",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": "",
+    "city": "San Francisco",
+    "country": "United States of America",
     "latitude": 37.78128935154147,
     "longitude": -122.49987454149979
   },
@@ -2237,6 +2245,17 @@
     "longitude": 132.68556
   },
   {
+    "id": "sogo",
+    "name": "Sōgō",
+    "description": "",
+    "parent": "",
+    "city": "Abu District",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.583,
+    "longitude": 131.5558
+  },
+  {
     "id": "soho",
     "name": "SoHo",
     "description": "",
@@ -2307,6 +2326,17 @@
     "parent": "",
     "city": "Nantucket",
     "country": "United States of America"
+  },
+  {
+    "id": "susa",
+    "name": "Susa",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.6187,
+    "longitude": 131.6
   },
   {
     "id": "takenoya-ryokan",
@@ -2419,6 +2449,14 @@
     "country": "United States of America",
     "latitude": 40.77416765599665,
     "longitude": -73.95773421216752
+  },
+  {
+    "id": "uta",
+    "name": "Uta",
+    "description": "",
+    "parent": "",
+    "city": "Abu District",
+    "country": "Japan"
   },
   {
     "id": "valley-of-the-kings",

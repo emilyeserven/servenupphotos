@@ -1529,6 +1529,14 @@
     "localScript": "北惣門橋"
   },
   {
+    "id": "place-kiyo",
+    "type": "place",
+    "name": "Kiyo",
+    "romanization": "Kiyo",
+    "pronunciation": "きよ",
+    "localScript": "木与"
+  },
+  {
     "id": "place-komfortabel-coffee-namsan",
     "type": "place",
     "name": "Komfortabel coffee Namsan",
@@ -2431,6 +2439,14 @@
     "romanization": "Upper East Side",
     "pronunciation": "",
     "localScript": "Upper East Side"
+  },
+  {
+    "id": "place-uta",
+    "type": "place",
+    "name": "Uta",
+    "romanization": "Uta",
+    "pronunciation": "うた",
+    "localScript": "宇田"
   },
   {
     "id": "place-valley-of-the-kings",

@@ -1,5 +1,5 @@
 {
-  "title": "Seal Rock Row",
+  "title": "Seal Rock & 45th",
   "comment": null,
   "id": 412,
   "file": "DSCF2483.jpg",
@@ -272,5 +272,7 @@
   },
   "similarPhotos": [430, 436, 414, 409, 373, 445],
   "compareGroup": "Seal Rock Row Houses",
-  "notes": "Quality Check (pixelation): The front plate of the black minivan parked by the tree on the left is readable."
+  "notes": "Quality Check (pixelation): The front plate of the black minivan parked by the tree on the left is readable.",
+  "noGps": false,
+  "altText": null
 }
