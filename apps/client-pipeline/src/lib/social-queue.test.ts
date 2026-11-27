@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import type { SocialPhoto } from "@/api/publish";
 import type { DayPost } from "@/lib/social-post-days";
-import { scheduledDaysFrom } from "@/lib/social-queue";
+import { scheduledDaysFrom, withPostDays } from "@/lib/social-queue";
 
 /** An Instagram post on a day with the given status. */
 function post(status: DayPost["status"]): DayPost {
@@ -43,4 +44,28 @@ test("a Not Stored post counts as a scheduled day", () => {
     ["2026-11-12", [post("scheduled")]],
   ]);
   assert.equal(scheduledDaysFrom(posts, "2026-11-10", ["2026-11-11"]), 3);
+});
+
+test("days with only an Instagram post get that post's photo, and a calendar day keeps its own", () => {
+  const read = (path: string) => ({ path }) as unknown as SocialPhoto;
+  const post = (path: string) =>
+    ({ photo: { path }, status: "planned", url: "" }) as unknown as DayPost;
+  const a = read("a.json");
+  const b = read("b.json");
+  const days = withPostDays(
+    new Map([["2026-12-01", a]]),
+    [a, b],
+    new Map([
+      ["2026-12-01", [post("b.json")]],
+      ["2026-12-02", [post("unread.json"), post("b.json")]],
+      ["2026-12-03", [post("unread.json")]],
+    ]),
+  );
+  assert.deepEqual(
+    [...days],
+    [
+      ["2026-12-01", a],
+      ["2026-12-02", b],
+    ],
+  );
 });

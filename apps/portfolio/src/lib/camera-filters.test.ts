@@ -3,12 +3,14 @@ import { test } from "node:test";
 import {
   exposureSeconds,
   filterWithCamera,
+  groupRange,
   parseCameraFilters,
   parseRange,
   rangeValues,
   settingNumber,
   withoutCameraFilters,
 } from "@portfolio/lib/camera-filters";
+import type { MetaGroup } from "@portfolio/lib/metadata-groups";
 import type { Photo } from "@portfolio/lib/photos";
 
 /** A photo with the camera settings and equipment the camera filters read. */
@@ -106,4 +108,32 @@ test("leaves out the camera filters named", () => {
   const filters = withoutCameraFilters({ camera: "X100V", iso: "1-2" }, ["iso"]);
   assert.equal(filters.camera, "X100V");
   assert.equal(filters.iso, undefined);
+});
+
+/** A focal length group no other group is in, with this range and these values. */
+function focalGroup(range: MetaGroup["range"], values: (string | number)[] = []): MetaGroup {
+  return {
+    id: "test-only-group",
+    name: "Test",
+    field: "focalLength",
+    parent: "",
+    values,
+    ...(range && { range }),
+  } as MetaGroup;
+}
+
+test("a group's quick-select runs over the photos' values inside its range", () => {
+  const values = ["8", "11", "16", "24", "35"];
+  assert.equal(groupRange("focalLength", focalGroup({ min: 10, max: 24 }), values), "11-24");
+  // A range missing an end runs as far as it goes.
+  assert.equal(groupRange("focalLength", focalGroup({ min: 20 }), values), "24-35");
+  assert.equal(groupRange("focalLength", focalGroup({ max: 10 }), values), "8-8");
+  assert.equal(groupRange("focalLength", focalGroup({ min: 50, max: 70 }), values), undefined);
+});
+
+test("a group without a range covers its values, read as numbers even when they have units", () => {
+  const values = ["11", "16", "24", "35"];
+  assert.equal(groupRange("focalLength", focalGroup(undefined, ["16 mm", 30]), values), "16-24");
+  assert.equal(groupRange("focalLength", focalGroup(undefined, ["wide"]), values), undefined);
+  assert.equal(groupRange("focalLength", focalGroup(undefined), values), undefined);
 });
