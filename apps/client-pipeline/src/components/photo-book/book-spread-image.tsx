@@ -29,11 +29,13 @@ interface SpreadImageProps {
   total: number;
 }
 
-/** The drawn spread's size in CSS pixels, with the image's longer side, or null when it isn't drawn. */
-function drawnSheet() {
-  const root = document.getElementById(SPREAD_ROOT_ID);
-  if (!root) return null;
-  const { width, height } = root.getBoundingClientRect();
+/**
+ * One drawn spread's size in CSS pixels, with the image's longer side, or null when none is drawn.
+ */
+export function drawnSheet() {
+  const first = document.getElementById(SPREAD_ROOT_ID)?.firstElementChild;
+  if (!first) return null;
+  const { width, height } = first.getBoundingClientRect();
   return { width, height, longest: SPREAD_IMAGE_LONGEST };
 }
 
@@ -87,21 +89,40 @@ export function SaveSpreadImageButton(props: SpreadImageProps) {
           className="bg-background absolute top-full right-0 z-10 mt-1 w-max max-w-sm text-right"
         />
       )}
-      {drawing && createPortal(<SpreadSheet {...props} />, document.body)}
+      {drawing &&
+        createPortal(
+          <SpreadSheets book={props.book} look={props.look} views={[props.view]} />,
+          document.body,
+        )}
     </div>
   );
 }
 
-/** The spread's two pages side by side at the book's page size, out of sight on the screen. */
-function SpreadSheet({ book, look, view }: SpreadImageProps) {
+/**
+ * Each of views' two pages side by side at the book's page size, one spread under another with no
+ * gap, out of sight on the screen.
+ */
+export function SpreadSheets({
+  book,
+  look,
+  views,
+}: {
+  book: PhotoBook;
+  look: PageLook;
+  views: BookView[];
+}) {
   const page = printSize(book);
   const sheet = printSize(book, true);
   return (
     <div inert style={{ position: "fixed", top: 0, left: "-300vw" }}>
-      <div id={SPREAD_ROOT_ID} data-preview data-print style={{ ...sheet, display: "flex" }}>
-        {view.pages.map((p, i) => (
-          <div key={p.id} style={{ ...page, flex: "none", overflow: "hidden" }}>
-            <PrintPage page={p} look={look} side={i === 0 ? "left" : "right"} />
+      <div id={SPREAD_ROOT_ID} data-preview data-print style={{ width: sheet.width }}>
+        {views.map((view) => (
+          <div key={view.pages[0]?.id} style={{ ...sheet, display: "flex", overflow: "hidden" }}>
+            {view.pages.map((p, i) => (
+              <div key={p.id} style={{ ...page, flex: "none", overflow: "hidden" }}>
+                <PrintPage page={p} look={look} side={i === 0 ? "left" : "right"} />
+              </div>
+            ))}
           </div>
         ))}
       </div>

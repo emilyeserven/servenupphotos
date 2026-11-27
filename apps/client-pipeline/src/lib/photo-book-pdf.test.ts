@@ -67,7 +67,7 @@ test("the printed page holds the style sheets and the pages, with no early end t
 });
 
 /** The backend's progress at step, done of total. */
-function at(step: "" | "starting" | "photos" | "printing", done = 0, total = 0) {
+function at(step: "" | "starting" | "photos" | "printing" | "drawing", done = 0, total = 0) {
   return { running: true, step, done, total };
 }
 
@@ -77,4 +77,9 @@ test("Save as PDF says how far the PDF has got", () => {
   assert.equal(pdfProgressText(false, at("starting")), "Starting Chrome…");
   assert.equal(pdfProgressText(false, at("photos", 12, 90)), "Loading photos: 12 of 90");
   assert.equal(pdfProgressText(false, at("printing", 0, 72)), "Printing 72 pages…");
+});
+
+test("Save all as images says which image it's drawing", () => {
+  assert.equal(pdfProgressText(false, undefined, "Making the images…"), "Making the images…");
+  assert.equal(pdfProgressText(false, at("drawing", 3, 37)), "Drawing image 4 of 37");
 });
