@@ -27,26 +27,28 @@ Below them every page is listed under its section, with the pages in its submenu
     - Location Names
     - Bulk Places
     - Localizations
+  - Trip Lines
+  - Photo Sets
+  - Related Photos
 - **Publish**
   - Instagram
     - Planned Posts
   - Captions (the Caption Templates page)
   - Photo Book
   - Bio
+    - Describe my style
   - Site Spotlight
-  - Related Photos
   - User Likes
 - **Configuration**
   - Settings
     - Status
     - Changelog
-    - Explore Bucket
-    - Manage Sizes
-    - Extra: Describe my style
+    - Storage: Explore Bucket, Manage Sizes
   - Update Data (each of its subpages)
-  - Metadata Groups
-  - Camera Overrides
-  - Trip Lines
+  - Gear (the Gear Pictures page)
+    - Camera Overrides
+    - Metadata Groups
+  - Graph Presets
 
 ## Submenus
 
@@ -65,9 +67,9 @@ The header's breadcrumbs start with the open page's sidebar section and page, an
 | Page                          | Breadcrumbs                                                      |
 | ----------------------------- | ---------------------------------------------------------------- |
 | An album, tag or genre        | **Organize › Albums › Japan › Tokyo** (an album's parents link)  |
-| A day's page on Trip Lines    | **Configuration › Trip Lines › Thu, Oct 1, 2026 › Route**        |
-| A Trip                        | **Configuration › Trip Lines › Trips › Japan**                   |
-| Trip Lines' Trips tab         | **Configuration › Trip Lines › Trips**                           |
+| A day's page on Trip Lines    | **Organize › Trip Lines › Thu, Oct 1, 2026 › Route**             |
+| A Trip                        | **Organize › Trip Lines › Trips › Japan**                        |
+| Trip Lines' Trips tab         | **Organize › Trip Lines › Trips**                                |
 | Lightroom Albums' Import page | **Pipeline › Lightroom Albums › Import**                         |
 | Dashboard, Bulk Upload        | **Dashboard**, **Bulk Upload** (the sidebar's header opens them) |
 

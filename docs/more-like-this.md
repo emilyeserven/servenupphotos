@@ -19,7 +19,7 @@ It's `MoreLikeThis` in `apps/portfolio/src/components/more-like-this.tsx`, and `
 
 ## Related Photos page
 
-The pipeline's **Related Photos** page (`/related-photos`, under Publish) has two cards.
+The pipeline's **Related Photos** page (`/related-photos`, under Organize) has two cards.
 
 **Find related photos** has the backend read every photo file as the next Commit will have them and score each pair:
 

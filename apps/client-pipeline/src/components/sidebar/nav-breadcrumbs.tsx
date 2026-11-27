@@ -16,7 +16,7 @@ const NO_CRUMBS = fixedCrumbs();
 /**
  * The header's breadcrumbs: the open page's sidebar section, the page its submenu is under, the page
  * itself, and whatever the route adds after it, such as Organize › Albums › Japan › Tokyo or
- * Configuration › Trip Lines › Wed, Sep 23, 2026 › Route. Every breadcrumb but the last links back
+ * Organize › Trip Lines › Wed, Sep 23, 2026 › Route. Every breadcrumb but the last links back
  * to its page. On a phone only the last shows.
  */
 export function NavBreadcrumbs() {

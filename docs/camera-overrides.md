@@ -1,6 +1,6 @@
 # Camera Overrides
 
-`/camera-overrides`, under **Configuration** in the sidebar, sets what to write instead of a camera's or a lens's EXIF values, such as `"Fujifilm X-T5"` for a camera whose EXIF says `"X-T5"`, `"Fujinon XF 35mm F2 R WR"` for the lens `"XF35mmF2 R WR"` on any camera, or a lens's real name for an adapted manual lens whose EXIF only says `"21.0 mm"`. Rules are per camera (the **Cameras** tab) or per lens (the **Lenses** tab, see [Lens overrides](#lens-overrides)) and can set any field read from EXIF: `camera`, `lens`, `focalLength`, `aperture`, `manualAperture` (**Manual/unknown aperture**, yes or no), `exposure`, `iso`, `gpsPosition`, `createDate`, `country` and `city`. A photo's [custom lens](custom-lenses.md) is applied after them.
+`/camera-overrides`, under **Configuration › Gear** in the sidebar, sets what to write instead of a camera's or a lens's EXIF values, such as `"Fujifilm X-T5"` for a camera whose EXIF says `"X-T5"`, `"Fujinon XF 35mm F2 R WR"` for the lens `"XF35mmF2 R WR"` on any camera, or a lens's real name for an adapted manual lens whose EXIF only says `"21.0 mm"`. Rules are per camera (the **Cameras** tab) or per lens (the **Lenses** tab, see [Lens overrides](#lens-overrides)) and can set any field read from EXIF: `camera`, `lens`, `focalLength`, `aperture`, `manualAperture` (**Manual/unknown aperture**, yes or no), `exposure`, `iso`, `gpsPosition`, `createDate`, `country` and `city`. A photo's [custom lens](custom-lenses.md) is applied after them.
 
 ## The file
 
