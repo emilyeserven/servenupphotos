@@ -1,4 +1,4 @@
-// Checks that every /api route the Go backend registers has a screenshot fixture, so `pnpm shot`
+// Checks that every /api route the Go backend or the BFF answers has a screenshot fixture, so `pnpm shot`
 // can show every page without a backend (see the `add-pipeline-endpoint` skill). A route
 // with a path parameter, such as `GET /places/{id}/area`, counts as covered by a fixture for any
 // value, such as `GET /api/places/dotonbori/area`. It also checks that every route follows the
@@ -6,7 +6,8 @@
 // and the routes that break a rule.
 //
 // The routes are read from the `mux.HandleFunc("METHOD /path", …)` lines in
-// apps/be-pipeline/internal/httpapi; the fixtures from scripts/fixtures (merged by scripts/screenshot-fixtures.mjs).
+// apps/be-pipeline/internal/httpapi and the `app.get("/path", …)` lines in apps/bff-pipeline/src/routes
+// (docs/bff-routes.md); the fixtures from scripts/fixtures (merged by scripts/screenshot-fixtures.mjs).
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { routeShapeProblems } from "../route-shapes.mjs";
@@ -14,6 +15,7 @@ import { defaultFixtures } from "../screenshot-fixtures.mjs";
 
 const root = path.resolve(import.meta.dirname, "../..");
 const HTTPAPI = path.join(root, "apps/be-pipeline/internal/httpapi");
+const BFF_ROUTES = path.join(root, "apps/bff-pipeline/src/routes");
 
 /**
  * Routes `pnpm shot` answers on its own, or that only the real BFF can answer, so they need no
@@ -30,6 +32,25 @@ const WITHOUT_FIXTURE = new Set([
 ]);
 
 const ROUTE_LINE = /mux\.Handle(?:Func)?\("((?:GET|POST|PUT|DELETE|PATCH) [^"]+)"/g;
+
+/** A Fastify route line in the BFF, such as `app.get("/areas", …)`; the catch-all relay's `app.all` isn't one. */
+const BFF_ROUTE_LINE = /app\.(get|post|put|delete|patch)\("(\/[^"]+)"/g;
+
+/** The `METHOD /path` routes one BFF route file answers, with `:id` parameters written `{id}` as Go writes them. */
+function bffRoutesIn(source) {
+  return [...source.matchAll(BFF_ROUTE_LINE)].map(
+    ([, method, route]) => `${method.toUpperCase()} ${route.replace(/:(\w+)/g, "{$1}")}`,
+  );
+}
+
+/** Every `METHOD /path` the BFF answers itself instead of relaying it. */
+async function bffRoutes() {
+  const names = (await readdir(BFF_ROUTES)).filter((name) => name.endsWith(".ts"));
+  const sources = await Promise.all(
+    names.map((name) => readFile(path.join(BFF_ROUTES, name), "utf8")),
+  );
+  return sources.flatMap(bffRoutesIn);
+}
 
 /** Whether the file is Go source the router could register routes in (not a test). */
 function registersRoutes(name) {
@@ -60,7 +81,7 @@ function routePattern(route) {
   return new RegExp(`^${method} /api${escaped}$`);
 }
 
-const routes = await backendRoutes();
+const routes = [...new Set([...(await backendRoutes()), ...(await bffRoutes())])].toSorted();
 const fixtureKeys = Object.keys(defaultFixtures());
 const missing = routes.filter(
   (route) =>

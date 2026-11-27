@@ -38,6 +38,10 @@ services:
     environment:
       PORT: "8080"
       API_URL: http://be-pipeline:8081
+      # From .env, for the routes the BFF answers itself (docs/bff-routes.md): the basemap key and the area search's servers.
+      CARTO_KEY: ${CARTO_KEY:-}
+      NOMINATIM_URL: ${NOMINATIM_URL:-}
+      WIKIDATA_URL: ${WIKIDATA_URL:-}
     depends_on:
       - be-pipeline
     develop:

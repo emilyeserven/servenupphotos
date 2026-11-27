@@ -4,6 +4,8 @@ import fastifyStatic from "@fastify/static";
 import Fastify from "fastify";
 import { env } from "./env.js";
 import { loadBackendTimeouts } from "./lib/backend-timeouts.js";
+import { areasRoutes } from "./routes/areas.js";
+import { basemapRoutes } from "./routes/basemap.js";
 import { healthRoutes } from "./routes/health.js";
 import { relayRoutes } from "./routes/relay.js";
 
@@ -17,6 +19,9 @@ await app.register(fastifyCompress, { encodings: ["gzip"] });
 await app.register(
   async (api) => {
     await api.register(healthRoutes);
+    // Answered here, not relayed: routes that need no GitHub, R2 or image work (docs/bff-routes.md).
+    await api.register(areasRoutes);
+    await api.register(basemapRoutes);
     await api.register(relayRoutes);
   },
   { prefix: "/api" },
