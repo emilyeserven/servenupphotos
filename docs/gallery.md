@@ -63,6 +63,10 @@ The Gallery's **Groups** picker has a fourth section, **Likes** (`?liked=<person
 
 > **Frontend analogy:** it's a join done in the client before filtering: each photo object gets a `likedBy` array from a `Map<photoId, person[]>`, so the shared filter code can stay a pure `photos.filter(...)` without knowing where the likes came from.
 
+#### Book in the Groups picker
+
+The Gallery's **Groups** picker also has a **Book** section (`?book=<id>`), which the portfolio leaves out too: each [photo book](photo-book.md) with any of the photos the other filters leave, with how many of them it has, A to Z. Choosing one shows only the photos actually placed on a page that's in that book (`photosInBook` in `lib/photo-book-order.ts`), not the candidates in the book's album or the photos on pages left out of it on its Book tab. The books are read from the combined data store's `PHOTOBOOKS.json` with the changes waiting for Commit made over it, so a photo placed a moment ago filters at once; `useGridFilters` puts each book on the photos placed in it (`books`), and `lib/in-book.ts` in the portfolio makes the choices and matches them. The section is left out while no photo is in a book.
+
 ### A place's photos
 
 On the [Places page](places-and-localizations/places.md), a place's photo count and **See photos in Gallery** at the top of its panel open the Gallery showing only the photos that list that place (`?placeId=<id>`). The filter bar then shows the place, with an × that shows every photo again, and a **Coordinates** filter for where each of its photos goes on the portfolio's map (`?placeGps=`):
