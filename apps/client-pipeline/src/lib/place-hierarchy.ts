@@ -70,7 +70,14 @@ function generalFirst(rows: PhotoPlace[], places: Place[]): boolean {
  * places swap, each relation staying in its row.
  */
 export function specificFirst(rows: PhotoPlace[], places: Place[]): PhotoPlace[] {
-  if (!generalFirst(rows, places)) return rows;
+  return generalFirst(rows, places) ? swappedPlaces(rows) : rows;
+}
+
+/**
+ * The two rows with their places swapped and each relation left where it was, so "In Gyeongbokgung
+ * Palace by Geunjeongmun Gate" becomes "In Geunjeongmun Gate by Gyeongbokgung Palace".
+ */
+export function swappedPlaces(rows: PhotoPlace[]): PhotoPlace[] {
   const ids = rows.map((row) => row.id).toReversed();
   return rows.map((row, index) => ({ ...row, id: ids[index] ?? row.id }));
 }

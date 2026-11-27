@@ -74,11 +74,21 @@ function joinWord(place: Place): string {
 }
 
 /**
- * The word before the photo's place at `index`: when it's a place the place before it is in, the
- * word of the place just under it on the way up, as set on the Places page; else the photo's own.
+ * The word before the photo's place at `index`: "and" after a place the photo is "between", or the
+ * word from the Places page (see joinedWord); else the photo's own.
  */
 function wordBefore(places: PhotoPlaces, index: number): string {
-  return placesWord(places, index) ?? places[index]?.relation ?? "";
+  return joinedWord(places, index) ?? places[index]?.relation ?? "";
+}
+
+/**
+ * "and" after a place the photo is "between" ("Between Kiyo and Uta"); else, when the photo's place
+ * at `index` is one the place before it is in, the word of the place just under it on the way up, as
+ * set on the Places page; else undefined.
+ */
+function joinedWord(places: PhotoPlaces, index: number): string | undefined {
+  const between = index > 0 && places[index - 1]?.relation === "between";
+  return between ? "and" : placesWord(places, index);
 }
 
 /** The word from the Places page before the photo's place at `index`, if it's one the place before it is in. */

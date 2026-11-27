@@ -1,5 +1,6 @@
 import type { CombinedData } from "@/api/photos";
-import { type Localization, type Place, savedPlaces } from "@/api/places";
+import { BETWEEN, type Localization, type Place, savedPlaces } from "@/api/places";
+import { placePhrase } from "@/lib/place-joins";
 
 /** The places, localizations, albums, tags and genres a caption names, from the combined lists. */
 export interface CaptionLists {
@@ -79,6 +80,10 @@ export const PLACEHOLDERS: Placeholder[] = [
     "places",
     "Every place, each localized, with how the photo relates to the later ones, such as 경복궁 (Gyeongbokgung), near 장고 (Janggo)",
   ),
+  one(
+    "placesPhrase",
+    "The places as the Photo page reads them, in English, such as In Gyeongbokgung Palace by Geunjeongmun Gate or Between Kiyo and Uta",
+  ),
   localPlaceholders("place", "The most specific of the photo's places"),
   localPlaceholders("mainPlace", "The place the photo's places are in, such as a palace"),
   localPlaceholders("city", "The city (the custom city first)"),
@@ -104,8 +109,8 @@ export const PLACE_FORM_PLACEHOLDERS: Placeholder[] = [
     localPlaceholders(`place${n}`, `The photo's ${["first", "second", "third"][n - 1]} place`),
   ),
   {
-    names: ["relation2", "relation3"],
-    help: "How the photo relates to its second and third place, such as near",
+    names: ["relation1", "relation2", "relation3"],
+    help: "How the photo relates to its first, second and third place, such as near; and after between",
   },
 ];
 
@@ -246,13 +251,24 @@ function placeLocalization(lists: CaptionLists, place: Place | undefined) {
   return place && findLocalization(lists, "place", "", place.id);
 }
 
-/** Every place, written in its own script with its romanization, the later ones after their relation, such as "경복궁 (Gyeongbokgung), near 장고 (Janggo)". */
+/**
+ * Every place, written in its own script with its romanization, the later ones after their relation,
+ * such as "경복궁 (Gyeongbokgung), near 장고 (Janggo)"; "and" takes no comma, as in "Kiyo and Uta".
+ */
 function allPlaces(places: RelatedPlace[], lists: CaptionLists): string {
-  const written = places.map(({ place, relation }, i) => {
+  return places.reduce((text, { place, relation }, i) => {
     const name = localizedName(place.name, placeLocalization(lists, place));
-    return i > 0 && relation ? `${relation} ${name}` : name;
-  });
-  return written.join(", ");
+    if (i === 0) return name;
+    if (relation === BETWEEN.join) return `${text} ${relation} ${name}`;
+    return `${text}, ${[relation, name].filter(Boolean).join(" ")}`;
+  }, "");
+}
+
+/** The photo's places as the Photo page reads them, such as "Between Kiyo and Uta". */
+function placesPhrase(places: RelatedPlace[], lists: CaptionLists): string {
+  const rows = places.map(({ place, relation }) => ({ relation, id: place.id }));
+  const names = new Map(lists.places.map((place) => [place.id, place.name]));
+  return placePhrase(rows, lists.places, names);
 }
 
 /** The place placeholders: every place, the most specific place, and the one they're all in. */
@@ -265,8 +281,14 @@ function placeValues(photo: Record<string, unknown>, lists: CaptionLists): Capti
     ...written("place", specific),
     ...written("mainPlace", ancestry(lists, places[0]?.place).at(-1)),
     places: allPlaces(places, lists),
+    placesPhrase: placesPhrase(places, lists),
   };
-  if (!specific) values.place = values.placeLocalized = values.places = firstText(photo.placeName);
+  if (!specific)
+    values.place =
+      values.placeLocalized =
+      values.places =
+      values.placesPhrase =
+        firstText(photo.placeName);
   return { ...values, ...numberedPlaceValues(places, lists, firstText(photo.placeName)) };
 }
 

@@ -3,7 +3,7 @@ import type { PhotoPlace } from "@/api/places";
 import type { Places } from "@/components/place-fields/use-places";
 import { Button } from "@/components/ui/button";
 import { unrelatedPair } from "@/lib/place-hierarchy";
-import { placePhrase } from "@/lib/place-joins";
+import { needsSecondPlace, placePhrase } from "@/lib/place-joins";
 
 /**
  * When two places are chosen and neither is in the other, offers to put the first in the second,
@@ -79,5 +79,6 @@ export function PlaceFooter({ rows, all, disabled, onAddSecond, onSwap }: PlaceF
 /** The places as a quoted phrase, or what to do when none is chosen. */
 function phraseText(rows: PhotoPlace[], all: Places): string {
   const phrase = placePhrase(rows, all.places, all.names);
-  return phrase ? `“${phrase}”` : "Choose a place, and how the photo relates to it.";
+  if (!phrase) return "Choose a place, and how the photo relates to it.";
+  return needsSecondPlace(rows) ? `“${phrase} and …”: choose the second place.` : `“${phrase}”`;
 }
