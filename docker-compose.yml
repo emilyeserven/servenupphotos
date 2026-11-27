@@ -23,10 +23,14 @@ services:
     environment:
       PORT: "8080"
       API_URL: http://be-pipeline:8081
-      # From .env, for the routes the BFF answers itself (docs/bff-routes.md): the basemap key and the area search's servers.
+      # From .env, for the routes the BFF answers itself (docs/bff-routes.md): the basemap key, the area search's servers and the transit look-ups'.
       CARTO_KEY: ${CARTO_KEY:-}
       NOMINATIM_URL: ${NOMINATIM_URL:-}
       WIKIDATA_URL: ${WIKIDATA_URL:-}
+      OVERPASS_URL: ${OVERPASS_URL:-}
+      PHOTON_URL: ${PHOTON_URL:-}
+      TRANSITLAND_API_KEY: ${TRANSITLAND_API_KEY:-}
+      TRANSITLAND_URL: ${TRANSITLAND_URL:-}
     ports:
       - "${PIPELINE_PORT:-8080}:8080"
     depends_on:

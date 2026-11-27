@@ -1,5 +1,6 @@
 import { NoRelationError } from "./area-finder.js";
 import type { Area } from "./areas.js";
+import { firstParam } from "./query.js";
 
 /** How long one look-up may take, waiting its turn included. */
 const AREA_SEARCH_TIMEOUT_MS = 28_000;
@@ -16,11 +17,9 @@ export interface AreaSearchAnswer {
 /** Finds the areas for a search; AreaFinder's find, or a fake in tests. */
 export type FindAreas = (query: string, signal: AbortSignal) => Promise<Area[]>;
 
-/** The first value of the `q` query parameter, as the request's query gives it. */
+/** The first value of the `q` query parameter, trimmed. */
 export function searchOf(query: unknown): string {
-  const q = (query as { q?: unknown } | undefined)?.q;
-  const first = Array.isArray(q) ? q[0] : q;
-  return typeof first === "string" ? first.trim() : "";
+  return firstParam(query, "q").trim();
 }
 
 /**

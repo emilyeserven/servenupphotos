@@ -67,7 +67,7 @@ func geofabrikIndex(body []byte) ([]osmRegion, error) {
 					PBF string `json:"pbf"`
 				} `json:"urls"`
 			} `json:"properties"`
-			Geometry tlGeometry `json:"geometry"`
+			Geometry geoJSON `json:"geometry"`
 		} `json:"features"`
 	}
 	if err := json.Unmarshal(body, &fc); err != nil {
@@ -87,7 +87,7 @@ func geofabrikIndex(body []byte) ([]osmRegion, error) {
 
 // polygons are g's polygons when it's a Polygon or MultiPolygon; none
 // otherwise.
-func (g *tlGeometry) polygons() [][][][2]float64 {
+func (g *geoJSON) polygons() [][][][2]float64 {
 	var out [][][][2]float64
 	switch g.Type {
 	case "MultiPolygon":

@@ -8,6 +8,7 @@ import { areasRoutes } from "./routes/areas.js";
 import { basemapRoutes } from "./routes/basemap.js";
 import { healthRoutes } from "./routes/health.js";
 import { relayRoutes } from "./routes/relay.js";
+import { transitRoutes } from "./routes/transit.js";
 
 const app = Fastify({ logger: true });
 
@@ -22,6 +23,7 @@ await app.register(
     // Answered here, not relayed: routes that need no GitHub, R2 or image work (docs/bff-routes.md).
     await api.register(areasRoutes);
     await api.register(basemapRoutes);
+    await api.register(transitRoutes);
     await api.register(relayRoutes);
   },
   { prefix: "/api" },

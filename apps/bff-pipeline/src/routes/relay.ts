@@ -7,7 +7,7 @@ import { timeoutFor } from "../lib/timeouts.js";
  * Response headers passed on to the client: thumbnail caching, an upload's JPEG size and quality,
  * the file name an original JPEG downloads as, and what a transit lines look-up searched.
  */
-const RELAY_HEADERS = [
+export const RELAY_HEADERS = [
   "cache-control",
   "last-modified",
   "x-jpeg-bytes",
