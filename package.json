@@ -18,6 +18,7 @@
     "fmt:check": "oxfmt --check",
     "typecheck": "pnpm -r typecheck",
     "fallow": "fallow --dupes-baseline fallow-baseline/dupes.json --summary || fallow --dupes-baseline fallow-baseline/dupes.json",
+    "fallow:coverage": "rm -rf coverage && NODE_V8_COVERAGE=\"$PWD/coverage\" pnpm test && fallow health --coverage coverage",
     "check:fallow-baseline": "fallow dupes --save-baseline fallow-baseline/dupes.json && oxfmt fallow-baseline",
     "check": "node scripts/check.mjs"
   },

@@ -1,6 +1,6 @@
 # Bio
 
-`/bio`, **Bio** under **Publish** in the sidebar, is where the bio the portfolio will show about you is written, with its photos in the order it shows them. The portfolio doesn't show the bio yet: for now the page only keeps it, so a portfolio page can read it later.
+`/bio`, **Bio** under **Publish** in the sidebar (with [Describe my style](describe-style.md) in its submenu), is where the bio the portfolio will show about you is written, with its photos in the order it shows them. The portfolio doesn't show the bio yet: for now the page only keeps it, so a portfolio page can read it later.
 
 ## The text
 

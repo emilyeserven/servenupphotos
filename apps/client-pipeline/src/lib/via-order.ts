@@ -20,6 +20,14 @@ function segmentKeys(segment: TripSegment): ViaKey[] {
   if (segment.mode === "wander" || a === undefined) return [];
   if (segment.line) return segment.start ? [] : stationKeys(segment, a);
   if (segment.mode !== "walk") return [segment.start ? "start" : String(a)];
+  return walkKeys(segment);
+}
+
+/**
+ * A walk's via lists: the start spot's and each photo's but the last (whose via points lead to the
+ * next segment), unless the walk ends at the end spot.
+ */
+function walkKeys(segment: TripSegment): ViaKey[] {
   const photos = segment.end ? segment.photos : segment.photos.slice(0, -1);
   return [...(segment.start ? ["start"] : []), ...photos.map(String)];
 }

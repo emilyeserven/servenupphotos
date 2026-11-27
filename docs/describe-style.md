@@ -1,6 +1,6 @@
 # Describe my style
 
-**Settings › Extra › Describe my style** (`/describe-style`) copies a prompt to paste into a chat with an LLM (Claude, ChatGPT, Gemini, …) that links small versions of your photos and asks it to describe your photography style. Like the other prompts in the pipeline (Bulk tagging, Album Suggestions), nothing is sent to an LLM by the pipeline itself, and nothing is saved: it reads the photo files the Photo Book and Bio read (`DecidedPhotoFiles`, without the [Undecided](photos-in-flight.md#undecided) ones) and only builds text.
+**Publish › Bio › Describe my style** (`/describe-style`) copies a prompt to paste into a chat with an LLM (Claude, ChatGPT, Gemini, …) that links small versions of your photos and asks it to describe your photography style. Like the other prompts in the pipeline (Bulk tagging, Album Suggestions), nothing is sent to an LLM by the pipeline itself, and nothing is saved: it reads the photo files the Photo Book and Bio read (`DecidedPhotoFiles`, without the [Undecided](photos-in-flight.md#undecided) ones) and only builds text.
 
 ## Narrowing the photos down
 

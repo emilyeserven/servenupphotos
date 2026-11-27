@@ -1,5 +1,6 @@
 import committedData from "@portfolio/data/photos/ALLPHOTOS.json";
 import type { Group } from "@portfolio/lib/groups";
+import type { BookRef } from "@portfolio/lib/in-book";
 import type { Liker } from "@portfolio/lib/liked-by";
 import { shownTiers } from "@portfolio/lib/lower-tier";
 import {
@@ -120,6 +121,11 @@ export interface Photo {
    * Gallery sets it, from its User Likes; the portfolio doesn't read the Like lists.
    */
   likedBy?: Liker[];
+  /**
+   * The photo books it's placed in, on a page that's in the book, for the Groups picker's **Book**.
+   * Only the pipeline's Gallery sets it, from its photo books; the portfolio doesn't read them.
+   */
+  books?: BookRef[];
   /** The point of the photo kept in view when the screen is the other way round, set on its Photo page; null keeps the middle. */
   spotlightFocus: SpotlightFocus | null;
   /** Where on the screen the focus point goes, in percent across and down, set on its Photo page; null for the middle. */

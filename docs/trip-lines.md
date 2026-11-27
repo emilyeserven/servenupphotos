@@ -1,6 +1,6 @@
 # Trip Lines
 
-`/trip-lines`, under **Configuration** in the sidebar, marks the route of a day: a solid line walking from photo to photo in the order they were taken, and a dashed hop by train, subway, bus or car between two of them. Commit bakes every day's line, with its photos' spots filled in, into one file the portfolio's map can draw as it is.
+`/trip-lines`, under **Organize** in the sidebar, marks the route of a day: a solid line walking from photo to photo in the order they were taken, and a dashed hop by train, subway, bus or car between two of them. Commit bakes every day's line, with its photos' spots filled in, into one file the portfolio's map can draw as it is.
 
 > **Frontend analogy:** the day files are the source, like `.tsx`, and `TRIPLINES.geo.json` is the build output, like the bundle. Commit is the build step, so the browser never works routes out; it only loads the result.
 

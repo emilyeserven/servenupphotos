@@ -141,13 +141,17 @@ function readMerges(parsed: Record<string, unknown>, reading: Reading): Autogrou
     const groups = knownGroups(texts(raw.groups), reading).filter((g) => !merged.has(g.name));
     if (groups.length < 2) continue;
     for (const group of groups) merged.add(group.name);
-    const name = textOf(raw.name);
-    merges.push({
-      name: reading.findGroup(name)?.name ?? (name || (groups[0]?.name ?? "")),
-      groups,
-    });
+    merges.push({ name: mergeName(textOf(raw.name), groups, reading), groups });
   }
   return merges;
+}
+
+/**
+ * The name the combined group goes by: a group there is keeps its name as it's saved, a new name
+ * is used as typed, and with none typed the first group's name is kept.
+ */
+function mergeName(typed: string, groups: ExistingGroup[], reading: Reading): string {
+  return reading.findGroup(typed)?.name ?? (typed || (groups[0]?.name ?? ""));
 }
 
 /** The groups to remove, leaving out any being combined, each once. */

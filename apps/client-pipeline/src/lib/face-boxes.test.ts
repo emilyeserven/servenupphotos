@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   areaName,
+  boxText,
   blockSide,
   drawnBox,
   type FaceBox,
@@ -169,4 +170,14 @@ test("a circle touches every cell of a 4 × 4 grid, and all but the corners of a
   const cells = touchedCells(square, 8, 8);
   assert.equal(cells.length, 60);
   assert.ok(!cells.some((cell) => cell.x === 0 && cell.y === 0));
+});
+
+test("an area is described in words: its size, shape, place, turn and blocks", () => {
+  const face = { x: 1200.4, y: 300, width: 320, height: 400, blocks: 8 };
+  assert.equal(boxText(face), "a 320 × 400 px box at 1200, 300, 8 blocks across");
+  assert.equal(
+    boxText({ ...face, shape: "circle", rotation: 30 }),
+    "a 320 × 400 px circle at 1200, 300, turned 30°, 8 blocks across",
+  );
+  assert.equal(boxText({ ...face, keep: true }), "a 320 × 400 px box at 1200, 300, kept as it is");
 });

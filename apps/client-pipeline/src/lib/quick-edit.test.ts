@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { quickEditTarget } from "@/lib/quick-edit";
+import { placeKeyForEdit, quickEditTarget } from "@/lib/quick-edit";
+import type { RegionNode } from "@/lib/region-tree";
 
 /** The pipeline address Quick Edit opens for a link, or its error. */
 function hrefOf(text: string): string {
@@ -60,4 +61,33 @@ test("a view of many photos, another site, or text says why it can't open", () =
   assert.match(hrefOf("https://servenupphotos.net/grid?size=large"), /doesn't show one thing/);
   assert.match(hrefOf("https://example.com/photos/1"), /example\.com, not the portfolio/);
   assert.match(hrefOf("   "), /isn't a link/);
+});
+
+test("a Quick Edit place edit picks the Places row: a place by its ID, a city by its name's slug", () => {
+  const nodes = [
+    { key: "city:new-york", kind: "city", name: "New York", parentKey: "", photos: 3 },
+    {
+      key: "place:p1",
+      kind: "place",
+      name: "Central Park",
+      parentKey: "city:new-york",
+      photos: 1,
+      place: { id: "p1", name: "Central Park" },
+    },
+  ] as RegionNode[];
+  assert.equal(placeKeyForEdit(nodes, "city/new-york"), "city:new-york");
+  assert.equal(placeKeyForEdit(nodes, "place/p1"), "place:p1");
+  // A place is never matched by its name's slug, and a kind must match too.
+  assert.equal(placeKeyForEdit(nodes, "place/central-park"), "");
+  assert.equal(placeKeyForEdit(nodes, "country/new-york"), "");
+});
+
+test("a Quick Edit place edit without a kind and a name matches no row", () => {
+  const nodes = [
+    { key: "city:seoul", kind: "city", name: "Seoul", parentKey: "", photos: 1 },
+  ] as RegionNode[];
+  assert.equal(placeKeyForEdit(nodes, undefined), "");
+  assert.equal(placeKeyForEdit(nodes, ""), "");
+  assert.equal(placeKeyForEdit(nodes, "city"), "");
+  assert.equal(placeKeyForEdit(nodes, "city/"), "");
 });

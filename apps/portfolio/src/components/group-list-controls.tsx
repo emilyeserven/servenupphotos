@@ -2,7 +2,7 @@ import { ArrowUpDown, Search } from "lucide-react";
 import { PickMenu } from "@portfolio/components/pick-menu";
 import type { GroupSort } from "@portfolio/lib/group-list";
 
-/** The Tags and Likes lists' sorts, A to Z first as it's how the tags and people are kept. */
+/** The Tags, Likes and Book lists' sorts, A to Z first as it's how the tags, people and books are kept. */
 const TAG_SORTS: [GroupSort, string][] = [
   ["az", "A to Z"],
   ["za", "Z to A"],
@@ -20,11 +20,13 @@ const SET_SORTS: [GroupSort, string][] = [
 ];
 
 /**
- * The sorts a Groups list offers, its default first: A to Z for tags and people, the set order
- * for albums and genres.
+ * The sorts a Groups list offers, its default first: A to Z for tags, people and books, the set
+ * order for albums and genres.
  */
-export function groupSorts(key: "album" | "tag" | "genre" | "liked"): [GroupSort, string][] {
-  return key === "tag" || key === "liked" ? TAG_SORTS : SET_SORTS;
+export function groupSorts(
+  key: "album" | "tag" | "genre" | "liked" | "book",
+): [GroupSort, string][] {
+  return key === "album" || key === "genre" ? SET_SORTS : TAG_SORTS;
 }
 
 /**
