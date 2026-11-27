@@ -2,9 +2,7 @@ package transit
 
 import (
 	"container/heap"
-	"context"
 	"errors"
-	"fmt"
 	"math"
 	"strings"
 )
@@ -13,25 +11,8 @@ import (
 // spots, or the line has no track.
 var ErrNoTrack = errors.New("couldn't follow that line between those spots")
 
-// Track is line id's track from the point on it nearest from to the point on
-// it nearest to, each [longitude, latitude], with from and to themselves
-// added at its ends so it joins the photos.
-func (c *Client) Track(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error) {
-	elements, err := c.query(ctx, fmt.Sprintf(serverTimeout+"rel(%d);out geom;", id))
-	if err != nil {
-		return nil, err
-	}
-	if len(elements) == 0 {
-		return nil, ErrNoTrack
-	}
-	path := newTrackGraph(elements[0].Members).between(from, to)
-	if len(path) < 2 {
-		return nil, ErrNoTrack
-	}
-	return append(append([][2]float64{from}, path...), to), nil
-}
-
-// trackGraph is a line's ways as a graph: each mapped point a node, joined to
+// trackGraph is a line's ways as a graph (the BFF keeps the same graph for
+// the Overpass and Transitland look-ups, in src/lib/track-graph.ts): each mapped point a node, joined to
 // the points next to it along a way.
 type trackGraph struct {
 	points [][2]float64

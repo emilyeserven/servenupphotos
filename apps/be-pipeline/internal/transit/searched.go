@@ -3,16 +3,11 @@ package transit
 import "fmt"
 
 // Searched says, in a sentence for the page, what a lines look-up of source
-// ("" for the Overpass servers, or a Line.Source such as "osmbus") between
-// from and to looked through: for a downloaded map, which one and how big it
-// is, and for a bus map how many routes pass near each end, so "no line
+// (a Line.Source such as "osmbus") between from and to looked through: which
+// downloaded map and how big it is, and for a bus map how many routes pass near each end, so "no line
 // found" can be told apart from a map that has none nearby.
 func (c *Client) Searched(source string, from, to [2]float64) string {
 	switch source {
-	case "":
-		return "OpenStreetMap's Overpass servers, asked live"
-	case SourceTransitland:
-		return "Transitland, the timetables transit agencies publish"
 	case SourceMLIT:
 		if net, ok := c.Rails.peek(SourceMLIT); ok {
 			return fmt.Sprintf("%s (MLIT's 2024 railway data, %d lines)", mlitName, len(net.lines))

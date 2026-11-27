@@ -255,7 +255,7 @@ func railFeatureOf(line osmLine, station string, coords [][2]float64) mlitFeatur
 	f.Properties.Colour = line.colour
 	f.Properties.HighSpeed = line.kind == highSpeedKind
 	raw, _ := json.Marshal(coords) //nolint:errchkjson // plain numbers always marshal
-	f.Geometry = tlGeometry{Type: "LineString", Coordinates: raw}
+	f.Geometry = geoJSON{Type: "LineString", Coordinates: raw}
 	return f
 }
 

@@ -3,7 +3,6 @@ package httpapi
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -13,17 +12,11 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/transit"
 )
 
-// transitFinder looks up the transit lines OpenStreetMap maps (see
-// transit.New): the ones near two spots, and one's track between them.
+// transitFinder looks up the transit lines on the rail and bus maps (see
+// transit.New): the ones near two spots, and one's track between them. The
+// BFF answers the Overpass, Transitland and Photon look-ups itself and relays
+// only these (docs/bff-routes.md).
 type transitFinder interface {
-	Lines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
-	Track(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
-	Stops(ctx context.Context, id int64) ([]transit.Stop, error)
-	Stations(ctx context.Context, mode, name string, near [2]float64) ([]transit.Station, error)
-	PhotonStations(ctx context.Context, mode, name string, near [2]float64) ([]transit.Station, error)
-	TransitlandLines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
-	TransitlandTrack(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
-	TransitlandStops(ctx context.Context, id int64) ([]transit.Stop, error)
 	MLITLines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
 	MLITTrack(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
 	MLITStops(ctx context.Context, id int64) ([]transit.Stop, error)
@@ -38,23 +31,24 @@ type transitFinder interface {
 	Searched(source string, from, to [2]float64) string
 }
 
-// lineSource is where the request asks for lines: ?source=transitland,
-// ?source=mlit for Japan's rail map, ?source=osmrail for a country's
-// OpenStreetMap rail map, ?source=osmbus for its bus map, or else
-// OpenStreetMap's Overpass servers ("").
+// lineSource is the map the request asks for lines on: ?source=mlit for
+// Japan's rail map, ?source=osmrail for a country's OpenStreetMap rail map,
+// ?source=osmbus for its bus map, or else "" for none of them.
 func lineSource(r *http.Request) string {
 	switch src := r.URL.Query().Get("source"); src {
-	case transit.SourceTransitland, transit.SourceMLIT, transit.SourceOSMRail, transit.SourceOSMBus:
+	case transit.SourceMLIT, transit.SourceOSMRail, transit.SourceOSMBus:
 		return src
 	}
 	return ""
 }
 
+// errNoMap is a request for a source other than the rail and bus maps,
+// which the BFF answers and never relays here.
+var errNoMap = errors.New("the backend only looks lines up on the rail and bus maps; the BFF answers OpenStreetMap's Overpass servers and Transitland")
+
 // linesSource is the lines look-up the request asks for.
 func linesSource(finder transitFinder, r *http.Request) func(context.Context, string, [2]float64, [2]float64) ([]transit.Line, error) {
 	switch lineSource(r) {
-	case transit.SourceTransitland:
-		return finder.TransitlandLines
 	case transit.SourceMLIT:
 		return finder.MLITLines
 	case transit.SourceOSMRail:
@@ -62,14 +56,12 @@ func linesSource(finder transitFinder, r *http.Request) func(context.Context, st
 	case transit.SourceOSMBus:
 		return finder.OSMBusLines
 	}
-	return finder.Lines
+	return func(context.Context, string, [2]float64, [2]float64) ([]transit.Line, error) { return nil, errNoMap }
 }
 
 // trackSource is the track look-up the request asks for.
 func trackSource(finder transitFinder, r *http.Request) func(context.Context, int64, [2]float64, [2]float64) ([][2]float64, error) {
 	switch lineSource(r) {
-	case transit.SourceTransitland:
-		return finder.TransitlandTrack
 	case transit.SourceMLIT:
 		return finder.MLITTrack
 	case transit.SourceOSMRail:
@@ -77,14 +69,12 @@ func trackSource(finder transitFinder, r *http.Request) func(context.Context, in
 	case transit.SourceOSMBus:
 		return finder.OSMBusTrack
 	}
-	return finder.Track
+	return func(context.Context, int64, [2]float64, [2]float64) ([][2]float64, error) { return nil, errNoMap }
 }
 
 // stopsSource is the stops look-up the request asks for.
 func stopsSource(finder transitFinder, r *http.Request) func(context.Context, int64) ([]transit.Stop, error) {
 	switch lineSource(r) {
-	case transit.SourceTransitland:
-		return finder.TransitlandStops
 	case transit.SourceMLIT:
 		return finder.MLITStops
 	case transit.SourceOSMRail:
@@ -92,11 +82,12 @@ func stopsSource(finder transitFinder, r *http.Request) func(context.Context, in
 	case transit.SourceOSMBus:
 		return finder.OSMBusStops
 	}
-	return finder.Stops
+	return func(context.Context, int64) ([]transit.Stop, error) { return nil, errNoMap }
 }
 
-// transitTimeout is how long one look-up may take, waiting its turn and trying
-// the mirrors included: a full try on two servers and part of a third.
+// transitTimeout is how long one look-up may take, waiting for its map to
+// download and be read included; a look-up that runs out answers that the
+// map is still loading, and the page asks again.
 const transitTimeout = 100 * time.Second
 
 // trackAnswer is a transit line's track between two spots.
@@ -115,8 +106,7 @@ const searchedHeader = "X-Transit-Searched"
 
 // handleTransitLines answers the lines of ?mode= ("train", "subway", "bus"
 // or "ferry") whose track passes near both ?from= and ?to=, each
-// "longitude,latitude", from OpenStreetMap or, with ?source=transitland,
-// Transitland.
+// "longitude,latitude", on the rail or bus map ?source= names.
 func handleTransitLines(finder transitFinder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		from, to, ok := spotsParam(w, r)
@@ -131,7 +121,7 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 			return
 		}
 		if err != nil {
-			writeOverpassError(w, "look up lines", err)
+			writeLookupError(w, "look up lines", err)
 			return
 		}
 		w.Header().Set(searchedHeader, url.PathEscape(finder.Searched(lineSource(r), from, to)))
@@ -151,50 +141,6 @@ func noKindMessage(source string) string {
 	return "Pick whether the hop was a train, subway, bus or ferry to find its lines, or name the line yourself."
 }
 
-// handleTransitStations answers the ?mode= stations or stops ("train",
-// "subway", "bus" or "ferry") whose name contains ?q=, near ?near=,
-// "longitude,latitude", nearest first, searched on Overpass or, with
-// ?source=photon, on Photon.
-func handleTransitStations(finder transitFinder) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.Query()
-		near, ok := parseSpot(q.Get("near"))
-		if !ok {
-			writeError(w, http.StatusBadRequest, "Give near as longitude,latitude: a spot on the day the station is looked for on.")
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), transitTimeout)
-		defer cancel()
-		stations, err := stationSearch(finder, q.Get("source"))(ctx, q.Get("mode"), q.Get("q"), near)
-		writeStations(w, stations, err)
-	}
-}
-
-// stationSearch is the search ?source= picks: "photon" for Photon, or else
-// Overpass.
-func stationSearch(finder transitFinder, source string) func(context.Context, string, string, [2]float64) ([]transit.Station, error) {
-	if source == "photon" {
-		return finder.PhotonStations
-	}
-	return finder.Stations
-}
-
-// writeStations answers stations, or the error that kept them from being found.
-func writeStations(w http.ResponseWriter, stations []transit.Station, err error) {
-	switch {
-	case errors.Is(err, transit.ErrNoKind):
-		writeError(w, http.StatusBadRequest, "Stations can be looked up for a train, subway, bus or ferry.")
-	case errors.Is(err, transit.ErrNoName):
-		writeError(w, http.StatusBadRequest, "Type the station's name to look it up.")
-	case errors.As(err, new(*transit.PhotonError)):
-		writeError(w, http.StatusBadGateway, err.Error()+". Try again, or search with Overpass instead.")
-	case err != nil:
-		writeOverpassError(w, "look up stations", err)
-	default:
-		writeJSON(w, http.StatusOK, stations)
-	}
-}
-
 // handleTransitStops answers line {id}'s stations or stops, in the order it
 // runs.
 func handleTransitStops(finder transitFinder) http.HandlerFunc {
@@ -207,7 +153,7 @@ func handleTransitStops(finder transitFinder) http.HandlerFunc {
 		defer cancel()
 		stops, err := stopsSource(finder, r)(ctx, id)
 		if err != nil {
-			writeOverpassError(w, "get the line's stops", err)
+			writeLookupError(w, "get the line's stops", err)
 			return
 		}
 		writeJSON(w, http.StatusOK, stops)
@@ -261,7 +207,7 @@ func writeTrack(w http.ResponseWriter, track trackAnswer, err error) {
 	case errors.Is(err, transit.ErrNoTrack):
 		writeError(w, http.StatusUnprocessableEntity, noTrackMessage(err))
 	case err != nil:
-		writeOverpassError(w, "get the line's track", err)
+		writeLookupError(w, "get the line's track", err)
 	default:
 		writeJSON(w, http.StatusOK, track)
 	}
@@ -277,34 +223,18 @@ func noTrackMessage(err error) string {
 	return base + ". Try another line or direction."
 }
 
-// writeOverpassError answers a failed look-up of what, such as "look up
-// lines". When every server was busy it says so and asks to try again later,
-// since that's the servers' load and not the photos.
-func writeOverpassError(w http.ResponseWriter, what string, err error) {
-	if writeTransitlandError(w, err) {
+// writeLookupError answers a failed look-up of what, such as "look up
+// lines": a map still loading or that couldn't be read, a source this
+// backend doesn't answer, or anything else.
+func writeLookupError(w http.ResponseWriter, what string, err error) {
+	if writeMapError(w, err) {
 		return
 	}
-	var busy *transit.BusyError
-	if errors.As(err, &busy) {
-		writeError(w, http.StatusServiceUnavailable, fmt.Sprintf(
-			"OpenStreetMap's line servers are busy right now, so we couldn't %s (tried %d times on %d servers; the last, %s, %s). Try again in a minute.",
-			what, busy.Tries, busy.Servers, busy.Server, statusOf(busy.Last)))
+	if errors.Is(err, errNoMap) {
+		writeError(w, http.StatusBadRequest, "Couldn't "+what+": "+err.Error()+".")
 		return
 	}
 	writeError(w, http.StatusBadGateway, "Couldn't "+what+" on OpenStreetMap: "+err.Error())
-}
-
-// statusOf is a server's failure in a few words, such as "answered 502 Bad
-// Gateway" or "took too long to answer".
-func statusOf(err error) string {
-	var status *transit.StatusError
-	if errors.As(err, &status) {
-		return "answered " + status.Status
-	}
-	if errors.Is(err, transit.ErrSlow) {
-		return "took too long to answer"
-	}
-	return "failed: " + err.Error()
 }
 
 // spotsParam reads ?from= and ?to=, writing an error when either isn't a spot.
@@ -330,14 +260,10 @@ func parseSpot(s string) ([2]float64, bool) {
 	return [2]float64{x, y}, true
 }
 
-// writeTransitlandError answers a Transitland or rail map failure, when err
-// is one, and reports whether it did.
-func writeTransitlandError(w http.ResponseWriter, err error) bool {
+// writeMapError answers a rail or bus map failure, when err is one, and
+// reports whether it did.
+func writeMapError(w http.ResponseWriter, err error) bool {
 	switch {
-	case errors.Is(err, transit.ErrNoTransitlandKey):
-		writeError(w, http.StatusServiceUnavailable, "Transitland needs an API key: get a free one at transit.land, add TRANSITLAND_API_KEY=<key> to the repo's .env, and restart the backend. Or look it up on OpenStreetMap instead.")
-	case errors.As(err, new(*transit.TransitlandError)):
-		writeError(w, http.StatusBadGateway, err.Error()+". Try again, or look it up on OpenStreetMap instead.")
 	case errors.Is(err, transit.ErrMapLoading):
 		writeJSON(w, http.StatusServiceUnavailable, map[string]any{"message": err.Error() + ".", "loading": true})
 	case errors.As(err, new(*transit.RailMapError)):

@@ -73,7 +73,7 @@ type mlitFeature struct {
 		// along slower track, as the Gyeongbu Line KTX does.
 		HighSpeed bool `json:"highspeed,omitempty"`
 	} `json:"properties"`
-	Geometry tlGeometry `json:"geometry"`
+	Geometry geoJSON `json:"geometry"`
 }
 
 // readMLIT reads the sections and stations from dir.

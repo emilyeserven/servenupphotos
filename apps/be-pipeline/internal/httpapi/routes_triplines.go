@@ -15,6 +15,5 @@ func registerTripLineRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("GET /transit/lines", handleTransitLines(d.transit))
 	mux.HandleFunc("GET /transit/lines/{id}/track", handleTransitTrack(d.transit))
 	mux.HandleFunc("GET /transit/lines/{id}/stops", handleTransitStops(d.transit))
-	mux.HandleFunc("GET /transit/stations", handleTransitStations(d.transit))
 	mux.HandleFunc("GET /transit/downloads", handleTransitDownloads(d.transit))
 }
