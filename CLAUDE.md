@@ -44,7 +44,7 @@ Passing checks print only a few lines, so a failure is easy to spot: oxlint show
 
 `fallow` fails on dead code (unused exports, files and dependencies, duplicate exports), on any function over its health thresholds (cyclomatic 20, cognitive 15, CRAP 30, 60 lines; the "refactoring targets" it prints are advice only), and on any duplicate code block not in the committed baseline `fallow-baseline/dupes.json`. The two clone groups there today pass; a new one fails `pnpm check` (and CI, which runs the same script). Split or share the code instead of adding to the baseline. Only when a PR deliberately accepts a duplicate, run `pnpm check:fallow-baseline` and commit the changed file.
 
-**Tests:** `pnpm test` runs `node --test` on `*.test.ts` files: the portfolio's `map-preview/` and each app's `src/lib/` and the pipeline's `src/api/` (next to the module they test), with no test framework. `scripts/test-aliases-register.mjs` lets Node resolve `@/` and `@portfolio/` imports, load the data JSON and stub Vite's `import.meta.glob`; a module that imports React components (`.tsx`) can't be tested this way. Tests assert behavior with small hand-built objects.
+**Tests:** `pnpm test` runs `node --test` on `*.test.ts` files: the portfolio's `map-preview/` and each app's `src/lib/` and the pipeline's `src/api/` and `src/stores/` (next to the module they test), with no test framework. `scripts/test-aliases-register.mjs` lets Node resolve `@/` and `@portfolio/` imports, load the data JSON and stub Vite's `import.meta.glob`; a module that imports React components (`.tsx`) can't be tested this way. Tests assert behavior with small hand-built objects.
 
 ## Conventions
 
