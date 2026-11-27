@@ -1,6 +1,6 @@
 # Gear Pictures
 
-`/gear-pictures`, under **Configuration** in the sidebar, gives a camera or lens its own picture and a few words about it. The portfolio's **Gear & settings** filter shows the picture in place of its drawing of that kind of camera (a DSLR, mirrorless, compact or phone) or of the lens, at the top of the **(i)** info pane for a camera or lens, with the description under its name (see [Filters](portfolio-filters.md)).
+`/gear-pictures`, the **Gear** page under **Configuration** in the sidebar (with Camera Overrides and Metadata Groups in its submenu), gives a camera or lens its own picture and a few words about it. The portfolio's **Gear & settings** filter shows the picture in place of its drawing of that kind of camera (a DSLR, mirrorless, compact or phone) or of the lens, at the top of the **(i)** info pane for a camera or lens, with the description under its name (see [Filters](portfolio-filters.md)).
 
 > **Frontend analogy:** it's an avatar for each camera and lens. The photos keep naming their camera as text, and `GEAR.json` is a lookup from that name to an image URL, like a `users` map that a comment's `authorName` is looked up in to show a profile picture, with the generated drawing as the fallback avatar.
 

@@ -14,7 +14,6 @@ import {
   HeartIcon,
   HistoryIcon,
   ImageIcon,
-  ImagePlusIcon,
   LanguagesIcon,
   LayersIcon,
   LayoutGridIcon,
@@ -35,6 +34,7 @@ import {
   SettingsIcon,
   ShapesIcon,
   SignpostIcon,
+  SlidersHorizontalIcon,
   SparklesIcon,
   TagIcon,
   TagsIcon,
@@ -139,7 +139,9 @@ export const navGroups: readonly NavGroup[] = [
           { title: "Localizations", url: "/localizations", icon: LanguagesIcon },
         ],
       },
+      { title: "Trip Lines", url: "/trip-lines", icon: RouteIcon },
       { title: "Photo Sets", url: "/photo-sets", icon: LayersIcon },
+      { title: "Related Photos", url: "/related-photos", icon: GalleryHorizontalIcon },
     ],
   },
   {
@@ -153,9 +155,13 @@ export const navGroups: readonly NavGroup[] = [
       },
       { title: "Captions", url: "/caption-templates", icon: MessageSquareTextIcon },
       { title: "Photo Books", url: "/photo-books", icon: BookOpenIcon },
-      { title: "Bio", url: "/bio", icon: UserRoundIcon },
+      {
+        title: "Bio",
+        url: "/bio",
+        icon: UserRoundIcon,
+        children: [{ title: "Describe my style", url: "/describe-style", icon: PaletteIcon }],
+      },
       { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
-      { title: "Related Photos", url: "/related-photos", icon: GalleryHorizontalIcon },
       { title: "User Likes", url: "/viewer-likes", icon: HeartIcon },
     ],
   },
@@ -169,15 +175,9 @@ export const navGroups: readonly NavGroup[] = [
         children: [
           { title: "Status", url: "/settings/status", icon: ActivityIcon },
           { title: "Changelog", url: "/changelog", icon: HistoryIcon },
-          { title: "Explore Bucket", url: "/bucket", icon: DatabaseIcon },
+          // The pages about the R2 bucket, under a Storage header.
+          { title: "Explore Bucket", url: "/bucket", icon: DatabaseIcon, heading: "Storage" },
           { title: "Manage Sizes", url: "/sizes", icon: ScalingIcon },
-          // Tools that don't change the photo data, under an Extra header.
-          {
-            title: "Describe my style",
-            url: "/describe-style",
-            icon: PaletteIcon,
-            heading: "Extra",
-          },
         ],
       },
       {
@@ -192,10 +192,16 @@ export const navGroups: readonly NavGroup[] = [
           icon: section.icon,
         })),
       },
-      { title: "Metadata Groups", url: "/metadata-groups", icon: ApertureIcon },
-      { title: "Camera Overrides", url: "/camera-overrides", icon: CameraIcon },
-      { title: "Gear Pictures", url: "/gear-pictures", icon: ImagePlusIcon },
-      { title: "Trip Lines", url: "/trip-lines", icon: RouteIcon },
+      {
+        // The camera and lens pages; Gear itself opens Gear Pictures.
+        title: "Gear",
+        url: "/gear-pictures",
+        icon: CameraIcon,
+        children: [
+          { title: "Camera Overrides", url: "/camera-overrides", icon: SlidersHorizontalIcon },
+          { title: "Metadata Groups", url: "/metadata-groups", icon: ApertureIcon },
+        ],
+      },
       { title: "Graph Presets", url: "/graph-presets", icon: ChartColumnIcon },
     ],
   },
