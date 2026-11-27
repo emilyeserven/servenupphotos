@@ -180,3 +180,11 @@ export function readPrintChoice(stored: unknown): PrintChoice {
   const saved = (stored ?? {}) as { size?: Partial<PrintSize>; fit?: unknown };
   return { size: readSize(saved.size), fit: saved.fit === "fit" ? "fit" : "fill" };
 }
+
+/**
+ * Whether a photo prints below the print queue's minimum pixels per inch, so it's grayed out; never
+ * when no minimum is set (0) or the photo's print couldn't be checked.
+ */
+export function belowMinimum(check: PrintCheck | null, minimum: number): boolean {
+  return minimum > 0 && check !== null && check.ppi < minimum;
+}

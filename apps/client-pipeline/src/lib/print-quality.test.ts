@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  belowMinimum,
   checkPrint,
   largestPrint,
   presetOf,
@@ -94,5 +95,20 @@ describe("readPrintChoice", () => {
     const start = { size: { width: 8, height: 10, unit: "in" }, fit: "fill" };
     assert.deepEqual(readPrintChoice(undefined), start);
     assert.deepEqual(readPrintChoice({ size: { width: 8, height: 10, unit: "ft" } }), start);
+  });
+});
+
+describe("belowMinimum", () => {
+  const check = checkPrint(sixK, { width: 16, height: 20, unit: "in" }, "fill");
+
+  it("grays out a photo under the minimum, but not one at it", () => {
+    assert.equal(check?.ppi, 250);
+    assert.equal(belowMinimum(check, 300), true);
+    assert.equal(belowMinimum(check, 250), false);
+  });
+
+  it("grays out nothing without a minimum or a check", () => {
+    assert.equal(belowMinimum(check, 0), false);
+    assert.equal(belowMinimum(null, 300), false);
   });
 });

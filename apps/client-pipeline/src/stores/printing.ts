@@ -8,3 +8,11 @@ export const printChoice = storedValue("pipeline-print-choice", readPrintChoice)
 export const printQueueAlbum = storedValue("pipeline-print-queue-album", (stored) =>
   typeof stored === "string" ? stored : "",
 );
+
+/**
+ * The lowest pixels per inch a print queue photo should print at, or 0 for none; photos below it are
+ * grayed out on Print Queue. Kept in this browser.
+ */
+export const printMinPpi = storedValue("pipeline-print-min-ppi", (stored) =>
+  typeof stored === "number" && stored > 0 ? stored : 0,
+);

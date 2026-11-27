@@ -2,8 +2,9 @@ import { Link } from "@tanstack/react-router";
 import type { CombinedData } from "@/api/photos";
 import { bookAlbums } from "@/components/photo-book/album-photos";
 import { AlbumSelect } from "@/components/photo-book/album-select";
-import { PrintPhotoTile } from "@/components/printing/print-photo-tile";
+import { MinPpiField } from "@/components/printing/min-ppi-field";
 import { PrintSizePicker } from "@/components/printing/print-size-picker";
+import { QueueItem } from "@/components/printing/queue-item";
 import { queuePhotos } from "@/components/printing/queue-photos";
 import { QueryResult } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -66,6 +67,7 @@ function QueueSettings({ albums, albumId }: { albums: BookAlbum[]; albumId: stri
           </span>
         </label>
         <PrintSizePicker />
+        <MinPpiField />
       </CardContent>
     </Card>
   );
@@ -96,9 +98,7 @@ function QueueCard({ album, photos }: { album: BookAlbum; photos: CombinedPhoto[
         ) : (
           <ul className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-6">
             {photos.map((photo) => (
-              <li key={photoKey(photo)}>
-                <PrintPhotoTile photo={photo} />
-              </li>
+              <QueueItem key={photoKey(photo)} photo={photo} />
             ))}
           </ul>
         )}
