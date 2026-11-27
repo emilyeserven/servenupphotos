@@ -46,8 +46,13 @@ export function useLocalizationDrafts(
   const saveRow = (row: LocalizationRow, fields: Fields) => {
     // A row already queued or saving isn't queued again, as when Save all is pressed twice.
     if (isSaving(queryClient, row.id)) return;
-    // Keeps what the row doesn't edit: its other names, and where a city or state is.
-    const { otherNames, state, country } = row.saved ?? {};
+    // Keeps what the row doesn't edit: its other names, and where a city or state is. A relation
+    // word's country is the one its row is for.
+    const {
+      otherNames,
+      state,
+      country = row.type === "relation" ? row.detail : undefined,
+    } = row.saved ?? {};
     save.mutate({
       id: row.id,
       type: row.type,

@@ -135,6 +135,9 @@ const (
 	LocalizationCity    = "city"
 	LocalizationState   = "state"
 	LocalizationPlace   = "place"
+	// LocalizationRelation is a relation word, such as "near", as a photo's
+	// places use it in one country: Name is the word and Country the country.
+	LocalizationRelation = "relation"
 )
 
 // Localization is a localization file: how a country, state, city or place
@@ -163,8 +166,9 @@ type Localization struct {
 	// place has yet is listed under it. Only a city has one; "" or missing
 	// for none.
 	State string `json:"state,omitempty"`
-	// Country is the country a city or state is in, the same way. Only a
-	// city or state has one; "" or missing for none.
+	// Country is the country a city or state is in, the same way, or the
+	// country a relation word is localized for. Only a city, state or
+	// relation has one; "" or missing for none.
 	Country string `json:"country,omitempty"`
 }
 
@@ -425,8 +429,8 @@ func validLocalization(l Localization) (Localization, *PublishError) {
 	if perr := validEntryID("localization", out.ID); perr != nil {
 		return out, perr
 	}
-	if !slices.Contains([]string{LocalizationCountry, LocalizationState, LocalizationCity, LocalizationPlace}, out.Type) {
-		return out, publishErr(http.StatusBadRequest, "A localization's type is country, state, city or place.")
+	if !slices.Contains([]string{LocalizationCountry, LocalizationState, LocalizationCity, LocalizationPlace, LocalizationRelation}, out.Type) {
+		return out, publishErr(http.StatusBadRequest, "A localization's type is country, state, city, place or relation.")
 	}
 	if out.Name == "" {
 		return out, publishErr(http.StatusBadRequest, "Say which %s the localization is for.", out.Type)
@@ -442,12 +446,13 @@ func validLocalization(l Localization) (Localization, *PublishError) {
 }
 
 // localizationRegion is the state and country l is in, trimmed, keeping only
-// what its type has: a city's state and country, or a state's country.
+// what its type has: a city's state and country, or a state's or relation's
+// country.
 func localizationRegion(l Localization) (state, country string) {
 	switch strings.TrimSpace(l.Type) {
 	case LocalizationCity:
 		return strings.TrimSpace(l.State), strings.TrimSpace(l.Country)
-	case LocalizationState:
+	case LocalizationState, LocalizationRelation:
 		return "", strings.TrimSpace(l.Country)
 	}
 	return "", ""

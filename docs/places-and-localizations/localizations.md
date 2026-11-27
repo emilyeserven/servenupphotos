@@ -13,9 +13,29 @@ A localization notes how a country, state, city or place is written and said whe
 }
 ```
 
-The ID is the type and the name as an ID (`country-south-korea`, `city-seoul`), or for a place, `place-` and the place's ID. The Localizations page has a tab each for countries, states, cities and places. Countries, states and cities come from `ALLPHOTOS.json` (at the pull request's head, with saves not committed yet, from the [combined data store](../combined-data-store.md)): each photo's custom country and city, or else its EXIF ones, with how many photos show each. Places come from the place files. Rows not saved yet say so; each row's **Save** (`PUT /api/localizations/<id>` → `PUT /localizations/{id}`) keeps its file waiting for Commit, and **Save all**, at the top right next to the sync button, saves every changed row on every tab. What's typed is kept while switching tabs. **Update Data → Localizations** asks an LLM to fill in the ones still missing, up to 50 at a time (see [Update Data](../update-data/localizations.md)).
+The ID is the type and the name as an ID (`country-south-korea`, `city-seoul`), or for a place, `place-` and the place's ID. The Localizations page has a tab each for countries, states, cities, places and [relation words](#relation-words). Countries, states and cities come from `ALLPHOTOS.json` (at the pull request's head, with saves not committed yet, from the [combined data store](../combined-data-store.md)): each photo's custom country and city, or else its EXIF ones, with how many photos show each. Places come from the place files. Rows not saved yet say so; each row's **Save** (`PUT /api/localizations/<id>` → `PUT /localizations/{id}`) keeps its file waiting for Commit, and **Save all**, at the top right next to the sync button, saves every changed row on every tab. What's typed is kept while switching tabs. **Update Data → Localizations** asks an LLM to fill in the ones still missing, up to 50 at a time (see [Update Data](../update-data/localizations.md)).
 
 A city's or state's localization can also say where it is, as `"state"` and `"country"` (see [Adding a country, state or city](places.md#adding-a-country-state-or-city)); they're left out when empty, and the Localizations page keeps them when saving a row.
+
+## Relation words
+
+A photo's relation words (in, near, by, …, the words before its places on the Photo page) are localized too, on the Localizations page's **Relations** tab. A word is written one way in Japan and another in South Korea, so each is localized once per country: the tab has a row for each word the photos use with their places, in each country they're in (the custom country, or else the EXIF one), with how many photos use it there. A comma isn't a word, and a photo with no country adds no row. Each is saved as a localization of type `relation`, with the word as its name and the country it's for:
+
+```json
+{
+  "id": "relation-near-japan",
+  "type": "relation",
+  "name": "near",
+  "romanization": "{place} no chikaku",
+  "pronunciation": "{place}のちかく",
+  "localScript": "{place}の近く",
+  "country": "Japan"
+}
+```
+
+Writing `{place}` where the place goes puts the word after it, as Japanese and Korean do (`{place}の近く`, `{place} 근처`); without it, the word goes before the place, as in English. A photo between two places (“Between Kiyo and Uta”) reads `between` before the first place and `and` before the second, so writing `between` as `{place}` and `and` as `と{place}の間` gives “Kiyo とUtaの間”. A relation has no other names, and **Update Data → Localizations** leaves relation words out, since its prompt doesn't ask for `{place}`. The portfolio shows them as [On the portfolio](on-the-portfolio.md) says; captions keep the English word.
+
+> **Frontend analogy:** it's an i18n message with an interpolation slot, like `t("near", { place })` with `"{{place}}の近く"` in the Japanese bundle, where each country is its own locale.
 
 ## Other names
 
