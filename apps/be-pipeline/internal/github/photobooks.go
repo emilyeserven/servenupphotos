@@ -88,6 +88,10 @@ type PhotoBook struct {
 	// NoTitles is true when no photo page of the book shows its title, set
 	// on its Info tab.
 	NoTitles bool `json:"noTitles,omitempty"`
+	// NoCaptionTitles is true when the book's captions leave their first
+	// line, the photo's title, off and draw every line alike, set on its
+	// Info tab.
+	NoCaptionTitles bool `json:"noCaptionTitles,omitempty"`
 	// LensPrefixes are lenses whose names the book's captions write without
 	// the words they start with, set on its Info tab.
 	LensPrefixes []PhotoBookLensPrefix `json:"lensPrefixes,omitempty"`
@@ -197,7 +201,7 @@ func (c *Client) DeletePhotoBook(ctx context.Context, gh settings.GitHub, id str
 // and album trimmed, each page with as many slots as its layout holds, and
 // its order listing only its pages, each once.
 func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
-	out := PhotoBook{ID: strings.TrimSpace(b.ID), Name: strings.TrimSpace(b.Name), Template: strings.TrimSpace(b.Template), Album: strings.TrimSpace(b.Album), NoTitles: b.NoTitles}
+	out := PhotoBook{ID: strings.TrimSpace(b.ID), Name: strings.TrimSpace(b.Name), Template: strings.TrimSpace(b.Template), Album: strings.TrimSpace(b.Album), NoTitles: b.NoTitles, NoCaptionTitles: b.NoCaptionTitles}
 	if perr := validEntryID(PhotoBooks.Name, out.ID); perr != nil {
 		return out, perr
 	}

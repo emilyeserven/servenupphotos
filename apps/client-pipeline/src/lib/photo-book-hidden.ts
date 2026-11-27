@@ -12,7 +12,7 @@ export interface LocationPart {
   key: string;
   /** What it's called, such as "Gyeongbokgung" or "Seoul". */
   name: string;
-  /** What kind of part it is, such as "Place", "City" or "Line". */
+  /** What kind of part it is, such as "Place", "City", "Line" or "Title", the first line when it's the photo's title. */
   kind: string;
 }
 
@@ -81,12 +81,20 @@ function lineKey(i: number): string {
   return `line:${i}`;
 }
 
-/** The caption's lines it can leave out, each with its text without style marks; none for a blank line. */
-export function captionLineParts(caption: string): LocationPart[] {
+/**
+ * The caption's lines it can leave out, each with its text without style marks, its first a
+ * "Title" when the caption is titled; none for a blank line.
+ */
+export function captionLineParts(caption: string, titled = false): LocationPart[] {
   return caption.split("\n").flatMap((line, i) => {
     const name = plainCaption(line).trim();
-    return name ? [{ key: lineKey(i), name, kind: "Line" }] : [];
+    return name ? [{ key: lineKey(i), name, kind: titled && i === 0 ? "Title" : "Line" }] : [];
   });
+}
+
+/** Whether the part is one of a caption's lines, its title included, not a part of its location. */
+export function isLinePart(part: LocationPart): boolean {
+  return part.key.startsWith("line:");
 }
 
 /** The caption without the lines hidden for its photo in the book. */

@@ -6,6 +6,7 @@ import { bookAlbums } from "@/components/photo-book/album-photos";
 import { BookSettings, DeleteBookButton } from "@/components/photo-book/book-bar";
 import { BudgetFields } from "@/components/photo-book/budget-fields";
 import { CameraNamesField } from "@/components/photo-book/camera-names-field";
+import { CaptionTitlesField } from "@/components/photo-book/caption-titles-field";
 import { LensPrefixesField } from "@/components/photo-book/lens-prefixes-field";
 import { RefreshCaptions } from "@/components/photo-book/refresh-captions";
 import { SizeFields } from "@/components/photo-book/size-fields";
@@ -26,7 +27,7 @@ interface InfoTabProps {
 
 /**
  * A book's Info tab: its name, the album its photos come from, its caption template and Refresh all
- * captions, its camera and lens names, its page size, its page budget, whether its pages show
+ * captions, whether its captions have titles, its camera and lens names, its page size, its page budget, whether its pages show
  * titles, and Remove book.
  */
 export function InfoTab(props: InfoTabProps) {
@@ -42,6 +43,7 @@ export function InfoTab(props: InfoTabProps) {
         onChange={update}
       />
       <RefreshCaptions book={book} onChange={update} />
+      <CaptionTitlesField book={book} onChange={update} />
       <CameraNamesField book={book} photos={photos} onChange={update} />
       <LensPrefixesField book={book} photos={photos} onChange={update} />
       <SizeFields book={book} onChange={update} />

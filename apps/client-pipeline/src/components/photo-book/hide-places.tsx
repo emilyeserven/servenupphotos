@@ -3,7 +3,7 @@ import type { PageLook } from "@/components/photo-book/page-actions";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { type BookSlot, type PhotoBook, setHiddenParts } from "@/lib/photo-book";
-import { type LocationPart, toggledHidden } from "@/lib/photo-book-hidden";
+import { type LocationPart, isLinePart, toggledHidden } from "@/lib/photo-book-hidden";
 import { photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
 import { count } from "@portfolio/lib/words";
@@ -40,12 +40,22 @@ function hideablePhotos(
 /** The button's words: how many places and lines are hidden on the pages, or what it does. */
 function triggerText(photos: HideablePhoto[]): string {
   const hidden = photos.flatMap((p) => p.parts.filter((part) => p.slot.hidden?.includes(part.key)));
-  const lines = hidden.filter((part) => part.kind === "Line").length;
+  const lines = hidden.filter(isLinePart).length;
   const places = hidden.length - lines;
   const counts = [places > 0 && count(places, "place"), lines > 0 && count(lines, "line")].filter(
     Boolean,
   );
   return counts.length > 0 ? `${counts.join(", ")} hidden` : "Hide places";
+}
+
+/** How a part's button looks: a line square-ish, a title bold, and a hidden part struck through. */
+function chipClass(part: LocationPart, off: boolean): string {
+  return cn(
+    "max-w-full truncate border px-2 py-0.5 text-xs",
+    isLinePart(part) ? "rounded-md" : "rounded-full",
+    part.kind === "Title" && "font-semibold",
+    off ? "text-muted-foreground border-dashed line-through" : "bg-primary/10",
+  );
 }
 
 /** Some of a photo's location parts or lines, each a button that hides it from the caption or shows it again. */
@@ -72,11 +82,7 @@ function PartChips({
             aria-label={`${photo.name}: ${part.kind.toLowerCase()} ${part.name}`}
             title={`${part.kind}: ${off ? "hidden, click to show" : "click to hide"}`}
             onClick={() => onHidden(toggledHidden(hidden, part.key))}
-            className={cn(
-              "max-w-full truncate border px-2 py-0.5 text-xs",
-              part.kind === "Line" ? "rounded-md" : "rounded-full",
-              off ? "text-muted-foreground border-dashed line-through" : "bg-primary/10",
-            )}
+            className={chipClass(part, off)}
           >
             {part.name}
           </button>
@@ -119,7 +125,8 @@ export function HidePlaces({ book, pages, look, update }: HidePlacesProps) {
       <PopoverContent align="start" className="flex w-80 flex-col gap-3 p-3 text-sm">
         <p className="text-muted-foreground text-xs">
           Click a part of a place to leave it out of that photo&apos;s caption, as if the photo
-          didn&apos;t have it, or a line to leave the whole line out. The photos&apos; own data
+          didn&apos;t have it, or a line to leave the whole line out. Leaving out the first line,
+          the title, draws the lines left alike, with none of them bold. The photos&apos; own data
           stays as it is, and a caption typed over shows it once it&apos;s from the template again.
         </p>
         {photos.map((photo) => (
@@ -144,8 +151,8 @@ function HideableRow({
   photo: HideablePhoto;
   onHidden: (hidden: string[]) => void;
 }) {
-  const lines = photo.parts.filter((part) => part.kind === "Line");
-  const places = photo.parts.filter((part) => part.kind !== "Line");
+  const lines = photo.parts.filter(isLinePart);
+  const places = photo.parts.filter((part) => !isLinePart(part));
   return (
     <div className="flex flex-col gap-1">
       <span className="text-xs font-medium">{photo.name}</span>

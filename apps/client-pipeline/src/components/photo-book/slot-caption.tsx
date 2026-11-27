@@ -2,8 +2,8 @@ import { RotateCcwIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { CaptionRuns } from "@/components/caption-runs";
 import { useCaptionOverflow } from "@/components/photo-book/use-caption-overflow";
-import { plainCaption } from "@/lib/caption-styles";
 import type { BookSlot } from "@/lib/photo-book";
+import { firstLine, titleAndRest } from "@/lib/photo-book-caption-titles";
 import { cn } from "@/lib/utils";
 
 interface SlotCaptionProps {
@@ -18,7 +18,8 @@ interface SlotCaptionProps {
 
 /**
  * A photo's caption, as the book prints it: its first line, the photo's title, in bold, and the
- * lines under it (place, date, camera, settings) small. Clicking it types over it; typed over, a
+ * lines under it (place, date, camera, settings) small; a caption whose first line is blank has no
+ * title, and all its lines are small (see titleAndRest). Clicking it types over it; typed over, a
  * button puts the caption template's back. It's as tall as its text, at the top of its room unless
  * className moves it, such as `justify-end` to sit at the bottom. Sizes are in `cqw`, shares of
  * the page's width, so the text scales with the page.
@@ -73,12 +74,6 @@ function FilledCaption({ slot, text, onChange, place, className }: SlotCaptionPr
   );
 }
 
-/** The caption's first line, and the lines after it without the blank ones before them. */
-function captionLines(text: string): { title: string; rest: string } {
-  const [title = "", ...rest] = text.split("\n");
-  return { title, rest: rest.join("\n").replace(/^\s*\n/, "") };
-}
-
 /** How the caption's text button looks. */
 const TEXT_CLASS =
   "shrink-0 cursor-text rounded-sm text-left hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none";
@@ -97,23 +92,24 @@ interface CaptionTextProps {
 
 /** The caption as printed, a button that starts typing over it. */
 function CaptionText({ ref, text, over, onEdit }: CaptionTextProps) {
-  const { title, rest } = captionLines(text);
+  const { title, rest } = titleAndRest(text);
   return (
     <button
       ref={ref}
       type="button"
-      aria-label={`Edit the caption: ${plainCaption(title) || "empty"}`}
+      aria-label={`Edit the caption: ${firstLine(text) || "empty"}`}
       onClick={onEdit}
       className={cn(TEXT_CLASS, over && OVER_CLASS)}
     >
-      <CaptionTitle title={title} />
-      <CaptionRest rest={rest} />
+      <CaptionTitle title={title} rest={rest} />
+      <CaptionRest rest={rest} titled={title !== ""} />
     </button>
   );
 }
 
-/** The caption's first line, the photo's title, in bold; "Caption" while it's empty. */
-function CaptionTitle({ title }: { title: string }) {
+/** The caption's first line, the photo's title, in bold; "Caption" while it's empty; none when it has no title. */
+function CaptionTitle({ title, rest }: { title: string; rest: string }) {
+  if (!title && rest) return null;
   return (
     <span className="block text-[3cqw] leading-tight font-bold">
       {title ? <CaptionRuns text={title} /> : "Caption"}
@@ -121,11 +117,16 @@ function CaptionTitle({ title }: { title: string }) {
   );
 }
 
-/** The caption's lines under its title, small; none when there are none. */
-function CaptionRest({ rest }: { rest: string }) {
+/** The caption's lines under its title, or all of them when it has none, small; none when there are none. */
+function CaptionRest({ rest, titled }: { rest: string; titled: boolean }) {
   if (!rest) return null;
   return (
-    <span className="mt-[0.3cqw] block text-[1.9cqw] leading-snug whitespace-pre-line">
+    <span
+      className={cn(
+        "block text-[1.9cqw] leading-snug whitespace-pre-line",
+        titled && "mt-[0.3cqw]",
+      )}
+    >
       <CaptionRuns text={rest} />
     </span>
   );

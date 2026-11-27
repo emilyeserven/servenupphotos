@@ -6,6 +6,7 @@ import { pageName } from "@/components/photo-book/page-types";
 import { SectionTitle } from "@/components/section-title";
 import { plainCaption } from "@/lib/caption-styles";
 import { type BookSlot, type PhotoBook, isOtherPage } from "@/lib/photo-book";
+import { firstLine } from "@/lib/photo-book-caption-titles";
 import { generatedKind, isGeneratedPage } from "@/lib/photo-book-generated";
 import { layoutName } from "@/lib/photo-book-layouts";
 import { type ListedPage, listedPages, photoCount } from "@/lib/photo-book-list";
@@ -108,7 +109,7 @@ function PhotoWords(props: { slot: BookSlot; photo: SocialPhoto | undefined; cap
       </span>
     );
   }
-  const [title = ""] = plainCaption(caption).split("\n");
+  const title = firstLine(caption);
   return (
     <>
       <span className="truncate text-sm font-medium">{photoName(photo)}</span>

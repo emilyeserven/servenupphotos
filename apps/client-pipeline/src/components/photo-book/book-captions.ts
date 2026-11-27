@@ -8,12 +8,12 @@ import { fillTemplate } from "@/lib/caption-place-form";
 import { captionLists, captionValues } from "@/lib/caption-template";
 import type { BookSlot, PhotoBook } from "@/lib/photo-book";
 import { withBookCameraName } from "@/lib/photo-book-cameras";
+import { bookCaption, templateHasTitle } from "@/lib/photo-book-caption-titles";
 import {
   type LocationPart,
   captionLineParts,
   locationParts,
   withHiddenParts,
-  withoutHiddenLines,
 } from "@/lib/photo-book-hidden";
 import { withStrippedLens } from "@/lib/photo-book-lenses";
 import { PHOTO_BOOK_PLATFORM } from "@/lib/social-posts";
@@ -51,18 +51,25 @@ export function usePhotoFields() {
   };
 }
 
-/** How a book's captions name cameras and lenses, set on its Info tab. */
-type BookNames = Pick<PhotoBook, "cameraNames" | "lensPrefixes">;
+/** How a book's captions name cameras and lenses and whether they have titles, set on its Info tab. */
+type BookNames = Pick<PhotoBook, "cameraNames" | "lensPrefixes" | "noCaptionTitles">;
 
 /** A photo's fields with its camera called what the book calls it and its lens without its prefix. */
 function bookFields(fields: Record<string, unknown>, names: BookNames): Record<string, unknown> {
   return withStrippedLens(withBookCameraName(fields, names.cameraNames), names.lensPrefixes);
 }
 
+/** A photo place's template caption, and whether it starts with the photo's title. */
+interface TemplateCaption {
+  text: string;
+  titled: boolean;
+}
+
 /**
  * The template filled in for each photo place from the photo's fields (see usePhotoFields), with its
  * camera and lens as the book names them (see bookFields) and without the parts of its location
- * hidden for it in the book, its hidden lines still in; "" without a photo or a template.
+ * hidden for it in the book, its hidden lines still in, and whether it starts with a title (see
+ * templateHasTitle); "" without a photo or a template.
  */
 function useTemplateCaption(
   photos: Map<string, SocialPhoto>,
@@ -72,17 +79,19 @@ function useTemplateCaption(
   const { data } = useCombinedData();
   const lists = useMemo(() => captionLists(data), [data]);
   const fieldsOf = usePhotoFields();
-  return (slot: BookSlot): string => {
+  return (slot: BookSlot): TemplateCaption => {
     const photo = photos.get(slot.photo);
-    if (!photo || !template) return "";
+    if (!photo || !template) return { text: "", titled: false };
     const fields = withHiddenParts(bookFields(fieldsOf(photo), names), slot.hidden);
-    return fillTemplate(template, captionValues(fields, lists));
+    const values = captionValues(fields, lists);
+    return { text: fillTemplate(template, values), titled: templateHasTitle(template, values) };
   };
 }
 
 /**
  * What each photo place's caption says: the one written by hand, or else the template's (see
- * useTemplateCaption) without the lines hidden for it in the book.
+ * useTemplateCaption) without the lines hidden for it in the book, and with its first line blank
+ * when it has no title (see bookCaption).
  */
 export function useCaptionFor(
   photos: Map<string, SocialPhoto>,
@@ -90,7 +99,15 @@ export function useCaptionFor(
   names: BookNames,
 ) {
   const filled = useTemplateCaption(photos, template, names);
-  return (slot: BookSlot): string => slot.caption ?? withoutHiddenLines(filled(slot), slot.hidden);
+  return (slot: BookSlot): string => {
+    if (slot.caption !== null) return slot.caption;
+    const { text, titled } = filled(slot);
+    return bookCaption(text, {
+      titled,
+      hidden: slot.hidden,
+      noCaptionTitles: names.noCaptionTitles,
+    });
+  };
 }
 
 /**
@@ -109,6 +126,7 @@ export function usePartsFor(
   return (slot: BookSlot): LocationPart[] => {
     const photo = photos.get(slot.photo);
     if (!photo) return [];
-    return [...locationParts(fieldsOf(photo), lists), ...captionLineParts(filled(slot))];
+    const { text, titled } = filled(slot);
+    return [...locationParts(fieldsOf(photo), lists), ...captionLineParts(text, titled)];
   };
 }

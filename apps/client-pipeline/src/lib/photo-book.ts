@@ -163,6 +163,11 @@ export interface PhotoBook {
   budget?: PageBudget;
   /** True when no page of the book shows a title, set on its Info tab; absent when they do. */
   noTitles?: boolean;
+  /**
+   * True when the book's captions have no titles, set by **Caption titles** on its Info tab: each
+   * leaves its first line, the photo's title, off and draws every line alike; absent when they do.
+   */
+  noCaptionTitles?: boolean;
   /** Lenses whose names its captions write without the words they start with, from its Info tab. */
   lensPrefixes?: LensPrefix[];
   /** Cameras its captions call by another name, from its Info tab. */
