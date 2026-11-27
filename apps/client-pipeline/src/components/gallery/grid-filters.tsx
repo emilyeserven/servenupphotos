@@ -1,9 +1,12 @@
 import { useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
+import { photoBooks } from "@/api/photo-books";
 import type { InFlightFileRead } from "@/api/photos";
 import { type ViewerLikes, viewerLikes } from "@/api/viewer-likes";
 import { Card, CardContent } from "@/components/ui/card";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import type { PhotoBook } from "@/lib/photo-book";
+import { photosInBook } from "@/lib/photo-book-order";
 import { readEntries } from "@/lib/smart-album-photos";
 import { editedData } from "@/lib/undecided";
 import { useCombinedData } from "@/stores/combined-data";
@@ -23,6 +26,7 @@ import {
   filterByColors,
   parseColorFilters,
 } from "@portfolio/lib/color-search";
+import type { BookRef } from "@portfolio/lib/in-book";
 import type { Liker } from "@portfolio/lib/liked-by";
 import {
   FILTER_KEYS,
@@ -76,23 +80,48 @@ function likersByPhoto(viewers: ViewerLikes[]): Map<number, Liker[]> {
 }
 
 /**
+ * The photo books each photo file is placed in, by its path, from the photo books as the next
+ * Commit will have them. Only a photo on a page that's in the book counts, not one on a page
+ * left out of it or one that's only in the book's album.
+ */
+function booksByPath(books: PhotoBook[]): Map<string, BookRef[]> {
+  const byPath = new Map<string, BookRef[]>();
+  for (const book of books) {
+    const ref = { id: book.id, name: book.name };
+    for (const path of photosInBook(book)) byPath.set(path, [...(byPath.get(path) ?? []), ref]);
+  }
+  return byPath;
+}
+
+/** Who liked each photo, by its ID, and which photo books each file is in, by its path. */
+interface GalleryGroups {
+  likers: Map<number, Liker[]>;
+  books: Map<string, BookRef[]>;
+}
+
+/**
  * The files as the portfolio reads its photos, with the local edits made, each saying whose Like
- * lists it's in, for the Groups picker's **Likes**. A file whose JSON couldn't be read, or that has
- * no date, has no photo, so the Grid's filters never show it.
+ * lists it's in and which photo books it's placed in, for the Groups picker's **Likes** and
+ * **Book**. A file whose JSON couldn't be read, or that has no date, has no photo, so the Grid's
+ * filters never show it.
  */
 function galleryPhotos(
   files: GridFile[],
   edits: Record<string, LocalEdit>,
-  likers: Map<number, Liker[]>,
+  { likers, books }: GalleryGroups,
 ): GalleryPhotos {
   const entries = files.flatMap((file) => {
     const data = editedData(file, edits);
     return typeof data === "object" && data !== null ? [{ path: file.path, data }] : [];
   });
   const read = readEntries(entries.map(({ data }) => data as CombinedPhoto));
-  const photos = read.photos.map((photo) => ({ ...photo, likedBy: likers.get(photo.id) }));
-  const ids = read.ids;
-  return { photos, paths: new Map(ids.map((id, index) => [id, entries[index]?.path ?? ""])) };
+  const paths = new Map(read.ids.map((id, index) => [id, entries[index]?.path ?? ""]));
+  const photos = read.photos.map((photo) => ({
+    ...photo,
+    likedBy: likers.get(photo.id),
+    books: books.get(paths.get(photo.id) ?? ""),
+  }));
+  return { photos, paths };
 }
 
 /**
@@ -104,10 +133,13 @@ export function useGridFilters<T extends GridFile>(all: T[], files: T[]) {
   const search = useSearch({ strict: false }) as Record<string, unknown>;
   const edits = useLocalEditsStore((s) => s.edits);
   const { data } = useCombinedData();
-  const likers = useMemo(() => likersByPhoto(viewerLikes(data)), [data]);
+  const groups = useMemo(
+    () => ({ likers: likersByPhoto(viewerLikes(data)), books: booksByPath(photoBooks(data)) }),
+    [data],
+  );
   const { photos: every, paths } = useMemo(
-    () => galleryPhotos(all, edits, likers),
-    [all, edits, likers],
+    () => galleryPhotos(all, edits, groups),
+    [all, edits, groups],
   );
   const listed = new Set(files.map(({ path }) => path));
   const photos = every.filter(({ id }) => listed.has(paths.get(id) ?? ""));
