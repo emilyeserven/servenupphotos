@@ -1192,6 +1192,25 @@
       ]
     },
     {
+      "id": "page-97",
+      "layout": "text",
+      "title": "Afterword",
+      "text": "help this stuff is so difficult to write",
+      "textSide": "left",
+      "slots": [
+        {
+          "photo": "apps/portfolio/src/data/photos/mirror-mirror-mirror.json",
+          "caption": null,
+          "hidden": ["state"]
+        },
+        {
+          "photo": "apps/portfolio/src/data/photos/dscf7967.json",
+          "caption": null,
+          "hidden": ["state"]
+        }
+      ]
+    },
+    {
       "id": "page-26",
       "tags": ["grayscale", "rural", "japan"],
       "layout": "custom-4",
@@ -1357,29 +1376,41 @@
       ]
     },
     {
+      "id": "page-99",
+      "layout": "custom-2",
+      "title": "",
+      "slots": [
+        {
+          "photo": "apps/portfolio/src/data/photos/20250118_151703.json",
+          "caption": null
+        },
+        {
+          "photo": "apps/portfolio/src/data/photos/dscf9818.json",
+          "caption": null
+        }
+      ]
+    },
+    {
+      "id": "page-100",
+      "layout": "custom-1",
+      "title": null,
+      "slots": [
+        {
+          "photo": "apps/portfolio/src/data/photos/view-from-the-villa.json",
+          "caption": null
+        },
+        {
+          "photo": "apps/portfolio/src/data/photos/dscf5447.json",
+          "caption": null
+        }
+      ]
+    },
+    {
       "id": "page-86",
       "name": "About",
       "layout": "other",
       "title": null,
       "slots": []
-    },
-    {
-      "id": "page-97",
-      "layout": "text",
-      "title": "Afterword",
-      "textSide": "left",
-      "slots": [
-        {
-          "photo": "apps/portfolio/src/data/photos/mirror-mirror-mirror.json",
-          "caption": null,
-          "hidden": ["state"]
-        },
-        {
-          "photo": "apps/portfolio/src/data/photos/dscf7967.json",
-          "caption": null,
-          "hidden": ["state"]
-        }
-      ]
     },
     {
       "id": "page-98",
@@ -1390,9 +1421,13 @@
         "kind": "places-index",
         "names": "namedLocal",
         "columns": 3,
-        "textSize": 60,
+        "textSize": 85,
+        "entrySizes": {
+          "place:jonggak-avenue-of-youth": 85,
+          "place:national-museum-of-korea": 85,
+          "place:okuhagi-observatory": 95
+        },
         "hidden": [
-          "state:Busan",
           "place:muhammad-ali-mosque",
           "place:former-kubota-family-residence",
           "place:shizuki-shrine",
@@ -1407,7 +1442,25 @@
           "place:komfortabel-coffee-namsan",
           "place:ocean-beach",
           "city:Osaka-shi",
-          "state:Brussels-Capital"
+          "state:Brussels-Capital",
+          "place:bowery",
+          "place:new-canaan-nature-center",
+          "place:outer-richmond",
+          "place:shoyama-station",
+          "city:Certaldo",
+          "place:grand-place",
+          "place:step-pyramid-of-djoser",
+          "city:Markaz al Badrashayn",
+          "place:citadel-of-salah-al-din-al-ayyubi",
+          "place:marsam-hotel",
+          "place:museum-of-egyptian-antiquities",
+          "place:horikawa-sightseeing-boat-karakoro-square-dock",
+          "place:takenoya-ryokan",
+          "state:Qena Governante",
+          "city:Markaz al Uqşur",
+          "place:uta",
+          "place:kiyo",
+          "city:Abu District"
         ]
       },
       "slots": []
@@ -1489,8 +1542,8 @@
     "page-84",
     "page-45",
     "page-94",
-    "page-98",
     "page-97",
+    "page-98",
     "page-26"
   ],
   "size": {

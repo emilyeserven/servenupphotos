@@ -1,5 +1,5 @@
 {
-  "title": "Busy Night in Myeongdong",
+  "title": "City Population Does Not Account For Tourists",
   "comment": null,
   "id": 251,
   "file": "DSCF5675.jpg",
@@ -275,5 +275,8 @@
     "peakChroma": 35.47,
     "samples": 9900
   },
-  "similarPhotos": [307, 205, 327, 120, 250, 353]
+  "similarPhotos": [307, 205, 327, 120, 250, 353],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

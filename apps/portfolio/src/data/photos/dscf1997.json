@@ -1,5 +1,5 @@
 {
-  "title": "On the Way to Matsue II",
+  "title": "Between Kiyo and Uta",
   "comment": null,
   "id": 948,
   "altText": null,
@@ -13,11 +13,11 @@
   "iso": 160,
   "focalLength": 18.5,
   "gpsPosition": "34 deg 31' 24.65\" N, 131 deg 29' 13.69\" E",
-  "customGpsPosition": null,
+  "customGpsPosition": "34.5538, 131.5198",
   "createDate": "2026:09:25 13:43:41",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Kiyo",
+  "customCity": "Abu District",
   "customState": null,
   "customCountry": null,
   "country": "Japan",
@@ -52,7 +52,16 @@
   "albums": ["2026-photo-book-candidates"],
   "tags": ["islands", "coastline", "ocean", "road", "hills"],
   "genres": ["landscape"],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "kiyo"
+    },
+    {
+      "relation": "near",
+      "id": "uta"
+    }
+  ],
   "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,

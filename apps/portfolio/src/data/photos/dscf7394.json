@@ -1,5 +1,5 @@
 {
-  "title": "Dragon fountain",
+  "title": "Dragon Fountain",
   "comment": null,
   "id": 312,
   "file": "DSCF7394.jpg",
@@ -267,5 +267,7 @@
     "samples": 9828
   },
   "notes": "Shows a chozuya basin with a dragon spout; 'chozuya' and 'dragons' aren't tags, since only 1 photo has them.",
-  "similarPhotos": [324, 313, 315, 309, 464, 311]
+  "similarPhotos": [324, 313, 315, 309, 464, 311],
+  "noGps": false,
+  "altText": null
 }

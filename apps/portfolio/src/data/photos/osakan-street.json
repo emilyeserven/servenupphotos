@@ -1,5 +1,5 @@
 {
-  "title": "Osakan Street",
+  "title": "Osakan Side Street",
   "comment": null,
   "id": 304,
   "file": "DSCF0186.jpg",
@@ -266,5 +266,8 @@
     "peakChroma": 14.81,
     "samples": 9711
   },
-  "similarPhotos": [306, 250, 449, 450, 319, 454]
+  "similarPhotos": [306, 250, 449, 450, 319, 454],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

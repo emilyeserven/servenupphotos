@@ -1,5 +1,5 @@
 {
-  "title": "Seal Rock Row II",
+  "title": "Coastal Row Houses",
   "comment": null,
   "id": 414,
   "file": "DSCF2488.jpg",
@@ -272,5 +272,7 @@
   },
   "similarPhotos": [430, 436, 372, 408, 412, 373],
   "compareGroup": "Seal Rock Row Houses",
-  "notes": "Quality Check (pixelation): The rear plate of the silver Nissan pickup in the foreground, right of centre, is readable."
+  "notes": "Quality Check (pixelation): The rear plate of the silver Nissan pickup in the foreground, right of centre, is readable.",
+  "noGps": false,
+  "altText": null
 }

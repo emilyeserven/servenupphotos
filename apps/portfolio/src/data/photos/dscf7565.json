@@ -1,5 +1,5 @@
 {
-  "title": "Busan Street",
+  "title": "Busan Side Street",
   "comment": null,
   "id": 321,
   "file": "DSCF7565.jpg",
@@ -261,5 +261,8 @@
     "peakChroma": 20.55,
     "samples": 10115
   },
-  "similarPhotos": [225, 319, 454, 373, 304, 407]
+  "similarPhotos": [225, 319, 454, 373, 304, 407],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }
