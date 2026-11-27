@@ -1,3 +1,4 @@
+import { readPicks } from "@/lib/print-picks";
 import { readPrintChoice } from "@/lib/print-quality";
 import { storedValue } from "@portfolio/lib/stored-value";
 
@@ -16,3 +17,9 @@ export const printQueueAlbum = storedValue("pipeline-print-queue-album", (stored
 export const printMinPpi = storedValue("pipeline-print-min-ppi", (stored) =>
   typeof stored === "number" && stored > 0 ? stored : 0,
 );
+
+/**
+ * The print queue photos hearted as the ones to actually print, by file name. Kept in this browser,
+ * like the queue album itself.
+ */
+export const printPicks = storedValue("pipeline-print-picks", readPicks);
