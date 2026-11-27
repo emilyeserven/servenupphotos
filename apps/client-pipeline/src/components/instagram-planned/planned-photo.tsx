@@ -4,6 +4,7 @@ import { FallbackImage } from "@/components/fallback-image";
 import { Button } from "@/components/ui/button";
 import type { PlannedPhoto } from "@/lib/instagram-planned";
 import { offlineSmallUrl } from "@/lib/offline-thumbnails";
+import { originalHref } from "@/lib/original-download";
 import { cn } from "@/lib/utils";
 import { parseIsoDate } from "@portfolio/lib/dates";
 
@@ -20,18 +21,6 @@ function image(data: Record<string, unknown>, name: string): string | undefined 
   const images = data.images as Record<string, unknown> | undefined;
   const value = images?.[name];
   return typeof value === "string" && value ? value : undefined;
-}
-
-/**
- * Where the original JPEG downloads from: the pipeline's own route, which names the file after the
- * photo, since a browser won't download straight from R2's address. Undefined without an R2 key.
- */
-function originalHref(data: Record<string, unknown>): string | undefined {
-  const key = image(data, "key");
-  if (!key) return undefined;
-  const params = new URLSearchParams({ key });
-  if (typeof data.file === "string") params.set("name", data.file);
-  return `/api/photos/original?${params}`;
 }
 
 /** The photo large enough to compare with Instagram's preview, or its smallest version. */

@@ -17,7 +17,8 @@ Pick a photo from the grid (search by title or file name), and its card shows:
 
 - its **pixels per inch** on the paper, from its original's `width` and `height` in its photo JSON, with a rating: **Excellent** at 300 and up, **Good** from 200, **Fair** from 150, and **Poor** below that;
 - the paper drawn to its shape with the photo on it, cropped or with its borders, so the crop can be seen;
-- the original's size in pixels, the paper's size, how much of the photo is cropped away (or of the paper left blank), and the largest print it makes at 300 and at 200 pixels per inch.
+- the original's size in pixels, the paper's size, how much of the photo is cropped away (or of the paper left blank), and the largest print it makes at 300 and at 200 pixels per inch;
+- **Original JPEG**, which downloads the photo's original from R2 to send to the printer (see [Print Queue](#print-queue)).
 
 Every tile in the grid shows its own rating at the chosen size too, so changing the size shows at a glance which photos still print well. The photo picked is in the address (`/printing?photo=DSCF4800.jpg`), so a tile on Print Queue links straight to its check. A photo whose JSON has no `width` and `height` says so; Update Data's **Missing fields** fills them in.
 
@@ -27,4 +28,6 @@ The ratings follow the usual printing guidance: 300 ppi is the standard for phot
 
 ## Print Queue
 
-One album is the print queue: pick it under **Print queue album**, and every photo in it, or in an album inside it, is listed in the album's order, each with its rating at the chosen size and a link to its check. Queue a photo by adding it to that album, from the Gallery or the album's page, and take it out the same way once it's printed. The album picked is kept in this browser's `localStorage` under `pipeline-print-queue-album`; it isn't committed anywhere, since it only matters to this pipeline.
+One album is the print queue: pick it under **Print queue album**, and every photo in it, or in an album inside it, is listed in the album's order, each with its rating at the chosen size, a link to its check, and an **Original JPEG** button that downloads its original from R2, named after the photo (`DSCF4800.jpg`). The download goes through the pipeline's `GET /api/photos/original?key=…&name=…`, the same route the Instagram Planned page uses (`lib/original-download.ts`), since a browser won't save a file straight from R2's address. A photo whose JSON has no R2 key says so instead.
+
+**Minimum PPI**, under the size, grays out every queued photo that prints below it at the size picked, but leaves it in the list (its rating, check link and download still work), so it's clear which ones need a smaller size. It's empty (no minimum) to start, and kept in this browser under `pipeline-print-min-ppi`. A photo whose size isn't known is never grayed out. Queue a photo by adding it to that album, from the Gallery or the album's page, and take it out the same way once it's printed. The album picked is kept in this browser's `localStorage` under `pipeline-print-queue-album`; it isn't committed anywhere, since it only matters to this pipeline.

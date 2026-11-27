@@ -1,3 +1,4 @@
+import { DownloadOriginalButton } from "@/components/printing/download-original-button";
 import { PrintRatingBadge, usePrintCheck } from "@/components/printing/print-rating";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type CombinedPhoto, photoImage } from "@/lib/group-photos";
@@ -48,7 +49,10 @@ function CheckBody({ photo }: { photo: CombinedPhoto }) {
   return (
     <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <PaperPreview photo={photo} check={check} fit={choice.fit} />
-      <CheckDetails pixels={pixels} check={check} choice={choice} />
+      <div className="flex flex-col gap-4">
+        <CheckDetails pixels={pixels} check={check} choice={choice} />
+        <DownloadOriginalButton photo={photo} />
+      </div>
     </div>
   );
 }
