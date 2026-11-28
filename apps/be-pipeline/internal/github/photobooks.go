@@ -234,10 +234,7 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 	if out.CameraNames, perr = validCameraNames(b.CameraNames); perr != nil {
 		return out, perr
 	}
-	if out.Cover, perr = validPhotoBookCover(b.Cover); perr != nil {
-		return out, perr
-	}
-	if out.Blurb, perr = validPhotoBookBlurb(b.Blurb); perr != nil {
+	if perr = validPhotoBookPrint(b, &out); perr != nil {
 		return out, perr
 	}
 	counts := photoBookSlotCounts(layouts)

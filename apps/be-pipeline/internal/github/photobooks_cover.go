@@ -103,3 +103,14 @@ func validPhotoBookBlurb(blurb *PhotoBookBlurb) (*PhotoBookBlurb, *PublishError)
 	}
 	return blurb, nil
 }
+
+// validPhotoBookPrint checks b's cover and Blurb sizes and sets them on out,
+// or says why they can't be saved.
+func validPhotoBookPrint(b PhotoBook, out *PhotoBook) *PublishError {
+	var perr *PublishError
+	if out.Cover, perr = validPhotoBookCover(b.Cover); perr != nil {
+		return perr
+	}
+	out.Blurb, perr = validPhotoBookBlurb(b.Blurb)
+	return perr
+}
