@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["birds", "flight", "silhouettes", "ocean", "sunrise", "seagulls"],
   "genres": [],
   "places": [
@@ -267,5 +267,8 @@
     "samples": 9900
   },
   "similarPhotos": [135, 138, 206, 137, 134, 109],
-  "compareGroup": "Gulls Flying at Sunrise"
+  "compareGroup": "Gulls Flying at Sunrise",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

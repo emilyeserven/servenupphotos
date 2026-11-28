@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "vertical-photos"],
   "tags": ["signage", "bridges", "crowd", "tourists", "storefronts", "twilight"],
   "genres": ["street"],
   "places": [
@@ -266,5 +266,8 @@
     "peakChroma": 16.9,
     "samples": 10030
   },
-  "similarPhotos": [306, 169, 307, 304, 219, 251]
+  "similarPhotos": [306, 169, 307, 304, 219, 251],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

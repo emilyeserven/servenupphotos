@@ -1195,7 +1195,7 @@
       "id": "page-97",
       "layout": "text",
       "title": "Afterword",
-      "text": "help this stuff is so difficult to write",
+      "text": "Wow, what a year.",
       "textSide": "left",
       "slots": [
         {
@@ -1341,7 +1341,8 @@
         },
         {
           "photo": "apps/portfolio/src/data/photos/dscf9818.json",
-          "caption": null
+          "caption": null,
+          "hidden": ["place:former-kubota-family-residence"]
         }
       ]
     },
@@ -1497,7 +1498,7 @@
     "page-84",
     "page-45",
     "page-94",
-    "page-97",
+    "page-99",
     "page-98",
     "page-26"
   ],
@@ -1524,7 +1525,9 @@
       "alignTo": "photo",
       "title": "off",
       "gap": 1,
-      "margin": 0
+      "margin": 0.5,
+      "printOffsetLeft": 1,
+      "leftPages": "mirror"
     },
     {
       "id": "custom-2",
@@ -1538,12 +1541,14 @@
       },
       "text": "left",
       "captions": "photo",
-      "textShare": 25,
+      "textShare": 26,
       "align": "end",
       "alignTo": "photo",
       "title": "off",
-      "gap": 3,
-      "margin": 0,
+      "gap": 1.5,
+      "margin": 0.5,
+      "printOffsetLeft": 1,
+      "printOffsetRight": 0,
       "leftPages": "mirror"
     },
     {
@@ -1562,7 +1567,9 @@
       "align": "start",
       "title": "off",
       "gap": 0,
-      "margin": 0
+      "margin": 0.5,
+      "printOffsetLeft": 1.5,
+      "leftPages": "mirror"
     }
   ],
   "lensPrefixes": [
@@ -1584,5 +1591,12 @@
       "camera": "Galaxy S24 Ultra",
       "name": "S24 Ultra"
     }
-  ]
+  ],
+  "cover": {
+    "title": "Serven\nUp\nPhotos",
+    "author": "Emily Serven",
+    "volume": "Vol. 5",
+    "background": "#000000",
+    "color": "#ffffff"
+  }
 }

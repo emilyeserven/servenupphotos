@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "vertical-photos"],
   "tags": ["daldongne", "alley", "rooftops", "houses", "power-lines", "stairs"],
   "genres": ["street", "architecture"],
   "places": [
@@ -266,5 +266,8 @@
     "peakChroma": 29.37,
     "samples": 10115
   },
-  "similarPhotos": [356, 323, 413, 216, 124, 436]
+  "similarPhotos": [356, 323, 413, 216, 124, 436],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

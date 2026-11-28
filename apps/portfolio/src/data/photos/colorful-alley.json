@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["vertical-photos"],
   "tags": [
     "alley",
     "street-art",
@@ -276,5 +276,8 @@
     "peakChroma": 40.1,
     "samples": 9628
   },
-  "similarPhotos": [439, 440, 441, 467, 438, 283]
+  "similarPhotos": [439, 440, 441, 467, 438, 283],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

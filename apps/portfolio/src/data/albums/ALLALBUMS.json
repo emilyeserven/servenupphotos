@@ -26,10 +26,31 @@
     "photoOrder": [1, 344, 356, 7, 118, 268, 262, 335, 355, 311]
   },
   {
+    "id": "horizontal-prints",
+    "name": "Horizontal Prints",
+    "description": "",
+    "parent": null,
+    "hidden": true
+  },
+  {
     "id": "japan",
     "name": "Japan",
     "description": "",
     "parent": null
+  },
+  {
+    "id": "office-album-verticals",
+    "name": "Office Album Verticals",
+    "description": "",
+    "parent": null,
+    "hidden": true
+  },
+  {
+    "id": "office-album",
+    "name": "Office Album",
+    "description": "",
+    "parent": null,
+    "hidden": true
   },
   {
     "id": "timeline-spotlight",
@@ -40,5 +61,12 @@
     "spotlightUpdated": {
       "timeline-header": "2026-11-07"
     }
+  },
+  {
+    "id": "vertical-photos",
+    "name": "Vertical Photos",
+    "description": "",
+    "parent": null,
+    "hidden": true
   }
 ]

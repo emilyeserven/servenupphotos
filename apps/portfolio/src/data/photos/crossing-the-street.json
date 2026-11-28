@@ -49,7 +49,7 @@
   },
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album-verticals"],
   "tags": [
     "hills",
     "road",
@@ -280,5 +280,7 @@
   },
   "notes": "Shows a manhole cover; 'manhole-cover' isn't a tag, since only 2 photos have one.\n\nShows a manhole cover, now tagged 'manhole-covers' (4 photos have one).",
   "similarPhotos": [492, 490, 494, 444, 158, 412],
-  "compareGroup": "Steep Street at Dusk"
+  "compareGroup": "Steep Street at Dusk",
+  "noGps": false,
+  "altText": null
 }

@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "office-album"],
   "tags": ["shinto", "senjafuda", "shimenawa", "shide", "shrine", "rope", "wood"],
   "genres": [],
   "places": [
@@ -267,5 +267,8 @@
     "peakChroma": 19.69,
     "samples": 9975
   },
-  "similarPhotos": [507, 329, 381, 506, 510, 505]
+  "similarPhotos": [507, 329, 381, 506, 510, 505],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

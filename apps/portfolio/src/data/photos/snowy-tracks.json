@@ -1,7 +1,7 @@
 {
-  "id": 64,
   "title": "Snowy Tracks",
   "comment": null,
+  "id": 64,
   "file": "IMG_1714.jpg",
   "addedDate": "2026-10-23T13:24:41Z",
   "camera": "Canon EOS Rebel T6i",
@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["railway", "trains", "snow", "winter", "repetition", "numbers"],
   "genres": [],
   "places": [],
@@ -265,5 +265,7 @@
     "samples": 9750
   },
   "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo.\n\nShows numbers by the tracks, now tagged 'numbers'.",
-  "similarPhotos": [106, 7, 22, 24, 116, 242]
+  "similarPhotos": [106, 7, 22, 24, 116, 242],
+  "noGps": false,
+  "altText": null
 }

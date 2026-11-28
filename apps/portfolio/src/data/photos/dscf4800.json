@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "vertical-photos"],
   "tags": ["autumn", "boardwalk", "fallen-leaves", "forest", "footbridges", "shadows"],
   "genres": ["landscape", "nature"],
   "places": [
@@ -267,5 +267,8 @@
     "peakChroma": 24.01,
     "samples": 9828
   },
-  "similarPhotos": [495, 473, 471, 476, 496, 478]
+  "similarPhotos": [495, 473, 471, 476, 496, 478],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

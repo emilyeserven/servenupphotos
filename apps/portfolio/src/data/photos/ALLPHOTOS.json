@@ -1959,7 +1959,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["mosque", "calligraphy", "lamps", "chains", "walls"],
     "genres": ["architecture"],
     "places": [
@@ -2180,7 +2180,9 @@
     },
     "notes": "Shows mishkat mosque lamps; 'mishkat' isn't a tag, since only 2 photos have them.",
     "similarPhotos": [279, 278, 274, 275, 273, 290],
-    "compareGroup": "Mosque Hanging Lamps"
+    "compareGroup": "Mosque Hanging Lamps",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Into the Light",
@@ -2503,7 +2505,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["mosque", "lamps", "chains", "walls", "patterns"],
     "genres": ["architecture", "abstract"],
     "places": [
@@ -2777,7 +2779,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["mosque", "windows", "wood", "patterns", "silhouettes"],
     "genres": ["architecture", "abstract"],
     "places": [
@@ -2997,7 +2999,9 @@
       "samples": 9490
     },
     "notes": "Shows a mashrabiya screen with girih patterns; 'mashrabiya' and 'girih' aren't tags, since only 1 photo has them.",
-    "similarPhotos": [275, 278, 272, 33, 274, 71]
+    "similarPhotos": [275, 278, 272, 33, 274, 71],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Entrance of the Red Pyramid",
@@ -3860,7 +3864,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["texture", "hieroglyphs", "ruins", "carvings", "inscriptions"],
     "genres": ["abstract", "architecture"],
     "places": [
@@ -4080,7 +4084,10 @@
       "samples": 9694
     },
     "similarPhotos": [359, 271, 279, 504, 358, 33],
-    "compareGroup": "Hieroglyph Wall Close-Ups"
+    "compareGroup": "Hieroglyph Wall Close-Ups",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Red Sea Waves",
@@ -5990,9 +5997,9 @@
     "altText": null
   },
   {
-    "id": 6,
     "title": "86th & 2nd",
     "comment": null,
+    "id": 6,
     "file": "IMG_4848.jpg",
     "addedDate": "2026-10-22T19:36:17Z",
     "camera": "Canon EOS 80D",
@@ -6038,7 +6045,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["subway", "commuters", "platform", "pedestrians", "signage"],
     "genres": ["street"],
     "places": [
@@ -6059,7 +6066,7 @@
         "hex": "#424242",
         "lab": {
           "l": 28.08,
-          "a": -0,
+          "a": 0,
           "b": -0.01
         },
         "hcl": {
@@ -6261,7 +6268,9 @@
       "samples": 9728
     },
     "notes": "Shows a newsstand; 'newsstand' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 295 (1.69:1), not the 16:9 crop for a landscape photo.",
-    "similarPhotos": [7, 74, 22, 383, 151, 11]
+    "similarPhotos": [7, 74, 22, 383, 151, 11],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "9/11 Memorial",
@@ -6538,9 +6547,9 @@
     "similarPhotos": [165, 23, 167, 163, 6, 42]
   },
   {
-    "id": 7,
     "title": "96th & Lex",
     "comment": null,
+    "id": 7,
     "file": "IMG_3769.jpg",
     "addedDate": "2026-10-22T19:36:17Z",
     "camera": "Canon EOS 80D",
@@ -6586,7 +6595,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": ["homepage-spotlight", "office-album"],
     "tags": ["subway", "commuters", "platform", "trains", "railway", "reflections", "lamps"],
     "genres": ["street"],
     "places": [
@@ -6610,8 +6619,8 @@
         "hex": "#3f3f3f",
         "lab": {
           "l": 26.47,
-          "a": -0,
-          "b": -0
+          "a": 0,
+          "b": 0
         },
         "hcl": {
           "h": 259.96,
@@ -6822,7 +6831,9 @@
     },
     "similarPhotos": [22, 6, 51, 151, 383, 74],
     "compareGroup": "Lone Figure on Subway Platform",
-    "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo."
+    "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo.",
+    "noGps": false,
+    "altText": null
   },
   {
     "id": 23,
@@ -9070,7 +9081,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["bay-windows", "houses", "apartments", "trees", "stones", "humor"],
     "genres": ["street", "architecture"],
     "places": [
@@ -9290,7 +9301,10 @@
       "peakChroma": 28.15,
       "samples": 9768
     },
-    "similarPhotos": [436, 429, 373, 494, 430, 400]
+    "similarPhotos": [436, 429, 373, 494, 430, 400],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Beach Parking",
@@ -11533,7 +11547,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": [
       "footbridges",
       "bridges",
@@ -11764,7 +11778,9 @@
       "samples": 9801
     },
     "similarPhotos": [45, 35, 39, 237, 113, 402],
-    "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo."
+    "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo.",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Blue Culture Street",
@@ -11815,7 +11831,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["daldongne", "alley", "rooftops", "houses", "power-lines", "stairs"],
     "genres": ["street", "architecture"],
     "places": [
@@ -12034,7 +12050,10 @@
       "peakChroma": 29.37,
       "samples": 10115
     },
-    "similarPhotos": [356, 323, 413, 216, 124, 436]
+    "similarPhotos": [356, 323, 413, 216, 124, 436],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Blue Fish",
@@ -16245,7 +16264,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["vertical-photos"],
     "tags": [
       "alley",
       "street-art",
@@ -16474,7 +16493,10 @@
       "peakChroma": 40.1,
       "samples": 9628
     },
-    "similarPhotos": [439, 440, 441, 467, 438, 283]
+    "similarPhotos": [439, 440, 441, 467, 438, 283],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "id": 16,
@@ -17621,7 +17643,7 @@
     },
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album-verticals"],
     "tags": [
       "hills",
       "road",
@@ -17852,7 +17874,9 @@
     },
     "notes": "Shows a manhole cover; 'manhole-cover' isn't a tag, since only 2 photos have one.\n\nShows a manhole cover, now tagged 'manhole-covers' (4 photos have one).",
     "similarPhotos": [492, 490, 494, 444, 158, 412],
-    "compareGroup": "Steep Street at Dusk"
+    "compareGroup": "Steep Street at Dusk",
+    "noGps": false,
+    "altText": null
   },
   {
     "id": 9,
@@ -20696,7 +20720,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["hangul", "signage", "storefronts", "sidewalk", "skyscrapers", "posters"],
     "genres": ["street"],
     "places": [
@@ -21514,7 +21538,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["silhouettes", "pedestrians", "signage", "skylights", "covered-street", "shotengai"],
     "genres": ["street", "architecture"],
     "places": [
@@ -21734,7 +21758,9 @@
       "samples": 10115
     },
     "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one.\n\nShows a shotengai, now tagged 'shotengai'.",
-    "similarPhotos": [306, 303, 219, 377, 307, 304]
+    "similarPhotos": [306, 303, 219, 377, 307, 304],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Avenue of Youth II",
@@ -23170,7 +23196,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["giwa", "pavilion", "park", "pine-trees", "pedestrians", "elderly"],
     "genres": ["street", "architecture"],
     "places": [
@@ -24994,7 +25020,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["kawara", "houses", "rooftops", "hills", "water"],
     "genres": ["cityscape", "landscape"],
     "places": [
@@ -25906,7 +25932,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["signage", "bridges", "crowd", "tourists", "storefronts", "twilight"],
     "genres": ["street"],
     "places": [
@@ -26125,7 +26151,10 @@
       "peakChroma": 16.9,
       "samples": 10030
     },
-    "similarPhotos": [306, 169, 307, 304, 219, 251]
+    "similarPhotos": [306, 169, 307, 304, 219, 251],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Break in the Wall",
@@ -27028,7 +27057,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["crowd", "pedestrians", "tourists", "humor", "signage", "storefronts"],
     "genres": ["street"],
     "places": [
@@ -27251,7 +27280,9 @@
       "samples": 9975
     },
     "similarPhotos": [305, 304, 307, 302, 169, 219],
-    "notes": "Quality Check (pixelation): In the crowd at the front, the man in the cap at the bottom right and the young women near him are facing the camera."
+    "notes": "Quality Check (pixelation): In the crowd at the front, the man in the cap at the bottom right and the young women near him are facing the camera.",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Seoul Streets IV",
@@ -27609,7 +27640,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["canal", "neon", "night", "city-lights", "signage", "boats", "crowd", "reflections"],
     "genres": ["street", "cityscape"],
     "places": [
@@ -27828,7 +27859,10 @@
       "peakChroma": 20.14,
       "samples": 9711
     },
-    "similarPhotos": [306, 353, 305, 251, 302, 354]
+    "similarPhotos": [306, 353, 305, 251, 302, 354],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Stone Marker",
@@ -29255,7 +29289,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["doors", "padlocks", "ironwork", "wood", "rust", "texture"],
     "genres": ["architecture"],
     "places": [
@@ -30095,7 +30129,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "horizontal-prints"],
     "tags": ["shinto", "shrine", "carvings", "wood", "plaques"],
     "genres": ["architecture"],
     "places": [
@@ -30376,7 +30410,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["wabi-sabi", "toro", "moss", "grass", "forest"],
     "genres": ["nature"],
     "places": [
@@ -32045,7 +32079,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["night", "twilight", "city-lights", "islands", "ocean"],
     "genres": ["cityscape", "landscape"],
     "places": [
@@ -32322,7 +32356,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["night", "twilight", "city-lights", "city", "mountains"],
     "genres": ["cityscape"],
     "places": [
@@ -33429,7 +33463,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["yeondeung", "buddhism", "temple", "statues", "lanterns", "interior"],
     "genres": ["architecture", "street"],
     "places": [
@@ -37957,7 +37991,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["hangul", "signage", "storefronts", "traffic", "street-lights", "night"],
     "genres": ["street"],
     "places": [
@@ -38237,7 +38271,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["trains", "railway", "platform", "train-station", "countryside"],
     "genres": ["transportation"],
     "places": [
@@ -41025,7 +41059,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": [
       "hangul",
       "rain",
@@ -41332,7 +41366,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["rain", "umbrellas", "reflections", "signage", "pedestrians", "neon", "night"],
     "genres": ["street"],
     "places": [
@@ -42465,7 +42499,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["koshi", "kawara", "kanji", "signage", "power-lines", "rain"],
     "genres": ["street", "architecture"],
     "places": [
@@ -43023,7 +43057,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["torii", "shinto", "sando", "silhouettes", "pine-trees"],
     "genres": ["architecture"],
     "places": [
@@ -43581,7 +43615,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "horizontal-prints"],
     "tags": ["sando", "shinto", "gates", "pine-trees", "path"],
     "genres": ["architecture", "landscape"],
     "places": [
@@ -45540,7 +45574,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["horizontal-prints"],
     "tags": ["shimenawa", "shide", "shinto", "rope", "texture"],
     "genres": ["abstract", "architecture"],
     "places": [
@@ -45821,7 +45855,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "horizontal-prints"],
     "tags": ["kamon", "koshi", "shinto", "windows", "patterns", "glass"],
     "genres": ["architecture", "abstract"],
     "places": [
@@ -46946,7 +46980,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["shinto", "shrine", "forest", "stairs", "tourists"],
     "genres": ["architecture", "nature"],
     "places": [
@@ -47780,7 +47814,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["torii", "shinto", "birds", "silhouettes", "minimalism"],
     "genres": ["abstract", "architecture", "wildlife"],
     "places": [
@@ -48840,7 +48874,7 @@
     "compareGroup": "Palace Gate in the Wall"
   },
   {
-    "title": "The Torii on the Island",
+    "title": "Island Torii",
     "comment": null,
     "id": 823,
     "altText": null,
@@ -49995,7 +50029,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["shinto", "shrine", "rock-formations", "beach", "ocean", "tourists"],
     "genres": ["landscape", "street"],
     "places": [
@@ -50544,7 +50578,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["trains", "railway", "machinery", "vintage", "steel"],
     "genres": ["transportation"],
     "places": [
@@ -52686,7 +52720,7 @@
     "similarPhotos": [128, 126, 210, 212, 127, 5]
   },
   {
-    "title": "Horikawa Karakoro Square Dock",
+    "title": "Horikawa Dock, Karakoro Square",
     "comment": null,
     "id": 864,
     "altText": null,
@@ -59263,7 +59297,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["vertical-photos"],
     "tags": ["sculpture", "humor", "signage", "plants"],
     "genres": [],
     "places": [],
@@ -63765,7 +63799,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["autumn", "benches", "lichen", "wood", "fallen-leaves", "texture"],
     "genres": ["nature", "abstract"],
     "places": [
@@ -63985,7 +64019,10 @@
       "peakChroma": 27.73,
       "samples": 9828
     },
-    "similarPhotos": [478, 495, 481, 497, 486, 479]
+    "similarPhotos": [478, 495, 481, 497, 486, 479],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "One Red Leaf",
@@ -64036,7 +64073,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["autumn", "fallen-leaves", "boardwalk", "patterns", "texture"],
     "genres": ["nature", "abstract"],
     "places": [
@@ -64256,7 +64293,10 @@
       "peakChroma": 23.72,
       "samples": 10115
     },
-    "similarPhotos": [479, 477, 473, 471, 476, 119]
+    "similarPhotos": [479, 477, 473, 471, 476, 119],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Autumn Path",
@@ -64307,7 +64347,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["autumn", "boardwalk", "fallen-leaves", "forest", "footbridges", "shadows"],
     "genres": ["landscape", "nature"],
     "places": [
@@ -64527,7 +64567,10 @@
       "peakChroma": 24.01,
       "samples": 9828
     },
-    "similarPhotos": [495, 473, 471, 476, 496, 478]
+    "similarPhotos": [495, 473, 471, 476, 496, 478],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Mountainous City",
@@ -64578,7 +64621,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["daldongne", "houses", "rooftops", "twilight", "city-lights", "apartments"],
     "genres": ["cityscape"],
     "places": [
@@ -64807,7 +64850,10 @@
       "samples": 9975
     },
     "similarPhotos": [245, 248, 491, 357, 356, 373],
-    "compareGroup": "Dense Hillside Houses"
+    "compareGroup": "Dense Hillside Houses",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Window Into Nature",
@@ -65688,7 +65734,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["lanterns", "art-installations", "patterns", "night"],
     "genres": [],
     "places": [
@@ -65965,7 +66011,12 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+    "albums": [
+      "homepage-spotlight",
+      "2026-photo-book-candidates",
+      "vertical-photos",
+      "office-album-verticals"
+    ],
     "tags": ["lanterns", "arches", "art-installations", "night"],
     "genres": [],
     "places": [
@@ -66752,7 +66803,7 @@
     }
   },
   {
-    "title": "Suitorou Lantern Grid",
+    "title": "Lantern Grid",
     "comment": null,
     "id": 904,
     "altText": null,
@@ -66802,7 +66853,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["lanterns", "festivals", "repetition", "night"],
     "genres": [],
     "places": [
@@ -67079,7 +67130,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["andon", "festivals", "lanterns", "night", "city-lights", "pedestrians"],
     "genres": [],
     "places": [
@@ -68190,7 +68241,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["stickers", "graffiti", "street-art", "typography", "walls"],
     "genres": ["street", "abstract"],
     "places": [
@@ -73718,7 +73769,7 @@
     }
   },
   {
-    "title": "City Population Does Not Account For Tourists",
+    "title": "City Population Doesn't Account For Tourists",
     "comment": null,
     "id": 251,
     "file": "DSCF5675.jpg",
@@ -73766,7 +73817,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["hangul", "neon", "signage", "storefronts", "crowd", "night"],
     "genres": ["street"],
     "places": [
@@ -74050,7 +74101,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["autumn", "park", "trees", "path", "pedestrians", "fallen-leaves"],
     "genres": ["landscape", "street"],
     "places": [
@@ -75997,7 +76048,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album-verticals"],
     "tags": ["framing", "windows", "city", "road", "signage", "mountains"],
     "genres": [],
     "places": [
@@ -77382,7 +77433,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["fog", "mountains", "bridges", "river", "village", "houses"],
     "genres": [],
     "places": [
@@ -78484,7 +78535,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["alley", "storefronts", "pedestrians", "tourists", "balconies", "power-lines"],
     "genres": ["street"],
     "places": [
@@ -83012,7 +83063,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["night", "train-station", "silhouettes", "bicycles", "pedestrians"],
     "genres": [],
     "places": [
@@ -86633,7 +86684,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["vertical-photos"],
     "tags": ["hangul", "alley", "cables", "power-lines", "signage", "urban-decay"],
     "genres": ["street"],
     "places": [
@@ -87186,7 +87237,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["horizontal-prints"],
     "tags": ["ironwork", "rust", "fences", "symmetry"],
     "genres": ["abstract"],
     "places": [
@@ -87463,7 +87514,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["vertical-photos"],
     "tags": ["humor", "vintage", "walls"],
     "genres": [],
     "places": [],
@@ -88277,7 +88328,12 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+    "albums": [
+      "homepage-spotlight",
+      "2026-photo-book-candidates",
+      "vertical-photos",
+      "office-album-verticals"
+    ],
     "tags": ["yeondeung", "buddhism", "lanterns", "repetition", "patterns", "shadows", "festivals"],
     "genres": ["abstract"],
     "places": [
@@ -88501,7 +88557,9 @@
     },
     "similarPhotos": [261, 328, 455, 308, 463, 465],
     "compareGroup": "Lantern Rows from Above",
-    "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo."
+    "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo.",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Cafe Chat",
@@ -88827,7 +88885,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["flowers"],
     "genres": [],
     "places": [],
@@ -98238,7 +98296,7 @@
     }
   },
   {
-    "title": "Buddha in a Nook",
+    "title": "Mountain Buddha",
     "comment": null,
     "id": 856,
     "altText": null,
@@ -98288,7 +98346,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "horizontal-prints", "office-album"],
     "tags": ["buddhism", "statues", "rock-formations", "stones"],
     "genres": [],
     "places": [
@@ -99934,7 +99992,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+    "albums": ["homepage-spotlight", "2026-photo-book-candidates", "vertical-photos"],
     "tags": ["skyline", "skyscrapers", "mountains", "city", "haze", "aerial-view"],
     "genres": [],
     "places": [
@@ -99958,7 +100016,7 @@
         "hex": "#505050",
         "lab": {
           "l": 33.84,
-          "a": -0,
+          "a": 0,
           "b": -0.01
         },
         "hcl": {
@@ -100172,7 +100230,9 @@
       }
     },
     "similarPhotos": [458, 258, 459, 246, 461, 263],
-    "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo."
+    "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo.",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Lotus & Luck",
@@ -100225,7 +100285,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["buddhism", "hanja", "carvings", "wood", "temple"],
     "genres": [],
     "places": [
@@ -100502,7 +100562,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["horizontal-prints"],
     "tags": ["dancheong", "buddhism", "murals", "temple"],
     "genres": [],
     "places": [
@@ -101333,7 +101393,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["buddhism", "hanja", "bells", "carvings", "inscriptions"],
     "genres": [],
     "places": [
@@ -101885,7 +101945,12 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+    "albums": [
+      "homepage-spotlight",
+      "2026-photo-book-candidates",
+      "vertical-photos",
+      "office-album-verticals"
+    ],
     "tags": ["kawara", "temple", "rooftops", "houses", "road", "forest", "aerial-view"],
     "genres": [],
     "places": [
@@ -102113,7 +102178,10 @@
         "placement": null
       }
     },
-    "similarPhotos": [460, 315, 313, 355, 324, 323]
+    "similarPhotos": [460, 315, 313, 355, 324, 323],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Bell Tower Ceiling",
@@ -102720,7 +102788,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["buddhism", "carvings", "statues", "rock-formations", "temple"],
     "genres": [],
     "places": [
@@ -102995,7 +103063,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["buddhism", "temple", "fountains", "water", "trees"],
     "genres": [],
     "places": [
@@ -103268,7 +103336,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["temple", "hiking-trail", "path", "forest", "fog", "street-lights", "trees"],
     "genres": [],
     "places": [
@@ -104909,7 +104977,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["harbor", "boats", "pier", "water", "aerial-view", "repetition"],
     "genres": [],
     "places": [
@@ -105128,7 +105196,10 @@
       "peakChroma": 15.3,
       "samples": 10050
     },
-    "similarPhotos": [228, 202, 229, 68, 204, 326]
+    "similarPhotos": [228, 202, 229, 68, 204, 326],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Autumnal Walk in the Park",
@@ -106848,7 +106919,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["alley", "road", "signage", "typography", "power-lines", "apartments"],
     "genres": [],
     "places": [],
@@ -109839,7 +109910,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["fences", "ironwork", "trees", "fallen-leaves", "autumn"],
     "genres": [],
     "places": [
@@ -112021,7 +112092,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["skyscrapers", "apartments", "night", "city-lights", "harbor", "water", "reflections"],
     "genres": [],
     "places": [
@@ -112240,7 +112311,10 @@
       "peakChroma": 0.01,
       "samples": 9828
     },
-    "similarPhotos": [307, 355, 327, 248, 247, 317]
+    "similarPhotos": [307, 355, 327, 248, 247, 317],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Commuting by the Castle",
@@ -113380,7 +113454,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["bridges", "cables", "harbor", "night", "city-lights", "reflections"],
     "genres": [],
     "places": [],
@@ -113922,7 +113996,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["alley", "signage", "night", "rain", "reflections", "umbrellas", "yokocho", "neon"],
     "genres": [],
     "places": [
@@ -114142,7 +114216,10 @@
       "samples": 9828
     },
     "similarPhotos": [354, 351, 377, 307, 352, 251],
-    "compareGroup": "Kobe Night Alley"
+    "compareGroup": "Kobe Night Alley",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "View of the Camellia",
@@ -114467,7 +114544,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["ferry", "boats", "silhouettes", "harbor", "night", "reflections"],
     "genres": [],
     "places": [],
@@ -114739,7 +114816,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["neon", "signage", "night", "city-lights"],
     "genres": [],
     "places": [],
@@ -115283,7 +115360,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["bridges", "cables", "ferry", "silhouettes", "night", "city-lights"],
     "genres": [],
     "places": [],
@@ -115827,7 +115904,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album-verticals"],
     "tags": ["shinto", "shrine", "lanterns", "beams"],
     "genres": [],
     "places": [],
@@ -116643,7 +116720,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "horizontal-prints", "office-album"],
     "tags": ["torii", "shinto", "statues", "repetition"],
     "genres": [],
     "places": [],
@@ -118003,7 +118080,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "horizontal-prints", "office-album"],
     "tags": ["shinto", "shrine", "kanji", "repetition"],
     "genres": [],
     "places": [],
@@ -118829,7 +118906,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album-verticals"],
     "tags": ["seigaiha", "trains", "railway", "platform"],
     "genres": [],
     "places": [],
@@ -120189,7 +120266,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album-verticals"],
     "tags": ["seigaiha", "trains", "railway", "platform", "clouds"],
     "genres": [],
     "places": [],
@@ -124364,7 +124441,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["vertical-photos"],
     "tags": ["buddhism", "temple", "gates", "doors", "stairs", "wood", "windows"],
     "genres": [],
     "places": [],
@@ -124579,7 +124656,9 @@
       "samples": 9912
     },
     "notes": "Shows a karahafu gable and katomado window; 'karahafu' and 'katomado' aren't tags, since only 1 photo has them.",
-    "similarPhotos": [349, 350, 464, 330, 309, 378]
+    "similarPhotos": [349, 350, 464, 330, 309, 378],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "The Wheel",
@@ -126006,7 +126085,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+    "albums": ["homepage-spotlight", "2026-photo-book-candidates", "office-album"],
     "tags": ["doors", "washitsu", "tatami", "shoji", "interior"],
     "genres": [],
     "places": [
@@ -126240,7 +126319,9 @@
       }
     },
     "similarPhotos": [345, 343, 347, 346, 330, 339],
-    "compareGroup": "Lattice Door in Dark Room"
+    "compareGroup": "Lattice Door in Dark Room",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Lantern Row",
@@ -126846,7 +126927,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["washitsu", "tatami", "shoji", "interior", "koshi", "machiya"],
     "genres": [],
     "places": [
@@ -127071,7 +127152,9 @@
     },
     "notes": "Shows a byobu folding screen in a machiya townhouse; 'byobu' and 'machiya' aren't tags, since only 1–2 photos have them.\n\nShows a machiya townhouse interior, now tagged 'machiya'.",
     "similarPhotos": [344, 343, 347, 346, 378, 381],
-    "compareGroup": "Lattice Door in Dark Room"
+    "compareGroup": "Lattice Door in Dark Room",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Lanterns for Buddha's Birthday",
@@ -127122,7 +127205,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["lanterns", "yeondeung", "buddhism", "temple", "prayers", "patterns", "festivals"],
     "genres": [],
     "places": [
@@ -127342,7 +127425,10 @@
       "samples": 10050
     },
     "similarPhotos": [308, 262, 455, 261, 16, 350],
-    "compareGroup": "Rows of Colorful Lotus Lanterns"
+    "compareGroup": "Rows of Colorful Lotus Lanterns",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "By the Temple Hall",
@@ -130163,7 +130249,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["buddhism", "wabi-sabi", "temple", "texture", "senjafuda", "wood"],
     "genres": [],
     "places": [
@@ -130382,7 +130468,10 @@
       "peakChroma": 11.95,
       "samples": 10050
     },
-    "similarPhotos": [466, 349, 397, 330, 339, 384]
+    "similarPhotos": [466, 349, 397, 330, 339, 384],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Edo Walls, Edo Doors",
@@ -131789,7 +131878,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["birds", "flight", "silhouettes", "ocean", "sunrise", "seagulls"],
     "genres": [],
     "places": [
@@ -132009,7 +132098,10 @@
       "samples": 9900
     },
     "similarPhotos": [135, 138, 206, 137, 134, 109],
-    "compareGroup": "Gulls Flying at Sunrise"
+    "compareGroup": "Gulls Flying at Sunrise",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "id": 47,
@@ -132605,7 +132697,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["city", "rooftops", "pyramids", "haze", "skyline", "mosque"],
     "genres": [],
     "places": [
@@ -132882,7 +132974,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+    "albums": ["homepage-spotlight", "2026-photo-book-candidates", "office-album"],
     "tags": ["mountains", "city", "daldongne", "houses", "rooftops", "harbor"],
     "genres": [],
     "places": [
@@ -133101,7 +133193,10 @@
       "peakChroma": 22.9,
       "samples": 9768
     },
-    "similarPhotos": [357, 396, 388, 323, 386, 217]
+    "similarPhotos": [357, 396, 388, 323, 386, 217],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "id": 49,
@@ -133152,7 +133247,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["horizontal-prints"],
     "tags": ["gears", "machinery", "steel", "cables"],
     "genres": [],
     "places": [
@@ -137855,7 +137950,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["humor", "windows", "brick", "repetition"],
     "genres": [],
     "places": [
@@ -138081,7 +138176,9 @@
       "samples": 9936
     },
     "notes": "Shows mannequins; 'mannequins' isn't a tag, since only 1 photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 259 (1.93:1), not the 16:9 crop for a landscape photo.",
-    "similarPhotos": [76, 35, 99, 445, 172, 117]
+    "similarPhotos": [76, 35, 99, 445, 172, 117],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Icy Branches",
@@ -144394,7 +144491,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["harbor", "boats", "sailboats", "water", "repetition", "humor"],
     "genres": [],
     "places": [
@@ -144614,7 +144711,10 @@
       "samples": 10050
     },
     "similarPhotos": [228, 230, 202, 317, 399, 204],
-    "compareGroup": "Harbor Full of Moored Boats"
+    "compareGroup": "Harbor Full of Moored Boats",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Harbor Town",
@@ -146030,7 +146130,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["signage", "typography", "humor", "trees", "ivy", "fences"],
     "genres": [],
     "places": [],
@@ -146248,7 +146348,9 @@
       "samples": 9882
     },
     "similarPhotos": [325, 232, 470, 401, 498, 200],
-    "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo."
+    "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo.",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Times Square is for Tourists",
@@ -159125,7 +159227,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["timeline-spotlight"],
+    "albums": ["timeline-spotlight", "office-album"],
     "tags": ["road", "bridges", "columns", "steel", "houses", "snow", "winter"],
     "genres": [],
     "places": [],
@@ -159349,7 +159451,9 @@
         "placement": null
       }
     },
-    "similarPhotos": [235, 240, 241, 236, 237, 64]
+    "similarPhotos": [235, 240, 241, 236, 237, 64],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Nantucket Signpost",
@@ -161022,7 +161126,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["horizontal-prints"],
     "tags": ["snow", "winter", "night", "cars", "minimalism"],
     "genres": [],
     "places": [],
@@ -163158,7 +163262,7 @@
     "similarPhotos": [359, 292, 339, 290, 369, 289]
   },
   {
-    "title": "Sunset on Kobe, Population: 1.5 Million",
+    "title": "Sunset on Kobe, Population: 1,500,000",
     "comment": null,
     "id": 962,
     "altText": null,
@@ -163208,7 +163312,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": [],
     "genres": [],
     "places": [],
@@ -163835,7 +163939,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["horizontal-prints"],
     "tags": ["chinatown", "lanterns", "night", "repetition", "string-lights", "minimalism"],
     "genres": [],
     "places": [
@@ -164107,7 +164211,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["horizontal-prints"],
     "tags": [
       "chinatown",
       "lanterns",
@@ -164658,7 +164762,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["vertical-photos"],
     "tags": ["autumn", "fallen-leaves", "hiking-trail", "footbridges", "forest", "wood", "stones"],
     "genres": [],
     "places": [
@@ -164878,7 +164982,10 @@
       "peakChroma": 28.41,
       "samples": 9912
     },
-    "similarPhotos": [496, 471, 479, 473, 476, 477]
+    "similarPhotos": [496, 471, 479, 473, 476, 477],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Little Chinatown",
@@ -164926,7 +165033,7 @@
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
     "socialMediaPublishDate": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["chinatown", "city", "traffic", "cars", "signage", "storefronts"],
     "genres": ["tilt-shift"],
     "places": [
@@ -165154,7 +165261,10 @@
       "peakChroma": 20.97,
       "samples": 10050
     },
-    "similarPhotos": [131, 437, 319, 250, 11, 169]
+    "similarPhotos": [131, 437, 319, 250, 11, 169],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "id": 58,
@@ -166851,7 +166961,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["torii", "shinto", "pedestrians", "sando", "road", "mountains", "pine-trees"],
     "genres": [],
     "places": [
@@ -168502,7 +168612,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "horizontal-prints", "office-album"],
     "tags": ["shrine", "statues", "rope", "stones"],
     "genres": [],
     "places": [
@@ -168723,7 +168833,9 @@
       "samples": 10050
     },
     "notes": "Shows a frog statue; 'amphibians' isn't a tag, since only 2 photos have it.",
-    "similarPhotos": [315, 509, 348, 324, 329, 451]
+    "similarPhotos": [315, 509, 348, 324, 329, 451],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Luxor Lunch",
@@ -169324,7 +169436,12 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+    "albums": [
+      "homepage-spotlight",
+      "2026-photo-book-candidates",
+      "vertical-photos",
+      "office-album-verticals"
+    ],
     "tags": ["castle", "lanterns", "night", "festivals", "tenshu", "andon"],
     "genres": [],
     "places": [
@@ -169553,7 +169670,9 @@
         "placement": null
       }
     },
-    "similarPhotos": [355, 438, 162, 467, 262, 351]
+    "similarPhotos": [355, 438, 162, 467, 262, 351],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Medieval Street",
@@ -170416,7 +170535,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+    "albums": ["homepage-spotlight", "2026-photo-book-candidates", "horizontal-prints"],
     "tags": ["dancheong", "pavilion", "birds", "patterns", "symmetry", "reflections", "pond"],
     "genres": [],
     "placeName": "Mirror Pond",
@@ -175384,7 +175503,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["japan", "2026-photo-book-candidates"],
+    "albums": ["japan", "2026-photo-book-candidates", "vertical-photos"],
     "tags": ["chochin", "alley", "power-lines", "cables", "signage", "storefronts", "pedestrians"],
     "genres": [],
     "places": [
@@ -176167,9 +176286,9 @@
     "notes": "Quality Check (pixelation): The rear plate of the white Volvo SUV on the left and the front plate of the tan sedan on the right are readable."
   },
   {
-    "id": 11,
     "title": "Overthrow?",
     "comment": null,
+    "id": 11,
     "file": "IMG_5747.jpg",
     "addedDate": "2026-10-22T19:36:17Z",
     "camera": "Canon EOS 80D",
@@ -176215,7 +176334,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["storefronts", "graffiti", "stickers", "neon", "signage", "pedestrians", "sidewalk"],
     "genres": [],
     "places": [
@@ -176236,7 +176355,7 @@
         "hex": "#4e4e4e",
         "lab": {
           "l": 33.16,
-          "a": -0,
+          "a": 0,
           "b": -0.01
         },
         "hcl": {
@@ -176438,7 +176557,9 @@
       "samples": 9750
     },
     "similarPhotos": [14, 30, 121, 6, 203, 441],
-    "notes": "Quality Check (aspect ratio): the Small version is 500 × 309 (1.62:1), not the 16:9 crop for a landscape photo."
+    "notes": "Quality Check (aspect ratio): the Small version is 500 × 309 (1.62:1), not the 16:9 crop for a landscape photo.",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Palace Halls",
@@ -176489,7 +176610,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": ["dancheong", "hanbok", "palace", "columns", "path", "repetition", "symmetry"],
     "genres": [],
     "places": [
@@ -176717,7 +176838,10 @@
       "peakChroma": 35.15,
       "samples": 9828
     },
-    "similarPhotos": [128, 12, 213, 5, 210, 126]
+    "similarPhotos": [128, 12, 213, 5, 210, 126],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Path in Tokoji Temple",
@@ -176768,7 +176892,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["lanterns", "gates", "toro", "torii", "cemetery", "path", "forest"],
     "genres": [],
     "places": [
@@ -176988,12 +177112,15 @@
       "samples": 9694
     },
     "similarPhotos": [332, 310, 309, 510, 511, 505],
-    "compareGroup": "Tokoji Stone Lantern Rows"
+    "compareGroup": "Tokoji Stone Lantern Rows",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
-    "id": 4,
-    "title": "Photographing photographers... Gyeongbokgung edition.",
+    "title": "Photographing Photographers, Gyeongbokgung Edition",
     "comment": "The one thing that can be frustrating about popular destinations is that you're kind of... damned if you do, damned if you don't. Like, yes, I definitely have to go see that palace. But also, everyone else does too. So of course, it gets really crowded. As a photographer, I try to do my best to make the presence of people \"work\" with a photo, but sometimes there's just too many people. In a case like this, sometimes it's just more fun to take photos of other photographers.",
+    "id": 4,
     "file": "DSCF3097.jpg",
     "addedDate": "2026-10-22T15:45:19Z",
     "camera": "Fujifilm X-T5",
@@ -177271,7 +177398,10 @@
       "peakChroma": 11.81,
       "samples": 9975
     },
-    "similarPhotos": [212, 128, 210, 209, 127, 5]
+    "similarPhotos": [212, 128, 210, 209, 127, 5],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "id": 61,
@@ -182529,7 +182659,12 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+    "albums": [
+      "homepage-spotlight",
+      "2026-photo-book-candidates",
+      "vertical-photos",
+      "office-album-verticals"
+    ],
     "tags": ["city", "night", "road", "cars", "traffic", "skyscrapers", "city-lights"],
     "genres": [],
     "places": [],
@@ -182758,7 +182893,10 @@
         }
       }
     },
-    "similarPhotos": [270, 352, 326, 354, 492, 311]
+    "similarPhotos": [270, 352, 326, 354, 492, 311],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Rainy Hot Spring Night",
@@ -182809,7 +182947,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["rain", "umbrellas", "night", "bridges", "pedestrians", "city", "river"],
     "genres": [],
     "places": [
@@ -183029,7 +183167,9 @@
       "samples": 10050
     },
     "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered.",
-    "similarPhotos": [351, 353, 355, 354, 377, 448]
+    "similarPhotos": [351, 353, 355, 354, 377, 448],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Red Fish",
@@ -184173,7 +184313,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["shinto", "senjafuda", "shimenawa", "shide", "shrine", "rope", "wood"],
     "genres": [],
     "places": [
@@ -184393,7 +184533,10 @@
       "peakChroma": 19.69,
       "samples": 9975
     },
-    "similarPhotos": [507, 329, 381, 506, 510, 505]
+    "similarPhotos": [507, 329, 381, 506, 510, 505],
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Rope & Shide",
@@ -188769,9 +188912,9 @@
     "compareGroup": "Snowy Park with Lone Walker"
   },
   {
-    "id": 64,
     "title": "Snowy Tracks",
     "comment": null,
+    "id": 64,
     "file": "IMG_1714.jpg",
     "addedDate": "2026-10-23T13:24:41Z",
     "camera": "Canon EOS Rebel T6i",
@@ -188817,7 +188960,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["railway", "trains", "snow", "winter", "repetition", "numbers"],
     "genres": [],
     "places": [],
@@ -189035,7 +189178,9 @@
       "samples": 9750
     },
     "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them.\n\nQuality Check (aspect ratio): the Small version is 500 × 288 (1.74:1), not the 16:9 crop for a landscape photo.\n\nShows numbers by the tracks, now tagged 'numbers'.",
-    "similarPhotos": [106, 7, 22, 24, 116, 242]
+    "similarPhotos": [106, 7, 22, 24, 116, 242],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Stardust Diner",
@@ -189312,9 +189457,9 @@
     "similarPhotos": [305, 306, 161, 170, 168, 205]
   },
   {
-    "id": 65,
     "title": "Station Blues",
     "comment": null,
+    "id": 65,
     "file": "IMG_9886.jpg",
     "addedDate": "2026-10-23T13:24:41Z",
     "camera": "Canon EOS Rebel T6i",
@@ -189360,7 +189505,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["railway", "subway", "platform", "steel", "beams", "minimalism"],
     "genres": [],
     "places": [
@@ -189583,12 +189728,14 @@
       "samples": 9782
     },
     "similarPhotos": [74, 151, 7, 22, 45, 25],
-    "notes": "Quality Check (aspect ratio): the Small version is 500 × 272 (1.84:1), not the 16:9 crop for a landscape photo."
+    "notes": "Quality Check (aspect ratio): the Small version is 500 × 272 (1.84:1), not the 16:9 crop for a landscape photo.",
+    "noGps": false,
+    "altText": null
   },
   {
-    "id": 13,
     "title": "Stickerbox",
     "comment": null,
+    "id": 13,
     "file": "IMG_5647.jpg",
     "addedDate": "2026-10-22T19:36:17Z",
     "camera": "Canon EOS 80D",
@@ -189634,7 +189781,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["street-art", "stickers", "fences", "padlocks", "signage", "alley"],
     "genres": [],
     "places": [
@@ -189857,7 +190004,9 @@
       "samples": 9625
     },
     "similarPhotos": [11, 47, 60, 30, 28, 15],
-    "notes": "Quality Check (aspect ratio): the Small version is 500 × 307 (1.63:1), not the 16:9 crop for a landscape photo."
+    "notes": "Quality Check (aspect ratio): the Small version is 500 × 307 (1.63:1), not the 16:9 crop for a landscape photo.",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Stopping by the pond on a snowy afternoon",
@@ -192361,7 +192510,7 @@
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
     "socialMediaPublishDate": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["city", "storefronts", "signage", "crosswalk", "pedestrians", "skyscrapers"],
     "genres": ["tilt-shift"],
     "places": [
@@ -192593,7 +192742,9 @@
       "samples": 10050
     },
     "similarPhotos": [132, 304, 282, 250, 11, 219],
-    "notes": "Quality Check (pixelation): The rear plate of the black sedan parked on the right side of the street is readable."
+    "notes": "Quality Check (pixelation): The rear plate of the black sedan parked on the right side of the street is readable.",
+    "noGps": false,
+    "altText": null
   },
   {
     "id": 67,
@@ -193193,7 +193344,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "office-album"],
     "tags": ["shinto", "torii", "shimenawa", "toro", "shrine", "pond", "reflections", "stairs"],
     "genres": [],
     "places": [
@@ -193414,7 +193565,10 @@
       "samples": 9768
     },
     "similarPhotos": [511, 505, 509, 507, 506, 381],
-    "compareGroup": "Torii by the Salt Water Pond"
+    "compareGroup": "Torii by the Salt Water Pond",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "The Other Side",
@@ -193465,7 +193619,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["grid-spotlight"],
+    "albums": ["grid-spotlight", "office-album"],
     "tags": ["subway", "platform", "commuters", "columns", "silhouettes", "railway", "pedestrians"],
     "genres": [],
     "places": [
@@ -193697,7 +193851,9 @@
         "placement": null
       }
     },
-    "similarPhotos": [74, 7, 22, 6, 148, 71]
+    "similarPhotos": [74, 7, 22, 6, 148, 71],
+    "noGps": false,
+    "altText": null
   },
   {
     "id": 68,
@@ -193748,7 +193904,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["horizontal-prints"],
     "tags": [
       "pilings",
       "pier",
@@ -194805,7 +194961,7 @@
     "similarPhotos": [476, 195, 435, 430, 120, 287]
   },
   {
-    "title": "To the Offering Box",
+    "title": "The Offering Box",
     "comment": null,
     "id": 507,
     "file": "DSCF1482.jpg",
@@ -195074,7 +195230,9 @@
       "samples": 9975
     },
     "notes": "Shows a saisen-bako offering box; 'saisen-bako' isn't a tag, since only 1 photo has one.",
-    "similarPhotos": [509, 505, 381, 506, 510, 511]
+    "similarPhotos": [509, 505, 381, 506, 510, 511],
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "Tokoji Temple - Heading Back",
@@ -197824,9 +197982,9 @@
     "notes": "Quality Check (aspect ratio): the Small version is 500 × 265 (1.89:1), not the 16:9 crop for a landscape photo."
   },
   {
-    "id": 73,
     "title": "View from the Skybridge",
     "comment": null,
+    "id": 73,
     "file": "IMG_8249.jpg",
     "addedDate": "2026-10-23T13:24:41Z",
     "camera": "Canon EOS Rebel T6i",
@@ -197872,7 +198030,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["office-album"],
     "tags": ["silhouettes", "windows", "river", "skyline", "interior", "tourists"],
     "genres": [],
     "places": [
@@ -197897,7 +198055,7 @@
         "hex": "#555555",
         "lab": {
           "l": 36.14,
-          "a": -0,
+          "a": 0,
           "b": -0.01
         },
         "hcl": {
@@ -198100,7 +198258,9 @@
     },
     "similarPhotos": [34, 263, 295, 296, 70, 68],
     "compareGroup": "Silhouettes at Riverside Windows",
-    "notes": "Quality Check (aspect ratio): the Small version is 500 × 262 (1.91:1), not the 16:9 crop for a landscape photo."
+    "notes": "Quality Check (aspect ratio): the Small version is 500 × 262 (1.91:1), not the 16:9 crop for a landscape photo.",
+    "noGps": false,
+    "altText": null
   },
   {
     "title": "View from the Villa",
@@ -198155,7 +198315,7 @@
     },
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos"],
     "tags": [],
     "genres": [],
     "places": [],
@@ -200093,7 +200253,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["2026-photo-book-candidates"],
+    "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
     "tags": ["night", "pedestrians", "signage", "rain", "umbrellas", "alley"],
     "genres": [],
     "places": [
@@ -202568,7 +202728,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["vertical-photos"],
     "tags": ["autumn", "boardwalk", "marsh", "path", "branches", "tall-grass", "wood"],
     "genres": [],
     "places": [
@@ -202789,7 +202949,10 @@
       "samples": 10115
     },
     "similarPhotos": [474, 495, 471, 473, 486, 476],
-    "compareGroup": "Boardwalk Through the Marsh"
+    "compareGroup": "Boardwalk Through the Marsh",
+    "noGps": false,
+    "altText": null,
+    "notes": null
   },
   {
     "title": "Yellow Fish",

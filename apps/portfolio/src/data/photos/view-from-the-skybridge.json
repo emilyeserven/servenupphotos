@@ -1,7 +1,7 @@
 {
-  "id": 73,
   "title": "View from the Skybridge",
   "comment": null,
+  "id": 73,
   "file": "IMG_8249.jpg",
   "addedDate": "2026-10-23T13:24:41Z",
   "camera": "Canon EOS Rebel T6i",
@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["silhouettes", "windows", "river", "skyline", "interior", "tourists"],
   "genres": [],
   "places": [
@@ -72,7 +72,7 @@
       "hex": "#555555",
       "lab": {
         "l": 36.14,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {
@@ -275,5 +275,7 @@
   },
   "similarPhotos": [34, 263, 295, 296, 70, 68],
   "compareGroup": "Silhouettes at Riverside Windows",
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 262 (1.91:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 262 (1.91:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

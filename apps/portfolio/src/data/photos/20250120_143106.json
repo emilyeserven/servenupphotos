@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "office-album"],
   "tags": ["texture", "hieroglyphs", "ruins", "carvings", "inscriptions"],
   "genres": ["abstract", "architecture"],
   "places": [
@@ -267,5 +267,8 @@
     "samples": 9694
   },
   "similarPhotos": [359, 271, 279, 504, 358, 33],
-  "compareGroup": "Hieroglyph Wall Close-Ups"
+  "compareGroup": "Hieroglyph Wall Close-Ups",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

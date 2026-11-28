@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "office-album"],
   "tags": ["daldongne", "houses", "rooftops", "twilight", "city-lights", "apartments"],
   "genres": ["cityscape"],
   "places": [
@@ -276,5 +276,8 @@
     "samples": 9975
   },
   "similarPhotos": [245, 248, 491, 357, 356, 373],
-  "compareGroup": "Dense Hillside Houses"
+  "compareGroup": "Dense Hillside Houses",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

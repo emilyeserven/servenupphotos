@@ -1,7 +1,7 @@
 {
-  "id": 13,
   "title": "Stickerbox",
   "comment": null,
+  "id": 13,
   "file": "IMG_5647.jpg",
   "addedDate": "2026-10-22T19:36:17Z",
   "camera": "Canon EOS 80D",
@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["street-art", "stickers", "fences", "padlocks", "signage", "alley"],
   "genres": [],
   "places": [
@@ -270,5 +270,7 @@
     "samples": 9625
   },
   "similarPhotos": [11, 47, 60, 30, 28, 15],
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 307 (1.63:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 307 (1.63:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+  "albums": ["homepage-spotlight", "2026-photo-book-candidates", "office-album"],
   "tags": ["doors", "washitsu", "tatami", "shoji", "interior"],
   "genres": [],
   "places": [
@@ -281,5 +281,7 @@
     }
   },
   "similarPhotos": [345, 343, 347, 346, 330, 339],
-  "compareGroup": "Lattice Door in Dark Room"
+  "compareGroup": "Lattice Door in Dark Room",
+  "noGps": false,
+  "altText": null
 }

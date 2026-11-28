@@ -1,7 +1,7 @@
 {
-  "id": 7,
   "title": "96th & Lex",
   "comment": null,
+  "id": 7,
   "file": "IMG_3769.jpg",
   "addedDate": "2026-10-22T19:36:17Z",
   "camera": "Canon EOS 80D",
@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["homepage-spotlight"],
+  "albums": ["homepage-spotlight", "office-album"],
   "tags": ["subway", "commuters", "platform", "trains", "railway", "reflections", "lamps"],
   "genres": ["street"],
   "places": [
@@ -71,8 +71,8 @@
       "hex": "#3f3f3f",
       "lab": {
         "l": 26.47,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,
@@ -283,5 +283,7 @@
   },
   "similarPhotos": [22, 6, 51, 151, 383, 74],
   "compareGroup": "Lone Figure on Subway Platform",
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

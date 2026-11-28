@@ -47,7 +47,12 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+  "albums": [
+    "homepage-spotlight",
+    "2026-photo-book-candidates",
+    "vertical-photos",
+    "office-album-verticals"
+  ],
   "tags": ["city", "night", "road", "cars", "traffic", "skyscrapers", "city-lights"],
   "genres": [],
   "places": [],
@@ -276,5 +281,8 @@
       }
     }
   },
-  "similarPhotos": [270, 352, 326, 354, 492, 311]
+  "similarPhotos": [270, 352, 326, 354, 492, 311],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

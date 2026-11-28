@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "office-album"],
   "tags": ["washitsu", "tatami", "shoji", "interior", "koshi", "machiya"],
   "genres": [],
   "places": [
@@ -272,5 +272,7 @@
   },
   "notes": "Shows a byobu folding screen in a machiya townhouse; 'byobu' and 'machiya' aren't tags, since only 1–2 photos have them.\n\nShows a machiya townhouse interior, now tagged 'machiya'.",
   "similarPhotos": [344, 343, 347, 346, 378, 381],
-  "compareGroup": "Lattice Door in Dark Room"
+  "compareGroup": "Lattice Door in Dark Room",
+  "noGps": false,
+  "altText": null
 }

@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
   "tags": ["skyscrapers", "apartments", "night", "city-lights", "harbor", "water", "reflections"],
   "genres": [],
   "places": [
@@ -266,5 +266,8 @@
     "peakChroma": 0.01,
     "samples": 9828
   },
-  "similarPhotos": [307, 355, 327, 248, 247, 317]
+  "similarPhotos": [307, 355, 327, 248, 247, 317],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

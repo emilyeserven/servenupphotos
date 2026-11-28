@@ -1,7 +1,7 @@
 {
-  "id": 65,
   "title": "Station Blues",
   "comment": null,
+  "id": 65,
   "file": "IMG_9886.jpg",
   "addedDate": "2026-10-23T13:24:41Z",
   "camera": "Canon EOS Rebel T6i",
@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["railway", "subway", "platform", "steel", "beams", "minimalism"],
   "genres": [],
   "places": [
@@ -270,5 +270,7 @@
     "samples": 9782
   },
   "similarPhotos": [74, 151, 7, 22, 45, 25],
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 272 (1.84:1), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 272 (1.84:1), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

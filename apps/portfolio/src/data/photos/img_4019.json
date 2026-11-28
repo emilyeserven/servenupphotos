@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["signage", "typography", "humor", "trees", "ivy", "fences"],
   "genres": [],
   "places": [],
@@ -265,5 +265,7 @@
     "samples": 9882
   },
   "similarPhotos": [325, 232, 470, 401, 498, 200],
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }

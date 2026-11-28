@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["footbridges", "bridges", "steel", "symmetry", "repetition", "train-station", "windows"],
   "genres": ["architecture", "abstract"],
   "places": [
@@ -270,5 +270,7 @@
     "samples": 9801
   },
   "similarPhotos": [45, 35, 39, 237, 113, 402],
-  "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 500 × 333 (3:2), not the 16:9 crop for a landscape photo.",
+  "noGps": false,
+  "altText": null
 }
