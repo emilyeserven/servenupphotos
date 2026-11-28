@@ -1,0 +1,61 @@
+name: Audit
+
+# Checks every package for known security advisories, including the ones that come in through other
+# packages, which Dependabot's grouped weekly updates don't touch (docs/dependency-audit.md). It runs
+# only when the lockfile or go.mod changes, and once a week, so a new advisory doesn't fail an
+# unrelated pull request.
+on:
+  pull_request:
+    paths:
+      - pnpm-lock.yaml
+      - apps/be-pipeline/go.mod
+      - apps/be-pipeline/go.sum
+      - .github/workflows/audit.yml
+  push:
+    branches: [main]
+    paths:
+      - pnpm-lock.yaml
+      - apps/be-pipeline/go.mod
+      - apps/be-pipeline/go.sum
+  schedule:
+    - cron: "0 13 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  npm:
+    name: npm (pnpm audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      # Only the packages the apps ship. Dev tools such as the shadcn CLI run on a laptop, never in a
+      # browser or on the server.
+      - name: pnpm audit
+        run: pnpm audit --prod
+
+  go:
+    name: Go (govulncheck)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/be-pipeline
+    steps:
+      - uses: actions/checkout@v7
+      # The standard library is checked at the Go version the server runs: the newest 1.27 release,
+      # as apps/be-pipeline/Dockerfile builds it from golang:1.27-alpine. go.mod's `go 1.26.0` is
+      # only the oldest version the code builds with, and 1.26.0 has since had security fixes.
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27"
+          check-latest: true
+          cache-dependency-path: apps/be-pipeline/go.mod
+      # Reports only advisories in code the backend actually calls, not every module in go.sum.
+      - name: govulncheck
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.10.0 ./...
