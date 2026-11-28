@@ -6,6 +6,7 @@ import { bookPdfMutation, bookPdfProgressQuery } from "@/api/photo-books";
 import { ErrorNote } from "@/components/error-note";
 import { BookPage } from "@/components/photo-book/book-page";
 import { NO_ACTIONS, type PageLook } from "@/components/photo-book/page-actions";
+import { pdfLook } from "@/components/photo-book/print-look";
 import { PrintingContext } from "@/components/photo-book/printing";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -125,7 +126,7 @@ export function SavePdfButton(props: PdfProps) {
     <PdfButton {...button} onClick={() => void start()}>
       {drawing &&
         createPortal(
-          <PrintBook {...props} look={{ ...props.look, printOffsets: false }} />,
+          <PrintBook {...props} look={pdfLook(props.book, props.look)} />,
           document.body,
         )}
     </PdfButton>

@@ -11,7 +11,7 @@ import { CaptionOverflowList } from "@/components/photo-book/caption-overflow-li
 import { LowResolutionList } from "@/components/photo-book/low-resolution-list";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { usePreviewKeys, usePreviewMode } from "@/components/photo-book/preview-mode";
-import { PrintGuidesToggle } from "@/components/photo-book/print-guides";
+import { PrintGuidesToggle, PrintPreviewToggle } from "@/components/photo-book/print-guides";
 import { UnitsDrawer } from "@/components/photo-book/units-drawer";
 import { UsedPanel } from "@/components/photo-book/used-panel";
 import { type PageLayout, type PhotoBook, placePhoto } from "@/lib/photo-book";
@@ -130,6 +130,7 @@ export function BookTab(props: BookTabProps) {
           <div className="flex flex-wrap items-start gap-3">
             <div className="flex min-w-0 flex-1 flex-col gap-2">
               <BudgetMeter book={book} />
+              <PrintPreviewToggle />
               <PrintGuidesToggle />
             </div>
             <SavePdfButton book={book} look={look} used={used} />

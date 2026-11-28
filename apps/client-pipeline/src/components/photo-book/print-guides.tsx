@@ -1,6 +1,8 @@
+import { Button } from "@/components/ui/button";
 import type { PageSide } from "@/lib/photo-book";
 import type { PageGuides } from "@/lib/photo-book-guides";
 import { printGuides } from "@/stores/photo-book-guides";
+import { printPreview } from "@/stores/photo-book-print-preview";
 
 /**
  * **Show bleed and safe boundary**, on the Book and Layouts tabs: draws Blurb's bleed and safe
@@ -21,6 +23,45 @@ export function PrintGuidesToggle() {
       />
       Show bleed and safe boundary
     </label>
+  );
+}
+
+/** The preview's two versions: as **Save as PDF** makes the pages, or as **PDF for Blurb** prints them. */
+const PREVIEW_OPTIONS: [boolean, string, string][] = [
+  [false, "PDF", "The book's own page size, as Save as PDF and Save as image make it."],
+  [
+    true,
+    "Print (Blurb)",
+    "Blurb's page size, with each layout's print offsets added to its margins, as PDF for Blurb makes it.",
+  ],
+];
+
+/**
+ * **Preview**, on the Book and Layouts tabs: shows the pages as **Save as PDF** makes them (the
+ * book's page size) or as **PDF for Blurb** prints them (Blurb's page size, with the layouts'
+ * print offsets), kept in this browser.
+ */
+export function PrintPreviewToggle() {
+  const on = printPreview.use();
+  return (
+    <div className="flex items-center gap-2 text-sm">
+      <span>Preview</span>
+      <div role="radiogroup" aria-label="Preview" className="flex gap-1">
+        {PREVIEW_OPTIONS.map(([value, name, title]) => (
+          <Button
+            key={name}
+            size="sm"
+            role="radio"
+            title={title}
+            aria-checked={on === value}
+            variant={on === value ? "secondary" : "outline"}
+            onClick={() => printPreview.set(value)}
+          >
+            {name}
+          </Button>
+        ))}
+      </div>
+    </div>
   );
 }
 

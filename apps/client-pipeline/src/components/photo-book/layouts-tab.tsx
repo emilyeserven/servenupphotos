@@ -7,7 +7,7 @@ import { LayoutFields } from "@/components/photo-book/layout-fields";
 import { LayoutList } from "@/components/photo-book/layout-list";
 import { LeftPagesField } from "@/components/photo-book/left-pages-field";
 import type { PageLook } from "@/components/photo-book/page-actions";
-import { PrintGuidesToggle } from "@/components/photo-book/print-guides";
+import { PrintGuidesToggle, PrintPreviewToggle } from "@/components/photo-book/print-guides";
 import { UnitSheets } from "@/components/photo-book/unit-sheets";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -84,6 +84,7 @@ export function LayoutsTab({ book, update, look, data, photos }: LayoutsTabProps
       <div className="flex min-w-0 flex-1 flex-col gap-2 lg:sticky lg:top-4">
         <PreviewSheets pages={pages} look={look} />
         <div className="flex flex-wrap items-center justify-center gap-4">
+          <PrintPreviewToggle />
           <PrintGuidesToggle />
           <Button
             size="sm"

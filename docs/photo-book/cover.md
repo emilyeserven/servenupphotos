@@ -21,6 +21,12 @@ The preview draws dashed lines where Blurb trims the cover and where the spine f
 
 Blurb's bleed, margins and safe boundary are only warned about under the preview, never drawn or enforced: nothing is moved to fit them and no marks are printed. The list says how much Blurb trims off each page and the cover, that text should stay 0.25 in inside the trimmed edge (0.5 in at the binding), and which of the front's words sit closer than that. With Blurb's 78-page sizes, the title's top is 0.128 in from the trimmed edge, as on Vol. 3.
 
+## Print or PDF preview
+
+**Preview**, on the Book tab (under the page budget) and the Layouts tab (under the preview), picks which version of the pages the preview shows. **PDF** (the default) draws them as **Save as PDF** and **Save as image** make them: the book's own page size from **Info**, without the layouts' print offsets. **Print (Blurb)** draws them as **PDF for Blurb** prints them: Blurb's page size, with each layout's **Print offset, left** and **right** added to its margins ([Photo book layouts](layouts.md)). The choice is kept in this browser and shared by both tabs; the other tabs always show the PDF version. It never changes what any button saves: each PDF and image is made in its own version. **Show bleed and safe boundary** is separate, and draws its guides over either version.
+
+> **Frontend analogy:** it's like a "print" media query preview in dev tools: the same components, fed a different page size and one extra flag, rather than a second copy of the page.
+
 ## Bleed and safe boundary guides
 
 **Show bleed and safe boundary**, a checkbox on the Book tab (under the page budget) and the Layouts tab (under the preview), draws Blurb's guides over every page, as **PDF for Blurb** prints it at Blurb's page size: the bleed Blurb trims off the top, bottom and outside edge shaded red (the left edge of a left page, the right of a right page), and Blurb's safe boundary dashed in blue, 0.25 in inside the trim and 0.5 in from the binding edge. The bleed is how much larger Blurb's page PDF is than the book's page size, or 0.125 in when the size is in pixels (`lib/photo-book-guides.ts`). The checkbox is kept in this browser and shared by both tabs. The guides are only on the screen, never in a PDF or a spread's image, and nothing on the page moves for them.
