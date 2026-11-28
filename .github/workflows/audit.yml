@@ -48,9 +48,13 @@ jobs:
         working-directory: apps/be-pipeline
     steps:
       - uses: actions/checkout@v7
+      # The standard library is checked at the Go version the server runs: the newest 1.27 release,
+      # as apps/be-pipeline/Dockerfile builds it from golang:1.27-alpine. go.mod's `go 1.26.0` is
+      # only the oldest version the code builds with, and 1.26.0 has since had security fixes.
       - uses: actions/setup-go@v7
         with:
-          go-version-file: apps/be-pipeline/go.mod
+          go-version: "1.27"
+          check-latest: true
           cache-dependency-path: apps/be-pipeline/go.mod
       # Reports only advisories in code the backend actually calls, not every module in go.sum.
       - name: govulncheck
