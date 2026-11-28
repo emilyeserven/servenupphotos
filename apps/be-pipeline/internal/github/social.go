@@ -148,20 +148,9 @@ func socialImage(images map[string]json.RawMessage) *string {
 // of each file changes. Nothing is saved when a file can't be read, or when two
 // photos would end up on the same day.
 func (c *Client) SetSocialDates(ctx context.Context, gh settings.GitHub, dates []SocialDate) (SocialDatesResult, error) {
-	if len(dates) == 0 {
-		return SocialDatesResult{}, publishErr(http.StatusBadRequest, "There are no publish dates to save.")
-	}
-	want := map[string]*string{}
-	for _, d := range dates {
-		if _, dup := want[d.Path]; dup {
-			return SocialDatesResult{}, publishErr(http.StatusBadRequest, "%s is listed more than once.", d.Path)
-		}
-		if d.Date != nil {
-			if _, err := time.Parse(time.DateOnly, *d.Date); err != nil {
-				return SocialDatesResult{}, publishErr(http.StatusBadRequest, "%q isn't a date like 2026-10-22.", *d.Date)
-			}
-		}
-		want[d.Path] = d.Date
+	want, perr := wantedDates(dates)
+	if perr != nil {
+		return SocialDatesResult{}, perr
 	}
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
@@ -171,49 +160,16 @@ func (c *Client) SetSocialDates(ctx context.Context, gh settings.GitHub, dates [
 	var entries []map[string]string
 	byDay := map[string]string{}
 	for _, f := range scan.files {
-		date, changing := want[f.path]
-		if f.err != "" {
-			return SocialDatesResult{}, publishErr(http.StatusConflict,
-				"%s couldn't be read (%s), so nothing was changed.", f.path, f.err)
+		entry, perr := dateEntry(f, want, byDay)
+		if perr != nil {
+			return SocialDatesResult{}, perr
 		}
-		if !changing {
-			var fields socialFields
-			if json.Unmarshal(f.content, &fields) == nil {
-				date = fields.SocialMediaPublishDate
-			}
+		if entry != nil {
+			entries = append(entries, entry)
 		}
-		if date != nil {
-			if other, taken := byDay[*date]; taken {
-				return SocialDatesResult{}, publishErr(http.StatusConflict,
-					"%s and %s would both be posted on %s, so nothing was changed.", other, f.path, *date)
-			}
-			byDay[*date] = f.path
-		}
-		if !changing {
-			continue
-		}
-		delete(want, f.path)
-		value := []byte("null")
-		if date != nil {
-			value, _ = json.Marshal(*date)
-		}
-		content, err := setTopLevel(f.content, publishDateKey, value)
-		if err != nil {
-			return SocialDatesResult{}, publishErr(http.StatusConflict, "%s: %s", f.path, err)
-		}
-		if bytes.Equal(content, f.content) {
-			continue
-		}
-		entries = append(entries, map[string]string{"path": f.path, "mode": "100644", "type": "blob", "content": string(content)})
 	}
 	if len(want) > 0 {
-		missing := make([]string, 0, len(want))
-		for p := range want {
-			missing = append(missing, p)
-		}
-		sort.Strings(missing)
-		return SocialDatesResult{}, publishErr(http.StatusNotFound,
-			"%s isn't a photo file on %s, so nothing was changed.", strings.Join(missing, ", "), scan.branch)
+		return SocialDatesResult{}, missingPhotoFiles(want, scan.branch)
 	}
 	if len(entries) == 0 {
 		return SocialDatesResult{}, publishErr(http.StatusConflict, "Those publish dates are already saved, so there's nothing to change.")
@@ -224,6 +180,87 @@ func (c *Client) SetSocialDates(ctx context.Context, gh settings.GitHub, dates [
 		return SocialDatesResult{}, perr
 	}
 	return SocialDatesResult{pendingSave: saved, Files: len(entries)}, nil
+}
+
+// wantedDates is each new publish date by photo file path, or an error when a
+// path is listed twice or a date isn't YYYY-MM-DD.
+func wantedDates(dates []SocialDate) (map[string]*string, *PublishError) {
+	if len(dates) == 0 {
+		return nil, publishErr(http.StatusBadRequest, "There are no publish dates to save.")
+	}
+	want := map[string]*string{}
+	for _, d := range dates {
+		if _, dup := want[d.Path]; dup {
+			return nil, publishErr(http.StatusBadRequest, "%s is listed more than once.", d.Path)
+		}
+		if d.Date != nil {
+			if _, err := time.Parse(time.DateOnly, *d.Date); err != nil {
+				return nil, publishErr(http.StatusBadRequest, "%q isn't a date like 2026-10-22.", *d.Date)
+			}
+		}
+		want[d.Path] = d.Date
+	}
+	return want, nil
+}
+
+// dateEntry checks one photo file against the dates SetSocialDates is saving.
+// It records the file's publish date, new or as saved, in byDay, failing when
+// another photo already has that day. When the file is in want it takes it out
+// and returns the file's tree entry with the new date, or nil when the date is
+// already saved.
+func dateEntry(f photoFile, want map[string]*string, byDay map[string]string) (map[string]string, *PublishError) {
+	if f.err != "" {
+		return nil, publishErr(http.StatusConflict, "%s couldn't be read (%s), so nothing was changed.", f.path, f.err)
+	}
+	date, changing := want[f.path]
+	if !changing {
+		date = savedPublishDate(f.content)
+	}
+	if date != nil {
+		if other, taken := byDay[*date]; taken {
+			return nil, publishErr(http.StatusConflict,
+				"%s and %s would both be posted on %s, so nothing was changed.", other, f.path, *date)
+		}
+		byDay[*date] = f.path
+	}
+	if !changing {
+		return nil, nil
+	}
+	delete(want, f.path)
+	value := []byte("null")
+	if date != nil {
+		value, _ = json.Marshal(*date)
+	}
+	content, err := setTopLevel(f.content, publishDateKey, value)
+	if err != nil {
+		return nil, publishErr(http.StatusConflict, "%s: %s", f.path, err)
+	}
+	if bytes.Equal(content, f.content) {
+		return nil, nil
+	}
+	return map[string]string{"path": f.path, "mode": "100644", "type": "blob", "content": string(content)}, nil
+}
+
+// savedPublishDate is the social media publish date a photo file already has,
+// or nil when it has none or can't be read.
+func savedPublishDate(content []byte) *string {
+	var fields socialFields
+	if json.Unmarshal(content, &fields) != nil {
+		return nil
+	}
+	return fields.SocialMediaPublishDate
+}
+
+// missingPhotoFiles is the error for the paths left in want, which aren't
+// photo files on branch.
+func missingPhotoFiles(want map[string]*string, branch string) *PublishError {
+	missing := make([]string, 0, len(want))
+	for p := range want {
+		missing = append(missing, p)
+	}
+	sort.Strings(missing)
+	return publishErr(http.StatusNotFound,
+		"%s isn't a photo file on %s, so nothing was changed.", strings.Join(missing, ", "), branch)
 }
 
 // valueOffset is where a value starts in span, which runs from the end of the
@@ -261,11 +298,8 @@ func setTopLevelList(content []byte, key string, value []byte) ([]byte, error) {
 // replaceTopLevel is setTopLevel, also replacing an object or array the key
 // holds when containers is true.
 func replaceTopLevel(content []byte, key string, value []byte, containers bool) ([]byte, error) {
+	s := &topLevelScan{content: content, key: key, containers: containers, closing: -1, valueStart: -1}
 	dec := json.NewDecoder(bytes.NewReader(content))
-	depth, prev, closing := 0, 0, -1
-	wantKey, matched := false, false
-	// valueStart is where the matched key's object or array value starts.
-	valueStart := -1
 	for {
 		tok, err := dec.Token()
 		if errors.Is(err, io.EOF) {
@@ -275,51 +309,107 @@ func replaceTopLevel(content []byte, key string, value []byte, containers bool) 
 			return nil, errors.New("the file isn't valid JSON")
 		}
 		end := int(dec.InputOffset())
-		start := prev
-		prev = end
-
-		if d, ok := tok.(json.Delim); ok {
-			if d == '{' || d == '[' {
-				if matched && depth == 1 {
-					if !containers {
-						return nil, fmt.Errorf("%s isn't a single value", key)
-					}
-					valueStart = start + valueOffset(content[start:end])
-				}
-				if depth == 0 && d != '{' {
-					return nil, errors.New("the file isn't a JSON object")
-				}
-				depth++
-				wantKey = depth == 1
-				continue
-			}
-			depth--
-			if depth == 1 && matched && valueStart >= 0 {
-				return splice(content, valueStart, end, value), nil
-			}
-			if depth == 0 {
-				closing = end - 1
-			}
-			wantKey = depth == 1
-			continue
+		start := s.prev
+		s.prev = end
+		at, err := s.step(tok, start, end)
+		if err != nil {
+			return nil, err
 		}
-		if depth != 1 {
-			continue
-		}
-		if wantKey {
-			matched = tok == key
-			wantKey = false
-			continue
-		}
-		wantKey = true
-		if matched {
-			return splice(content, start+valueOffset(content[start:end]), end, value), nil
+		if at >= 0 {
+			return splice(content, at, end, value), nil
 		}
 	}
-	if closing < 0 {
+	if s.closing < 0 {
 		return nil, errors.New("the file isn't a JSON object")
 	}
+	return appendTopLevel(content, s.closing, key, value), nil
+}
 
+// topLevelScan follows replaceTopLevel through a JSON object's tokens, one
+// step per token, to find where its top-level key's value is.
+type topLevelScan struct {
+	content    []byte
+	key        string
+	containers bool
+	// depth is how many objects and arrays the current token is inside.
+	depth int
+	// prev is where the previous token ended, so the current one's span starts there.
+	prev int
+	// closing is where the top-level object's closing brace is, once it's seen.
+	closing int
+	// wantKey is true when the next top-level token is a key, and matched
+	// when the last key read was the one being set.
+	wantKey, matched bool
+	// valueStart is where the matched key's object or array value starts.
+	valueStart int
+}
+
+// step reads one token, spanning content[start:end]. It returns where the
+// key's value starts once the token ending at end is the value's last, or -1
+// while the value hasn't ended yet.
+func (s *topLevelScan) step(tok json.Token, start, end int) (int, error) {
+	d, ok := tok.(json.Delim)
+	if !ok {
+		return s.scalar(tok, start, end), nil
+	}
+	if d == '{' || d == '[' {
+		return -1, s.open(d, start, end)
+	}
+	return s.close(end), nil
+}
+
+// open steps into an object or array, noting where it starts when it's the
+// matched key's value.
+func (s *topLevelScan) open(d json.Delim, start, end int) error {
+	if s.matched && s.depth == 1 {
+		if !s.containers {
+			return fmt.Errorf("%s isn't a single value", s.key)
+		}
+		s.valueStart = start + valueOffset(s.content[start:end])
+	}
+	if s.depth == 0 && d != '{' {
+		return errors.New("the file isn't a JSON object")
+	}
+	s.depth++
+	s.wantKey = s.depth == 1
+	return nil
+}
+
+// close steps out of an object or array, returning where the matched key's
+// value started when this closes it.
+func (s *topLevelScan) close(end int) int {
+	s.depth--
+	if s.depth == 1 && s.matched && s.valueStart >= 0 {
+		return s.valueStart
+	}
+	if s.depth == 0 {
+		s.closing = end - 1
+	}
+	s.wantKey = s.depth == 1
+	return -1
+}
+
+// scalar reads a key, string, number, boolean or null, returning where it
+// starts when it's the matched key's value.
+func (s *topLevelScan) scalar(tok json.Token, start, end int) int {
+	if s.depth != 1 {
+		return -1
+	}
+	if s.wantKey {
+		s.matched = tok == s.key
+		s.wantKey = false
+		return -1
+	}
+	s.wantKey = true
+	if s.matched {
+		return start + valueOffset(s.content[start:end])
+	}
+	return -1
+}
+
+// appendTopLevel is content, a JSON object whose closing brace is at closing,
+// with key added as its last field, indented as Publish writes a photo's file.
+func appendTopLevel(content []byte, closing int, key string, value []byte) []byte {
 	last := bytes.LastIndexFunc(content[:closing], func(r rune) bool { return r != ' ' && r != '\n' && r != '\r' && r != '\t' })
 	field := fmt.Sprintf(`  %q: %s`, key, value)
 	var out bytes.Buffer
@@ -331,5 +421,5 @@ func replaceTopLevel(content []byte, key string, value []byte, containers bool) 
 		out.Write(content[last+1 : closing])
 	}
 	out.Write(content[closing:])
-	return out.Bytes(), nil
+	return out.Bytes()
 }
