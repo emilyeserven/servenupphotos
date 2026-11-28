@@ -68,27 +68,35 @@ export interface CoverBox {
 }
 
 /**
+ * How far the white spine band reaches past the spine into the front and the back, in inches: as on
+ * Vol. 3's cover, whose front and back each have a white strip 49 pt (0.681 in) wide along the
+ * spine.
+ */
+export const SPINE_BAND = 49 / 72;
+
+/**
  * Where each part of Blurb's cover sheet is: the back on the left, the spine in the middle and the
- * front on the right, each the sheet's full height, and the front as it's left once Blurb trims
- * the bleed off its top, bottom and outside edge, which the front's words are laid out in.
+ * front on the right, each the sheet's full height; the white spine band, the spine with
+ * SPINE_BAND more on each side; the front as it's left once Blurb trims the bleed off its top,
+ * bottom and outside edge; and the part of that right of the band, which the front's words are
+ * laid out in.
  */
 export function coverParts(
   sizes: BlurbSizes,
-): Record<"back" | "spine" | "front" | "frontTrim", CoverBox> {
+): Record<"back" | "spine" | "band" | "front" | "frontTrim" | "frontWords", CoverBox> {
   const { coverWidth: w, coverHeight: h, spine, bleed } = sizes;
   const x = (inches: number) => (inches / w) * 100;
   const y = (inches: number) => (inches / h) * 100;
   const side = (w - spine) / 2;
+  const band = Math.min(SPINE_BAND, side - bleed);
+  const trim = { top: y(bleed), height: y(h - 2 * bleed) };
   return {
     back: { left: 0, top: 0, width: x(side), height: 100 },
     spine: { left: x(side), top: 0, width: x(spine), height: 100 },
+    band: { left: x(side - band), top: 0, width: x(spine + 2 * band), height: 100 },
     front: { left: x(side + spine), top: 0, width: x(side), height: 100 },
-    frontTrim: {
-      left: x(side + spine),
-      top: y(bleed),
-      width: x(side - bleed),
-      height: y(h - 2 * bleed),
-    },
+    frontTrim: { left: x(side + spine), width: x(side - bleed), ...trim },
+    frontWords: { left: x(side + spine + band), width: x(side - bleed - band), ...trim },
   };
 }
 
@@ -96,8 +104,9 @@ export function coverParts(
 const SAFE_INSET = 0.25;
 
 /**
- * How far the front's words sit from its trimmed edges, in shares of the trimmed front's width, as
- * on Vol. 3's cover; `FrontWords` in `book-cover.tsx` places them by the same numbers.
+ * How far the front's words sit from the edges of the front right of the white spine band, in
+ * shares of its width, as on Vol. 3's cover; `FrontWords` in `book-cover.tsx` places them by the
+ * same numbers.
  */
 export const FRONT_INSETS = { title: 0.01, left: 0.08, right: 0.035, bottom: 0.042 };
 
@@ -114,9 +123,10 @@ const INSET_NAMES: Record<keyof typeof FRONT_INSETS, string> = {
  * how close it is. They're only warnings: the cover is drawn as Vol. 3's is either way.
  */
 export function coverWarnings(sizes: BlurbSizes): string[] {
-  const front = (sizes.coverWidth - sizes.spine) / 2 - sizes.bleed;
+  const { width } = coverParts(sizes).frontWords;
+  const words = (width / 100) * sizes.coverWidth;
   return (Object.keys(FRONT_INSETS) as (keyof typeof FRONT_INSETS)[]).flatMap((edge) => {
-    const at = FRONT_INSETS[edge] * front;
+    const at = FRONT_INSETS[edge] * words + (edge === "left" ? SPINE_BAND : 0);
     if (at >= SAFE_INSET) return [];
     return [
       `${INSET_NAMES[edge]} is ${inches(at)} from the trimmed edge, inside Blurb's ${inches(SAFE_INSET)} safe boundary, as on Vol. 3.`,
