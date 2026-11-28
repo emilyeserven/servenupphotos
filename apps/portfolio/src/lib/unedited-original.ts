@@ -1,4 +1,4 @@
-import type { PhotoImages } from "./photo-image";
+import type { PhotoImages } from "./photo-image.ts";
 
 // Imported by private-notes.ts in the Vite config as well as by the app, so this file only imports
 // types, by relative path.
