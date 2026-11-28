@@ -1,4 +1,5 @@
-import { photos, type Photo } from "@/lib/photos";
+import { photos } from "@/lib/all-photos";
+import type { Photo } from "@/lib/photos";
 import {
   arranged,
   HOMEPAGE_ZONE,

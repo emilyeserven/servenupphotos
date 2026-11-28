@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import { DateField } from "@portfolio/components/date-field";
 import { PickerPart } from "@portfolio/components/section-picker";
 import {
@@ -9,7 +9,7 @@ import {
 } from "@portfolio/components/when-buttons";
 import { isoDate, parseIsoDate } from "@portfolio/lib/dates";
 import { filterPhotos, type PhotoFilters, withoutFilters } from "@portfolio/lib/photo-filters";
-import { photos as allPhotos, type Photo } from "@portfolio/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 import {
   CURRENT_LABELS,
   currentChoice,
@@ -20,9 +20,11 @@ import {
   WHEN_KEYS,
 } from "@portfolio/lib/when-filters";
 
-/** The first and last day a portfolio photo was taken, which the calendar keeps to. */
-const FIRST_DAY = new Date(Math.min(...allPhotos.map((photo) => photo.takenAt.getTime())));
-const LAST_DAY = new Date(Math.max(...allPhotos.map((photo) => photo.takenAt.getTime())));
+/** The first and last day one of the photos was taken, which the calendar keeps to. */
+function dayRange(photos: Photo[]): { first: Date; last: Date } {
+  const times = photos.map((photo) => photo.takenAt.getTime());
+  return { first: new Date(Math.min(...times)), last: new Date(Math.max(...times)) };
+}
 
 /** One section of the When picker: a kind of list across all years, or a range of dates. */
 export type WhenSection = ListKey | "range";
@@ -35,6 +37,8 @@ export interface WhenSetters {
 
 /** What the When picker reads and changes, and the photos each choice's count is out of. */
 export interface WhenProps extends WhenSetters {
+  /** The view's photos before any filter, whose first and last days the calendar keeps to. */
+  photos: Photo[];
   facet: Photo[];
 }
 
@@ -123,7 +127,8 @@ function dateOf(day: string | undefined): Date | undefined {
  * A range of dates from the first day to the last, both included, each picked in its own field with
  * its own calendar; either can be left open. The start can't come after the end.
  */
-function RangePart(props: WhenSetters) {
+function RangePart(props: WhenSetters & { photos: Photo[] }) {
+  const { first, last } = useMemo(() => dayRange(props.photos), [props.photos]);
   const from = dateOf(props.filters.start);
   const to = dateOf(props.filters.end);
   const set = (next: { start?: Date; end?: Date }) => {
@@ -137,16 +142,16 @@ function RangePart(props: WhenSetters) {
           label="From"
           value={from}
           onChange={(start) => set({ start, end: to })}
-          first={FIRST_DAY}
-          last={LAST_DAY}
+          first={first}
+          last={last}
           disabled={to && { after: to }}
         />
         <DateField
           label="To"
           value={to}
           onChange={(end) => set({ start: from, end })}
-          first={FIRST_DAY}
-          last={LAST_DAY}
+          first={first}
+          last={last}
           disabled={from && { before: from }}
         />
       </div>

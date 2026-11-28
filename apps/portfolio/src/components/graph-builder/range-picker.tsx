@@ -12,6 +12,7 @@ import {
   type GraphPickerSection,
 } from "@portfolio/components/graph-builder/graph-picker";
 import { XEnds, YEnds } from "@portfolio/components/graph-builder/graph-ranges";
+import { photos as allPhotos } from "@portfolio/lib/all-photos";
 import {
   axisValues,
   type GraphConfig,
@@ -20,7 +21,7 @@ import {
   yBuckets,
 } from "@portfolio/lib/graph-data";
 import { photoCounts } from "@portfolio/lib/graph-ranges";
-import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 import type { StatRow } from "@portfolio/lib/stat-groups";
 
 /** A change to some of the graph's settings. */

@@ -1,6 +1,7 @@
+import { photos } from "@/lib/all-photos";
 import { placeById } from "@/lib/localize";
 import { fitView, type MapView } from "@/lib/map-preview-view";
-import { photos, type Photo } from "@/lib/photos";
+import type { Photo } from "@/lib/photos";
 import { placeSlug } from "@/lib/place-slug";
 
 /**

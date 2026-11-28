@@ -4,9 +4,10 @@ import { type ReactNode, useState } from "react";
 import { ShowInGrid } from "@/components/show-in-grid";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { type FocusChain, type StatFocus, StatGroupCard } from "@/components/stat-group";
+import { photos } from "@/lib/all-photos";
 import { filterWithCamera } from "@/lib/camera-filters";
 import { LOCATION_KEYS } from "@/lib/photo-filters";
-import { type Photo, photos } from "@/lib/photos";
+import type { Photo } from "@/lib/photos";
 import { type GroupDef, type GroupVariant, groupChains, type StatRow } from "@/lib/stat-groups";
 import { type StatSection, STAT_SECTIONS, type StatTotals, statTotals } from "@/lib/stats";
 

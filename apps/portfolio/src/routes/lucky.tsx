@@ -10,6 +10,7 @@ import { GridTiles, type ImagePhoto, type TileMode } from "@/components/photo-ti
 import { SiteHomeLink } from "@/components/site-home-link";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { TILE_SHAPES, ViewSwitcher } from "@/components/view-switcher";
+import { photos } from "@/lib/all-photos";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import { type ColorFilters, filterByColors, parseColorFilters } from "@/lib/color-search";
 import { type GridSize, naturalSize, parseGridSize, squareSize } from "@/lib/grid-size";
@@ -21,7 +22,6 @@ import {
   shuffled,
 } from "@/lib/lucky";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { photos } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { type LuckyDraw, useLuckyDraw } from "@/lib/use-lucky-draw";
 

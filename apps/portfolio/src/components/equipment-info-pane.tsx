@@ -1,6 +1,7 @@
 import { GearInfo } from "@portfolio/components/gear-info";
 import type { EquipmentKey } from "@portfolio/lib/camera-filters";
 import type { FilterOption } from "@portfolio/lib/filter-options";
+import type { Photo } from "@portfolio/lib/photos";
 
 /** What each equipment list's info pane says while no camera or lens by name is pointed at or chosen. */
 const EMPTY_TEXT: Record<EquipmentKey, string> = {
@@ -22,22 +23,33 @@ const PANE_LABELS: Record<EquipmentKey, string> = {
 export function EquipmentInfoPane({
   equipment,
   option,
+  photos,
 }: {
   equipment: EquipmentKey;
   /** The choice pointed at, or else the chosen one. */
   option?: FilterOption;
+  /** The view's photos before any filter, which the details say how a camera or lens was used in. */
+  photos: Photo[];
 }) {
   return (
     <aside aria-label={PANE_LABELS[equipment]} className="flex flex-col">
-      <PaneContent equipment={equipment} option={option} />
+      <PaneContent equipment={equipment} option={option} photos={photos} />
     </aside>
   );
 }
 
 /** A camera's or lens's details, when the option is one by name, or else a note saying to point at one. */
-function PaneContent({ equipment, option }: { equipment: EquipmentKey; option?: FilterOption }) {
+function PaneContent({
+  equipment,
+  option,
+  photos,
+}: {
+  equipment: EquipmentKey;
+  option?: FilterOption;
+  photos: Photo[];
+}) {
   if (option?.key !== equipment) {
     return <p className="text-xs text-muted-foreground">{EMPTY_TEXT[equipment]}</p>;
   }
-  return <GearInfo kind={equipment} name={option.value} />;
+  return <GearInfo kind={equipment} name={option.value} photos={photos} />;
 }

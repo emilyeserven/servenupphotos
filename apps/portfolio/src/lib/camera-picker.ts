@@ -5,7 +5,7 @@ import {
   withoutCameraFilters,
 } from "@portfolio/lib/camera-filters";
 import { equipmentOptions, type FilterOption } from "@portfolio/lib/filter-options";
-import { photos as allPhotos, type Photo } from "@portfolio/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 
 /** The camera or lens choices the Camera picker lists, and the one chosen, if any. */
 interface EquipmentChoices {
@@ -16,16 +16,18 @@ interface EquipmentChoices {
 
 /**
  * The camera or lens choices for `photos`, the photos the other filters leave: its metadata
- * groups, then each camera or lens by name, with the one the filters choose.
+ * groups, then each camera or lens by name, with the one the filters choose. The choices listed
+ * are every one in `all`, the view's photos before any filter.
  */
 export function equipmentChoices(
   equipment: EquipmentKey,
   photos: Photo[],
   filters: CameraFilters,
+  all: Photo[],
 ): EquipmentChoices {
   const own = [equipment, `${equipment}Group`] as const;
   const facet = filterByCamera(photos, withoutCameraFilters(filters, own));
-  const options = equipmentOptions(equipment, allPhotos, facet, {
+  const options = equipmentOptions(equipment, all, facet, {
     group: filters[`${equipment}Group`],
     name: filters[equipment],
   });

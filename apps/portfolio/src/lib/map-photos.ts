@@ -1,10 +1,11 @@
 import { LngLatBounds } from "maplibre-gl";
 import { useMemo } from "react";
+import { photos } from "@/lib/all-photos";
 import { byCountrySource } from "@/lib/map-country-groups";
 import { type PlacedSet, splitSets } from "@/lib/map-sets";
 import { filterPhotos, type PhotoFilters } from "@/lib/photo-filters";
 import { photoSets } from "@/lib/photo-sets";
-import { photos, type Photo } from "@/lib/photos";
+import type { Photo } from "@/lib/photos";
 import { filterByVisuals, type VisualSearch } from "@/lib/visual-filters";
 
 /** A photo with a GPS position, which is all the map can show. */

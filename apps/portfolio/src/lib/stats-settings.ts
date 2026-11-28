@@ -1,3 +1,4 @@
+import { photos as allPhotos } from "@portfolio/lib/all-photos";
 import {
   groupRange,
   parseRange,
@@ -6,7 +7,7 @@ import {
   settingNumber,
 } from "@portfolio/lib/camera-filters";
 import { groupTree, type MetaGroup } from "@portfolio/lib/metadata-groups";
-import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 import { type Bucket, bucketGroup, type StatGroup } from "@portfolio/lib/stat-groups";
 
 /** A shutter speed in seconds as a photographer writes it, such as "1/250" or "2". */

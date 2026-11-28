@@ -7,7 +7,7 @@ import {
   lensUse,
 } from "@portfolio/lib/gear-kinds";
 import { type GearKind, gearFile } from "@portfolio/lib/gear-pictures";
-import { photos as allPhotos } from "@portfolio/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 
 /** A range as "low–high", or the one value when the ends are the same. */
 function rangeText([low, high]: [number, number], write: (value: number) => string): string {
@@ -64,8 +64,8 @@ function favoriteText(focal: number | undefined): string | undefined {
 }
 
 /** A lens's specs from its name, and how the photos used it. */
-function lensRows(name: string): Detail[] {
-  const use = lensUse(allPhotos, name);
+function lensRows(name: string, photos: Photo[]): Detail[] {
+  const use = lensUse(photos, name);
   return [
     ...specRows(name),
     ["Photos", String(use.count)],
@@ -76,8 +76,8 @@ function lensRows(name: string): Detail[] {
 }
 
 /** A camera's kind, from its name, and how the photos used it. */
-function cameraRows(name: string): Detail[] {
-  const use = cameraUse(allPhotos, name);
+function cameraRows(name: string, photos: Photo[]): Detail[] {
+  const use = cameraUse(photos, name);
   return [
     ["Kind", CAMERA_KIND_NAMES[cameraKind(name)]],
     ["Photos", String(use.count)],
@@ -88,11 +88,19 @@ function cameraRows(name: string): Detail[] {
 /**
  * A camera's or lens's details, for the Gear & settings info panel: its picture (its own from the
  * Gear Pictures page, or a drawing of it), its name and description, what its name says about it,
- * and how the portfolio's photos used it.
+ * and how `photos`, the view's photos before any filter, used it.
  */
-export function GearInfo({ kind, name }: { kind: GearKind; name: string }) {
+export function GearInfo({
+  kind,
+  name,
+  photos,
+}: {
+  kind: GearKind;
+  name: string;
+  photos: Photo[];
+}) {
   const description = gearFile(kind, name)?.description;
-  const rows = kind === "lens" ? lensRows(name) : cameraRows(name);
+  const rows = kind === "lens" ? lensRows(name, photos) : cameraRows(name, photos);
   return (
     <div className="flex flex-col gap-2 text-xs">
       <GearPicture kind={kind} name={name} />

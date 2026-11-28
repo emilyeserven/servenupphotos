@@ -1,5 +1,5 @@
+import { photos as allPhotos } from "@portfolio/lib/all-photos";
 import { type SortOrder, statById } from "@portfolio/lib/graph-data";
-import { photos as allPhotos } from "@portfolio/lib/photos";
 import type { StatRow } from "@portfolio/lib/stat-groups";
 
 /** Whether a row's name is a plain whole number, such as a year. */
