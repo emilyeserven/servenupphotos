@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import { PlacesPanel } from "@/components/place-columns";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import { photos } from "@/lib/all-photos";
 import { DEFAULT_NEAR_LABEL, nearLabel, pointText } from "@/lib/distance-sort";
 import { locationOptions } from "@/lib/filter-options";
-import { photos } from "@/lib/photos";
 
 /**
  * Distance's **From** button, shown beside **Sort** while the Grid is sorted by Distance: it opens

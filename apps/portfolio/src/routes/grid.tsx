@@ -13,6 +13,7 @@ import { GridTiles, type ImagePhoto, type TileMode } from "@/components/photo-ti
 import { SiteHomeLink } from "@/components/site-home-link";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { TILE_SHAPES, type ViewChoice, ViewSwitcher } from "@/components/view-switcher";
+import { photos as allPhotos } from "@/lib/all-photos";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import {
   type ColorFilters,
@@ -33,7 +34,7 @@ import {
   sortGrid,
 } from "@/lib/grid-sort";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { photos as allPhotos, type Photo } from "@/lib/photos";
+import type { Photo } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { parseTableSearch, type TableSearch } from "@/lib/table-search";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";

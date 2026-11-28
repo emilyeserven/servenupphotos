@@ -1,5 +1,6 @@
+import { photos } from "@/lib/all-photos";
 import { albumAndSubAlbums, albums, type Group } from "@/lib/groups";
-import { photos, type Photo, type PhotoImage, type ZoneFocus } from "@/lib/photos";
+import type { Photo, PhotoImage, ZoneFocus } from "@/lib/photos";
 
 /** A photo with resized versions in R2, which is all a spotlight zone can show. */
 export type ImagePhoto = Photo & { image: PhotoImage };

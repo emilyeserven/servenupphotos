@@ -1,6 +1,7 @@
+import { photos as allPhotos } from "@portfolio/lib/all-photos";
 import type { RangeKey } from "@portfolio/lib/camera-filters";
 import { groupTree, groupValues, type MetaGroup } from "@portfolio/lib/metadata-groups";
-import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 import {
   type Bucket,
   bucketGroup,

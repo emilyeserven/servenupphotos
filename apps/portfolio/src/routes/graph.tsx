@@ -3,6 +3,7 @@ import { ChartColumn } from "lucide-react";
 import { useMemo } from "react";
 import { COLUMN, GraphBuilder } from "@/components/graph-builder/graph-builder";
 import { SiteHomeLink } from "@/components/site-home-link";
+import { photos } from "@/lib/all-photos";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import { type ColorFilters, filterByColors, parseColorFilters } from "@/lib/color-search";
 import type { GraphConfig } from "@/lib/graph-data";
@@ -15,7 +16,6 @@ import {
 } from "@/lib/graph-search";
 import { useGraphWide } from "@/lib/graph-wide";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { photos } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
 
 /**

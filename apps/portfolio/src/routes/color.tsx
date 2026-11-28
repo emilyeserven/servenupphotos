@@ -8,12 +8,13 @@ import { FloatingHeader } from "@/components/floating-header";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ShadeSpectrum } from "@/components/shade-spectrum";
 import { ViewPlaceholder } from "@/components/view-placeholder";
+import { photos as allPhotos } from "@/lib/all-photos";
 import { colorDisplay, type ColorDisplaySearch, parseColorDisplay } from "@/lib/color-display";
 import { type ColorFilters, parseColorFilters, vividEnough } from "@/lib/color-search";
 import type { VividMeasure } from "@/lib/color-sort";
 import { lightnessExtent } from "@/lib/lightness-range";
 import { isBlackAndWhite } from "@/lib/photo-colors";
-import { photos as allPhotos, type Photo, type PhotoImage } from "@/lib/photos";
+import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useRememberViewOptions } from "@/lib/view-options";
 

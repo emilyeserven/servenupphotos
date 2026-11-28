@@ -4,12 +4,7 @@ import type {
   CameraSection,
   PickerPartProps,
 } from "@portfolio/components/camera-picker";
-import {
-  RANGE_LABELS,
-  RANGE_PRESETS,
-  RANGE_VALUES,
-  writeSetting,
-} from "@portfolio/components/camera-ranges";
+import { RANGE_LABELS, cameraRanges, writeSetting } from "@portfolio/components/camera-ranges";
 import { EquipmentInfoPane } from "@portfolio/components/equipment-info-pane";
 import { EquipmentList } from "@portfolio/components/equipment-list";
 import { InfoButton } from "@portfolio/components/info-button";
@@ -94,12 +89,14 @@ function setEnds(values: string[], range: string | undefined): [string, string] 
 function RangePart({
   setting,
   filters,
+  source,
   graphics,
   onGraphics,
   onChange,
   onDrag,
 }: PickerPartProps & { setting: RangeKey }) {
   const label = RANGE_LABELS[setting];
+  const ranges = cameraRanges(source.photos);
   const set = (range: string | undefined) => onChange({ [setting]: range });
   const [previewed, setPreviewed] = useState<string | undefined>();
   const point = (range: string | undefined) => {
@@ -111,7 +108,7 @@ function RangePart({
       <PartTitle label={label} on={graphics} onClick={() => onGraphics(!graphics)} />
       <RangeFilter
         label={label}
-        values={RANGE_VALUES[setting]}
+        values={ranges.values[setting]}
         range={filters[setting]}
         preview={previewed}
         write={writeSetting(setting)}
@@ -120,7 +117,7 @@ function RangePart({
       />
       <RangePresetList
         label={label}
-        presets={RANGE_PRESETS[setting]}
+        presets={ranges.presets[setting]}
         range={filters[setting]}
         onChange={set}
         onPoint={point}
@@ -156,9 +153,12 @@ function EquipmentAside({
   pointed,
   photos,
   filters,
+  source,
 }: CameraPickerProps & { equipment: EquipmentKey; pointed?: FilterOption }) {
-  const chosen = equipmentChoices(equipment, photos, filters).chosen;
-  return <EquipmentInfoPane equipment={equipment} option={pointed ?? chosen} />;
+  const chosen = equipmentChoices(equipment, photos, filters, source.photos).chosen;
+  return (
+    <EquipmentInfoPane equipment={equipment} option={pointed ?? chosen} photos={source.photos} />
+  );
 }
 
 /**
@@ -169,8 +169,10 @@ function RangeAside({
   setting,
   dragged,
   filters,
+  source,
 }: CameraPickerProps & { setting: RangeKey; dragged?: [string, string] }) {
-  const [low, high] = dragged ?? setEnds(RANGE_VALUES[setting], filters[setting]);
+  const [low, high] =
+    dragged ?? setEnds(cameraRanges(source.photos).values[setting], filters[setting]);
   return (
     <aside aria-label={`About ${RANGE_LABELS[setting]}`}>
       <SettingIllustration setting={setting} low={low} high={high} write={writeSetting(setting)} />

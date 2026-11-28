@@ -50,12 +50,17 @@ interface ListProps extends CameraPickerProps {
  * taken with each, oldest or newest first), All cameras or All lenses, then the choices.
  */
 export function EquipmentList(props: ListProps) {
-  const { equipment, photos, filters } = props;
-  const choices = equipmentChoices(equipment, photos, filters);
+  const { equipment, photos, filters, source } = props;
+  const choices = equipmentChoices(equipment, photos, filters, source.photos);
   const groupings = equipmentGroupings(equipment, choices.options);
   const [groupingId, setGroupingId] = useState(() => groupingOf(groupings, choices.chosen));
   const [sort, setSort] = useState<EquipmentSort>("name");
-  const options = sortEquipment(equipment, groupingOptions(groupings, groupingId), sort);
+  const options = sortEquipment(
+    equipment,
+    groupingOptions(groupings, groupingId),
+    sort,
+    source.photos,
+  );
   const choose = (option?: FilterOption) => props.onChange(equipmentFilters(equipment, option));
   return (
     <div className="flex flex-col gap-2" onMouseLeave={() => props.onPoint(undefined)}>

@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { TripStory } from "@/components/trip-story";
-import { photos } from "@/lib/photos";
+import { photos } from "@/lib/all-photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { newestWithImages } from "@/lib/spotlight-zones";
 import {

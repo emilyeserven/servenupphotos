@@ -1,5 +1,6 @@
+import { photos } from "@/lib/all-photos";
 import { type Group, subTags, tagAndSubTags, tags } from "@/lib/groups";
-import { photos, type Photo } from "@/lib/photos";
+import type { Photo } from "@/lib/photos";
 import { type ImagePhoto, newestWithImages } from "@/lib/spotlight-zones";
 
 /** One tag on the Tags page: its photos, counting the tags under it, and a few to preview. */

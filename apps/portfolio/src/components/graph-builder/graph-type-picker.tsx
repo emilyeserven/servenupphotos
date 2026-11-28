@@ -7,9 +7,10 @@ import { hasParts, PARTS } from "@portfolio/components/graph-builder/parts-butto
 import { StatChoices } from "@portfolio/components/graph-builder/stat-choices";
 import { useTypeFits } from "@portfolio/components/graph-builder/type-suggestion";
 import { PickerPart } from "@portfolio/components/section-picker";
+import { photos as allPhotos } from "@portfolio/lib/all-photos";
 import { type GraphConfig, type GraphType, SPLIT_TYPES, statById } from "@portfolio/lib/graph-data";
 import { suggestedType, type TypeFit } from "@portfolio/lib/graph-suggest";
-import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 
 /** A change to some of the graph's settings. */
 type ConfigChange = (change: Partial<GraphConfig>) => void;

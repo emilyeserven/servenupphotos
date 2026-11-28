@@ -13,11 +13,12 @@ import { TimelineDisplayOptions } from "@/components/timeline-display-options";
 import { MonthMaps, TripLinesButton, useMonthTripLines } from "@/components/timeline-month-map";
 import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-sketch";
 import { TimelineScrubber } from "@/components/timeline-scrubber";
+import { photos as allPhotos } from "@/lib/all-photos";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import { type ColorFilters, filterByColors, parseColorFilters } from "@/lib/color-search";
 import { isoDate } from "@/lib/dates";
 import { hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
-import { photos as allPhotos, type Photo, type PhotoImage } from "@/lib/photos";
+import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import {

@@ -327,11 +327,11 @@ function PlacesDropdown({ photos, facet, filters, setFilters }: DropdownProps) {
 }
 
 /** The **Groups** picker, for the album, tag and genre, and the **When** picker. */
-function GroupDropdowns({ facet, filters, setFilters }: DropdownProps) {
+function GroupDropdowns({ photos, facet, filters, setFilters }: DropdownProps) {
   return (
     <>
       <GroupPicker facet={facet} filters={filters} setFilters={setFilters} />
-      <WhenFilter facet={facet} filters={filters} setFilters={setFilters} />
+      <WhenFilter photos={photos} facet={facet} filters={filters} setFilters={setFilters} />
     </>
   );
 }

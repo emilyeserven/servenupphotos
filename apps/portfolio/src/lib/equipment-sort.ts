@@ -1,6 +1,6 @@
 import type { EquipmentKey } from "@portfolio/lib/camera-filters";
 import type { FilterOption } from "@portfolio/lib/filter-options";
-import { photos as allPhotos } from "@portfolio/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 
 /**
  * How the Cameras or Lenses list orders the cameras or lenses under each heading or group: as the tab lists them (by
@@ -8,10 +8,10 @@ import { photos as allPhotos } from "@portfolio/lib/photos";
  */
 export type EquipmentSort = "name" | "oldest" | "newest";
 
-/** When the first of the portfolio's photos was taken with each camera or lens, in ms, by name. */
-function firstTaken(equipment: EquipmentKey): Map<string, number> {
+/** When the first of the photos was taken with each camera or lens, in ms, by name. */
+function firstTaken(photos: Photo[], equipment: EquipmentKey): Map<string, number> {
   const first = new Map<string, number>();
-  for (const photo of allPhotos) {
+  for (const photo of photos) {
     const name = photo[equipment];
     const time = photo.takenAt.getTime();
     if (name) first.set(name, Math.min(time, first.get(name) ?? time));
@@ -19,11 +19,17 @@ function firstTaken(equipment: EquipmentKey): Map<string, number> {
   return first;
 }
 
-/** The first photo's time for each camera and lens, worked out once. */
-const FIRST_TAKEN: Record<EquipmentKey, Map<string, number>> = {
-  camera: firstTaken("camera"),
-  lens: firstTaken("lens"),
-};
+/** The first photo's time for each camera and lens, worked out once for each photo list. */
+const firstTakenByPhotos = new WeakMap<Photo[], Record<EquipmentKey, Map<string, number>>>();
+
+/** The first photo's time for each camera and lens in the photos. */
+function firstTakenOf(photos: Photo[]): Record<EquipmentKey, Map<string, number>> {
+  const known = firstTakenByPhotos.get(photos);
+  if (known) return known;
+  const first = { camera: firstTaken(photos, "camera"), lens: firstTaken(photos, "lens") };
+  firstTakenByPhotos.set(photos, first);
+  return first;
+}
 
 /** Whether two rows are cameras or lenses by name side by side at the same depth, so they sort together. */
 function sameRun(equipment: EquipmentKey, a: FilterOption | undefined, b: FilterOption): boolean {
@@ -44,15 +50,16 @@ function runsOf(equipment: EquipmentKey, options: FilterOption[]): FilterOption[
 /**
  * The choices with each run of cameras or lenses by name, under the same heading or group, put in
  * the order `sort` asks for; headings and groups stay where they are. A camera with no photos goes
- * last either way.
+ * last either way. When each was first used comes from `photos`, the view's photos before any filter.
  */
 export function sortEquipment(
   equipment: EquipmentKey,
   options: FilterOption[],
   sort: EquipmentSort,
+  photos: Photo[],
 ): FilterOption[] {
   if (sort === "name") return options;
-  const first = FIRST_TAKEN[equipment];
+  const first = firstTakenOf(photos)[equipment];
   const sign = sort === "oldest" ? 1 : -1;
   const time = (option: FilterOption) => first.get(option.value) ?? sign * Number.MAX_SAFE_INTEGER;
   return runsOf(equipment, options).flatMap((run) =>

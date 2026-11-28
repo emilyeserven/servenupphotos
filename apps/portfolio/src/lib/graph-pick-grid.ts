@@ -1,7 +1,8 @@
+import { photos as allPhotos } from "@/lib/all-photos";
 import { filterWithCamera } from "@/lib/camera-filters";
 import { type GraphConfig, statById } from "@/lib/graph-data";
 import { type GraphPick, isSplit, type PickedGroup } from "@/lib/graph-pick";
-import { type Photo, photos as allPhotos } from "@/lib/photos";
+import type { Photo } from "@/lib/photos";
 import { searchPhotos } from "@/lib/text-search";
 
 /** A Grid filter as the URL writes it, such as `{ country: "Japan" }`. */

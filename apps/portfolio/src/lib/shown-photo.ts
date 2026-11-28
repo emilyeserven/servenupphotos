@@ -1,5 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { photos, type Photo, type PhotoImage } from "@/lib/photos";
+import { photos } from "@/lib/all-photos";
+import type { Photo, PhotoImage } from "@/lib/photos";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };

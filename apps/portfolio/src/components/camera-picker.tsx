@@ -145,9 +145,9 @@ function useSections(props: CameraPickerProps): PickerSection<CameraSection>[] {
 /** What a set section is set to, such as "X-T5" or "f/2 – f/4". */
 function setText(
   section: CameraSection,
-  { photos, filters }: CameraPickerProps,
+  { photos, filters, source }: CameraPickerProps,
   script: ScriptDisplay,
 ): string {
   if (!isEquipment(section)) return spanText(section, filters[section] ?? "");
-  return equipmentChoices(section, photos, filters).chosen?.label[script] ?? "Any";
+  return equipmentChoices(section, photos, filters, source.photos).chosen?.label[script] ?? "Any";
 }

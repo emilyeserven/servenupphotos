@@ -7,7 +7,8 @@ import {
   type ComparisonMode,
 } from "@/components/edit-comparison";
 import { SiteHomeLink } from "@/components/site-home-link";
-import { photos, type Photo, type PhotoImage } from "@/lib/photos";
+import { photos } from "@/lib/all-photos";
+import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
 import { count } from "@/lib/words";
 import { EmptyNote } from "@portfolio/components/empty-note";
