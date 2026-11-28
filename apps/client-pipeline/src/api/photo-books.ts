@@ -31,6 +31,13 @@ interface BookPdfRequest {
   html: string;
   /** How many pages the PDF has. */
   pages: number;
+  /**
+   * The exact size each page should measure, in inches, as **PDF for Blurb** asks for: Chrome
+   * rounds the paper size a little, and the backend sets it back to this.
+   */
+  width?: number;
+  /** The exact height each page should measure, in inches, with width. */
+  height?: number;
 }
 
 /** Has the backend make a book's PDF with a headless Chrome, and gives the PDF. */

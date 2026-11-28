@@ -172,6 +172,49 @@ export interface PhotoBook {
   lensPrefixes?: LensPrefix[];
   /** Cameras its captions call by another name, from its Info tab. */
   cameraNames?: CameraName[];
+  /** The book's cover from its Cover tab; absent while it has the Cover tab's defaults. */
+  cover?: BookCover;
+  /** The sizes **PDF for Blurb** makes its PDFs at, from its Info tab; absent for Blurb's 78-page Large Landscape book. */
+  blurb?: BlurbSizes;
+}
+
+/**
+ * A book's cover, drawn in the style of Serven Up Photos Vol. 3: a plain background, the title
+ * large in the front's top left, the author in its bottom left and the volume in its bottom right,
+ * a plain back, and the spine's text down the spine.
+ */
+export interface BookCover {
+  /** The title on the front, one line of the cover a line, such as "Serven\nUp\nPhotos". */
+  title: string;
+  /** The name in the front's bottom left; absent or "" for none. */
+  author?: string;
+  /** The words in the front's bottom right, such as "Vol. 3"; absent or "" for none. */
+  volume?: string;
+  /** The text down the spine; absent or "" for none. */
+  spine?: string;
+  /** The cover's color as "#rrggbb"; absent for black. */
+  background?: string;
+  /** The cover's text color as "#rrggbb"; absent for white. */
+  color?: string;
+}
+
+/**
+ * The sizes Blurb asks of a book's PDFs, in inches, from Blurb's specifications for its size, paper
+ * and page count.
+ */
+export interface BlurbSizes {
+  /** The width each page's PDF should measure. */
+  pageWidth: number;
+  /** The height each page's PDF should measure. */
+  pageHeight: number;
+  /** The width the cover's PDF should measure: back, spine and front together. */
+  coverWidth: number;
+  /** The height the cover's PDF should measure. */
+  coverHeight: number;
+  /** The spine's width, which grows with the page count. */
+  spine: number;
+  /** How much of each edge of the cover Blurb trims off. */
+  bleed: number;
 }
 
 /** A book's page budget, in printed pages (a spread is two); a number left out isn't set. */

@@ -29,6 +29,11 @@ type bookPdfBody struct {
 	HTML string `json:"html"`
 	// Pages is how many pages the PDF has, to say while it prints.
 	Pages int `json:"pages"`
+	// Width and Height are the exact size each page should measure, in
+	// inches, as PDF for Blurb asks for; 0 leaves Chrome's own rounding of
+	// the @page size.
+	Width  float64 `json:"width,omitempty"`
+	Height float64 `json:"height,omitempty"`
 }
 
 // makePdfFunc prints html to a PDF of pages pages, telling report how far it
@@ -86,6 +91,9 @@ func handleBookPdf(progress *pdfProgress, makePdf makePdfFunc) http.HandlerFunc 
 			slog.Error("making a photo book's PDF failed", "book", id, "err", err)
 			writeError(w, status, message)
 			return
+		}
+		if body.Width > 0 && body.Height > 0 {
+			pdf = bookpdf.SetPageSize(pdf, body.Width*72, body.Height*72)
 		}
 		w.Header().Set("Content-Type", "application/pdf")
 		w.Header().Set("Content-Length", strconv.Itoa(len(pdf)))

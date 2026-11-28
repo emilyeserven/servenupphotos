@@ -5,6 +5,7 @@ import type { SocialPhoto } from "@/api/publish";
 import { PhotoDrawerToggle } from "@/components/instagram-picker/photo-drawer";
 import { useBookTemplate, useCaptionFor, usePartsFor } from "@/components/photo-book/book-captions";
 import { BookTab } from "@/components/photo-book/book-tab";
+import { CoverTab } from "@/components/photo-book/cover-tab";
 import { InfoTab } from "@/components/photo-book/info-tab";
 import { LayoutsTab } from "@/components/photo-book/layouts-tab";
 import { ListTab } from "@/components/photo-book/list-tab";
@@ -19,11 +20,12 @@ import { pageSides } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
 
 /**
- * A book's five tabs: Info for its name, album, captions and size; Layouts for trying out page
+ * A book's six tabs: Info for its name, album, captions and size; Layouts for trying out page
  * layouts; Photo Pages for making pages that could be used; Book for putting the ones that will be
- * used in order; List for every photo in the book, in order, to jump to editing one.
+ * used in order; Cover for its cover; List for every photo in the book, in order, to jump to
+ * editing one.
  */
-export type BookPart = "info" | "layouts" | "pages" | "book" | "list";
+export type BookPart = "info" | "layouts" | "pages" | "book" | "cover" | "list";
 
 /** Each tab's name, in the order they're shown. */
 export const BOOK_PARTS: Record<BookPart, string> = {
@@ -31,6 +33,7 @@ export const BOOK_PARTS: Record<BookPart, string> = {
   layouts: "Layouts",
   pages: "Photo Pages",
   book: "Book",
+  cover: "Cover",
   list: "List",
 };
 
@@ -47,6 +50,8 @@ const PART_DESCRIPTIONS: Record<BookPart, string> = {
   pages:
     "Make pages that could be used, in any layout, from the album's photos, as many as you like. Link a page with the next one to make a two-page spread.",
   book: "Drag pages, spreads and other pages from the drawer into Used page spreads to put the book together, and page through it in the preview.",
+  cover:
+    "The book's cover in the style of Serven Up Photos Vol. 3: its title, author, volume and spine, drawn as Blurb prints it, back, spine and front on one sheet.",
   list: "Every photo in the book, page by page in the order it's printed. Edit info opens a photo's editor, to fix its title, Place or anything else its caption shows.",
 };
 
@@ -82,6 +87,7 @@ const TABS: Record<BookPart, (props: TabProps) => ReactNode> = {
     <PagesTab {...p} drawer={p.drawerOpen ? () => p.setDrawerOpen(false) : undefined} />
   ),
   book: (p) => <BookTab {...p} />,
+  cover: (p) => <CoverTab {...p} />,
   list: (p) => <ListTab {...p} />,
 };
 

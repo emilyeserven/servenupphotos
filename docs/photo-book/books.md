@@ -2,12 +2,13 @@
 
 **Photo Books** lists every book as a card, with the album its photos come from, how many pages are in the book (and how many more could be used), and how many photos are on them; each card opens the book's own page, as the Trips do. **New book** names and makes another (its ID is made from the name, as caption templates' are) and opens it. An old `/photo-book` link opens the list, or the book its `?book=<id>` names.
 
-On a book's page, **All photo books** goes back to the list. Under it, five tabs, each a page of its own with a line under the tabs saying what it's for:
+On a book's page, **All photo books** goes back to the list. Under it, six tabs, each a page of its own with a line under the tabs saying what it's for:
 
-- **Info** (`/photo-books/<id>/info`): the book's name, album, caption template, page size and page budget.
+- **Info** (`/photo-books/<id>/info`): the book's name, album, caption template, page size, page budget and Blurb's sizes.
 - **Layouts** (`/photo-books/<id>/layouts`): trying out page layouts at the book's page size.
 - **Photo Pages** (`/photo-books/<id>/pages`, where the book opens): making photo pages that could be used, and linking them into spreads.
 - **Book** (`/photo-books/<id>/book`): putting the pages that will be used in order, adding other pages, and paging through the book.
+- **Cover** (`/photo-books/<id>/cover`): the book's cover in the style of Serven Up Photos Vol. 3 ([The Cover tab and PDF for Blurb](cover.md)).
 - **List** (`/photo-books/<id>/list`): every photo in the book in printed order, to jump to editing one.
 
 # Info
@@ -15,6 +16,8 @@ On a book's page, **All photo books** goes back to the list. Under it, five tabs
 **Name** renames the book, **Photos from** picks the album its photos come from, **Captions from** picks the [caption template](../caption-templates.md) its captions are filled in with, and **Remove book** removes it after asking.
 
 **Page size** takes the page's width and height in inches, centimeters, millimeters, points or pixels, starting at BookWright's large landscape page, 12.5 × 10.625 in. Only the shape is used: every page on every tab is drawn with width over height as its `aspect-ratio`, shown beside the fields as a small black page. A side that isn't a number more than 0 isn't saved.
+
+**Blurb sizes** are the sizes Blurb's specifications give the book's PDFs, for **PDF for Blurb** and the Cover tab ([Blurb sizes](cover.md#blurb-sizes)).
 
 **Caption titles**, **Start captions with the photo's title**, on to start, can be turned off to leave every caption's first line, the photo's title, out of the book and draw the lines left alike, with none of them bold ([Caption titles](captions.md#caption-titles)).
 

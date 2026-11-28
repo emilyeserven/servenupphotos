@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { CombinedData } from "@/api/photos";
 import type { SocialPhoto } from "@/api/publish";
+import { BlurbPdfButton } from "@/components/photo-book/blurb-pdf";
 import { SavePdfButton } from "@/components/photo-book/book-pdf";
 import { BookPhotoDrawer } from "@/components/photo-book/book-photo-drawer";
 import { BookPreview } from "@/components/photo-book/book-preview";
@@ -131,6 +132,7 @@ export function BookTab(props: BookTabProps) {
             </div>
             <SavePdfButton book={book} look={look} used={used} />
             <SavePdfButton book={book} look={look} used={used} spreads />
+            <BlurbPdfButton book={book} look={look} used={used} />
             <SaveSpreadImagesButton book={book} look={look} used={used} />
           </div>
           <BookPreview
