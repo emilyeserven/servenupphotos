@@ -11,7 +11,7 @@ import { mirrorMargins } from "@/lib/photo-book-margins";
 import { count } from "@portfolio/lib/words";
 
 /** Everything about a layout made on the Layouts tab but its ID and name. */
-export type LayoutLook = Omit<CustomLayout, "id" | "name" | "leftPages" | "left">;
+export type LayoutLook = Omit<CustomLayout, "id" | "name" | "leftPages" | "left" | "standard">;
 
 /** The built-in layouts as Layouts tab settings, so Customize starts a new layout from one of them. */
 export const BUILT_IN_LOOKS: Record<BuiltInLayout, LayoutLook> = {
@@ -141,7 +141,7 @@ const SHAPE_WORDS: Record<LayoutLook["shape"], string> = {
 };
 
 /** A layout's settings in a sentence, such as "2 photos in a row, 2:3, text on the left." */
-function describeLook(look: LayoutLook): string {
+export function describeLook(look: LayoutLook): string {
   const photos = count(look.photos, "photo");
   const arrange = look.photos === 1 ? "" : look.arrange === "row" ? " in a row" : " stacked";
   const captions = look.captions === "photo" ? ", each caption beside its photo" : "";
@@ -167,11 +167,16 @@ export function everyLayoutChoice(book: PhotoBook): LayoutChoice[] {
 }
 
 /**
- * The layouts a page's picker offers: every one but the built-in ones the book hides, though a
- * page keeps its current one: the built-in ones, a text page, then the book's own.
+ * The layouts a page's picker offers: every one but the built-in ones the book hides or that are
+ * hidden in every book (everywhere), though a page keeps its current one: the built-in ones, a
+ * text page, then the book's own.
  */
-export function layoutChoices(book: PhotoBook, current?: PageLayout): LayoutChoice[] {
-  const hidden = new Set<PageLayout>(book.hiddenLayouts ?? []);
+export function layoutChoices(
+  book: PhotoBook,
+  current?: PageLayout,
+  everywhere: readonly BuiltInLayout[] = [],
+): LayoutChoice[] {
+  const hidden = new Set<PageLayout>([...(book.hiddenLayouts ?? []), ...everywhere]);
   const choices = everyLayoutChoice(book).filter((c) => !hidden.has(c.id) || c.id === current);
   const own = choices.filter((c) => c.id.startsWith("custom-"));
   return [...choices.filter((c) => !own.includes(c)), TEXT_CHOICE, ...own];
@@ -272,7 +277,7 @@ function mirrorLook<
 
 /** How layout draws a page on side: its look on the right, or what it gives left-hand pages. */
 export function sideLook(layout: CustomLayout, side: PageSide): LayoutLook {
-  const { id: _id, name: _name, leftPages, left, ...look } = layout;
+  const { id: _id, name: _name, leftPages, left, standard: _standard, ...look } = layout;
   if (side === "right" || !leftPages || leftPages === "same") return look;
   if (leftPages === "own" && left) return { ...left, photos: look.photos };
   return mirrorLook(look);

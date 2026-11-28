@@ -24,6 +24,7 @@ const COMBINED_KINDS = [
   "gear",
   "notstored",
   "photobooks",
+  "booklayouts",
   "bio",
   "sets",
 ] as const;
@@ -71,6 +72,11 @@ export const KIND_INFO: Record<CombinedKind, KindInfo> = {
   gear: { file: "GEAR.json", heading: "Gear pictures", pending: "gear picture" },
   notstored: { file: "NOTSTORED.json", heading: "Not Stored posts", pending: "Not Stored post" },
   photobooks: { file: "PHOTOBOOKS.json", heading: "Photo books", pending: "photo book" },
+  booklayouts: {
+    file: "BOOKLAYOUTS.json",
+    heading: "Standard photo book layouts",
+    pending: "standard layouts file",
+  },
   bio: { file: "ALLBIO.json", heading: "Bio", pending: "bio" },
   sets: { file: "SETS.json", heading: "Photo Sets", pending: "Photo Set" },
 };

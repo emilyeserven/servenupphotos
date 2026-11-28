@@ -1,25 +1,32 @@
 import { CopyPlusIcon, EyeIcon, EyeOffIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import { LayoutGlyph } from "@/components/photo-book/layout-glyph";
 import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import type { BuiltInLayout, PageLayout, PhotoBook } from "@/lib/photo-book";
 import { type LayoutChoice, everyLayoutChoice, pagesUsing } from "@/lib/photo-book-layouts";
+import { layoutRowNote } from "@/lib/photo-book-standard";
+import { cn } from "@/lib/utils";
 import { EmptyNote } from "@portfolio/components/empty-note";
-import { count } from "@portfolio/lib/words";
 
 interface LayoutListProps {
   book: PhotoBook;
-  selected: PageLayout;
+  /** The Layouts tab's selection: a layout's ID, or a standard layout's key. */
+  selected: string;
   onSelect: (layout: PageLayout) => void;
   /** Makes a new layout from layout's settings. */
   onCustomize: (layout: PageLayout) => void;
   /** Hides the built-in layout id from the Photo Pages' layout buttons, or shows it again. */
   onHide: (id: BuiltInLayout, hide: boolean) => void;
+  /** The built-in layouts hidden in every book, from the standard layouts file. */
+  hiddenEverywhere: readonly BuiltInLayout[];
+  /** The standard layouts' section, shown between the built-in layouts and the book's own. */
+  standard: ReactNode;
 }
 
 /**
- * The built-in layouts, each to hide from the Photo Pages, then the book's own, each to pick and to
- * start a new layout from.
+ * The built-in layouts, each to hide from the Photo Pages, then the standard layouts, then the
+ * book's own, each to pick and to start a new layout from.
  */
 export function LayoutList(props: LayoutListProps) {
   const choices = everyLayoutChoice(props.book);
@@ -34,6 +41,7 @@ export function LayoutList(props: LayoutListProps) {
             <LayoutRow key={choice.id} choice={choice} {...props} />
           ))}
       </section>
+      {props.standard}
       <section className="flex flex-col gap-1">
         <SectionTitle as="h2">This book&apos;s layouts</SectionTitle>
         {own.length === 0 && (
@@ -49,22 +57,22 @@ export function LayoutList(props: LayoutListProps) {
   );
 }
 
-/** Under a layout's name: hidden, or how many pages have it. */
-function rowNote(used: number, hidden: boolean): string {
-  if (hidden) return used > 0 ? `Hidden · on ${count(used, "page")}` : "Hidden from Photo Pages";
-  return used > 0 ? `On ${count(used, "page")}` : "Not on any page";
-}
-
 /**
  * One layout in the list: its glyph, name and how many pages have it, the eye that hides a built-in
  * one, and Customize.
  */
 function LayoutRow(props: LayoutListProps & { choice: LayoutChoice }) {
-  const { book, choice, selected, onSelect, onCustomize } = props;
+  const { book, choice, selected, onSelect, onCustomize, hiddenEverywhere } = props;
   const used = pagesUsing(book, choice.id);
   const hidden = (book.hiddenLayouts ?? []).includes(choice.id as BuiltInLayout);
+  const everywhere = hiddenEverywhere.includes(choice.id as BuiltInLayout);
   return (
-    <div className="has-[[aria-current]]:bg-accent flex items-center gap-1 rounded-md pr-1 has-[[aria-pressed=true]]:opacity-60">
+    <div
+      className={cn(
+        "has-[[aria-current]]:bg-accent flex items-center gap-1 rounded-md pr-1 has-[[aria-pressed=true]]:opacity-60",
+        everywhere && "opacity-60",
+      )}
+    >
       <button
         type="button"
         aria-current={choice.id === selected ? "true" : undefined}
@@ -78,7 +86,9 @@ function LayoutRow(props: LayoutListProps & { choice: LayoutChoice }) {
         />
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-sm">{choice.label}</span>
-          <span className="text-muted-foreground text-xs">{rowNote(used, hidden)}</span>
+          <span className="text-muted-foreground text-xs">
+            {layoutRowNote(used, hidden, everywhere)}
+          </span>
         </span>
       </button>
       <HideButton {...props} hidden={hidden} />

@@ -78,6 +78,7 @@ export function inflightFixtures() {
       gear: { folder: `${FOLDER}/gear`, files: added.gear.map(groupFile) },
       notstored: { folder: `${FOLDER}/notstored`, files: added.notstored.map(groupFile) },
       photobooks: { folder: `${FOLDER}/photobooks`, files: added.photobooks.map(groupFile) },
+      booklayouts: { folder: `${FOLDER}/booklayouts`, files: added.booklayouts.map(groupFile) },
       bio: { folder: `${FOLDER}/bio`, files: added.bio.map(groupFile) },
       sets: { folder: `${FOLDER}/sets`, files: added.sets.map(groupFile) },
       images: imagesByPath([added.photo]),

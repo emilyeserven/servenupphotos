@@ -56,6 +56,8 @@ A day posted to Instagram with a photo that isn't in the portfolio is a Not Stor
 
 Each mockup on the Photo Book page is `photobooks/<id>.json`, combined into `photobooks/PHOTOBOOKS.json`; see [Photo Book](photo-book.md).
 
+The photo books' [standard layouts](photo-book/layouts.md#standard-layouts) are one file, `booklayouts/standard.json`, combined into `booklayouts/BOOKLAYOUTS.json`.
+
 The bio is one file, `bio/bio.json`, combined into `bio/ALLBIO.json`; see [Bio](bio.md).
 
 Each Photo Set is `sets/<id>.json`, with its name and its photos' IDs in order, combined into `sets/SETS.json`; see [Photo Sets](photo-sets.md).
