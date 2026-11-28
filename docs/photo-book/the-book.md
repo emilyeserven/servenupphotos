@@ -63,6 +63,8 @@ The backend uses the Chrome or Chromium installed where it runs: Google Chrome o
 
 ## Save as image
 
+**PDF for Blurb**, beside them, makes the book's pages and its cover as the two PDFs Blurb takes, at Blurb's sizes from **Info** ([PDF for Blurb](cover.md#pdf-for-blurb)).
+
 **Save as image**, in the strip under the preview, saves the two pages the preview shows as one small WEBP image, to paste into an LLM and ask for feedback on the spread. It's named after the book and its pages (`korea-2026-pages-4-5.webp`, or `korea-2026-page-1.webp` for page 1 facing the inside front cover, which is left blank as in **Save spreads as PDF**). The image is 1568 pixels on its longer side, about the most Claude takes in without shrinking it, and saved at WEBP quality 80, so a spread is usually well under half a megabyte. Unlike the PDF, each photo is its resized WEBP version that fits the image, never its original JPEG, so it's quick and small. Nothing that's only for editing is drawn, as in the PDF. A failure shows under the button.
 
 **Save all as images**, above the preview beside the PDF buttons, does the same for every spread of the book at once, as the preview pages through them, and downloads them in one zip named after the book (`korea-2026-spreads.zip`), each image named for its pages as above. While it works, the button says how far it has got: "Drawing the pages…", "Starting Chrome…", "Loading photos: 38 of 90", then "Drawing image 4 of 37". The backend gives it up to 10 minutes.

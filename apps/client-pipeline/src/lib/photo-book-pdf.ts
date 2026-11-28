@@ -38,6 +38,14 @@ export function spreadSheets(pages: number): [number | null, number | null][] {
  */
 export function printCss(book: Pick<PhotoBook, "size">, spreads = false): string {
   const { width, height } = printSize(book, spreads);
+  return sheetCss(width, height);
+}
+
+/**
+ * The style sheet for a PDF of sheets width by height (CSS lengths, such as `12.5in`) with no
+ * margin: printed, only what's drawn in the print root; on the screen, it kept out of sight.
+ */
+export function sheetCss(width: string, height: string): string {
   return [
     `@page { size: ${width} ${height}; margin: 0; }`,
     `@media print { body > :not(#${PRINT_ROOT_ID}) { display: none !important; } }`,

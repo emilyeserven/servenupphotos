@@ -98,6 +98,12 @@ type PhotoBook struct {
 	// CameraNames are cameras the book's captions call by another name, set
 	// on its Info tab.
 	CameraNames []PhotoBookCameraName `json:"cameraNames,omitempty"`
+	// Cover is the book's cover from its Cover tab; nil while it has the
+	// Cover tab's defaults.
+	Cover *PhotoBookCover `json:"cover,omitempty"`
+	// Blurb is the sizes of the PDFs **PDF for Blurb** makes, set on its
+	// Info tab; nil for a Large Landscape book of 78 pages.
+	Blurb *PhotoBookBlurb `json:"blurb,omitempty"`
 }
 
 // PhotoBookBudget is a book's page budget, counted in printed pages (a
@@ -226,6 +232,12 @@ func validPhotoBook(b PhotoBook) (PhotoBook, *PublishError) {
 		return out, perr
 	}
 	if out.CameraNames, perr = validCameraNames(b.CameraNames); perr != nil {
+		return out, perr
+	}
+	if out.Cover, perr = validPhotoBookCover(b.Cover); perr != nil {
+		return out, perr
+	}
+	if out.Blurb, perr = validPhotoBookBlurb(b.Blurb); perr != nil {
 		return out, perr
 	}
 	counts := photoBookSlotCounts(layouts)

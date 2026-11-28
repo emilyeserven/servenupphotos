@@ -104,7 +104,7 @@ function useSavePdf({ book, used, spreads = false }: PdfProps) {
   };
 }
 
-interface PdfProps {
+export interface PdfProps {
   book: PhotoBook;
   look: PageLook;
   used: BookUnit[];
@@ -120,27 +120,51 @@ interface PdfProps {
  * a blank half where the inside cover is.
  */
 export function SavePdfButton(props: PdfProps) {
-  const { start, drawing, busy, disabled, text, title, error } = useSavePdf(props);
+  const { start, drawing, ...button } = useSavePdf(props);
+  return (
+    <PdfButton {...button} onClick={() => void start()}>
+      {drawing && createPortal(<PrintBook {...props} />, document.body)}
+    </PdfButton>
+  );
+}
+
+interface PdfButtonProps {
+  busy: boolean;
+  disabled: boolean;
+  /** The button's words: what it makes, or how far it has got while busy. */
+  text: string;
+  /** The button's tooltip. */
+  title: string;
+  error: Error | null;
+  onClick: () => void;
+  /** What's drawn out of sight while the PDF is made. */
+  children?: React.ReactNode;
+}
+
+/** A button that makes a PDF of the book: its icon or a spinner while busy, and any failure under it. */
+export function PdfButton({
+  busy,
+  disabled,
+  text,
+  title,
+  error,
+  onClick,
+  children,
+}: PdfButtonProps) {
   return (
     <div className="flex flex-col items-end gap-1">
-      <Button
-        size="sm"
-        variant="outline"
-        disabled={disabled}
-        title={title}
-        onClick={() => void start()}
-      >
+      <Button size="sm" variant="outline" disabled={disabled} title={title} onClick={onClick}>
         {busy ? <Spinner /> : <FileDownIcon />}
         {text}
       </Button>
       {error && <ErrorNote error={error} className="max-w-sm text-right" />}
-      {drawing && createPortal(<PrintBook {...props} />, document.body)}
+      {children}
     </div>
   );
 }
 
 /** The book's pages as printed, one sheet of paper each or two a sheet, out of sight on the screen. */
-function PrintBook({ book, look, used, spreads = false }: PdfProps) {
+export function PrintBook({ book, look, used, spreads = false }: PdfProps) {
   const { width, height } = printSize(book, spreads);
   const pages = printedPages(used);
   return (
