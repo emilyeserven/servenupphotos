@@ -14,12 +14,13 @@ Built-in layouts stay as they are. The copy button beside any layout (or **Custo
 > **Frontend analogy:** a photo kept in its shape is `width: min(100cqw, 150cqh)` inside its room, so the room's edges and the photo's differ, and plain CSS can't line a sibling up with that. **The photo itself** measures the photos with a `ResizeObserver` and gives the text room a `margin-top` and `height` (or `margin-left` and `width`) that match them.
 
 - **Room for the text**, **Gap** and **Margin**: shares of the page, as sliders.
+- **Margins:** **Same all round** uses the one **Margin** on every edge. **Left and right apart** keeps **Margin** for the top and bottom and adds **Left margin** and **Right margin** sliders, both starting at the margin, so one side (such as the one at the binding) can have more room than the other. Going back to **Same all round** drops the left and right margins.
 
 ## Left and right pages
 
 A book's own layout is previewed as a left page (even) and a right page (odd) side by side. **Left-hand pages** says how it draws the pages that land on the left of the open book:
 
-- **Mirrored** (new layouts start this way): the same settings with the text on the other side, so text on the left of a right page goes on the right of a left page.
+- **Mirrored** (new layouts start this way): the same settings with the text and the left and right margins on the other side, so text on the left of a right page goes on the right of a left page, and a wide left margin on a right page (at the binding) is a wide right margin on a left page.
 - **Same:** the same settings on both sides.
 - **Own settings:** left pages have settings of their own, starting from the mirrored ones; **Settings for** picks which side the fields below change. Both sides always hold the same number of photos.
 

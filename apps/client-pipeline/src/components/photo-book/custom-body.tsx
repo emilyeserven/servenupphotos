@@ -8,6 +8,7 @@ import {
   textFirst,
   titlePlace,
 } from "@/lib/photo-book-layouts";
+import { marginPadding } from "@/lib/photo-book-margins";
 import { cn } from "@/lib/utils";
 
 /** How each text alignment sits in its room, as flexbox's justify-content. */
@@ -136,7 +137,7 @@ export function CustomBody({ parts, look }: { parts: PageParts; look: LayoutLook
   return (
     <div
       className="flex min-h-0 flex-1 flex-col gap-[2cqw]"
-      style={{ padding: `${look.margin}cqw` }}
+      style={{ padding: marginPadding(look) }}
     >
       {place === "top" && parts.title}
       <Body parts={parts} look={look} title={inText} />

@@ -64,6 +64,10 @@ export interface CustomLayout {
   gap: number;
   /** The room around the page's edge, in percent of its width, 0 to 20. */
   margin: number;
+  /** The room at the page's left edge in place of margin, in percent of its width, 0 to 20; absent for margin. */
+  marginLeft?: number;
+  /** The room at the page's right edge in place of margin, in percent of its width, 0 to 20; absent for margin. */
+  marginRight?: number;
   /**
    * What left-hand (even) pages get: the look turned around (`mirror`), their own look (`own`,
    * `left`), or the same look; absent in a layout made before, which is the same.

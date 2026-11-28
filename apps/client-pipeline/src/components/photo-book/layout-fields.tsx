@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { RatioFields } from "@/components/photo-book/ratio-fields";
 import { Button } from "@/components/ui/button";
 import { type LayoutLook, textBeside, titlePlace } from "@/lib/photo-book-layouts";
+import { marginsApart, pageMargins, setMarginsApart } from "@/lib/photo-book-margins";
 
 /** One setting's name over its control. */
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -182,6 +183,53 @@ function TextFields({ look, onChange }: LayoutFieldsProps) {
   );
 }
 
+/**
+ * The margin settings: one margin all round, or the left and right margins set apart from the
+ * top and bottom one.
+ */
+function MarginFields({ look, onChange }: LayoutFieldsProps) {
+  const apart = marginsApart(look);
+  const { left, right } = pageMargins(look);
+  return (
+    <>
+      <Choices
+        label="Margins"
+        value={apart ? "apart" : "all"}
+        options={[
+          ["all", "Same all round"],
+          ["apart", "Left and right apart"],
+        ]}
+        onChange={(value) => onChange(setMarginsApart(look, value === "apart"))}
+      />
+      <Percent
+        label={apart ? "Top and bottom margin" : "Margin"}
+        value={look.margin}
+        min={0}
+        max={20}
+        onChange={(margin) => onChange({ margin })}
+      />
+      {apart && (
+        <>
+          <Percent
+            label="Left margin"
+            value={left}
+            min={0}
+            max={20}
+            onChange={(marginLeft) => onChange({ marginLeft })}
+          />
+          <Percent
+            label="Right margin"
+            value={right}
+            min={0}
+            max={20}
+            onChange={(marginRight) => onChange({ marginRight })}
+          />
+        </>
+      )}
+    </>
+  );
+}
+
 interface LayoutFieldsProps {
   look: LayoutLook;
   onChange: (change: Partial<LayoutLook>) => void;
@@ -189,7 +237,7 @@ interface LayoutFieldsProps {
 
 /**
  * Every setting of a layout made on the Layouts tab: its photos, where its title and captions go,
- * and how much room the text, the gaps and the margin take.
+ * and how much room the text, the gaps and the margins take.
  */
 export function LayoutFields({ look, onChange }: LayoutFieldsProps) {
   return (
@@ -210,13 +258,7 @@ export function LayoutFields({ look, onChange }: LayoutFieldsProps) {
         max={20}
         onChange={(gap) => onChange({ gap })}
       />
-      <Percent
-        label="Margin"
-        value={look.margin}
-        min={0}
-        max={20}
-        onChange={(margin) => onChange({ margin })}
-      />
+      <MarginFields look={look} onChange={onChange} />
     </div>
   );
 }
