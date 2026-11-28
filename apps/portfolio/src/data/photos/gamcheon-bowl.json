@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+  "albums": ["homepage-spotlight", "2026-photo-book-candidates", "office-album"],
   "tags": ["mountains", "city", "daldongne", "houses", "rooftops", "harbor"],
   "genres": [],
   "places": [
@@ -266,5 +266,8 @@
     "peakChroma": 22.9,
     "samples": 9768
   },
-  "similarPhotos": [357, 396, 388, 323, 386, 217]
+  "similarPhotos": [357, 396, 388, 323, 386, 217],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

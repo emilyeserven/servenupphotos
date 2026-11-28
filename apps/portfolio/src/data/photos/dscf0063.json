@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
   "tags": ["silhouettes", "pedestrians", "signage", "skylights", "covered-street", "shotengai"],
   "genres": ["street", "architecture"],
   "places": [
@@ -267,5 +267,7 @@
     "samples": 10115
   },
   "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one.\n\nShows a shotengai, now tagged 'shotengai'.",
-  "similarPhotos": [306, 303, 219, 377, 307, 304]
+  "similarPhotos": [306, 303, 219, 377, 307, 304],
+  "noGps": false,
+  "altText": null
 }

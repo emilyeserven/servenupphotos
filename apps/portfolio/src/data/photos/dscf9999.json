@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "office-album"],
   "tags": ["buddhism", "wabi-sabi", "temple", "texture", "senjafuda", "wood"],
   "genres": [],
   "places": [
@@ -266,5 +266,8 @@
     "peakChroma": 11.95,
     "samples": 10050
   },
-  "similarPhotos": [466, 349, 397, 330, 339, 384]
+  "similarPhotos": [466, 349, 397, 330, 339, 384],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

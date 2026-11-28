@@ -47,7 +47,12 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+  "albums": [
+    "homepage-spotlight",
+    "2026-photo-book-candidates",
+    "vertical-photos",
+    "office-album-verticals"
+  ],
   "tags": ["yeondeung", "buddhism", "lanterns", "repetition", "patterns", "shadows", "festivals"],
   "genres": ["abstract"],
   "places": [
@@ -271,5 +276,7 @@
   },
   "similarPhotos": [261, 328, 455, 308, 463, 465],
   "compareGroup": "Lantern Rows from Above",
-  "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo."
+  "notes": "Quality Check (aspect ratio): the Small version is 333 × 500 (2:3), not the 5:7 crop for a portrait photo.",
+  "noGps": false,
+  "altText": null
 }

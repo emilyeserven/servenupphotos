@@ -1,5 +1,5 @@
 {
-  "title": "To the Offering Box",
+  "title": "The Offering Box",
   "comment": null,
   "id": 507,
   "file": "DSCF1482.jpg",
@@ -268,5 +268,7 @@
     "samples": 9975
   },
   "notes": "Shows a saisen-bako offering box; 'saisen-bako' isn't a tag, since only 1 photo has one.",
-  "similarPhotos": [509, 505, 381, 506, 510, 511]
+  "similarPhotos": [509, 505, 381, 506, 510, 511],
+  "noGps": false,
+  "altText": null
 }

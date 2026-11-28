@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["harbor", "boats", "sailboats", "water", "repetition", "humor"],
   "genres": [],
   "places": [
@@ -267,5 +267,8 @@
     "samples": 10050
   },
   "similarPhotos": [228, 230, 202, 317, 399, 204],
-  "compareGroup": "Harbor Full of Moored Boats"
+  "compareGroup": "Harbor Full of Moored Boats",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "vertical-photos"],
   "tags": ["autumn", "benches", "lichen", "wood", "fallen-leaves", "texture"],
   "genres": ["nature", "abstract"],
   "places": [
@@ -267,5 +267,8 @@
     "peakChroma": 27.73,
     "samples": 9828
   },
-  "similarPhotos": [478, 495, 481, 497, 486, 479]
+  "similarPhotos": [478, 495, 481, 497, 486, 479],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

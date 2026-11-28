@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["vertical-photos"],
   "tags": ["autumn", "fallen-leaves", "hiking-trail", "footbridges", "forest", "wood", "stones"],
   "genres": [],
   "places": [
@@ -267,5 +267,8 @@
     "peakChroma": 28.41,
     "samples": 9912
   },
-  "similarPhotos": [496, 471, 479, 473, 476, 477]
+  "similarPhotos": [496, 471, 479, 473, 476, 477],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

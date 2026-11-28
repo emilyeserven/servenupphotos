@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
   "tags": ["alley", "signage", "night", "rain", "reflections", "umbrellas", "yokocho", "neon"],
   "genres": [],
   "places": [
@@ -267,5 +267,8 @@
     "samples": 9828
   },
   "similarPhotos": [354, 351, 377, 307, 352, 251],
-  "compareGroup": "Kobe Night Alley"
+  "compareGroup": "Kobe Night Alley",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "office-album"],
   "tags": ["rain", "umbrellas", "night", "bridges", "pedestrians", "city", "river"],
   "genres": [],
   "places": [
@@ -267,5 +267,7 @@
     "samples": 10050
   },
   "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered.",
-  "similarPhotos": [351, 353, 355, 354, 377, 448]
+  "similarPhotos": [351, 353, 355, 354, 377, 448],
+  "noGps": false,
+  "altText": null
 }

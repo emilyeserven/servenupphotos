@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "vertical-photos"],
   "tags": ["dancheong", "hanbok", "palace", "columns", "path", "repetition", "symmetry"],
   "genres": [],
   "places": [
@@ -275,5 +275,8 @@
     "peakChroma": 35.15,
     "samples": 9828
   },
-  "similarPhotos": [128, 12, 213, 5, 210, 126]
+  "similarPhotos": [128, 12, 213, 5, 210, 126],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

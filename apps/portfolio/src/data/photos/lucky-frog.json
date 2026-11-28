@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "horizontal-prints", "office-album"],
   "tags": ["shrine", "statues", "rope", "stones"],
   "genres": [],
   "places": [
@@ -268,5 +268,7 @@
     "samples": 10050
   },
   "notes": "Shows a frog statue; 'amphibians' isn't a tag, since only 2 photos have it.",
-  "similarPhotos": [315, 509, 348, 324, 329, 451]
+  "similarPhotos": [315, 509, 348, 324, 329, 451],
+  "noGps": false,
+  "altText": null
 }

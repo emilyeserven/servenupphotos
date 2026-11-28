@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
   "tags": ["canal", "neon", "night", "city-lights", "signage", "boats", "crowd", "reflections"],
   "genres": ["street", "cityscape"],
   "places": [
@@ -266,5 +266,8 @@
     "peakChroma": 20.14,
     "samples": 9711
   },
-  "similarPhotos": [306, 353, 305, 251, 302, 354]
+  "similarPhotos": [306, 353, 305, 251, 302, 354],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

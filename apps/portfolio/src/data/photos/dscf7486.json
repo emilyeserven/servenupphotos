@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "office-album"],
   "tags": ["harbor", "boats", "pier", "water", "aerial-view", "repetition"],
   "genres": [],
   "places": [
@@ -266,5 +266,8 @@
     "peakChroma": 15.3,
     "samples": 10050
   },
-  "similarPhotos": [228, 202, 229, 68, 204, 326]
+  "similarPhotos": [228, 202, 229, 68, 204, 326],
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

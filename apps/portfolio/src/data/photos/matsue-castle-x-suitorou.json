@@ -47,7 +47,12 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["homepage-spotlight", "2026-photo-book-candidates"],
+  "albums": [
+    "homepage-spotlight",
+    "2026-photo-book-candidates",
+    "vertical-photos",
+    "office-album-verticals"
+  ],
   "tags": ["castle", "lanterns", "night", "festivals", "tenshu", "andon"],
   "genres": [],
   "places": [
@@ -276,5 +281,7 @@
       "placement": null
     }
   },
-  "similarPhotos": [355, 438, 162, 467, 262, 351]
+  "similarPhotos": [355, 438, 162, 467, 262, 351],
+  "noGps": false,
+  "altText": null
 }

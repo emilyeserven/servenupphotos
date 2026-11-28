@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "office-album"],
   "tags": ["lanterns", "yeondeung", "buddhism", "temple", "prayers", "patterns", "festivals"],
   "genres": [],
   "places": [
@@ -267,5 +267,8 @@
     "samples": 10050
   },
   "similarPhotos": [308, 262, 455, 261, 16, 350],
-  "compareGroup": "Rows of Colorful Lotus Lanterns"
+  "compareGroup": "Rows of Colorful Lotus Lanterns",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

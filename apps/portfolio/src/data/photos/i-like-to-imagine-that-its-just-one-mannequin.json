@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["humor", "windows", "brick", "repetition"],
   "genres": [],
   "places": [
@@ -273,5 +273,7 @@
     "samples": 9936
   },
   "notes": "Shows mannequins; 'mannequins' isn't a tag, since only 1 photo has them.\n\nQuality Check (aspect ratio): the Small version is 500 × 259 (1.93:1), not the 16:9 crop for a landscape photo.",
-  "similarPhotos": [76, 35, 99, 445, 172, 117]
+  "similarPhotos": [76, 35, 99, 445, 172, 117],
+  "noGps": false,
+  "altText": null
 }

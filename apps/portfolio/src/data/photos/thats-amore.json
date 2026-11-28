@@ -44,7 +44,7 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["city", "storefronts", "signage", "crosswalk", "pedestrians", "skyscrapers"],
   "genres": ["tilt-shift"],
   "places": [
@@ -276,5 +276,7 @@
     "samples": 10050
   },
   "similarPhotos": [132, 304, 282, 250, 11, 219],
-  "notes": "Quality Check (pixelation): The rear plate of the black sedan parked on the right side of the street is readable."
+  "notes": "Quality Check (pixelation): The rear plate of the black sedan parked on the right side of the street is readable.",
+  "noGps": false,
+  "altText": null
 }

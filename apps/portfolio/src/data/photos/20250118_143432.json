@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["2026-photo-book-candidates"],
+  "albums": ["2026-photo-book-candidates", "vertical-photos", "office-album-verticals"],
   "tags": ["mosque", "calligraphy", "lamps", "chains", "walls"],
   "genres": ["architecture"],
   "places": [
@@ -268,5 +268,7 @@
   },
   "notes": "Shows mishkat mosque lamps; 'mishkat' isn't a tag, since only 2 photos have them.",
   "similarPhotos": [279, 278, 274, 275, 273, 290],
-  "compareGroup": "Mosque Hanging Lamps"
+  "compareGroup": "Mosque Hanging Lamps",
+  "noGps": false,
+  "altText": null
 }

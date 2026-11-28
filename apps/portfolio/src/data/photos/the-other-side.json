@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["grid-spotlight"],
+  "albums": ["grid-spotlight", "office-album"],
   "tags": ["subway", "platform", "commuters", "columns", "silhouettes", "railway", "pedestrians"],
   "genres": [],
   "places": [
@@ -279,5 +279,7 @@
       "placement": null
     }
   },
-  "similarPhotos": [74, 7, 22, 6, 148, 71]
+  "similarPhotos": [74, 7, 22, 6, 148, 71],
+  "noGps": false,
+  "altText": null
 }

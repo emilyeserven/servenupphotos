@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["vertical-photos"],
   "tags": ["autumn", "boardwalk", "marsh", "path", "branches", "tall-grass", "wood"],
   "genres": [],
   "places": [
@@ -268,5 +268,8 @@
     "samples": 10115
   },
   "similarPhotos": [474, 495, 471, 473, 486, 476],
-  "compareGroup": "Boardwalk Through the Marsh"
+  "compareGroup": "Boardwalk Through the Marsh",
+  "noGps": false,
+  "altText": null,
+  "notes": null
 }

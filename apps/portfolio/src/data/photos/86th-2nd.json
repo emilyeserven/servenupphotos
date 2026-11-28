@@ -1,7 +1,7 @@
 {
-  "id": 6,
   "title": "86th & 2nd",
   "comment": null,
+  "id": 6,
   "file": "IMG_4848.jpg",
   "addedDate": "2026-10-22T19:36:17Z",
   "camera": "Canon EOS 80D",
@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["subway", "commuters", "platform", "pedestrians", "signage"],
   "genres": ["street"],
   "places": [
@@ -68,7 +68,7 @@
       "hex": "#424242",
       "lab": {
         "l": 28.08,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {
@@ -270,5 +270,7 @@
     "samples": 9728
   },
   "notes": "Shows a newsstand; 'newsstand' isn't a tag, since only 1 photo has one.\n\nQuality Check (aspect ratio): the Small version is 500 × 295 (1.69:1), not the 16:9 crop for a landscape photo.",
-  "similarPhotos": [7, 74, 22, 383, 151, 11]
+  "similarPhotos": [7, 74, 22, 383, 151, 11],
+  "noGps": false,
+  "altText": null
 }

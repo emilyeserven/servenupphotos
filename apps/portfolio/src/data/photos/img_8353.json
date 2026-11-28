@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["timeline-spotlight"],
+  "albums": ["timeline-spotlight", "office-album"],
   "tags": ["road", "bridges", "columns", "steel", "houses", "snow", "winter"],
   "genres": [],
   "places": [],
@@ -271,5 +271,7 @@
       "placement": null
     }
   },
-  "similarPhotos": [235, 240, 241, 236, 237, 64]
+  "similarPhotos": [235, 240, 241, 236, 237, 64],
+  "noGps": false,
+  "altText": null
 }

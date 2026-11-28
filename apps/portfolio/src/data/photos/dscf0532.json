@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["office-album"],
   "tags": ["crowd", "pedestrians", "tourists", "humor", "signage", "storefronts"],
   "genres": ["street"],
   "places": [
@@ -270,5 +270,7 @@
     "samples": 9975
   },
   "similarPhotos": [305, 304, 307, 302, 169, 219],
-  "notes": "Quality Check (pixelation): In the crowd at the front, the man in the cap at the bottom right and the young women near him are facing the camera."
+  "notes": "Quality Check (pixelation): In the crowd at the front, the man in the cap at the bottom right and the young women near him are facing the camera.",
+  "noGps": false,
+  "altText": null
 }
