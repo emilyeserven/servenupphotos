@@ -24,11 +24,19 @@ if ! command -v exiftool >/dev/null 2>&1; then
   apt-get install -y -q --no-install-recommends libimage-exiftool-perl
 fi
 
-# Installs golangci-lint with its own script into /usr/local/bin, which is already on PATH, rather
-# than with `go install`, which would build it from source.
-if ! command -v golangci-lint >/dev/null 2>&1; then
+# Installs the golangci-lint version ci.yml pins into /usr/local/bin, which is already on PATH. A
+# container can come with an older one already there, which fails on code for a newer Go ("the Go
+# language version used to build golangci-lint is lower than the targeted Go version"), so the
+# version is compared, not just whether it's installed. Tries the release download first and falls
+# back to `go install` (slower, since it builds from source) when GitHub's release files can't be
+# reached. Run from apps/be-pipeline so the build uses the Go version go.mod names.
+lint_version="$(sed -n 's/^ *version: v\([0-9.]*\)$/\1/p' .github/workflows/ci.yml | head -1)"
+if [ "$(golangci-lint version --short 2>/dev/null || true)" != "$lint_version" ]; then
+  echo "session-start: installing golangci-lint $lint_version" >&2
   curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
-    | sh -s -- -b /usr/local/bin v2.14.0
+    | sh -s -- -b /usr/local/bin "v$lint_version" \
+    || (cd apps/be-pipeline \
+      && GOBIN=/usr/local/bin go install "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v$lint_version")
 fi
 
 # Downloads the Go modules and compiles the backend and its tests once, so the first `go test`
