@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { RatioFields } from "@/components/photo-book/ratio-fields";
 import { Button } from "@/components/ui/button";
 import { type LayoutLook, textBeside, titlePlace } from "@/lib/photo-book-layouts";
-import { marginsApart, pageMargins, setMarginsApart } from "@/lib/photo-book-margins";
 
 /** One setting's name over its control. */
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -184,48 +183,33 @@ function TextFields({ look, onChange }: LayoutFieldsProps) {
 }
 
 /**
- * The margin settings: one margin all round, or the left and right margins set apart from the
- * top and bottom one.
+ * The margin settings: the margin all round, and the extra room at the left and right edges that
+ * only the PDF for Blurb adds.
  */
 function MarginFields({ look, onChange }: LayoutFieldsProps) {
-  const apart = marginsApart(look);
-  const { left, right } = pageMargins(look);
   return (
     <>
-      <Choices
-        label="Margins"
-        value={apart ? "apart" : "all"}
-        options={[
-          ["all", "Same all round"],
-          ["apart", "Left and right apart"],
-        ]}
-        onChange={(value) => onChange(setMarginsApart(look, value === "apart"))}
-      />
       <Percent
-        label={apart ? "Top and bottom margin" : "Margin"}
+        label="Margin"
         value={look.margin}
         min={0}
         max={20}
         onChange={(margin) => onChange({ margin })}
       />
-      {apart && (
-        <>
-          <Percent
-            label="Left margin"
-            value={left}
-            min={0}
-            max={20}
-            onChange={(marginLeft) => onChange({ marginLeft })}
-          />
-          <Percent
-            label="Right margin"
-            value={right}
-            min={0}
-            max={20}
-            onChange={(marginRight) => onChange({ marginRight })}
-          />
-        </>
-      )}
+      <Percent
+        label="Print offset, left (Blurb only)"
+        value={look.printOffsetLeft ?? 0}
+        min={0}
+        max={20}
+        onChange={(printOffsetLeft) => onChange({ printOffsetLeft })}
+      />
+      <Percent
+        label="Print offset, right (Blurb only)"
+        value={look.printOffsetRight ?? 0}
+        min={0}
+        max={20}
+        onChange={(printOffsetRight) => onChange({ printOffsetRight })}
+      />
     </>
   );
 }

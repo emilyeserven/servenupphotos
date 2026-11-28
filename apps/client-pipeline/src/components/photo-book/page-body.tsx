@@ -25,6 +25,7 @@ type BodyProps = Pick<
   | "printWidth"
   | "noTitles"
   | "placesIndexFor"
+  | "printOffsets"
 >;
 
 /** The other pages in the book with the slot's photo; none for a page left out. */
@@ -191,7 +192,7 @@ const BODIES: Record<BuiltInLayout, (parts: PageParts) => ReactNode> = {
 function PhotosBody(props: BodyProps & { parts: PageParts }) {
   const { parts } = props;
   const custom = customPageLook(props.layouts, props.page, props.sides, props.side);
-  if (custom) return <CustomBody parts={parts} look={custom} />;
+  if (custom) return <CustomBody parts={parts} look={custom} print={props.printOffsets === true} />;
   return (BODIES[props.page.layout as BuiltInLayout] ?? BODIES.full)(parts);
 }
 

@@ -261,11 +261,11 @@ export function photoShape(look: Pick<LayoutLook, "shape" | "ratio">): number | 
 
 /**
  * The look turned around for the other side of the book: text on the left goes on the right, and
- * so does the left margin.
+ * so does the left print offset.
  */
-function mirrorLook<T extends Pick<LayoutLook, "text" | "margin" | "marginLeft" | "marginRight">>(
-  look: T,
-): T {
+function mirrorLook<
+  T extends Pick<LayoutLook, "text" | "margin" | "printOffsetLeft" | "printOffsetRight">,
+>(look: T): T {
   const turned = { left: "right", right: "left", above: "above", below: "below" } as const;
   return mirrorMargins({ ...look, text: turned[look.text] });
 }

@@ -127,17 +127,18 @@ function BesideBody(props: { parts: PageParts; look: LayoutLook; title: ReactNod
 /**
  * A page in a layout made on the Layouts tab: its photos arranged and shaped as the layout says,
  * and its captions on the layout's side, together in one column or each beside its own photo,
- * inside the layout's margin. The title goes with the captions, across the top, or nowhere, as the
+ * inside the layout's margin, with its print offsets added when print is true. The title goes with the captions, across the top, or nowhere, as the
  * layout says.
  */
-export function CustomBody({ parts, look }: { parts: PageParts; look: LayoutLook }) {
+export function CustomBody(props: { parts: PageParts; look: LayoutLook; print: boolean }) {
+  const { parts, look, print } = props;
   const place = titlePlace(look);
   const inText = place === "text" ? parts.title : null;
   const Body = look.captions === "column" ? ColumnBody : BesideBody;
   return (
     <div
       className="flex min-h-0 flex-1 flex-col gap-[2cqw]"
-      style={{ padding: marginPadding(look) }}
+      style={{ padding: marginPadding(look, print) }}
     >
       {place === "top" && parts.title}
       <Body parts={parts} look={look} title={inText} />

@@ -120,7 +120,11 @@ export function SpreadSheets({
           <div key={view.pages[0]?.id} style={{ ...sheet, display: "flex", overflow: "hidden" }}>
             {view.pages.map((p, i) => (
               <div key={p.id} style={{ ...page, flex: "none", overflow: "hidden" }}>
-                <PrintPage page={p} look={look} side={i === 0 ? "left" : "right"} />
+                <PrintPage
+                  page={p}
+                  look={{ ...look, printOffsets: false }}
+                  side={i === 0 ? "left" : "right"}
+                />
               </div>
             ))}
           </div>

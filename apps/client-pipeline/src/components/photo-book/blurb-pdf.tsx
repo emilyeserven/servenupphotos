@@ -22,12 +22,15 @@ interface BlurbPdfProps {
   coverOnly?: boolean;
 }
 
-/** The book and look with each page Blurb's page size, in inches, so the pages are drawn that shape. */
+/**
+ * The book and look with each page Blurb's page size, in inches, so the pages are drawn that shape,
+ * with the layouts' print offsets.
+ */
 function blurbPages(book: PhotoBook, look: PageLook) {
   const { pageWidth, pageHeight } = blurbOf(book);
   return {
     book: { ...book, size: { width: pageWidth, height: pageHeight, unit: "in" as const } },
-    look: { ...look, aspect: pageWidth / pageHeight, printWidth: pageWidth },
+    look: { ...look, aspect: pageWidth / pageHeight, printWidth: pageWidth, printOffsets: true },
   };
 }
 
