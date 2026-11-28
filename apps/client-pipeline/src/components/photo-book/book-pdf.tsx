@@ -224,6 +224,7 @@ export function PrintPage({ page, look, side }: { page: Page; look: PageLook; si
       number={null}
       repeated={NOT_REPEATED}
       {...look}
+      guides={null}
       side={side}
       actions={NO_ACTIONS}
     />

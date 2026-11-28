@@ -21,6 +21,10 @@ The preview draws dashed lines where Blurb trims the cover and where the spine f
 
 Blurb's bleed, margins and safe boundary are only warned about under the preview, never drawn or enforced: nothing is moved to fit them and no marks are printed. The list says how much Blurb trims off each page and the cover, that text should stay 0.25 in inside the trimmed edge (0.5 in at the binding), and which of the front's words sit closer than that. With Blurb's 78-page sizes, the title's top is 0.128 in from the trimmed edge, as on Vol. 3.
 
+## Bleed and safe boundary guides
+
+**Show bleed and safe boundary**, a checkbox on the Book tab (under the page budget) and the Layouts tab (under the preview), draws Blurb's guides over every page, as **PDF for Blurb** prints it at Blurb's page size: the bleed Blurb trims off the top, bottom and outside edge shaded red (the left edge of a left page, the right of a right page), and Blurb's safe boundary dashed in blue, 0.25 in inside the trim and 0.5 in from the binding edge. The bleed is how much larger Blurb's page PDF is than the book's page size, or 0.125 in when the size is in pixels (`lib/photo-book-guides.ts`). The checkbox is kept in this browser and shared by both tabs. The guides are only on the screen, never in a PDF or a spread's image, and nothing on the page moves for them.
+
 ## PDF for Blurb
 
 **PDF for Blurb**, beside **Save as PDF** on the Book tab, makes two PDFs on the pipeline's backend, as **Save as PDF** does, and downloads both:
@@ -31,6 +35,8 @@ Blurb's bleed, margins and safe boundary are only warned about under the preview
 Each PDF measures exactly Blurb's size, to the thousandth of an inch. Chrome rounds a PDF's paper size a little (11.625 in comes out 11.623 in), so the button sends the size it wants with the pages (`width` and `height`, in inches, on `POST /api/photobooks/<id>/pdf`) and the backend sets each page's size back to it (`bookpdf.SetPageSize`).
 
 > **Frontend analogy:** the size is a number in the PDF's text, like a value in a minified bundle; the backend rewrites it in place, padded to the same length, so every offset the file keeps to find its parts still lines up.
+
+If the backend stops part way through sending a PDF (it crashed, restarted, or ran out of time), the button says so, such as "The backend stopped answering /photobooks/korea/pdf", and the backend's terminal says why.
 
 **Save cover PDF for Blurb**, on the Cover tab, makes only the cover's. The browser may ask once to allow the two downloads.
 

@@ -24,3 +24,9 @@ If the backend never answers, such as an older backend without the route, the BF
 ## Adding a slow endpoint
 
 Give the handler its own `…Timeout` constant as usual. When the work can take more than 30s, add one line for its path prefix to `relayTimeouts`; the BFF needs no change. The fallback table in the BFF only matters for an older backend, so a new path doesn't need to go there.
+
+## When the backend stops part way
+
+The relay reads the backend's whole answer before sending it on. If the backend stops part way through, or the wait runs out while a large answer such as a book's PDF is still arriving, the BFF answers 502 (or 504) with its usual JSON message, after taking off the type and headers it had already copied from the backend's answer (`sendFailure` in `apps/bff-pipeline/src/lib/backend.ts`). Before, Fastify refused to send that JSON as a PDF and the page showed "Attempted to send payload of invalid type 'object'" instead.
+
+> **Frontend analogy:** like resetting a `Response`'s `Content-Type` to JSON in an error boundary, since the success path had already set it to `application/pdf`.

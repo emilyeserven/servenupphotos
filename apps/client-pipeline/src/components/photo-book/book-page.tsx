@@ -1,5 +1,6 @@
 import { PageBody } from "@/components/photo-book/page-body";
 import { type BookPageProps, pageName } from "@/components/photo-book/page-types";
+import { PageGuidesOverlay } from "@/components/photo-book/print-guides";
 import { PAGE_SHEET_ATTRIBUTE } from "@/components/photo-book/use-slot-dpi";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +13,8 @@ const PAGE_CLASS =
  * printed books, in the shape the book's size gives it.
  */
 export function BookPage(props: BookPageProps & { className?: string }) {
-  const { page, aspect, controls, className } = props;
+  const { page, aspect, controls, className, guides } = props;
+  const side = props.side ?? props.sides.get(page.id) ?? "right";
   return (
     <section
       aria-label={pageName(page)}
@@ -22,6 +24,7 @@ export function BookPage(props: BookPageProps & { className?: string }) {
       {controls}
       <PageSheet aspect={aspect}>
         <PageBody {...props} />
+        {guides && <PageGuidesOverlay guides={guides} side={side} />}
       </PageSheet>
     </section>
   );
@@ -34,7 +37,7 @@ function PageSheet({ aspect, children }: { aspect: number; children: React.React
       {...{ [PAGE_SHEET_ATTRIBUTE]: "" }}
       style={{ containerType: "inline-size", aspectRatio: aspect }}
       className={cn(
-        "w-full overflow-hidden rounded-sm border border-neutral-800 shadow-sm in-data-[print]:rounded-none in-data-[print]:border-0 in-data-[print]:shadow-none",
+        "relative w-full overflow-hidden rounded-sm border border-neutral-800 shadow-sm in-data-[print]:rounded-none in-data-[print]:border-0 in-data-[print]:shadow-none",
         PAGE_CLASS,
       )}
     >

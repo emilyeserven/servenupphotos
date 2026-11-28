@@ -3,6 +3,7 @@ import type { SocialPhoto } from "@/api/publish";
 import type { SlotShape } from "@/components/photo-book/page-slot";
 import type { CustomLayout, BookPage as Page, PageSide, SlotPlace } from "@/lib/photo-book";
 import type { GeneratedPage } from "@/lib/photo-book-generated";
+import type { PageGuides } from "@/lib/photo-book-guides";
 import type { IndexEntry } from "@/lib/photo-book-places-index";
 import type { TextPlace } from "@/lib/photo-book-text";
 
@@ -51,6 +52,8 @@ export interface BookPageProps {
   placesIndexFor?: (generated: GeneratedPage) => IndexEntry[];
   /** The buttons above the page; none on a preview. */
   controls?: ReactNode;
+  /** Blurb's bleed and safe boundary to draw over the page; none while they're hidden. */
+  guides?: PageGuides | null;
 }
 
 /** What a page is called: the name it was given, or "Untitled page". */

@@ -32,3 +32,5 @@ The eye beside each built-in layout hides it from the **Photo Pages**' layout bu
 Every change shows on the preview at once and is saved as a change waiting for Commit. The book's layouts show up on **Photo Pages** after the built-in ones, in each page's layout buttons and **Add page**. A layout that holds fewer photos now takes the extra ones off its pages; **Remove layout** asks first when pages have it, and they become full pages.
 
 > **Frontend analogy:** a built-in layout is a hand-written component; a book's layout is data fed to one generic component, like a CMS block whose props (flex direction, `flex-basis`, `gap`, padding, `aspect-ratio`) come from a JSON file. Sizes are in `cqw`, so the preview and the small pages on the other tabs look the same.
+
+**Show bleed and safe boundary**, under the preview, draws Blurb's bleed and safe boundary over the left and right pages ([Bleed and safe boundary guides](cover.md#bleed-and-safe-boundary-guides)).
