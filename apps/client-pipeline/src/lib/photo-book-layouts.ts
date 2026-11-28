@@ -7,6 +7,7 @@ import {
   type PhotoBook,
   setLayout,
 } from "@/lib/photo-book";
+import { mirrorMargins } from "@/lib/photo-book-margins";
 import { count } from "@portfolio/lib/words";
 
 /** Everything about a layout made on the Layouts tab but its ID and name. */
@@ -258,10 +259,15 @@ export function photoShape(look: Pick<LayoutLook, "shape" | "ratio">): number | 
   return width > 0 && height > 0 ? width / height : 1;
 }
 
-/** The look turned around for the other side of the book: text on the left goes on the right. */
-function mirrorLook<T extends Pick<LayoutLook, "text">>(look: T): T {
+/**
+ * The look turned around for the other side of the book: text on the left goes on the right, and
+ * so does the left print offset.
+ */
+function mirrorLook<
+  T extends Pick<LayoutLook, "text" | "margin" | "printOffsetLeft" | "printOffsetRight">,
+>(look: T): T {
   const turned = { left: "right", right: "left", above: "above", below: "below" } as const;
-  return { ...look, text: turned[look.text] };
+  return mirrorMargins({ ...look, text: turned[look.text] });
 }
 
 /** How layout draws a page on side: its look on the right, or what it gives left-hand pages. */

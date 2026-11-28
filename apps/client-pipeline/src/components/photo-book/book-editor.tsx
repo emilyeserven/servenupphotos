@@ -99,6 +99,7 @@ export function BookEditor({ saved, photos, data, part, onRemoved }: BookEditorP
   const [drawerOpen, setDrawerOpen] = useState(true);
   const byPath = useMemo(() => new Map(photos.map((p) => [p.path, p])), [photos]);
   const { templates, template } = useBookTemplate(book);
+  const showGuides = printGuides.use();
   const look: PageLook = {
     photos: byPath,
     captionFor: useCaptionFor(byPath, template, book),
@@ -109,7 +110,8 @@ export function BookEditor({ saved, photos, data, part, onRemoved }: BookEditorP
     printWidth: pageWidthInches(book),
     noTitles: book.noTitles === true,
     placesIndexFor: usePlacesIndexFor(book, byPath),
-    guides: printGuides.use() ? pageGuides(book) : null,
+    guides: showGuides ? pageGuides(book) : null,
+    printOffsets: showGuides,
   };
   const drawer = part === "pages" && (
     <PhotoDrawerToggle open={drawerOpen} onToggle={() => setDrawerOpen(!drawerOpen)} />

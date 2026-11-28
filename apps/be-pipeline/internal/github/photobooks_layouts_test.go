@@ -80,3 +80,27 @@ func TestSavePhotoBookLayouts(t *testing.T) {
 		}
 	}
 }
+
+func TestSavePhotoBookLayoutPrintOffsets(t *testing.T) {
+	_, c := newMainRepo(t, map[string]string{})
+	l := bigPair
+	wide, none := 25.0, -2.0
+	l.PrintOffsetLeft, l.PrintOffsetRight = &wide, &none
+	if _, err := c.SavePhotoBook(t.Context(), placesGH, PhotoBook{ID: "korea", Name: "Korea", Layouts: []PhotoBookLayout{l}}); err != nil {
+		t.Fatalf("SavePhotoBook() error = %v", err)
+	}
+	// The print offsets are kept from 0 to 20.
+	saved := staged(t, c, dataRoot+"/photobooks/korea.json")
+	for _, want := range []string{`"margin": 3`, `"printOffsetLeft": 20`, `"printOffsetRight": 0`} {
+		if !strings.Contains(saved, want) {
+			t.Errorf("saved %s, want %s in it", saved, want)
+		}
+	}
+	if _, err := c.SavePhotoBook(t.Context(), placesGH, PhotoBook{ID: "korea", Name: "Korea", Layouts: []PhotoBookLayout{bigPair}}); err != nil {
+		t.Fatalf("SavePhotoBook() error = %v", err)
+	}
+	// A layout without them saves none.
+	if same := staged(t, c, dataRoot+"/photobooks/korea.json"); strings.Contains(same, "printOffset") {
+		t.Errorf("saved %s, want no print offsets", same)
+	}
+}

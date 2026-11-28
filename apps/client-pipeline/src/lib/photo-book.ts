@@ -65,6 +65,13 @@ export interface CustomLayout {
   /** The room around the page's edge, in percent of its width, 0 to 20. */
   margin: number;
   /**
+   * Extra room added to margin at the page's left edge only in the PDF for Blurb (and on the
+   * screen while the bleed and safe boundary show), in percent of its width, 0 to 20; absent for none.
+   */
+  printOffsetLeft?: number;
+  /** Extra room added to margin at the page's right edge, printed for Blurb only, as printOffsetLeft is. */
+  printOffsetRight?: number;
+  /**
    * What left-hand (even) pages get: the look turned around (`mirror`), their own look (`own`,
    * `left`), or the same look; absent in a layout made before, which is the same.
    */

@@ -182,6 +182,38 @@ function TextFields({ look, onChange }: LayoutFieldsProps) {
   );
 }
 
+/**
+ * The margin settings: the margin all round, and the extra room at the left and right edges that
+ * only the PDF for Blurb adds.
+ */
+function MarginFields({ look, onChange }: LayoutFieldsProps) {
+  return (
+    <>
+      <Percent
+        label="Margin"
+        value={look.margin}
+        min={0}
+        max={20}
+        onChange={(margin) => onChange({ margin })}
+      />
+      <Percent
+        label="Print offset, left (Blurb only)"
+        value={look.printOffsetLeft ?? 0}
+        min={0}
+        max={20}
+        onChange={(printOffsetLeft) => onChange({ printOffsetLeft })}
+      />
+      <Percent
+        label="Print offset, right (Blurb only)"
+        value={look.printOffsetRight ?? 0}
+        min={0}
+        max={20}
+        onChange={(printOffsetRight) => onChange({ printOffsetRight })}
+      />
+    </>
+  );
+}
+
 interface LayoutFieldsProps {
   look: LayoutLook;
   onChange: (change: Partial<LayoutLook>) => void;
@@ -189,7 +221,7 @@ interface LayoutFieldsProps {
 
 /**
  * Every setting of a layout made on the Layouts tab: its photos, where its title and captions go,
- * and how much room the text, the gaps and the margin take.
+ * and how much room the text, the gaps and the margins take.
  */
 export function LayoutFields({ look, onChange }: LayoutFieldsProps) {
   return (
@@ -210,13 +242,7 @@ export function LayoutFields({ look, onChange }: LayoutFieldsProps) {
         max={20}
         onChange={(gap) => onChange({ gap })}
       />
-      <Percent
-        label="Margin"
-        value={look.margin}
-        min={0}
-        max={20}
-        onChange={(margin) => onChange({ margin })}
-      />
+      <MarginFields look={look} onChange={onChange} />
     </div>
   );
 }

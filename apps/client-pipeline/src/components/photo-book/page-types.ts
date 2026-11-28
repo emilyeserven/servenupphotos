@@ -54,6 +54,8 @@ export interface BookPageProps {
   controls?: ReactNode;
   /** Blurb's bleed and safe boundary to draw over the page; none while they're hidden. */
   guides?: PageGuides | null;
+  /** True when the page is drawn for Blurb, so a layout's print offsets add to its margins; absent for not. */
+  printOffsets?: boolean;
 }
 
 /** What a page is called: the name it was given, or "Untitled page". */

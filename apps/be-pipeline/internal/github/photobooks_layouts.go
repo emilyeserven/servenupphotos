@@ -66,6 +66,12 @@ type PhotoBookLayoutLook struct {
 	// Margin is the room around the page's edge, in percent of its width,
 	// 0 to 20.
 	Margin float64 `json:"margin"`
+	// PrintOffsetLeft is extra room added to Margin at the page's left
+	// edge only in the PDF for Blurb, in percent of its width, 0 to 20;
+	// nil for none.
+	PrintOffsetLeft *float64 `json:"printOffsetLeft,omitempty"`
+	// PrintOffsetRight is the same at the page's right edge.
+	PrintOffsetRight *float64 `json:"printOffsetRight,omitempty"`
 }
 
 // PhotoBookRatio is a photo place's aspect ratio, its width to its height.
@@ -167,7 +173,19 @@ func validLayoutLook(l PhotoBookLayoutLook, n int) (PhotoBookLayoutLook, *Publis
 	l.TextShare = min(max(l.TextShare, 10), 60)
 	l.Gap = min(max(l.Gap, 0), 20)
 	l.Margin = min(max(l.Margin, 0), 20)
+	l.PrintOffsetLeft = clampedMargin(l.PrintOffsetLeft)
+	l.PrintOffsetRight = clampedMargin(l.PrintOffsetRight)
 	return l, nil
+}
+
+// clampedMargin returns a print offset kept from 0 to 20, or nil when it
+// isn't set.
+func clampedMargin(m *float64) *float64 {
+	if m == nil {
+		return nil
+	}
+	v := min(max(*m, 0), 20)
+	return &v
 }
 
 // validHiddenLayouts returns the built-in layouts a book hides from its

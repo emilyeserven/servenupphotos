@@ -115,7 +115,7 @@ export interface PdfProps {
 /**
  * **Save as PDF**: draws every page of the book in its order, each the book's page size, and has
  * the backend print them to a PDF with a headless Chrome, saying how far it has got, then downloads
- * the PDF. Blank pages print blank; the inside covers aren't pages of the book, so they're left out.
+ * the PDF. Layouts' print offsets are left out, as they're for Blurb only. Blank pages print blank; the inside covers aren't pages of the book, so they're left out.
  * With spreads, **Save spreads as PDF**: each spread is one sheet, page 1 and a last left page with
  * a blank half where the inside cover is.
  */
@@ -123,7 +123,11 @@ export function SavePdfButton(props: PdfProps) {
   const { start, drawing, ...button } = useSavePdf(props);
   return (
     <PdfButton {...button} onClick={() => void start()}>
-      {drawing && createPortal(<PrintBook {...props} />, document.body)}
+      {drawing &&
+        createPortal(
+          <PrintBook {...props} look={{ ...props.look, printOffsets: false }} />,
+          document.body,
+        )}
     </PdfButton>
   );
 }
