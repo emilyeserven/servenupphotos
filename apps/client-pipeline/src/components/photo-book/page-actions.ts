@@ -11,6 +11,7 @@ import {
   setCaption,
   setTitle,
 } from "@/lib/photo-book";
+import type { PageGuides } from "@/lib/photo-book-guides";
 import { setPageText, setPhotoPlaces, setTextColumns, setTextPlace } from "@/lib/photo-book-text";
 
 /** What the page itself does to book, through update: its title, photos and captions, and a text page's text. */
@@ -49,6 +50,8 @@ export interface PageLook {
   noTitles: boolean;
   /** The Places Index a generated page shows, with its options, from the pages in the book. */
   placesIndexFor: ReturnType<typeof usePlacesIndexFor>;
+  /** Blurb's bleed and safe boundary to draw over each page, while **Show bleed and safe boundary** is on; null while it's off. */
+  guides: PageGuides | null;
 }
 
 /** Actions for a page that's only shown, such as a small preview: they do nothing. */

@@ -26,8 +26,22 @@ export async function relayToBackend(
   } catch (error) {
     log.error(error, "be-pipeline request failed");
     const failure = relayFailure(error, path, timeoutMs);
-    return reply.code(failure.status).send({ message: failure.message });
+    return sendFailure(reply, failure, relayHeaders);
   }
+}
+
+/**
+ * Sends why the backend gave no answer as JSON. The backend may have stopped part way through its
+ * answer, after its type (such as a PDF's) and headers were copied onto the reply, so those are
+ * taken off first: Fastify refuses to send JSON as a PDF.
+ */
+function sendFailure(
+  reply: FastifyReply,
+  failure: { status: number; message: string },
+  relayHeaders: readonly string[],
+) {
+  for (const name of relayHeaders) reply.removeHeader(name);
+  return reply.code(failure.status).type("application/json").send({ message: failure.message });
 }
 
 /** Why a request to the backend got no answer, as a status and a message fit to show. */

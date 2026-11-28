@@ -16,8 +16,10 @@ import { usePlacesIndexFor } from "@/components/photo-book/use-places-index";
 import { SaveState } from "@/components/save-state";
 import { type PhotoBook, pageAspect } from "@/lib/photo-book";
 import { pageWidthInches } from "@/lib/photo-book-dpi";
+import { pageGuides } from "@/lib/photo-book-guides";
 import { pageSides } from "@/lib/photo-book-order";
 import { cn } from "@/lib/utils";
+import { printGuides } from "@/stores/photo-book-guides";
 
 /**
  * A book's six tabs: Info for its name, album, captions and size; Layouts for trying out page
@@ -107,6 +109,7 @@ export function BookEditor({ saved, photos, data, part, onRemoved }: BookEditorP
     printWidth: pageWidthInches(book),
     noTitles: book.noTitles === true,
     placesIndexFor: usePlacesIndexFor(book, byPath),
+    guides: printGuides.use() ? pageGuides(book) : null,
   };
   const drawer = part === "pages" && (
     <PhotoDrawerToggle open={drawerOpen} onToggle={() => setDrawerOpen(!drawerOpen)} />
