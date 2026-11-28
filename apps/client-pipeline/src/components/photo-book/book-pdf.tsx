@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { bookPdfMutation, bookPdfProgressQuery } from "@/api/photo-books";
 import { ErrorNote } from "@/components/error-note";
+import { FrontCoverPage } from "@/components/photo-book/book-cover";
 import { BookPage } from "@/components/photo-book/book-page";
 import { NO_ACTIONS, type PageLook } from "@/components/photo-book/page-actions";
 import { pdfLook } from "@/components/photo-book/print-look";
@@ -12,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { downloadBlob } from "@/lib/download-blob";
 import type { BookPage as Page, PageSide, PhotoBook } from "@/lib/photo-book";
+import { coverOf } from "@/lib/photo-book-cover";
+import { pageWidthInches } from "@/lib/photo-book-dpi";
 import { type BookUnit, isPlaceholder, printedPages } from "@/lib/photo-book-order";
 import {
   PRINT_ROOT_ID,
@@ -116,7 +119,7 @@ export interface PdfProps {
 /**
  * **Save as PDF**: draws every page of the book in its order, each the book's page size, and has
  * the backend print them to a PDF with a headless Chrome, saying how far it has got, then downloads
- * the PDF. Layouts' print offsets are left out, as they're for Blurb only. Blank pages print blank; the inside covers aren't pages of the book, so they're left out.
+ * the PDF, its first page the front cover alone, as on Vol. 3. Layouts' print offsets are left out, as they're for Blurb only. Blank pages print blank; the inside covers aren't pages of the book, so they're left out.
  * With spreads, **Save spreads as PDF**: each spread is one sheet, page 1 and a last left page with
  * a blank half where the inside cover is.
  */
@@ -126,7 +129,11 @@ export function SavePdfButton(props: PdfProps) {
     <PdfButton {...button} onClick={() => void start()}>
       {drawing &&
         createPortal(
-          <PrintBook {...props} look={pdfLook(props.book, props.look)} />,
+          <PrintBook
+            {...props}
+            look={pdfLook(props.book, props.look)}
+            frontCover={!props.spreads}
+          />,
           document.body,
         )}
     </PdfButton>
@@ -168,8 +175,18 @@ export function PdfButton({
   );
 }
 
-/** The book's pages as printed, one sheet of paper each or two a sheet, out of sight on the screen. */
-export function PrintBook({ book, look, used, spreads = false }: PdfProps) {
+/**
+ * The book's pages as printed, one sheet of paper each or two a sheet, out of sight on the screen.
+ * With frontCover, as **Save as PDF** draws them, the front cover alone comes first, on a sheet of
+ * its own.
+ */
+export function PrintBook({
+  book,
+  look,
+  used,
+  spreads = false,
+  frontCover = false,
+}: PdfProps & { frontCover?: boolean }) {
   const { width, height } = printSize(book, spreads);
   const pages = printedPages(used);
   return (
@@ -182,6 +199,11 @@ export function PrintBook({ book, look, used, spreads = false }: PdfProps) {
         style={{ width, printColorAdjust: "exact", WebkitPrintColorAdjust: "exact" }}
       >
         <style>{printCss(book, spreads)}</style>
+        {frontCover && (
+          <div style={{ width, height, breakAfter: "page", overflow: "hidden" }}>
+            <FrontCoverPage cover={coverOf(book)} widthInches={pageWidthInches(book)} />
+          </div>
+        )}
         {spreads ? (
           <PrintSpreads book={book} look={look} pages={pages} />
         ) : (

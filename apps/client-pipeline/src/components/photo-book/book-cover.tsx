@@ -1,6 +1,12 @@
 import type { CSSProperties } from "react";
 import type { BlurbSizes } from "@/lib/photo-book";
-import { type CoverBox, FRONT_INSETS, type FullCover, coverParts } from "@/lib/photo-book-cover";
+import {
+  type CoverBox,
+  FRONT_INSETS,
+  type FullCover,
+  coverParts,
+  frontBandShare,
+} from "@/lib/photo-book-cover";
 
 /** An inset of the front's as a share of its width, in `cqw`. */
 const cqw = (share: number) => `${share * 100}cqw`;
@@ -69,6 +75,39 @@ export function CoverSheet({ cover, sizes, guides = false }: CoverSheetProps) {
         </span>
       </div>
       <div style={{ ...boxStyle(parts.frontWords), containerType: "inline-size" }}>
+        <FrontWords cover={cover} />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The front cover alone, filling its page, as page 1 of **Save as PDF** draws it, the shape of
+ * Vol. 3's first page: the white spine band down its left edge, the background beside it, and the
+ * front's words placed in the rest as on the whole cover. widthInches is the page's printed width,
+ * which sets the band's share, or null for a size in pixels.
+ */
+export function FrontCoverPage({
+  cover,
+  widthInches,
+}: {
+  cover: FullCover;
+  widthInches: number | null;
+}) {
+  const band = frontBandShare(widthInches);
+  return (
+    <div
+      className={`relative size-full overflow-hidden ${COVER_FONT}`}
+      style={{ background: cover.background, color: cover.color }}
+    >
+      <div
+        className="absolute inset-y-0 left-0"
+        style={{ width: `${band}%`, background: cover.color }}
+      />
+      <div
+        className="absolute inset-y-0 right-0"
+        style={{ left: `${band}%`, containerType: "inline-size" }}
+      >
         <FrontWords cover={cover} />
       </div>
     </div>

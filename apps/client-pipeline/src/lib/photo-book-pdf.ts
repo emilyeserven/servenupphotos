@@ -112,17 +112,17 @@ export function pdfProgressText(
 }
 
 /**
- * What a PDF of the book is called, how many sheets it has, and its button's words when idle and
- * tooltip.
+ * What a PDF of the book is called, how many sheets it has (for **Save as PDF**, the front cover
+ * and the printed pages), and its button's words when idle and tooltip.
  */
 export function pdfFile(id: string, printed: number, spreads: boolean) {
   if (!spreads) {
     return {
       name: `${id}.pdf`,
-      sheets: printed,
+      sheets: printed + 1,
       label: "Save as PDF",
       title:
-        "Makes a PDF of every page of the book at its page size, with sharp photos, and downloads it",
+        "Makes a PDF of the front cover and every page of the book at its page size, with sharp photos, and downloads it",
     };
   }
   return {

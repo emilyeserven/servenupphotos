@@ -42,6 +42,8 @@ test("page 1 is a right page, then they alternate", () => {
   assert.equal(pdfFile("korea", 4, true).name, "korea-spreads.pdf");
   assert.equal(pdfFile("korea", 4, true).sheets, 3);
   assert.equal(pdfFile("korea", 4, false).name, "korea.pdf");
+  // Save as PDF's first sheet is the front cover.
+  assert.equal(pdfFile("korea", 4, false).sheets, 5);
 });
 
 test("a srcset's URLs are made whole, keeping their widths", () => {

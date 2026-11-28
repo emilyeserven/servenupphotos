@@ -10,6 +10,7 @@ import {
   blurbWarnings,
   coverOf,
   coverWarnings,
+  frontBandShare,
   coverParts,
   inches,
   setBlurb,
@@ -106,4 +107,10 @@ test("the front's words closer to the trim than Blurb's safe boundary are warned
   assert.equal(warnings.length, 1);
   assert.match(warnings[0] ?? "", /^The title's top is 0\.121 in from the trimmed edge/);
   assert.equal(coverWarnings({ ...DEFAULT_BLURB, coverWidth: 60, spine: 1 }).length, 0);
+});
+
+test("the front cover alone keeps Vol. 3's band: 49 pt of a 12.5 in page, or of 900 pt in pixels", () => {
+  assert.ok(Math.abs(frontBandShare(12.5) - (49 / 900) * 100) < 1e-9);
+  assert.ok(Math.abs(frontBandShare(null) - (49 / 900) * 100) < 1e-9);
+  assert.equal(frontBandShare(1), 50);
 });

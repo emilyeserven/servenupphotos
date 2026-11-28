@@ -18,6 +18,10 @@ The preview draws dashed lines where Blurb trims the cover and where the spine f
 
 > **Frontend analogy:** the cover sheet is one `position: relative` box with `aspect-ratio` set to Blurb's cover size; the back, spine and front are absolutely placed boxes in percent of it, and the front's words use `cqw` on a container-query box the size of the trimmed front right of the band, so they scale with it like `vw` scales with the window.
 
+## The front cover in Save as PDF
+
+**Save as PDF** on the Book tab starts with the front cover alone, on a sheet the book's page size, as Serven Up Photos Vol. 3's PDF does: the white spine band down its left edge, 0.681 in wide (49 pt, Vol. 3's; 49 of 900 pt of the page when its size is in pixels), and the front's words placed in the rest by the same shares as on the whole cover (`FrontCoverPage` in `components/photo-book/book-cover.tsx`). The back cover and the spine are left out. **Save spreads as PDF** and **PDF for Blurb** don't add it: Blurb takes the cover as its own PDF.
+
 ## Warnings, not rules
 
 Blurb's bleed, margins and safe boundary are only warned about under the preview, never drawn or enforced: nothing is moved to fit them and no marks are printed. The list says how much Blurb trims off each page and the cover, that text should stay 0.25 in inside the trimmed edge (0.5 in at the binding), and which of the front's words sit closer than that. With Blurb's 78-page sizes, the title's top is 0.121 in from the trimmed edge, as on Vol. 3.

@@ -100,6 +100,16 @@ export function coverParts(
   };
 }
 
+/**
+ * How much of the front cover's width, in percent, the white spine band takes when the front is
+ * drawn alone at the book's page size, as page 1 of **Save as PDF**: SPINE_BAND of the page's width
+ * in inches, or Vol. 3's 49 of 900 pt when the page size is in pixels.
+ */
+export function frontBandShare(pageWidthInches: number | null): number {
+  const share = pageWidthInches ? SPINE_BAND / pageWidthInches : 49 / 900;
+  return Math.min(share, 0.5) * 100;
+}
+
 /** Blurb's safe boundary: how far inside the trimmed edge text should stay, in inches. */
 const SAFE_INSET = 0.25;
 
