@@ -124,6 +124,8 @@ type InFlightResult struct {
 	NotStored InFlightGroups `json:"notstored"`
 	// PhotoBooks are the photo book files in the pull request.
 	PhotoBooks InFlightGroups `json:"photobooks"`
+	// BookLayouts is the standard layouts file in the pull request.
+	BookLayouts InFlightGroups `json:"booklayouts"`
 	// Bio is the bio file in the pull request.
 	Bio InFlightGroups `json:"bio"`
 	// Sets are the Photo Set files in the pull request.

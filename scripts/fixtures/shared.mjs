@@ -616,6 +616,36 @@ added.photobooks = [
   },
 ];
 
+/**
+ * The photo books' standard layouts: one saved from another book, so the sample book can add it,
+ * and the pair with its photos on the right hidden in every book.
+ */
+added.booklayouts = [
+  {
+    path: `${FOLDER}/booklayouts/standard.json`,
+    data: {
+      id: "standard",
+      layouts: [
+        {
+          id: "custom-1",
+          name: "Wide with captions below",
+          photos: 1,
+          arrange: "stack",
+          shape: "landscape",
+          text: "below",
+          captions: "column",
+          textShare: 20,
+          align: "start",
+          gap: 2,
+          margin: 4,
+          leftPages: "mirror",
+        },
+      ],
+      hiddenLayouts: ["pair-right"],
+    },
+  },
+];
+
 /** The bio, with a self-portrait first and three of the portfolio's photos after it. */
 added.bio = [
   {

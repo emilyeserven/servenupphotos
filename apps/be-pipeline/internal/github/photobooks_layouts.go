@@ -25,6 +25,9 @@ type PhotoBookLayout struct {
 	LeftPages string `json:"leftPages,omitempty"`
 	// Left is the look of left-hand pages when LeftPages is "own".
 	Left *PhotoBookLayoutLook `json:"left,omitempty"`
+	// Standard is the ID of the standard layout this one was saved as or
+	// added from, so the Layouts tab can update it; "" for none.
+	Standard string `json:"standard,omitempty"`
 }
 
 // PhotoBookLayoutLook is how a layout draws a page: its photos' arrangement
@@ -124,6 +127,10 @@ func validPhotoBookLayout(l PhotoBookLayout, n int) (PhotoBookLayout, *PublishEr
 	l.Name = strings.TrimSpace(l.Name)
 	if !strings.HasPrefix(l.ID, "custom-") || tooLongEntryText(l.ID) {
 		return l, publishErr(http.StatusBadRequest, "Layout %d needs an ID that starts with \"custom-\".", n)
+	}
+	l.Standard = strings.TrimSpace(l.Standard)
+	if tooLongEntryText(l.Standard) {
+		return l, publishErr(http.StatusBadRequest, "Layout %d names a standard layout whose ID is too long.", n)
 	}
 	if l.Name == "" || tooLongEntryText(l.Name) {
 		return l, publishErr(http.StatusBadRequest, "Give layout %d a name of up to %d characters.", n, maxEntryTextLength)

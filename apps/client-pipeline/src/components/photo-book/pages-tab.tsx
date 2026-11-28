@@ -16,6 +16,7 @@ import { PagesGrid } from "@/components/photo-book/pages-grid";
 import { PagesViewToggle } from "@/components/photo-book/pages-view-toggle";
 import { ShowHiddenToggle } from "@/components/photo-book/show-hidden-toggle";
 import { TagButton, TagChips } from "@/components/photo-book/unit-tags";
+import { usePickerLayouts } from "@/components/photo-book/use-picker-layouts";
 import {
   type PhotoBook,
   firstEmptySlot,
@@ -29,7 +30,6 @@ import {
   setLayout,
 } from "@/lib/photo-book";
 import { isHidden, markAlternates } from "@/lib/photo-book-alternates";
-import { layoutChoices } from "@/lib/photo-book-layouts";
 import {
   type BookUnit,
   addPage,
@@ -75,6 +75,7 @@ interface PagesTabProps {
 export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabProps) {
   const fade = useFadeTag(book);
   const jump = useJumpToPhoto(book);
+  const pickerLayouts = usePickerLayouts(book);
   const pick = (photo: SocialPhoto) => {
     const place = firstEmptySlot(book);
     if (place) update(placePhoto(book, place, photo.path));
@@ -87,7 +88,7 @@ export function PagesTab({ book, update, look, data, photos, drawer }: PagesTabP
         <PagesView book={book} update={update} look={look} />
         <div>
           <AddPageButton
-            layouts={layoutChoices(book)}
+            layouts={pickerLayouts()}
             onAdd={(layout) => update(addPage(book, layout))}
           />
         </div>
@@ -175,6 +176,7 @@ function PagesView(props: UnitsProps) {
  * page is scrolled into view once it's drawn (in **Edit pages**).
  */
 function TopAddPage({ book, update }: Pick<UnitsProps, "book" | "update">) {
+  const pickerLayouts = usePickerLayouts(book);
   const add = (layout: PageLayout) => {
     const next = addPage(book, layout);
     update(next);
@@ -188,7 +190,7 @@ function TopAddPage({ book, update }: Pick<UnitsProps, "book" | "update">) {
   };
   return (
     <div className="ml-auto">
-      <AddPageButton layouts={layoutChoices(book)} onAdd={add} keepScroll />
+      <AddPageButton layouts={pickerLayouts()} onAdd={add} keepScroll />
     </div>
   );
 }
@@ -239,6 +241,7 @@ interface PhotoUnitProps extends UnitsProps {
 function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
   const numbers = pageNumbers(book);
   const repeated = repeatedPhotos(book);
+  const pickerLayouts = usePickerLayouts(book);
   const spread = unit.pages.length > 1;
   return (
     <div
@@ -284,7 +287,7 @@ function PhotoUnit({ unit, place, next, book, update, look }: PhotoUnitProps) {
               controls={
                 <PageControls
                   page={page}
-                  layouts={layoutChoices(book, page.layout)}
+                  layouts={pickerLayouts(page.layout)}
                   onName={(name) => update(renamePage(book, index, name))}
                   onLayout={(layout) => update(setLayout(book, index, layout))}
                   onTitle={actions.onTitle}

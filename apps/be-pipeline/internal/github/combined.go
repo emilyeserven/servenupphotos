@@ -42,6 +42,8 @@ type CombinedFiles struct {
 	NotStored InFlightAllPhotos `json:"notstored"`
 	// PhotoBooks is PHOTOBOOKS.json, the Photo Book page's mockups.
 	PhotoBooks InFlightAllPhotos `json:"photobooks"`
+	// BookLayouts is BOOKLAYOUTS.json, the photo books' standard layouts.
+	BookLayouts InFlightAllPhotos `json:"booklayouts"`
 	// Bio is ALLBIO.json, the Bio page's bio and its photos.
 	Bio InFlightAllPhotos `json:"bio"`
 	// Sets is SETS.json, the Photo Sets the map keeps as one marker each.

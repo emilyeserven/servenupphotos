@@ -8,7 +8,8 @@ import (
 
 // registerPublishRoutes adds the Publish routes: the Instagram calendar and its
 // Not Stored posts, combined into NOTSTORED.json, the Photo Book's books,
-// combined into PHOTOBOOKS.json, their PDFs and spread images, the Bio page's bio and its self-portraits,
+// combined into PHOTOBOOKS.json, their standard layouts, combined into
+// BOOKLAYOUTS.json, their PDFs and spread images, the Bio page's bio and its self-portraits,
 // combined into ALLBIO.json, and the Dashboard's Needs attention, which
 // reads the same files cut down.
 func registerPublishRoutes(mux *http.ServeMux, d routeDeps) {
@@ -18,6 +19,7 @@ func registerPublishRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("DELETE /notstored/{day}", handleDeleteNotStoredPost(d.store, d.gh))
 	mux.HandleFunc("PUT /photobooks/{id}", handleSavePhotoBook(d.store, d.gh))
 	mux.HandleFunc("DELETE /photobooks/{id}", handleDeletePhotoBook(d.store, d.gh))
+	mux.HandleFunc("PUT /booklayouts/{id}", handleSaveStandardLayouts(d.store, d.gh))
 	pdfs := newPdfProgress()
 	mux.HandleFunc("POST /photobooks/{id}/pdf", handleBookPdf(pdfs, bookpdf.Make))
 	mux.HandleFunc("GET /photobooks/{id}/pdf/progress", handleBookPdfProgress(pdfs))

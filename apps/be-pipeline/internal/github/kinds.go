@@ -42,6 +42,7 @@ var dataKinds = []combinedKind{
 	{"gear", GearKind.Folder, GearKind.AllFile},
 	{"notstored", NotStoredKind.Folder, NotStoredKind.AllFile},
 	{"photobooks", PhotoBooks.Folder, PhotoBooks.AllFile},
+	{"booklayouts", BookLayouts.Folder, BookLayouts.AllFile},
 	{"bio", BioKind.Folder, BioKind.AllFile},
 	{"sets", PhotoSets.Folder, PhotoSets.AllFile},
 }

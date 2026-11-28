@@ -120,6 +120,13 @@ export function publishFixtures() {
       done: 38,
       total: 90,
     },
+    "PUT /api/booklayouts/standard": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/booklayouts/standard.json`,
+      data: { ...body, id: "standard" },
+      before: added.booklayouts[0].data,
+      changed: true,
+    }),
     "PUT /api/bio/bio": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/bio/bio.json`,

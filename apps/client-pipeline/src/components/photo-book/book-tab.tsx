@@ -13,12 +13,12 @@ import type { PageLook } from "@/components/photo-book/page-actions";
 import { usePreviewKeys, usePreviewMode } from "@/components/photo-book/preview-mode";
 import { PrintGuidesToggle, PrintPreviewToggle } from "@/components/photo-book/print-guides";
 import { UnitsDrawer } from "@/components/photo-book/units-drawer";
+import { usePickerLayouts } from "@/components/photo-book/use-picker-layouts";
 import { UsedPanel } from "@/components/photo-book/used-panel";
 import { type PageLayout, type PhotoBook, placePhoto } from "@/lib/photo-book";
 import { firstEmptySlotOn, insertNewPage, insertPoints } from "@/lib/photo-book-edit";
 import { addGeneratedPage, changeGenerated, setGeneratedTitle } from "@/lib/photo-book-generated";
 import { unitLayouts } from "@/lib/photo-book-layout-filter";
-import { layoutChoices } from "@/lib/photo-book-layouts";
 import {
   type BookUnit,
   addOtherPage,
@@ -76,10 +76,11 @@ function useEditMode(
 ) {
   const { book, update, data, photos } = props;
   const [on, setOn] = useState(false);
+  const pickerLayouts = usePickerLayouts(book);
   const view = preview.views[preview.at];
   const inserting = {
     points: view ? insertPoints(view, used) : [],
-    layouts: layoutChoices(book),
+    layouts: pickerLayouts(),
     onInsert: (layout: PageLayout, at: number) => {
       const added = insertNewPage(book, layout, at);
       update(added.book);

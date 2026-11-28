@@ -65,13 +65,16 @@ var (
 	// PhotoBooks is the Photo Book page's rough mockups of photo books, one
 	// file per book.
 	PhotoBooks = EntryKind{Name: "photo book", Folder: "photobooks", AllFile: "PHOTOBOOKS.json"}
+	// BookLayouts is the standard layouts every photo book can use, and the
+	// built-in layouts hidden in every book, one file, standard.json.
+	BookLayouts = EntryKind{Name: "standard layouts file", Folder: "booklayouts", AllFile: "BOOKLAYOUTS.json"}
 	// BioKind is the bio the portfolio will show about the photographer,
 	// one file, bio.json.
 	BioKind = EntryKind{Name: "bio", Folder: "bio", AllFile: "ALLBIO.json"}
 	// PhotoSets are photos the portfolio's map always shows as one marker,
 	// one file per set.
 	PhotoSets  = EntryKind{Name: "Photo Set", Folder: "sets", AllFile: "SETS.json"}
-	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, LensOverrides, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind, PhotoBooks, BioKind, PhotoSets}
+	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, LensOverrides, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind, NotStoredKind, PhotoBooks, BookLayouts, BioKind, PhotoSets}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as

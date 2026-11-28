@@ -78,10 +78,15 @@ export interface CustomLayout {
   leftPages?: "same" | "mirror" | "own";
   /** The look of left-hand pages when leftPages is `own`. */
   left?: VariantLook;
+  /** The ID of the standard layout this one was saved as or added from; absent for none. */
+  standard?: string;
 }
 
 /** How a layout draws a page, without what's the same on both sides of the book. */
-export type VariantLook = Omit<CustomLayout, "id" | "name" | "photos" | "leftPages" | "left">;
+export type VariantLook = Omit<
+  CustomLayout,
+  "id" | "name" | "photos" | "leftPages" | "left" | "standard"
+>;
 
 /** Which side of the book a page falls on: left (even page numbers) or right (odd ones). */
 export type PageSide = "left" | "right";
