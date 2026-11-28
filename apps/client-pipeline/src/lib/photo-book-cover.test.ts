@@ -4,6 +4,7 @@ import type { PhotoBook } from "@/lib/photo-book";
 import {
   DEFAULT_BLURB,
   DEFAULT_COVER,
+  SPINE_BAND,
   blurbOf,
   blurbPdfs,
   blurbWarnings,
@@ -35,7 +36,7 @@ test("Blurb's sizes start as the 78-page Large Landscape book's and refuse ones 
   assert.equal(validBlurb({ ...DEFAULT_BLURB, bleed: -0.1 }), false);
 });
 
-test("the cover sheet is the back, the spine, then the front, the front's words inside its trim", () => {
+test("the cover sheet is the back, the spine, then the front, the front's words inside its trim past the spine band", () => {
   const sizes = { ...DEFAULT_BLURB, coverWidth: 21, coverHeight: 10, spine: 1, bleed: 0.5 };
   const parts = coverParts(sizes);
   assert.deepEqual(parts.back, { left: 0, top: 0, width: (10 / 21) * 100, height: 100 });
@@ -55,6 +56,19 @@ test("the cover sheet is the back, the spine, then the front, the front's words 
     left: (11 / 21) * 100,
     top: 5,
     width: (9.5 / 21) * 100,
+    height: 90,
+  });
+  // The white band covers the spine and SPINE_BAND of the front and back; the words start past it.
+  assert.deepEqual(parts.band, {
+    left: ((10 - SPINE_BAND) / 21) * 100,
+    top: 0,
+    width: ((1 + 2 * SPINE_BAND) / 21) * 100,
+    height: 100,
+  });
+  assert.deepEqual(parts.frontWords, {
+    left: ((11 + SPINE_BAND) / 21) * 100,
+    top: 5,
+    width: ((9.5 - SPINE_BAND) / 21) * 100,
     height: 90,
   });
 });
@@ -90,6 +104,6 @@ test("PDF for Blurb makes the pages' PDF then the cover's, and the Cover tab's o
 test("the front's words closer to the trim than Blurb's safe boundary are warned about, not moved", () => {
   const warnings = coverWarnings(DEFAULT_BLURB);
   assert.equal(warnings.length, 1);
-  assert.match(warnings[0] ?? "", /^The title's top is 0\.128 in from the trimmed edge/);
+  assert.match(warnings[0] ?? "", /^The title's top is 0\.121 in from the trimmed edge/);
   assert.equal(coverWarnings({ ...DEFAULT_BLURB, coverWidth: 60, spine: 1 }).length, 0);
 });

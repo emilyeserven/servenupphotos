@@ -27,7 +27,8 @@ interface CoverSheetProps {
   sizes: BlurbSizes;
   /**
    * Draws dashed lines where Blurb trims the cover and where the spine folds, for the Cover tab's
-   * preview only; never printed.
+   * preview only; never printed. They're grey, so they show on the background and on the spine
+   * band.
    */
   guides?: boolean;
 }
@@ -35,10 +36,11 @@ interface CoverSheetProps {
 /**
  * The book's whole cover as Blurb prints it, the back, spine and front on one sheet the shape of
  * Blurb's cover PDF, in the style of Serven Up Photos Vol. 3: a plain background running to every
- * edge, the title large and bold in the front's top left, one line a line, the author in its bottom
- * left and the volume in italics in its bottom right, a plain back, and the spine's text down the
- * spine. The front's words are placed inside its trimmed edges, sized in shares of its width as
- * Vol. 3's are.
+ * edge, a band in the text color over the spine reaching a little into the front and back, the
+ * title large and bold in the front's top left, one line a line, the author in its bottom left and
+ * the volume in italics in its bottom right, a plain back, and the spine's text down the spine in
+ * the background color. The front's words are placed inside its trimmed edges right of the band,
+ * sized in shares of that width as Vol. 3's are.
  */
 export function CoverSheet({ cover, sizes, guides = false }: CoverSheetProps) {
   const parts = coverParts(sizes);
@@ -53,9 +55,10 @@ export function CoverSheet({ cover, sizes, guides = false }: CoverSheetProps) {
         WebkitPrintColorAdjust: "exact",
       }}
     >
+      <div style={{ ...boxStyle(parts.band), background: cover.color }} />
       {guides && <CoverGuides parts={parts} />}
       <div
-        style={{ ...boxStyle(parts.spine), containerType: "size" }}
+        style={{ ...boxStyle(parts.spine), containerType: "size", color: cover.background }}
         className="flex items-center justify-center"
       >
         <span
@@ -65,7 +68,7 @@ export function CoverSheet({ cover, sizes, guides = false }: CoverSheetProps) {
           {cover.spine}
         </span>
       </div>
-      <div style={{ ...boxStyle(parts.frontTrim), containerType: "inline-size" }}>
+      <div style={{ ...boxStyle(parts.frontWords), containerType: "inline-size" }}>
         <FrontWords cover={cover} />
       </div>
     </div>
@@ -73,7 +76,8 @@ export function CoverSheet({ cover, sizes, guides = false }: CoverSheetProps) {
 }
 
 /**
- * The front's words, sized and placed in shares of the trimmed front's width as on Vol. 3's
+ * The front's words, sized and placed in shares of the width of the trimmed front right of the
+ * spine band, as on Vol. 3's
  * cover: the title's capitals 1% below the top, 8% in, its lines 17.5% tall with 1.2 between
  * them; the author and volume 5.65% tall, their baseline 4.2% above the bottom, the volume 3.5%
  * from the right.
@@ -129,8 +133,8 @@ function CoverGuides({ parts }: { parts: ReturnType<typeof coverParts> }) {
     <div
       key={i}
       aria-hidden
-      className="pointer-events-none absolute border border-dashed opacity-50"
-      style={{ ...boxStyle(box), borderColor: "currentColor" }}
+      className="pointer-events-none absolute border border-dashed border-neutral-500"
+      style={boxStyle(box)}
     />
   ));
 }

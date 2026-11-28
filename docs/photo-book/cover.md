@@ -4,22 +4,23 @@ The **Cover** tab (`/photo-books/<id>/cover`, `components/photo-book/cover-tab.t
 
 ## The cover
 
-The cover is drawn as Blurb prints it: the back, the spine and the front on one sheet the shape of Blurb's cover PDF (26.681 × 11.625 in for a 78-page Large Landscape hardcover ImageWrap book). Like Vol. 3's, it's a plain background running to every edge with the words in Helvetica:
+The cover is drawn as Blurb prints it: the back, the spine and the front on one sheet the shape of Blurb's cover PDF (26.681 × 11.625 in for a 78-page Large Landscape hardcover ImageWrap book). Like Vol. 3's, it's a plain background running to every edge, a white spine band, and the words in Helvetica:
 
 - **Title**, one line of the cover a line (`Serven`, `Up`, `Photos` to start), large and bold in the front's top left.
 - **Author** (`Emily Serven` to start) in the front's bottom left, and **Volume** (such as `Vol. 3`, empty to start) in italics in its bottom right.
-- **Spine**, the text down the spine, reading top to bottom; empty to start, for none. The back is left plain.
+- **Spine**, the text down the spine, reading top to bottom, in the background color; empty to start, for none. The back is left plain.
+- The **spine band**, in the text color (white to start), covers the spine and reaches 0.681 in (49 pt) past each fold into the front and back, as the white strip along the spine of Vol. 3's front and back does (`SPINE_BAND`).
 - **Background** and **Text**, the colors, black and white to start.
 
-The front's words are placed and sized in shares of the front's width once Blurb trims it, measured off Vol. 3's cover: the title's capitals 1% below the top and 8% in, each line 17.5% tall with 1.2 lines between them; the author and volume 5.65% tall, their baseline 4.2% above the bottom, the volume 3.5% in from the right (`FRONT_INSETS` in `lib/photo-book-cover.ts`). So the cover keeps Vol. 3's look at any of Blurb's sizes. Each change saves as typed, as a [change waiting for Commit](../pending-changes.md).
+The front's words are placed and sized in shares of the width of the front right of the spine band once Blurb trims it, measured off Vol. 3's cover: the title's capitals 1% below the top and 8% in, each line 17.5% tall with 1.2 lines between them; the author and volume 5.65% tall, their baseline 4.2% above the bottom, the volume 3.5% in from the right (`FRONT_INSETS` in `lib/photo-book-cover.ts`). So the cover keeps Vol. 3's look at any of Blurb's sizes. Each change saves as typed, as a [change waiting for Commit](../pending-changes.md).
 
 The preview draws dashed lines where Blurb trims the cover and where the spine folds. They're only on the screen, never printed.
 
-> **Frontend analogy:** the cover sheet is one `position: relative` box with `aspect-ratio` set to Blurb's cover size; the back, spine and front are absolutely placed boxes in percent of it, and the front's words use `cqw` on a container-query box the size of the trimmed front, so they scale with it like `vw` scales with the window.
+> **Frontend analogy:** the cover sheet is one `position: relative` box with `aspect-ratio` set to Blurb's cover size; the back, spine and front are absolutely placed boxes in percent of it, and the front's words use `cqw` on a container-query box the size of the trimmed front right of the band, so they scale with it like `vw` scales with the window.
 
 ## Warnings, not rules
 
-Blurb's bleed, margins and safe boundary are only warned about under the preview, never drawn or enforced: nothing is moved to fit them and no marks are printed. The list says how much Blurb trims off each page and the cover, that text should stay 0.25 in inside the trimmed edge (0.5 in at the binding), and which of the front's words sit closer than that. With Blurb's 78-page sizes, the title's top is 0.128 in from the trimmed edge, as on Vol. 3.
+Blurb's bleed, margins and safe boundary are only warned about under the preview, never drawn or enforced: nothing is moved to fit them and no marks are printed. The list says how much Blurb trims off each page and the cover, that text should stay 0.25 in inside the trimmed edge (0.5 in at the binding), and which of the front's words sit closer than that. With Blurb's 78-page sizes, the title's top is 0.121 in from the trimmed edge, as on Vol. 3.
 
 ## Print or PDF preview
 
