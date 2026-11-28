@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite";
-import { publicOriginal } from "./src/lib/unedited-original";
+import { publicOriginal } from "./src/lib/unedited-original.ts";
 
 /** The combined photo lists the portfolio imports: ALLPHOTOS.json and ALLPHOTOS.local.json. */
 const ALL_PHOTOS = /[/\\]ALLPHOTOS(\.local)?\.json$/;

@@ -346,7 +346,14 @@ function CalendarGrid(props: CalendarGridProps) {
   const { days, today, byDay, notStored, posts, unsaved, onOpen, onDropPhoto, places } = props;
   return (
     <>
-      <WeekNav {...props} />
+      <WeekNav
+        days={days}
+        today={today}
+        weekOffset={props.weekOffset}
+        onWeekOffset={props.onWeekOffset}
+        weeksSelect={props.weeksSelect}
+        drawerToggle={props.drawerToggle}
+      />
       <div className="grid grid-cols-7 gap-1 sm:gap-2" role="grid" aria-label="Instagram calendar">
         {WEEKDAYS.map((weekday) => (
           <div key={weekday} className="text-muted-foreground text-center text-xs font-medium">
@@ -378,8 +385,14 @@ function CalendarGrid(props: CalendarGridProps) {
   );
 }
 
+/** The parts of the calendar's props the week buttons above it use. */
+type WeekNavProps = Pick<
+  CalendarGridProps,
+  "days" | "today" | "weekOffset" | "onWeekOffset" | "weeksSelect" | "drawerToggle"
+>;
+
 /** The days shown, with buttons to page a week at a time. */
-function WeekNav(props: CalendarGridProps) {
+function WeekNav(props: WeekNavProps) {
   const { days, today, weekOffset, onWeekOffset, weeksSelect, drawerToggle } = props;
   const first = parseIsoDate(days[0] ?? today);
   const last = parseIsoDate(days.at(-1) ?? today);

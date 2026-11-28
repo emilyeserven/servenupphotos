@@ -5,9 +5,9 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
-import { mapPreviewPages } from "./map-preview/pages";
-import { photoPreviewPages } from "./photo-previews";
-import { privatePhotoNotes, shownOriginals } from "./private-notes";
+import { mapPreviewPages } from "./map-preview/pages.ts";
+import { photoPreviewPages } from "./photo-previews.ts";
+import { privatePhotoNotes, shownOriginals } from "./private-notes.ts";
 
 const root = path.resolve(import.meta.dirname, "../..");
 /** How long after one refresh the next page load waits before refreshing again. */
