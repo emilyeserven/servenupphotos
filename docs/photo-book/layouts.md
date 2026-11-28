@@ -14,7 +14,7 @@ Built-in layouts stay as they are. The copy button beside any layout (or **Custo
 > **Frontend analogy:** a photo kept in its shape is `width: min(100cqw, 150cqh)` inside its room, so the room's edges and the photo's differ, and plain CSS can't line a sibling up with that. **The photo itself** measures the photos with a `ResizeObserver` and gives the text room a `margin-top` and `height` (or `margin-left` and `width`) that match them.
 
 - **Room for the text**, **Gap** and **Margin**: shares of the page, as sliders.
-- **Print offset, left (Blurb only)** and **Print offset, right (Blurb only)**: extra room added to **Margin** at that edge only in **PDF for Blurb**, such as more room at the binding. **Save as PDF** and **Save as image** leave them out. On the screen they show while **Show bleed and safe boundary** is on, so the preview matches what Blurb gets.
+- **Print offset, left (Blurb only)** and **Print offset, right (Blurb only)**: extra room added to **Margin** at that edge only in **PDF for Blurb**, such as more room at the binding. **Save as PDF** and **Save as image** leave them out. On the screen they show while **Preview** is on **Print (Blurb)** ([Print or PDF preview](cover.md#print-or-pdf-preview)).
 
 ## Left and right pages
 
@@ -34,4 +34,4 @@ Every change shows on the preview at once and is saved as a change waiting for C
 
 > **Frontend analogy:** a built-in layout is a hand-written component; a book's layout is data fed to one generic component, like a CMS block whose props (flex direction, `flex-basis`, `gap`, padding, `aspect-ratio`) come from a JSON file. Sizes are in `cqw`, so the preview and the small pages on the other tabs look the same.
 
-**Show bleed and safe boundary**, under the preview, draws Blurb's bleed and safe boundary over the left and right pages ([Bleed and safe boundary guides](cover.md#bleed-and-safe-boundary-guides)).
+**Preview** (**PDF** or **Print (Blurb)**), under the preview, picks which version the pages show ([Print or PDF preview](cover.md#print-or-pdf-preview)), and **Show bleed and safe boundary** beside it draws Blurb's bleed and safe boundary over the left and right pages ([Bleed and safe boundary guides](cover.md#bleed-and-safe-boundary-guides)).

@@ -5,6 +5,7 @@ import { bookPdfMutation, bookPdfProgressQuery } from "@/api/photo-books";
 import { CoverSheet } from "@/components/photo-book/book-cover";
 import { PdfButton, PrintBook, drawnPages, settle } from "@/components/photo-book/book-pdf";
 import type { PageLook } from "@/components/photo-book/page-actions";
+import { printLook } from "@/components/photo-book/print-look";
 import { downloadBlob } from "@/lib/download-blob";
 import type { PhotoBook } from "@/lib/photo-book";
 import { type BlurbPdf, blurbOf, blurbPdfs, coverOf } from "@/lib/photo-book-cover";
@@ -30,7 +31,7 @@ function blurbPages(book: PhotoBook, look: PageLook) {
   const { pageWidth, pageHeight } = blurbOf(book);
   return {
     book: { ...book, size: { width: pageWidth, height: pageHeight, unit: "in" as const } },
-    look: { ...look, aspect: pageWidth / pageHeight, printWidth: pageWidth, printOffsets: true },
+    look: printLook(book, look),
   };
 }
 

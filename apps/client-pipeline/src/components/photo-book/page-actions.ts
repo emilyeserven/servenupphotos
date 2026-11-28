@@ -53,8 +53,8 @@ export interface PageLook {
   /** Blurb's bleed and safe boundary to draw over each page, while **Show bleed and safe boundary** is on; null while it's off. */
   guides: PageGuides | null;
   /**
-   * True when pages are drawn for print, in the PDF for Blurb or on the screen while **Show bleed
-   * and safe boundary** is on, so a layout's print offsets add to its margins.
+   * True when pages are drawn for print, in the PDF for Blurb or on the screen while **Preview** is
+   * on **Print (Blurb)**, so a layout's print offsets add to its margins.
    */
   printOffsets: boolean;
 }

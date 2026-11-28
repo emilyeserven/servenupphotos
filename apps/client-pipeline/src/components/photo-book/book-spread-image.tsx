@@ -6,6 +6,7 @@ import { spreadImageMutation } from "@/api/photo-books";
 import { ErrorNote } from "@/components/error-note";
 import { PrintPage, drawnPages, settle } from "@/components/photo-book/book-pdf";
 import type { PageLook } from "@/components/photo-book/page-actions";
+import { pdfLook } from "@/components/photo-book/print-look";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { downloadBlob } from "@/lib/download-blob";
@@ -120,11 +121,7 @@ export function SpreadSheets({
           <div key={view.pages[0]?.id} style={{ ...sheet, display: "flex", overflow: "hidden" }}>
             {view.pages.map((p, i) => (
               <div key={p.id} style={{ ...page, flex: "none", overflow: "hidden" }}>
-                <PrintPage
-                  page={p}
-                  look={{ ...look, printOffsets: false }}
-                  side={i === 0 ? "left" : "right"}
-                />
+                <PrintPage page={p} look={pdfLook(book, look)} side={i === 0 ? "left" : "right"} />
               </div>
             ))}
           </div>
