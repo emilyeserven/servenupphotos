@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import type { CombinedData } from "@/api/photos";
 import type { SocialPhoto } from "@/api/publish";
 import { BlurbPdfButton } from "@/components/photo-book/blurb-pdf";
@@ -10,6 +10,7 @@ import { BudgetMeter } from "@/components/photo-book/budget-meter";
 import { CaptionOverflowList } from "@/components/photo-book/caption-overflow-list";
 import { LowResolutionList } from "@/components/photo-book/low-resolution-list";
 import type { PageLook } from "@/components/photo-book/page-actions";
+import { PageEditorPanel } from "@/components/photo-book/page-editor-panel";
 import { usePreviewKeys, usePreviewMode } from "@/components/photo-book/preview-mode";
 import { PrintGuidesToggle, PrintPreviewToggle } from "@/components/photo-book/print-guides";
 import { UnitsDrawer } from "@/components/photo-book/units-drawer";
@@ -35,6 +36,7 @@ import {
   unitsInBook,
   viewOf,
 } from "@/lib/photo-book-order";
+import { sidePanelShows } from "@/lib/photo-book-page-editor";
 
 /**
  * What the preview shows and where it is: the book as it opens, two facing pages at a time; the
@@ -119,6 +121,7 @@ export function BookTab(props: BookTabProps) {
   const bookPreview = useBookPreview(used);
   const { views, at, setAt, preview, turnPreview } = bookPreview;
   const edit = useEditMode(props, bookPreview, used);
+  const [editingPage, setEditingPage] = useState<string | null>(null);
   /** Opens or closes a panel, leaving Preview Mode first. */
   const panel = (set: (open: boolean) => void) => (open: boolean) => {
     if (preview.on) turnPreview(false);
@@ -152,6 +155,8 @@ export function BookTab(props: BookTabProps) {
             editMode={edit.on}
             onEditMode={edit.setOn}
             inserting={edit.inserting}
+            editingPage={editingPage}
+            onEditPage={setEditingPage}
           />
           <LowResolutionList
             book={book}
@@ -161,17 +166,16 @@ export function BookTab(props: BookTabProps) {
           />
           <CaptionOverflowList book={book} look={look} onShow={(id) => setAt(viewOf(views, id))} />
         </div>
-        {edit.on && !preview.on ? (
-          edit.drawer
-        ) : (
-          <BookUsedPanel
-            {...props}
-            used={used}
-            preview={bookPreview}
-            collapsed={usedCollapsed}
-            onCollapsed={panel(setUsedCollapsed)}
-          />
-        )}
+        <BookSidePanel
+          {...props}
+          used={used}
+          preview={bookPreview}
+          edit={edit}
+          editingPage={editingPage}
+          onEditPage={setEditingPage}
+          usedCollapsed={usedCollapsed}
+          onUsedCollapsed={panel(setUsedCollapsed)}
+        />
       </div>
       <BookUnitsDrawer
         {...props}
@@ -183,6 +187,50 @@ export function BookTab(props: BookTabProps) {
   );
 }
 
+/**
+ * Beside the preview: Used page spreads, collapsed, in Preview Mode; Edit mode's Photos drawer while
+ * it's on; the page editor while a page is open in it; or else Used page spreads.
+ */
+function BookSidePanel(
+  props: BookTabProps & {
+    used: BookUnit[];
+    preview: ReturnType<typeof useBookPreview>;
+    edit: { on: boolean; drawer: ReactNode };
+    editingPage: string | null;
+    onEditPage: (id: string | null) => void;
+    usedCollapsed: boolean;
+    onUsedCollapsed: (collapsed: boolean) => void;
+  },
+) {
+  const { book, update, look, edit, editingPage, onEditPage } = props;
+  const shows = sidePanelShows({
+    previewMode: props.preview.preview.on,
+    editMode: edit.on,
+    book,
+    editingPage,
+  });
+  if (shows === "drawer") return edit.drawer;
+  if (shows === "editor" && editingPage !== null) {
+    return (
+      <PageEditorPanel
+        book={book}
+        update={update}
+        look={look}
+        id={editingPage}
+        onClose={() => onEditPage(null)}
+      />
+    );
+  }
+  return (
+    <BookUsedPanel
+      {...props}
+      collapsed={props.usedCollapsed}
+      onCollapsed={props.onUsedCollapsed}
+      onEdit={onEditPage}
+    />
+  );
+}
+
 /** Used page spreads, beside the preview: the book's pages and spreads in order. */
 function BookUsedPanel(
   props: BookTabProps & {
@@ -190,9 +238,11 @@ function BookUsedPanel(
     preview: ReturnType<typeof useBookPreview>;
     collapsed: boolean;
     onCollapsed: (collapsed: boolean) => void;
+    /** Opens a text page or generated page in the page editor. */
+    onEdit: (id: string) => void;
   },
 ) {
-  const { book, update, look, used, preview, collapsed, onCollapsed } = props;
+  const { book, update, look, used, preview, collapsed, onCollapsed, onEdit } = props;
   return (
     <UsedPanel
       units={used}
@@ -205,6 +255,7 @@ function BookUsedPanel(
       onTakeOut={(id) => update(takeOutOfBook(book, id))}
       collapsed={preview.preview.on || collapsed}
       onCollapsed={onCollapsed}
+      onEdit={onEdit}
     />
   );
 }

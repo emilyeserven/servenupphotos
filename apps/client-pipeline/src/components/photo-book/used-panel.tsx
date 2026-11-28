@@ -1,4 +1,4 @@
-import { EyeIcon, PanelRightCloseIcon, PanelRightOpenIcon, XIcon } from "lucide-react";
+import { EyeIcon, PanelRightCloseIcon, PanelRightOpenIcon, PencilIcon, XIcon } from "lucide-react";
 import { MoveArrows } from "@/components/move-arrows";
 import type { PageLook } from "@/components/photo-book/page-actions";
 import { unitName } from "@/components/photo-book/page-types";
@@ -8,6 +8,7 @@ import { SectionTitle } from "@/components/section-title";
 import { Button } from "@/components/ui/button";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import type { BookUnit } from "@/lib/photo-book-order";
+import { isEditablePage } from "@/lib/photo-book-page-editor";
 import { cn } from "@/lib/utils";
 
 interface UsedPanelProps {
@@ -25,6 +26,8 @@ interface UsedPanelProps {
   onTakeOut: (id: string) => void;
   collapsed: boolean;
   onCollapsed: (collapsed: boolean) => void;
+  /** Opens the text page or generated page with ID id in the page editor. */
+  onEdit: (id: string) => void;
 }
 
 /**
@@ -101,7 +104,8 @@ function numbersText(unit: BookUnit, numbers: Map<string, number>): string {
 
 /**
  * One page or spread in Used page spreads. Clicking its preview, or the eye button that shows on
- * hover, shows it in the book's preview.
+ * hover, shows it in the book's preview; on a text page or generated page, the pencil beside it
+ * opens the page in the page editor too.
  */
 function UsedUnit(props: UsedPanelProps & { unit: BookUnit; place: number }) {
   const { unit, place, units, shown, look, numbers, onShow, onPlace, onMove, onTakeOut } = props;
@@ -138,6 +142,14 @@ function UsedUnit(props: UsedPanelProps & { unit: BookUnit; place: number }) {
       >
         <EyeIcon />
       </Button>
+      <EditButton
+        unit={unit}
+        name={name}
+        onEdit={(id) => {
+          onShow(unit.id);
+          props.onEdit(id);
+        }}
+      />
       <div className="flex items-center gap-0.5 text-xs">
         <span className="min-w-0 flex-1 truncate" title={name}>
           <span className="text-muted-foreground">{numbersText(unit, numbers)} · </span>
@@ -155,5 +167,23 @@ function UsedUnit(props: UsedPanelProps & { unit: BookUnit; place: number }) {
         </Button>
       </div>
     </li>
+  );
+}
+
+/** The pencil that shows on hover beside the eye, on a unit with a text page or generated page, opening it in the page editor. */
+function EditButton(props: { unit: BookUnit; name: string; onEdit: (id: string) => void }) {
+  const page = props.unit.pages.find(isEditablePage);
+  if (!page) return null;
+  return (
+    <Button
+      size="icon-xs"
+      variant="secondary"
+      aria-label={`Edit ${props.name}`}
+      title="Edit text"
+      onClick={() => props.onEdit(page.id)}
+      className="absolute top-2.5 right-10 opacity-0 shadow group-hover/used:opacity-100 focus-visible:opacity-100"
+    >
+      <PencilIcon />
+    </Button>
   );
 }

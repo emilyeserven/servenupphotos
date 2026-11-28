@@ -10,6 +10,7 @@ import { createPortal } from "react-dom";
 import { SaveSpreadImageButton } from "@/components/photo-book/book-spread-image";
 import { InsertPagePoints, type PageInserting } from "@/components/photo-book/insert-page-points";
 import type { PageLook } from "@/components/photo-book/page-actions";
+import { PageEditTargets } from "@/components/photo-book/page-edit-targets";
 import { pageName } from "@/components/photo-book/page-types";
 import { UnitSheets, sheetsAspect } from "@/components/photo-book/unit-sheets";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,10 @@ interface BookPreviewProps {
   onEditMode: (on: boolean) => void;
   /** Inserting pages in Edit mode. */
   inserting: PageInserting;
+  /** The ID of the page open in the page editor, if one is. */
+  editingPage: string | null;
+  /** Opens the text page or generated page with ID id in the page editor. */
+  onEditPage: (id: string) => void;
 }
 
 /**
@@ -43,10 +48,11 @@ interface BookPreviewProps {
  * controls under it to page through the book and to turn Edit mode and Preview Mode on or off.
  * In Edit mode, photos can be dragged from one place to another on the pages shown, moving or
  * swapping them, or in from the Photos drawer, and **+** buttons on their edges insert new pages;
- * nothing else on the pages changes there. In Preview Mode it covers the whole window, with nothing around it, so the pages are as large as they can be.
+ * nothing else on the pages changes there. Otherwise, clicking a text page or generated page opens it
+ * in the page editor. In Preview Mode it covers the whole window, with nothing around it, so the pages are as large as they can be.
  */
 export function BookPreview(props: BookPreviewProps) {
-  const { views, at, look, previewMode, book, update, editMode, inserting } = props;
+  const { views, at, look, previewMode } = props;
   const view = views[at];
   if (!view) {
     return (
@@ -58,17 +64,37 @@ export function BookPreview(props: BookPreviewProps) {
   }
   return (
     <PreviewFrame previewMode={previewMode} ratio={sheetsAspect(view.pages, look)}>
-      <div className="relative">
-        <UnitSheets
-          pages={view.pages}
-          look={look}
-          editing={editMode ? { book, update } : undefined}
-          className="gap-px"
-        />
-        {editMode && <InsertPagePoints {...inserting} />}
-      </div>
+      <PreviewPages {...props} view={view} />
       <PreviewControls {...props} view={view} />
     </PreviewFrame>
+  );
+}
+
+/** The pages shown, and over them what can be clicked on them. */
+function PreviewPages(props: BookPreviewProps & { view: BookView }) {
+  const { view, look, book, update, editMode } = props;
+  return (
+    <div className="relative">
+      <UnitSheets
+        pages={view.pages}
+        look={look}
+        editing={editMode ? { book, update } : undefined}
+        className="gap-px"
+      />
+      <PreviewOverlay {...props} />
+    </div>
+  );
+}
+
+/**
+ * Over the pages shown: Edit mode's **+** buttons while it's on, nothing in Preview Mode, and
+ * otherwise the buttons that open a text page or generated page in the page editor.
+ */
+function PreviewOverlay(props: BookPreviewProps & { view: BookView }) {
+  if (props.editMode) return <InsertPagePoints {...props.inserting} />;
+  if (props.previewMode) return null;
+  return (
+    <PageEditTargets pages={props.view.pages} open={props.editingPage} onEdit={props.onEditPage} />
   );
 }
 

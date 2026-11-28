@@ -30,7 +30,7 @@ export interface GeneratedPageChanges {
 }
 
 /** A row of buttons picking one of a few choices, the picked one pressed. */
-function Choices<T extends string | number>(props: {
+export function Choices<T extends string | number>(props: {
   label: string;
   choices: { value: T; name: string }[];
   value: T;
@@ -58,7 +58,7 @@ function Choices<T extends string | number>(props: {
 }
 
 /** A number with − and + buttons, between min and max, and a note after it. */
-function Stepper(props: {
+export function Stepper(props: {
   label: string;
   value: number;
   shown: string;
@@ -368,8 +368,7 @@ function OptionsPopover(props: {
   look: PageLook;
   changes: GeneratedPageChanges;
 }) {
-  const { page, look, changes } = props;
-  const g = page.generated;
+  const { page } = props;
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -381,26 +380,45 @@ function OptionsPopover(props: {
         align="end"
         className="flex max-h-[70vh] w-80 flex-col gap-3 overflow-y-auto p-3 text-sm"
       >
-        <p className="text-muted-foreground text-xs">
-          Made from the places of the photos on the pages in the book each time it&apos;s shown, so
-          it stays current as pages change.
-        </p>
-        <HeadingField title={page.title} onTitle={(title) => changes.onTitle(page.id, title)} />
-        <IndexOptions generated={g} onChange={(next) => changes.onChange(page.id, () => next)} />
-        <IndexEntries
-          every={look.placesIndexFor({ ...g, hidden: undefined })}
-          changes={{
-            hidden: g.hidden ?? [],
-            onHidden: (next) => changes.onChange(page.id, (old) => ({ ...old, hidden: next })),
-            sizes: g,
-            onSize: (key, size) =>
-              changes.onChange(page.id, (old) => ({
-                ...old,
-                entrySizes: withEntrySize(old.entrySizes, key, size),
-              })),
-          }}
-        />
+        <GeneratedPageForm {...props} />
       </PopoverContent>
     </Popover>
+  );
+}
+
+/**
+ * A generated page's options, in the drawer's popover and the page editor: what it's made from,
+ * its heading, how the Places Index writes and orders its places, and every entry it could show,
+ * each to leave out or make smaller.
+ */
+export function GeneratedPageForm(props: {
+  page: BookPage & { generated: GeneratedPage };
+  look: PageLook;
+  changes: GeneratedPageChanges;
+}) {
+  const { page, look, changes } = props;
+  const g = page.generated;
+  return (
+    <>
+      <p className="text-muted-foreground text-xs">
+        Made from the places of the photos on the pages in the book each time it&apos;s shown, so it
+        stays current as pages change.
+      </p>
+      <HeadingField title={page.title} onTitle={(title) => changes.onTitle(page.id, title)} />
+      <IndexOptions generated={g} onChange={(next) => changes.onChange(page.id, () => next)} />
+      <IndexEntries
+        every={look.placesIndexFor({ ...g, hidden: undefined })}
+        changes={{
+          hidden: g.hidden ?? [],
+          onHidden: (next) => changes.onChange(page.id, (old) => ({ ...old, hidden: next })),
+          sizes: g,
+          onSize: (key, size) =>
+            changes.onChange(page.id, (old) => ({
+              ...old,
+              entrySizes: withEntrySize(old.entrySizes, key, size),
+            })),
+        }}
+      />
+    </>
   );
 }
