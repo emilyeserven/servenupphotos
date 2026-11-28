@@ -30,3 +30,9 @@ export function generatedPart(page: Pick<BookPage, "id">): number {
   const n = at < 0 ? NaN : Number(page.id.slice(at + PART.length));
   return Number.isInteger(n) && n > 1 ? n - 1 : 0;
 }
+
+/** The ID of the saved page a page is drawn from: its own, or for a page a generated page runs on to, the first page's. */
+export function savedPageId(id: string): string {
+  const at = id.lastIndexOf(PART);
+  return at < 0 ? id : id.slice(0, at);
+}

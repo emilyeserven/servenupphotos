@@ -8,6 +8,17 @@ The **Book** tab has three parts, as the book makers' own software does:
 - **Used page spreads**, beside it (under it on a narrow screen): the pages and spreads in the book, in order, top to bottom, each a small preview with its page numbers and name. Click one to show it in the preview; drag one onto another to put it before it, or onto the box at the end; the arrows move it and **×** takes it out, leaving it among the ones that could be used. The panel's button collapses it to a thin rail. Its list scrolls on its own (staying in view beside the preview on a wide screen), so a long book doesn't make the page longer. Pointing at one shows an eye button that shows it in the preview, as clicking its picture does.
 - **All pages and spreads**, a drawer along the bottom of the window: every photo page and spread made on **Photo Pages**, then the other pages, each a small preview, dimmed and marked **In book** when it's in. Drag one into **Used page spreads**, or its **+** adds it at the end; drag one from **Used page spreads** onto the drawer to take it out. Its heading opens and closes it. The tag dropdown beside the drawer's name, once it's open, shows only the pages and spreads with that tag, to find a group of pages again, such as "Seoul" or "maybe". Tags are set on **Photo Pages**; the drawer doesn't show each one's tags, to keep it short. The layout dropdown beside it shows only the pages and spreads with a page in that layout: the built-in and the book's own layouts in use, in the order the pickers list them, **Text pages** and **Other pages**. **Show ones in the book**, beside the dropdowns and on to start, can be turned off to list only the pages and spreads not in the book yet.
 
+## Editing text and generated pages
+
+Text pages and generated pages, such as the Places Index, are edited from the preview, without scrolling to them on **Photo Pages** or opening the drawer. Each one the preview shows has an **Edit text** (or **Edit index**) chip at its top right, and clicking anywhere on it opens the page editor in place of **Used page spreads**, with the page outlined in the preview. The pencil that shows on hover beside the eye in **Used page spreads** opens it too, and shows that page.
+
+- **A text page:** its **Name**, **Title** and **Text, in Markdown** in a large box, its **Columns**, how many **Photos** places it has, and once it has some, where its **Text** goes beside them. They're the same settings as on the page on **Photo Pages**.
+- **A generated page:** the same options as its options button in the drawer: its **Heading**, how the Places Index writes and orders its names, its pages, columns and text size, and every entry to leave out or make smaller. Any of the pages it runs on to opens it.
+
+The preview shows each change as it's typed. Clicking another text or generated page in the preview switches the editor to it, and **Done** closes it, showing **Used page spreads** again. **Edit mode** shows its Photos drawer in its place while it's on, and Preview Mode hides it.
+
+> **Frontend analogy:** the pages in the preview are `inert`, so the chips are buttons in a grid laid over them, one cell per page, like a click-catching overlay over an `<iframe>`. The editor holds only the open page's ID in state and reads the page from the book each render, so a change made anywhere shows in it.
+
 When a photo is on more than one page in the book, each of them is marked **Also on page …** on **Photo Pages**.
 
 ## Print resolution
